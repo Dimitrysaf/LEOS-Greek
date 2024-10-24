@@ -429,8 +429,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     action: string;
     elementId: string;
     elementType: string;
+    differentMessageForLast: string;
   }) {
-    const { elementType, elementId } = elementData;
+    const { elementType, elementId, differentMessageForLast } = elementData;
     const isLastElement = isNodeLastElement(
       this.tableOfContentService.getCurrentToc(),
       elementId,
@@ -455,8 +456,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       });
     };
 
-    if ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType)) ||
-      (!this.isCNInstance && isLastElement)) {
+    if (differentMessageForLast && ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType)) ||
+      (!this.isCNInstance && isLastElement))) {
       this.dialogService.openDialog({
         title: this.translateService.instant(
           'page.editor.last-element-delete-confirmation.title',

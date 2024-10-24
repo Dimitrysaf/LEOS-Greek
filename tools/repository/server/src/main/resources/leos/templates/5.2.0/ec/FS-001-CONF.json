@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[6]/content/aknp",
+          "destinationPath": "//level[5]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -12,7 +12,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[7]/subparagraph[2]/content/aknp",
+          "destinationPath": "//level[6]/subparagraph[2]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -21,7 +21,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[9]/subparagraph[2]/content/aknp",
+          "destinationPath": "//level[8]/subparagraph[2]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -34,7 +34,16 @@
           "position": "BEFORE-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_17__p\" class=\"guidance-green-block\"><span id=\"_17__p-guidance\">[If more than one management mode is indicated, please provide details in the ‘Comments’ section]</span></guidance>"
+      "content": "<guidance id=\"guidance-_17__p\" class=\"guidance-green-block\"><span id=\"_17__p-guidance\">[If more than one management mode is indicated, please provide details in the 'Comments' section]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//level[19]/content",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_21__p\" class=\"guidance-green-block\"><span id=\"_21__p-guidance\">[Specify frequency and conditions.]</span></guidance>"
     },
     {
       "targets": [
@@ -43,7 +52,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_221__p\" class=\"guidance-green-block\"><span id=\"_221__p-guidance\">[DGs are to <i id=\"guidance-_221__p_i_1\">explain why</i> the management mode(s), funding implementation mechanism(s), payment modalities, and control strategy proposed are <i id=\"guidance-_221__p_i_2\">considered to be the most appropriate solutions</i> in this case – not only in terms of the policy/programme objectives but also in terms of balancing the internal control objectives (control effectiveness, efficiency and economy; i.e. low errors, fast contracting/paying and low control costs) – knowing that complexity of programmes can impact the error rates and (together with the volumes of transactions to be processed) also the costs of controls.<br><i id=\"guidance-_221__p_i_3\">Remark: Such justification is especially crucial when the programme is split into segments, with a deviating delivery set-up for some of them</i>.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_221__p\" class=\"guidance-green-block\"><span id=\"_221__p-guidance\">[DGs are to <i id=\"guidance-_221__p_i_1\">explain why</i> the management mode(s), funding implementation mechanism(s), payment modalities, and control strategy proposed are <i id=\"guidance-_221__p_i_2\">considered to be the most appropriate solutions</i> in this case - not only in terms of the policy/programme objectives but also in terms of balancing the internal control objectives (control effectiveness, efficiency and economy; i.e. low errors, fast contracting/paying and low control costs) - knowing that complexity of programmes can impact the error rates and (together with the volumes of transactions to be processed) also the costs of controls.<br><i id=\"guidance-_221__p_i_3\">Remark: Such justification is especially crucial when the programme is split into segments, with a deviating delivery set-up for some of them</i>.]</span></guidance>"
     },
     {
       "targets": [
@@ -66,11 +75,29 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[49]/content/aknp",
+          "destinationPath": "//level[24]/content",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_23__p\" class=\"guidance-green-block\"><span id=\"_23__p-guidance\">[Specify existing or envisaged prevention and protection measures, e.g. from the anti-fraud strategy.]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[26]/heading",
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_223__p\" class=\"guidance-green-block\"><span id=\"_223__p-guidance\">[NB: In case the initial Commission proposal evolves considerably during the legislative negotiations, it should be considered to update information laid down in the LFDS for any financial and/or digital aspects, as necessary, with the aim to support the negotiation process and create clarity for all parties concerned.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_31-1__p\" class=\"guidance-green-block\"><span id=\"_31-1__p-guidance\">[Please note that an Excel tool is available on the BUDGpedia page on the Legislative Financial and Digital Statement to help you with the calculations. You are strongly advised to use it to facilitate filling in this template.]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[26]/subparagraph[1]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_31-2__p\" class=\"guidance-green-block\"><span id=\"_31-2__p-guidance\">[Please insert as many budget lines as needed in the two tables below.]</span></guidance>"
     }
   ],
   "structure": [

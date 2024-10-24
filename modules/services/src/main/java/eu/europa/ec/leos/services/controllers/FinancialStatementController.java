@@ -333,11 +333,11 @@ public class FinancialStatementController {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
             elementId = encodeParam(elementId);
-            DocumentViewResponse bill = this.financialStatementApiService.deleteBlock(documentRef, elementName, elementId);
-            return ResponseEntity.ok().body(bill);
+            DocumentViewResponse financialStatement = this.financialStatementApiService.deleteBlock(documentRef, elementName, elementId);
+            return ResponseEntity.ok().body(financialStatement);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting bill  element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while deleting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while getting financial statement element - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while deleting financial statement element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

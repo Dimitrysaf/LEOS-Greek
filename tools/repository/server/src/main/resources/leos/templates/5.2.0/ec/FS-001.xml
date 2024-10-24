@@ -243,12 +243,12 @@
                 </heading>
                 <subparagraph>
                     <content>
-                        <p>Reasons for action at European level (ex-ante) […]</p>
+                        <p>Reasons for action at European level (ex-ante) [...]</p>
                     </content>
                 </subparagraph>
                 <subparagraph>
                     <content>
-                        <p>Expected generated Union added value (ex-post) […]</p>
+                        <p>Expected generated Union added value (ex-post) [...]</p>
                     </content>
                 </subparagraph>
             </level>
@@ -519,7 +519,7 @@
                         </list>
                     </indent>
                 </list>
-                <subparagraph leos:editable="false" leos:optional="true">
+                <subparagraph leos:editable="false">
                     <content>
                         <p>Comments</p>
                     </content>
@@ -576,7 +576,7 @@
                 <num>2.2.3.</num>
                 <heading leos:editable="false">
                     <i leos:editable="false">Estimation and justification of the cost-effectiveness
-                        of the controls (ratio of "control costs ÷ value of the related funds
+                        of the controls (ratio of "control costs &#247; value of the related funds
                         managed"), and assessment of the expected levels of risk of error (at
                         payment &amp; at closure)</i>
                 </heading>
@@ -642,21 +642,21 @@
                                     <p>Number</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:center;">
-                                    <p>Diff./Non-diff. <authorialNote marker="3" placement="bottom">
+                                    <p>Diff./Non-diff. <authorialNote marker="2" placement="bottom">
                                         <p>Diff. = Differentiated appropriations / Non-diff. =
                                             Non-differentiated appropriations.</p>
                                     </authorialNote>
                                     </p>
                                 </td>
                                 <td style="border:1px solid black;text-align:center;">
-                                    <p>from EFTA countries <authorialNote marker="4" placement="bottom">
+                                    <p>from EFTA countries <authorialNote marker="3" placement="bottom">
                                         <p>EFTA: European Free Trade Association.</p>
                                     </authorialNote>
                                     </p>
                                 </td>
                                 <td style="border:1px solid black;text-align:center;">
                                     <p>from candidate countries and potential candidates
-                                        <authorialNote marker="5" placement="bottom">
+                                        <authorialNote marker="4" placement="bottom">
                                             <p>Candidate countries and, where applicable, potential
                                                 candidates from the Western Balkans.</p>
                                         </authorialNote>
@@ -969,8 +969,8 @@
                                 <td colspan="8" style="width: 100%;">
                                     <p>Appropriations of an administrative nature financed from
                                         the envelope of specific programmes
-                                        <authorialNote marker="6" placement="bottom">
-                                            <p>Technical and/or administrative assistance and expenditure in support of the implementation of EU programmes and/or actions (former ‘BA’ lines), indirect research, direct research.</p>
+                                        <authorialNote marker="5" placement="bottom">
+                                            <p>Technical and/or administrative assistance and expenditure in support of the implementation of EU programmes and/or actions (former 'BA' lines), indirect research, direct research.</p>
                                         </authorialNote>
                                     </p>
                                 </td>
@@ -1208,8 +1208,8 @@
                                 <td colspan="8" style="width: 100%;">
                                     <p>Appropriations of an administrative nature financed from
                                         the envelope of specific programmes
-                                        <authorialNote marker="7" placement="bottom">
-                                            <p>Technical and/or administrative assistance and expenditure in support of the implementation of EU programmes and/or actions (former ‘BA’ lines), indirect research, direct research.</p>
+                                        <authorialNote marker="6" placement="bottom">
+                                            <p>Technical and/or administrative assistance and expenditure in support of the implementation of EU programmes and/or actions (former 'BA' lines), indirect research, direct research.</p>
                                         </authorialNote>
                                     </p>
                                 </td>
@@ -1527,7 +1527,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false" leos:optional="true" leos:repeatable="true" leos:group="1">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr>
                                     <td style="width: 34%;">
                                         <p><b>Heading of multiannual financial</b></p>
@@ -1538,14 +1538,14 @@
                                     </td>
                                     <td style="width: 57%;"> </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" leos:optional="true" leos:repeatable="true" leos:group="1">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr>
                                     <td colspan="3" rowspan="2" style="width: 54%;">
                                         <p>DG: ...</p>
@@ -1681,10 +1681,10 @@
                                     <td colspan="8" style="width: 100%;">
                                         <p>Appropriations of an administrative nature financed from
                                             the envelope of specific programmes
-                                            <authorialNote marker="8" placement="bottom">
+                                            <authorialNote marker="7" placement="bottom">
                                                 <p>Technical and/or administrative assistance and
                                                     expenditure in support of the implementation of EU
-                                                    programmes and/or actions (former ‘BA’ lines),
+                                                    programmes and/or actions (former 'BA' lines),
                                                     indirect research, direct research.</p>
                                             </authorialNote>
                                         </p>
@@ -1791,14 +1791,14 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" leos:optional="true" leos:repeatable="true" leos:group="1">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr>
                                     <td colspan="3" rowspan="2" style="width: 54%;">
                                         <p>DG: ...</p>
@@ -1929,10 +1929,10 @@
                                 <tr>
                                     <td colspan="8" style="width: 100%;">
                                         <p>Appropriations of an administrative nature financed from
-                                            the envelope of specific programmes <authorialNote marker="9" placement="bottom">
+                                            the envelope of specific programmes <authorialNote marker="8" placement="bottom">
                                                 <p>Technical and/or administrative assistance and
                                                     expenditure in support of the implementation of EU
-                                                    programmes and/or actions (former ‘BA’ lines),
+                                                    programmes and/or actions (former 'BA' lines),
                                                     indirect research, direct research.</p>
                                             </authorialNote>
                                         </p>
@@ -2031,14 +2031,14 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" leos:optional="true" leos:repeatable="true" leos:group="1">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr>
                                     <td colspan="3" rowspan="2" style="width: 48%;">
                                         <p/>
@@ -2234,7 +2234,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
@@ -2242,7 +2242,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr>
                                     <td style="width: 30%;"> </td>
                                     <td style="width: 9%;"> </td>
@@ -2446,14 +2446,14 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr>
                                     <td style="width: 34%;">
                                         <p><b>Heading of multiannual financial</b></p>
@@ -2465,7 +2465,7 @@
                                         </p>
                                     </td>
                                     <td style="width: 57%;">
-                                        <p> Administrative expenditure <authorialNote marker="10" placement="bottom">
+                                        <p> Administrative expenditure <authorialNote marker="9" placement="bottom">
                                             <p>The necessary appropriations should be determined
                                                 using the annual average cost figures available on
                                                 the appropriate BUDGpedia webpage.</p>
@@ -2473,15 +2473,28 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
+                    </content>
+                </subparagraph>
+                <subparagraph leos:editable="true" leos:deletable="false">
+                    <content>
+                        <p>This section should be filled in using the 'budget data of an
+                            administrative nature' to be firstly inserted in the Annex to the
+                            Legislative Financial and Digital Statement (Annex 5 <authorialNote marker="10" placement="bottom">
+                                <p>If you report the use of appropriations under Heading 7,
+                                    completing Annex 5 is a compulsory requirement.</p>
+                            </authorialNote> to the Commission Decision on the internal rules for
+                            the implementation of the Commission section of the general budget of
+                            the European Union), which is uploaded to DECIDE for interservice
+                            consultation purposes.</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 14.4pt;">
                                     <td style="width: 60.64%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" colspan="4" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -2814,7 +2827,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -2835,7 +2848,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 480; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;">
                                     <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;">
                                         <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;"><b style="mso-bidi-font-weight: normal;"> Heading of multiannual financial</b></p>
@@ -2848,7 +2861,7 @@
                                         <p style="margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -2857,7 +2870,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;">
                                     <td style="width: 48.88%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -3030,7 +3043,7 @@
                                             the envelope of specific programmes <authorialNote marker="11" placement="bottom">
                                             <p>Technical and/or administrative assistance and
                                                 expenditure in support of the implementation of EU
-                                                programmes and/or actions (former ‘BA’ lines),
+                                                programmes and/or actions (former 'BA' lines),
                                                 indirect research, direct research.</p>
                                         </authorialNote>
                                         </p>
@@ -3148,7 +3161,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -3158,7 +3171,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;">
                                     <td style="width: 48.88%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -3331,7 +3344,7 @@
                                             the envelope of specific programmes <authorialNote marker="12" placement="bottom">
                                             <p>Technical and/or administrative assistance and
                                                 expenditure in support of the implementation of EU
-                                                programmes and/or actions (former ‘BA’ lines),
+                                                programmes and/or actions (former 'BA' lines),
                                                 indirect research, direct research.</p>
                                         </authorialNote>
                                         </p>
@@ -3449,7 +3462,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -3460,7 +3473,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 48.64%; border-top: windowtext; border-left: windowtext; border-bottom: black; border-right: black; border-style: solid; border-width: 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -3681,7 +3694,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -3691,7 +3704,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 480; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;">
                                     <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;">
                                         <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;"><b style="mso-bidi-font-weight: normal;"> Heading of multiannual financial </b></p>
@@ -3704,7 +3717,7 @@
                                         <p style="margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -3713,7 +3726,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;">
                                     <td style="width: 48.88%; border: solid windowtext 1.0pt; border-bottom: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -3885,7 +3898,7 @@
                                             Appropriations of an administrative nature financed from
                                             the envelope of specific programmes
                                             <authorialNote marker="13" placement="bottom">
-                                                <p>Technical and/or administrative assistance and expenditure in support of the implementation of EU programmes and/or actions (former ‘BA’ lines), indirect research, direct research.</p>
+                                                <p>Technical and/or administrative assistance and expenditure in support of the implementation of EU programmes and/or actions (former 'BA' lines), indirect research, direct research.</p>
                                             </authorialNote>
                                         </p>
                                     </td>
@@ -4002,7 +4015,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -4013,7 +4026,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;">
                                     <td style="width: 48.88%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -4184,7 +4197,7 @@
                                         <p style="margin: 0cm; text-align: left;">
                                             Appropriations of an administrative nature financed from
                                             the envelope of specific programmes<authorialNote marker="14" placement="bottom">
-                                            <p>Technical and/or administrative assistance and expenditure in support of the implementation of EU programmes and/or actions (former ‘BA’ lines), indirect research, direct research.</p>
+                                            <p>Technical and/or administrative assistance and expenditure in support of the implementation of EU programmes and/or actions (former 'BA' lines), indirect research, direct research.</p>
                                         </authorialNote>
                                         </p>
                                     </td>
@@ -4301,7 +4314,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -4312,7 +4325,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 48.64%; border-top: windowtext; border-left: windowtext; border-bottom: black; border-right: black; border-style: solid; border-width: 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -4533,7 +4546,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -4542,7 +4555,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 14.4pt;">
                                     <td style="width: 30.44%; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;"> </td>
                                     <td style="width: 9.42%; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" colspan="2"> </td>
@@ -4770,7 +4783,7 @@
                                         <p> </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -4798,7 +4811,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 657.0pt; margin-left: 5.9pt; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 14.4pt;">
                                     <td style="width: 394.6pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" colspan="4" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -5131,7 +5144,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -5146,7 +5159,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 657.0pt; margin-left: 5.9pt; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 14.4pt;">
                                     <td style="width: 355.0pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" colspan="2" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;"> </p>
@@ -5262,7 +5275,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -5284,11 +5297,11 @@
                         <!-- rotated table -->
                         <table style="text-align:center;border-collapse:collapse;margin-bottom:25px;">
                             <tr>
-                                <td rowspan="3" style="border:1px solid black;">
+                                <td rowspan="3" style="border:1px solid black;text-align:center;">
                                     <p><b>Indicate</b></p>
                                     <p><b>objectives and</b></p>
                                     <p><b>outputs</b></p>
-                                    <p>⇩</p>
+                                    <p>&#8659;</p>
                                 </td>
                                 <td style="border:1px solid black;">
                                     <p/>
@@ -5395,7 +5408,7 @@
                                 <td colspan="3" style="border:1px solid black;">
                                     <p>SPECIFIC OBJECTIVE No 1
                                         <authorialNote marker="18" placement="bottom">
-                                            <p>As described in point 1.4.2. ‘Specific objective(s)…’</p>
+                                            <p>As described in point 1.4.2. 'Specific objective(s)...'</p>
                                         </authorialNote>: [...]
                                     </p>
                                 </td>
@@ -5839,14 +5852,14 @@
                     </indent>
                 </list>
             </level>
-            <level leos:depth="4" class="landscape" leos:deletable="false">
+            <level leos:depth="4" class="landscape" leos:editable="true" leos:deletable="false">
                 <num>3.2.3.1.</num>
                 <heading leos:editable="false">
                     <i>Appropriations from voted budget</i>
                 </heading>
-                <content>
+                <content leos:editable="true" leos:deletable="false">
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 43.34%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -6099,19 +6112,19 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
             </level>
             <!-- Optionnal levels -Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the tables in Sections 3.2.3.2. and 3.2.3.3. If not, please delete both sections. -->
-            <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
+            <level leos:depth="4" class="landscape" leos:editable="true" leos:deletable="false" leos:optional="true">
                 <num>3.2.3.2.</num>
                 <heading leos:editable="false">
                     <i>Appropriations from external assigned revenues</i>
                 </heading>
                 <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 43.32%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -6364,19 +6377,19 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
             </level>
-            <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
+            <level leos:depth="4" class="landscape" leos:deletable="false">
                 <num>3.2.3.3</num>
-                <heading leos:editable="false">
+                <heading leos:editable="false" leos:optional="true">
                     <i>Total appropriations</i>
                 </heading>
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 434.0pt; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 25.95pt;">
                                     <td style="width: 188.0pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 25.95pt;" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
@@ -6630,7 +6643,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
@@ -6692,7 +6705,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 58.26%; border: solid windowtext 1.0pt; border-right: solid black 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" colspan="2" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -7010,20 +7023,20 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
             </level>
             <!-- optionnal levels together - Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the tables in Sections 3.2.4.2. and 3.2.4.3. If not, please delete both sections. -->
-            <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
+            <level leos:depth="4" class="landscape" leos:editable="true" leos:deletable="false" leos:optional="true">
                 <num>3.2.4.2.</num>
                 <heading leos:editable="false">
                     <i>Financed from external assigned revenues</i>
                 </heading>
                 <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 58.26%; border: solid windowtext 1.0pt; border-right: solid black 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" colspan="2" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -7342,19 +7355,19 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
             </level>
-            <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
+            <level leos:depth="4" class="landscape" leos:deletable="false">
                 <num>3.2.4.3.</num>
-                <heading leos:editable="false">
+                <heading leos:editable="false" leos:optional="true">
                     <i>Financed from external assigned revenues</i>
                 </heading>
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 460.0pt; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 24.6pt;">
                                     <td style="width: 268.0pt; border: solid windowtext 1.0pt; border-right: solid black 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 24.6pt;" colspan="2" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
@@ -7674,7 +7687,7 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
@@ -7737,7 +7750,7 @@
                 <subparagraph>
                     <content>
                         <p leos:editable="false">Please fill in the table to illustrate this for
-                            staff at ‘cruising speed’ level.</p>
+                            staff at 'cruising speed' level.</p>
                     </content>
                 </subparagraph>
                 <subparagraph>
@@ -7746,10 +7759,10 @@
                             FTEs):</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 474.35pt; margin-left: 0pt; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="1" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 92.25pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;">
                                         <p style="margin-left: 0cm; text-align: center;">
@@ -7830,7 +7843,7 @@
                                         <p style="margin-left: 0cm;"> </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
@@ -7839,10 +7852,10 @@
                         <p leos:editable="false">Description of tasks to be carried out by:</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 522.0pt; margin-left: 0pt; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .25pt; mso-yfti-tbllook: 480; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .25pt solid windowtext; mso-border-insidev: .25pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes;">
                                     <td style="width: 162.0pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .25pt; padding: 0cm 5.4pt 0cm 5.4pt;">
                                         <p>Officials and temporary staff</p>
@@ -7859,7 +7872,7 @@
                                         <p> </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
@@ -7888,19 +7901,19 @@
                 <subparagraph>
                     <content>
                         <p leos:editable="false">The appropriations under Headings 1-6 should be
-                            reflected as “Policy IT expenditure on operational programmes”. This
+                            reflected as "Policy IT expenditure on operational programmes". This
                             expenditure refers to the operational budget to be used to re-use/ buy/
                             develop IT platforms/ tools directly linked to the implementation of the
                             initiative and their associated investments (e.g. licences, studies,
                             data storage etc). The information provided in this table should be
-                            consistent with details presented under Section 4 “Digital
-                            dimensions”.</p>
+                            consistent with details presented under Section 4 "Digital
+                            dimensions".</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 26.25pt;">
                                     <td style="width: 160.7pt; border: solid windowtext 1.0pt; border-bottom: none; mso-border-top-alt: solid windowtext 1.0pt; mso-border-left-alt: solid windowtext .5pt; mso-border-right-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.25pt;" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;"><b> TOTAL </b></p>
@@ -8118,12 +8131,12 @@
                                         </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
             </level>
-            <level leos:editable="true" leos:depth="3" leos:deletable="false">
+            <level leos:depth="3" leos:deletable="false">
                 <num>3.2.6.</num>
                 <heading leos:editable="false">
                     <i leos:editable="false">Compatibility with the current multiannual financial
@@ -8146,7 +8159,7 @@
                                     Framework (MFF).</p>
                             </content>
                         </subparagraph>
-                        <subparagraph leos:editable="true">
+                        <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                             <content>
                                 <p>Explain what reprogramming is required, specifying the budget
                                     lines concerned and the corresponding amounts. Please provide an
@@ -8165,7 +8178,7 @@
                                     instruments as defined in the MFF Regulation.</p>
                             </content>
                         </subparagraph>
-                        <subparagraph leos:editable="true">
+                        <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                             <content>
                                 <p>Explain what is required, specifying the headings and budget
                                     lines concerned, the corresponding amounts, and the instruments
@@ -8182,7 +8195,7 @@
                                 <p leos:editable="false">requires a revision of the MFF.</p>
                             </content>
                         </subparagraph>
-                        <subparagraph leos:editable="true">
+                        <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                             <content>
                                 <p>Explain what is required, specifying the headings and budget
                                     lines concerned and the corresponding amounts.</p>
@@ -8227,7 +8240,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .75pt; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .75pt solid windowtext; mso-border-insidev: .75pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; page-break-inside: avoid;">
                                     <td style="width: 31.82%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .75pt; padding: 0cm 5.4pt 0cm 5.4pt;">
                                         <p style="margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
@@ -8292,7 +8305,7 @@
                                         <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
@@ -8335,22 +8348,18 @@
                                 <num>
                                     <inline name="unchecked">&#x2610;</inline>
                                 </num>
-                                <list leos:editable="false" class="CHECK">
-                                    <subparagraph leos:editable="false">
-                                        <content>
-                                            <p leos:editable="false">on other revenue</p>
-                                        </content>
-                                    </subparagraph>
-                                    <indent leos:editable="false">
-                                        <num>
-                                            <inline name="unchecked">&#x2610;</inline>
-                                        </num>
-                                        <content>
-                                            <p leos:editable="false">please indicate, if the revenue
-                                                is assigned to expenditure lines </p>
-                                        </content>
-                                    </indent>
-                                </list>
+                                <content>
+                                    <p leos:editable="false">on other revenue</p>
+                                </content>
+                            </indent>
+                            <indent leos:editable="false">
+                                <num>
+                                    <inline name="unchecked">&#x2610;</inline>
+                                </num>
+                                <content>
+                                    <p leos:editable="false">please indicate, if the revenue
+                                        is assigned to expenditure lines </p>
+                                </content>
                             </indent>
                         </list>
                     </indent>
@@ -8363,7 +8372,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-                            
+
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 19.4pt;">
                                     <td style="width: 28.46%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 19.4pt;" rowspan="2">
                                         <p style="margin: 2.0pt 0cm 2.0pt 0cm;"> Budget revenue
@@ -8423,7 +8432,7 @@
                                         <p style="mso-para-margin-top: .4gd; mso-para-margin-right: 0cm; mso-para-margin-bottom: .4gd; mso-para-margin-left: 0cm; text-align: center; margin: 4.8pt 0cm 4.8pt 0cm;"> </p>
                                     </td>
                                 </tr>
-                            
+
                         </table>
                     </content>
                 </subparagraph>
@@ -8450,12 +8459,12 @@
                     </content>
                 </subparagraph>
             </level>
-            <level leos:depth="1" leos:editable="true">
+            <level leos:depth="1" leos:deletable="false">
                 <num>4.</num>
                 <heading leos:editable="false">
                     <b>DIGITAL DIMENSIONS</b>
                 </heading>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Guidance and online tooling will be made available through GoPro in order
                             to help you complete the below sections. You are strongly advised to use
@@ -8466,29 +8475,29 @@
                             http://data.europa.eu/eli/reg/2024/903/oj).</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>When completing this Section, it is acceptable to present the information
                             in a table format, where appropriate.</p>
                     </content>
                 </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level leos:depth="2" leos:deletable="false">
                 <num>4.1.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Requirements of digital relevance</b>
                 </heading>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>If the policy initiative is assessed as having no requirement of digital
                             relevance, please provide an explanation as to why digital means cannot
                             be utilised to enhance policy implementation by making it simpler,
                             quicker, more transparent, and/or more cost-effective. Please also
-                            explain why the ‘digital by default’ principle, which prioritises
+                            explain why the 'digital by default' principle, which prioritises
                             digital delivery of public services, is not applicable.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Otherwise, please enumerate the requirements of digital relevance as
                             follows:</p>
@@ -8496,17 +8505,17 @@
                 </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
-                        <p>[Requirement 1 (R1): …]</p>
+                        <p>[Requirement 1 (R1): ...]</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
-                        <p>[Requirement 2 (R2): …]</p>
+                        <p>[Requirement 2 (R2): ...]</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
-                        <p>[…]<authorialNote marker="23" placement="bottom">
+                        <p>[...]<authorialNote marker="23" placement="bottom">
                             <p>Please insert as many requirement lines as needed and identify
                                 each requirement distinctly (like R1, R2, etc.) to ease
                                 cross-referencing in the following sections.</p>
@@ -8514,66 +8523,66 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>A requirement of digital relevance is an obligation or criterion of a
                             legal, organisational, semantic or technical nature, set in a paragraph
                             or an article of a legal text that concerns:</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• collection, processing, generation, exchange or sharing of data;</p>
+                        <p>&#8226; collection, processing, generation, exchange or sharing of data;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• the automation or digitalisation of stakeholders’ processes;</p>
+                        <p>&#8226; the automation or digitalisation of stakeholders' processes;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• the use of new or existing digital solutions; and/or</p>
+                        <p>&#8226; the use of new or existing digital solutions; and/or</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• digital public services, that is, digital services provided by Union
+                        <p>&#8226; digital public services, that is, digital services provided by Union
                             entities or public sector bodies to one another or to natural or legal
                             persons in the Union.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>For each requirement of digital relevance listed, please include:</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• the reference to the legal provision containing this requirement (for
-                            example, ‘Article 7(2)’);</p>
+                        <p>&#8226; the reference to the legal provision containing this requirement (for
+                            example, 'Article 7(2)');</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• a high-level description of the requirement;</p>
+                        <p>&#8226; a high-level description of the requirement;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• the stakeholder categories affected by this requirement (EU
+                        <p>&#8226; the stakeholder categories affected by this requirement (EU
                             institutions, bodies and agencies, Member States, businesses, the
                             general public, or others); and</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• the high-level processes affected by this requirement (such as
+                        <p>&#8226; the high-level processes affected by this requirement (such as
                             notification, management of registries, procurement, etc.).</p>
                     </content>
                 </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level leos:depth="2" leos:deletable="false">
                 <num>4.2.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Data</b>
@@ -8583,46 +8592,46 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Guidance:</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>For each requirement of digital relevance identified in Section 4.1 that
                             mandates the collection, processing, generation, exchange or sharing of
                             data, please:</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• provide a high-level description of the data in scope and any related
+                        <p>&#8226; provide a high-level description of the data in scope and any related
                             standards/specifications;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• explain how the requirement is aligned with the European Data Strategy
+                        <p>&#8226; explain how the requirement is aligned with the European Data Strategy
                             and its various aspects;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• • confirm that the once-only principle has been followed, and that the
+                        <p>&#8226; confirm that the once-only principle has been followed, and that the
                             possibility to reuse existing data has been explored;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• specifically for data flows, identify the stakeholders that are to
+                        <p>&#8226; specifically for data flows, identify the stakeholders that are to
                             provide and receive the data, respectively, and indicate what triggers
                             the data exchange (for example, a reporting obligation) and with what
                             frequency.</p>
                     </content>
                 </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level leos:depth="2" leos:deletable="false">
                 <num>4.3.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Digital solutions</b>
@@ -8632,12 +8641,12 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Guidance</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>A digital solution is a digital service, platform, system, application,
                             tool or infrastructure, designed to automate, manage, or improve
@@ -8645,7 +8654,7 @@
                             technologies.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>For each requirement of digital relevance identified in Section 4.1 that
                             mandates a digital solution, please provide a description of the digital
@@ -8654,7 +8663,7 @@
                             and accessibility.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Explain whether the digital solution intends to make use of AI
                             technologies and how the digital solution complies with the requirements
@@ -8666,7 +8675,7 @@
                     </content>
                 </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level leos:depth="2" leos:deletable="false">
                 <num>4.4.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Interoperability assessment</b>
@@ -8676,27 +8685,27 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Guidance</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>For each requirement of digital relevance identified in Section 4.1. that
                             concerns digital public services, please assess and document:</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>(a) whether it requires interaction across Member State borders, among EU
                             entities or between EU entities and public sector bodies, by means of
                             their network and information systems; and </p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>(b) whether it has an effect on ‘cross-border interoperability’,
+                        <p>(b) whether it has an effect on 'cross-border interoperability',
                             understood as the ability of EU entities and public sector bodies to
                             interact with each other across borders by sharing data, information and
                             knowledge through digital processes in line with the legal,
@@ -8704,25 +8713,25 @@
                             cross-border interaction.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>If both of the aforementioned conditions apply, please:</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• describe the digital public services affected by the requirement;</p>
+                        <p>&#8226; describe the digital public services affected by the requirement;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• assess the impact of the requirement on cross-border
+                        <p>&#8226; assess the impact of the requirement on cross-border
                             interoperability;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• list the Interoperable Europe solutions identified for (re)use;
+                        <p>&#8226; list the Interoperable Europe solutions identified for (re)use;
                             <authorialNote marker="24" placement="bottom">
                                 <p>As per Regulation (EU) 2024/903 (Interoperable Europe Act),
                                     Interoperable Europe Solutions are interoperability solutions
@@ -8732,18 +8741,18 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• list other relevant interoperability solutions; and</p>
+                        <p>&#8226; list other relevant interoperability solutions; and</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• describe the detected remaining barriers to cross-border
+                        <p>&#8226; describe the detected remaining barriers to cross-border
                             interoperability.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Please refer to the guidelines on interoperability assessment for further
                             support. Be aware that the minimum content of the interoperability
@@ -8752,7 +8761,7 @@
                     </content>
                 </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level leos:depth="2" leos:deletable="false">
                 <num>4.5.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Measures to support digital implementation</b>
@@ -8762,12 +8771,12 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Guidance</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>To facilitate the smooth implementation of the requirements of digital
                             relevance identified in Section 4.1., it is important to plan specific
@@ -8778,34 +8787,39 @@
                             support, awareness-raising campaigns, etc.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>Even if the requirements may change during the inter-institutional
                             negotiations, sharing the proposed digital implementation measures
                             timely and transparently builds trust and partnership.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
                         <p>For this reason, please list here the planned digital implementation
                             measures. For each measure:</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• briefly describe the measure and indicate the requirement(s) of digital
+                        <p>&#8226; briefly describe the measure and indicate the requirement(s) of digital
                             relevance identified in Section 4.1., that it will support;</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• specify the Commission’s role in implementing the measure and list the
+                        <p>&#8226; specify the Commission's role in implementing the measure and list the
                             stakeholders to be involved; and</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" leos:deletable="true">
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
                     <content>
-                        <p>• indicate the expected timeline of the measure.</p>
+                        <p>&#8226; indicate the expected timeline of the measure.</p>
+                    </content>
+                </subparagraph>
+                <subparagraph leos:editable="false" leos:optional="true" leos:guidance="true">
+                    <content>
+                        <p>NB: In case the initial Commission proposal evolves considerably during the legislative negotiations, it should be considered to update information laid down in the LFDS for any financial and/or digital aspects, as necessary, with the aim to support the negotiation process and create clarity for all parties concerned.</p>
                     </content>
                 </subparagraph>
             </level>

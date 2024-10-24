@@ -434,17 +434,28 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         XercesUtils.removeAttribute(nodeToRestore, LEOS_UID);
 
         Node headingNode = getFirstChild(nodeToRestore, HEADING);
+        boolean isOptionalForHeaderLevel = false;
         boolean isOptionalForLevel = false;
+        boolean isGuidance = false;
         if (headingNode != null && headingNode.getAttributes() != null && headingNode.getAttributes().getNamedItem("leos:optional") != null
                 && "true".equals(headingNode.getAttributes().getNamedItem("leos:optional").getTextContent())
                 && nodeToRestore.getLocalName().equals(LEVEL)) {
+            isOptionalForHeaderLevel = true;
+        }
+        if (nodeToRestore != null && nodeToRestore.getAttributes() != null && nodeToRestore.getAttributes().getNamedItem("leos:optional") != null
+                && "true".equals(nodeToRestore.getAttributes().getNamedItem("leos:optional").getTextContent())
+                && nodeToRestore.getLocalName().equals(LEVEL)) {
             isOptionalForLevel = true;
         }
+        if (nodeToRestore != null && nodeToRestore.getAttributes() != null && nodeToRestore.getAttributes().getNamedItem("leos:guidance") != null
+                && "true".equals(nodeToRestore.getAttributes().getNamedItem("leos:guidance").getTextContent())) {
+            isGuidance = true;
+        }
 
-        if (XercesUtils.hasAttribute(nodeToRestore, LEOS_EDITABLE_ATTR) && !isOptionalForLevel) {
+        if ((XercesUtils.hasAttribute(nodeToRestore, LEOS_EDITABLE_ATTR) || isOptionalForLevel) && !isOptionalForHeaderLevel && !isGuidance) {
             XercesUtils.addAttribute(nodeToRestore, LEOS_EDITABLE_ATTR, "true");
         }
-        if (isOptionalForLevel) {
+        if (isOptionalForHeaderLevel && !isOptionalForLevel) {
             XercesUtils.removeAttribute(nodeToRestore, LEOS_EDITABLE_ATTR);
         }
         XercesUtils.updateXMLIDAttributeFullStructureNode(nodeToRestore, EMPTY_STRING, true);
@@ -456,7 +467,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                     documentLanguageContext.getDocumentLanguage());
 
             if (numNode != null && (langNumConfig != null && langNumConfig.isAuto())) {
-                if (!isOptionalForLevel) {
+                if (!isOptionalForHeaderLevel && !isOptionalForLevel) {
                     numNode.setTextContent("#");
                 }
                 XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
