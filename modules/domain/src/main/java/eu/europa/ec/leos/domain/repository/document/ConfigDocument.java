@@ -15,13 +15,4 @@ public final class ConfigDocument extends LeosDocument {
         super(LeosCategory.CONFIG, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
     }
-
-    public ConfigDocument(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy,
-            Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
-            VersionType versionType, boolean isLatestVersion, Option<Content> content, String lfdsScreenFlag) {
-
-        super(LeosCategory.CONFIG, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content, lfdsScreenFlag);
-    }
-
 }

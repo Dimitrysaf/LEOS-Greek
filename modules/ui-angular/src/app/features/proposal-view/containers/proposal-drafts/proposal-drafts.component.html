@@ -246,7 +246,7 @@
             <div
                     class="eui-u-flex eui-u-pb-m"
                     style="border-bottom: 1px solid var(--eui-base-color-grey-15)"
-                    *ngIf="!documentCard.euiCollapsed && proposal.lfdsScreenFlag !== 'FORBIDDEN'"
+                    *ngIf="!documentCard.euiCollapsed && this.createOptions['FS-001']"
             >
                 <div class="eui-u-flex-grow">
                     <div class="eui-u-display-flex eui-u-flex-row">
@@ -300,7 +300,7 @@
                     </button>
                 </ng-container>
                 <ng-container
-                        *ngIf="financialStatement && permissions.includes('CAN_UPDATE') && proposal.lfdsScreenFlag !== 'MANDATORY'"
+                        *ngIf="financialStatement && permissions.includes('CAN_UPDATE') && this.createOptions['FS-001'] !== 'MANDATORY'"
                 >
                     <button
                             class="eui-u-ml-l"

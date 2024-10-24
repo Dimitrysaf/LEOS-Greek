@@ -279,7 +279,7 @@ public class LeosDocumentExtensions {
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
                 Integer.toString(Objects.hash(d.getRef(), d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
-                contentOption(d, fetchContent), d.getLfdsScreenFlag());
+                contentOption(d, fetchContent));
     }
 
     private static Structure toLeosStructureDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -471,11 +471,6 @@ public class LeosDocumentExtensions {
     private static String getClonedFrom(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
         String clonedFrom = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM));
         return clonedFrom != null ? clonedFrom : "";
-    }
-
-    private static String getCreationFlag(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        String creationFlag = (String) document.getMetadata().get("creationFlag");
-        return creationFlag != null ? creationFlag : "";
     }
 
     private static String getRevisionStatus(eu.europa.ec.leos.rest.support.model.LeosDocument document) {

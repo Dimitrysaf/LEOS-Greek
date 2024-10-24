@@ -72,7 +72,6 @@ public class MemorandumContextService {
     private String language;
     private boolean translated;
     private String packageRef = null;
-    private String creationFlag;
 
     @Autowired
     MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
@@ -281,10 +280,6 @@ public class MemorandumContextService {
 
     public void useTranslated(boolean translated) {
         this.translated = translated;
-    }
-
-    public void useCreationFlag(String creationFlag) {
-        this.creationFlag = creationFlag;
     }
 
 }

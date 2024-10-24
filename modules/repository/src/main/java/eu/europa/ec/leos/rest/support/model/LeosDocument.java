@@ -45,8 +45,6 @@ public class LeosDocument {
 
     private String category;
 
-    private String lfdsScreenFlag;
-
     private Map<String, Object> metadata = new HashMap<>();
 
     public LeosDocument() {}
@@ -207,14 +205,6 @@ public class LeosDocument {
 
     public String getName() {
         return name;
-    }
-
-    public String getLfdsScreenFlag() {
-        return lfdsScreenFlag;
-    }
-
-    public void setLfdsScreenFlag(String lfds) {
-        this.lfdsScreenFlag = lfds;
     }
 
 }

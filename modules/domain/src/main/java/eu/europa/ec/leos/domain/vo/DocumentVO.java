@@ -56,7 +56,7 @@ public class DocumentVO {
 
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private Boolean favourite;
-    private String lfdsScreenFlag;
+    private String creationOptions;
 
     public DocumentVO(XmlDocument xmlDocument) {
         if (xmlDocument != null) {
@@ -473,12 +473,12 @@ public class DocumentVO {
         this.translatedProposals = translatedProposals;
     }
 
-    public String getLfdsScreenFlag() {
-        return lfdsScreenFlag;
+    public String getCreationOptions() {
+        return creationOptions;
     }
 
-    public void setLfdsScreenFlag(String lfdsScreenFlag) {
-        this.lfdsScreenFlag = lfdsScreenFlag;
+    public void setCreationOptions(String creationOptions) {
+        this.creationOptions = creationOptions;
     }
 
 }

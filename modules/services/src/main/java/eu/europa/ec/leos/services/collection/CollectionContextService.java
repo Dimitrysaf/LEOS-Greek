@@ -452,7 +452,6 @@ public abstract class CollectionContextService {
 
         loadTemplates(templatePropertiesMap, DOCUMENT_MANDATORY_TEMPLATES);
         loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
-        loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_FALSE_TEMPLATES);
 
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
@@ -466,6 +465,9 @@ public abstract class CollectionContextService {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .build();
+
+        String creationOptions = createJsonCreationOptions(templatePropertiesMap);
+        metadata.setCreationOptions(creationOptions);
 
         Proposal prpsl = proposalService.createProposal(proposalTemplate.getId(), leosPckg.getPath(), metadata, null);
 
@@ -709,6 +711,36 @@ public abstract class CollectionContextService {
                 this.useTemplate(name);
             }
         }
+    }
+
+    protected String createJsonCreationOptions(Map<String, String> templatePropertiesMap) {
+        String json = "{ ";
+        String comma = "";
+        String template = templatePropertiesMap.get(DOCUMENT_MANDATORY_TEMPLATES);
+        String[] templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            if (name != null && !name.isEmpty()) {
+                json += comma + "\"" + name + "\": \"MANDATORY\"";
+                comma = ", ";
+            }
+        }
+        template = templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES);
+        templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            if (name != null && !name.isEmpty()) {
+                json += comma + "\"" + name + "\": \"DEFAULT_TRUE\"";
+                comma = ", ";
+            }
+        }
+        template = templatePropertiesMap.get(DOCUMENT_DEFAULT_FALSE_TEMPLATES);
+        templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            if (name != null && !name.isEmpty()) {
+                json += comma + "\"" + name + "\": \"DEFAULT_FALSE\"";
+                comma = ", ";
+            }
+        }
+        return json + " }";
     }
 
     @SuppressWarnings("unchecked")

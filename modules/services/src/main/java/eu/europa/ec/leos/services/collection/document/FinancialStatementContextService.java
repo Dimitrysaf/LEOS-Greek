@@ -70,7 +70,6 @@ public class FinancialStatementContextService {
     private String language;
     private boolean translated;
     private String packageRef = null;
-    private String creationFlag;
 
     public FinancialStatementContextService(TemplateService templateService, FinancialStatementService financialStatementService,
             ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
@@ -205,7 +204,6 @@ public class FinancialStatementContextService {
                 .withPackageRef(packageRef)
                 .build();
 
-        metadata.setCreationFlag(creationFlag);
         if (cloneProposal) {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO("USER_ADDED_IN_CLONE_PROPOSAL", originRef);
             financialStatement = financialStatementService.createClonedFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED), null);
@@ -363,10 +361,6 @@ public class FinancialStatementContextService {
 
     public void useTranslated(boolean translated) {
         this.translated = translated;
-    }
-
-    public void useCreationFlag(String creationFlag) {
-        this.creationFlag = creationFlag;
     }
 
 }

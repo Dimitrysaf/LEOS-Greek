@@ -34,7 +34,7 @@ class LeosRepositoryMetadataExtensions {
     private static RepositoryPropertiesMapper repositoryPropertiesMapper = new RestProperties();
 
     private static class CommonMetadataProperties {
-        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress, creationFlag;
+        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress, creationOptions;
         Boolean eeaRelevance, imported;
     }
 
@@ -54,6 +54,7 @@ class LeosRepositoryMetadataExtensions {
                     props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
+            metadata.setCreationOptions(props.creationOptions);
             return Option.some(metadata);
         });
     }
@@ -122,7 +123,6 @@ class LeosRepositoryMetadataExtensions {
                     props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
-            metadata.setCreationFlag(props.creationFlag);
             return Option.some(metadata);
         });
     }
@@ -139,7 +139,7 @@ class LeosRepositoryMetadataExtensions {
         props.eeaRelevance = getMetadataEeaRelevance(doc);
         props.callbackAddress = getMetadataCallbaclAddress(doc);
         props.imported = getMetadataImported(doc);
-        props.creationFlag = getMetadataCreationFlag(doc);
+        props.creationOptions = getMetadataCreationOptions(doc);
 
         Option<T> result;
         if (props.language != null && props.docTemplate != null) {
@@ -180,9 +180,9 @@ class LeosRepositoryMetadataExtensions {
         return  imported != null ? Boolean.valueOf(imported) : false;
     }
 
-    private static String getMetadataCreationFlag(LeosDocument leosDocument) {
-        String creationFlag = (String) leosDocument.getMetadata().get("creationFlag");
-        return  creationFlag != null ? creationFlag : "";
+    private static String getMetadataCreationOptions(LeosDocument leosDocument) {
+        String creationOptions = (String) leosDocument.getMetadata().get("creationOptions");
+        return  creationOptions != null ? creationOptions : "";
     }
 
     private static Integer getAnnexIndex(LeosDocument leosDocument) {

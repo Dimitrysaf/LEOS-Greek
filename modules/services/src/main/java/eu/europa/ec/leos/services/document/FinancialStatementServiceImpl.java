@@ -130,12 +130,10 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         StringBuilder refBuilder = new StringBuilder(STAT_FINANC_LEGIS_NAME_PREFIX).append(FinancialStatementUid).append("-").append(language.toLowerCase());
         final String ref = refBuilder.toString();
         final String fileName = refBuilder.append(STAT_FINANC_LEGIS_DOC_EXTENSION).toString();
-        String creationFlag = metadata.getCreationFlag();
         metadata = metadata
                 .builder()
                 .withRef(ref)
                 .build();
-        metadata.setCreationFlag(creationFlag);
         FinancialStatement financialStatement = financialStatementRepository.createFinancialStatement(templateId, path, fileName, metadata);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(financialStatement) : content, metadata);
         financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);

@@ -34,7 +34,6 @@ public class FinancialStatementMetadata extends LeosMetadata{
         private boolean eeaRelevance;
         private String title;
         private String packageRef;
-        private String creationFlag;
 
         private FinancialStatementMetadataBuilder(FinancialStatementMetadata metadata) {
             this.title = metadata.title;
@@ -108,11 +107,6 @@ public class FinancialStatementMetadata extends LeosMetadata{
 
         public FinancialStatementMetadataBuilder withPackageRef(String packageRef) {
             this.packageRef = packageRef;
-            return this;
-        }
-
-        public FinancialStatementMetadata.FinancialStatementMetadataBuilder withCreationFlag(String creationFlag) {
-            this.creationFlag = creationFlag;
             return this;
         }
 
