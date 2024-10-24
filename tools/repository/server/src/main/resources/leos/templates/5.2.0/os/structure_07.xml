@@ -124,6 +124,10 @@
                     <elementSelector>level:not([leos\:editable]) subparagraph[leos\:editable='true']</elementSelector>
                     <profileName>inlineAknSubParagraphFinancialStatement</profileName>
                 </profile>
+                <profile>
+                    <elementSelector>level:not([leos\:editable]) subparagraph[leos\:optional='true']</elementSelector>
+                    <profileName>inlineAknSubParagraphFinancialStatement</profileName>
+                </profile>
             </profiles>
             <editable>true</editable>
         </tocItem>

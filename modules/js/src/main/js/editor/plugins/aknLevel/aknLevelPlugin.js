@@ -199,7 +199,10 @@ define(function aknLevelPluginModule(require) {
             }, {
                 akn : "leos:title",
                 html : "title"
-            }]
+            }, {
+                 akn : "leos:optional",
+                 html : "leos:optional"
+             }]
         },
         rootElementsForFrom: ["level"],
         contentWrapperForFrom: "subparagraph",

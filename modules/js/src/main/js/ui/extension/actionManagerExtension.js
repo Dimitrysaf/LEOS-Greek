@@ -382,12 +382,15 @@ define(function actionManagerExtensionModule(require) {
         var editable = _getEditable($element);
         var deletable = _getDeletable($element);
         let optional = $element.attr('leos\:optional');
+        let guidance = $element.attr('leos\:guidance');
+        let differentMessageForLast = guidance && guidance === 'true' ? false : true;
         var user = connector.user;
         if (_isValidAction(action, elementId, elementType, editable, deletable, user) || optional) {
             var data = {
                 action: action,
                 elementId: elementId,
-                elementType: elementType
+                elementType: elementType,
+                differentMessageForLast: differentMessageForLast
             };
             var topic = "actions." + action + ".element";
             if (action == 'edit') {
@@ -586,7 +589,8 @@ define(function actionManagerExtensionModule(require) {
         type = type === 'crossHeading' ? 'crossheading' : type;
         type = type === 'block' ? 'crossheading' : type;
         let isHeadingOfAnOptionalLevel = false;
-        let optional = $element.attr('leos\:optional');
+        let optional = $element.attr('leos:optional');
+        let action = $element.attr('leos:action');
         let leosAction = "";
         if (optional === 'true' && $element[0] && $element[0].parentNode && $element[0].parentNode.localName === 'level') {
             isHeadingOfAnOptionalLevel = true;
@@ -597,7 +601,7 @@ define(function actionManagerExtensionModule(require) {
         let hasBeforeAndAfter = optional ? false : deletable;
         var insertBeforeAndAfter = _insertBeforeAndAfterIcon($element, hasBeforeAndAfter);
         editable = editable || (editable && $element.attr('leos\:optionlist'));
-        deletable = (optional === 'true') || _isDeletable($element, deletable, connector);
+        deletable = (optional === 'true' && action !== 'delete') || _isDeletable($element, deletable, connector);
 
         let template = ['<div class="leos-actions Vaadin-Icons">']; //FIXME: we can directly create elements
 
