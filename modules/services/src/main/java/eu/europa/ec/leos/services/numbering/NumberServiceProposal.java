@@ -42,10 +42,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChildType;
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
+import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.replaceElement;
+import static eu.europa.ec.leos.services.support.XercesUtils.addLeosNamespace;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
@@ -55,8 +57,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemByName;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.isAutoNumberingEnabled;
 
@@ -133,6 +133,7 @@ public class NumberServiceProposal implements NumberService {
         if (isAutoNumberingEnabled(tocItems, elementName, documentLanguageContext.getDocumentLanguage())) {
             Document document = createXercesDocument(xmlContent, namespaceEnabled);
             numberProcessorHandler.renumberDocument(document, elementName, documentLanguageContext.getDocumentLanguage(), renumberChildren);
+            addLeosNamespace(document);
             return nodeToByteArray(document);
         }
         return xmlContent;
