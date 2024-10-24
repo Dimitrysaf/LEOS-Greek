@@ -17,7 +17,6 @@ import eu.europa.ec.digit.leos.pilot.export.exception.TemplateEngineException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.TemplateEngineService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil;
@@ -36,8 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_RENDITION_CSS_PATH;
 
 @Service
 public class XmlDocumentServiceImpl implements XmlDocumentService {
@@ -59,36 +56,6 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
 
     public XmlDocumentServiceImpl(TemplateEngineService templateEngineService) {
         this.templateEngineService = templateEngineService;
-    }
-
-    @Override
-    public LeosRenditionOutput xmlToHtmlRendition(LeosConvertDocumentInput convertDocumentInput) {
-        try {
-            String styleSheetFileName =  getStyleSheetName(convertDocumentInput);
-            String cssFileName = getCssFileName(styleSheetFileName);
-            String styleSheet = CSS_PATH + cssFileName;
-            String coverPage = prepareCoverPage(convertDocumentInput);
-
-            InputStream styleSheetInputStream = new ClassPathResource(styleSheet).getInputStream();
-            byte[] styleSheetOutput = StreamUtils.copyToByteArray(styleSheetInputStream);
-
-            byte[] htmlOutput = templateEngineService.xmlToHtml(convertDocumentInput, cssFileName, coverPage);
-            String renditionFilename = ConvertUtil.getFilename(convertDocumentInput.getInputFile(), "html");
-            return new LeosRenditionOutput(htmlOutput, renditionFilename, styleSheetOutput,
-                    HTML_RENDITION_CSS_PATH + cssFileName);
-        } catch (IOException e) {
-            LOG.error("Failed getting stylesheet or generating zip file", e);
-            throw new XmlDocumentException("Failed getting stylesheet or generating zip file", e);
-        } catch (TemplateEngineException e) {
-            LOG.error("Error calling template engine", e);
-            throw new XmlDocumentException("Error calling template engine", e);
-        } catch (XmlUtilException e) {
-            LOG.error("Error parsing XML", e);
-            throw new XmlDocumentException("Error parsing XML", e);
-        } catch (TransformerException e) {
-            LOG.error("Error parsing Node", e);
-            throw new XmlDocumentException("Error parsing Node", e);
-        }
     }
 
     @Override

@@ -171,6 +171,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private final MilestoneService milestoneService;
     private final CloneContext cloneContext;
     private final UserHelper userHelper;
+    protected final GenericDocumentTocApiService genericDocumentTocApiService;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private ProposalConverterService proposalConverterService;
     private PostProcessingDocumentService postProcessingDocumentService;
@@ -210,9 +211,10 @@ public abstract class ApiServiceImpl implements ApiService {
                           PostProcessingDocumentService postProcessingDocumentService,
                           ValidationService validationService, Properties applicationProperties,
                           ExplanatoryService explanatoryService,
-                          ExportPackageService exportPackageService, NotificationService notificationService, LegService legService,
-                          UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-                          DocumentViewService documentViewService) {
+                          ExportPackageService exportPackageService, NotificationService notificationService,
+                          LegService legService, UserHelper userHelper, LeosRepository leosRepository,
+                          TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
+                          GenericDocumentTocApiService genericDocumentTocApiService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -243,6 +245,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.leosRepository = leosRepository;
         this.trackChangesContext = trackChangesContext;
         this.documentViewService = documentViewService;
+        this.genericDocumentTocApiService = genericDocumentTocApiService;
     }
 
     private static String readFileToString(File file) throws IOException {

@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -36,6 +37,8 @@ import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponse;
+import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -62,8 +65,11 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -91,12 +97,13 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
             NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-            DocumentViewService documentViewService, ConValidatorService conValidatorService) {
+            DocumentViewService documentViewService, ConValidatorService conValidatorService,
+                                  GenericDocumentTocApiService genericDocumentTocApiService) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService);
+                documentViewService, genericDocumentTocApiService);
         this.conValidatorService = conValidatorService;
     }
 
@@ -146,4 +153,17 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
         }
     }
 
+    @Override
+    public LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) throws IOException {
+        List<LeosRenditionOutputResponse> renditionOutputResponses = new ArrayList<>();
+        Map<String, Object> documentsMap = ZipPackageUtil.unzipByteArray(document);
+        documentsMap.keySet().stream().forEach(documentKey -> {
+            byte[] content = (byte[])documentsMap.get(documentKey);
+            String tocJson = this.genericDocumentTocApiService.getTocAsJson(documentKey, content, TocMode.SIMPLIFIED);
+            LeosRenditionOutputResponse renditionOutputResponse = this.genericDocumentTocApiService.addHtmlRendition(
+                    documentKey, content, tocJson);
+            renditionOutputResponses.add(renditionOutputResponse);
+        });
+        return new LeosRenditionOutputResponseList(renditionOutputResponses);
+    }
 }

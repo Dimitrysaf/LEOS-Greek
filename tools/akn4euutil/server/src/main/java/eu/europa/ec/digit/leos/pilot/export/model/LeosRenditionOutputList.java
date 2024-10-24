@@ -15,15 +15,9 @@ package eu.europa.ec.digit.leos.pilot.export.model;
 
 import lombok.Data;
 
-@Data
-public class LeosRenditionOutput {
-    private byte[] htmlRendition;
-    private String htmlRenditionFilename;
-    private byte[] htmlTocRendition;
-    private String htmlTocRenditionFilename;
-    private byte[] htmlTocJS;
-    private String htmlTocJSFilename;
+import java.util.List;
 
-    private byte[] styleSheetOutput;
-    private String styleSheetName;
+@Data
+public class LeosRenditionOutputList {
+    private List<LeosRenditionOutput> leosRenditionOutputs;
 }
