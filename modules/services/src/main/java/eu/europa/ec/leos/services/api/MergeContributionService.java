@@ -64,6 +64,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getEndTagNodeAsXmlF
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstAscendant;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstAncestorWithTagNames;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChildType;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
@@ -1836,11 +1837,26 @@ public class MergeContributionService {
             // Checks that last child is not a "content"
             Node lastChild = getLastChild(xmlParentSibling);
             if (lastChild != null && lastChild.getNodeName().equals(CONTENT)) {
-                Node contentInContribution = getElementById(contributionNode, getId(lastChild));
-                if (contentInContribution != null) {
+                Node mainElementInContribution = getElementById(contributionNode, getId(xmlParentSibling));
+                if (mainElementInContribution != null) {
+                    Node contentInContribution = getFirstChild(mainElementInContribution, Arrays.asList(SUBPARAGRAPH, CONTENT));
+                    if (contentInContribution.getNodeName().equals(SUBPARAGRAPH)) {
+                        contentInContribution = getFirstChild(contentInContribution, CONTENT);
+                    }
                     XercesUtils.replaceElement(lastChild, (getStartTagNodeAsXmlFragment(contentInContribution.getParentNode())
                             + nodeToString(lastChild)
                             + getEndTagNodeAsXmlFragment(contentInContribution.getParentNode())));
+                    if (!withTrackChanges) {
+                        resolveTrackChange(lastChild, false);
+                    }
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlParentSibling), getId(xmlParentSibling));
+                    xmlParentSibling = getElementById(xmlContent, getId(xmlParentSibling));
+                    lastChild = getLastChild(xmlParentSibling);
+                } else {
+                    XercesUtils.replaceElement(lastChild,
+                            "<" + SUBPARAGRAPH + " " + XMLID + "=\"" + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + getId(xmlParentSibling) + "\">"
+                            + nodeToString(lastChild)
+                            + "</" + SUBPARAGRAPH + ">");
                     if (!withTrackChanges) {
                         resolveTrackChange(lastChild, false);
                     }
