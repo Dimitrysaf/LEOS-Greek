@@ -245,17 +245,6 @@ export class DocumentEditorComponent
             [];
           [...documentPanes].forEach((el) => (el.style.flexBasis = ''));
         });
-        if (pageMode === PageMode.Contribution) {
-          this.requestStoredDocumentAnnotationsSubscription = this.milestoneService.requestStoredDocumentAnnotations$.subscribe((request) => {
-            if (request && this.contribution && this.pageMode === PageMode.Contribution && !this.isViewContributionPaneCollapsed && request.includes('revision-')) {
-              this.milestoneService.triggerRequestStoredDocumentAnnotations(this.contribution.proposalRef, this.contribution.legFileName, this.contribution.versionedReference);
-            } else {
-              this.milestoneService.sendEmptyStoredDocumentAnnotations();
-            }
-          });
-        } else {
-          this.requestStoredDocumentAnnotationsSubscription.unsubscribe();
-        }
       });
 
     this.contributionChanges$
