@@ -51,7 +51,6 @@ define(function aknSubParagraphFSProfileModule(require) {
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
     plugins.push(require("plugins/leosElementSplitHandler/leosElementSplitHandlerPlugin"));
-    plugins.push(require("plugins/leosElementMergeHandler/leosElementMergeHandlerPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
@@ -108,7 +107,7 @@ define(function aknSubParagraphFSProfileModule(require) {
             { name: 'insert', items: [ 'Mathjax', 'SpecialChar' ] },
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
             '/',
-            { name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandlerFS', 'leosElementMerge', 'Table' ] },
+            { name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandlerFS', 'Table' ] },
             { name : "mode" , items: [ 'Sourcedialog' ] },
             { name : "colors" , items: [ 'BGColor' ] }
         ],
