@@ -11,12 +11,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.digit.leos.pilot.export.model;
+package eu.europa.ec.leos.services.dto.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class LeosRenditionOutput {
+@Builder
+public class LeosRenditionOutputResponse {
+
     private byte[] htmlRendition;
     private String htmlRenditionFilename;
     private byte[] htmlTocRendition;

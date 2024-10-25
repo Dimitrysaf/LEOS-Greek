@@ -84,9 +84,9 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
                     outputFilename, contentToZip, filesToAdd);
 
             renditionOutputs.forEach(output -> {
-                String htmlName = HTML_RENDITION_PATH + output.getRenditionFilename();
-                contentToZip.put(htmlName, output.getRendition());
-                contentToZip.put(output.getStyleSheetName(), output.getStyleSheetOutput());
+                contentToZip.put(output.getHtmlRenditionFilename(), output.getHtmlRendition());
+                contentToZip.put(output.getHtmlTocRenditionFilename(), output.getHtmlTocRendition());
+                contentToZip.put(output.getHtmlTocJSFilename(), output.getHtmlTocJS());
             });
 
             if(outputDescriptor != null && !outputDescriptor.isEmpty()) {

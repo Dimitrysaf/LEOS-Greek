@@ -15,12 +15,12 @@
 package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.eventbus.EventBus;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.User;
@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
+import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -756,6 +757,20 @@ public class LeosApiController {
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting application configuration", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/getHtmlRenditions", method = RequestMethod.POST, produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getHtmlRenditions(@RequestParam("document") MultipartFile document) {
+        try {
+            LeosRenditionOutputResponseList renditionOutputs = apiService.getHtmlRenditions(document.getBytes());
+            return new ResponseEntity<>(renditionOutputs, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            LOG.error("Error occurred while getting Html renditions - {}", e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting Html renditions", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

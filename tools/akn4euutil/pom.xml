@@ -39,6 +39,7 @@
         <wagon-ftp-extension.version>2.2</wagon-ftp-extension.version>
         <commons-io.version>2.7</commons-io.version>
         <tomcat.version>9.0.36</tomcat.version>
+        <lombok.version>1.18.34</lombok.version>
     </properties>
 
     <modules>
