@@ -12,9 +12,10 @@ class tableOfContent {
         navigationPaneMinimized: () => cy.get("button[aria-label='Expand Navigation Pane']"),
         compareBtn: () => cy.get("button[title='Compare versions']"),
         searchBtn: () => cy.get("button[title='Show search bar']"),
-        recentChangesVersionCardContent: () => cy.get('app-versions-pane-group eui-card').first().find('eui-card-content'),
-        recentChangesVersionCardSubTitle: () => cy.get('app-versions-pane-group eui-card').first().find('.eui-card-header__title-container-subtitle'),
-        lastVersionCardHeaderTitle: () => cy.get('app-versions-pane-group eui-card').last().find('.eui-card-header__title-container-title'),
+        appVersionsPaneGroup: () => cy.get('app-versions-pane-group eui-card'),
+        recentChangesVersionCardContent: () => this.elements.appVersionsPaneGroup().first().find('eui-card-content'),
+        recentChangesVersionCardSubTitle: () => this.elements.appVersionsPaneGroup().first().find('.eui-card-header__title-container-subtitle'),
+        lastVersionCardHeaderTitle: () => this.elements.appVersionsPaneGroup().last().find('.eui-card-header__title-container-title'),
         nestedTreeNode: () => cy.get('mat-nested-tree-node.mat-nested-tree-node'),
         changeTypeBtn: () => cy.get("button[aria-label='Change Type']"),
         definitionArticleTypeBtn: () => cy.get("button[aria-label='Definition']"),
@@ -130,6 +131,10 @@ class tableOfContent {
 
     getSubVersion(subVersionNumber) {
         return this.elements.subVersion().eq(subVersionNumber-1);
+    }
+
+    getCardHeaderTitle(versionPaneIndex){
+        return this.elements.appVersionsPaneGroup().eq(versionPaneIndex-1).find("eui-card-header-title");
     }
 }
 export default new tableOfContent();

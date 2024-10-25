@@ -150,3 +150,11 @@ Then(/^confidentiality level is "([^"]*)" in details tab$/, function (confidenti
 Then(/^EEA Relevance is unticked in details tab$/, function () {
     actViewerPage.elements.eeARelevanceCheckBoxValue().should('not.be.checked');
 });
+
+When(/^click on favourite icon$/, function () {
+    actViewerPage.clickFavouriteIcon();
+});
+
+Then(/^favourite icon is selected$/, function () {
+    actViewerPage.elements.favouriteIcon().should('have.css', 'color','rgb(48, 48, 48)');
+});

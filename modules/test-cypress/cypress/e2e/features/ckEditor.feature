@@ -21,7 +21,7 @@ Feature: CK Editor Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         When mouseover and click on citation 2
         Then ck editor window is displayed
         When select content from offset 7 till offset 13 in citation in edition mode

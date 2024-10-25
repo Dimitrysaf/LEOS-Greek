@@ -78,10 +78,6 @@ When('{int} paragraphs are present in article {int}', (paragraphNumber, articleN
     legalActPage.getAllParagraphFromArticle(articleNumber).should('have.length', paragraphNumber);
 })
 
-And('ribbon toolbar is displayed', () => {
-    legalActPage.elements.ribbonToolBar().should('be.visible');
-})
-
 And('citation {int} contains {string}', (citationNumber, text) => {
     legalActPage.getCitation(citationNumber).contains(text);
 })

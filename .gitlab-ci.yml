@@ -27,6 +27,8 @@ java-build:
     - mvn clean install
     - cd $CI_PROJECT_DIR/tools/repository
     - mvn clean install
+    - cd $CI_PROJECT_DIR/tools/akn4euutil
+    - mvn clean install
     - cd $CI_PROJECT_DIR
     - mvn clean install -DskipKarmaTests
   artifacts:
@@ -65,6 +67,8 @@ cypress-test-for-local:
     - cd $CI_PROJECT_DIR/tools/user-repo/web
     - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
     - cd $CI_PROJECT_DIR/tools/repository/web
+    - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
+    - cd $CI_PROJECT_DIR/tools/akn4euutil/web
     - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
     - cd $CI_PROJECT_DIR/modules/web
     - mvn jetty:run-war &

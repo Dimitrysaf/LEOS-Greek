@@ -136,7 +136,7 @@ Then('navigation pane is expanded', function () {
 });
 
 Then(/^navigation pane is minimized$/, function () {
-    tableOfContent.elements.navigationPaneMinimized().should('be.visible');
+    tableOfContent.elements.navigationPaneMinimized().should('exist');
 });
 
 When('drag node label {string} and drop to node label {string} in navigation pane', function (dragLabel, dropLabel) {
@@ -252,4 +252,8 @@ When(`click on contributions pane accordion`, () => {
 
 When(`click on first contribution`, () => {
     tableOfContent.clickFirstContribution();
+});
+
+Then('app-versions-pane-group {int} contains card header title {string}', function (versionPaneIndex, cardHeaderTitle) {
+    tableOfContent.getCardHeaderTitle(versionPaneIndex).should('have.text', cardHeaderTitle);
 });

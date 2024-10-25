@@ -71,7 +71,7 @@ Feature: Annex Page Regression Features
         When click on annex 1 link
         Then user is on annex page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
         And  annex title is "Annex I"
 #        Then block heading of the annex container is "Annex 1"
@@ -163,7 +163,7 @@ Feature: Annex Page Regression Features
         Then total number of annexes present in act viewer page is 1
         When click on annex 1 link
         Then user is on annex page
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  annotation side bar is present
         When click on toc edit button
         Then cancel button is displayed and enabled in navigation pane

@@ -60,7 +60,7 @@ Feature: fork and merge features
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  enable track changes toggle bar is on in ribbon toolbar
     And  enable track changes is disabled
     And  see track changes toggle bar is on in ribbon toolbar

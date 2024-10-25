@@ -21,7 +21,7 @@ Feature: Track Changes Feature
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  toc editing button is displayed and enabled
     # Enable track changes
     When enable track changes
@@ -91,7 +91,7 @@ Feature: Track Changes Feature
     And  title of the act contains "Automation Testing TC" keyword
     When click on legal act link present in act viewer page
     Then user is on legal act page
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  toc editing button is displayed and enabled
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
@@ -128,7 +128,7 @@ Feature: Track Changes Feature
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  toc editing button is displayed and enabled
     When enable track changes
     When mouseover and click on article 1
@@ -175,7 +175,7 @@ Feature: Track Changes Feature
     Then user is on act viewer page
     When click on collaborators tab in act view page
     And  click on add button in collaborators tab
-    Then user is on "Add users" window
+    Then "Add users" dialog box window is displayed
     When provide input "demo" in name field of add users window
     And  click on row 1 from the user list in name field of add users window
     And  click on add users button
@@ -186,7 +186,7 @@ Feature: Track Changes Feature
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  toc editing button is displayed and enabled
     # Enable track changes
     When enable track changes
@@ -309,7 +309,7 @@ Feature: Track Changes Feature
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  toc editing button is displayed and enabled
     # Open ckeditor
     When mouseover and click on article 1
@@ -381,7 +381,7 @@ Feature: Track Changes Feature
     Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  toc editing button is displayed and enabled
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
@@ -424,7 +424,7 @@ Feature: Track Changes Feature
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  toc editing button is displayed and enabled
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
