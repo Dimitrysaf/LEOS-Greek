@@ -307,7 +307,8 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/searchlegfile/{legFileId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getLegFile(@PathVariable("legFileId") String legFileId) {
+    public ResponseEntity<Object> getLegFile(@PathVariable("legFileId") String legFileId,
+                                             @RequestParam(required = false, defaultValue = "false") Boolean isDownload) {
         boolean isStatusUpdated = false;
         LeosLegStatus currentStatus = null;
         try {
@@ -319,9 +320,11 @@ public class LeosApiController {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
                 headers.setContentLength(file.length);
-                LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
-                leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
-                isStatusUpdated = true;
+                if (!(isDownload || currentStatus == LeosLegStatus.CONTRIBUTION_SENT)) {
+                    LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
+                    leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
+                    isStatusUpdated = true;
+                }
                 return new ResponseEntity<>(file, headers, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Leg file with Id" + legFileId + " in status " + currentStatus, HttpStatus.NOT_FOUND);
@@ -342,7 +345,8 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/searchlegfile/anystatus/{legFileId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getLegFileAnyStatus(@PathVariable("legFileId") String legFileId) {
+    public ResponseEntity<Object> getLegFileAnyStatus(@PathVariable("legFileId") String legFileId,
+                                                      @RequestParam(required = false, defaultValue = "false") Boolean isDownload) {
         boolean isStatusUpdated = false;
         LeosLegStatus currentStatus = null;
         try {
@@ -353,9 +357,11 @@ public class LeosApiController {
             HttpHeaders headers = new HttpHeaders();
             headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
             headers.setContentLength(file.length);
-            LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
-            leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
-            isStatusUpdated = true;
+            if (!(isDownload || currentStatus == LeosLegStatus.CONTRIBUTION_SENT)) {
+                LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
+                leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
+                isStatusUpdated = true;
+            }
             return new ResponseEntity<>(file, headers, HttpStatus.OK);
         } catch (Exception ex) {
             // in case of any exception reverting to current status
