@@ -1,4 +1,4 @@
-import { DOCUMENT, formatDate, NgClass } from '@angular/common';
+import { DOCUMENT, NgClass } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -314,6 +314,7 @@ export class DocumentComponent
 
       akomantosoEl.querySelectorAll('docPurpose').forEach((el) => {
         if (el.textContent) {
+          el.querySelectorAll("del").forEach(e => e.parentNode.removeChild(e));
           el.innerHTML = this.domSanitizer.sanitize(SecurityContext.HTML, el.textContent) || '';
         }
       });
