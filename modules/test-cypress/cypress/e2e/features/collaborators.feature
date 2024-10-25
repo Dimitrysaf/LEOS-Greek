@@ -18,7 +18,7 @@ Feature: collaborator section regression features
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  toc editing button is displayed and enabled
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     When click on insert after icon of citation 1
     Then citation 2 is displayed
     When click on versions pane accordion
@@ -34,7 +34,7 @@ Feature: collaborator section regression features
     When click on collaborators tab in act view page
     Then active tab name is "Collaborators"
     When click on add button in collaborators tab
-    Then user is on "Add users" window
+    Then "Add users" dialog box window is displayed
     When provide input "demo" in name field of add users window
     And  click on row 1 from the user list in name field of add users window
     And  select role with value "REVIEWER" in add users window
@@ -54,7 +54,7 @@ Feature: collaborator section regression features
     Then  user is on act viewer page
     When  click on legal act link present in act viewer page
     Then  user is on legal act page
-    And   ribbon toolbar is displayed
+    And   ribbon toolbar is maximized
     And   toc editing button is not present
     And   show all action menu is not present for citation 1
     And   show all action menu is not present for recital 1

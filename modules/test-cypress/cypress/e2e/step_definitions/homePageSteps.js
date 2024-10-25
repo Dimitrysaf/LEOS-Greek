@@ -72,3 +72,27 @@ When(/^click on proposal (\d+) in search card container$/, function (proposalInd
 Then(/^total search results is displayed$/, function () {
     homePage.elements.totalSearchResults().should('be.visible');
 });
+
+Then(/^my latest activity table is displayed$/, function () {
+    homePage.elements.myLatestActivityItemHomeCard().should('be.visible');
+});
+
+Then(/^name of the proposal in row (\d+) of my latest activity table contains "([^"]*)"$/, function (rowIndex, proposalName) {
+    homePage.getProposalFromMyLatestActivityTable(rowIndex).should('include.text', proposalName);
+});
+
+When(/^click on proposal (\d+) in my latest activity table$/, function (rowIndex) {
+    homePage.clickProposalFromMyLatestActivityTable(rowIndex);
+});
+
+Then(/^my favourites table is displayed$/, function () {
+    homePage.elements.myFavouritesItemHomeCard().should('be.visible');
+});
+
+Then(/^name of the proposal in row (\d+) of my favourites table contains "([^"]*)"$/, function (rowIndex, proposalName) {
+    homePage.getProposalFromMyLatestFavouritesTable(rowIndex).should('include.text', proposalName);
+});
+
+When(/^click on proposal (\d+) in my favourites table$/, function (rowIndex) {
+    homePage.clickProposalFromMyFavouritesTable(rowIndex);
+});

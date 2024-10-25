@@ -1,7 +1,6 @@
 class legalActPage {
     elements = {
         closeBtn: () => cy.contains('Close'),
-        ribbonToolBar: () => cy.get('app-ribbon-toolbar-container'),
         bill: () => cy.get('bill'),
         preface: () => this.elements.bill().find('preface'),
         longTitle: () => this.elements.preface().find('longtitle'),

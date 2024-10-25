@@ -3,6 +3,7 @@ class headerPage {
         homeBtn: () => cy.get('div.eui-toolbar__left a').contains('Home'),
         breadCrumbItem: () => cy.get('div.eui-breadcrumb__items button'),
         workspaceBreadCrumbItem: () => this.elements.breadCrumbItem().contains('Workspace'),
+        homeLink: () => this.elements.breadCrumbItem().contains('Home'),
         breadCrumbItemLabel: () => cy.get('eui-breadcrumb eui-breadcrumb-item:last-child .eui-label'),
         loadingIcon: () => cy.get('eui-block-document.eui-block-document--blocked')
         // userProfileName: () => cy.get('div.eui-user-profile__infos-name'),
@@ -18,6 +19,10 @@ class headerPage {
 
     clickWorkspace(){
         this.elements.workspaceBreadCrumbItem().click();
+    }
+
+    clickHomeLink(){
+        this.elements.homeLink().click();
     }
 
     getLoadingIcon(){
