@@ -74,7 +74,13 @@ public abstract class AbstractMilestoneService implements MilestoneService{
         if(legId != null && !legId.isEmpty()){
             long stamp = updateMilestoneLock.writeLock();
             try{
-                return legService.updateLegDocument(ref, legId, status);
+                LegDocument legDocument = legService.findLegDocumentById(legId);
+                LeosLegStatus currentStatus = legDocument.getStatus();
+                if (currentStatus.equals(LeosLegStatus.CONTRIBUTION_SENT)) {
+                    return legDocument;
+                } else {
+                    return legService.updateLegDocument(ref, legId, status);
+                }
             } finally {
                 updateMilestoneLock.unlockWrite(stamp);
             }

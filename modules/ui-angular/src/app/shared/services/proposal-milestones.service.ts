@@ -182,7 +182,7 @@ export class ProposalMilestonesService {
   downloadLegFile(legFileId: string) {
     this.loadingService.setLoading(true);
     return this.http
-      .get(`${apiBaseUrl}/secured/searchlegfile/${legFileId}`, {
+      .get(`${apiBaseUrl}/secured/searchlegfile/${legFileId}?isDownload=true`, {
         observe: 'response',
         responseType: 'blob',
       })
@@ -203,7 +203,7 @@ export class ProposalMilestonesService {
   downloadLegFileAnyStatus(legFileId: string) {
     this.loadingService.setLoading(true);
     return this.http
-      .get(`${apiBaseUrl}/secured/searchlegfile/anystatus/${legFileId}`, {
+      .get(`${apiBaseUrl}/secured/searchlegfile/anystatus/${legFileId}?isDownload=true`, {
         observe: 'response',
         responseType: 'blob',
       })

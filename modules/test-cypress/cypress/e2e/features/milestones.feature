@@ -63,7 +63,7 @@ Feature: milestone section regression features
         And  wait for 500 milliseconds
         And  refresh the browser
         When click on milestones tab in act view page
-        Then "EXPORTED" is showing under status column of row 1 of milestones table
+        Then "File ready" is showing under status column of row 1 of milestones table
 
     @exportBtnInMilestoneExplorer @nonlocal
     Scenario: navigate to legal act page
