@@ -13,9 +13,10 @@
  */
 package eu.europa.ec.leos.vo.coedition;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public final class CoEditionVO {
+public final class CoEditionVO implements Serializable {
 
     private final String sessionId;
     private final String presenterId;

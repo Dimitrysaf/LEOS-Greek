@@ -182,6 +182,10 @@
             <artifactId>ehcache</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-jgroupsreplication</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>

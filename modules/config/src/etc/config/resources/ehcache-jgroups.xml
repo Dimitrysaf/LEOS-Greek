@@ -1,0 +1,19 @@
+<!--
+    Ehcache JGroups external file config for cache replication
+    Note: Check ehcache.xml file in services module for more related config
+-->
+<config xmlns="urn:org:jgroups" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd">
+
+    <UDP mcast_addr="${leos.ehcache.jgroups.multicast.addr}" mcast_port="${leos.ehcache.jgroups.multicast.port}"/>
+    <PING/>
+    <MERGE3/>
+    <FD_SOCK/>
+    <VERIFY_SUSPECT/>
+    <pbcast.NAKACK2/>
+    <UNICAST/>
+    <pbcast.STABLE/>
+    <FRAG/>
+    <pbcast.GMS/>
+
+</config>
