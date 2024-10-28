@@ -97,3 +97,32 @@ Feature: financial statement page regression features
     Then content of level 2 contains "text" in financial statement page
     When click on versions pane accordion
     And  last subversion of recent changes version card contains "1.0.1Document finalised"
+
+  @repeatSubparagrapthInFinancialStatement @local
+  Scenario: repeat subparagraph in financial statement document
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing FS" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    And  title of the act contains "Automation Testing FS" keyword
+    When click on financial statement link present in act viewer page
+    Then user is on financial statement page
+    When click on insert after icon of repeatable subparagraph
+    Then repeated subparagraph should exist
+    When click on delete icon of repeated subparagraph
+    Then "Delete Repeated Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then repeated subparagraph should not exist
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When click on insert after icon of repeatable subparagraph
+    Then repeated subparagraph should exist
+    When click on delete icon of repeated subparagraph
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then repeated subparagraph should exist
+    Then repeated subparagraph should have track changes action delete
+

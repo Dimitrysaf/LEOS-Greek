@@ -37,6 +37,26 @@ Then('content of level {int} has below content', (levelNumber, datatable) => {
     });
 });
 
+When('click on insert after icon of repeatable subparagraph', () => {
+    financialStatementPage.duplicateRepeatableSubparagraph();
+});
+
+Then('repeated subparagraph should exist', () => {
+    financialStatementPage.elements.repeatedSubparagraph().first().should('exist');
+});
+
+When('click on delete icon of repeated subparagraph', () => {
+    financialStatementPage.deleteRepeatedSubparagraph();
+});
+
+Then('repeated subparagraph should not exist', () => {
+    financialStatementPage.elements.repeatedSubparagraph().should('not.exist');
+});
+
+Then('repeated subparagraph should have track changes action delete', () => {
+    financialStatementPage.elements.repeatedSubparagraph().should('have.attr', 'leos:action').and('equal', 'delete');
+});
+
 function checkContentResult(element, datatable) {
     element[0].childNodes.forEach((element, index) => {
         if (element.nodeType === 1 && (datatable.raw().at(index).at(0).includes(",") || datatable.raw().at(index).at(0) !== "html")) {

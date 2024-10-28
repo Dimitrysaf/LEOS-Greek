@@ -9,6 +9,7 @@ import eu.europa.ec.leos.services.api.FinancialStatementApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentTocApiService;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
+import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -338,6 +339,24 @@ public class FinancialStatementController {
         } catch (Exception e) {
             LOG.error("Error occurred while getting financial statement element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while deleting financial statement element", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> insertElement(@PathVariable("documentRef") String documentRef,
+                                                @PathVariable("elementName") String elementName,
+                                                @PathVariable("elementId") String elementId,
+                                                @RequestBody InsertElementRequest request) {
+        try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
+            DocumentViewResponse bill = this.financialStatementApiService.insertElement(documentRef, elementName, elementId, request.getPosition());
+            return ResponseEntity.ok().body(bill);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting financial statement element - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while inserting financial statement element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
