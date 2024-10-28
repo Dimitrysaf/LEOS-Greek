@@ -1737,7 +1737,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent.getBytes(StandardCharsets.UTF_8));
         Node node = document.getFirstChild();
         node = setAttributeForDefinitionArticle(node);
-        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + XercesUtils.getId(node);
+        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + XercesUtils.getId(node).replaceAll("_", "");
         String newIdAttrValue = IdGenerator.generateId(idPrefix);
         addAttribute(node, XMLID, newIdAttrValue);
         String updatedElement = nodeToString(node);
