@@ -38,6 +38,7 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
@@ -49,9 +50,11 @@ public class CoEditionController {
     private static final String TOPIC_DOCUMENT_SLASH = "/topic/document/";
 
     @Autowired
-    CoEditionService coEditionService;
-    @Autowired
     UserService userService;
+
+    @Autowired
+    CoEditionService coEditionService;
+
     @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
 
@@ -81,12 +84,15 @@ public class CoEditionController {
     //on disconnect for any reason make sure that the user is removed from the store
     public void handleSessionUnsubscribeEvent(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
-        List<CoEditionVO> sessionEdits = this.coEditionService.getCoEditionsFromSession(sessionId);
-        this.coEditionService.removeUserEditInfo(sessionId);
-        simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, coEditionService.getAllEditInfo());
-        for (CoEditionVO coEdit : sessionEdits) {
-            String destination = encodeParam(TOPIC_DOCUMENT_SLASH + coEdit.getDocumentId());
-            simpMessagingTemplate.convertAndSend(destination, coEditionService.getCurrentEditInfo(coEdit.getDocumentId()));
+        List<String> sessionDocumentIds = this.coEditionService.getCoEditionsFromSession(sessionId).stream().
+                map(CoEditionVO::getDocumentId).distinct().collect(Collectors.toList());
+        CoEditionActionInfo coEditionActionInfo = this.coEditionService.removeUserEditInfo(sessionId);
+        if (!coEditionActionInfo.getOperation().equals(CoEditionActionInfo.Operation.REMOVE)) {
+            for (String sessionDocumentId : sessionDocumentIds) {
+                String destination = encodeParam(TOPIC_DOCUMENT_SLASH + sessionDocumentId);
+                simpMessagingTemplate.convertAndSend(destination, this.coEditionService.getCurrentEditInfo(sessionDocumentId));
+            }
+            simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
         }
     }
 
@@ -107,22 +113,24 @@ public class CoEditionController {
         LOG.info("Received message from user {} on documentId {} with type {}", event.getUserId(), event.getDocumentId(), event.getInfoType());
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(message);
         User user = this.userService.getUser(event.getUserId());
-        String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
         CoEditionActionInfo coEditionActionInfo = this.coEditionService.storeUserEditInfo(headerAccessor.getSessionId(), event.getPresenterId(), user, event.getDocumentId(), event.getElementId(), event.getInfoType());
-        simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
-        simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo);
+        if (!coEditionActionInfo.getOperation().equals(CoEditionActionInfo.Operation.STORE)) {
+            String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
+            simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo);
+            simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
+        }
     }
 
     @MessageMapping("/remove/document")
     public void removeFromDocumentRoom(Message<CoEditionRequest> message) {
         CoEditionRequest event = message.getPayload();
         LOG.info("Received message from user {} on documentId {} with type {} for remove", event.getUserId(), event.getDocumentId(), event.getInfoType());
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(message);
-        User user = this.userService.getUser(event.getUserId());
-        String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
         CoEditionActionInfo coEditionActionInfo = this.coEditionService.removeUserEditInfo(event.getPresenterId(), event.getDocumentId(), event.getElementId(), event.getInfoType());
-        simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
-        simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo);
+        if (!coEditionActionInfo.getOperation().equals(CoEditionActionInfo.Operation.REMOVE)) {
+            String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
+            simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo);
+            simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
+        }
     }
 
     @MessageMapping("/update/document")
@@ -146,10 +154,11 @@ public class CoEditionController {
         CoEditionRequest event = message.getPayload();
         LOG.info("Received message to remove session {} ", event.getSessionId());
         CoEditionActionInfo coEditionActionInfo = this.coEditionService.removeUserEditInfo(event.getSessionId());
-        simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
-        if (coEditionActionInfo.sucesss()) {
+        if (!coEditionActionInfo.getOperation().equals(CoEditionActionInfo.Operation.REMOVE)) {
             String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
-            simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo.getCoEditionVos());
+            simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo);
+            simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
         }
     }
+
 }
