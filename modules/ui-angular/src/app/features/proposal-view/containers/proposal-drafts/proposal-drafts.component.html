@@ -25,7 +25,7 @@
 </ng-container>
 
 <!-- SECTION: MEMORANDUM -->
-<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum">
+<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum && this.createOptions['EM-LP01']">
     <eui-card-header>
         <eui-card-header-title>
             <div class="eui-u-display-flex eui-u-flex-row">
@@ -317,7 +317,7 @@
             </div>
         </ng-container>
         <!-- ANNEX SECTION   -->
-        <ng-container *ngIf="!documentCard.euiCollapsed">
+        <ng-container *ngIf="!documentCard.euiCollapsed && this.createOptions['SG-017']">
             <div class="eui-u-flex eui-u-pt-m">
                 <div class="eui-u-flex-grow">
                     <div>
@@ -469,7 +469,7 @@
                                                         (click)="handleAnnexEditTitle(row)"
                                                 ></button>
                                             </ng-container>
-                                            <ng-container *ngIf="permissions.includes('CAN_DELETE')">
+                                            <ng-container *ngIf="permissions.includes('CAN_DELETE') && this.createOptions['SG-017'] !== 'MANDATORY'">
                                                 <button
                                                         class="eui-u-p-s"
                                                         euiListItem
