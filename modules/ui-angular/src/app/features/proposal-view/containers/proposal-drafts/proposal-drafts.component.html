@@ -469,7 +469,7 @@
                                                         (click)="handleAnnexEditTitle(row)"
                                                 ></button>
                                             </ng-container>
-                                            <ng-container *ngIf="permissions.includes('CAN_DELETE') && this.createOptions['SG-017'] !== 'MANDATORY'">
+                                            <ng-container *ngIf="permissions.includes('CAN_DELETE')">
                                                 <button
                                                         class="eui-u-p-s"
                                                         euiListItem
