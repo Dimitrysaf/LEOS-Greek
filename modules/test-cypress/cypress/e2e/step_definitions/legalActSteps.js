@@ -416,3 +416,11 @@ Then('ins tag with attribute {string} and value {string} of num tag of recital {
     const tagName = 'ins';
     legalActPage.getRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
 });
+
+When(/^click on soft move label with title "([^"]*)"$/, function (label) {
+    legalActPage.clickSoftMoveLabelWithTitle(label);
+});
+
+When(/^soft move label with title "([^"]*)" is  displayed$/, function (label) {
+    legalActPage.elements.leosSoftMoveLabel().contains(label).should('be.visible');
+});

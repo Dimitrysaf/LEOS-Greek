@@ -636,3 +636,106 @@ Feature: Track Changes Feature
     And  deleted paragraph number of paragraph 15 of article 1 is "15."
     And  inserted paragraph number of paragraph 15 of article 1 is "14."
     And  paragraph 15 of article 1 contains attribute "leos:tc-original-number" with value "15."
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When click on three vertical dots for the element contains text "Article 3 - Article heading... Unnumbered paragraphs with 2 paragraphs." in toc
+    And  click on move option from dropdown content
+    And  click on three vertical dots for the element contains text "Article 7 - Article heading... Unnumbered without children." in toc
+    And  click on place before option from dropdown content
+    Then "Article  3" is showing as soft move title in navigation pane
+    And  "MOVED" is showing as soft move label with soft move title " Article  3" in navigation pane
+    And  "Article  #" is showing as soft move title in navigation pane
+    And  "MOVED" is showing as soft move label with soft move title " Article  #" in navigation pane
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  "Article  2" is showing as soft move title in navigation pane
+    And  "MOVED" is showing as soft move label with soft move title " Article  2" in navigation pane
+    And  "Article  6" is showing as soft move title in navigation pane
+    And  "MOVED" is showing as soft move label with soft move title " Article  6" in navigation pane
+    And  "Article 2" is showing as strikethrough in num of article 3 of bill
+    And  "MOVED to Article 6" is showing as soft move label in num of article 3 of bill
+    And  heading tag is not present for article 3 of bill
+    And  paragraph tag is not present for article 3 of bill
+    When click on soft move label with title "MOVED to Article 6"
+    And "Article 2" is showing as track changes deleted in num of article 7 of bill
+    And "Article 6" is showing as track changes inserted in num of article 7 of bill
+    And "MOVED from Article 2" is showing as soft move label in num of article 7 of bill
+    And  soft move label with title "MOVED from Article 2" is  displayed
+    When click on soft move label with title "MOVED from Article 2"
+    Then soft move label with title "MOVED to Article 6" is  displayed
+
+  @movePointInAnnexTrackChanges @local
+  Scenario: move of point inside annex using 3 dots and drag and drop
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing Move Point in Annex" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 1
+    When click on annex 1 link
+    Then user is on annex page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And  toc editing button is displayed and enabled
+    When click on insert after icon of level 2
+    Then total number of level is 4
+    When click on insert after icon of level 2
+    Then total number of level is 5
+    When click on insert after icon of level 2
+    Then total number of level is 6
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When click on three vertical dots for the element contains text "1.1. Text..." in toc
+    And  click on move option from dropdown content
+    And  click on three vertical dots for the element contains text "1.4. Text..." in toc
+    And  click on place before option from dropdown content
+    Then "MOVED" is showing as soft move label with soft move title " 1.1." in navigation pane
+    And  "MOVED" is showing as soft move label with soft move title " #" in navigation pane
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  "MOVED" is showing as soft move label with soft move title " 1.1." in navigation pane
+    And  "MOVED" is showing as soft move label with soft move title " 1.3." in navigation pane
+    And  level 2 contains attribute "leos:action" with value "delete"
+    And  level 2 contains attribute "leos:softaction" with value "move_to"
+    And  level 2 contains attribute "leos:softmove_label" with value "MOVED to point 1.3"
+    And  level 2 contains attribute "leos:softactionroot" with value "true"
+    And  level 2 contains attribute "leos:deletable" with value "false"
+    And  level 2 contains attribute "leos:editable" with value "false"
+    And  "MOVED to point 1.3" is showing as soft move label in num of level 2
+    And  level 5 contains attribute "leos:softaction" with value "move_from"
+    And  level 5 contains attribute "leos:softmove_label" with value "MOVED from point 1.1"
+    And  level 5 contains attribute "leos:softactionroot" with value "true"
+    And  num of level 5 contains attribute "leos:action" with value "insert"
+    And  num value of level 5 contains "1.3."
+    And  "MOVED from point 1.1" is showing as soft move label in num of level 5
+    When right click on soft move label of num of level 2
+    And  click on reject this change option under track changes action
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When drag node label "1.1. Text..." and drop to node label "1.3. Text..." in navigation pane
+    Then "MOVED" is showing as soft move label with soft move title " 1.1." in navigation pane
+    And  "MOVED" is showing as soft move label with soft move title " #" in navigation pane
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  "MOVED" is showing as soft move label with soft move title " 1.1." in navigation pane
+    And  "MOVED" is showing as soft move label with soft move title " 1.3." in navigation pane
+    And  level 2 contains attribute "leos:action" with value "delete"
+    And  level 2 contains attribute "leos:softaction" with value "move_to"
+    And  level 2 contains attribute "leos:softmove_label" with value "MOVED to point 1.3"
+    And  level 2 contains attribute "leos:softactionroot" with value "true"
+    And  level 2 contains attribute "leos:deletable" with value "false"
+    And  level 2 contains attribute "leos:editable" with value "false"
+    And  "MOVED to point 1.3" is showing as soft move label in num of level 2
+    And  level 5 contains attribute "leos:softaction" with value "move_from"
+    And  level 5 contains attribute "leos:softmove_label" with value "MOVED from point 1.1"
+    And  level 5 contains attribute "leos:softactionroot" with value "true"
+    And  num of level 5 contains attribute "leos:action" with value "insert"
+    And  num value of level 5 contains "1.3."
+    And  "MOVED from point 1.1" is showing as soft move label in num of level 5
