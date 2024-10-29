@@ -529,7 +529,7 @@ export abstract class DocumentActionsService {
           ),
           disabled: this.documentService.isEditorOpen$,
           isSlider: true,
-          value: true,
+          value: this.seeTrackChanges,
           actionFn: () => this.toggleSeeTrackChanges(),
         },
       ];
