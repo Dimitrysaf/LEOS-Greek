@@ -11,6 +11,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.label.ReferenceLabelServiceImplMandate;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
+import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -42,9 +43,12 @@ public abstract class SaveTocMandateTest_IT extends SaveTocTest_IT {
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerMandate();
     @Mock
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
+    @Mock
+    private ProfileContext profileContext;
 
     private TrackChangesContext trackChangesContext = new TrackChangesContext();
-    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    @InjectMocks
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext, profileContext);
     private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);

@@ -41,6 +41,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.response.MergeContributionResponse;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
@@ -106,6 +107,9 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     @Mock
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
 
+    @Mock
+    private ProfileContext profileContext;
+
     @InjectMocks
     protected XPathCatalog xPathCatalog = spy(new XPathCatalog());
 
@@ -121,7 +125,8 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerProposal();
 
     private TrackChangesContext trackChangesContext = new TrackChangesContext();
-    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
+    @InjectMocks
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, securityContext, trackChangesContext, profileContext);
     private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
