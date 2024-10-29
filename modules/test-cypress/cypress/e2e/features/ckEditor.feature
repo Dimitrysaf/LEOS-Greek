@@ -264,4 +264,4 @@ Feature: CK Editor Regression Features
         And upload an image file from a relative location "the-quick-fox.jpg" in iframe "cke_dialog_ui_input_file"
         And click dialog ok button
         When click save and close button of ck editor
-        Then level 2 contains an image
+        Then level 2 contains image

@@ -1,4 +1,5 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "cypress-cucumber-preprocessor/steps";
+
 require('@cypress/xpath');
 import annexPage from "../pages/annexPage";
 import headerPage from "../pages/headerPage";
@@ -40,6 +41,10 @@ When(`click on insert before icon of level {int}`, (levelNumber) => {
     annexPage.clickInsertBeforeIconOfLevel(levelNumber);
 });
 
+When(/^click on insert after icon of level (\d+)$/, function (levelNumber) {
+    annexPage.clickInsertAfterIconOfLevel(levelNumber);
+});
+
 Then(`click on edit icon of level {int}`, (levelNumber) => {
     annexPage.clickEditIconOfLevel(levelNumber);
 });
@@ -68,4 +73,31 @@ When('click on authorial note with marker {int} in level {int}', function (marke
 
 Then(`{string} is added as internal reference {int} of level {int}`, (text, mReferenceNumber, levelNumber) => {
     annexPage.getMRefTextFromLevel(mReferenceNumber, levelNumber).should('have.text', text);
+});
+
+Then(`level {int} contains image`, (levelNumber) => {
+    annexPage.getImageOfLevel(levelNumber).should('exist');
+});
+
+Then(/^level (\d+) contains attribute "([^"]*)" with value "([^"]*)"$/, function (levelNumber, attributeName, attributeValue) {
+    annexPage.getLevel(levelNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then(/^num of level (\d+) contains attribute "([^"]*)" with value "([^"]*)"$/, function (levelNumber, attributeName, attributeValue) {
+    annexPage.getNumOfLevel(levelNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then(/^"([^"]*)" is showing as soft move label in num of level (\d+)$/, function (labelName, levelNumber) {
+    annexPage.getSoftMoveLabelOfNumOfLevel(levelNumber).should('have.attr', 'title').and('equal', labelName);
+});
+
+Then(/^num value of level (\d+) contains "([^"]*)"$/, function (levelNumber, numValue) {
+    annexPage.getNumOfLevel(levelNumber).invoke('clone').then(($el) => {
+        $el.children().remove()
+        return $el.text().trim()
+    }).should('equal', numValue);
+});
+
+When(/^right click on soft move label of num of level (\d+)$/, function (levelNumber) {
+    annexPage.rightClickOnSoftMoveLabelOfNumOfLevel(levelNumber);
 });
