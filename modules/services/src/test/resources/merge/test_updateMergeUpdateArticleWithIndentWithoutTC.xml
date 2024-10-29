@@ -1,0 +1,139 @@
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <bill name="REG">
+        <meta>
+            <identification source="~COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="cm2n0hwzq0004p028l3giikx4"/>
+                        <akn4eu:docCUID value="cm2n0hvk50001p028jg30f1iy"/>
+                    </preservation>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="en"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.1.1.0"/>
+                        <akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                    </preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~COM">
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions" xml:id="ART_DEF"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/></references>
+            <proprietary source="~COM">
+                <leos:templateVersion>4.1.0</leos:templateVersion>
+                <leos:docVersion>0.1.0</leos:docVersion>
+                <leos:template>SJ-023</leos:template>
+                <leos:docTemplate>BL-023</leos:docTemplate>
+                <leos:docPurpose xml:id="_proprietary__docpurpose">sur back teste</leos:docPurpose><leos:docStage xml:id="_proprietary__docstage">Proposal for a</leos:docStage><leos:ref>REG-cm2n0hwzq0004p028l3giikx4-en</leos:ref><leos:clonedProposals><leos:milestoneRef name="PROP_ACT-cm2n0hvk50001p028jg30f1iy-en.leg"><clonedProposalRef ref="REG-cm2n0hwzq0004p028l3giikx4-en"><targetUser>demo</targetUser><creationDate>Thu Oct 24 10:18:05 CEST 2024</creationDate><status>Sent for contribution</status></clonedProposalRef></leos:milestoneRef></leos:clonedProposals><leos:docType xml:id="_proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType><leos:objectId/></proprietary>
+        </meta>
+        <preface xml:id="ecW7n1v32KzsC59W9">
+            <container class="template" name="procedureIdentifier" xml:id="eciZZK0sei7Gy8P0V">
+                <p xml:id="ectipAgUSwWweCUMY">
+                    <docketNumber class="template" xml:id="ec4q012OOV4Y1kyq8"/>
+                </p>
+            </container>
+            <longTitle xml:id="ecrOONzqPg903c6qp">
+                <p xml:id="eckCu15wKd4cKtKZi">
+                    <docStage xml:id="ecqkdo99xZYuBtJcm">Proposal for a</docStage>
+                    <docType refersTo="~REG" xml:id="ecMcRZtMaVqmzkvRI">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
+                    <docPurpose xml:id="ecoc8HJmQ5fVyFhp0">sur back teste</docPurpose>
+                </p>
+            </longTitle>
+        </preface>
+        <preamble xml:id="ecMwgCTUEn92NW60H">
+            <formula name="actingEntity" xml:id="ecQh2O7dJBLoKMGPd">
+                <p xml:id="ecy16Sq3HTMzBWMZN">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p>
+            </formula>
+            <citations leos:editable="false" xml:id="ecfnMj79boazMa0gW">
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="ecfBM5utmN2ehc2xq">
+                    <p xml:id="ec0PgtBx9KOkyjk0A">Having regard to the Treaty on the Functioning of the European Union, and in particular Article [...] thereof,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="ecR42mRlIKxVlfgsY">
+                    <p xml:id="ec7BU7ozGflGHwVD8">Having regard to the proposal from the European Commission,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="ecPqP3llYs5NNbcUC">
+                    <p xml:id="ecnvQUZn7WqN4QYnr">After transmission of the draft legislative act to the national Parliaments,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="ecA6wtsFdslcSndGJ">
+                    <p xml:id="ecdZYFP1ifmTZ25dB">Having regard to the opinion of the European Economic and Social Committee<authorialNote marker="1" placement="bottom" xml:id="ec5Zo8NmDy6OmkT6Q"><p xml:id="ecGenSjB7VFy3BIT2">OJ C [...], [...], p. [...]</p></authorialNote>,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="ecaK0xvQ1sd89Py1o">
+                    <p xml:id="ecKo9GF3rNQ5w8yaF">Having regard to the opinion of the Committee of the Regions<authorialNote marker="2" placement="bottom" xml:id="ecss5aqgnpPuY2tMD"><p xml:id="ecoiaVJ0j5RgjTd01">OJ C [...], [...], p. [...]</p></authorialNote>,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="ecxZiS17eizIbxACY">
+                    <p xml:id="ecBtgVzenhl0JlBfg">Acting in accordance with the ordinary legislative procedure,</p>
+                </citation>
+            </citations>
+            <recitals leos:editable="false" xml:id="ec7jVEhfbB0WfWez5">
+                <intro xml:id="ectatZs5W5KfSeark"><p xml:id="ecDMaSK8m24s2Bqo8">Whereas:</p></intro>
+                <recital leos:editable="true" xml:id="ecBT0WY940bGVrQYL"><num xml:id="ecgYLDLG3qNOW2v7p">(1)</num><p xml:id="ecklDQOpBUzbsrm9Y">Recital...cwxcwcw</p></recital>
+                <recital leos:editable="true" xml:id="ecIiYQAu7GUI4kNxz">
+                    <num xml:id="ecFaFebxDIIVh4El5">(2)</num>
+                    <p xml:id="ecCb4iOhLzSz71PlL">Recital...</p>
+                </recital><recital leos:deletable="true" leos:editable="true" xml:id="impXrecd1e87XecUyzxzVGgZYoYjk8"><num xml:id="ecy9Y1O8lzCjZGxzk">(3)</num><p xml:id="ec3Bsx736Az2QocmF">The G-20 Declaration of 2 April 2009 on Strengthening of the Financial System called for internationally consistent efforts that are aimed at strengthening transparency, accountability and regulation by improving the quantity and quality of capital in the banking system once the economic recovery is assured. That declaration also called for introduction of a supplementary non-risk based measure to contain the build-up of leverage in the banking system, and the development of a framework for stronger liquidity buffers. In response to the mandate given by the G-20, in September 2009 the Group of Central Bank Governors and Heads of Supervision (GHOS), agreed on a number of measures to strengthen the regulation of the banking sector. Those measures were endorsed by the G-20 leaders at their Pittsburgh Summit of 24-25 September 2009 and were set out in detail in December 2009. In July and September 2010, GHOS issued two further announcements on design and calibration of those new measures, and in December 2010, the Basel Committee on Banking Supervision (BCBS) published the final measures, that are referred to as the Basel III framework.</p></recital><recital leos:deletable="true" leos:editable="true" xml:id="impXrecd1e102XecyB5M0MFNSQyColj"><num xml:id="ecreJYi5iT0sSEtA4">(4)</num><p xml:id="ecoEQA3wQfs6CavEG">The High Level Group on Financial Supervision in the EU chaired by Jacques de LarosiÃ¨re (the "de LarosiÃ¨re group") invited the Union to develop a more harmonised set of financial regulations. In the context of the future European supervisory architecture, the European Council of 18 and 19 June 2009 also stressed the need to establish a 'European Single Rule Book' applicable to all credit institutions and investment firms in the internal market.</p></recital>
+            </recitals>
+            <formula name="enactingFormula" xml:id="ec7EwccHCOygHGmTe">
+                <p xml:id="ecsHxzkvYcPctMf3j">HAVE ADOPTED THIS REGULATION:</p>
+            </formula>
+        </preamble>
+        <body xml:id="ecpZm9hIoJUkfFxQJ">
+            <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="ec0UwSsS2ACF1HY53" xml:id="ecVqSfxA1wDrqFyCM"><num leos:editable="false" xml:id="ecxOC2TjwuicaOfRB">Article 1</num><heading xml:id="ecmtoGFe4cK0AKa0S">Scope</heading><paragraph leos:origin="ec" xml:id="ecgkKCoRpG1che80J"><num xml:id="ec1GtKlvYd0bu88pm">1.</num><content xml:id="ecIGM3zrHRQUQNcJ8"><p xml:id="ec0zbVqQODsGJrO9c">Text... test</p></content></paragraph><paragraph xml:id="ecm78DeEHF7YQ5SMN"><num xml:id="ecLNkAdp6SyHRvAiY">2.</num><content xml:id="ecq1jjwAcAOVeR7P8"><p xml:id="ecEvwUMiaAEYpEeQH">dfgdfgdf</p></content></paragraph><paragraph xml:id="ecC0S4HacHJiepoOA"><num xml:id="ecgqrr1vctrM1WNkG">3.</num><content xml:id="ec3mdVpaOt0AaMnJh"><p xml:id="ecmezm465BoHb0iu7">dfgdfgdfg</p></content></paragraph><paragraph xml:id="ecCqmc28itETfSkKW"><num xml:id="ec9JuE0fGaI1skHEi">4.</num><content xml:id="ecNoYyiP00lP6AGkV"><p xml:id="eccTuHqZv0iVJrLCW">dfgdfgdfgd</p></content></paragraph><paragraph xml:id="ecO5bGAj5xB6QSAlc"><num xml:id="ecalxBT9kGJp7OIxK">5.</num><content xml:id="ecl267K7NbEC6QW6c"><p xml:id="eciT4i8FvW6dW1tkv">dgdfgdfg</p></content></paragraph><paragraph xml:id="ec2n4DMVpaZ7xpodA"><num xml:id="ecY4kS5OCVP558ijG">6.</num><content xml:id="ecs4sebcxxmwzrA5i"><p xml:id="ecClyNCLmeRQ0stxs">dfgdfgd</p></content></paragraph><paragraph xml:id="ecQO9HnqS1rPSFC8R"><num xml:id="ecCfq7RVIkadeg0CQ">7.</num><content xml:id="ec6sNAjS0QAwJm1ry"><p xml:id="ecp9z7jyDVKfEyFYY">Text...</p></content></paragraph></article>
+            <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="ecvHcJs2CS5tRFq6P" refersTo="~ART_DEF" xml:id="ecHrDJn0N0yhyAV1e"><num leos:editable="true" xml:id="ecvIxFHJDGB6W7KlB">Article 2</num><heading xml:id="ec1zF1V0FQP4fFUbo">Definitions</heading><paragraph xml:id="ecdqfc9FekqaIHkd6"><list xml:id="ecw2YMClTDDsM9vwh"><subparagraph leos:origin="ec" refersTo="~INP" xml:id="transformedXecdqfc9FekqaIHkd6"><content leos:origin="ec" xml:id="ecxA7on0S50oLZ9AH"><p leos:origin="ec" xml:id="ecYNQ3YER00Ff8R5h">Text...</p></content></subparagraph><point leos:origin="ec" xml:id="ecif6k98kH2pud7LL"><num xml:id="ecw1NAA332KP6ouHR">(1)</num><subparagraph leos:origin="ec" xml:id="transformedXecif6k98kH2pud7LL"><content xml:id="ecxA7on0S50oLZ9AH"><p xml:id="ecYNQ3YER00Ff8R5h">New Point</p></content></subparagraph><subparagraph xml:id="ecLifLpCDHkAcivs0"><content xml:id="ecZkRuBrxyRHy7OSs"><p xml:id="ecSDKOASR2gLSd4cl">suppara</p></content></subparagraph></point></list></paragraph><paragraph xml:id="ecDF1DcWUTanfRS4e"><content xml:id="ec2OyD44MFtdZid8W"><p xml:id="ecTSr783Yvvj5A0ZK">dfgdfsgdsf</p></content></paragraph><paragraph xml:id="ecOkZo9SWD8olZVyd"><list xml:id="ecwE1jTjdr09ZJhzG"><subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-10-28T13:27:59.273+01:00" leos:softuser="DOE Jane(DGT)" refersTo="~INP" xml:id="transformedXecOkZo9SWD8olZVyd"><content xml:id="ec0znuKZRBb30BNKQ"><p xml:id="eciwY7nz8jHha1iLe">Point</p></content></subparagraph><point xml:id="eceoqn20J6DYwidTz"><num xml:id="ecACSSKOv1vdQzhBy">(1)</num><content xml:id="ec3cd4wVwnrEgwg06"><p xml:id="ecUAwexyqrmnNTss0">gdfsgdsfgsd</p></content></point></list></paragraph><paragraph xml:id="ecemeP55GSH2seU3O"><list xml:id="ecmcR0tujj5epo0U4"><subparagraph refersTo="~INP" xml:id="ecEC0ini1FEl4WzoQ"><content xml:id="ecrR2MYsNwZ6ShfYE"><p xml:id="eczBP68U9czNADx2Y">dfsgdsfgdsf</p></content></subparagraph><point xml:id="ecNu9QqdS5AmuPbrP"><num xml:id="ecGYF7nfDUlmYFF7x">(1)</num><content xml:id="ecqNsEqv0uhzlHNfY"><p xml:id="ecGR6o4oJv40kbG8v">test</p></content></point><point xml:id="ec2EO2jvQMhN4k0jo"><num xml:id="ecgt6bP5WzxJQOibb">(2)</num><content xml:id="eccyhDOz6Z2cz7T49"><p xml:id="ecpED9UQMTF9Rjgi1">dfsgdsfg</p></content></point></list></paragraph></article>
+            <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" xml:id="ecEBUcz84aZfmDbpT">
+                <num leos:editable="false" xml:id="ecaMCZmCuEMoRcQpx">Article 3</num>
+                <heading xml:id="ecS6QNPPwvSnA8I9S">Entry into force</heading>
+                <paragraph xml:id="ecBfuw4Sabd1D3ZBm">
+                    <content xml:id="ecoDKwxNYYVfzKpWA">
+                        <p xml:id="ecEbKRMSES4YKUJHb">This Regulation shall enter into force on the [...] day following that of its publication in the <i xml:id="ecavac7TshU16VFy5">Official Journal of the European Union</i>.</p>
+                    </content>
+                </paragraph>
+            </article>
+
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="eczo28ilmWNMICvDr">
+                <content xml:id="ecpIn0I6UCHKdYK04">
+                    <p xml:id="ecKZx8I0Fql8NwnBq">This Regulation shall be binding in its entirety and directly applicable in all Member States.</p>
+                </content>
+            </clause>
+
+        </body>
+        <conclusions xml:id="ecGEWrcF5eJMCS0dq">
+            <p xml:id="ecGTpFgxtw1Nck1I5">Done at <location refersTo="~BEL_BRU" xml:id="ecKdmlJcm9tYGnAON">Brussels</location>, <date class="template" date="2999-01-01" xml:id="ecUqLkWhSMhV2dwp1"/></p>
+            <block name="signatory" xml:id="eccPwkl7HggP7ZTKW">
+                <signature xml:id="ecgVivQ7CPaz0tnuA">
+                    <organization refersTo="~EP" xml:id="ecNgd3iyexQpbZFB5">For the European Parliament</organization>
+                    <role refersTo="~PRESID" xml:id="ecF7x73hEWLwbsej4">The President</role>
+                    <person refersTo="" xml:id="ecpqODeaU5TZDzYlq">[...]</person>
+                </signature>
+                <signature xml:id="ecjy07oYmqyjkQ4D5">
+                    <organization refersTo="~CONSIL" xml:id="ectpglpvw1HRM1vCq">For the Council</organization>
+                    <role refersTo="~PRESID" xml:id="ecyBOqSMnrvST4Sj0">The President</role>
+                    <person refersTo="" xml:id="eco0REepyDSsAMM3w">[...]</person>
+                </signature>
+            </block>
+        </conclusions>
+        <attachments><attachment xml:id="ecygpCiMHdzmi9yhp"><documentRef href="ANNEX-cm2n1g0jo000bp028pgpa72qk-en.xml" showAs="Annex" xml:id="ecpatGAu57rvEd6hS"/></attachment></attachments></bill>
+</akomaNtoso>
