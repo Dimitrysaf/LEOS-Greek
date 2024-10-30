@@ -362,4 +362,5 @@ public class FinancialStatementContextService {
     public void useTranslated(boolean translated) {
         this.translated = translated;
     }
+
 }

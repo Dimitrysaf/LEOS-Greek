@@ -66,8 +66,6 @@ public class Config implements Serializable {
     @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private ConfigCategory configCategory;
-    @Column(name = "LFDS")
-    private String lfds;
 
     public Config() {
     }
@@ -138,14 +136,6 @@ public class Config implements Serializable {
 
     public void setLanguage(String language) {
         this.language = language;
-    }
-
-    public String getLfds() {
-        return lfds;
-    }
-
-    public void setLfds(String lfds) {
-        this.lfds = lfds;
     }
 
     public ConfigCategory getConfigCategory() {

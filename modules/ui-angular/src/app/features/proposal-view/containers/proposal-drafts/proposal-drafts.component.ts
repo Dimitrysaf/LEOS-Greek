@@ -51,6 +51,7 @@ export class ProposalDraftsComponent
   proposalRef: string;
   coEditionMap: Record<string, CoEditionVO[]> = null;
   permissions: Permission[];
+  createOptions: object;
 
   @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
@@ -233,6 +234,7 @@ export class ProposalDraftsComponent
   private populateView() {
     const getChildDocument = (type: DocumentType) =>
       this.proposal.childDocuments.find((d) => d.category === type) ?? null;
+    this.createOptions = JSON.parse(this.proposal.creationOptions);
     this.coverpage = getChildDocument('COVERPAGE');
     this.memorandum = getChildDocument('MEMORANDUM');
     this.document = getChildDocument('BILL');

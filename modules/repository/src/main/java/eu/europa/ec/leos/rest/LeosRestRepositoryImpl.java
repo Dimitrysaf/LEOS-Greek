@@ -105,6 +105,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
 
     private static String ADMIN_USER = "admin";
+    private final String CREATION_OPTIONS = "creationOptions";
     @Value("${leos.workspaces.path}")
     private String workspacesPath;
     @Value("${leos.rest.cache.enable}")
@@ -169,6 +170,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         Map<String, Object> properties = new HashMap<>();
         setDocumentCollaboratorProperties(metadata, properties);
+        properties.put(CREATION_OPTIONS, metadata.getCreationOptions());
         Set<LeosCategory> cats = LeosMapper.leosCategories(type);
         if (!cats.isEmpty()) {
             properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), cats.iterator().next());
