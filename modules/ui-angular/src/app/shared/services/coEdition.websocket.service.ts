@@ -295,7 +295,7 @@ export class CoEditionServiceWS {
     isCalledFromToc?: boolean,
   ) {
     const userCoEditionElements = this.document.querySelectorAll(
-      '.leos-user-coedition',
+      '.leos-user-coedition:not(.leos-user-coedition-toc)'
     );
     userCoEditionElements.forEach((userCoEditionElement) => {
       userCoEditionElement.remove();
@@ -376,9 +376,11 @@ export class CoEditionServiceWS {
   ) {
     const coEditNode = this.document.createElement('div');
     coEditNode.classList.add(
-      'leos-user-coedition',
-      'leos-user-coedition-self-user',
+      'leos-user-coedition'
     );
+    if (this.isElementAlreadyEditedByUser(coEdits[key])) {
+      coEditNode.classList.add('leos-user-coedition-self-user');
+    }
     const iconSpan = this.document.createElement('span');
     iconSpan.classList.add('eui-icon', 'eui-icon-person');
     iconSpan.style.verticalAlign = 'bottom';
@@ -398,5 +400,9 @@ export class CoEditionServiceWS {
     coEditNode.addEventListener('mouseleave', () => {
       textDiv.style.display = 'none';
     });
+  }
+
+  private isElementAlreadyEditedByUser(coEdits: CoEditionVO[]) {
+    return coEdits.find((c) => (c.userLoginName === this.user.login)) != undefined;
   }
 }
