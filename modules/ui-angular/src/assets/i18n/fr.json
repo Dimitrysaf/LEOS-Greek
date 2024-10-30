@@ -391,6 +391,7 @@
   "page.editor.navigation-pane.label": "Panneau de Navigation",
   "page.editor.toc-pane.label": "Table des Matières",
   "page.editor.versions-pane.label": "Versions",
+  "page.editor.versions-pane.version.label.before.finalised": "Avant finalisation",
   "page.editor.contribution-pane.label": "Contributions",
   "page.editor.contribution-pane.contribution-processed": "Contribution processé",
   "page.editor.contribution.actions-button.tooltip": "Actions",

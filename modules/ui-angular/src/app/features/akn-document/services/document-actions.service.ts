@@ -275,6 +275,7 @@ export abstract class DocumentActionsService {
     const finalizeSection =
       this.isDocumentTypeTheSame(this.documentService.documentType, 'STAT_FINANC_LEGIS')
       && !this.isClonedProposal()
+      && !this.profile
       && this.hasUpdatePermission
       && this.buildFinalizeSection();
     const leosLightSection =  this.showMarkAsDoneButton && this.buildMarkAsDoneSection();
