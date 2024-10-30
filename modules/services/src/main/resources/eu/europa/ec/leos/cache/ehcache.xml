@@ -103,6 +103,7 @@
            timeToIdleSeconds="600"
            timeToLiveSeconds="3600"
            memoryStoreEvictionPolicy="LFU"/>
+
     <cache name="searchEngineCacheHighlight"
            eternal="false"
            maxElementsInMemory="25"
@@ -110,6 +111,7 @@
            timeToIdleSeconds="600"
            timeToLiveSeconds="3600"
            memoryStoreEvictionPolicy="LFU"/>
+
     <!-- Reference label target document xml cache policy -->
     <cache name="referenceLabelTargetDocumentCache"
            eternal="false"
@@ -193,4 +195,36 @@
            timeToIdleSeconds="600"
            timeToLiveSeconds="3600"
            memoryStoreEvictionPolicy="LFU"/>
+
+    <!-- CoEdition cache policy with replication using JGroups -->
+    <cache name="coEditionCache"
+           eternal="false"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="0">
+        <bootstrapCacheLoaderFactory
+                class="net.sf.ehcache.distribution.jgroups.JGroupsBootstrapCacheLoaderFactory"
+                properties="bootstrapAsynchronously=true"/>
+        <cacheEventListenerFactory
+                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+                properties="replicateAsynchronously=true, replicatePuts=true, replicateUpdates=true, replicateUpdatesViaCopy=true,
+                    replicateRemovals=true"/>
+        <cacheEventListenerFactory
+                class="eu.europa.ec.leos.services.coedition.cache.CoEditionCacheEventListenerFactory"/>
+    </cache>
+
+    <!-- Inline config -->
+    <!--cacheManagerPeerProviderFactory
+            class="eu.europa.ec.leos.services.support.cache.LeosCacheManagerPeerProviderFactory"
+            properties="channelName=LEOS_EHCACHE::connect=UDP(mcast_addr=224.0.0.1;mcast_port=45000;):PING:MERGE3:
+                FD_SOCK:VERIFY_SUSPECT:pbcast.NAKACK2:UNICAST:pbcast.STABLE:FRAG:pbcast.GMS"
+            propertySeparator="::"/-->
+
+    <!-- Config from provided external ehcache-jgroups.xml file -->
+    <cacheManagerPeerProviderFactory
+            class="eu.europa.ec.leos.services.support.cache.LeosCacheManagerPeerProviderFactory"
+            properties="channelName=LEOS_EHCACHE::file=ehcache-jgroups.xml"
+            propertySeparator="::"/>
+
 </ehcache>

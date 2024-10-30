@@ -50,7 +50,7 @@ Then(`last version card header title contains {string}`, (headerTitle) => {
 });
 
 When(`click on navigation pane accordion`, () => {
-    tableOfContent.clickNavigationPaneAccordian();
+    tableOfContent.clickNavigationPaneAccordion();
 });
 
 When(`only title element is present in navigation pane`, () => {
@@ -136,7 +136,7 @@ Then('navigation pane is expanded', function () {
 });
 
 Then(/^navigation pane is minimized$/, function () {
-    tableOfContent.elements.navigationPaneMinimized().should('be.visible');
+    tableOfContent.elements.navigationPaneMinimized().should('exist');
 });
 
 When('drag node label {string} and drop to node label {string} in navigation pane', function (dragLabel, dropLabel) {
@@ -252,4 +252,16 @@ When(`click on contributions pane accordion`, () => {
 
 When(`click on first contribution`, () => {
     tableOfContent.clickFirstContribution();
+});
+
+Then('app-versions-pane-group {int} contains card header title {string}', function (versionPaneIndex, cardHeaderTitle) {
+    tableOfContent.getCardHeaderTitle(versionPaneIndex).should('have.text', cardHeaderTitle);
+});
+
+When(/^click on move option from dropdown content$/, function () {
+    tableOfContent.clickMoveOptionFromDropDownContent();
+});
+
+When(/^click on place before option from dropdown content$/, function () {
+    tableOfContent.clickPlaceBeforeOptionFromDropDownContent();
 });

@@ -26,6 +26,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
+import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
@@ -106,4 +107,6 @@ public interface ApiService {
     MilestonePDFDownloadResponse downloadMilestonePDFFromVersion(String proposalRef, String versionedReference) throws Exception;
 
     void validateProposal(String proposalRef) throws Exception;
+
+    LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) throws IOException;
 }

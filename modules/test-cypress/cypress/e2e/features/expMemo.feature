@@ -20,13 +20,13 @@ Feature: explanatory memorandum page regression features
     When click on explanatory memorandum link present in act viewer page
     Then user is on explanatory memorandum page
     And  annotation side bar is present
-    And  ribbon toolbar is displayed
+    And  ribbon toolbar is maximized
     And  navigation pane is expanded
     And  explanatory memorandum document container is displayed
     And  save button is displayed in ribbon toolbar
     And  exports button is displayed in ribbon toolbar
     And  search button is displayed in ribbon toolbar
-    And  zoom percentage level is showing "100%" in ribbon toolbar
+    And  zoom percentage level is showing 100 in ribbon toolbar
     And  see user guidance toggle bar is off in ribbon toolbar
     And  enable track changes toggle bar is off in ribbon toolbar
     And  see track changes toggle bar is on in ribbon toolbar

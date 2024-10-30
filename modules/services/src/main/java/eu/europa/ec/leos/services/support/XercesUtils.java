@@ -306,6 +306,31 @@ public class XercesUtils {
         return getElementById(node, elementId, true);
     }
 
+    public static List<Node> getElementsById(Node node, String elementId) {
+        return getElementsById(node, elementId, true);
+    }
+
+    public static List<Node> getElementsById(Node node, String elementId, boolean namespaceEnabled) {
+        String attrId = namespaceEnabled ? XMLID : ID;
+        // Preferred to use XPath for finding elements by ID.
+        // In order to use API method getElementById(elementId) rules has to be set to Xerces to indicate which
+        // from the parameters will be considered as ID.
+        NodeList nodes = getElementsByXPath(node, String.format("//*[@%s = '%s']", attrId, elementId), namespaceEnabled);
+        if (nodes.getLength() == 0) {
+            if (namespaceEnabled) { //try without namespace.
+                // TODO Is a bad design! Actually we shouldn't be in a situation when we load the DOM tree with namespace enabled
+                // while  we keep treating the ID attribute without namespace. Is happening in comparison when converting the
+                // files in transformerService.formatToHtml()
+                nodes = getElementsByXPath(node, String.format("//*[@%s = '%s']", ID, elementId), false);
+            }
+        }
+        List<Node> listNodes = new ArrayList<>();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            listNodes.add(nodes.item(i));
+        }
+        return listNodes;
+    }
+
     public static Node getElementById(Node node, String elementId, boolean namespaceEnabled) {
         String attrId = namespaceEnabled ? XMLID : ID;
         // Preferred to use XPath for finding elements by ID.
@@ -823,6 +848,21 @@ public class XercesUtils {
             node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 if (elementName.equals(node.getNodeName())) {
+                    firstChild = node;
+                    break;
+                }
+            }
+        }
+        return firstChild;
+    }
+
+    public static Node getFirstChild(Node node, List<String> elementNames) {
+        Node firstChild = null;
+        NodeList nodeList = node.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if (elementNames.contains(node.getNodeName())) {
                     firstChild = node;
                     break;
                 }

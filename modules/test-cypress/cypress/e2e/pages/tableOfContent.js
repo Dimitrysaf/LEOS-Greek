@@ -12,9 +12,10 @@ class tableOfContent {
         navigationPaneMinimized: () => cy.get("button[aria-label='Expand Navigation Pane']"),
         compareBtn: () => cy.get("button[title='Compare versions']"),
         searchBtn: () => cy.get("button[title='Show search bar']"),
-        recentChangesVersionCardContent: () => cy.get('app-versions-pane-group eui-card').first().find('eui-card-content'),
-        recentChangesVersionCardSubTitle: () => cy.get('app-versions-pane-group eui-card').first().find('.eui-card-header__title-container-subtitle'),
-        lastVersionCardHeaderTitle: () => cy.get('app-versions-pane-group eui-card').last().find('.eui-card-header__title-container-title'),
+        appVersionsPaneGroup: () => cy.get('app-versions-pane-group eui-card'),
+        recentChangesVersionCardContent: () => this.elements.appVersionsPaneGroup().first().find('eui-card-content'),
+        recentChangesVersionCardSubTitle: () => this.elements.appVersionsPaneGroup().first().find('.eui-card-header__title-container-subtitle'),
+        lastVersionCardHeaderTitle: () => this.elements.appVersionsPaneGroup().last().find('.eui-card-header__title-container-title'),
         nestedTreeNode: () => cy.get('mat-nested-tree-node.mat-nested-tree-node'),
         changeTypeBtn: () => cy.get("button[aria-label='Change Type']"),
         definitionArticleTypeBtn: () => cy.get("button[aria-label='Definition']"),
@@ -31,11 +32,13 @@ class tableOfContent {
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
         labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
         revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version'),
-        dropdownContent: () => cy.get('eui-dropdown-content .eui-u-flex-align-items-start'),
-        dropdownItemContentTextList: () => this.elements.dropdownContent().find('button .eui-dropdown-item__content-text'),
+        dropdownContent: () => cy.get("eui-dropdown-content[role='menu']"),
+        dropdownItemContentTextList: () => this.elements.dropdownContent().find('.eui-u-flex-align-items-start button .eui-dropdown-item__content-text'),
         contributionCard: () => cy.get('eui-card.revisions-pane').eq(0),
         euiLabelSuccess: () => cy.get('span.eui-label--success'),
-        euiLabelDanger: () => cy.get('span.eui-label--danger')
+        euiLabelDanger: () => cy.get('span.eui-label--danger'),
+        moveOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Move']"),
+        placeBeforeOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place before']")
     }
 
     clickContributionsPaneButton(){
@@ -58,6 +61,7 @@ class tableOfContent {
 
     clickSaveCloseBtn(){
         this.elements.saveCloseBtn().click();
+        cy.wait(500);
     }
 
     clickCancelBtn(){
@@ -68,7 +72,7 @@ class tableOfContent {
         this.elements.versionsPaneAccordion().click();
     }
 
-    clickNavigationPaneAccordian(){
+    clickNavigationPaneAccordion(){
         this.elements.navigationPaneAccordion().click();
     }
 
@@ -130,6 +134,18 @@ class tableOfContent {
 
     getSubVersion(subVersionNumber) {
         return this.elements.subVersion().eq(subVersionNumber-1);
+    }
+
+    getCardHeaderTitle(versionPaneIndex){
+        return this.elements.appVersionsPaneGroup().eq(versionPaneIndex-1).find("eui-card-header-title");
+    }
+
+    clickMoveOptionFromDropDownContent() {
+        this.elements.moveOptionInDropDownContent().click();
+    }
+
+    clickPlaceBeforeOptionFromDropDownContent() {
+        this.elements.placeBeforeOptionInDropDownContent().click();
     }
 }
 export default new tableOfContent();

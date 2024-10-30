@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.StructureServiceImpl;
@@ -90,6 +91,8 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
     protected DocumentLanguageContext documentLanguageContext;
     @Mock
     protected CloneContext cloneContext;
+    @Mock
+    private ProfileContext profileContext;
     protected TrackChangesContext trackChangesContext = new TrackChangesContext();
     protected AkomantosoXsdValidator akomantosoXsdValidator = new AkomantosoXsdValidator();
 
@@ -123,7 +126,8 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
     protected NumberConfigFactory numberConfigFactory = Mockito.spy(new NumberConfigFactory());
     @InjectMocks
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerMandate();
-    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    @InjectMocks
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext, profileContext);
     private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);

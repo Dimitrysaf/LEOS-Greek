@@ -187,6 +187,7 @@
         <sonar-jacoco-plugin.version>0.8.7</sonar-jacoco-plugin.version>
         <!-- Ehcache 2.x -->
         <ehcache.version>2.10.9.2</ehcache.version>
+        <ehcache.jgroups.version>1.7</ehcache.jgroups.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -625,6 +626,17 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache-jgroupsreplication</artifactId>
+                <version>${ehcache.jgroups.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>net.sf.ehcache</groupId>
+                        <artifactId>ehcache-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>

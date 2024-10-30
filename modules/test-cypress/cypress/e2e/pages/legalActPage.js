@@ -1,13 +1,14 @@
 class legalActPage {
     elements = {
         closeBtn: () => cy.contains('Close'),
-        ribbonToolBar: () => cy.get('app-ribbon-toolbar-container'),
         bill: () => cy.get('bill'),
         preface: () => this.elements.bill().find('preface'),
         longTitle: () => this.elements.preface().find('longtitle'),
         docPurpose: () => this.elements.longTitle().find('docpurpose'),
         recitalFromImportOj: () => cy.get("recital[id^='impXrec']"),
-        articleFromImportOj: () => cy.get("article[id^='impXart']")
+        articleFromImportOj: () => cy.get("article[id^='impXart']"),
+        aknBody: () => cy.get('aknbody'),
+        leosSoftMoveLabel: () => this.elements.aknBody().find('span.leos-soft-move-label')
     }
 
     clickCloseBtn() {
@@ -269,6 +270,10 @@ class legalActPage {
 
     getLeosActionsIconOfRecital(recitalNumber){
         return this.getRecital(recitalNumber).siblings('.leos-actions.Vaadin-Icons .leos-actions-icon');
+    }
+
+    clickSoftMoveLabelWithTitle(label) {
+        this.elements.leosSoftMoveLabel().contains(label).click();
     }
 }
 export default new legalActPage();

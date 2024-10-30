@@ -1,6 +1,5 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import messageGrowl from "../pages/messageGrowl";
-import dialogBoxPage from "../pages/euiDialogBoxPage";
 import headerPage from "../pages/headerPage";
 
 And(`extract recent {string} file present in download folder`, (extension) => {
@@ -48,12 +47,12 @@ Then(`xml files having separator {string} present in download folder contain bel
     });
 });
 
-Then(`user is on {string} window`, (windowName) => {
-    dialogBoxPage.elements.headerTitle().should('have.text', windowName);
-});
-
 When(/^click on workspace button in breadcrumb item$/, function () {
     headerPage.clickWorkspace();
+});
+
+When(/^click on home link in breadcrumb item$/, function () {
+    headerPage.clickHomeLink();
 });
 
 When(`click on home button`, () => {

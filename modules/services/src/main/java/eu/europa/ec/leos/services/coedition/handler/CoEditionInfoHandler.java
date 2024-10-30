@@ -91,7 +91,7 @@ public class CoEditionInfoHandler implements InfoHandler {
 
     @Override
     public List<CoEditionVO> getSessionEditInfo(String sessionId) {
-        return editionInfoRepository.getCurrentEditInfo(sessionId);
+        return editionInfoRepository.getSessionEditInfo(sessionId);
     }
 
 }

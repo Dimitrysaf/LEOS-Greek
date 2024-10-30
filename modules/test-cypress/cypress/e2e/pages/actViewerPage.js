@@ -1,7 +1,7 @@
 class actViewerPage {
     elements = {
-        proposalTitle: () => cy.get('app-proposal-header h1'),
-        //favouriteIconBtn: () => cy.get('eui-icon.eui-icon--size-l'),
+        appProposalHeader: () => cy.get('app-proposal-header'),
+        proposalTitle: () => this.elements.appProposalHeader().find('h1'),
         actionBtn: () => cy.get('app-proposal-actions-dropdown button'),
         downloadBtn:() => cy.get('.eui-dropdown-item__content-text').contains('Download'),
         deleteBtn: () => cy.get('button.eui-u-color-danger-100'),
@@ -34,7 +34,8 @@ class actViewerPage {
         templateLabelValue: () => this.elements.rowLabel().contains('Template').closest('div').next('div'),
         languageLabelValue: () => this.elements.rowLabel().contains('Language').closest('div').next('div'),
         confidentialityLevelLabelValue: () => this.elements.rowLabel().contains('Confidentiality Level').closest('div').next('div'),
-        eeARelevanceCheckBoxValue: () => this.elements.rowLabel().contains('EEA Relevance').prev('input')
+        eeARelevanceCheckBoxValue: () => this.elements.rowLabel().contains('EEA Relevance').prev('input'),
+        favouriteIcon: () => this.elements.appProposalHeader().find("eui-icon-svg svg[class*='eui-bookmark']")
     }
 
     clickCloseBtn(){
@@ -125,7 +126,10 @@ class actViewerPage {
     clickDetailsTab() {
         this.elements.detailsTab().click();
     }
+
+    clickFavouriteIcon() {
+        this.elements.favouriteIcon().click({force:true});
+    }
 }
 export default new actViewerPage();
-
 import '@cypress/xpath';

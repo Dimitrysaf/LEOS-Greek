@@ -344,11 +344,14 @@ define(function actionManagerExtensionModule(require) {
         // Means the event was fired from single click and not selection
         if (selection.isCollapsed && selection.type === "Caret") {
             const isInstanceReady = CKEDITOR.currentInstance ? CKEDITOR.currentInstance.instanceReady : false;
+            const targetElementId = event.currentTarget.getAttribute('id');
+            const currentElementId = CKEDITOR.currentInstance ? CKEDITOR.currentInstance.element.getChildren().getItem(0).getAttribute('id') : '';
             // Ignore clicks coming from specific elements
             const shouldBeIgnored = connector.getState().isAngularUI &&
                 (IGNORE_EDIT_CLICK.elementName.includes(event.target.nodeName) ||
                  IGNORE_EDIT_CLICK.elementClass.some((cl) => event.target?.classList?.contains(cl)) ||
-                 IGNORE_EDIT_CLICK.elementName.includes(event.target?.offsetParent?.nodeName) || isInstanceReady
+                 IGNORE_EDIT_CLICK.elementName.includes(event.target?.offsetParent?.nodeName) ||
+                 (isInstanceReady && targetElementId === currentElementId)
                 );
             if (!shouldBeIgnored) {
                 _handleAction(connector, "edit", event);
@@ -382,12 +385,15 @@ define(function actionManagerExtensionModule(require) {
         var editable = _getEditable($element);
         var deletable = _getDeletable($element);
         let optional = $element.attr('leos\:optional');
+        let guidance = $element.attr('leos\:guidance');
+        let differentMessageForLast = guidance && guidance === 'true' ? false : true;
         var user = connector.user;
         if (_isValidAction(action, elementId, elementType, editable, deletable, user) || optional) {
             var data = {
                 action: action,
                 elementId: elementId,
-                elementType: elementType
+                elementType: elementType,
+                differentMessageForLast: differentMessageForLast
             };
             var topic = "actions." + action + ".element";
             if (action == 'edit') {
@@ -586,7 +592,8 @@ define(function actionManagerExtensionModule(require) {
         type = type === 'crossHeading' ? 'crossheading' : type;
         type = type === 'block' ? 'crossheading' : type;
         let isHeadingOfAnOptionalLevel = false;
-        let optional = $element.attr('leos\:optional');
+        let optional = $element.attr('leos:optional');
+        let action = $element.attr('leos:action');
         let leosAction = "";
         if (optional === 'true' && $element[0] && $element[0].parentNode && $element[0].parentNode.localName === 'level') {
             isHeadingOfAnOptionalLevel = true;
@@ -597,7 +604,7 @@ define(function actionManagerExtensionModule(require) {
         let hasBeforeAndAfter = optional ? false : deletable;
         var insertBeforeAndAfter = _insertBeforeAndAfterIcon($element, hasBeforeAndAfter);
         editable = editable || (editable && $element.attr('leos\:optionlist'));
-        deletable = (optional === 'true') || _isDeletable($element, deletable, connector);
+        deletable = (optional === 'true' && action !== 'delete') || _isDeletable($element, deletable, connector);
 
         let template = ['<div class="leos-actions Vaadin-Icons">']; //FIXME: we can directly create elements
 

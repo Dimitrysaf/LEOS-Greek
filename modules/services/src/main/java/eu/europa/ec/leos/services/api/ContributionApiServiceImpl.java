@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
@@ -33,6 +34,7 @@ import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.clone.InternalRefMap;
+import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
@@ -73,6 +75,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +106,6 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
-import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @Service
 public class ContributionApiServiceImpl implements ContributionApiService {
@@ -141,6 +143,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private final DocumentViewService<XmlDocument> documentViewService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final DocumentLanguageContext documentLanguageContext;
+    private final Provider<CollectionContextService> proposalContextProvider;
 
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
@@ -171,7 +174,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       ProposalConverterService proposalConverterService,
                                       BillService billService,
                                       Provider<BillContextService> billContextProvider,
-                                      ArchiveService archiveService, CollectionUrlBuilder urlBuilder) {
+                                      ArchiveService archiveService, CollectionUrlBuilder urlBuilder, Provider<CollectionContextService> proposalContextProvider) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
@@ -203,6 +206,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.billContextProvider = billContextProvider;
         this.archiveService = archiveService;
         this.urlBuilder = urlBuilder;
+        this.proposalContextProvider = proposalContextProvider;
     }
 
     private XmlDocument findDocumentByRef(String docRef) throws NotFoundException {
@@ -373,13 +377,30 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 xmlContent = this.numberService.renumberDivisions(xmlContent);
             }
             xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
-            document = this.leosRepository.updateDocument(
-                    document.getId(),
-                    xmlContent,
-                    document.getVersionType(),
-                    this.messageHelper.getMessage("contribution.merge.operation.message"),
-                    XmlDocument.class
-            );
+            if (document.getCategory().equals(LeosCategory.PROPOSAL)) {
+                document = proposalService.updateProposal(
+                        (Proposal) document,
+                        xmlContent,
+                        VersionType.MINOR,
+                        this.messageHelper.getMessage("contribution.merge.operation.message")
+                );
+                CollectionContextService context = proposalContextProvider.get();
+                context.useProposal(proposal);
+                context.usePurpose(StringEscapeUtils.unescapeXml(proposalService.getPurposeFromXml(xmlContent)));
+                context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+                String comment = messageHelper.getMessage("operation.docpurpose.updated");
+                context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
+                context.useActionComment(comment);
+                context.executeUpdateDocumentsAssociatedToProposal();
+            } else {
+                document = this.leosRepository.updateDocument(
+                        document.getId(),
+                        xmlContent,
+                        VersionType.MINOR,
+                        this.messageHelper.getMessage("contribution.merge.operation.message"),
+                        XmlDocument.class
+                );
+            }
         }
         if (request.isAcceptAllContributions() && Objects.nonNull(contribution)) {
             this.markContributionAsProcessed(contribution.getVersionedReference());

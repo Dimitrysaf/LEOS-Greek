@@ -14,7 +14,11 @@ class homePage {
         searchBtn: () => cy.get('button.input-container'),
         searchCardContainer: () => cy.get('app-proposal-home-card.search-card-container'),
         proposalLinksInSearchCardContainer: () => this.elements.searchCardContainer().find('.proposals-list-container app-proposal-item-home-card a'),
-        totalSearchResults: () => cy.get('div.search-total-results')
+        totalSearchResults: () => cy.get('div.search-total-results'),
+        myLatestActivityHomeCard: () => cy.get("app-proposal-home-card[labelkey='page.home.my-latest-activity']"),
+        myLatestActivityItemHomeCard: () => this.elements.myLatestActivityHomeCard().find('app-proposal-item-home-card'),
+        myFavouritesHomeCard: () => cy.get("app-proposal-home-card[labelkey='page.home.my-favourites']"),
+        myFavouritesItemHomeCard: () => this.elements.myFavouritesHomeCard().find('app-proposal-item-home-card')
     }
 
 /*    clickCreateProposalBtn() {
@@ -51,6 +55,22 @@ class homePage {
 
     clickProposalInSearchCardContainer(proposalIndex) {
         this.elements.proposalLinksInSearchCardContainer().eq(proposalIndex-1).click();
+    }
+
+    getProposalFromMyLatestActivityTable(rowIndex) {
+        return this.elements.myLatestActivityItemHomeCard().eq(rowIndex-1).find('eui-card-header-title a');
+    }
+
+    clickProposalFromMyLatestActivityTable(rowIndex) {
+        this.getProposalFromMyLatestActivityTable(rowIndex).click();
+    }
+
+    getProposalFromMyLatestFavouritesTable(rowIndex) {
+        return this.elements.myFavouritesItemHomeCard().eq(rowIndex-1).find('eui-card-header-title a');
+    }
+
+    clickProposalFromMyFavouritesTable(rowIndex) {
+        this.getProposalFromMyLatestFavouritesTable(rowIndex).click();
     }
 }
 export default new homePage();

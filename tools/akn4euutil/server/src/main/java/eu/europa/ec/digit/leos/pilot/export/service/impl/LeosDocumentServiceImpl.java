@@ -13,40 +13,41 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
-import eu.europa.ec.digit.leos.pilot.export.model.CustomMultipartFile;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutputList;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
-import eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil;
-import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
+import eu.europa.ec.digit.leos.pilot.export.service.rest.Akn4EUUtilRestClient;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
+@Slf4j
 public class LeosDocumentServiceImpl implements LeosDocumentService {
     private static final Logger LOG = LoggerFactory.getLogger(LeosLegDocumentServiceImpl.class);
 
     private final LeosLegDocumentService leosLegDocumentService;
     private final XmlDocumentService xmlDocumentService;
     private final MetadataService metadataService;
+    private final Akn4EUUtilRestClient restClient;
 
     public LeosDocumentServiceImpl(LeosLegDocumentService leosLegDocumentService,
-            XmlDocumentService xmlDocumentService,
-            MetadataService metadataService) {
+                                   XmlDocumentService xmlDocumentService,
+                                   MetadataService metadataService, Akn4EUUtilRestClient restClient) {
         this.leosLegDocumentService = leosLegDocumentService;
         this.xmlDocumentService = xmlDocumentService;
         this.metadataService = metadataService;
+        this.restClient = restClient;
     }
 
     public LeosConvertDocumentInput createDocumentInput(MultipartFile inputFile, MultipartFile main, boolean isWithAnnotations) {
@@ -74,29 +75,14 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
     }
 
     private List<LeosRenditionOutput> getRenditionOutputs(LeosConvertDocumentInput convertDocumentInput) {
-        Map<String, Object> translationMap;
-        List<LeosRenditionOutput> renditionOutputs = new ArrayList<>();
+        LeosRenditionOutputList outputList;
         try {
-            translationMap = ZipUtil.unzipByteArray(convertDocumentInput.getTranslationsFile().getBytes());
-            translationMap.keySet().stream().forEach(translationKey -> {
-                MultipartFile main = null;
-                if(translationKey.startsWith(ConvertUtil.PROPOSAL_FILE_PREFIX)) {
-                    main = new CustomMultipartFile((byte[])translationMap.get(translationKey), translationKey,
-                            "application/xml");
-                }
-                LeosConvertDocumentInput renditionInput = createDocumentInput(
-                        new CustomMultipartFile((byte[])translationMap.get(translationKey), translationKey,
-                                "application/xml"),
-                        main,
-                        false
-                );
-                LeosRenditionOutput renditionOutput = xmlDocumentService.xmlToHtmlRendition(renditionInput);
-                renditionOutputs.add(renditionOutput);
-            });
+            outputList = restClient.generateHtmlRenditions(convertDocumentInput.getTranslationsFile());
         } catch (IOException e) {
+            log.error("Error while generating html renditions - {}", e.getMessage());
             throw new RuntimeException(e);
         }
-        return renditionOutputs;
+        return outputList.getLeosRenditionOutputs();
     }
 
     public byte[] applyMetadata(MultipartFile inputFile) {

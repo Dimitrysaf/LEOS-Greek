@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
@@ -56,6 +57,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.io.File;
+import java.util.Collections;
 import java.util.Properties;
 
 @Service
@@ -80,12 +82,12 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
             NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-            DocumentViewService documentViewService) {
+            DocumentViewService documentViewService, GenericDocumentTocApiService genericDocumentTocApiService) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService);
+                documentViewService, genericDocumentTocApiService);
     }
 
     @Override
@@ -105,6 +107,11 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
     @Override
     public void validateProposal(String proposalRef) {
         throw new IllegalStateException("Feature not implemented for the running instance");
+    }
+
+    @Override
+    public LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) {
+        return new LeosRenditionOutputResponseList(Collections.emptyList());
     }
 
 }

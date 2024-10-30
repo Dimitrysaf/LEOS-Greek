@@ -5,17 +5,8 @@ $GREY_COLOUR:#707070;
 $HEADER_BLUE:#0065A2;
 
 .leos-user-coedition {
-  left:0;
-  transform:translateX(-100%);
-  position: absolute;
-  width: 15px;
-  user-select: none;
   color: $HEADER_BLUE;
-  marign-right: 10px;
-  display: inline-block;
-  * {
-    font-weight: normal;
-  }
+  user-select: none;
   z-index: 999;
 }
 
@@ -23,3 +14,11 @@ $HEADER_BLUE:#0065A2;
   color: $GREY_COLOUR;
 }
 
+.leos-user-coedition-toc-element {
+  transform: translateX(-100%);
+  position: absolute;
+  display: inline-block;
+  * {
+    font-weight: normal;
+  }
+}

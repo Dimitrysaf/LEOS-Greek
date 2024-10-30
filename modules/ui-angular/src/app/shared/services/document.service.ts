@@ -28,9 +28,9 @@ import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import {
-  AnnotateOperationMode,
+  AnnotateOperationMode, ApplicationRole,
   Collaborator,
-  DocumentConfig,
+  DocumentConfig, DocumentRole,
   LeosAppConfig,
   Permission,
 } from '@/shared';
@@ -347,7 +347,7 @@ export class DocumentService {
       .subscribe(([collaborators, config, documentConfig]) => {
         const roles = this.resolveRoles(collaborators, config, documentConfig);
         this.userRolesBS.next(roles);
-        const permissions = this.resolvePermissions(collaborators, config, documentConfig);
+        const permissions = this.resolvePermissions(config, roles);
         this.permissionsBS.next(permissions);
       });
 
@@ -1515,21 +1515,16 @@ export class DocumentService {
 
   private resolveRoles(collaborators: Collaborator[], config: LeosAppConfig, documentConfig: DocumentConfig) {
     const docRoles = this.retrieveAuthority(collaborators, config);
-    return [...config.user.roles, ...docRoles, documentConfig.contextRole].filter(
-      Boolean,
-    );
-  }
-
-  private resolvePermissions(
-    collaborators: Collaborator[],
-    config: LeosAppConfig,
-    documentConfig: DocumentConfig
-  ) {
-    const docRoles = this.retrieveAuthority(collaborators, config);
     const roles = [...config.user.roles, ...docRoles];
     if(documentConfig.contextRole) {
       roles.push(documentConfig.contextRole);
     }
+    return roles.filter(
+      Boolean,
+    );
+  }
+
+  private resolvePermissions(config: LeosAppConfig, roles: (ApplicationRole | DocumentRole)[]) {
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];
   }

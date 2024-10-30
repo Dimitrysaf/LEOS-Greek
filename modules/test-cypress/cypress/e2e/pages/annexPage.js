@@ -23,6 +23,10 @@ class annexPage {
         cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.before']").click({force:true}));
     }
 
+    clickInsertAfterIconOfLevel(levelNumber) {
+        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.after']").click({force:true}));
+    }
+
     clickDeleteIconOfLevel(levelNumber) {
         cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='delete']").click({force:true}));
     }
@@ -67,8 +71,20 @@ class annexPage {
         this.getLevel(levelNumber).find('mref').eq(mReferenceNumber-1).find('ref').click();
     }
 
-    checkLevelContainsImage(levelNumber){
-        return this.getLevel(levelNumber).find('img').should('exist');
+    getImageOfLevel(levelNumber){
+        return this.getLevel(levelNumber).find('img');
+    }
+
+    getNumOfLevel(levelNumber) {
+        return this.getLevel(levelNumber).children('num');
+    }
+
+    getSoftMoveLabelOfNumOfLevel(levelNumber) {
+        return this.getNumOfLevel(levelNumber).children('span.leos-soft-move-label');
+    }
+
+    rightClickOnSoftMoveLabelOfNumOfLevel(levelNumber) {
+        this.getSoftMoveLabelOfNumOfLevel(levelNumber).rightclick();
     }
 }
 export default new annexPage();

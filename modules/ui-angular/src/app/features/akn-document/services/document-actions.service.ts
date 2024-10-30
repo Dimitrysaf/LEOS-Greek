@@ -107,6 +107,7 @@ export abstract class DocumentActionsService {
   private actionItemsBS = new BehaviorSubject<IRibbonToolbarSection[]>([]);
   private applyDisabledBS = new BehaviorSubject<boolean>(true);
   private leosSwitchLevelArticle = false;
+  private hasUpdatePermission = false;
 
   protected constructor(
     protected router: Router,
@@ -159,6 +160,7 @@ export abstract class DocumentActionsService {
         this.documentConfig.trackChangesShowed;
       this.updateTrackChangesStatus();
       this.permissions = permissions;
+      this.hasUpdatePermission = permissions != null && permissions.includes('CAN_UPDATE');
       const newActions = this.buildActions();
       this.actionItemsBS.next(newActions);
     });
@@ -273,6 +275,7 @@ export abstract class DocumentActionsService {
     const finalizeSection =
       this.isDocumentTypeTheSame(this.documentService.documentType, 'STAT_FINANC_LEGIS')
       && !this.isClonedProposal()
+      && this.hasUpdatePermission
       && this.buildFinalizeSection();
     const leosLightSection =  this.showMarkAsDoneButton && this.buildMarkAsDoneSection();
     return [
@@ -526,7 +529,7 @@ export abstract class DocumentActionsService {
           ),
           disabled: this.documentService.isEditorOpen$,
           isSlider: true,
-          value: true,
+          value: this.seeTrackChanges,
           actionFn: () => this.toggleSeeTrackChanges(),
         },
       ];

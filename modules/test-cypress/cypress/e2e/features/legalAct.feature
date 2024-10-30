@@ -18,9 +18,27 @@ Feature: Legal Act Page Regression Features
         Then user is on act viewer page
         When click on legal act link present in act viewer page
         Then user is on legal act page
-        And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
+        And  annotation side bar is present
+        And  annotation pane is minimized
+        When minimize ribbon toolbar
+        Then ribbon toolbar is minimized
+        When maximize ribbon toolbar
+        Then ribbon toolbar is maximized
+        And  zoom percentage level is showing 100 in ribbon toolbar
+        When click on zoom in button in ribbon toolbar
+        Then zoom percentage level is showing 110 in ribbon toolbar
+        When click on zoom out button in ribbon toolbar
+        Then zoom percentage level is showing 100 in ribbon toolbar
+        When click on zoom out button in ribbon toolbar
+        Then zoom percentage level is showing 90 in ribbon toolbar
+        When click on zoom in button in ribbon toolbar
+        Then zoom percentage level is showing 100 in ribbon toolbar
+        When click on annotation forward pane
+        Then annotation pane is maximized
+        When click on annotation back pane
+        Then annotation pane is minimized
         When mouseover and click on citation 1
         Then ck editor window is displayed
         When select content from offset 7 till offset 14 in citation in edition mode
@@ -62,7 +80,7 @@ Feature: Legal Act Page Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
         When mouseover and click on article 1
         Then ck editor window is displayed
@@ -98,7 +116,7 @@ Feature: Legal Act Page Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         When mouseover and click on article 1
         Then ck editor window is displayed
         When append "New Text" at offset 7 in numbered paragraph 1 of article in edition mode
@@ -143,8 +161,22 @@ Feature: Legal Act Page Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
+        When click search button in ribbon toolbar
+        Then document search bar is displayed
+        When put keyword "regard" in document search input box
+        Then search result is showing "1 of 7"
+        And  number of focus search result is 1
+        And  number of other search results are 6
+        When click next button in document search bar
+        Then search result is showing "2 of 7"
+        When click next button in document search bar
+        Then search result is showing "3 of 7"
+        When click previous button in document search bar
+        Then search result is showing "2 of 7"
+        When click on cancel button in document search bar
+        Then document search bar is not present
         When click on toc edit button
         Then cancel button is displayed and enabled in navigation pane
         Then below element lists are displayed in Elements menu
@@ -182,6 +214,16 @@ Feature: Legal Act Page Regression Features
         Then ck editor window is not displayed
         And  content of paragraph 1 of article 7 contains "New Text"
         And  paragraph 1 of article 7 doesn't contain "Directive"
+        When click on save button in ribbon toolbar
+        Then "Save this version" dialog box window is displayed
+        When provide input "major version" dialog box window
+        And  click on ok button in dialog box window
+        And  click on versions pane accordion
+        Then compare versions button is displayed in versions pane section
+        And  search button is displayed in versions pane section
+        And  navigation pane is minimized
+        And  "No changes after last version" subtitle is displayed under recent changes version card
+        And  app-versions-pane-group 2 contains card header title "Version 0.2.0 - major version"
 
     @indentOutdent @paragraphMode @local
     Scenario: test indent and out-dent scenario inside article
@@ -197,7 +239,7 @@ Feature: Legal Act Page Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
         When mouseover and click on article 1
         Then ck editor window is displayed
@@ -434,7 +476,7 @@ Feature: Legal Act Page Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
         When mouseover and click on citation 2
         Then ck editor window is displayed
@@ -532,9 +574,9 @@ Feature: Legal Act Page Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         When click on import from oj button in ribbon toolbar
-        Then user is on "Import from the Official Journal of the European Union" window
+        Then "Import from the Official Journal of the European Union" dialog box window is displayed
         And  close button in import office journal window is displayed and enabled
         And  select all recitals button is disabled
         And  select all articles button is disabled
@@ -566,7 +608,7 @@ Feature: Legal Act Page Regression Features
         Then 3 recitals are added in legal act by import oj
         Then 3 articles are added in legal act by import oj
         When click on import from oj button in ribbon toolbar
-        Then user is on "Import from the Official Journal of the European Union" window
+        Then "Import from the Official Journal of the European Union" dialog box window is displayed
         When select option "REGULATION" for type field
         And  select option "2014" for year field
         And  provide value "9999" in Nr. field
@@ -583,7 +625,7 @@ Feature: Legal Act Page Regression Features
         When click on import button
         Then 176 recitals are added in legal act by import oj
         When click on import from oj button in ribbon toolbar
-        Then user is on "Import from the Official Journal of the European Union" window
+        Then "Import from the Official Journal of the European Union" dialog box window is displayed
         When select option "REGULATION" for type field
         And  select option "2016" for year field
         And  provide value "679" in Nr. field
@@ -612,7 +654,7 @@ Feature: Legal Act Page Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
         When mouseover and click on article 1
         Then ck editor window is displayed

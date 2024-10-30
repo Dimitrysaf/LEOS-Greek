@@ -13,33 +13,17 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.model;
 
-public class LeosRenditionOutput {
+import lombok.Data;
 
-    private byte[] rendition;
-    private String renditionFilename;
+@Data
+public class LeosRenditionOutput {
+    private byte[] htmlRendition;
+    private String htmlRenditionFilename;
+    private byte[] htmlTocRendition;
+    private String htmlTocRenditionFilename;
+    private byte[] htmlTocJS;
+    private String htmlTocJSFilename;
+
     private byte[] styleSheetOutput;
     private String styleSheetName;
-
-    public LeosRenditionOutput(byte[] rendition, String renditionFilename, byte[] styleSheetOutput, String styleSheetName) {
-        this.rendition = rendition;
-        this.renditionFilename = renditionFilename;
-        this.styleSheetOutput = styleSheetOutput;
-        this.styleSheetName = styleSheetName;
-    }
-
-    public byte[] getRendition() {
-        return rendition;
-    }
-
-    public String getRenditionFilename() {
-        return renditionFilename;
-    }
-
-    public byte[] getStyleSheetOutput() {
-        return styleSheetOutput;
-    }
-
-    public String getStyleSheetName() {
-        return styleSheetName;
-    }
 }

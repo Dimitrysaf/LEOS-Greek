@@ -139,7 +139,6 @@ export class DocumentEditorComponent
   contributionIndex = 0;
   contributionTemporaryDataId?: string;
   contributionTemporaryDataDocument?: string;
-  tasksOngoing: { name: string; key: string }[] = [];
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -271,7 +270,7 @@ export class DocumentEditorComponent
     this.loadStyleSheet();
 
     this.documentService.documentView$
-      .pipe(takeUntil(this.destroy$), filter(Boolean))
+      .pipe(filter(Boolean))
       .subscribe((documentView) => {
         this.loadingService.setTaskOver('refresh', this.documentRef);
         this.documentService.setDidDocumentLoadAndRender(true);
@@ -409,60 +408,6 @@ export class DocumentEditorComponent
         }
       });
 
-    this.loadingService.task$
-      .pipe(takeUntil(this.destroy$), debounceTime(500))
-      .subscribe((latestTask) => {
-        if (latestTask.ongoing) {
-          if (
-            !this.tasksOngoing.some(
-              (i) => i.name === latestTask.taskName && i.key === latestTask.key,
-            )
-          ) {
-            this.tasksOngoing.push({
-              name: latestTask.taskName,
-              key: latestTask.key,
-            });
-          }
-        } else if (
-          this.tasksOngoing.some(
-            (i) => i.name === latestTask.taskName && i.key === latestTask.key,
-          )
-        ) {
-          this.tasksOngoing = this.tasksOngoing.filter(
-            (item) =>
-              item.name !== latestTask.taskName && item.key !== latestTask.key,
-          );
-        }
-        let target = '';
-        this.tasksOngoing
-          .filter(
-            (value, index, array) =>
-              index === array.findIndex((item) => item.name === value.name),
-          )
-          .forEach(
-            (c) =>
-              (target =
-                target +
-                ' ' +
-                this.translate.instant('task.' + c.name + '.ongoing') +
-                ' '),
-          );
-        if (this.tasksOngoing.length > 0) {
-          this.appShellService.growl({
-            severity: 'info',
-            summary: 'Tasks ongoing',
-            detail: target,
-            sticky: true,
-          });
-        } else {
-          this.appShellService.growl({
-            severity: 'info',
-            summary: 'Tasks over',
-            detail: target,
-            life: 1,
-          });
-        }
-      });
   }
 
   onSearch() {

@@ -381,6 +381,7 @@ export class MergeContributionsService {
             isGrowlSticky: false,
             position: 'bottom-right',
           });
+          this.documentService.reloadDocument();
           this.emptyMergeActionList();
           this.loadingService.setLoading(false);
         },

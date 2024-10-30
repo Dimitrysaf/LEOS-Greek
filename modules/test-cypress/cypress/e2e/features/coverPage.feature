@@ -21,7 +21,7 @@ Feature: cover page Regression Features
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
         And  preface long title docPurpose contains "Automation Cover Page Testing"
         When click on versions pane accordion
@@ -71,10 +71,24 @@ Feature: cover page Regression Features
         When click on close button present in cover page
         Then user is on act viewer page
         And  title of the act contains "Automation Testing Cover Page" keyword
+        When click on home button
+        Then user is on home page
+        And  my latest activity table is displayed
+        And  name of the proposal in row 1 of my latest activity table contains "Automation Testing Cover Page"
+        When click on proposal 1 in my latest activity table
+        Then user is on act viewer page
+        When click on favourite icon
+        Then favourite icon is selected
+        When click on home button
+        Then user is on home page
+        And  my favourites table is displayed
+        And  name of the proposal in row 1 of my favourites table contains "Automation Testing Cover Page"
+        When click on proposal 1 in my favourites table
+        Then user is on act viewer page
         When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
-        And  ribbon toolbar is displayed
+        And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
         And  preface long title docPurpose contains "Automation Testing Cover Page"
         When click on versions pane accordion
@@ -83,3 +97,5 @@ Feature: cover page Regression Features
         And  navigation pane is minimized
         And  last subversion of recent changes version card contains "0.1.1Document title updated"
         And  last version card header title contains "Version 0.1.0 - Document created"
+        When click on home link in breadcrumb item
+        Then user is on home page

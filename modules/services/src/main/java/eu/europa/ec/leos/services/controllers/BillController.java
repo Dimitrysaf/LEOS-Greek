@@ -35,8 +35,10 @@ import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.request.SearchForImportCriteriaRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +78,8 @@ public class BillController {
     private GenericDocumentApiService genericDocumentApiService;
     @Autowired
     private CoEditionContext coEditionContext;
+    @Autowired
+    ProfileContext profileContext;
 
     @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -85,12 +89,17 @@ public class BillController {
                                                   @RequestHeader("presenterId") String presenterId,
                                                   @RequestParam(required = false) boolean isSplit,
                                                   @RequestParam(required = false, defaultValue = "") String alternateElementId,
-                                                  @RequestBody String elementContent) {
+                                                  @RequestBody String elementContent,
+                                                  HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+            if(StringUtils.isNotBlank(clientContextToken)) {
+                profileContext.setClientContextToken(clientContextToken);
+            }
             SaveElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName,
                     elementContent, isSplit, alternateElementId);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement, alternateElementId);

@@ -23,16 +23,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.locks.StampedLock;
 
 @Service
 public class CoEditionServiceImpl implements CoEditionService {
 
     private static final String SESSION_ID_MUST_NOT_BE_NULL = "sessionId must not be null";
+
     @Autowired
     private InfoHandler infoHandler;
-
-    private final StampedLock infoHandlerLock = new StampedLock();
 
     @Override
     public CoEditionActionInfo storeUserEditInfo(String sessionId, String presenterId, User user, String documentId, String elementId, InfoType infoType) {
@@ -40,85 +38,54 @@ public class CoEditionServiceImpl implements CoEditionService {
         Validate.notNull(presenterId, "presenterId must not be null");
         Validate.notNull(user, "user must not be null");
         Validate.notNull(documentId, "documentId must not be null");
-
-        CoEditionVO coEditionVo = new CoEditionVO(sessionId, presenterId, user.getLogin(), user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "", user.getEmail(), documentId,
-                elementId, infoType, System.currentTimeMillis());
-        long stamp = infoHandlerLock.writeLock();
-        try {
-            CoEditionActionInfo actionInfo = infoHandler.checkIfInfoExists(coEditionVo);
-            if (!actionInfo.sucesss()) {
-                actionInfo = infoHandler.storeInfo(coEditionVo);
-            }
-            return actionInfo;
-        } finally {
-            infoHandlerLock.unlockWrite(stamp);
+        CoEditionVO coEditionVo = new CoEditionVO(sessionId, presenterId, user.getLogin(), user.getName(),
+                user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
+                user.getEmail(), documentId, elementId, infoType, System.currentTimeMillis());
+        CoEditionActionInfo actionInfo = infoHandler.checkIfInfoExists(coEditionVo);
+        if (!actionInfo.sucesss()) {
+            actionInfo = infoHandler.storeInfo(coEditionVo);
         }
+        return actionInfo;
     }
 
     @Override
     public CoEditionActionInfo removeUserEditInfo(String presenterId, String documentId, String elementId, InfoType infoType) {
         Validate.notNull(presenterId, "presenterId must not be null");
         Validate.notNull(documentId, "documentId must not be null");
-
-        CoEditionVO coEditionVo = new CoEditionVO(null, presenterId, null, null, null, null, documentId, elementId, infoType, null);
-        long stamp = infoHandlerLock.writeLock();
-        try {
-            CoEditionActionInfo actionInfo = infoHandler.checkIfInfoExists(coEditionVo);
-            if (actionInfo.sucesss()) {
-                actionInfo = infoHandler.removeInfo(actionInfo.getInfo());
-            }
-            return actionInfo;
-        } finally {
-            infoHandlerLock.unlockWrite(stamp);
+        CoEditionVO coEditionVo = new CoEditionVO(null, presenterId, null, null, null, null,
+                documentId, elementId, infoType, null);
+        CoEditionActionInfo actionInfo = infoHandler.checkIfInfoExists(coEditionVo);
+        if (actionInfo.sucesss()) {
+            actionInfo = infoHandler.removeInfo(actionInfo.getInfo());
         }
+        return actionInfo;
     }
 
     @Override
     public CoEditionActionInfo removeUserEditInfo(String sessionId) {
         Validate.notNull(sessionId, SESSION_ID_MUST_NOT_BE_NULL);
-
-        long stamp = infoHandlerLock.writeLock();
-        try {
-            CoEditionActionInfo actionInfo = infoHandler.checkIfInfoExists(sessionId);
-            if (actionInfo.sucesss()) {
-                actionInfo = infoHandler.removeInfo(actionInfo.getInfo());
-            }
-            return actionInfo;
-        } finally {
-            infoHandlerLock.unlockWrite(stamp);
+        CoEditionActionInfo actionInfo = infoHandler.checkIfInfoExists(sessionId);
+        if (actionInfo.sucesss()) {
+            actionInfo = infoHandler.removeInfo(actionInfo.getInfo());
         }
+        return actionInfo;
     }
 
     @Override
     public List<CoEditionVO> getCoEditionsFromSession(String sessionId) {
         Validate.notNull(sessionId, SESSION_ID_MUST_NOT_BE_NULL);
-
-        long stamp = infoHandlerLock.readLock();
-        try {
-            return infoHandler.getSessionEditInfo(sessionId);
-        } finally {
-            infoHandlerLock.unlockRead(stamp);
-        }
+        return infoHandler.getSessionEditInfo(sessionId);
     }
 
     @Override
     public List<CoEditionVO> getAllEditInfo() {
-        long stamp = infoHandlerLock.readLock();
-        try {
-            return infoHandler.getAllEditInfo();
-        } finally {
-            infoHandlerLock.unlockRead(stamp);
-        }
+        return infoHandler.getAllEditInfo();
     }
 
     @Override
     public List<CoEditionVO> getCurrentEditInfo(String docId) {
         Validate.notNull(docId, "The document id must not be null!");
-        long stamp = infoHandlerLock.readLock();
-        try {
-            return infoHandler.getCurrentEditInfo(docId);
-        } finally {
-            infoHandlerLock.unlockRead(stamp);
-        }
+        return infoHandler.getCurrentEditInfo(docId);
     }
+
 }

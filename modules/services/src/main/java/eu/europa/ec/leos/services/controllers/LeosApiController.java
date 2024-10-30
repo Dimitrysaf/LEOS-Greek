@@ -15,12 +15,12 @@
 package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.eventbus.EventBus;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.User;
@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
+import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -307,7 +308,8 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/searchlegfile/{legFileId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getLegFile(@PathVariable("legFileId") String legFileId) {
+    public ResponseEntity<Object> getLegFile(@PathVariable("legFileId") String legFileId,
+                                             @RequestParam(required = false, defaultValue = "false") Boolean isDownload) {
         boolean isStatusUpdated = false;
         LeosLegStatus currentStatus = null;
         try {
@@ -319,9 +321,11 @@ public class LeosApiController {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
                 headers.setContentLength(file.length);
-                LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
-                leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
-                isStatusUpdated = true;
+                if (!(isDownload || currentStatus == LeosLegStatus.CONTRIBUTION_SENT)) {
+                    LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
+                    leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
+                    isStatusUpdated = true;
+                }
                 return new ResponseEntity<>(file, headers, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Leg file with Id" + legFileId + " in status " + currentStatus, HttpStatus.NOT_FOUND);
@@ -342,7 +346,8 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/searchlegfile/anystatus/{legFileId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getLegFileAnyStatus(@PathVariable("legFileId") String legFileId) {
+    public ResponseEntity<Object> getLegFileAnyStatus(@PathVariable("legFileId") String legFileId,
+                                                      @RequestParam(required = false, defaultValue = "false") Boolean isDownload) {
         boolean isStatusUpdated = false;
         LeosLegStatus currentStatus = null;
         try {
@@ -353,9 +358,11 @@ public class LeosApiController {
             HttpHeaders headers = new HttpHeaders();
             headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
             headers.setContentLength(file.length);
-            LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
-            leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
-            isStatusUpdated = true;
+            if (!(isDownload || currentStatus == LeosLegStatus.CONTRIBUTION_SENT)) {
+                LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
+                leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
+                isStatusUpdated = true;
+            }
             return new ResponseEntity<>(file, headers, HttpStatus.OK);
         } catch (Exception ex) {
             // in case of any exception reverting to current status
@@ -756,6 +763,20 @@ public class LeosApiController {
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting application configuration", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/getHtmlRenditions", method = RequestMethod.POST, produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getHtmlRenditions(@RequestParam("document") MultipartFile document) {
+        try {
+            LeosRenditionOutputResponseList renditionOutputs = apiService.getHtmlRenditions(document.getBytes());
+            return new ResponseEntity<>(renditionOutputs, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            LOG.error("Error occurred while getting Html renditions - {}", e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting Html renditions", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

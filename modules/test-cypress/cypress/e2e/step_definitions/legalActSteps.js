@@ -1,6 +1,7 @@
 import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
 import legalActPage from "../pages/legalActPage";
 import headerPage from "../pages/headerPage";
+import {checkContentResult} from "../util/expectDataTable";
 
 Then('user is on legal act page', () => {
     headerPage.getCurrentPageName().should("have.text", "Legal Act");
@@ -18,23 +19,6 @@ Then('document has {int} trackChange {string} tags with below content', (count, 
         expect(element[0].textContent).equal(datatable.raw().at(index).toString());
     });
 })
-
-function checkContentResult(element, datatable) {
-    element[0].childNodes.forEach((element, index) => {
-        if (element.nodeType === 1 && (datatable.raw().at(index).at(0).includes(",") || datatable.raw().at(index).at(0) !== "html")) {
-            const elementsArray = datatable.raw().at(index).at(0).split(",");
-            for (let elementIndex = 0; elementIndex < elementsArray.length; elementIndex++) {
-                expect(element.localName).equal(elementsArray[elementIndex]);
-                element = element.childNodes[0];
-            }
-            expect(element.textContent + "\"").equal(datatable.raw().at(index).at(1).substring(1));
-        }
-        if (element.nodeType === 1 && datatable.raw().at(index).at(0) === "html") {
-            const re = new RegExp(datatable.raw().at(index).at(1));
-            expect(true).equal(re.test(element.outerHTML));
-        }
-    })
-}
 
 Then('paragraph {int} of article {int} has below content', (paragraph, article, datatable) => {
     legalActPage.getContentOfParagraphFromArticle(paragraph, article).then((element) => {
@@ -76,10 +60,6 @@ When('click on close button present in legal act page', () => {
 
 When('{int} paragraphs are present in article {int}', (paragraphNumber, articleNumber) => {
     legalActPage.getAllParagraphFromArticle(articleNumber).should('have.length', paragraphNumber);
-})
-
-And('ribbon toolbar is displayed', () => {
-    legalActPage.elements.ribbonToolBar().should('be.visible');
 })
 
 And('citation {int} contains {string}', (citationNumber, text) => {
@@ -419,4 +399,12 @@ And('del tag with attribute {string} and value {string} of num tag of recital {i
 Then('ins tag with attribute {string} and value {string} of num tag of recital {int} contains value {string}', function (attributeName, attributeValue, recitalNumber, value) {
     const tagName = 'ins';
     legalActPage.getRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+When(/^click on soft move label with title "([^"]*)"$/, function (label) {
+    legalActPage.clickSoftMoveLabelWithTitle(label);
+});
+
+When(/^soft move label with title "([^"]*)" is  displayed$/, function (label) {
+    legalActPage.elements.leosSoftMoveLabel().contains(label).should('be.visible');
 });

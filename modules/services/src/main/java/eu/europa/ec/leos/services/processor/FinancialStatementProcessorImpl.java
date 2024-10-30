@@ -34,6 +34,7 @@ import java.util.List;
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
 @Service
@@ -111,6 +112,10 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
                 && element.getElementTagName().equals(HEADING)
                 && parentElement != null && parentElement.getElementFragment() != null && parentElement.getElementTagName().equals("level")) {
             elementId = parentElement.getElementId();
+            specialDeleteForLevels = true;
+        }
+        if (element != null && element.getElementFragment() != null && element.getElementFragment().contains("leos:optional=\"true\"")
+                && element.getElementTagName().equals(LEVEL)) {
             specialDeleteForLevels = true;
         }
         if(tagName.equalsIgnoreCase(SUBPARAGRAPH) || specialDeleteForLevels) {

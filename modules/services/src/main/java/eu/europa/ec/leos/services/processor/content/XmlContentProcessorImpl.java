@@ -1737,7 +1737,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent.getBytes(StandardCharsets.UTF_8));
         Node node = document.getFirstChild();
         node = setAttributeForDefinitionArticle(node);
-        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + XercesUtils.getId(node);
+        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + XercesUtils.getId(node).replaceAll("_", "");
         String newIdAttrValue = IdGenerator.generateId(idPrefix);
         addAttribute(node, XMLID, newIdAttrValue);
         String updatedElement = nodeToString(node);
@@ -2134,17 +2134,19 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         boolean singleChild = siblings.size() <= 1;
         boolean firstChild = siblings.indexOf(node) == 0;
 
-        if ((Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(tagName) && firstChild && !is(parentNode, LIST))
-                || (Arrays.asList(POINT, INDENT, INDENT).contains(tagName) && singleChild)) {
-            // Cases when the deleted element should be the wrapping element
-            node = parentNode;
-        } else if (tagName.equals(SUBPARAGRAPH) && is(parentNode, LIST) && firstChild) {
-            // Cases when the deleted element should be the wrapping element (subparagraph is intro of the first list)
-            Node grandParentNode = parentNode.getParentNode();
-            if (grandParentNode != null && !is(grandParentNode,LEVEL)) {
-                List<Node> parentNodeSiblings = XercesUtils.getChildren(grandParentNode, Arrays.asList(SUBPARAGRAPH, LIST));
-                if (parentNodeSiblings.indexOf(parentNode) == 0) {
-                    node = grandParentNode;
+        if (!is(parentNode, LEVEL)) {
+            if ((Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(tagName) && firstChild && !is(parentNode, LIST))
+                    || (Arrays.asList(POINT, INDENT, INDENT).contains(tagName) && singleChild)) {
+                // Cases when the deleted element should be the wrapping element
+                node = parentNode;
+            } else if (tagName.equals(SUBPARAGRAPH) && is(parentNode, LIST) && firstChild) {
+                // Cases when the deleted element should be the wrapping element (subparagraph is intro of the first list)
+                Node grandParentNode = parentNode.getParentNode();
+                if (grandParentNode != null && !is(grandParentNode, LEVEL)) {
+                    List<Node> parentNodeSiblings = XercesUtils.getChildren(grandParentNode, Arrays.asList(SUBPARAGRAPH, LIST));
+                    if (parentNodeSiblings.indexOf(parentNode) == 0) {
+                        node = grandParentNode;
+                    }
                 }
             }
         }
