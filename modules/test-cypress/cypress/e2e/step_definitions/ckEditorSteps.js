@@ -489,7 +489,3 @@ When(`click on image icon present in ck editor panel`, () => {
 When(`upload an image file from a relative location {string} in iframe {string}`, (location, iframeClass) => {
     ckEditorWindow.uploadImageFile("cypress/fixtures/images/" + location, iframeClass);
 });
-
-Then(`level {int} contains an image`, (levelNumber) => {
-    annexPage.checkLevelContainsImage(levelNumber);
-});

@@ -1,6 +1,7 @@
 import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import financialStatementPage from "../pages/financialStatementPage";
 import headerPage from "../pages/headerPage";
+import {checkContentResult} from "../util/expectDataTable";
 
 Then('user is on financial statement page', () => {
     headerPage.getCurrentPageName().should("have.text", "Financial Statement");

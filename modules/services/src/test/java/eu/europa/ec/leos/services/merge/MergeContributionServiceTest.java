@@ -41,6 +41,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.response.MergeContributionResponse;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
@@ -106,6 +107,9 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     @Mock
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
 
+    @Mock
+    private ProfileContext profileContext;
+
     @InjectMocks
     protected XPathCatalog xPathCatalog = spy(new XPathCatalog());
 
@@ -121,7 +125,8 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerProposal();
 
     private TrackChangesContext trackChangesContext = new TrackChangesContext();
-    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
+    @InjectMocks
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, securityContext, trackChangesContext, profileContext);
     private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
@@ -154,6 +159,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     private ContributionVO contribution4;
     private ContributionVO contribution5;
     private ContributionVO contribution6;
+    private ContributionVO contribution7;
     private XmlDocument xmlDoc;
     private byte[] docContent;
     protected byte[] contributionContent;
@@ -172,6 +178,9 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     private byte[] docContent6;
     private XmlDocument xmlDoc6;
     protected byte[] contributionContent6;
+    private byte[] docContent7;
+    private XmlDocument xmlDoc7;
+    protected byte[] contributionContent7;
 
     private final String FILE_PREFIX = "/merge";
 
@@ -209,12 +218,14 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         docContent4 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml");
         docContent5 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest5.xml");
         docContent6 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest6.xml");
+        docContent7 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest7.xml");
         contributionContent = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest.xml");
         contributionContent2 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest2.xml");
         contributionContent3 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest3.xml");
         contributionContent4 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest4.xml");
         contributionContent5 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest5.xml");
         contributionContent6 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest6.xml");
+        contributionContent7 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest7.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(docContent)));
         this.xmlDoc = getMockedBill(content);
@@ -233,6 +244,9 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         content = new ContentImpl("billMergeTest6.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(docContent6)));
         this.xmlDoc6 = getMockedBill(content);
+        content = new ContentImpl("billMergeTest7.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(docContent7)));
+        this.xmlDoc7 = getMockedBill(content);
         this.contribution = new ContributionVO();
         this.contribution.setCollaborators(Arrays.asList());
         this.contribution.setCheckinCommentVO(new CheckinCommentVO());
@@ -292,6 +306,16 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         this.contribution6.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
         this.contribution6.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
         this.contribution6.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
+
+        this.contribution7 = new ContributionVO();
+        this.contribution7.setCollaborators(Arrays.asList());
+        this.contribution7.setCheckinCommentVO(new CheckinCommentVO());
+        this.contribution7.setDocumentId("454");
+        this.contribution7.setUpdatedDate(Instant.now());
+        this.contribution7.setXmlContent(contributionContent7);
+        this.contribution7.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
+        this.contribution7.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
+        this.contribution7.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
         numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor,
                 documentLanguageContext);
         mergeContributionService = Mockito.spy(new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext,
@@ -2828,7 +2852,26 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest6.xml"));
-        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
         this.contribution6.setXmlContent(contributionContent6);
+    }
+
+    @Test
+    public void testMergeUpdateArticleWithIndent() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecHrDJn0N0yhyAV1e");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution7);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc7, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateMergeUpdateArticleWithIndentWithoutTC.xml"));
+        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
     }
 }

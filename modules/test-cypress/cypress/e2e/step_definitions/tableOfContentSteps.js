@@ -50,7 +50,7 @@ Then(`last version card header title contains {string}`, (headerTitle) => {
 });
 
 When(`click on navigation pane accordion`, () => {
-    tableOfContent.clickNavigationPaneAccordian();
+    tableOfContent.clickNavigationPaneAccordion();
 });
 
 When(`only title element is present in navigation pane`, () => {
@@ -256,4 +256,12 @@ When(`click on first contribution`, () => {
 
 Then('app-versions-pane-group {int} contains card header title {string}', function (versionPaneIndex, cardHeaderTitle) {
     tableOfContent.getCardHeaderTitle(versionPaneIndex).should('have.text', cardHeaderTitle);
+});
+
+When(/^click on move option from dropdown content$/, function () {
+    tableOfContent.clickMoveOptionFromDropDownContent();
+});
+
+When(/^click on place before option from dropdown content$/, function () {
+    tableOfContent.clickPlaceBeforeOptionFromDropDownContent();
 });

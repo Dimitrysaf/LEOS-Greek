@@ -344,11 +344,14 @@ define(function actionManagerExtensionModule(require) {
         // Means the event was fired from single click and not selection
         if (selection.isCollapsed && selection.type === "Caret") {
             const isInstanceReady = CKEDITOR.currentInstance ? CKEDITOR.currentInstance.instanceReady : false;
+            const targetElementId = event.currentTarget.getAttribute('id');
+            const currentElementId = CKEDITOR.currentInstance ? CKEDITOR.currentInstance.element.getChildren().getItem(0).getAttribute('id') : '';
             // Ignore clicks coming from specific elements
             const shouldBeIgnored = connector.getState().isAngularUI &&
                 (IGNORE_EDIT_CLICK.elementName.includes(event.target.nodeName) ||
                  IGNORE_EDIT_CLICK.elementClass.some((cl) => event.target?.classList?.contains(cl)) ||
-                 IGNORE_EDIT_CLICK.elementName.includes(event.target?.offsetParent?.nodeName) || isInstanceReady
+                 IGNORE_EDIT_CLICK.elementName.includes(event.target?.offsetParent?.nodeName) ||
+                 (isInstanceReady && targetElementId === currentElementId)
                 );
             if (!shouldBeIgnored) {
                 _handleAction(connector, "edit", event);

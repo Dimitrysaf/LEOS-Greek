@@ -10,6 +10,7 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBasedD
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAndPoint;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
+import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import org.junit.Before;
@@ -41,9 +42,12 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerMandate();
     @Mock
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
+    @Mock
+    private ProfileContext profileContext;
 
     private TrackChangesContext trackChangesContext = new TrackChangesContext();
-    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    @InjectMocks
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext, profileContext);
     private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
