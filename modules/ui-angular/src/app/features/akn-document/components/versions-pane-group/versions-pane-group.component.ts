@@ -50,6 +50,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     public versionCompareService: VersionCompareService,
     public docService: DocumentService,
+    public translateService: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -195,7 +196,10 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     if (this.majorVersion) {
       const { versionType, cmisVersionNumber, checkinCommentVO } =
         this.majorVersion;
-      this.isMilestone = versionType === 'MAJOR';
+      let beforeFinaliseVersionComment = this.translateService.instant(
+        'page.editor.versions-pane.version.label.before.finalised',
+      );
+      this.isMilestone = versionType === 'MAJOR' && checkinCommentVO.title !== beforeFinaliseVersionComment;
       this.isCreation =
         versionType === 'INTERMEDIATE' && cmisVersionNumber === '1.0';
       this.description = checkinCommentVO.description;
