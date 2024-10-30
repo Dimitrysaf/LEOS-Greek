@@ -1,10 +1,13 @@
 import { formatDate } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import {keys} from "lodash-es";
+
+import { getUserDetails, UserDetails } from '@eui/base';
+import { Store } from "@ngrx/store";
 
 @Component({
   selector: 'app-co-edition-info',
@@ -17,21 +20,26 @@ export class CoEditionInfoComponent implements OnInit, OnDestroy {
   @Input() isNotTocNodeLevel?: boolean;
   @Input() nodeId?:string;
 
-  coEditiionForToc: CoEditionVO[];
+  coEditionForToc: CoEditionVO[];
   coEditionForDocumentId: Record<string, CoEditionVO[]>;
+  user: UserDetails;
 
   private destroy$: Subject<any> = new Subject();
-  constructor(private coEditionService: CoEditionServiceWS) {
+  constructor(private coEditionService: CoEditionServiceWS, private store: Store<any>) {
     this.coEditionService.toCCoEditionInfo
       .pipe(takeUntil(this.destroy$))
       .subscribe((coEdits) => {
-        this.coEditiionForToc = coEdits;
+        this.coEditionForToc = coEdits;
       });
     this.coEditionService.getDocCoEditionInfo()
       .pipe(takeUntil(this.destroy$))
       .subscribe((coEdits: Record<string, CoEditionVO[]>) => {
         this.coEditionForDocumentId = coEdits;
       });
+    this.store
+      .select(getUserDetails)
+      .pipe(take(1))
+      .subscribe((state) => (this.user = state));
   }
 
   ngOnDestroy(): void {
@@ -54,6 +62,7 @@ export class CoEditionInfoComponent implements OnInit, OnDestroy {
     }
     return result;
   }
+
   generateTooltip(coEdits: CoEditionVO[]) {
     if (!coEdits) return;
     let target = '';
@@ -69,13 +78,22 @@ export class CoEditionInfoComponent implements OnInit, OnDestroy {
     );
     return target;
   }
-  generateTooltipForIcon() {
+
+  generateStyleClass(defaultStyleClass: string, coEdits: CoEditionVO[]) {
+    let coEditionStyleClass = defaultStyleClass + " leos-user-coedition";
+    if (coEdits.find((c) => (c.userLoginName === this.user.login)) != undefined) {
+      coEditionStyleClass += " leos-user-coedition-self-user";
+    }
+    return coEditionStyleClass;
+  }
+
+  getCoEditsForElement() {
     let coEdits: CoEditionVO[];
     const coEditKeys = keys(this.coEditionForDocumentId);
     const result = coEditKeys.includes(this.nodeId);
-    if(result){
+    if (result) {
       coEdits = this.coEditionForDocumentId[this.nodeId];
-    }else{
+    } else {
       coEditKeys.forEach(
         (key) => {
           if (!!document.querySelector(`#${key}`)?.closest(`#${this.nodeId}`)) {
@@ -83,7 +101,6 @@ export class CoEditionInfoComponent implements OnInit, OnDestroy {
           }
         });
     }
-
-    return this.generateTooltip(coEdits);
+    return coEdits;
   }
 }

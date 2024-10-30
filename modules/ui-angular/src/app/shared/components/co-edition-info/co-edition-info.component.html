@@ -1,30 +1,30 @@
-<!-- indicator for toc next to the edit button-->
+<!-- CoEdition for Proposal view -->
 <div
-  class="eui-u-width-100 align-self-center"
-  *ngIf="isToc && isNotTocNodeLevel && coEditiionForToc && coEditiionForToc.length > 0"
->
-  <span
-    class="eui-icon eui-icon-person eui-u-font-size-m"
-    [euiTooltip]="generateTooltip(coEditiionForToc)"
-  ></span>
-</div>
-<!-- -->
-<div
-  class=""
-  *ngIf="!isToc  && isNotTocNodeLevel && documentCoEditions && documentCoEditions.length > 0"
+  *ngIf="!isToc && isNotTocNodeLevel && documentCoEditions && documentCoEditions.length > 0"
+  [ngClass]="generateStyleClass('eui-u-width-100', documentCoEditions)"
 >
   <span
     class="eui-icon eui-icon-person"
     [euiTooltip]="generateTooltip(documentCoEditions)"
   ></span>
 </div>
-<!-- -->
+<!-- CoEdition for TOC toolbar -->
 <div
-  class="w-100 leos-user-coedition leos-user-coedition-self-user"
-  *ngIf="!isNotTocNodeLevel && isNodeCoEdited()"
+  *ngIf="isToc && isNotTocNodeLevel && coEditionForToc && coEditionForToc.length > 0"
+  [ngClass]="generateStyleClass('eui-u-width-100 align-self-center leos-user-coedition-toc', coEditionForToc)"
 >
   <span
     class="eui-icon eui-icon-person"
-    [euiTooltip]="generateTooltipForIcon()"
+    [euiTooltip]="generateTooltip(coEditionForToc)"
+  ></span>
+</div>
+<!-- CoEdition for TOC tree element -->
+<div
+  *ngIf="!isNotTocNodeLevel && isNodeCoEdited()"
+  [ngClass]="generateStyleClass('w-100 leos-user-coedition-toc-element', this.getCoEditsForElement())"
+>
+  <span
+    class="eui-icon eui-icon-person"
+    [euiTooltip]="generateTooltip(this.getCoEditsForElement())"
   ></span>
 </div>
