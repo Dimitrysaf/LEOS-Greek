@@ -60,6 +60,8 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     DocumentLanguageContext documentLanguageContext;
     @Autowired
     TrackChangesProcessor<FinancialStatement> trackChangesProcessor;
+    @Autowired
+    GenericDocumentApiService genericDocumentApiService;
 
     @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
@@ -203,7 +205,9 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
 
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef, String clientContextToken) {
-        return null;
+        FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
+        StructureContext structure = structureContext.get();
+        return genericDocumentApiService.getDocumentConfig(financialStatement, structure, clientContextToken);
     }
 
     @Override

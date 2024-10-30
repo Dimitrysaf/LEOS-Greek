@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,8 @@ public class FinancialStatementControllerTest {
     private GenericDocumentTocApiService genericDocumentTocApiService;
     @Mock
     private FinancialStatementApiService financialStatementApiService;
+    @Mock
+    private HttpServletRequest request;
     @InjectMocks
     private FinancialStatementController financialStatementController;
 
@@ -121,10 +124,11 @@ public class FinancialStatementControllerTest {
                 false,
                 false, "latin", "en",null, null);
 
-        Mockito.when(this.genericDocumentApiService.getDocumentConfig(Mockito.anyString()))
-                .thenReturn(TEST_RESPONSE);
+        Mockito.when(this.financialStatementApiService.getDocumentConfig(Mockito.anyString(), Mockito.anyString())).thenReturn(TEST_RESPONSE);
 
-        DocumentConfigResponse response = this.financialStatementController.getDocumentConfig(TEST_DOC_REF);
+        Mockito.when(this.request.getHeader(Mockito.anyString())).thenReturn("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTczMDI5NjAzOCwicm9sZSI6Ik9XTkVSIiwic3lzdGVtTmFtZSI6IkRHVF9FRElUIiwiaXNzIjoiZGd0Q2xpZW50SWQiLCJleHAiOjE3NjE4MzIwMzgsImlhdCI6MTczMDI5NjAzOCwidXNlciI6ImphbmUiLCJzeXN0ZW1DbGllbnRJZCI6ImRndENsaWVudElkIn0.jaaOr-PRWDt-fjhWh_8K4JituhOvvUMZqz2gZAeOD7c");
+
+        DocumentConfigResponse response = this.financialStatementController.getDocumentConfig(TEST_DOC_REF, this.request);
 
         Assert.assertNotNull(response);
         Assert.assertEquals(TEST_RESPONSE, response);
