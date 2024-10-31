@@ -98,7 +98,7 @@ define(function elementEditorModule(require) {
             }
             // load the specific profile and initialize the editor
             require(["profiles/" + profileId],
-                _initEditor.bind(undefined, connector, params));
+                _initEditorWrapper.bind(undefined, connector, params));
         } else {
             throw new Error("Unknown element editor profile!");
         }
@@ -127,6 +127,32 @@ define(function elementEditorModule(require) {
             });
         }
         return selectedProfile;
+    }
+
+    async function addExternalPluginsToProfile(connector, profile) {
+        let externalPlugins = [];
+        if (connector.getState().spellCheckerName === UTILS.SPELLCHECKER.qas) {
+            let spellcheckerPlugin = {
+                name: 'spellchecker',
+                url: connector.getState().spellCheckerSourceUrl
+            };
+            externalPlugins.push(spellcheckerPlugin)
+        }
+        let externalPluginNames = await pluginTools.addExternalPlugins(externalPlugins)
+        if (externalPluginNames !== "") {
+            profile.config.extraPlugins = profile.config.extraPlugins + "," + externalPluginNames;
+        }
+    }
+
+    function _initEditorWrapper(connector, params, profile) {
+        addExternalPluginsToProfile(connector, profile)
+            .then(function (result) {
+                _initEditor(connector, params, profile)
+            })
+            .catch(function (error) {
+                log.warn("Error when setting externalPlugins", error);
+                _initEditor(connector, params, profile)
+            });
     }
 
     function _initEditor(connector, params, profile) {
@@ -172,7 +198,7 @@ define(function elementEditorModule(require) {
                 user: user,
                 implicitSaveEnabled: connector.getState().isImplicitSaveEnabled,
                 elementType: params.elementType,
-                isSpellCheckerEnabled: connector.getState().isSpellCheckerEnabled,
+                spellCheckerName: connector.getState().spellCheckerName,
                 spellCheckerServiceUrl: connector.getState().spellCheckerServiceUrl,
                 spellCheckerSourceUrl: connector.getState().spellCheckerSourceUrl,
                 alternatives: params.alternatives,

@@ -22,7 +22,6 @@ define(function pluginToolsModule(require) {
     var transformationConfigManager = require("transformer/transformationConfigManager");
     var pluginsRoot = "plugins";
 
-    
     function addPlugin(pluginName, pluginDefinition) {
         var pluginFolder = [pluginsRoot, pluginName].join("/");
         var pluginFile = [pluginName, "Plugin.js"].join("");
@@ -32,17 +31,31 @@ define(function pluginToolsModule(require) {
         CKEDITOR.plugins.addExternal(pluginName, pluginUrl, "");
         CKEDITOR.plugins.add(pluginName, pluginDefinition);
     }
-    
+
     /*
      * Adds the external plugins to the ckEditor
      * @externalPluginsNames - array with the plugins names
      */
-    function addExternalPlugins(externalPluginsNames) {
-        externalPluginsNames.forEach(function(externalPluginName) {
-            var pluginModule = "ck_" + externalPluginName;
-            var pluginUrl = leosTools.toUrl(pluginModule);
-            LOG.debug("Adding external plugin to CKEditor:", externalPluginName, "=>", pluginUrl);
-            CKEDITOR.plugins.addExternal(externalPluginName, pluginUrl, "");
+    function addExternalPlugins(externalPlugins) {
+        var externalPluginNames = ""
+        var loadPromises = externalPlugins.map(
+            function (externalPlugin) {
+                var pluginName = externalPlugin.name;
+                var pluginUrl = externalPlugin.url;
+                if (!CKEDITOR.plugins.get(pluginName)) {
+                    return leosTools.loadExternalJs(pluginUrl)
+                        .then(function (resolvedUrl) {
+                            LOG.debug("Adding external plugin to CKEditor:", pluginName, "=>", resolvedUrl);
+                            CKEDITOR.plugins.addExternal(pluginName, resolvedUrl, "");
+                            externalPluginNames += pluginName + ",";
+                        })
+                        .catch(function (error) {
+                            LOG.error("Failed to load plugin:", pluginName, error);  // Handle the error (optional)
+                        });
+                }
+            });
+        return Promise.all(loadPromises).then(function () {
+            return externalPluginNames;
         });
     }
 
@@ -57,7 +70,7 @@ define(function pluginToolsModule(require) {
         var resourceUrl = leosTools.toUrl(resourcePath);
         return resourceUrl;
     }
-    
+
     function toUrl(path) {
         return leosTools.toUrl(path);
     }
@@ -71,8 +84,8 @@ define(function pluginToolsModule(require) {
         var config = transformationConfigResolver._.resolverConfigs.from;
         for (var el in config) {
             var entryArr = el.split("/");
-            for(var i=0; i < entryArr.length; i++) {
-                if(entryArr[i] !== 'text') {
+            for (var i = 0; i < entryArr.length; i++) {
+                if (entryArr[i] !== 'text') {
                     var entry = entryArr[i] + '[*]'; //allow attributes and classes
                     if (filterList.indexOf(entry) <= -1) {
                         filterList.push(entry);
@@ -86,12 +99,12 @@ define(function pluginToolsModule(require) {
     // return module definition
     var pluginTools = {
         addPlugin: addPlugin,
-        addExternalPlugins:addExternalPlugins,
+        addExternalPlugins: addExternalPlugins,
         addDialog: addDialog,
         getResourceUrl: getResourceUrl,
         toUrl: toUrl,
         addTransformationConfigForPlugin: addTransformationConfigForPlugin,
-        createFilterList:createFilterList
+        createFilterList: createFilterList
     };
 
     return pluginTools;

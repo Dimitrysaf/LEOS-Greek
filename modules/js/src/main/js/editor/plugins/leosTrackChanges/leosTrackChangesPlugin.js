@@ -845,7 +845,7 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     }
                 }
-                if (editor.LEOS.isSpellCheckerEnabled) {
+                if (editor.LEOS.spellCheckerName === UTILS.SPELLCHECKER.wsc) {
                     setTimeout(function() {
                         var spellCheckerContextMenuRootElement = $("div.wsc-contextmenu").get(0);
                         if (spellCheckerContextMenuRootElement && !spellCheckerContextMenuRootElement.mutationObserver) {

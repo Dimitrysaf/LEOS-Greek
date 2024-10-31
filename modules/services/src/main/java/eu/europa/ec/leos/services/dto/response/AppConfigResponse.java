@@ -24,7 +24,7 @@ public class AppConfigResponse {
 
     private String mappingUrl;
     private boolean implicitSaveAndClose;
-    private boolean isSpellCheckerEnabled;
+    private String spellCheckerName;
     private String spellCheckerServiceUrl;
     private String spellCheckerSourceUrl;
     private boolean searchAndReplaceEnabled;
@@ -70,12 +70,12 @@ public class AppConfigResponse {
         this.implicitSaveAndClose = implicitSaveAndClose;
     }
 
-    public boolean isSpellCheckerEnabled() {
-        return isSpellCheckerEnabled;
+    public String getSpellCheckerName() {
+        return spellCheckerName;
     }
 
-    public void setSpellCheckerEnabled(boolean spellCheckerEnabled) {
-        isSpellCheckerEnabled = spellCheckerEnabled;
+    public void setSpellCheckerName(String spellCheckerName) {
+        this.spellCheckerName = spellCheckerName;
     }
 
     public String getSpellCheckerServiceUrl() {
