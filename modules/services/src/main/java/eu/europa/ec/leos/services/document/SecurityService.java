@@ -22,7 +22,7 @@ import java.util.List;
 
 public interface SecurityService {
 
-    <T extends XmlDocument> T addOrUpdateCollaborator(String id, String userLogin, String userEntity, String authority, Class<T> type);
+    <T extends XmlDocument> T addOrUpdateCollaborator(String id, String userLogin, String userEntity, String authority, String systemClientId, Class<T> type);
 
     <T extends XmlDocument> T updateCollaborators(String ref, String id, List<Collaborator> collaborators, Class<T> type);
 

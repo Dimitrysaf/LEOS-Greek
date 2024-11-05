@@ -52,7 +52,7 @@ public class ModelHelper {
         String docId = "1";
         BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "BL-000.xml", "EN", "", "bill-id", "", "0.0.1", false);
         List<Collaborator> collaborators = new ArrayList<>();
-        collaborators.add(new Collaborator("login", "OWNER", "SG"));
+        collaborators.add(new Collaborator("login", "OWNER", "SG", null));
 
         when(source.getBytes()).thenReturn(xmlBytes);
         when(content.getSource()).thenReturn(source);

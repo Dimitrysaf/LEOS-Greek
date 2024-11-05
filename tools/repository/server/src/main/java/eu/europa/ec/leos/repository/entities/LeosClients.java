@@ -27,4 +27,7 @@ public class LeosClients implements Serializable {
     @Column(name = "NAME", length = 100, nullable = false)
     private String name;
 
+    @Column(name = "DISPLAY_NAME", length = 100, nullable = false)
+    private String displayName;
+
 }

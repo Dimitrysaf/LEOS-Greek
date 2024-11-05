@@ -9,6 +9,7 @@ import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.request.WorkflowCollaboratorAclRequest;
 import eu.europa.ec.leos.services.store.PackageService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +18,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class WorkflowCollaboratorServiceImpl implements WorkflowCollaboratorService{
 
     private final LeosRepository leosRepository;
     private final PackageService packageService;
-
-    @Autowired
-    public WorkflowCollaboratorServiceImpl(LeosRepository leosRepository, PackageService packageService) {
-        this.leosRepository = leosRepository;
-        this.packageService = packageService;
-    }
 
     @Override
     public Integer setWorkflowCollaboratorAcl(Proposal proposal, String clientSystemId, WorkflowCollaboratorAclRequest wcar) {
