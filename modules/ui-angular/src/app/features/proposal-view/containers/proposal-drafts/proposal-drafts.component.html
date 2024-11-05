@@ -25,7 +25,7 @@
 </ng-container>
 
 <!-- SECTION: MEMORANDUM -->
-<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum && this.createOptions['EM-LP01']">
+<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum">
     <eui-card-header>
         <eui-card-header-title>
             <div class="eui-u-display-flex eui-u-flex-row">
@@ -246,7 +246,7 @@
             <div
                     class="eui-u-flex eui-u-pb-m"
                     style="border-bottom: 1px solid var(--eui-base-color-grey-15)"
-                    *ngIf="!documentCard.euiCollapsed && this.createOptions['FS-001']"
+                    *ngIf="!documentCard.euiCollapsed"
             >
                 <div class="eui-u-flex-grow">
                     <div class="eui-u-display-flex eui-u-flex-row">
@@ -300,7 +300,7 @@
                     </button>
                 </ng-container>
                 <ng-container
-                        *ngIf="financialStatement && permissions.includes('CAN_UPDATE') && this.createOptions['FS-001'] !== 'MANDATORY'"
+                        *ngIf="financialStatement && permissions.includes('CAN_UPDATE') && false"
                 >
                     <button
                             class="eui-u-ml-l"
@@ -317,7 +317,7 @@
             </div>
         </ng-container>
         <!-- ANNEX SECTION   -->
-        <ng-container *ngIf="!documentCard.euiCollapsed && this.createOptions['SG-017']">
+        <ng-container *ngIf="!documentCard.euiCollapsed">
             <div class="eui-u-flex eui-u-pt-m">
                 <div class="eui-u-flex-grow">
                     <div>
