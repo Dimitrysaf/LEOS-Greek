@@ -131,7 +131,7 @@ class JwtTokenService implements TokenService {
         final String subject = String.format("acct:%s@%s", userLogin, annotateAuthority);
         final String audience = getDomainName(url);
         final Date now = Calendar.getInstance().getTime();
-        return generateToken(annotateClientId, subject, audience, now, now, ANNOT_TOKEN_EXPIRE_IN_MIN, annotateSecret, userLogin, null, null);
+        return generateToken(annotateClientId, subject, audience, now, now, ANNOT_TOKEN_EXPIRE_IN_MIN, annotateSecret, userLogin, null, null, null);
     }
 
     @Override
@@ -156,7 +156,7 @@ class JwtTokenService implements TokenService {
     private String createAccessToken(String user, String clientId, int tokenExpireInMin, String clientSecret, AuthClient authClient) {
         final Date now = Calendar.getInstance().getTime();
         return generateToken(clientId, null, null, now, now, tokenExpireInMin,
-                clientSecret, user, null, null);
+                clientSecret, user, null, null, authClient);
     }
 
     @Override
@@ -188,7 +188,7 @@ class JwtTokenService implements TokenService {
         }
         final Date now = Calendar.getInstance().getTime();
         return generateToken(authClient.getClientId(), null, null, now, now, CONTEXT_TOKEN_EXPIRE_IN_MIN,
-                authClient.getSecret(), user, role, systemName);
+                authClient.getSecret(), user, role, systemName,null);
     }
 
     @Override
@@ -200,7 +200,7 @@ class JwtTokenService implements TokenService {
     }
 
     private String generateToken(String clientId, String subject, String audience, Date issuedAt, Date notBefore,
-                                 int expireInMin, String secret, String user, String role, String systemName) {
+                                 int expireInMin, String secret, String user, String role, String systemName, AuthClient authClient) {
         String token = null;
         try {
             Calendar expires = Calendar.getInstance();
@@ -231,6 +231,11 @@ class JwtTokenService implements TokenService {
 
             if(hasLength(clientId)) {
                 builder.withClaim("systemClientId", clientId);
+            }
+
+            if (authClient!=null) {
+                builder.withClaim("remoteClientId", authClient.getClientId());
+                builder.withClaim("remoteClientName", authClient.getName());
             }
 
             token = builder.sign(algorithm);

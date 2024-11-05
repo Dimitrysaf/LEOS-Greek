@@ -32,6 +32,7 @@ import eu.europa.ec.leos.rest.support.requests.CreatePackageRequest;
 import eu.europa.ec.leos.rest.support.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.rest.support.requests.UpdateDocumentRequest;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.Logger;
@@ -146,6 +147,9 @@ public class RestRepository extends AbstractRestClient {
 
     @Value("${leos.rest.repository.config.workflow-collaborator-config}")
     private String leosRestRepositoryWorkflowCollaboratorConfig;
+
+    @Value("${leos.rest.repository.config.leos-client}")
+    private String leosRestRepositoryLeosClient;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -547,6 +551,17 @@ public class RestRepository extends AbstractRestClient {
                 .encode()
                 .toUriString();
         return getEntity(urlTemplate, WorkflowCollaboratorConfigVO.class, packageName, clientName);
+    }
+
+    Optional<LeosClientResponse> getLeosClient(String clientName) {
+        LOGGER.trace("getLeosClient ... [ clientId = "+clientName+"]");
+        String url = getUrl(leosRestRepositoryLeosClient);
+        String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("clientName", "{clientName}")
+                .encode()
+                .toUriString();
+        final LeosClientResponse entity = getEntity(urlTemplate, LeosClientResponse.class, clientName);
+        return Optional.ofNullable(entity);
     }
 
     Object configNotificationsUpload(String content) throws JsonProcessingException {

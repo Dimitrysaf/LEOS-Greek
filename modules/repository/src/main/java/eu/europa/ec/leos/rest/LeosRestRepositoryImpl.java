@@ -48,6 +48,7 @@ import eu.europa.ec.leos.rest.support.util.ConversionUtils;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -521,7 +522,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         List<Collaborator> collaboratorUsers = collaborators
                 .stream()
-                .map(collaborator -> new Collaborator(collaborator.getLogin(),  collaborator.getRole(), collaborator.getEntity()))
+                .map(collaborator -> new Collaborator(collaborator.getLogin(),  collaborator.getRole(), collaborator.getEntity(), collaborator.getLeosClientId()))
                 .collect(toList());
 
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS), collaboratorUsers);
@@ -1076,6 +1077,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         } catch (HttpClientErrorException.NotFound ex) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    @PerformanceLogger
+    public Optional<LeosClientResponse> getLeosClient(String clientName) {
+        return repository.getLeosClient(clientName);
     }
 
     @Override

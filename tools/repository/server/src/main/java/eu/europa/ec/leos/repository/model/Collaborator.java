@@ -22,6 +22,8 @@ public class Collaborator {
 
     private String role;
 
+    private String leosClientId;
+
     public Collaborator() {
     }
 
@@ -29,6 +31,13 @@ public class Collaborator {
         this.login = login;
         this.role = role;
         this.entity = entity;
+    }
+
+    public Collaborator(String login, String role, String entity, String leosClientId) {
+        this.login = login;
+        this.role = role;
+        this.entity = entity;
+        this.leosClientId = leosClientId;
     }
 
     public String getLogin() {
@@ -53,6 +62,14 @@ public class Collaborator {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getLeosClientId() {
+        return leosClientId;
+    }
+
+    public void setLeosClientId(String leosClientId) {
+        this.leosClientId = leosClientId;
     }
 
     @Override

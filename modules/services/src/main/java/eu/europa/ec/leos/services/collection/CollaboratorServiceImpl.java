@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.notification.collaborators.AddCollaborator;
+import eu.europa.ec.leos.model.user.ClientSystem;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
@@ -19,6 +20,8 @@ import eu.europa.ec.leos.services.exception.SendNotificationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.vo.response.LeosClientResponse;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -34,6 +37,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CollaboratorServiceImpl implements CollaboratorService {
     private static final Logger LOG = LoggerFactory.getLogger(CollaboratorServiceImpl.class);
 
@@ -44,33 +48,22 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     private final UserService userService;
     private final LeosPermissionAuthorityMap leosPermissionAuthorityMap;
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
-
-    @Autowired
-    public CollaboratorServiceImpl(NotificationService notificationService, MessageHelper messageHelper, PackageService packageService,
-                                   SecurityService securityService, UserService userService, LeosPermissionAuthorityMap leosPermissionAuthorityMap, LeosPermissionAuthorityMapHelper authorityMapHelper) {
-        this.notificationService = notificationService;
-        this.messageHelper = messageHelper;
-        this.packageService = packageService;
-        this.securityService = securityService;
-        this.userService = userService;
-        this.leosPermissionAuthorityMap = leosPermissionAuthorityMap;
-        this.authorityMapHelper = authorityMapHelper;
-    }
+    private final LeosClientService leosClientService;
 
     @Override
     public List<CollaboratorDTO> getCollaborators(Proposal proposal) {
         LOG.trace("Getting collaborators for proposal {}", proposal);
         return Collections.unmodifiableList(proposal.getCollaborators().stream()
-                .map(collaborator -> createCollaboratorDTO(collaborator.getLogin(), collaborator.getRole(), this::getUser, collaborator.getEntity()))
+                .map(collaborator -> createCollaboratorDTO(collaborator.getLogin(), collaborator.getRole(), this::getUser, collaborator.getEntity(), collaborator.getLeosClientId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList()));
     }
 
-    private Optional<CollaboratorDTO> createCollaboratorDTO(String login, String roleName, Function<String, User> converter, String entityName) {
+    private Optional<CollaboratorDTO> createCollaboratorDTO(String login, String roleName, Function<String, User> converter, String entityName, String clientId) {
         try {
             User user = converter.apply(login);
-            return Optional.of(new CollaboratorDTO(login, user.getName(), roleName, pickFromUserEntitiesByName(user, entityName)));
+            return Optional.of(new CollaboratorDTO(login, user.getName(), roleName, pickFromUserEntitiesByName(user, entityName), getLeosClient(clientId)));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -84,8 +77,8 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     @Override
-    public String addCollaborator(Proposal proposal, String userId, String roleName, String selectedEntity, String proposalUrl) {
-        LOG.trace("Adding collaborator...{}, with authority {}", userId, roleName);
+    public String addCollaborator(Proposal proposal, String userId, String roleName, String selectedEntity, String proposalUrl, String systemClientId) {
+        LOG.trace("Adding collaborator...{}, with authority {} for systemClientId {}", userId, roleName, systemClientId);
         final User user = getUser(userId);
         final Role role = getRole(roleName);
         final String entity = getEntity(selectedEntity, user);
@@ -95,7 +88,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.present", user.getLogin(), role.getName(), entity));
         }
 
-        documents.forEach(doc -> updateCollaborators(user, role, entity, doc, false));
+        documents.forEach(doc -> updateCollaborators(user, role, entity, systemClientId, doc, false));
 
         sendNotification(user, entity, role, proposal.getId(), proposalUrl);
         LOG.info("Collaborator '{}', role '{}', entity '{}' inserted to proposal id {}", user.getLogin(), role.getName(), entity, proposal.getId());
@@ -120,7 +113,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.last.owner.removed", role.getName()));
         }
 
-        documents.forEach(doc -> updateCollaborators(user, role, entity, doc, true));
+        documents.forEach(doc -> updateCollaborators(user, role, entity, null, doc, true));
 
         sendNotification(user, entity, role, proposal.getId(), proposalUrl);
         LOG.info("Collaborator '{}', role '{}', entity '{}' removed from proposal id {}", user.getLogin(), role.getName(), entity, proposal.getId());
@@ -150,7 +143,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.last.owner.edited", messageHelper.getMessage(oldRole.getMessageKey())));
         }
 
-        documents.forEach(doc -> updateCollaborators(user, newRole, entity, doc, false));
+        documents.forEach(doc -> updateCollaborators(user, newRole, entity, null, doc, false));
         sendNotification(user, entity, newRole, proposal.getId(), proposalUrl);
         LOG.info("Collaborator '{}', oldRole '{}', entity '{}' updated new role to '{}' for proposal id {}", user.getLogin(), oldRole.getName(), entity, newRole.getName(), proposal.getId());
         return entity;
@@ -183,6 +176,23 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.notFound", userId));
         }
         return user;
+    }
+
+    private ClientSystem getLeosClient(String clientSystemId) {
+        if (clientSystemId==null || StringUtils.isEmpty(clientSystemId)) {
+            return null;
+        }
+        final Optional<LeosClientResponse> leosClient = leosClientService.getLeosClient(clientSystemId);
+        if (leosClient.isPresent()) {
+            final LeosClientResponse leosClientResponse = leosClient.get();
+            return ClientSystem.builder().clientId(leosClientResponse.getName()).displayName(leosClientResponse.getDisplayName()).build();
+        } else {
+            return null;
+        }
+    }
+
+    private ClientSystem getInternalUser() {
+        return ClientSystem.builder().clientId("INTERNAL_USER").build();
     }
 
     private String getEntity(String connectedDG, User user) {
@@ -284,7 +294,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     //Update document based on action(add/edit/remove)
-    private void updateCollaborators(User user, Role role, String selectedEntity, XmlDocument doc, boolean isRemoveAction) {
+    private void updateCollaborators(User user, Role role, String selectedEntity, String systemClientId, XmlDocument doc, boolean isRemoveAction) {
         Validate.notNull(doc, "The document must not be null!");
         Validate.notNull(user, "The user must not be null!");
         List<Collaborator> collaborators = doc.getCollaborators();
@@ -298,7 +308,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
                 if (newEntity == null) {
                     newEntity = user.getEntities().get(0) != null ? user.getEntities().get(0).getName() : null;
                 }
-                collaborators.add(new Collaborator(user.getLogin(), role.getName(), newEntity));
+                collaborators.add(new Collaborator(user.getLogin(), role.getName(), newEntity, systemClientId));
             }
             securityService.updateCollaborators(doc.getMetadata().get().getRef(), doc.getId(), collaborators, doc.getClass());
         }

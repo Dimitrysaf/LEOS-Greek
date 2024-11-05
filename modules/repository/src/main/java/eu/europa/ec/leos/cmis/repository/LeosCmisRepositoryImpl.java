@@ -44,6 +44,7 @@ import eu.europa.ec.leos.rest.aop.annotation.PerformanceLogger;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -692,6 +693,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
 
     @Override
     public Optional<WorkflowCollaboratorConfigVO> getWorkflowCollaboratorConfig(String packageName, String clientName) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<LeosClientResponse> getLeosClient(String clientName) {
         return Optional.empty();
     }
 

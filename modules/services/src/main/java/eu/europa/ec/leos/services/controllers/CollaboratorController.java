@@ -85,7 +85,7 @@ public class CollaboratorController {
         final String connectedDG = collaboratorRequest.getConnectedDG();
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        return collaboratorService.addCollaborator(proposal, userId, roleName, connectedDG, proposalUrl);
+        return collaboratorService.addCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, null);
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.POST)

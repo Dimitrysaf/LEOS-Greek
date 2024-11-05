@@ -9,7 +9,7 @@ import java.util.Optional;
 @UtilityClass
 public class HttpUtils {
     public static final int BEARER_LENGTH = 7;
-    public static final String CLAIM_SYSTEM_CLIENT_ID = "systemClientId";
+    public static final String CLAIM_REMOTE_CLIENT_ID = "remoteClientId";
 
     public static Optional<String> extractSystemClientIdFromAuthorizationHeader(String authorizationHeader) {
         if (authorizationHeader==null && authorizationHeader.length()<BEARER_LENGTH) {
@@ -17,7 +17,7 @@ public class HttpUtils {
         }
         String token = extractToken(authorizationHeader);
 
-        return extractStringClaimFromToken(token, CLAIM_SYSTEM_CLIENT_ID);
+        return extractStringClaimFromToken(token, CLAIM_REMOTE_CLIENT_ID);
     }
 
     public static String extractToken(String authorizationHeader) {
