@@ -55,6 +55,7 @@ import static org.springframework.web.util.UriUtils.encodeUriVariables;
 public class RestRepository extends AbstractRestClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestRepository.class);
+    public static final String CLIENT_NAME = "clientName";
 
     @Value("${leos.rest.repository.url}")
     private String leosRestRepositoryURL;
@@ -528,14 +529,14 @@ public class RestRepository extends AbstractRestClient {
     }
 
     Integer createOrUpdateWorkflowCollaboratorConfig(String clientName, String packageName, String aclCallbackUrl, String userCheckCallbackUrl) {
-        LOGGER.trace("createOrUpdateWorkflowCollaboratorConfig ... [packageName =" + packageName + ", clientId = "+clientName+"]");
+        LOGGER.trace("createOrUpdateWorkflowCollaboratorConfig ... [packageName = {}, clientId = {}]", packageName, clientName);
         String url = getUrl(leosRestRepositoryWorkflowCollaboratorConfig);
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
                 .encode()
                 .toUriString();
         Map<String, Object> dynamicPayload = new HashMap<>();
         dynamicPayload.put("packageName", packageName);
-        dynamicPayload.put("clientName", clientName);
+        dynamicPayload.put(CLIENT_NAME, clientName);
         dynamicPayload.put("aclCallbackUrl", aclCallbackUrl);
         dynamicPayload.put("userCheckCallbackUrl", userCheckCallbackUrl);
 
@@ -543,21 +544,21 @@ public class RestRepository extends AbstractRestClient {
     }
 
     WorkflowCollaboratorConfigVO getWorkflowCollaboratorConfig(final String packageName, final String clientName) {
-        LOGGER.trace("getWorkflowCollaboratorConfig ... [packageName =" + packageName + ", clientId = "+clientName+"]");
+        LOGGER.trace("getWorkflowCollaboratorConfig ... [packageName = {}, clientId = {}]", packageName, clientName);
         String url = getUrl(leosRestRepositoryWorkflowCollaboratorConfig);
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("packageName", "{packageName}")
-                .queryParam("clientName", "{clientName}")
+                .queryParam(CLIENT_NAME, "{clientName}")
                 .encode()
                 .toUriString();
         return getEntity(urlTemplate, WorkflowCollaboratorConfigVO.class, packageName, clientName);
     }
 
     Optional<LeosClientResponse> getLeosClient(String clientName) {
-        LOGGER.trace("getLeosClient ... [ clientId = "+clientName+"]");
+        LOGGER.trace("getLeosClient ... [ clientId = {}]", clientName);
         String url = getUrl(leosRestRepositoryLeosClient);
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("clientName", "{clientName}")
+                .queryParam(CLIENT_NAME, "{clientName}")
                 .encode()
                 .toUriString();
         final LeosClientResponse entity = getEntity(urlTemplate, LeosClientResponse.class, clientName);
@@ -579,7 +580,7 @@ public class RestRepository extends AbstractRestClient {
     }
 
     public void deleteWorkflowCollaborator(BigInteger id) {
-        LOGGER.trace("delete WorkflowCollaboratorConfig ... [id =" + id + "]");
+        LOGGER.trace("delete WorkflowCollaboratorConfig ... [id = {}]", id);
         String url = getUrl(leosRestRepositoryWorkflowCollaboratorConfig);
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
                 .path("/{id}")
