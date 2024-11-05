@@ -70,7 +70,7 @@ public class AnnotateExtension<T extends AbstractField<V>, V> extends LeosJavaSc
         getState().annotationPopupDefaultStatus = cfgHelper.getProperty("annotate.popup.default.status");
         getState().proposalRef = proposalRef;
         getState().connectedEntity = connectedEntity;
-        getState().isSpellCheckerEnabled = Boolean.valueOf(cfgHelper.getIntegrationProperty("leos.spell.checker.enabled"));
+        getState().spellCheckerName = cfgHelper.getIntegrationProperty("leos.spell.checker");
         getState().spellCheckerServiceUrl = cfgHelper.getIntegrationProperty("leos.spell.checker.service.url");
         getState().spellCheckerSourceUrl = cfgHelper.getIntegrationProperty("leos.spell.checker.source.url");
         containerId = (containerId == null) ? cfgHelper.getProperty("annotation.container") : ("#" + containerId);
@@ -96,7 +96,7 @@ public class AnnotateExtension<T extends AbstractField<V>, V> extends LeosJavaSc
         getState().annotationPopupDefaultStatus = cfgHelper.getProperty("annotate.popup.default.status");
         getState().proposalRef = proposalRef;
         getState().connectedEntity = connectedEntity;
-        getState().isSpellCheckerEnabled = Boolean.valueOf(cfgHelper.getIntegrationProperty("leos.spell.checker.enabled"));
+        getState().spellCheckerName = cfgHelper.getIntegrationProperty("leos.spell.checker");
         getState().spellCheckerServiceUrl = cfgHelper.getIntegrationProperty("leos.spell.checker.service.url");
         getState().spellCheckerSourceUrl = cfgHelper.getIntegrationProperty("leos.spell.checker.source.url");
         containerId = (containerId == null) ? cfgHelper.getProperty("annotation.container") : ("#" + containerId);

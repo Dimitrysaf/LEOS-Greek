@@ -51,6 +51,7 @@ export class ProposalDraftsComponent
   proposalRef: string;
   coEditionMap: Record<string, CoEditionVO[]> = null;
   permissions: Permission[];
+  createOptions: object;
 
   @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;

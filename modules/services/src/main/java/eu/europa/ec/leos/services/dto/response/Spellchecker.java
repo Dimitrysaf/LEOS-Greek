@@ -11,21 +11,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.services.document;
+package eu.europa.ec.leos.services.dto.response;
 
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.model.user.Collaborator;
-
-import java.util.List;
-
-
-
-public interface SecurityService {
-
-    <T extends XmlDocument> T addOrUpdateCollaborator(String id, String userLogin, String userEntity, String authority, String systemClientId, Class<T> type);
-
-    <T extends XmlDocument> T updateCollaborators(String ref, String id, List<Collaborator> collaborators, Class<T> type);
-
-    <T extends XmlDocument> T removeCollaborator(String id, String userLogin, Class<T> type);
+public enum Spellchecker {
+    disabled, qas, wsc
 }
-

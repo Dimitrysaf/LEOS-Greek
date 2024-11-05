@@ -65,7 +65,7 @@ public class ConfigServiceImpl implements ConfigService {
 
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
         boolean implicitSaveEnabled = Boolean.parseBoolean(applicationProperties.getProperty("implicitSaveAndClose.enabled"));
-        boolean isSpellCheckerEnabled = Boolean.parseBoolean(integrationProperties.getProperty("leos.spell.checker.enabled"));
+        String spellCheckerName = integrationProperties.getProperty("leos.spell.checker");
         String spellCheckServiceUrl = integrationProperties.getProperty("leos.spell.checker.service.url");
         String spellCheckSourceUrl = integrationProperties.getProperty("leos.spell.checker.source.url");
         boolean searchAndReplaceEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.searchAndReplace.enabled"));
@@ -93,7 +93,7 @@ public class ConfigServiceImpl implements ConfigService {
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
-        appConfigResponse.setSpellCheckerEnabled(isSpellCheckerEnabled);
+        appConfigResponse.setSpellCheckerName(spellCheckerName);
         appConfigResponse.setSpellCheckerServiceUrl(spellCheckServiceUrl);
         appConfigResponse.setSpellCheckerSourceUrl(spellCheckSourceUrl);
         appConfigResponse.setSearchAndReplaceEnabled(searchAndReplaceEnabled);

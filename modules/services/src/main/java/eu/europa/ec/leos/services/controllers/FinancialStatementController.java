@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -54,6 +55,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 @RequestMapping(value = "/secured/stat_financ_legis")
 public class FinancialStatementController {
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementController.class);
+    private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
 
     private FinancialStatementApiService financialStatementApiService;
 
@@ -143,9 +145,10 @@ public class FinancialStatementController {
     @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public DocumentConfigResponse getDocumentConfig(@PathVariable("documentRef") String documentRef) {
+    public DocumentConfigResponse getDocumentConfig(@PathVariable("documentRef") String documentRef, HttpServletRequest request) {
         documentRef = encodeParam(documentRef);
-        DocumentConfigResponse config = this.genericDocumentApiService.getDocumentConfig(documentRef);
+        String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+        DocumentConfigResponse config = this.financialStatementApiService.getDocumentConfig(documentRef, clientContextToken);
         return config;
     }
 

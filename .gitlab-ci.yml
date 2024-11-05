@@ -1,26 +1,23 @@
+image: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
+
 stages:
   - build
   - test
-  - deploy
 
 variables:
-  MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository'
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository -e .npm
   npm_config_cache: '$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.npm'
   CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
+  MAVEN_OPTS: "-Dmaven.repo.local=/builds/${CI_PIPELINE_ID}/.m2/repository"
 
-#cache:
-#    key: ${CI_COMMIT_REF_SLUG}
-#    paths:
-#      - .cache/*
-#      - cache/Cypress
-#      - node_modules
-#      - build
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - /builds/${CI_PIPELINE_ID}/.m2/repository/
 
 java-build:
-  image: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
   stage: build
   script:
     - cd $CI_PROJECT_DIR/tools/user-repo
@@ -32,38 +29,32 @@ java-build:
     - cd $CI_PROJECT_DIR
     - mvn clean install -DskipKarmaTests
   artifacts:
-    expire_in: 1 day
+    expire_in: 1 hour
     when: always
     paths:
       - pom.xml
       - "**/target"
       - "**/package-lock.json"
       - "**/yarn.lock"
-  cache:
-    paths:
-      - $CI_PROJECT_DIR/.m2
-#      - $CI_PROJECT_DIR/.yarn
-#      - $CI_PROJECT_DIR/.npm
-#    policy: pull-push
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
 cypress-test-for-local:
-  image:
-    name: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
   variables:
     TAGS_TO_RUN: "@local"
     GIT_CLEAN_FLAGS: none
   stage: test
-  resource_group: cypress
+  dependencies:
+    - java-build
+  #  resource_group: cypress
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
       when: never
-  script:
+  before_script:
     - cd $CI_PROJECT_DIR/tools/user-repo/web
     - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
     - cd $CI_PROJECT_DIR/tools/repository/web
@@ -73,22 +64,22 @@ cypress-test-for-local:
     - cd $CI_PROJECT_DIR/modules/web
     - mvn jetty:run-war &
     - sleep 40
+  script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
-    - npx cypress run --quiet --browser chrome --headed -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN"
+    - npx cypress run --browser chrome --headed -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN"
   after_script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - node ./cucumberReport.js
+    - rm -rf /builds/${CI_PIPELINE_ID}/.m2/repository
   artifacts:
-    expire_in: 5 days
+    expire_in: 1 day
     when: always
     paths:
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
 
 cypress-test-for-non-local:
-  image:
-    name: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
   stage: test
   resource_group: cypress
   rules:
@@ -101,7 +92,7 @@ cypress-test-for-non-local:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - node ./cucumberReport.js
   artifacts:
-    expire_in: 5 days
+    expire_in: 1 days
     when: always
     paths:
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png

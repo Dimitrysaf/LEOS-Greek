@@ -43,7 +43,7 @@ export type LeosConfig = {
   headerPath: string | null;
   mappingUrl: string;
   implicitSaveAndClose: boolean;
-  spellCheckerEnabled: boolean;
+  spellCheckerName: string;
   spellCheckerServiceUrl: string | null;
   spellCheckerSourceUrl: string | null;
   searchAndReplaceEnabled: boolean;

@@ -145,7 +145,7 @@ export class AnnotateManager {
             anotHost: config.annotateHostUrl,
             oauthClientId: config.annotateJwtIssuerClientId,
             annotationPopupDefaultStatus: config.annotatePopupDefaultStatus,
-            isSpellCheckerEnabled: config.spellCheckerEnabled,
+            spellCheckerName: config.spellCheckerName,
             spellCheckerServiceUrl: config.spellCheckerServiceUrl ?? '',
             spellCheckerSourceUrl: config.spellCheckerSourceUrl ?? '',
             ...this.options,

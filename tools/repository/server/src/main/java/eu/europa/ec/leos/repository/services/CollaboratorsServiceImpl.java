@@ -14,13 +14,16 @@
 package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.entities.Collaborators;
+import eu.europa.ec.leos.repository.entities.LeosClients;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.repositories.CollaboratorsRepository;
+import eu.europa.ec.leos.repository.repositories.LeosClientsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,24 +35,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class CollaboratorsServiceImpl implements CollaboratorsService {
     private final CollaboratorsRepository collaboratorsRepository;
     private final PackageCollaboratorsRepository packageCollaboratorsRepository;
     private final PackageRepository packageRepository;
-
-    @Autowired
-    public CollaboratorsServiceImpl(CollaboratorsRepository collaboratorsRepository, PackageCollaboratorsRepository packageCollaboratorsRepository, PackageRepository packageRepository) {
-        this.collaboratorsRepository = collaboratorsRepository;
-        this.packageCollaboratorsRepository = packageCollaboratorsRepository;
-        this.packageRepository = packageRepository;
-    }
+    private final LeosClientsRepository leosClientsRepository;
 
     public List<Collaborator> getCollaborators(Package pkg) {
         List<Collaborator> collaboratorList = new ArrayList<>();
         List<PackageCollaborators> pkgCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg);
         for (PackageCollaborators pkgCollaborator : pkgCollaborators) {
-            collaboratorList.add(new Collaborator(pkgCollaborator.getCollaborator().getCollaboratorName(),
-                    pkgCollaborator.getCollaborator().getRole(), pkgCollaborator.getCollaborator().getOrganization()));
+            collaboratorList.add(
+                    new Collaborator(
+                            pkgCollaborator.getCollaborator().getCollaboratorName(),
+                            pkgCollaborator.getCollaborator().getRole(),
+                            pkgCollaborator.getCollaborator().getOrganization(),
+                            pkgCollaborator.getCollaborator().getLeosClients()!=null?pkgCollaborator.getCollaborator().getLeosClients().getName():""
+                    )
+            );
         }
         return collaboratorList;
     }
@@ -109,6 +113,8 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         LocalDateTime creationDate = LocalDateTime.now();
         Optional<Collaborators> collaborator = collaboratorsRepository.findCollaboratorByNameRoleAndOrganization(c.getLogin(), c.getRole(),
                 c.getEntity());
+        final Optional<LeosClients> leosClient = (c.getLeosClientId()!=null)?leosClientsRepository.findByName(c.getLeosClientId()):Optional.empty();
+
         Collaborators updatedCollaborators;
         if (!collaborator.isPresent()) {
             Collaborators collaborators = new Collaborators();
@@ -119,6 +125,9 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
             collaborators.setCollaboratorName(c.getLogin());
             collaborators.setOrganization(c.getEntity());
             collaborators.setRole(c.getRole());
+            if (leosClient.isPresent()) {
+                collaborators.setLeosClients(leosClient.get());
+            }
             updatedCollaborators = collaboratorsRepository.save(collaborators);
         } else {
             updatedCollaborators = collaborator.get();

@@ -279,7 +279,7 @@ public class LeosDocumentExtensions {
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
                 Integer.toString(Objects.hash(d.getRef(), d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
-                contentOption(d, fetchContent), d.getLfds());
+                contentOption(d, fetchContent));
     }
 
     private static Structure toLeosStructureDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {

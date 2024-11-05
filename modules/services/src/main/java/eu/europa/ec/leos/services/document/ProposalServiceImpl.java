@@ -544,10 +544,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
         LOG.trace("Creating Proposal... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
         String ref = generateProposalReference(metadata.getLanguage());
+        String creationOptions = metadata.getCreationOptions();
         metadata = metadata
                 .builder()
                 .withRef(ref)
                 .build();
+        metadata.setCreationOptions(creationOptions);
         Proposal proposal = proposalRepository.createProposal(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Proposal ref {} in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(proposal) : content, metadata);

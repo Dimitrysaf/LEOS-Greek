@@ -13,23 +13,25 @@
  */
 package eu.europa.ec.leos.repository.entities;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Entity
 @Table(name = "COLLABORATORS")
@@ -60,6 +62,9 @@ public class Collaborators implements Serializable {
     private String role;
     @Column(name = "ORGANIZATION", nullable = false, length = 100)
     private String organization;
+    @JoinColumn(name = "LEOS_CLIENTS_ID", referencedColumnName = "ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private LeosClients leosClients;
     @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
     private String auditCBy;
     @Column(name = "AUDIT_C_DATE", nullable = false)
@@ -147,6 +152,14 @@ public class Collaborators implements Serializable {
 
     public void setAuditLastMDate(LocalDateTime auditLastMDate) {
         this.auditLastMDate = auditLastMDate;
+    }
+
+    public LeosClients getLeosClients() {
+        return leosClients;
+    }
+
+    public void setLeosClients(LeosClients leosClients) {
+        this.leosClients = leosClients;
     }
 
     @XmlTransient

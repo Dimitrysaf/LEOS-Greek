@@ -1505,7 +1505,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         final String proposalUrl = event.getProposalURL();
         try {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
-            collaboratorService.addCollaborator(proposal, userVO.getLogin(), role.getName(), selectedEntity, proposalUrl);
+            collaboratorService.addCollaborator(proposal, userVO.getLogin(), role.getName(), selectedEntity, proposalUrl, null);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "collaborator.message.user.added", userVO.getName(),
                     messageHelper.getMessage(role.getMessageKey())));
         } catch (SendNotificationException e) {

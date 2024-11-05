@@ -71,8 +71,13 @@ public abstract class CollectionContextService {
     protected static final String TEMPLATE = "template";
     protected static final String ACT_TYPE = "actType";
     protected static final String PROCEDURE_TYPE = "procedureType";
-    protected static final String DOCUMENT_TEMPLATES = "documentTemplates";
-    protected static final String MANDATORY = "mandatory";
+    protected static final String DOCUMENT_MANDATORY_TEMPLATES = "documentMandatoryTemplates";
+    protected static final String DOCUMENT_DEFAULT_TRUE_TEMPLATES = "documentDefaultTrueTemplates";
+    protected static final String DOCUMENT_DEFAULT_FALSE_TEMPLATES = "documentDefaultFalseTemplates";
+    protected static final String MANDATORY = "MANDATORY";
+    protected static final String DEFAULT_TRUE = "DEFAULT_TRUE";
+    protected static final String DEFAULT_FALSE = "DEFAULT_FALSE";
+    protected static final String FORBIDDEN = "FORBIDDEN";
 
     protected final MessageHelper messageHelper;
     protected final ExplanatoryService explanatoryService;
@@ -435,6 +440,9 @@ public abstract class CollectionContextService {
 
         List<CatalogItem> catalogItems;
         Map<String, String> templatePropertiesMap = new HashMap<>();
+        templatePropertiesMap.put(DOCUMENT_MANDATORY_TEMPLATES, "");
+        templatePropertiesMap.put(DOCUMENT_DEFAULT_TRUE_TEMPLATES, "");
+        templatePropertiesMap.put(DOCUMENT_DEFAULT_FALSE_TEMPLATES, "");
         try {
             catalogItems = templateService.getTemplatesCatalog();
             getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
@@ -442,11 +450,8 @@ public abstract class CollectionContextService {
             LOG.error("Error occurred while retrieving catalog items " + e.getMessage());
         }
 
-        String template = templatePropertiesMap.get(DOCUMENT_TEMPLATES);
-        String[] templates = (template != null) ? template.split(";") : new String[0];
-        for (String name : templates) {
-            this.useTemplate(name);
-        }
+        loadTemplates(templatePropertiesMap, DOCUMENT_MANDATORY_TEMPLATES);
+        loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
 
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
@@ -460,6 +465,9 @@ public abstract class CollectionContextService {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .build();
+
+        String creationOptions = createJsonCreationOptions(templatePropertiesMap);
+        metadata.setCreationOptions(creationOptions);
 
         Proposal prpsl = proposalService.createProposal(proposalTemplate.getId(), leosPckg.getPath(), metadata, null);
 
@@ -665,14 +673,15 @@ public abstract class CollectionContextService {
         boolean skipItr = false;
         for (CatalogItem item : catalogItems) {
             tp = getTemplateProperties(tp, item.getItems(), templateId, isGetChildren);
-            if (tp.containsKey(TEMPLATE) && item.isEnabled() &&
-                    ( (item.isMandatory() != null && item.isMandatory()) || (item.isDefaultDocument() != null && item.isDefaultDocument()) )) {
-                if (!tp.containsKey(DOCUMENT_TEMPLATES)) {
-                    tp.put(DOCUMENT_TEMPLATES, "");
-                } else if (tp.containsKey(DOCUMENT_TEMPLATES) && !tp.get(DOCUMENT_TEMPLATES).isEmpty()) {
-                    tp.put(DOCUMENT_TEMPLATES, tp.get(DOCUMENT_TEMPLATES) + ";");
-                }
-                tp.put(DOCUMENT_TEMPLATES, tp.get(DOCUMENT_TEMPLATES) + item.getId());
+            if (tp.containsKey(TEMPLATE) && item.isEnabled() && (item.isMandatory() != null && item.isMandatory())) {
+                // This method adds in object tp
+                fillTemplate(tp, item, DOCUMENT_MANDATORY_TEMPLATES);
+            } else if (tp.containsKey(TEMPLATE) && item.isEnabled() && (item.isDefaultDocument() != null && item.isDefaultDocument())) {
+                // This method adds in object tp
+                fillTemplate(tp, item, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
+            } else if (tp.containsKey(TEMPLATE) && item.isEnabled() && (item.isDefaultDocument() != null && !item.isDefaultDocument())) {
+                // This method adds in object tp
+                fillTemplate(tp, item, DOCUMENT_DEFAULT_FALSE_TEMPLATES);
             } else if (tp.containsKey(TEMPLATE) && !tp.containsKey(ACT_TYPE) && !isGetChildren) {
                 tp.put(ACT_TYPE, item.getKey());
                 skipItr = true;
@@ -685,6 +694,53 @@ public abstract class CollectionContextService {
             }
         }
         return tp;
+    }
+
+    private static void fillTemplate(Map<String, String> tp, CatalogItem item, String documentTemplatesType) {
+        if (tp.containsKey(documentTemplatesType) && !tp.get(documentTemplatesType).isEmpty()) {
+            tp.put(documentTemplatesType, tp.get(documentTemplatesType) + ";");
+        }
+        tp.put(documentTemplatesType, tp.get(documentTemplatesType) + item.getId());
+    }
+
+    protected void loadTemplates(Map<String, String> templatePropertiesMap, String documentTemplatesType) {
+        String template = templatePropertiesMap.get(documentTemplatesType);
+        String[] templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            if (name != null && !name.isEmpty()) {
+                this.useTemplate(name);
+            }
+        }
+    }
+
+    protected String createJsonCreationOptions(Map<String, String> templatePropertiesMap) {
+        String json = "{ ";
+        String comma = "";
+        String template = templatePropertiesMap.get(DOCUMENT_MANDATORY_TEMPLATES);
+        String[] templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            if (name != null && !name.isEmpty()) {
+                json += comma + "\"" + name + "\": \"MANDATORY\"";
+                comma = ", ";
+            }
+        }
+        template = templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES);
+        templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            if (name != null && !name.isEmpty()) {
+                json += comma + "\"" + name + "\": \"DEFAULT_TRUE\"";
+                comma = ", ";
+            }
+        }
+        template = templatePropertiesMap.get(DOCUMENT_DEFAULT_FALSE_TEMPLATES);
+        templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            if (name != null && !name.isEmpty()) {
+                json += comma + "\"" + name + "\": \"DEFAULT_FALSE\"";
+                comma = ", ";
+            }
+        }
+        return json + " }";
     }
 
     @SuppressWarnings("unchecked")

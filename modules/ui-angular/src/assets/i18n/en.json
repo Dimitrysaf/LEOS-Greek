@@ -394,6 +394,7 @@
   "page.editor.navigation-pane.label": "Navigation Pane",
   "page.editor.toc-pane.label": "Table of Content",
   "page.editor.versions-pane.label": "Versions",
+  "page.editor.versions-pane.version.label.before.finalised": "Before finalization",
   "page.editor.contribution-pane.label": "Contributions",
   "page.editor.contribution-pane.contribution-processed": "Contribution processed",
   "page.editor.contribution.actions-button.tooltip": "Actions",

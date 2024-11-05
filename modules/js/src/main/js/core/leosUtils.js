@@ -50,6 +50,11 @@ define(function leosUtilsModule(require) {
         "KEY_V": 86,
         "KEY_X": 88
     }
+    var SPELLCHECKER = {
+        disabled: "disabled",
+        qas: "qas",
+        wsc: "wsc"
+    }
 
     function _getParentElement(connector) {
         var element = null;
@@ -364,6 +369,7 @@ define(function leosUtilsModule(require) {
         NUM: NUM,
         ID: ID,
         HEADING: HEADING,
+        SPELLCHECKER: SPELLCHECKER,
         BLOCKCONTAINER: BLOCKCONTAINER,
         LEVEL: LEVEL,
         DOCPURPOSE: DOCPURPOSE

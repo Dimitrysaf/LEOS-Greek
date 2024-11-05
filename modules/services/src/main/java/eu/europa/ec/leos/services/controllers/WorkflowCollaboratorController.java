@@ -1,12 +1,17 @@
 package eu.europa.ec.leos.services.controllers;
 
+import com.google.common.base.Strings;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.integration.ExternalSystemACLService;
+import eu.europa.ec.leos.integration.dto.AccessDTO;
+import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.request.WorkflowCollaboratorAclRequest;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.utils.HttpUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +43,9 @@ public class WorkflowCollaboratorController {
     private final WorkflowCollaboratorService workflowCollaboratorService;
     private final ProposalService proposalService;
     private final PackageService packageService;
+    private final ExternalSystemACLService externalSystemACLService;
+    private final CollaboratorService collaboratorService;
+    private final CollectionUrlBuilder urlBuilder;
 
     @PostMapping(value = "/{proposalRef}/workflow-collaborators")
     @ResponseBody
@@ -45,16 +53,31 @@ public class WorkflowCollaboratorController {
             @PathVariable("proposalRef") String proposalRef,
             @RequestBody WorkflowCollaboratorAclRequest workflowCollaboratorAclRequest,
             @RequestHeader("Authorization") String authorizationHeader) {
-        proposalRef = encodeParam(proposalRef);
-        logDebug("proposalRef:%s, payload:%s", proposalRef, workflowCollaboratorAclRequest.toString());
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        Optional<String> systemClientId = HttpUtils.extractSystemClientIdFromAuthorizationHeader(authorizationHeader);
+        final String proposalReference = encodeParam(proposalRef);
+        logDebug("proposalRef:%s, payload:%s", proposalReference, workflowCollaboratorAclRequest.toString());
+        Proposal proposal = proposalService.findProposalByRef(proposalReference);
+        final Optional<String> systemClientId = HttpUtils.extractSystemClientIdFromAuthorizationHeader(authorizationHeader);
         if (!systemClientId.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN);
         }
-        final Integer integer = workflowCollaboratorService.setWorkflowCollaboratorAcl(proposal, systemClientId.get(), workflowCollaboratorAclRequest);
+        final String clientSystemId = systemClientId.get();
+        final Integer integer = workflowCollaboratorService.setWorkflowCollaboratorAcl(proposal, clientSystemId, workflowCollaboratorAclRequest);
+        final List<AccessDTO> accessControlList = externalSystemACLService.getAccessControlList(workflowCollaboratorAclRequest.getAclCallbackUrl());
+        accessControlList.stream().forEach(u->{
+            addWorkflowCollaborator(proposalReference, clientSystemId, u);
+        });
         return new ResponseEntity<>(integer, HttpStatus.OK);
 
+    }
+
+    private String addWorkflowCollaborator(String proposalRef, String systemClientId, AccessDTO accessDTO) {
+        proposalRef = encodeParam(proposalRef);
+        final String userId = !Strings.isNullOrEmpty(accessDTO.getUserId())?accessDTO.getUserId():accessDTO.getEntity();
+        final String roleName = accessDTO.getRole();
+        final String connectedDG = accessDTO.getEntity();
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
+        return collaboratorService.addCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, systemClientId);
     }
 
     /**

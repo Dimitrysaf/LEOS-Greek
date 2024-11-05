@@ -36,10 +36,10 @@ class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public <T extends XmlDocument> T addOrUpdateCollaborator(String id, String userLogin, String userEntity, String authority, Class<T> type) {
+    public <T extends XmlDocument> T addOrUpdateCollaborator(String id, String userLogin, String userEntity, String authority, String systemClientId, Class<T> type) {
         T document = workspaceRepository.findDocumentById(id, type, true);
         List<Collaborator> collaborators = document.getCollaborators();
-        collaborators.add(new Collaborator(userLogin, authority, userEntity));
+        collaborators.add(new Collaborator(userLogin, authority, userEntity, systemClientId));
         return updateCollaborators(document.getMetadata().get().getRef(), id, collaborators, type);
     }
 
