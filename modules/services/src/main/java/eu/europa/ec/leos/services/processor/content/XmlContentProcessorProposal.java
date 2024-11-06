@@ -325,6 +325,18 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         if (element != null && element.getElementFragment() != null && element.getElementFragment().contains("leos:optional=\"true\"")) {
             hasOptional = true;
         }
+        boolean hasRepeated = false;
+        if (element != null && element.getElementFragment() != null && element.getElementFragment().contains("leos:repeated=\"true\"")) {
+            hasRepeated = true;
+        }
+
+        if(hasRepeated) {
+            if (element == null) {
+                return xmlContent;
+            }
+            return removeElement(xmlContent, element, LS, isTrackChangesEnabled);
+        }
+
         if (isTrackChangesEnabled || hasOptional) {
             if (element == null) {
                 return xmlContent;

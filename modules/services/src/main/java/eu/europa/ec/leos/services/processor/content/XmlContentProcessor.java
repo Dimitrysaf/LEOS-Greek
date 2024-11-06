@@ -68,6 +68,8 @@ public interface XmlContentProcessor {
 
     byte[] removeElementById(byte[] xmlContent, String elementId, boolean isTrackChangesEnabled);
 
+    byte[] repeatElement(byte[] xmlContent, String idAttributeValue, boolean before);
+
     byte[] insertElementByTagNameAndId(byte[] xmlContent, String articleTemplate, String tagName, String idAttributeValue, boolean before, boolean isTrackChangesEnabled);
 
     byte[] insertElementByTagNameAndIdWithoutCheckOnIntro(byte[] xmlContent, String elementTemplate, String idAttributeValue,
