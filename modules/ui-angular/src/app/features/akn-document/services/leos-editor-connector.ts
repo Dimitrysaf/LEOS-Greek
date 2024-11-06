@@ -456,36 +456,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       });
     };
 
-    let element = document.getElementById(elementData.elementId);
-    if(element.hasAttribute('leos:repeated') && element.getAttribute('leos:repeated') === 'true') {
-      if(this._state.isTrackChangesEnabled) {
-        this.dialogService.openDialog({
-          title: this.translateService.instant(
-            'page.editor.element-delete-dialog.title',
-          ),
-          content: this.translateService.instant(
-            'page.editor.element-delete-dialog.body',
-          ),
-          accept: confirmDeletion,
-          dismiss: () => {
-            this.actionManagerConnector.cancelActionElement(elementData.elementId);
-          },
-        });
-      } else {
-        this.dialogService.openDialog({
-          title: this.translateService.instant(
-            'page.editor.repeated-element-delete-confirmation.title',
-          ),
-          content: this.translateService.instant(
-            'page.editor.repeated-element-delete-confirmation.message',
-          ),
-          accept: confirmDeletion,
-          dismiss: () => {
-            this.actionManagerConnector.cancelActionElement(elementData.elementId);
-          },
-        });
-      }
-    } else if (differentMessageForLast && ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType)) ||
+    if (differentMessageForLast && ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType)) ||
       (!this.isCNInstance && isLastElement))) {
       this.dialogService.openDialog({
         title: this.translateService.instant(

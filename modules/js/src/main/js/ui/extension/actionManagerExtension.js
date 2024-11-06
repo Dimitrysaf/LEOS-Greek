@@ -593,7 +593,6 @@ define(function actionManagerExtensionModule(require) {
         type = type === 'block' ? 'crossheading' : type;
         let isHeadingOfAnOptionalLevel = false;
         let optional = $element.attr('leos:optional');
-        let repeatable = $element.attr('leos:repeatable');
         let action = $element.attr('leos:action');
         let leosAction = "";
         if (optional === 'true' && $element[0] && $element[0].parentNode && $element[0].parentNode.localName === 'level') {
@@ -603,9 +602,6 @@ define(function actionManagerExtensionModule(require) {
         // If we don't have leos:optional, uses deletable because it was previously using this variable
         // So, to avoid conflicts, we add the same old value in this case
         let hasBeforeAndAfter = optional ? false : deletable;
-        if(optional && repeatable) {
-            hasBeforeAndAfter = true;
-        }
         var insertBeforeAndAfter = _insertBeforeAndAfterIcon($element, hasBeforeAndAfter);
         editable = editable || (editable && $element.attr('leos\:optionlist'));
         deletable = (optional === 'true' && action !== 'delete') || _isDeletable($element, deletable, connector);
