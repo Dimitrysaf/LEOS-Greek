@@ -506,8 +506,19 @@ public class MergeContributionService {
         return elementsToBeProcessed;
     }
 
-    private boolean isCurrentlyIndented(@NotNull Node node) {
+    private boolean isCurrentlyIndented(@NotNull Node node, Node originalParent) {
         Node num = getFirstChild(node, NUM);
+        Node contributionParent = node.getParentNode();
+        if (contributionParent.getNodeName().equals(LIST)) {
+            contributionParent = contributionParent.getParentNode();
+        }
+        if (originalParent != null && originalParent.getNodeName().equals(LIST)) {
+            originalParent = originalParent.getParentNode();
+        }
+        if (originalParent != null && !getId(originalParent).replaceAll(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, "")
+                .equals(getId(contributionParent).replaceAll(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, ""))) {
+            return true;
+        }
         String originNum = getAttributeValue(node, LEOS_INDENT_ORIGIN_NUM_ATTR);
         String originTag = getAttributeValue(node, LEOS_INDENT_ORIGIN_TYPE_ATTR);
         if (originTag != null && !originTag.equalsIgnoreCase(node.getNodeName())) {
@@ -1209,7 +1220,7 @@ public class MergeContributionService {
 
     private byte[] doIndent(byte[] xmlContent, String id, Node indentedNode, boolean withTrackChanges, LinkedHashSet<ElementToBeProcessed> elementsToBeProcessed) {
         Node originalIndentedElt = getElementById(xmlContent, id);
-        if (originalIndentedElt == null || !isCurrentlyIndented(indentedNode)) {
+        if (originalIndentedElt == null || !isCurrentlyIndented(indentedNode, originalIndentedElt.getParentNode())) {
             return xmlContent;
         }
         String parentId = getId(originalIndentedElt.getParentNode());
