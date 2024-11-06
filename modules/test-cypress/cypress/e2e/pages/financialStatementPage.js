@@ -1,8 +1,7 @@
 class financialStatementPage {
     elements = {
         closeBtn: () => cy.xpath("//button[text()='Close']"),
-        doctype: () => cy.get("docType[refersTo='~STAT_FINANC_LEGIS']"),
-        repeatedSubparagraph: () => cy.get('subparagraph[leos\\:repeated="true"]'),
+        doctype: () => cy.get("docType[refersTo='~STAT_FINANC_LEGIS']")
     }
 
     clickCloseBtn(){
@@ -30,14 +29,6 @@ class financialStatementPage {
 
     clickEditIconOfLevel(levelNumber) {
         this.getLevel(levelNumber).realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(2000).find("span[data-widget-type='edit']").click({force:true}));
-    }
-
-    duplicateRepeatableSubparagraph() {
-        cy.get('subparagraph[leos\\:repeatable="true"]').first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }).wait(500));
-    }
-
-    deleteRepeatedSubparagraph() {
-        cy.get('subparagraph[leos\\:repeated="true"]').first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='delete']").click({ force: true }).wait(500));
     }
 }
 export default new financialStatementPage();
