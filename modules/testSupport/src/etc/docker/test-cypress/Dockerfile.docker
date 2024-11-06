@@ -1,0 +1,13 @@
+# This Dockerfile is used to create an image to test-cypress to be used in our runner in gitlab
+# The base used image is documented here: https://hub.docker.com/r/cypress/factory/
+# From this base image page we have links to updated version numbers of node and chrome
+#
+# To create the image itself those commands were used:
+# docker build -f Dockerfile.docker -t code.europa.eu:4567/leos/core/image-for-docker:1.0.0 . (change version when create a new one)
+# docker login code.europa.eu:4567 (with gitlab user and token created in gitlab profile)
+# docker push code.europa.eu:4567/leos/core/image-for-docker:1.0.0 (change version when create a new one)
+#
+# Container Registry page: https://code.europa.eu/leos/core/container_registry
+#
+
+FROM docker:latest
