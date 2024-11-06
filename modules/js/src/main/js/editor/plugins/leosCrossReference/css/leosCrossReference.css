@@ -257,7 +257,7 @@ bill level num {
     grid-column: 1;
     grid-row: 1 / 6;
     margin-right: 10px;
-
+    padding-bottom: 6pt;
 }
 
 bill level heading {
@@ -266,12 +266,12 @@ bill level heading {
 
 bill level subparagraph {
 	grid-column: 2/4;
+    display: grid;
 }
 
 bill level list {
 	grid-column: 2/4;
-    padding-left: 30px;
-
+    padding-left: 10px;
 }
 
 bill level list list {
@@ -293,12 +293,42 @@ bill level list point {
     float: left;
     clear: both;
     text-align: left;
+    display: grid;
+    padding-left: 0pt;
+}
+
+bill level list point num {
+    padding-bottom: 6pt;
 }
 
 bill level list indent {
     float: left;
     clear: both;
     text-align: left;
+    display: grid;
+}
+
+bill level list  content {
+    padding-bottom: 6pt;
+}
+
+bill level list point > content {
+    grid-column: 4 / 4;
+    display: grid;
+    padding-left: 30px;
+}
+
+bill level list indent > content {
+    grid-column: 2 / 4;
+    display: grid;
+}
+
+bill level list indent > content > aknP {
+    padding-left: 0px;
+}
+
+bill level list point > list > subparagraph > content > aknP{
+    padding-left: 0px;
 }
 
 bill article {
@@ -335,6 +365,12 @@ bill article paragraph > num {
     float: left;
     padding-top: 6pt;
     padding-left: 3px;
+}
+
+bill article paragraph > content > aknP{
+    display: block;
+    padding-top: 6pt;
+    padding-bottom: 6pt;
 }
 
 bill article subparagraph > content > aknP {
@@ -380,6 +416,8 @@ bill article list point > num {
     display: block;
     min-width: 40px;
     float: left;
+    padding-top: 6pt;
+    padding-bottom: 6pt;
 }
 
 bill article alinea {
