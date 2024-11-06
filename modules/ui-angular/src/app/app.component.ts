@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import {Component, HostBinding, OnDestroy, OnInit, SecurityContext} from '@angular/core';
 import {
   getI18nState,
   getUserPreferences,
@@ -29,6 +29,9 @@ import { Notification } from './shared/models/notification.model';
 import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
 import { NotificationsService } from './shared/services/notifications.service';
 import {DocumentService} from "@/shared/services/document.service";
+import { Title } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-root',
@@ -73,7 +76,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private storage: AppLocalStorageService,
     private notificationsService: NotificationsService,
     private userService: UserService,
-    private documentService: DocumentService
+    private documentService: DocumentService,
+    private titleService: Title,
+    private domSanitizer: DomSanitizer
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
     this.i18nState = this.store.select(getI18nState);
@@ -93,6 +98,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.config.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
       this.headerTitleHtml = config.headerTitle;
+      const plainTextTitle = this.stripHtmlTags(this.headerTitleHtml);
+      this.titleService.setTitle(plainTextTitle);
     });
 
     this.documentService.documentConfig$
@@ -114,6 +121,12 @@ export class AppComponent implements OnInit, OnDestroy {
       this.translateService.use(activeLang);
       this.storage.set('lang', activeLang);
     });
+  }
+
+  stripHtmlTags(html: string): string {
+    const tempElement = document.createElement('div');
+    tempElement.innerHTML = html;
+    return tempElement.textContent || tempElement.innerText || '';
   }
 
   get showLoggedUser() {
