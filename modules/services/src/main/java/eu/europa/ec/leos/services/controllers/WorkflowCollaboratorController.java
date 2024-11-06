@@ -63,9 +63,9 @@ public class WorkflowCollaboratorController {
         final String clientSystemId = systemClientId.get();
         final Integer integer = workflowCollaboratorService.setWorkflowCollaboratorAcl(proposal, clientSystemId, workflowCollaboratorAclRequest);
         final List<AccessDTO> accessControlList = externalSystemACLService.getAccessControlList(workflowCollaboratorAclRequest.getAclCallbackUrl());
-        accessControlList.stream().forEach(u->{
-            addWorkflowCollaborator(proposalReference, clientSystemId, u);
-        });
+        accessControlList.stream().forEach(u->
+            addWorkflowCollaborator(proposalReference, clientSystemId, u)
+        );
         return new ResponseEntity<>(integer, HttpStatus.OK);
 
     }
@@ -93,7 +93,7 @@ public class WorkflowCollaboratorController {
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
         Optional<String> systemClientId = HttpUtils.extractSystemClientIdFromAuthorizationHeader(authorizationHeader);
         if (!systemClientId.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "systemClientId not found on jwt token");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN);
         }
         final Optional<WorkflowCollaboratorDTO> collaborators = workflowCollaboratorService.getCollaborators(leosPackage.getName(),systemClientId.get());
         return collaborators.isPresent() ? new ResponseEntity<>(collaborators.get(), HttpStatus.OK) : new ResponseEntity("workflow-collaborators not found ", HttpStatus.NOT_FOUND);
@@ -121,7 +121,7 @@ public class WorkflowCollaboratorController {
         logDebug("Delete workflow collaborator %s", proposalRef);
         Optional<String> systemClientId = HttpUtils.extractSystemClientIdFromAuthorizationHeader(authorizationHeader);
         if (!systemClientId.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "systemClientId not found on jwt token");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN);
         }
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         workflowCollaboratorService.deleteWorkflowCollaborator(systemClientId.get(), proposal);

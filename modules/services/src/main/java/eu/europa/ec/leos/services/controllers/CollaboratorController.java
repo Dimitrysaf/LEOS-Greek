@@ -60,7 +60,6 @@ public class CollaboratorController {
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public ResponseEntity<Object> getAllCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -89,7 +88,6 @@ public class CollaboratorController {
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.POST)
-    @ResponseBody
     public ResponseEntity<Object> addCollaboratorToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -107,7 +105,6 @@ public class CollaboratorController {
     }
 
     @RequestMapping(value = "/{proposalRef}/bulkCollaborators", method = RequestMethod.POST)
-    @ResponseBody
     public ResponseEntity<Object> addBulkCollaboratorsToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -137,7 +134,6 @@ public class CollaboratorController {
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public ResponseEntity<Object> editCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -155,7 +151,6 @@ public class CollaboratorController {
     }
 
     @RequestMapping(value = "/{proposalRef}/bulkCollaborators", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public ResponseEntity<Object> editBulkCollaboratorsFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
