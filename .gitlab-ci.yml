@@ -18,6 +18,8 @@ cache:
     - /builds/${CI_PIPELINE_ID}/.m2/repository/
 
 java-build:
+  variables:
+    TAGS_TO_RUN: "@local"
   stage: build
   script:
     - cd $CI_PROJECT_DIR/tools/user-repo
@@ -37,9 +39,10 @@ java-build:
       - "**/package-lock.json"
       - "**/yarn.lock"
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
     - if: $CI_PIPELINE_SOURCE == "web"
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
 
 cypress-test-for-local:
   variables:
