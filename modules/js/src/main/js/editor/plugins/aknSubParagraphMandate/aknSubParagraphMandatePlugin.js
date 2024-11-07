@@ -112,6 +112,12 @@ define(function aknSubParagraphMandatePluginModule(require) {
                 akn : "leos:optional",
                 html : "data-akn-optional"
             }, {
+                akn : "leos:repeatable",
+                html : "leos:repeatable"
+            }, {
+                akn : "leos:repeated",
+                html : "leos:repeated"
+            }, {
                 akn : "leos:allow-soft-enter",
                 html : "data-akn-allow-soft-enter"
             }]
