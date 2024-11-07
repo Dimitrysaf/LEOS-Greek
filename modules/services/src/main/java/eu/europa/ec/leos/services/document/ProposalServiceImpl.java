@@ -446,7 +446,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         LOG.trace("Updating Proposal Xml Content... [id={}]", proposal.getId());
         ProposalMetadata updatedMetadata = proposal.getMetadata().get()
                 .builder()
-                .withPurpose(StringEscapeUtils.unescapeXml(getPurposeFromXml(content)))
+                .withPurpose(getPurposeFromXml(content))
                 .build();
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedMetadata, content, versionType, comment);
 
