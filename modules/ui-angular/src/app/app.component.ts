@@ -144,7 +144,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
       case 3: {
         window.open(
-          'https://webgate.ec.europa.eu/fpfis/wikis/pages/viewpage.action?spaceKey=REGISTRY&title=Home',
+          'https://eceuropaeu.sharepoint.com/sites/gopro',
           '_blank',
         );
         break;
