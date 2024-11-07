@@ -10,7 +10,6 @@ import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.request.WorkflowCollaboratorAclRequest;
 import eu.europa.ec.leos.services.store.PackageService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

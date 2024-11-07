@@ -1,4 +1,4 @@
-import {Component, HostBinding, OnDestroy, OnInit, SecurityContext} from '@angular/core';
+import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
 import {
   getI18nState,
   getUserPreferences,
@@ -9,29 +9,19 @@ import {
   UserService,
   UserState,
 } from '@eui/core';
-import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
-import {
-  map,
-  Observable,
-  of,
-  Subject,
-  Subscription,
-  take,
-  takeUntil,
-} from 'rxjs';
+import {Store} from '@ngrx/store';
+import {TranslateService} from '@ngx-translate/core';
+import {Observable, Subject, take, takeUntil,} from 'rxjs';
 
-import { AppConfigService } from '@/core/services/app-config.service';
-import { AppLocalStorageService } from '@/core/services/app-local-storage.service';
+import {AppConfigService} from '@/core/services/app-config.service';
+import {AppLocalStorageService} from '@/core/services/app-local-storage.service';
 
-import { Profile } from './shared/models/leos.model';
-import { Notification } from './shared/models/notification.model';
-import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
-import { NotificationsService } from './shared/services/notifications.service';
+import {Profile} from './shared/models/leos.model';
+import {Notification} from './shared/models/notification.model';
+import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service';
+import {NotificationsService} from './shared/services/notifications.service';
 import {DocumentService} from "@/shared/services/document.service";
-import { Title } from '@angular/platform-browser';
-import { DomSanitizer } from '@angular/platform-browser';
-
+import {DomSanitizer, Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',

@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -78,7 +77,6 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
     @Override
     public String addCollaborator(Proposal proposal, String userId, String roleName, String selectedEntity, String proposalUrl, String systemClientId) {
-        LOG.trace("Adding collaborator...{}, with authority {} for systemClientId {}", userId, roleName, systemClientId);
         final User user = getUser(userId);
         final Role role = getRole(roleName);
         final String entity = getEntity(selectedEntity, user);
@@ -189,10 +187,6 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         } else {
             return null;
         }
-    }
-
-    private ClientSystem getInternalUser() {
-        return ClientSystem.builder().clientId("INTERNAL_USER").build();
     }
 
     private String getEntity(String connectedDG, User user) {
