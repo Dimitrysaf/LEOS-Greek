@@ -71,6 +71,12 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
     }
 
     @Override
+    public byte[] repeatElement(FinancialStatement document, String idAttributeValue, boolean before) {
+        byte[] updateContent = xmlContentProcessor.repeatElement(getContent(document), idAttributeValue, before);
+        return xmlContentProcessor.doXMLPostProcessing(updateContent);
+    }
+
+    @Override
     public byte[] insertNewElement(FinancialStatement financialStatement, String elementId, String tagName, boolean before) {
         String template;byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();

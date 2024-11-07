@@ -516,6 +516,19 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
+    public byte[] repeatElement(byte[] xmlContent, String idAttributeValue, boolean before) {
+        Document document = createXercesDocument(xmlContent);
+        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        if (node != null) {
+            Node newNode = XercesUtils.createNodeFromXmlFragment(document, nodeToByteArray(node), false);
+            XercesUtils.removeAttributeRecursively(newNode, XMLID);
+            XercesUtils.addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
+            XercesUtils.addSibling(newNode, node, before);
+        }
+        return nodeToByteArray(document);
+    }
+
+    @Override
     public byte[] insertElementByTagNameAndId(byte[] xmlContent, String elementTemplate, String tagName, String idAttributeValue, boolean before, boolean isTrackChangesEnabled) {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
