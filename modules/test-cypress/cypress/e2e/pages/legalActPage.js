@@ -12,7 +12,7 @@ class legalActPage {
     }
 
     clickCloseBtn() {
-        this.elements.closeBtn().click();
+        this.elements.closeBtn().click().wait(500);
     }
 
     getAllParagraphFromArticle(articleNumber) {
