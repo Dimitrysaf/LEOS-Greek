@@ -315,7 +315,7 @@ bill level list  content {
 bill level list point > content {
     grid-column: 4 / 4;
     display: grid;
-    padding-left: 30px;
+    padding-left: 10px;
 }
 
 bill level list indent > content {
@@ -323,7 +323,7 @@ bill level list indent > content {
     display: grid;
 }
 
-bill level list indent > content > aknP {
+bill level list indent > content > aknP, bill level list point > content > aknP {
     padding-left: 0px;
 }
 
@@ -373,13 +373,6 @@ bill article paragraph > content > aknP{
     padding-bottom: 6pt;
 }
 
-bill article subparagraph > content > aknP {
-    display: block;
-    padding-top: 6pt;
-    padding-bottom: 6pt;
-    margin: 0;
-}
-
 bill article list indent > num {
     display: block;
     min-width: 40px;
@@ -402,6 +395,13 @@ bill article list indent > content > aknP {
     display: block;
     padding-left: 40px;
 
+}
+
+bill article list point > content > aknP {
+    display: block;
+    padding-top: 6pt;
+    padding-bottom: 6pt;
+    margin: 0;
 }
 
 bill article alinea {
@@ -434,6 +434,9 @@ bill article subparagraph {
 
 bill article subparagraph > content > aknP {
     padding-left: 40px;
+    padding-top: 6pt;
+    padding-bottom: 6pt;
+    margin: 0;
 }
 
 bill article alinea > content > aknP, bill article alinea > content > p {

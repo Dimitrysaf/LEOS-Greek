@@ -375,7 +375,11 @@ define(function leosCrossReferenceDialog(require) {
             return this.elementIds;
         },
         addSelectedElementId: function addSelectedElementId(elementId) {
-            this.getSelectedElementIds().add(elementId.split("/").pop());
+            let elemId = elementId.split("/").pop();
+            if(elemId && elemId.startsWith("~")){
+                elemId = elemId.slice(1);
+            }
+            this.getSelectedElementIds().add(elemId);
         },
         removeSelectedElementId: function removeSelectedElementId(elementId) {
             this.getSelectedElementIds().delete(elementId.split("/").pop());
