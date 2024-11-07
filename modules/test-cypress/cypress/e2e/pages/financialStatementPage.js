@@ -2,6 +2,7 @@ class financialStatementPage {
     elements = {
         closeBtn: () => cy.xpath("//button[text()='Close']"),
         doctype: () => cy.get("docType[refersTo='~STAT_FINANC_LEGIS']"),
+        repeatableSubparagraph: () => cy.get('subparagraph[leos\\:repeatable="true"]'),
         repeatedSubparagraph: () => cy.get('subparagraph[leos\\:repeated="true"]'),
     }
 
@@ -33,11 +34,11 @@ class financialStatementPage {
     }
 
     duplicateRepeatableSubparagraph() {
-        cy.get('subparagraph[leos\\:repeatable="true"]').first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }).wait(500));
+        this.elements.repeatableSubparagraph().first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }).wait(500));
     }
 
     deleteRepeatedSubparagraph() {
-        cy.get('subparagraph[leos\\:repeated="true"]').first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='delete']").click({ force: true }).wait(500));
+        this.elements.repeatedSubparagraph().first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='delete']").click({ force: true }).wait(500));
     }
 }
 export default new financialStatementPage();
