@@ -172,6 +172,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         ),
         bodyComponent: {
           component: CoEditionDetectedDialogComponent,
+          config: {
+            coEditionAction: 'EDIT_ELEMENT',
+            elementEditedId: data.elementId
+          }
         },
         accept: () => {
           this.getDocumentElement(
