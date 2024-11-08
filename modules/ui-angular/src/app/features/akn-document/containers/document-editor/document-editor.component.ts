@@ -486,6 +486,9 @@ export class DocumentEditorComponent
         ),
         bodyComponent: {
           component: CoEditionDetectedDialogComponent,
+          config: {
+            coEditionAction: 'EDIT_TOC'
+          }
         },
         accept: () => {
           this.editInlineToC();
