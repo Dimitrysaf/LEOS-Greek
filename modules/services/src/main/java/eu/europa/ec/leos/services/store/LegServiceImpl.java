@@ -1242,7 +1242,7 @@ public class LegServiceImpl implements LegService {
 
     @Override
     public LegDocument updateLegDocument(String ref, String id, LeosLegStatus status) {
-        LOG.info("Updating Leg document status... [id={}, status={}]", id, status.name());
+        LOG.trace("Updating Leg document status... [id={}, status={}]", id, status.name());
         return packageRepository.updateLegDocument(ref, id, status);
     }
 
