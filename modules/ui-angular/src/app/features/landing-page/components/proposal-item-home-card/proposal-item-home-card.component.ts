@@ -1,13 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { apiBaseUrl } from 'src/config';
+import { catchError, EMPTY } from 'rxjs';
 
 import { Document } from '@/shared';
-
-import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 import { LandingPageService } from '../../services/landing-page.service';
 
 @Component({
@@ -35,12 +31,11 @@ export class ProposalItemHomeCardComponent implements OnInit {
   ngOnInit() {
     if (this.proposal) {
       this.setItemTitle(this.proposal.title);
-    }
-
-    if (this.package) {
+    } else if (this.package) {
       this.setItemTitle(this.package.title);
       this.landingPageService
         .getUserDoc(this.package.ref)
+        .pipe(catchError(() => { return EMPTY; }))
         .subscribe((document) => {
           this.updatedBy = document.updatedBy;
           this.updatedOn = document.updatedOn;

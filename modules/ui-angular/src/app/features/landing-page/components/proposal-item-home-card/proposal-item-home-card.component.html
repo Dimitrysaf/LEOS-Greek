@@ -55,8 +55,8 @@
         'page.workspace.proposal-item.updated-by'
           | translate
             : {
-                updatedOn: updatedOn | date : 'dd/MM/yyyy h:mm',
-                updatedBy: updatedBy
+                updatedOn: updatedOn ? (updatedOn | date : 'dd/MM/yyyy HH:mm') : '----',
+                updatedBy: updatedBy ? updatedBy : '----'
               }
       }}
     </eui-card-header-subtitle>
