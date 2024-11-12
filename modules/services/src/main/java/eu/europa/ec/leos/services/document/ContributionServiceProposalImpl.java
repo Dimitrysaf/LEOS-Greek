@@ -277,6 +277,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             clonedMilestoneIds.add(getClonedMilestoneId(cloneProposalRef, legDocument.getName()));
             properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID), clonedMilestoneIds);
             updatedProposal = proposalService.updateProposal(originalProposal.getMetadata().get().getRef(), originalProposal.getId(), properties);
+            LOG.info("Update contribution status after contributionDone [id={}, status={}]", legDocument.getId(), LeosLegStatus.CONTRIBUTION_SENT.name());
             updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legDocument.getId(), LeosLegStatus.CONTRIBUTION_SENT);
         } catch(Exception e) {
             LOG.error("Unexpected error occurred while updating the proposal after revision", e);
