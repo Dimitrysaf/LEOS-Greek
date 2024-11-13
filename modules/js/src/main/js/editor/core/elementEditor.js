@@ -691,7 +691,8 @@ define(function elementEditorModule(require) {
     function _requestToc(connector, event) {
         log.debug("Requesting toc...");
         var data = {
-            elementIds: event.data.selectedNodeIds
+            elementIds: event.data.selectedNodeIds,
+            documentRef: event.data.documentRef
         };
         connector.requestToc(data);
     }
