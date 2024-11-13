@@ -42,9 +42,12 @@ $BLACK : #000000;
 
     [leos\:editable=true],
     [leos\:optional=true],
-    .leos-placeholder
-    {
+    .leos-placeholder {
         @extend %elementEditable;
+    }
+
+    [leos\:optional=true] {
+        padding-bottom: 5px;
     }
 
     article {

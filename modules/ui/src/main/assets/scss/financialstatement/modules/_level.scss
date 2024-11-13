@@ -68,10 +68,16 @@ $NUM_WIDTH: 40px;
       padding-left: 0px; // first level list must be aligned to the heading
     }
 
-    heading {
+    heading:not([leos\:optional="true"]) {
       padding-top: 6pt;
       display: block;
     }
+
+    heading[leos\:optional="true"] {
+      padding-top: 7px !important;
+      display: block;
+    }
+
   }
 
   level, level[leos\:depth="1"], level[leos\:depth="2"], level[leos\:depth="3"], level[leos\:depth="4"] {
