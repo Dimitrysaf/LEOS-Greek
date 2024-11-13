@@ -329,7 +329,7 @@ define(function leosIdentityHandler(require) {
         if (!["akomaNtoso", "bill", "documentCollection", "div", "doc", "attachments", "br", "span"].includes(tagName)) {
             let idAttrValue = element.getAttribute("id");
             if ((idAttrValue == undefined) || (idAttrValue.trim().length == 0)) {
-                idAttrValue = generateId();
+                idAttrValue = _generateId();
                 element.setAttribute("id", idAttrValue);
                 element.setAttribute("NEW", '');
                 element.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
@@ -351,7 +351,7 @@ define(function leosIdentityHandler(require) {
     const DEFAULT_POSTFIX_LENGTH = 15;
     const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz01234567890';
 
-    function generateId() {
+    function _generateId() {
         return DEFAULT_PREFIX + generateRandomString(DEFAULT_POSTFIX_LENGTH);
     }
 
@@ -365,6 +365,7 @@ define(function leosIdentityHandler(require) {
     return {
         handleIdentity: _handleIdentity,
         getElementDetails: _getElementDetails,
-        injectTagIdsInNode: _injectTagIdsInNode
+        injectTagIdsInNode: _injectTagIdsInNode,
+        generateId: _generateId
     };
 });
