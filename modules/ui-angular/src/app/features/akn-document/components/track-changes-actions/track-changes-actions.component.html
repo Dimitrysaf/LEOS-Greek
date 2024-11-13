@@ -5,22 +5,6 @@
     euiButton
     euiIconButton
     euiBasicButton
-    [title]="'page.editor.track.changes.actions.reject' | translate"
-    [attr.aria-label]="'page.editor.track.changes.actions.reject' | translate"
-    [disabled]="!this.canRejectTrackChanges"
-    (click)="onReject()"
-  >
-    <img src="assets/images/remove.png" alt="" />
-    <span class="tc_menubutton_label">{{
-      'page.editor.track.changes.actions.reject' | translate
-    }}</span>
-  </button>
-  <button
-    class="tc_menuitem tc_menubutton"
-    width="100%"
-    euiButton
-    euiIconButton
-    euiBasicButton
     [title]="'page.editor.track.changes.actions.accept' | translate"
     [attr.aria-label]="'page.editor.track.changes.actions.accept' | translate"
     [disabled]="!this.canAcceptTrackChanges"
@@ -29,6 +13,22 @@
     <img src="assets/images/ok.png" alt="" />
     <span class="tc_menubutton_label">{{
       'page.editor.track.changes.actions.accept' | translate
+    }}</span>
+  </button>
+  <button
+    class="tc_menuitem tc_menubutton"
+    width="100%"
+    euiButton
+    euiIconButton
+    euiBasicButton
+    [title]="'page.editor.track.changes.actions.reject' | translate"
+    [attr.aria-label]="'page.editor.track.changes.actions.reject' | translate"
+    [disabled]="!this.canRejectTrackChanges"
+    (click)="onReject()"
+  >
+    <img src="assets/images/remove.png" alt="" />
+    <span class="tc_menubutton_label">{{
+      'page.editor.track.changes.actions.reject' | translate
     }}</span>
   </button>
 </div>
