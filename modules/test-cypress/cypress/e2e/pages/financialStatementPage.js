@@ -1,7 +1,7 @@
 class financialStatementPage {
     elements = {
         closeBtn: () => cy.xpath("//button[text()='Close']"),
-        doctype: () => cy.get("docType[refersTo='~STAT_FINANC_LEGIS']")
+        doctype: () => cy.get("docType[refersTo='~STAT_DIGIT_FINANC_LEGIS']")
     }
 
     clickCloseBtn(){
