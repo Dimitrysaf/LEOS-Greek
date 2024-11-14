@@ -273,6 +273,11 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
+    public List<LegDocument> listSentContributions(String path, String legFileName) {
+        return packageRepository.listSentContributions(path, legFileName);
+    }
+
+    @Override
     public List<LegDocumentVO> getLegDocumentDetailsByUserId(String userId, String proposalId, String legStatus) {
         List<LegDocumentVO> legDocumentVOs = new ArrayList<>();
         if(!StringUtils.isEmpty(proposalId)) {
@@ -1492,9 +1497,9 @@ public class LegServiceImpl implements LegService {
             if (exportOptions.isWithFeedbackAnnotations()) {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
-                annotations = annotateService.fetchFeedbackRepliesFromDB(ref, proposalRef, legFileName, annotations, false);
+                List<JsonNode> feedbackReplies = annotateService.getFeedbackRepliesFromDB(ref, proposalRef, annotations);
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
-                annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
+                annotations = addFeedbackAnnotations(annotations, ref, proposalRef, legFileName, feedbackAnnotations, feedbackReplies);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
                 String annotFilename = creatAnnotationFileName(docName);
                 contentToZip.remove(annotFilename);
@@ -1960,6 +1965,7 @@ public class LegServiceImpl implements LegService {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(annotations);
         JsonNode rootNode = json.get("rows");
+        JsonNode repliesNode = json.get("replies");
         Iterator<JsonNode> itr = rootNode.elements();
         LOG.debug("Processing " + rootNode.size() + " annotations");
         List<JsonNode> modifiedList = new ArrayList<JsonNode>();
@@ -1990,11 +1996,38 @@ public class LegServiceImpl implements LegService {
 
         });
         ((ObjectNode) json).putArray("rows").removeAll().addAll(modifiedList);
+        if (repliesNode != null) {
+            List<JsonNode> modifiedRepliesList = new ArrayList<JsonNode>();
+            itr = repliesNode.elements();
+            itr.forEachRemaining(node -> {
+                String entityText = "";
+                JsonNode userInfo = node.get("user_info");
+                if (userInfo != null && exportOptions.isWithAnonymization()) {
+                    JsonNode entityName = userInfo.get("entity_name");
+                    entityText = entityName.textValue();
+                    int firstEntitySeparator = entityText.indexOf(".");
+                    entityText = firstEntitySeparator >= 0 ? entityText.substring(0, firstEntitySeparator) : entityText;
+                    ((ObjectNode) userInfo).put("display_name", entityText);
+                    ((ObjectNode) userInfo).put("entity_name", entityText);
+                    ((ObjectNode) node).put("user", entityText);
+                    JsonNode permissions = node.get("permissions");
+                    if(permissions != null) {
+                        anonymizePermission(permissions,"admin", entityText);
+                        anonymizePermission(permissions,"update", entityText);
+                        anonymizePermission(permissions,"delete", entityText);
+                    }
+                }
+                modifiedRepliesList.add(node);
+
+            });
+            ((ObjectNode) json).putArray("replies").removeAll().addAll(modifiedRepliesList);
+        }
         ((ObjectNode) json).put("total", modifiedList.size());
         return mapper.writeValueAsString(json);
     }
 
-    private String addFeedbackAnnotations(String annotations, String feedbackAnnotations) throws JsonProcessingException {
+    private String addFeedbackAnnotations(String annotations, String documentRef, String proposalRef, String legFileName, String feedbackAnnotations,
+                                          List<JsonNode> repliesFeedback) throws JsonProcessingException {
         if (StringUtils.isBlank(feedbackAnnotations)) {
             LOG.debug("Didn't find any feedback annotations in DB");
             return annotations;
@@ -2026,11 +2059,26 @@ public class LegServiceImpl implements LegService {
         });
         Iterator<JsonNode> itrRepliesFeedback = repliesNodeFeedback.elements();
         List<JsonNode> repliesFilteredList = new ArrayList<JsonNode>();
-        itrRepliesFeedback.forEachRemaining((node) -> {
-            if(!isPresent(rowsNodeFeedback, node)) {
-                repliesFilteredList.add(node);
+        itrRepliesFeedback.forEachRemaining((reply) -> {
+            if(!isPresent(rowsNodeFeedback, reply)) {
+                repliesFilteredList.add(reply);
             }
         });
+
+        for (JsonNode reply : repliesFeedback) {
+            String id = reply.get("id").asText();
+            try {
+                annotateService.deleteAnnotation(proposalRef, id);
+                String replyStr = mapper.writeValueAsString(reply).replaceAll(
+                        "uri://LEOS/" + legFileName + "/revision-" + documentRef, "uri://LEOS/" + documentRef);
+                String createdReply = annotateService.createAnnotation(proposalRef, replyStr);
+                JsonNode createdReplyJson = mapper.readTree(createdReply);
+                ((ObjectNode) reply).put("id", createdReplyJson.get("id").asText());
+                repliesFilteredList.add(reply);
+            } catch (JsonProcessingException e) {
+                LOG.debug("Couldn't update reply in DB", id);
+            }
+        }
 
         LOG.debug("Added " + filteredList.size() + " feedback annotations from DB");
         rowsNode.addAll(filteredList);
@@ -2104,7 +2152,8 @@ public class LegServiceImpl implements LegService {
             String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
             String feedbackLegAnnotations = getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
             String feedbackAnnotations = annotateService.getFeedbackAnnotations(documentRef, legFileName, proposalRef);
-            return countFeedbacksToBeSent(feedbackAnnotations, feedbackLegAnnotations);
+            int countfeedbackReplies = annotateService.countFeedbackRepliesFromDB(documentRef, proposalRef, feedbackLegAnnotations);
+            return countFeedbacksToBeSent(feedbackAnnotations, feedbackLegAnnotations) + countfeedbackReplies;
         } catch(Exception e) {
             LOG.error("Exception occurred", e);
         }

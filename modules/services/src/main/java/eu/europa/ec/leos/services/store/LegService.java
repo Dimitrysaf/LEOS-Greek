@@ -19,6 +19,8 @@ public interface LegService {
 
     LegDocument findLastContribution(String path, String legFileName);
 
+    List<LegDocument> listSentContributions(String path, String legFileName);
+
     LegDocument findLastContributionByVersionedReference(String path, String versionedReference) throws Exception;
 
     LegDocument findLastContributionByVersionedReferenceAndName(String path, String legFileName, String versionedReference) throws Exception;

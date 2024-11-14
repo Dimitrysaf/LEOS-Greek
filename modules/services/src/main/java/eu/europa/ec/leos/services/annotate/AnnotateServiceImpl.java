@@ -61,6 +61,44 @@ public class AnnotateServiceImpl implements AnnotateService {
     }
 
     @Override
+    public String updateAnnotation(String proposalRef, String id, String jsonAnnot) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/annotations")
+                .path("/{id}").buildAndExpand(id).encode().toUri();
+
+        try {
+            return annotationProvider.updateAnnotation(uri, this.getAnnotateToken(), proposalRef, jsonAnnot);
+        } catch (Exception exception) {
+            LOG.error("Error updating annotations: ", exception);
+            throw new RuntimeException("Error Occurred While Updating Annotation");
+        }
+    }
+
+    @Override
+    public void deleteAnnotation(String proposalRef, String id) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/annotations")
+                .path("/{id}").buildAndExpand(id).encode().toUri();
+
+        try {
+            annotationProvider.deleteAnnotation(uri, this.getAnnotateToken(), proposalRef, id);
+        } catch (Exception exception) {
+            LOG.error("Error deleting annotations: ", exception);
+            throw new RuntimeException("Error Occurred While Deleting Annotation");
+        }
+    }
+
+    @Override
+    public String createAnnotation(String proposalRef, String jsonAnnot) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/annotations").build().encode().toUri();
+
+        try {
+            return annotationProvider.createAnnotation(uri, this.getAnnotateToken(), proposalRef, jsonAnnot);
+        } catch (Exception exception) {
+            LOG.error("Error creating annotations: ", exception);
+            throw new RuntimeException("Error Occurred While Creating Annotation");
+        }
+    }
+
+    @Override
     public String getFeedbackAnnotations(String docName, String legFileName, String proposalRef) {
         URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/search")
                 .queryParam("_separate_replies", true)
@@ -105,29 +143,27 @@ public class AnnotateServiceImpl implements AnnotateService {
             JsonNode repliesAnnots = annotsJson.get("replies");
             JsonNode storedRepliesJson = storedAnnotsJson.get("replies");
             for (final JsonNode reply : repliesAnnots) {
-                boolean found = false;
-                boolean isAlreadyStored = false;
-                for (final JsonNode storedReplyAnnot : storedRepliesJson) {
-                    if (reply.get("id").asText("").equals(storedReplyAnnot.get("id").asText("id"))) {
-                        isAlreadyStored = true;
-                        ((ObjectNode) storedReplyAnnot).remove("feedbackReply");
-                        break;
-                    }
-                }
-                if (!isAlreadyStored) {
-                    JsonNode refs = reply.get("references");
-                    for (final JsonNode storedAnnot : rowStoredAnnotsJson) {
-                        if (storedAnnot.get("id").asText("").equals(refs.get(0).asText("ref"))) {
-                            if (setFlag) {
-                                ((ObjectNode) reply).put("feedbackReply", true);
-                            }
-                            found = true;
+                if (isNormalAnnot(reply) && isReplyFromRevision(reply)) {
+                    boolean isAlreadyStored = false;
+                    for (final JsonNode storedReplyAnnot : storedRepliesJson) {
+                        if (reply.get("id").asText("").equals(storedReplyAnnot.get("id").asText("id"))) {
+                            isAlreadyStored = true;
+                            ((ObjectNode) storedReplyAnnot).remove("feedbackReply");
                             break;
                         }
                     }
-                }
-                if (found) {
-                    ((ArrayNode) storedRepliesJson).add(reply);
+                    if (!isAlreadyStored) {
+                        JsonNode refs = reply.get("references");
+                        for (final JsonNode storedAnnot : rowStoredAnnotsJson) {
+                            if (storedAnnot.get("id").asText("").equals(refs.get(0).asText("ref"))) {
+                                if (setFlag) {
+                                    ((ObjectNode) reply).put("feedbackReply", true);
+                                }
+                                ((ArrayNode) storedRepliesJson).add(reply);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             storedAnnotations =  mapper.writeValueAsString(storedAnnotsJson);
@@ -136,6 +172,108 @@ public class AnnotateServiceImpl implements AnnotateService {
             LOG.error("Error getting feedback annotations: ", exception);
         }
         return storedAnnotations;
+    }
+
+    @Override
+    public List<JsonNode> getFeedbackRepliesFromDB(String docName, String proposalRef, String storedAnnotations) {
+        List<JsonNode> repliesList = new ArrayList<JsonNode>();
+        if (StringUtils.isEmpty(storedAnnotations)) {
+            return repliesList;
+        }
+        URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/search")
+                .queryParam("_separate_replies", true)
+                .queryParam("group", "__world__")
+                .queryParam("limit", -1)
+                .queryParam("offset", 0)
+                .queryParam("order", "asc")
+                .queryParam("sort", "created")
+                .queryParam("metadatasets", "[{\"status\":[\"ALL\"]}]")
+                .queryParam("uri", "uri://LEOS/" + docName).build().encode().toUri();
+
+        try {
+            String annotations =  annotationProvider.searchAnnotations(uri, this.getAnnotateToken(), proposalRef);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode annotsJson = mapper.readTree(annotations);
+            JsonNode storedAnnotsJson = mapper.readTree(storedAnnotations);
+
+            JsonNode rowStoredAnnotsJson = storedAnnotsJson.get("rows");
+            JsonNode repliesAnnots = annotsJson.get("replies");
+            JsonNode storedRepliesJson = storedAnnotsJson.get("replies");
+            for (final JsonNode reply : repliesAnnots) {
+                if (isNormalAnnot(reply) && isReplyFromRevision(reply)) {
+                    boolean isAlreadyStored = false;
+                    for (final JsonNode storedReplyAnnot : storedRepliesJson) {
+                        if (reply.get("id").asText("").equals(storedReplyAnnot.get("id").asText("id"))) {
+                            isAlreadyStored = true;
+                            break;
+                        }
+                    }
+                    if (!isAlreadyStored) {
+                        JsonNode refs = reply.get("references");
+                        for (final JsonNode storedAnnot : rowStoredAnnotsJson) {
+                            if (storedAnnot.get("id").asText("").equals(refs.get(0).asText("ref"))) {
+                                repliesList.add(reply);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            LOG.error("Error getting feedback annotations: ", exception);
+        }
+        return repliesList;
+    }
+
+    @Override
+    public int countFeedbackRepliesFromDB(String docName, String proposalRef, String storedAnnotations) {
+        int count = 0;
+        if (StringUtils.isEmpty(storedAnnotations)) {
+            return 0;
+        }
+        URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/search")
+                .queryParam("_separate_replies", true)
+                .queryParam("group", "__world__")
+                .queryParam("limit", -1)
+                .queryParam("offset", 0)
+                .queryParam("order", "asc")
+                .queryParam("sort", "created")
+                .queryParam("metadatasets", "[{\"status\":[\"ALL\"]}]")
+                .queryParam("uri", "uri://LEOS/" + docName).build().encode().toUri();
+
+        try {
+            String annotations =  annotationProvider.searchAnnotations(uri, this.getAnnotateToken(), proposalRef);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode annotsJson = mapper.readTree(annotations);
+            JsonNode storedAnnotsJson = mapper.readTree(storedAnnotations);
+
+            JsonNode rowStoredAnnotsJson = storedAnnotsJson.get("rows");
+            JsonNode repliesAnnots = annotsJson.get("replies");
+            JsonNode storedRepliesJson = storedAnnotsJson.get("replies");
+            for (final JsonNode reply : repliesAnnots) {
+                if (isNormalAnnot(reply) && isReplyFromRevision(reply)) {
+                    boolean isAlreadyStored = false;
+                    for (final JsonNode storedReplyAnnot : storedRepliesJson) {
+                        if (reply.get("id").asText("").equals(storedReplyAnnot.get("id").asText("id"))) {
+                            isAlreadyStored = true;
+                            break;
+                        }
+                    }
+                    if (!isAlreadyStored) {
+                        JsonNode refs = reply.get("references");
+                        for (final JsonNode storedAnnot : rowStoredAnnotsJson) {
+                            if (storedAnnot.get("id").asText("").equals(refs.get(0).asText("ref"))) {
+                                count++;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            LOG.error("Error getting feedback annotations: ", exception);
+        }
+        return count;
     }
 
     @Override
@@ -161,6 +299,17 @@ public class AnnotateServiceImpl implements AnnotateService {
             LOG.error("Error sending user permissions to annotate: ", exception);
             return false;
         }
+    }
+
+    private boolean isNormalAnnot(JsonNode annot) {
+        return (annot != null && (annot.get("status") == null
+                || annot.get("status").get("status") == null
+                || annot.get("status").get("status").asText("").equals("NORMAL")));
+    }
+
+    private boolean isReplyFromRevision(JsonNode annot) {
+        return (annot != null && annot.get("uri") != null
+                && annot.get("uri").asText("").contains("revision-"));
     }
 
     private String getAnnotateToken() {

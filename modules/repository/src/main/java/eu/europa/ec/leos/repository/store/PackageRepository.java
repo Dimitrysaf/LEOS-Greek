@@ -211,6 +211,15 @@ public interface PackageRepository {
     LegDocument findLastContribution(String path, String legFileName);
 
     /**
+     * Lists leg documents from name.
+     *
+     * @param path the path of the package where to find the documents
+     * @param legFileName the document leg's file name.
+     * @return List of leg documents that contains the reference
+     */
+    List<LegDocument> listSentContributions(String path, String legFileName);
+
+    /**
      * Finds documents with the specified characteristics.
      *
      * @param id   the id of the package where to find the documents.
