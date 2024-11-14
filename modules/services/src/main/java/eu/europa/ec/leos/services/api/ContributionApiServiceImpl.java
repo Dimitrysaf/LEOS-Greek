@@ -307,7 +307,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         String documentRef = contributionVersion.getMetadata().get().getRef();
         ExportLeos exportOptions = new ExportLeos(ExportOptions.Output.PDF);
         exportOptions.setWithSuggestions(false);
-        exportOptions.setWithAnonymization(true);
+        exportOptions.setWithAnonymization(false);
         exportOptions.setWithAnnotations(true);
         exportOptions.setWithFeedbackAnnotations(true);
         legService.updateLegDocumentFeedbackAnnotations(cloneProposalRef, cloneLegFileName, documentRef, contributionsVersionRef,

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -212,6 +213,20 @@ public class PackageRepositoryImpl implements PackageRepository {
         } else {
             throw new RuntimeException("Unable to retrieve the Milestone");
         }
+    }
+
+    @Override
+    public List<LegDocument> listSentContributions(String path, String legFileName) {
+        logger.debug("Finding contribution leg document by name ... [path=$path, legFileName=$legFileName]");
+        String ref = legFileName.replace(".leg", "");
+        QueryFilter queryFilter = new QueryFilter();
+        QueryFilter.Filter filter = new QueryFilter.Filter(QueryFilter.FilterType.ref.name(), "=", false, ref);
+        queryFilter.addFilter(filter);
+        QueryFilter.SortOrder sortOrder = new QueryFilter.SortOrder(QueryFilter.FilterType.creationDate.name(), QueryFilter.SORT_DESCENDING);
+        queryFilter.addSortOrder(sortOrder);
+        // TODO set maximum value using a global constant
+        Stream<LegDocument> legDocuments = leosRepository.findPagedDocumentsByParentPath(path, LegDocument.class, true, true, 0, 100, queryFilter);
+        return legDocuments.filter((l) -> l.getStatus().equals(LeosLegStatus.CONTRIBUTION_SENT)).collect(Collectors.toList());
     }
 
     @Override
