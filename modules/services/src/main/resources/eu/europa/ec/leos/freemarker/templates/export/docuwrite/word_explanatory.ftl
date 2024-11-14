@@ -32,7 +32,7 @@ ns_prefixes={}>
 
 <@compress>
     <importOptions technicalKey="${proposal.getExportOptions().getTechnicalKey()}">
-    <importJob filename="${explanatory.getLeosCategory().name()?capitalize}_${explanatory.getDocNumber()}"
+    <importJob filename="${explanatory.getName()}"
                convertAnnotations="${proposal.getExportOptions().isWithAnnotations()?c}"
                comparisonType="${proposal.getExportOptions().getComparisonType()?lower_case}">
         <leos>

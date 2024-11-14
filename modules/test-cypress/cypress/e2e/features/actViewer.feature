@@ -63,3 +63,19 @@ Feature: act viewer page Regression Features
             | main              |
             | REG               |
 
+    @verifyExportButtonsPresent @local
+    Scenario: verify export buttons are present
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation Testing Export" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 1
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 2
+        When click on actions button
+        Then export as pdf button is present
+        Then export as legiswrite button is present

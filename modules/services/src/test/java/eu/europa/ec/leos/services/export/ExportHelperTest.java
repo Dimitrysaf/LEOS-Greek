@@ -56,23 +56,28 @@ public class ExportHelperTest extends LeosTest {
 
     @Test
     public void test_createContentFile() throws Exception {
-        final String expectedProposalName = "COMproposal";
+        final String expectedProposalName = "main-cm3ddull700116474j3fwlge2-en";
+        final String memorandumName = "EXPL_MEMORANDUM-cm3eap4jf0002x4747q5srh8c-en";
+        final String billName = "REG-cm3eap5jy0004x474vrrfrq1z-en";
         final ExportLW exportOptions = new ExportLW(ExportOptions.Output.PDF);
 
         final ExportResource proposal = new ExportResource(LeosCategory.PROPOSAL);
         Map<String, String> tagRefs = new HashMap<String, String>();
         tagRefs.put("coverPage", "coverPage");
         proposal.setResourceId(expectedProposalName);
+        proposal.setName(expectedProposalName);
         proposal.setComponentsIdsMap(tagRefs);
         proposal.setExportOptions(exportOptions);
 
         ExportResource memorandum = new ExportResource(LeosCategory.MEMORANDUM);
-        memorandum.setResourceId("memorandum");
+        memorandum.setResourceId(memorandumName);
+        memorandum.setName(memorandumName);
         memorandum.setComponentsIdsMap(tagRefs);
         proposal.addChildResource(memorandum);
 
         ExportResource bill = new ExportResource(LeosCategory.BILL);
-        bill.setResourceId("bill");
+        bill.setResourceId(billName);
+        bill.setName(billName);
         bill.setComponentsIdsMap(tagRefs);
         proposal.addChildResource(bill);
 
@@ -102,18 +107,21 @@ public class ExportHelperTest extends LeosTest {
     
     @Test
     public void test_createContentFileForDocuWrite() throws Exception {
-        final String expectedProposalName = "COMproposal";
+        final String expectedProposalName = "main-cm3ddull700116474j3fwlge2-en";
+        final String billName = "REG-cm3eap5jy0004x474vrrfrq1z-en";
         final ExportDW exportOptions = new ExportDW(ExportOptions.Output.PDF, Bill.class, false);
         
         final ExportResource proposal = new ExportResource(LeosCategory.PROPOSAL);
         Map<String, String> tagRefs = new HashMap<String, String>();
         tagRefs.put("coverPage", "coverPage");
         proposal.setResourceId(expectedProposalName);
+        proposal.setName(expectedProposalName);
         proposal.setComponentsIdsMap(tagRefs);
         proposal.setExportOptions(exportOptions);
         
         ExportResource bill = new ExportResource(LeosCategory.BILL);
-        bill.setResourceId("bill");
+        bill.setResourceId(billName);
+        bill.setName(billName);
         bill.setComponentsIdsMap(tagRefs);
         proposal.addChildResource(bill);
 

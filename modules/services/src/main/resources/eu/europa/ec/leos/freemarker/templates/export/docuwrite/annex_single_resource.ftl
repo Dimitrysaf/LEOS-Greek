@@ -26,7 +26,7 @@
 <#macro annex proposal annex>
     <#local annexRef = annex.getResourceId()>
     <#local annexHref = annex.getHref()>
-    <importJob filename="${annex.getLeosCategory().name()?capitalize}_${annex.getDocNumber()}"
+    <importJob filename="${annex.getName()}"
                convertAnnotations="${proposal.getExportOptions().isWithAnnotations()?c}"
                comparisonType="${proposal.getExportOptions().getComparisonType()?lower_case}">
         <leos>
