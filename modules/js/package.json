@@ -23,5 +23,9 @@
     "nodemon": "^2.0.22",
     "puppeteer": "^21.5.0",
     "requirejs": "^2.3.3"
+  },
+  "dependencies": {
+    "@fidm/x509": "^1.2.1",
+    "constants": "^0.0.2"
   }
 }

@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.structure.lang;
 
 import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.lang.LanguageGroup;
 import eu.europa.ec.leos.vo.lang.ObjectFactory;
 import org.slf4j.Logger;
@@ -23,15 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,22 +68,10 @@ public class LanguageGroupService {
 
     private LanguageGroup loadLanguageGroupFromFile(byte[] fileBytes) {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema langSchema = sf.newSchema(new StreamSource(loadSchema()));
-            jaxbUnmarshaller.setSchema(langSchema);
-
-            LanguageGroup languageGroup = (LanguageGroup) jaxbUnmarshaller.unmarshal(new ByteArrayInputStream(fileBytes));
-            return languageGroup;
+            return XmlHelper.loadFromFile(fileBytes, LanguageGroup.class, ObjectFactory.class, langGroupSchema);
         } catch (Exception e) {
             LOG.debug("Error in loadLanguageGroupFromFile", e);
             throw new IllegalStateException("Error loading language group configurations", e);
         }
-    }
-
-    private InputStream loadSchema() {
-        return LanguageGroupService.class.getClassLoader().getResourceAsStream(langGroupSchema);
     }
 }

@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.security;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
 
@@ -29,6 +30,9 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -71,7 +75,14 @@ public class LeosPermissionAuthorityMap {
         }
     }
 
-    private Roles unmarshallerRolesPermission() throws JAXBException, SAXException {
+    private Roles unmarshallerRolesPermission() throws JAXBException, SAXException, XMLStreamException {
+        // Convert DOM to XMLStreamReader
+        XMLInputFactory xif = XMLInputFactory.newInstance();
+        xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+        xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        XMLStreamReader xsr = xif.createXMLStreamReader(loadPermissionHierarchy());
+
+        // Set up JAXB context and unmarshaller
         JAXBContext jaxbContext = JAXBContext.newInstance(Roles.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
@@ -79,7 +90,7 @@ public class LeosPermissionAuthorityMap {
         Schema rolePermSchema = sf.newSchema(new StreamSource(loadPermissionHierarchySchema()));
         jaxbUnmarshaller.setSchema(rolePermSchema);
 
-        return (Roles) jaxbUnmarshaller.unmarshal(loadPermissionHierarchy());
+        return (Roles) jaxbUnmarshaller.unmarshal(xsr);
     }
 
     private InputStream loadPermissionHierarchy() {

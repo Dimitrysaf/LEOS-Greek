@@ -21,7 +21,7 @@ import java.security.spec.KeySpec;
 public class Cryptor {
 
     private static final String UNICODE_FORMAT = "UTF8";
-    private static final String DESEDE_ENCRYPTION_SCHEME = "DESede";
+    private static final String AES_ENCRYPTION_SCHEME = "AES";
     private KeySpec ks;
     private SecretKeyFactory skf;
     private Cipher cipher;
@@ -33,7 +33,7 @@ public class Cryptor {
         ConfigReader config = new ConfigReader();
         String decryptedText = null;
         String myEncryptionKey = config.getProperty("encKey");
-        String myEncryptionScheme = DESEDE_ENCRYPTION_SCHEME;
+        String myEncryptionScheme = AES_ENCRYPTION_SCHEME;
         boolean skipDecrypt = Boolean.parseBoolean(config.getProperty("skipDecrypt"));
         if (skipDecrypt) {
             return encryptedString;

@@ -11,8 +11,6 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequestScope
 public class ProfileContext {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProfileContext.class);
-
     private final ProfileService profileService;
     private String clientContextToken;
 

@@ -11,11 +11,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
+const { generateKeyPairSync } = require("crypto");
+const { Certificate } = require("@fidm/x509");
 const config = require('./jasmin-server-config.json');
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const app = express();
+const https = require("https");
 
 const isDirectory = (pathDir) => fs.statSync(pathDir).isDirectory();
 const getDirectories = (pathDir) => fs.readdirSync(pathDir).map((name) => path.join(pathDir, name)).filter(isDirectory);
@@ -27,6 +30,33 @@ const getFilesRecursively = (pathDir) => {
     let dirs = getDirectories(pathDir);
     let files = dirs.map((dir) => getFilesRecursively(dir)).reduce((a, b) => a.concat(b), []);
     return files.concat(getFiles(pathDir));
+};
+
+const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048, // Key size in bits
+});
+
+const cert = new Certificate({
+    serialNumber: "01",
+    issuer: { CN: "localhost" },
+    subject: { CN: "localhost" },
+    publicKey: publicKey,
+    validFrom: new Date(),
+    validTo: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000), // 1 year validity
+});
+
+const privateKeyPEM = privateKey.export({ type: "pkcs1", format: "pem" });
+const certPEM = cert.toPEM();
+
+const options = {
+    key: privateKeyPEM,
+    cert: certPEM,
+    secureProtocol: 'TLSv1_2_method',
+    secureOptions: require("constants").SSL_OP_NO_SSLv2 |
+      require("constants").SSL_OP_NO_SSLv3 |
+      require("constants").SSL_OP_NO_TLSv1 |
+      require("constants").SSL_OP_NO_TLSv1_1,
+    minVersion: "TLSv1.2" // Ensures only TLS 1.2 and above are allowed
 };
 
 const filterSpecs = (specs) => {
@@ -69,7 +99,8 @@ const getSpecs = () => {
 };
 
 var argv;
-app.listen(3000, () => {
+
+https.createServer(options, app).listen(3000, () => {
     console.log("Application started and listening on port 3000");
     argv = require("minimist")(process.argv.slice(2));
 });
