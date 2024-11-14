@@ -234,6 +234,12 @@ export interface Collaborator {
   entity: Entity;
   role: DocumentRole;
   additionalRole?: DocumentRole;
+  clientSystem?: ClientSystem;
+}
+
+export interface ClientSystem {
+  clientId: string;
+  displayName: string;
 }
 
 export interface Entity {

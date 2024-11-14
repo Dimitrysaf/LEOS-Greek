@@ -26,8 +26,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -56,20 +56,11 @@ import static org.springframework.web.util.UriUtils.decode;
 @RestController
 @Tag(name = "Workflow Collaborator Config API", description = "Workflow Collaborator Config API")
 @Slf4j
+@AllArgsConstructor
 public class WorkflowCollaboratorConfigController {
 
     WorkflowCollaboratorConfigService workflowCollaboratorConfigService;
     PackageService packageService;
-
-    @Autowired
-    public WorkflowCollaboratorConfigController (
-            WorkflowCollaboratorConfigService workflowCollaboratorConfigService,
-            PackageService packageService
-    ) {
-        this.workflowCollaboratorConfigService = workflowCollaboratorConfigService;
-        this.packageService = packageService;
-    }
-    //get config for a client_id and a package_id
 
     @PostMapping(path = "/workflow-collaborator-config",
             consumes = {MediaType.APPLICATION_JSON_VALUE})

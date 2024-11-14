@@ -8,6 +8,7 @@ import eu.europa.ec.leos.integration.dto.AccessDTO;
 import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.request.WorkflowCollaboratorAclRequest;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -48,7 +49,6 @@ public class WorkflowCollaboratorController {
     private final CollectionUrlBuilder urlBuilder;
 
     @PostMapping(value = "/{proposalRef}/workflow-collaborators")
-    @ResponseBody
     public ResponseEntity<Object> addWorkflowCollaboratorAcl(
             @PathVariable("proposalRef") String proposalRef,
             @RequestBody WorkflowCollaboratorAclRequest workflowCollaboratorAclRequest,
@@ -61,13 +61,31 @@ public class WorkflowCollaboratorController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN);
         }
         final String clientSystemId = systemClientId.get();
+        deleteWorkflowCollaborators(proposal, proposalRef, clientSystemId);
         final Integer integer = workflowCollaboratorService.setWorkflowCollaboratorAcl(proposal, clientSystemId, workflowCollaboratorAclRequest);
         final List<AccessDTO> accessControlList = externalSystemACLService.getAccessControlList(workflowCollaboratorAclRequest.getAclCallbackUrl());
         accessControlList.stream().forEach(u->
             addWorkflowCollaborator(proposalReference, clientSystemId, u)
         );
         return new ResponseEntity<>(integer, HttpStatus.OK);
+    }
 
+    private void deleteWorkflowCollaborators(Proposal proposal, String proposalRef, String systemClientId) {
+        // get list
+        List<CollaboratorDTO> collaborators = collaboratorService.getCollaborators(proposal);
+        collaborators.stream()
+                .filter(u->u.getClientSystem()!=null && u.getClientSystem().getClientId().equals(systemClientId))
+                .forEach(u-> deleteWorkflowCollaborator(proposal, proposalRef, u))
+        ;
+    }
+
+    private String deleteWorkflowCollaborator(Proposal proposal, String proposalRef, CollaboratorDTO collaboratorDTO) {
+        proposalRef = encodeParam(proposalRef);
+        final String userId = !Strings.isNullOrEmpty(collaboratorDTO.getLogin())?collaboratorDTO.getLogin():collaboratorDTO.getEntity().getName();
+        final String roleName = collaboratorDTO.getRole();
+        final String connectedDG = collaboratorDTO.getEntity().getOrganizationName();
+        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
+        return collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl);
     }
 
     private String addWorkflowCollaborator(String proposalRef, String systemClientId, AccessDTO accessDTO) {
@@ -84,7 +102,6 @@ public class WorkflowCollaboratorController {
      * returns the WorkflowCollaboratorAcl of the connected client
      */
     @GetMapping(value = "/{proposalRef}/workflow-collaborators")
-    @ResponseBody
     public ResponseEntity<WorkflowCollaboratorDTO> getWorkflowCollaboratorAcl(
             @PathVariable("proposalRef") String proposalRef,
             @RequestHeader("Authorization") String authorizationHeader) {
@@ -103,7 +120,6 @@ public class WorkflowCollaboratorController {
      * returns all WorkflowCollaboratorAcl (of all the clients)
      */
     @GetMapping(value = "/{proposalRef}/workflow-collaborators/all")
-    @ResponseBody
     public ResponseEntity<List<WorkflowCollaboratorDTO>> getWorkflowCollaboratorAcls(@PathVariable("proposalRef") String proposalRef) {
         proposalRef = encodeParam(proposalRef);
         logDebug("get all workflow collaborators for %s ",proposalRef);
@@ -113,7 +129,6 @@ public class WorkflowCollaboratorController {
     }
 
     @DeleteMapping(value = "/{proposalRef}/workflow-collaborators")
-    @ResponseBody
     public ResponseEntity<Object> deleteWorkflowCollaboratorAcl(
             @PathVariable("proposalRef") String proposalRef,
             @RequestHeader("Authorization") String authorizationHeader) {
@@ -124,7 +139,7 @@ public class WorkflowCollaboratorController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN);
         }
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        workflowCollaboratorService.deleteWorkflowCollaborator(systemClientId.get(), proposal);
+        workflowCollaboratorService.deleteWorkflowCollaboratorAcl(systemClientId.get(), proposal);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -29,8 +29,7 @@ public class WorkflowCollaboratorServiceImpl implements WorkflowCollaboratorServ
         return this.leosRepository.createOrUpdateWorkflowCollaboratorConfig(clientSystemId,leosPackage.getName(), wcar.getAclCallbackUrl(), wcar.getUserCheckCallbackUrl());
     }
 
-    @Override
-    public void deleteWorkflowCollaborator(String clientSystemId, Proposal proposal) {
+    public void deleteWorkflowCollaboratorAcl(String clientSystemId, Proposal proposal) {
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         final Optional<WorkflowCollaboratorDTO> wc = getCollaborators(leosPackage.getName(), clientSystemId);
         if (wc.isPresent()) {
