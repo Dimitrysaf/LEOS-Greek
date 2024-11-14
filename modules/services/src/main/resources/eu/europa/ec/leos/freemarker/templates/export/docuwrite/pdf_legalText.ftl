@@ -33,7 +33,7 @@
 
 <@compress>
     <importOptions technicalKey="${proposal.getExportOptions().getTechnicalKey()}">
-        <importJob filename="${proposal.getExportOptions().getFileName()}"
+        <importJob filename="${bill.getName()}"
             convertAnnotations="${proposal.getExportOptions().isWithAnnotations()?c}" comparisonType="${proposal.getExportOptions().getComparisonType()?lower_case}">
             <leos>
                 <resource ref="${proposalRef}">

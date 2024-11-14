@@ -28,7 +28,7 @@ ns_prefixes={}>
     <#local explanatory = proposal.getChildResource('council_explanatory')>
     <#local explanatoryRef = explanatory.getResourceId()>
     <#local explanatoryHref = explanatory.getHref()>
-    <importJob filename="${explanatory.getLeosCategory().name()?capitalize}_${explanatory.getDocNumber()}"
+    <importJob filename="${explanatory.getName()}"
                convertAnnotations="${proposal.getExportOptions().isWithAnnotations()?c}">
         <leos>
             <resource ref="${explanatoryRef}" filename="${explanatoryHref}">

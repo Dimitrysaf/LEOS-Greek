@@ -4,6 +4,8 @@ class actViewerPage {
         proposalTitle: () => this.elements.appProposalHeader().find('h1'),
         actionBtn: () => cy.get('app-proposal-actions-dropdown button'),
         downloadBtn:() => cy.get('.eui-dropdown-item__content-text').contains('Download'),
+        exportPdfBtn:() => cy.get('.eui-dropdown-item__content-text').contains('Export as PDF'),
+        exportLegBtn:() => cy.get('.eui-dropdown-item__content-text').contains('Export as Legiswrite'),
         deleteBtn: () => cy.get('button.eui-u-color-danger-100'),
         closeBtn: () => cy.contains("Close"),
         legalActLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Legal Act'),
