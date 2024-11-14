@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
+import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -63,12 +64,15 @@ public class ProposalApiController {
 
     private final ApiService apiService;
     private final FinancialStatementService financialStatementService;
+    private final ConValidatorService conValidatorService;
 
     @Autowired
     public ProposalApiController(ApiService apiService,
-                                 FinancialStatementService financialStatementService) {
+                                 FinancialStatementService financialStatementService,
+                                 ConValidatorService conValidatorService) {
         this.apiService = Objects.requireNonNull(apiService);
         this.financialStatementService = Objects.requireNonNull(financialStatementService);
+        this.conValidatorService = Objects.requireNonNull(conValidatorService);
     }
 
     @RequestMapping(value = "/{proposalRef}", method = RequestMethod.PUT)
@@ -289,6 +293,15 @@ public class ProposalApiController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         LegFileValidation result = this.apiService.validateLegFile(content);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/conValidateLegFile", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) {
+        validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
+        File content = new File(legFile.getName());
+        String result = conValidatorService.validate(content);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
