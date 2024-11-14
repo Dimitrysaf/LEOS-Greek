@@ -908,7 +908,7 @@ export abstract class DocumentActionsService {
           euiSize: 's',
           euiStyle: 'secondary',
           actionFn: () => {
-            this.finaliseDocument();
+            this.confirmFinaliseDocument();
           }
         },
       ],
@@ -1088,6 +1088,17 @@ export abstract class DocumentActionsService {
 
   private canRejectTrackChanges() {
     return this.permissions?.includes('CAN_REJECT_CHANGES');
+  }
+
+  private confirmFinaliseDocument() {
+    this.dialogService.openDialog({
+      title: this.translateService.instant('page.editor.toolbar-actions.button.finalisation.confirmation.title'),
+      content: this.translateService.instant('page.editor.toolbar-actions.button.finalisation.confirmation.message'),
+      acceptLabel: this.translateService.instant('global.actions.confirm'),
+      accept: () => {
+        this.finaliseDocument();
+      },
+    });
   }
 
   private finaliseDocument() {

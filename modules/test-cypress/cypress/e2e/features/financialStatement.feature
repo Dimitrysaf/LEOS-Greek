@@ -94,6 +94,9 @@ Feature: financial statement page regression features
       | del | "[...]"                           |
       | ins | "text"                            |
     When click on finalise button in ribbon toolbar
+    Then "Finalise Document" dialog box window is displayed
+    And  dialog box body contains "All optional and tracked elements will be consolidated. Do you want to proceed?"
+    When click on confirm button in dialog box window
     Then content of level 2 contains "text" in financial statement page
     When click on versions pane accordion
     And  last subversion of recent changes version card contains "1.0.1Document finalised"

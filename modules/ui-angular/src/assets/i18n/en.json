@@ -314,6 +314,8 @@
   "page.editor.actions-dropdown.see-track-changes": "See track changes",
   "page.editor.toolbar-actions.section.finalisation.label": "Finalisation",
   "page.editor.toolbar-actions.button.finalisation.label": "Finalise Document",
+  "page.editor.toolbar-actions.button.finalisation.confirmation.title": "Finalise Document",
+  "page.editor.toolbar-actions.button.finalisation.confirmation.message": "All optional and tracked elements will be consolidated. Do you want to proceed?",
   "page.editor.toolbar-actions.section.leos.light.label": "Leos-Light",
   "page.editor.actions-dropdown.renumber-document": "Renumber Document",
   "page.editor.actions-dropdown.change-document-structure": "Change Annex Structure",
