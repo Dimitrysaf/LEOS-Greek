@@ -1,21 +1,7 @@
 package eu.europa.ec.leos.services.structure;
 
-import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemsByName;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
+import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.DocumentRules;
@@ -32,7 +18,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import eu.europa.ec.leos.services.template.TemplateStructureService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemsByName;
 
 @Service
 public class StructureServiceImpl implements StructureService {
@@ -135,25 +126,13 @@ public class StructureServiceImpl implements StructureService {
     
     private Structure loadRulesFromFile(byte[] fileBytes) {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema tocSchema = sf.newSchema(new StreamSource(loadSchema()));
-            jaxbUnmarshaller.setSchema(tocSchema);
-            
-            Structure structure = (Structure) jaxbUnmarshaller.unmarshal(new ByteArrayInputStream(fileBytes));
-            return structure;
+            return XmlHelper.loadFromFile(fileBytes, Structure.class, ObjectFactory.class, structureSchema);
         } catch (Exception e) {
             LOG.debug("Error loadRulesFromFile", e);
             throw new IllegalStateException("Error loading xml configurations", e);
         }
     }
-    
-    private InputStream loadSchema() {
-        return StructureServiceImpl.class.getClassLoader().getResourceAsStream(structureSchema);
-    }
-    
+
     private Map<TocItem, List<TocItem>> buildProposalTocRules(Structure structure, List<TocItem> tocItems) {
         Map<TocItem, List<TocItem>> tocRules = new HashMap<>();
         if(structure.getTocRules() != null) {

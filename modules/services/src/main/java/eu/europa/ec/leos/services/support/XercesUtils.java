@@ -14,11 +14,13 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -188,11 +190,8 @@ public class XercesUtils {
     private static void saveNodeToOutput(Node node, StreamResult output,boolean omitXmlDeclaration) {
         try {
             final Source input = new DOMSource(node);
-            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-
-            Transformer transformer = transformerFactory.newTransformer();
+            Transformer transformer = getTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            //transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             if(omitXmlDeclaration){
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             }else{
@@ -203,6 +202,25 @@ public class XercesUtils {
         } catch (Exception e) {
             throw new IllegalStateException("Cannot save Node to output", e);
         }
+    }
+
+    private static Transformer getTransformer() throws TransformerConfigurationException {
+        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        // Secure the factory to prevent XXE attacks
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        Transformer transformer = transformerFactory.newTransformer();
+        return transformer;
+    }
+
+    private static DOMSource createNamespaceAwareDOMSource(Node node) throws Exception {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true); // Enable namespace awareness
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        Document document = dbf.newDocumentBuilder().newDocument();
+        document.appendChild(document.importNode(node, true));
+        return new DOMSource(document);
     }
 
     public static String getContentNodeAsXmlFragment(Node node) {

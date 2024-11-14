@@ -32,6 +32,8 @@ public abstract class BaseXmlLoader {
 
     protected static Document parseXmlFile(Path xmlFile) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // Secure the factory to prevent XXE attacks
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         // prohibit the use of all protocols by external entities:
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
