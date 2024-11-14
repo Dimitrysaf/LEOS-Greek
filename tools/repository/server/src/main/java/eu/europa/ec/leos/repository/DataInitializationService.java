@@ -145,7 +145,11 @@ public class DataInitializationService {
                                     "VALUES ((SELECT id FROM CONFIG WHERE NAME=?), ?, '1', null, 1, 1, 1, 0, 'admin/admin', " +
                                     "current_timestamp, current_timestamp, 'admin/admin', 0)";
 
+                            //set is_latest_version flag for other versions to false
+                            String updateQuery = "UPDATE CONFIG_VERSION SET IS_LATEST_VERSION = 0 WHERE CONFIG_ID IN (SELECT ID FROM CONFIG WHERE NAME = ?) AND version_label != ?";
+
                             jdbcTemplate.update(insertQuery, fileName.substring(0, fileName.lastIndexOf(".")), versionFolder);
+                            jdbcTemplate.update(updateQuery, fileName.substring(0, fileName.lastIndexOf(".")), versionFolder);
                         }
 
                         String sql = "INSERT INTO CONFIG_CONTENT (VERSION_ID, CONTENT, CONTENT_STREAM_MIME_TYPE, CONTENT_STREAM_FILENAME, CONTENT_STREAM_ID, CONTENT_STREAM_LENGTH, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY) " +
