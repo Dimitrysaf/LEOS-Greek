@@ -566,6 +566,10 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
+  isInternalUser (collaborator: Collaborator): boolean {
+    return collaborator.clientSystem==null;
+  }
+
   hasPermissions(required: Permission[], any = false) {
     return this.permissions$.pipe(
       map((permissions) =>
