@@ -1211,7 +1211,7 @@ public class MergeContributionService {
             } else {
                 xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(contributionNum), getId(xmlNum));
             }
-        } else if (xmlNum != null && !getId(firstChild).equals(getId(xmlNode))) {
+        } else if (xmlNum != null && !withTrackChanges && !getId(firstChild).equals(getId(xmlNode))) {
             xmlNum.setTextContent("#");
             xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNum), getId(xmlNum));
         }
@@ -1265,7 +1265,32 @@ public class MergeContributionService {
                         xmlContent = doIndent(xmlContent, getId(listChild), listChild, withTrackChanges, elementsToBeProcessed);
                     }
                 }
+            } else {
+                // means that child should be moved to new position
+                Node xmlNode = getElementById(xmlContent, getId(child));
+                Node xmlParent = xmlNode.getParentNode();
+                if (isCurrentlyIndented(child, xmlParent)) {
+                    if (child.getNodeName().equals(LIST)) {
+                        xmlContent = doMoveList(xmlContent, xmlNode, child);
+                    } else {
+                        xmlContent = doMoveElement(xmlContent, getId(child), child, false, elementsToBeProcessed);
+                    }
+                }
             }
+        }
+        return xmlContent;
+    }
+
+    private byte[] doMoveList(byte[] xmlContent, Node xmlList, Node contributionList) {
+        Node targetParent = contributionList.getParentNode();
+        Node xmlTargetParent = getElementById(xmlContent, getId(targetParent));
+        if (xmlTargetParent == null) {
+            xmlTargetParent = getElementById(xmlContent, getId(targetParent).replaceAll(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, ""));
+        }
+        if (xmlTargetParent != null) {
+            xmlContent = moveOutIntroAndConclusionFromList(xmlContent, xmlList);
+            xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(xmlList), false);
+            xmlContent = mergeInsertedEltInXml(xmlContent, contributionList, nodeToString(xmlList), getId(contributionList), false, true, false);
         }
         return xmlContent;
     }
@@ -1790,6 +1815,7 @@ public class MergeContributionService {
     }
 
     private byte[] undoIndentedElement(byte[] xmlContent, Node elt) {
+        this.mergingCompletelySuccessfull = false;
         String eltId = getId(elt);
         Node xmlElt = getElementById(xmlContent, eltId);
         if (xmlElt != null) {
@@ -2683,6 +2709,51 @@ public class MergeContributionService {
             if (relatedNode != null) {
                 replaceElement(subpara, nodeToString(relatedNode));
                 xmlContent = xmlContentProcessor.removeElementById(xmlContent, subparaId, false);
+            }
+        }
+        return xmlContent;
+    }
+
+    // If that's a list, we must check intro and conclusion
+    // this method moves intro and conclusion out of the  list
+    private byte[] moveOutIntroAndConclusionFromList(@NotNull byte[] xmlContent, @NotNull Node list) {
+        if (list.getNodeName().equals(LIST)) {
+            int nbChild = getChildren(list.getParentNode(), SUBPARAGRAPH).size();
+            int nbList = getChildren(list.getParentNode(), LIST).size();
+            Node intro = XercesUtils.getFirstChild(list);
+            Node conclusion = getLastChild(list);
+            boolean hasIntro = intro.getNodeName().equals(SUBPARAGRAPH);
+            boolean hasConclusion = conclusion.getNodeName().equals(SUBPARAGRAPH) && !getId(conclusion).equals(getId(intro));
+            if (nbChild == 0 && nbList == 1 && hasIntro && !hasConclusion) {
+                // Intro's content should be moved before list
+                Node content = getFirstChild(intro);
+                xmlContent = xmlContentProcessor.insertElementByTagNameAndIdWithoutCheckOnIntro(xmlContent, nodeToString(content), getId(list), true, false);
+                xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(intro), false);
+                intro.getParentNode().removeChild(intro);
+            } else if (nbChild == 0 && nbList == 1 && hasIntro && hasConclusion) {
+                // Intro should be moved before list
+                xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(intro), false);
+                xmlContent = xmlContentProcessor.insertElementByTagNameAndIdWithoutCheckOnIntro(xmlContent, nodeToString(intro), getId(list), true, false);
+                intro.getParentNode().removeChild(intro);
+                // Conclusion should be moved after list
+                xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(conclusion), false);
+                xmlContent = xmlContentProcessor.insertElementByTagNameAndIdWithoutCheckOnIntro(xmlContent, nodeToString(conclusion), getId(list), false,
+                        false);
+                conclusion.getParentNode().removeChild(conclusion);
+            } else if (nbChild > 0 || nbList > 1) {
+                if (hasIntro) {
+                    // Intro should be moved before list
+                    xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(intro), false);
+                    xmlContent = xmlContentProcessor.insertElementByTagNameAndIdWithoutCheckOnIntro(xmlContent, nodeToString(intro), getId(list), true, false);
+                    intro.getParentNode().removeChild(intro);
+                }
+                if (hasConclusion) {
+                    // Conclusion should be moved after list
+                    xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(conclusion), false);
+                    xmlContent = xmlContentProcessor.insertElementByTagNameAndIdWithoutCheckOnIntro(xmlContent, nodeToString(conclusion), getId(list), false,
+                            false);
+                    conclusion.getParentNode().removeChild(conclusion);
+                }
             }
         }
         return xmlContent;
