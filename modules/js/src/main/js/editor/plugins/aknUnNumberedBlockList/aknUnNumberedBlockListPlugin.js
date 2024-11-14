@@ -43,6 +43,17 @@ define(function aknUnNumberedBlockListPluginModule(require) {
                         uls[i].setAttribute("data-akn-name","UnNumberedBlockList");
                         var listItems = uls[i].children;
                         for (var jj = 0; jj < listItems.length; jj++) {
+                            idAttrValue = listItems[jj].getAttribute("id");
+                            if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
+                                idAttrValue = identityHandler.generateId();
+                                listItems[jj].setAttribute("id", idAttrValue);
+                            }
+                            idAttrValue = listItems[jj].getAttribute("data-akn-num-id");
+                            if (idAttrValue && $('[data-akn-num-id="' + idAttrValue + '"]').length > 1) {
+                                idAttrValue = identityHandler.generateId();
+                                listItems[jj].setAttribute("data-akn-num-id", idAttrValue);
+                            }
+
                             var previousNumber = listItems[jj].getAttribute("data-akn-num");
                             listItems[jj].setAttribute("data-akn-num","•");
                             listItems[jj].removeAttribute("data-akn-name");
