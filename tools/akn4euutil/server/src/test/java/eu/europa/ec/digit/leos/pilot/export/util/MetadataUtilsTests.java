@@ -1,12 +1,17 @@
 package eu.europa.ec.digit.leos.pilot.export.util;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
+import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.Assert;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * tests on parsing the linked documents
@@ -132,5 +137,85 @@ public class MetadataUtilsTests {
         
         final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
         Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
+    }
+
+    @Test
+    public void testPreFinalizationLegNameWithoutInstitutionalReference() {
+        ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
+        actionNode.setFields(Collections.singletonList(createIsFinalNode("true")));
+
+        ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
+        taskNode.setActions(Collections.singletonList(actionNode));
+        ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+
+        ApplyMetadataRequest request = getDummyMetadataRequest();
+        request.setDocument(documentNode);
+        request.setTasks(Collections.singletonList(taskNode));
+
+        String legName = MetadataUtil.buildPrefinalizationLegName(request);
+        Assertions.assertEquals(documentNode.getFilename(), legName);
+    }
+
+    @Test
+    public void testPreFinalizationLegNameWithInstitutionalReference() {
+        ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
+        actionNode.setFields(Arrays.asList(createInsertCoteNode("COM(2022) 666"), createIsFinalNode("0")));
+
+        ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
+        taskNode.setActions(Collections.singletonList(actionNode));
+        ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+
+        ApplyMetadataRequest request = getDummyMetadataRequest();
+        request.setDocument(documentNode);
+        request.setTasks(Collections.singletonList(taskNode));
+
+        String legName = MetadataUtil.buildPrefinalizationLegName(request);
+        Assertions.assertEquals("PROP_ACT-COM(2022)_666-en.leg", legName);
+    }
+
+    @Test
+    public void testPreFinalizationLegNameWithInstitutionalReferenceAndIsFinal() {
+        ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
+        actionNode.setFields(Arrays.asList(createInsertCoteNode("COM(2022) 666"), createIsFinalNode("1")));
+
+        ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
+        taskNode.setActions(Collections.singletonList(actionNode));
+        ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+
+        ApplyMetadataRequest request = getDummyMetadataRequest();
+        request.setDocument(documentNode);
+        request.setTasks(Collections.singletonList(taskNode));
+
+        String legName = MetadataUtil.buildPrefinalizationLegName(request);
+        Assertions.assertEquals("PROP_ACT-COM(2022)_666-final-en.leg", legName);
+    }
+
+
+    private ApplyMetadataRequest getDummyMetadataRequest() {
+        return new ApplyMetadataRequest("http://example.com/test",
+                "1.0.0", "1900-01-01T00:00:01.000+02:00", "12345");
+    }
+
+    private ApplyMetadataRequest.DocumentNode getDummyDocumentNode() {
+        return new ApplyMetadataRequest.DocumentNode("zip://PROP_ACT-clujy4npp0000mg34snvwwcd0-en.leg",
+                "PROP_ACT-clujy4npp0000mg34snvwwcd0-en.leg",
+                "application/zip",
+                "_body_cmp_1__dref_2");
+    }
+
+    private ApplyMetadataRequest.TaskNode getDummyTaskNode() {
+        return new ApplyMetadataRequest.TaskNode("1");
+    }
+
+    private ApplyMetadataRequest.ActionNode getDummyActionNode() {
+        return new ApplyMetadataRequest.ActionNode("InsertData", "true");
+    }
+
+    private ApplyMetadataRequest.FieldNode createInsertCoteNode(final String value) {
+        return new ApplyMetadataRequest.FieldNode("insertCote", value);
+    }
+
+    private ApplyMetadataRequest.FieldNode createIsFinalNode(final String value) {
+        return new ApplyMetadataRequest.FieldNode("isFinal", value);
     }
 }
