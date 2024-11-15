@@ -1077,12 +1077,12 @@ public class MetadataUtil {
 
         Optional<ApplyMetadataRequest.FieldNode> isFinalNode = action.get().getFieldWithKey(MetadataFieldType.DOCUMENT_FINAL.toString());
         Optional<ApplyMetadataRequest.FieldNode> insertCoteField = action.get().getFieldWithKey(MetadataFieldType.INSERT_COTE.toString());
-        if (!action.isPresent()) {
+        if (!insertCoteField.isPresent()) {
             return documentFilename;
         }
 
         final String insertCote = insertCoteField.get().getValue()
-                .replace(" ", "");
+                .replace(" ", "_");
         String prefinalisationName = "";
         int pos = documentFilename.indexOf("-");
         if (pos == -1) {
