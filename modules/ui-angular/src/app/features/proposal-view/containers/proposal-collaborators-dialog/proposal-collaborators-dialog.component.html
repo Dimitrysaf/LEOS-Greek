@@ -5,40 +5,15 @@
 <eui-dialog
   #addCollaboratorsModal
   [title]="'page.collection.collaborators.dialog.header' | translate"
-  [isHandleCloseOnDismiss]="true"
-  [isHandleCloseOnEscape]="true"
-  [isHandleCloseOnClose]="true"
+  [isClosedOnClickOutside]="true"
+  [isHandleCloseOnClickOutside]="true"
   (clickOutside)="closeDialog()"
-  (dismiss)="closeDialog()"
+  [isClosedOnEscape]="true"
+  [isHandleCloseOnEscape]="true"
   (escape)="closeDialog()"
-  (close)="closeDialog()"
+  [hasCloseButton]="false"
 >
   <!-- Body -->
-  <div euiInputGroup class="row eui-u-flex-justify-content-center">
-    <div class="col-md-3">
-      <label euiLabel for="quantity">
-        {{ 'page.collection.collaborators.dialog.quantity' | translate }}</label
-      >
-    </div>
-    <div class="col-md-9">
-      <input
-        type="number"
-        euiInputText
-        id="quantity"
-        name="quantity"
-        [min]="MIN_QUANTITY_USER"
-        [max]="MAX_QUANTITY_USER"
-        [(ngModel)]="quantity"
-        (ngModelChange)="handleQuantityChange($event)"
-        [isInvalid]="isQuantityValid"
-      />
-      <eui-feedback-message euiDanger [hidden]="isQuantityValid">
-        {{ 'page.collection.collaborators.dialog.max-quantity' | translate }}
-        {{ MAX_QUANTITY_USER }}
-      </eui-feedback-message
-      >
-    </div>
-  </div>
   <div [formGroup]="collaboratorsForm">
     <div formArrayName="collaborators">
       <div
@@ -57,6 +32,8 @@
               id="item"
               formControlName="item"
               (selectionChange)="handleNameSelect($event, i)"
+              (keydown)="handleNameChanged(i)"
+              (clear)="handleNameChanged(i)"
             ></eui-autocomplete>
           </div>
           <div class="col-md-3">
@@ -96,7 +73,9 @@
             </select>
           </div>
           <div class="col-md-1 eui-u-mt-l">
-            <eui-icon-svg set="eui" icon="eui-close" fillColor="danger-100"
+            <eui-icon-svg *ngIf="i < (this.MAX_QUANTITY_USER - 1)" set="eui" icon="eui-add" fillColor="success-100" style="cursor:pointer;"
+                          (click)="addCollaborator(i)"></eui-icon-svg>
+            <eui-icon-svg *ngIf="this.collaboratorsFormList.length > 1" set="eui" icon="eui-delete" fillColor="danger-100" style="cursor:pointer;"
                           (click)="removeCollaborator(i)"></eui-icon-svg>
           </div>
         </div>

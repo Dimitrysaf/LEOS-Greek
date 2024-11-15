@@ -96,11 +96,9 @@
           </ng-template>
         </td>
         <td *ngIf="!translated">
-          @if(this.detailsService.isInternalUser(row)) {
           <eui-dropdown
             [euiDisabled]="
-              (this.detailsService.isInternalUser(row) &&
-              this.detailsService.hasPermissions([
+              (this.detailsService.hasPermissions([
                 'CAN_ADD_REMOVE_COLLABORATOR'
               ]) | async) === false
             "
@@ -144,7 +142,6 @@
               </button>
             </eui-dropdown-content>
           </eui-dropdown>
-          }
         </td>
       </tr>
     </ng-template>
