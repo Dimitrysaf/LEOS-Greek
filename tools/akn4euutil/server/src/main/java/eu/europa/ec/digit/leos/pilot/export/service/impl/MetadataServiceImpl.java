@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 class MetadataServiceImpl implements MetadataService {
@@ -175,7 +176,7 @@ class MetadataServiceImpl implements MetadataService {
         final ApplyMetadataResponse.StatusNode successResult = isContainsTaskResponseWithErrors(taskResponses)
                 ? MetadataUtil.getErrorStatusResult() : MetadataUtil.getSuccessStatusResult();
         return new ApplyMetadataResponse(request.getRequestId(),
-                MetadataUtil.applyMetadataRequestDocumentToResultDocument(request.getDocument()),
+                MetadataUtil.applyMetadataRequestDocumentToResultDocument(request.getDocument(), MetadataUtil.buildPrefinalizationLegName(request)),
                 taskResponses, successResult);
     }
 
@@ -255,7 +256,6 @@ class MetadataServiceImpl implements MetadataService {
             XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response);
             responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
             responseContent.put(response.getDocument().getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
-
             return ZipUtil.zipByteArray(responseContent);
         } catch(Exception e) {
             LOG.error("Error building response {}", e);
@@ -323,5 +323,4 @@ class MetadataServiceImpl implements MetadataService {
         }
         return null;
     }
-
 }
