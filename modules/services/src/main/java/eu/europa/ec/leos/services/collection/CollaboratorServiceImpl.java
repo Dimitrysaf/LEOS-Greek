@@ -98,7 +98,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         LOG.trace("Removing collaborator...{}, with authority {}", userId, roleName);
         final User user = getUser(userId);
         final Role role = getRole(roleName);
-        final String entity = getEntity(selectedEntity, user);
+        final String entity = selectedEntity != null ? getEntity(selectedEntity, user) : null;
 
         List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
         if (!isCollaboratorPresent(documents, user, role, entity)) {
@@ -123,6 +123,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         final User user = getUser(userId);
         final Role newRole = getRole(newRoleName);
         final String entity = getEntity(selectedEntity, user);
+
         List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
         String collaboratorRole = documents.get(0).getCollaborators().stream()
                 .filter(c -> user.getLogin().equals(c.getLogin()) && c.getEntity().equals(entity))
@@ -142,6 +143,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         }
 
         documents.forEach(doc -> updateCollaborators(user, newRole, entity, null, doc, false));
+
         sendNotification(user, entity, newRole, proposal.getId(), proposalUrl);
         LOG.info("Collaborator '{}', oldRole '{}', entity '{}' updated new role to '{}' for proposal id {}", user.getLogin(), oldRole.getName(), entity, newRole.getName(), proposal.getId());
         return entity;
@@ -238,7 +240,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         return collaborators.stream()
                 .anyMatch(collaborator -> collaborator.getLogin().equals(user.getLogin())
                         && collaborator.getRole().equals(role.getName())
-                        && collaborator.getEntity().equals(selectedEntity)
+                        && (collaborator.getEntity().equals(selectedEntity) || selectedEntity == null)
                 );
     }
 
@@ -257,7 +259,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
                 .collect(Collectors.toList());
         if (collaborators.size() == 1
                 && collaborators.get(0).getLogin().equals(user.getLogin())
-                && collaborators.get(0).getEntity().equals(entity)) {
+                && (collaborators.get(0).getEntity().equals(entity) || entity == null)) {
             isLastOwner = true;
         }
         return isLastOwner;
