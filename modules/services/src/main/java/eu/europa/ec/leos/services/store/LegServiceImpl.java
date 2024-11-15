@@ -122,9 +122,9 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.c
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
+import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
-import static eu.europa.ec.leos.services.support.XmlHelper.PROP_ACT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
@@ -488,7 +488,7 @@ public class LegServiceImpl implements LegService {
 
         final byte[] proposalXmlContent = proposalVO.getSource();
         ExportResource proposalExportResource = new ExportResource(LeosCategory.PROPOSAL);
-        proposalExportResource.setName(getProposalActFileName(proposalVO.getMetadataDocument().getRef()));
+        proposalExportResource.setName(generateActFileName(proposalVO.getMetadataDocument().getRef(), proposalXmlContent));
         final Map<String, String> proposalRefsMap = buildProposalExportResource(proposalExportResource, proposalXmlContent);
         proposalExportResource.setExportOptions(exportOptions);
         final DocumentVO memorandumVO = proposalVO.getChildDocument(LeosCategory.MEMORANDUM);
@@ -554,10 +554,10 @@ public class LegServiceImpl implements LegService {
         
         // 1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
-        exportProposalResource.setName(getProposalActFileName(proposal.getMetadata().get().getRef()));
+        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
+        exportProposalResource.setName(generateActFileName(proposal.getMetadata().get().getRef(), proposalContent));
         final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal);
         legPackage.addContainedFile(proposal.getVersionedReference());
-        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         String language = proposal.getMetadata().get().getLanguage();
         documentLanguageContext.setDocumentLanguage(language);
 
@@ -1743,10 +1743,10 @@ public class LegServiceImpl implements LegService {
 
         //1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
-        exportProposalResource.setName(getProposalActFileName(proposal.getMetadata().get().getRef()));
+        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
+        exportProposalResource.setName(generateActFileName(proposal.getMetadata().get().getRef(), proposalContent));
         final Map<String, String> proposalRefsMap = enrichZipWithProposalForClone(contentToZip, exportProposalResource, proposal);
         legPackage.addContainedFile(proposal.getVersionedReference());
-        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         String language = proposal.getMetadata().get().getLanguage();
         //2. Add Bill to package
         Bill bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
@@ -2167,8 +2167,10 @@ public class LegServiceImpl implements LegService {
         return 0;
     }
 
-    private String getProposalActFileName(String proposalRef) {
-        String proposalCuid = proposalRef.substring(proposalRef.indexOf("-") + 1, proposalRef.length());
-        return PROP_ACT + proposalCuid;
+    private String generateActFileName(String documentRef, byte[] xmlContent) {
+        String docCollectionXPath = xPathCatalog.getXPathProposalDocCollection();
+        String docCollectionName = xmlContentProcessor.getElementValue(xmlContent, docCollectionXPath, true);
+        String cuidAndLang = documentRef.substring(documentRef.indexOf("-") + 1, documentRef.length());
+        return docCollectionName.concat(DOC_FILE_NAME_SEPARATOR).concat(cuidAndLang);
     }
 }
