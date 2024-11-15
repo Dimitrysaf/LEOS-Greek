@@ -99,6 +99,7 @@
             </ng-template>
           </td>
           <td [ngClass]="collaboratorClass" *ngIf="!translated">
+            @if(this.detailsService.isInternalUser(row)) {
             <eui-dropdown
               [euiDisabled]="
                 (this.detailsService.hasPermissions([
@@ -146,6 +147,7 @@
                 </button>
               </eui-dropdown-content>
             </eui-dropdown>
+            }
           </td>
         </tr>
     </ng-template>
