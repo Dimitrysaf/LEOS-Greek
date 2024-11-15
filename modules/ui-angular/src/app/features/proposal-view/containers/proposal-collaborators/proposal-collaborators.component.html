@@ -40,110 +40,114 @@
       </tr>
     </ng-template>
     <ng-template let-row euiTemplate="body">
-      <tr>
-        <td>{{ row.fullName }}</td>
-        <td>{{ row.entity.organizationName }}</td>
-        <td>
-          <ng-container
-            *ngIf="
-              isEditRole &&
-                editUserId === row.login &&
-                row.entity.organizationName === entity;
-              else tdRole
-            "
-          >
-            <div euiInputGroup class="row">
-              <div class="col-sm-10">
-                <select
-                  euiSelect
-                  (change)="handleOnChange($event)"
-                  [selectedIndex]="getIndexByRole()"
-                >
-                  <option value="OWNER">
-                    {{
-                      'page.collection.collaborators.role.author' | translate
-                    }}
-                  </option>
-                  <option value="CONTRIBUTOR">
-                    {{
-                      'page.collection.collaborators.role.contributor'
-                        | translate
-                    }}
-                  </option>
-                  <option value="REVIEWER">
-                    {{
-                      'page.collection.collaborators.role.reviewer' | translate
-                    }}
-                  </option>
-                </select>
-              </div>
-              <div class="col-sm-2">
-                <div class="eui-u-mr-s" (click)="exitEditMode()">
-                  <eui-icon-svg
-                    size="l"
-                    icon="eui-ecl-close-filled"
-                  ></eui-icon-svg>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-          <ng-template #tdRole>
-            <span>{{
-                'page.collection.collaborators.role.' +
-                (row.role === 'OWNER' ? 'author' : row.role.toLowerCase())
-                  | translate
-              }}</span>
-          </ng-template>
-        </td>
-        <td *ngIf="!translated">
-          <eui-dropdown
-            [euiDisabled]="
-              (this.detailsService.hasPermissions([
-                'CAN_ADD_REMOVE_COLLABORATOR'
-              ]) | async) === false
-            "
-          >
-            <button
-              euiButton
-              euiRounded
-              euiIconButton
-              euiBasicButton
-              euiSecondary
-              [euiTooltip]="
-                'page.collection.collaborators.table.actions.more.tooltip'
-                  | translate
-              "
-              [attr.aria-label]="
-                'page.collection.collaborators.table.actions.more.tooltip'
-                  | translate
+        <tr *ngFor="let collaboratorClass of [!row.entity?.organizationName ? 'eui-u-color-danger-25 eui-u-bg-color-danger-25' : '']">
+          <td [ngClass]="collaboratorClass">{{ row.fullName }}</td>
+          <td [ngClass]="collaboratorClass"
+              [euiTooltip]="!row.entity?.organizationName ? ('page.collection.collaborators.table.user.entity.error.tooltip' | translate) : ''">
+            {{ row.entity?.organizationName }}
+          </td>
+          <td [ngClass]="collaboratorClass">
+            <ng-container
+              *ngIf="
+                isEditRole &&
+                  editUserId === row.login &&
+                  row.entity?.organizationName === entity;
+                else tdRole
               "
             >
-              <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>
-            </button>
-            <eui-dropdown-content>
-              <button
-                euiDropdownItem
-                class="eui-u-p-s"
-                (click)="editCollaborator(row.login, row.entity, row.role)"
-              >
-                {{
-                  'page.collection.collaborators.table.actions.edit-role'
+              <div euiInputGroup class="row">
+                <div class="col-sm-10">
+                  <select
+                    euiSelect
+                    (change)="handleOnChange($event)"
+                    [selectedIndex]="getIndexByRole()"
+                  >
+                    <option value="OWNER">
+                      {{
+                        'page.collection.collaborators.role.author' | translate
+                      }}
+                    </option>
+                    <option value="CONTRIBUTOR">
+                      {{
+                        'page.collection.collaborators.role.contributor'
+                          | translate
+                      }}
+                    </option>
+                    <option value="REVIEWER">
+                      {{
+                        'page.collection.collaborators.role.reviewer' | translate
+                      }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-sm-2">
+                  <div class="eui-u-mr-s" (click)="exitEditMode()">
+                    <eui-icon-svg
+                      size="l"
+                      icon="eui-ecl-close-filled"
+                    ></eui-icon-svg>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #tdRole>
+              <span>{{
+                  'page.collection.collaborators.role.' +
+                  (row.role === 'OWNER' ? 'author' : row.role.toLowerCase())
                     | translate
-                }}
-              </button>
+                }}</span>
+            </ng-template>
+          </td>
+          <td [ngClass]="collaboratorClass" *ngIf="!translated">
+            <eui-dropdown
+              [euiDisabled]="
+                (this.detailsService.hasPermissions([
+                  'CAN_ADD_REMOVE_COLLABORATOR'
+                ]) | async) === false
+              "
+            >
               <button
-                euiDropdownItem
-                class="eui-u-p-s"
-                euiDanger
-                (click)="handleConfirmDeletion(row)"
-                *ngIf="dataSource.length > 1"
+                euiButton
+                euiRounded
+                euiIconButton
+                euiBasicButton
+                euiSecondary
+                [euiTooltip]="
+                  'page.collection.collaborators.table.actions.more.tooltip'
+                    | translate
+                "
+                [attr.aria-label]="
+                  'page.collection.collaborators.table.actions.more.tooltip'
+                    | translate
+                "
               >
-                {{ 'global.actions.delete' | translate }}
+                <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>
               </button>
-            </eui-dropdown-content>
-          </eui-dropdown>
-        </td>
-      </tr>
+              <eui-dropdown-content>
+                <button
+                  euiDropdownItem
+                  class="eui-u-p-s"
+                  (click)="editCollaborator(row.login, row.entity, row.role)"
+                  *ngIf="row.entity?.organizationName !== null"
+                >
+                  {{
+                    'page.collection.collaborators.table.actions.edit-role'
+                      | translate
+                  }}
+                </button>
+                <button
+                  euiDropdownItem
+                  class="eui-u-p-s"
+                  euiDanger
+                  (click)="handleConfirmDeletion(row)"
+                  *ngIf="dataSource.length > 1"
+                >
+                  {{ 'global.actions.delete' | translate }}
+                </button>
+              </eui-dropdown-content>
+            </eui-dropdown>
+          </td>
+        </tr>
     </ng-template>
     <ng-template euiTemplate="emptyMessage">
       <tr>
