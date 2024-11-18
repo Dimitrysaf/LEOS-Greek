@@ -14,7 +14,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 public class MetadataUtil {
 
@@ -365,6 +370,11 @@ public class MetadataUtil {
 
     public static ApplyMetadataResponse.DocumentNode applyMetadataRequestDocumentToResultDocument(ApplyMetadataRequest.DocumentNode document) {
         return new ApplyMetadataResponse.DocumentNode(document.getSourceURL(), document.getFilename(), document.getMimeType(),
+                document.getDocumentId());
+    }
+
+    public static ApplyMetadataResponse.DocumentNode applyMetadataRequestDocumentToResultDocument(ApplyMetadataRequest.DocumentNode document, String legFilename) {
+        return new ApplyMetadataResponse.DocumentNode("zip://" + legFilename, legFilename, document.getMimeType(),
                 document.getDocumentId());
     }
 
@@ -1051,5 +1061,43 @@ public class MetadataUtil {
         return xmlNode != null 
                 && XmlUtil.parentNodeNameEquals(xmlNode, "references")
                 && XmlUtil.parentNodeNameEquals(xmlNode.getParentNode(), "meta");
+    }
+
+    public static String buildPrefinalizationLegName(ApplyMetadataRequest request) {
+        final String documentFilename = request.getDocument().getFilename();
+        Optional<ApplyMetadataRequest.TaskNode> task = request.getTasks().stream().findFirst();
+        if (!task.isPresent()) {
+            return documentFilename;
+        }
+
+        Optional<ApplyMetadataRequest.ActionNode> action = task.get().getActions().stream().findFirst();
+        if (!action.isPresent()) {
+            return documentFilename;
+        }
+
+        Optional<ApplyMetadataRequest.FieldNode> isFinalNode = action.get().getFieldWithKey(MetadataFieldType.DOCUMENT_FINAL.toString());
+        Optional<ApplyMetadataRequest.FieldNode> insertCoteField = action.get().getFieldWithKey(MetadataFieldType.INSERT_COTE.toString());
+        if (!insertCoteField.isPresent()) {
+            return documentFilename;
+        }
+
+        final String insertCote = insertCoteField.get().getValue()
+                .replace(" ", "_");
+        String prefinalisationName = "";
+        int pos = documentFilename.indexOf("-");
+        if (pos == -1) {
+            return documentFilename;
+        }
+
+        prefinalisationName = documentFilename.substring(0, pos+1) + insertCote;
+        if (isFinalNode.isPresent() && isFinalNode.get().getValue().equals("1")) {
+            prefinalisationName = prefinalisationName + "-final";
+        }
+
+        pos = documentFilename.indexOf("-", pos+1);
+        if (pos == -1) {
+            return documentFilename;
+        }
+        return prefinalisationName + documentFilename.substring(pos);
     }
 }
