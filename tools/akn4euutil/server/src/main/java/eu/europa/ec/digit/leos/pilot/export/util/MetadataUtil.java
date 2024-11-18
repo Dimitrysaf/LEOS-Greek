@@ -129,6 +129,9 @@ public class MetadataUtil {
         if (filename.startsWith("reg")) {
             return true;
         }
+        if (filename.startsWith("stat_financ")) {
+            return true;
+        }
         return false;
     }
 
@@ -833,6 +836,36 @@ public class MetadataUtil {
         MetadataUtil.addInsertCoteToMetaReference(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToCoverPage(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToDocumentFilename(fieldInfo, xmlFile);
+        MetadataUtil.addInsertCoteToCuid(fieldInfo, xmlFile);
+    }
+
+    /**
+     * Add the cote value to the akn4eu:xxxxCUID nodes.
+     * */
+    public static void addInsertCoteToCuid(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
+        final Node frbrWorkNode = xmlFile.getElementByName("FRBRWork");
+        if (frbrWorkNode == null) {
+            return;
+        }
+
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "preservation");
+        if (preservationNode == null) {
+            return;
+        }
+
+        String cuidValue = fieldInfo.getDisplayValue().replace(" ", "_");
+        MetadataUtil.replaceCuidValue(preservationNode, "docCUID", cuidValue);
+
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            MetadataUtil.replaceCuidValue(preservationNode, "fileCUID", cuidValue);
+        }
+    }
+
+    private static void replaceCuidValue(Node preservationNode, String cuidName, String value) {
+        final Node cuidNode = XmlUtil.getChildNodeWithName(preservationNode, String.format("akn4eu:%s", cuidName));
+        if (cuidNode != null) {
+            XmlUtil.setNodeAttributeValue(cuidNode, "value", value);
+        }
     }
 
     private static void addInsertCoteToDocumentFilename(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
