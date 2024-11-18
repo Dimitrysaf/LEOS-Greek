@@ -1,6 +1,8 @@
 package eu.europa.ec.digit.leos.pilot.export.util;
 
+import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
+import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
@@ -8,7 +10,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleRef
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
+import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,7 +22,7 @@ public class MetadataUtilsTests {
 
     @Test
     public void testLinkedDocumentsSwdWithDraft() throws MetadataUtilsException {
-     
+
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("{SWD(2012) 1234 draft}");
 
         Assertions.assertNotNull(actual);
@@ -29,14 +31,14 @@ public class MetadataUtilsTests {
         Assertions.assertEquals(1, typedResult.getReferences().size());
 
         final ReferenceFieldInfo refField = typedResult.getReferences().get(0);
-        
+
         Assertions.assertEquals("SWD(2012) 1234 draft", refField.getDisplayValue());
         Assertions.assertEquals("http://data.europa.eu/eli/swd/2012/1234", refField.getHref());
     }
-    
+
     @Test
     public void testLinkedDocumentsComWithoutSuffixAndBrackets() throws MetadataUtilsException {
-     
+
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("COM(2014) 4");
 
         Assertions.assertNotNull(actual);
@@ -45,11 +47,11 @@ public class MetadataUtilsTests {
         Assertions.assertEquals(1, typedResult.getReferences().size());
 
         final ReferenceFieldInfo refField = typedResult.getReferences().get(0);
-        
+
         Assertions.assertEquals("COM(2014) 4", refField.getDisplayValue());
         Assertions.assertEquals("http://data.europa.eu/eli/com/2014/4", refField.getHref());
     }
-    
+
     @Test
     public void testLinkedDocumentsSecIsConvertedToSwdInHref() throws MetadataUtilsException {
 
@@ -63,14 +65,14 @@ public class MetadataUtilsTests {
 
         Assertions.assertEquals(1, typedResult.getReferences().size());
         final ReferenceFieldInfo refField = typedResult.getReferences().get(0);
-        
+
         Assertions.assertEquals("SEC(2011) 12 final", refField.getDisplayValue());
         Assertions.assertEquals("http://data.europa.eu/eli/swd/2011/12", refField.getHref());
     }
-    
+
     @Test
     public void testParseMultipleLinkedDocuments() throws MetadataUtilsException {
-        
+
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments(
                 "{COM(2014) 4 final}-{SWD(2012) 1111}-{SEC(2016) 248 final}");
 
@@ -82,61 +84,123 @@ public class MetadataUtilsTests {
         ReferenceFieldInfo refField = typedResult.getReferences().get(0);
         Assertions.assertEquals("COM(2014) 4 final", refField.getDisplayValue());
         Assertions.assertEquals("http://data.europa.eu/eli/com/2014/4", refField.getHref());
-        
+
         refField = typedResult.getReferences().get(1);
         Assertions.assertEquals("SWD(2012) 1111", refField.getDisplayValue());
         Assertions.assertEquals("http://data.europa.eu/eli/swd/2012/1111", refField.getHref());
-        
+
         refField = typedResult.getReferences().get(2);
         Assertions.assertEquals("SEC(2016) 248 final", refField.getDisplayValue());
         Assertions.assertEquals("http://data.europa.eu/eli/swd/2016/248", refField.getHref());
     }
-    
+
     //---------------------------
     // verify space tolerance for parsing the "cote"
     //---------------------------
     @Test
     public void testParseCote_spaceLeft() throws MetadataUtilsException {
-        
+
         final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013) 2456");
-        
+
         Assertions.assertNotNull(actual);
-        
+
         final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
         Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
     }
-    
+
     @Test
     public void testParseCote_noSpaceLeft() throws MetadataUtilsException {
-        
+
         final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013)2456");
-        
+
         Assertions.assertNotNull(actual);
-        
+
         final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
         Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
     }
-    
+
     @Test
     public void testParseCote_spaceLeftWithSuffix() throws MetadataUtilsException {
-        
+
         final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013) 2456 final");
-        
+
         Assertions.assertNotNull(actual);
-        
+
         final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
         Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
     }
-    
+
     @Test
     public void testParseCote_noSpaceLeftWithSuffix() throws MetadataUtilsException {
-        
+
         final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013)2456 final");
-        
+
         Assertions.assertNotNull(actual);
-        
+
         final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
         Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
+    }
+
+    @Test
+    public void testAddInsertCoteToCuidInMainXml() throws XmlUtilException, MetadataUtilsException {
+        XmlFile xmlFile = createCuidXmlFile("main-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
+        ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
+        MetadataUtil.addInsertCoteToCuid(insertCoteFieldInfo, xmlFile);
+
+        Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
+        Assertions.assertNotNull(fileCuidNode);
+        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(fileCuidNode, "value"));
+
+        Node docCuidNode = xmlFile.getElementByName("akn4eu:docCUID");
+        Assertions.assertNotNull(docCuidNode);
+        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(docCuidNode, "value"));
+    }
+
+    @Test
+    public void testAddInsertCoteToCuidInNotMainXml() throws XmlUtilException, MetadataUtilsException {
+        XmlFile xmlFile = createCuidXmlFile("notMain-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
+        ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
+        MetadataUtil.addInsertCoteToCuid(insertCoteFieldInfo, xmlFile);
+
+        Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
+        Assertions.assertNotNull(fileCuidNode);
+        Assertions.assertEquals("cm29gm7v600276e56hvqz1k4g", XmlUtil.getNodeAttributeValue(fileCuidNode, "value"));
+
+        Node docCuidNode = xmlFile.getElementByName("akn4eu:docCUID");
+        Assertions.assertNotNull(docCuidNode);
+        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(docCuidNode, "value"));
+    }
+
+    private XmlFile createCuidXmlFile(String filename, String cuid) throws XmlUtilException {
+        XmlFile xmlFile = XmlUtil.newXmlFile();
+        xmlFile.setName(filename);
+        Node rootNode = xmlFile.createRoot("doc");
+
+        Node metaNode = xmlFile.newElement("meta");
+        rootNode.appendChild(metaNode);
+
+        Node identiciationNode = xmlFile.newElement("identification");
+        metaNode.appendChild(identiciationNode);
+
+        Node frbrWorkNode = xmlFile.newElement("FRBRWork");
+        identiciationNode.appendChild(frbrWorkNode);
+
+        Node preservationNode = xmlFile.newElement("preservation");
+        frbrWorkNode.appendChild(preservationNode);
+
+        Node fileCuidNode = xmlFile.newElement("akn4eu:fileCUID");
+        XmlUtil.setNodeAttributeValue(fileCuidNode, "value", cuid);
+        preservationNode.appendChild(fileCuidNode);
+
+        Node docCuidNode = xmlFile.newElement("akn4eu:docCUID");
+        XmlUtil.setNodeAttributeValue(docCuidNode, "value", cuid);
+        preservationNode.appendChild(docCuidNode);
+
+        return xmlFile;
+    }
+
+    private ReferenceFieldInfo createInsertCoteFieldInfo(String fieldValue) throws MetadataUtilsException {
+        return (ReferenceFieldInfo)MetadataUtil.parseInsertCote(fieldValue);
     }
 
     @Test
