@@ -72,7 +72,7 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
 
     @Override
     public byte[] repeatElement(FinancialStatement document, String idAttributeValue, boolean before) {
-        byte[] updateContent = xmlContentProcessor.repeatElement(getContent(document), idAttributeValue, before);
+        byte[] updateContent = xmlContentProcessor.repeatElement(getContent(document), idAttributeValue, before, document.isTrackChangesEnabled());
         return xmlContentProcessor.doXMLPostProcessing(updateContent);
     }
 

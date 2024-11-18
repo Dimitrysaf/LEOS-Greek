@@ -516,7 +516,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public byte[] repeatElement(byte[] xmlContent, String idAttributeValue, boolean before) {
+    public byte[] repeatElement(byte[] xmlContent, String idAttributeValue, boolean before, boolean isTrackChangesEnabled) {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
         if (node != null) {
@@ -524,6 +524,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             XercesUtils.removeAttributeRecursively(newNode, XMLID);
             XercesUtils.addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
             XercesUtils.addSibling(newNode, node, before);
+
+            if (isTrackChangesEnabled) {
+                addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
+                addAttribute(newNode, LEOS_UID, securityContext.getUser().getLogin());
+                addAttribute(newNode, LEOS_TITLE, getTitleValue(securityContext));
+            }
         }
         return nodeToByteArray(document);
     }
