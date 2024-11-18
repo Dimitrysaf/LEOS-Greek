@@ -297,10 +297,15 @@ public class ProposalApiController {
     }
 
     @RequestMapping(value = "/conValidateLegFile", method = RequestMethod.POST)
-    @ResponseBody
     public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) {
         validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
         File content = new File(legFile.getName());
+        try (FileOutputStream fos = new FileOutputStream(content)) {
+            fos.write(legFile.getBytes());
+        } catch (IOException ioe) {
+            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         String result = conValidatorService.validate(content);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
