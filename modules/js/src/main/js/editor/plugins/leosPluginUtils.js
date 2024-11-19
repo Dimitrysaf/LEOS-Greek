@@ -95,6 +95,7 @@ define(function leosPluginUtilsModule(require) {
     var MOVETO = "move_to";
     var DELETED = "deletedX";
     var MOVED = "movedX";
+    var DATA_AKN_ACTION = 'data-akn-action';
 
     var REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX = /\u200B/g;
 
@@ -1557,6 +1558,7 @@ define(function leosPluginUtilsModule(require) {
         DATA_AKN_WRAPPED_CONTENT_ID: DATA_AKN_WRAPPED_CONTENT_ID,
         DATA_AKN_MP_ID: DATA_AKN_MP_ID,
         DATA_AKN_TC_ORIGINAL_NUMBER: DATA_AKN_TC_ORIGINAL_NUMBER,
+        DATA_AKN_ACTION: DATA_AKN_ACTION,
         LEOS_SOFTACTION: LEOS_SOFTACTION,
         DEL: DEL,
         MOVETO: MOVETO,

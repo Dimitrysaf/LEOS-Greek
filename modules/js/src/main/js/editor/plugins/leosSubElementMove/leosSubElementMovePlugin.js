@@ -118,6 +118,7 @@ define(function leosSubElementMovePluginModule(require) {
             var element = selection.getStartElement();
             UTILS.setItemInStorage("movedElement", element.getOuterHtml());
             element.setAttribute("class", MOVED_ELEMENT_CLASS);
+            element.setAttribute("contenteditable", "false");
             //_setTrackChangesElement(element, editor);
         }
     }
