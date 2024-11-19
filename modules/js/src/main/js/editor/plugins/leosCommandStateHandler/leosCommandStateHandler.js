@@ -15,6 +15,8 @@
 define(function leosCommandStateHandler(require) {
     "use strict";
 
+    var leosPluginUtils = require("plugins/leosPluginUtils");
+
     //Function takes event and command name from respective plugin command. changeStateElements provides elements
     //for which command is to be disabled.
     var changeCommandState = function changeCommandState(event, commandName, changeStateElements, overrideState) {
@@ -30,7 +32,7 @@ define(function leosCommandStateHandler(require) {
 
     function shouldDisable(selection, changeStateElements) {
         var startElement = selection.getStartElement();
-        if (startElement && startElement.getAttribute('contenteditable') === 'false') {
+        if (startElement && (startElement.getAttribute('contenteditable') === 'false' ||  startElement.getAttribute(leosPluginUtils.DATA_AKN_ACTION) === 'delete')) {
             return true;
         } else {
             if (changeStateElements) {
