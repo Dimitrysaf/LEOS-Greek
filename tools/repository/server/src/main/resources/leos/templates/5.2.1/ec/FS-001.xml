@@ -180,7 +180,7 @@
                             <p>
                                 <b>a new action following a pilot project/preparatory action
                                     <authorialNote marker="1" placement="bottom">
-                                        <p>As referred to in Article 58(2)(a) or (b) of the
+                                        <p>As referred to in Article 58(2), point (a) or (b) of the
                                             Financial Regulation.</p>
                                     </authorialNote>
                                 </b>
@@ -234,21 +234,21 @@
             <level leos:depth="3" leos:editable="true" leos:deletable="false">
                 <num>1.5.2.</num>
                 <heading leos:editable="false">
-                    <i leos:editable="false">Added value of Union involvement (it may result from
+                    <i leos:editable="false">Added value of EU involvement (it may result from
                         different factors, e.g. coordination gains, legal certainty, greater
-                        effectiveness or complementarities). For the purposes of this point 'added
-                        value of Union involvement' is the value resulting from Union intervention,
-                        which is additional to the value that would have been otherwise created by
+                        effectiveness or complementarities). For the purposes of this section 'added
+                        value of EU involvement' is the value resulting from EU action,
+                        that is additional to the value that would have been otherwise created by
                         Member States alone.</i>
                 </heading>
                 <subparagraph>
                     <content>
-                        <p>Reasons for action at European level (ex-ante) [...]</p>
+                        <p>Reasons for action at EU level (ex-ante) [...]</p>
                     </content>
                 </subparagraph>
                 <subparagraph>
                     <content>
-                        <p>Expected generated Union added value (ex-post) [...]</p>
+                        <p>Expected generated EU added value (ex-post) [...]</p>
                     </content>
                 </subparagraph>
             </level>
@@ -265,7 +265,7 @@
             <level leos:depth="3" leos:editable="true" leos:deletable="false">
                 <num>1.5.4.</num>
                 <heading leos:editable="false">
-                    <i leos:editable="false">Compatibility with the Multiannual Financial Framework
+                    <i leos:editable="false">Compatibility with the multiannual financial framework
                         and possible synergies with other appropriate instruments</i>
                 </heading>
                 <content>
@@ -285,7 +285,7 @@
             <level leos:depth="2" leos:editable="false" leos:deletable="false">
                 <num>1.6.</num>
                 <heading leos:editable="false">
-                    <b>Duration and financial impact of the proposal/initiative</b>
+                    <b>Duration of the proposal/initiative and of its financial impact</b>
                 </heading>
                 <list class="CHECK" leos:editable="false">
                     <indent>
@@ -317,7 +317,7 @@
                                     <inline name="unchecked">&#x2610;</inline>
                                 </num>
                                 <content>
-                                    <p>Financial impact from
+                                    <p>financial impact from
                                         <date date="2999-01-01" period="yy"><placeholder>YYYY</placeholder></date>
                                         to
                                         <date date="2999-01-01" period="yy"><placeholder>YYYY</placeholder></date>
@@ -554,7 +554,7 @@
             <level leos:editable="true" leos:depth="3" leos:deletable="false">
                 <num>2.2.1.</num>
                 <heading leos:editable="false">
-                    <i leos:editable="false">Justification of the management mode(s), the funding
+                    <i leos:editable="false">Justification of the budget implementation method(s), the funding
                         implementation mechanism(s), the payment modalities and the control strategy
                         proposed</i>
                 </heading>
@@ -575,10 +575,7 @@
             <level leos:editable="true" leos:depth="3" leos:deletable="false">
                 <num>2.2.3.</num>
                 <heading leos:editable="false">
-                    <i leos:editable="false">Estimation and justification of the cost-effectiveness
-                        of the controls (ratio of "control costs &#247; value of the related funds
-                        managed"), and assessment of the expected levels of risk of error (at
-                        payment &amp; at closure)</i>
+                    <i leos:editable="false">Estimation and justification of the cost-effectiveness of the controls (ratio between the control costs  and the value of the related funds managed), and assessment of the expected levels of risk of error (at payment &amp; at closure)</i>
                 </heading>
                 <content leos:editable="true">
                     <p>[...]</p>
@@ -6818,7 +6815,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 58.26%; border: solid windowtext 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 01 (Headquarters and Commissions
+                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 01 (Headquarters and Commission's
                                         Representation Offices)</p>
                                 </td>
                                 <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9;">
@@ -6912,8 +6909,8 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 58.26%; border: solid windowtext 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 01 (AC, END from the global
-                                        envelope)</p>
+                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 01 (AC, END from the 'global
+                                        envelope')</p>
                                 </td>
                                 <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: center;">0</p>
@@ -8128,7 +8125,7 @@
                 </heading>
                 <subparagraph leos:editable="false">
                     <content>
-                        <p leos:editable="false">The proposal/initiative :</p>
+                        <p leos:editable="false">The proposal/initiative:</p>
                     </content>
                 </subparagraph>
                 <list leos:editable="true" class="CHECK">
@@ -8138,8 +8135,8 @@
                         </num>
                         <content>
                             <p leos:editable="false">can be fully financed through redeployment
-                                within the relevant heading of the Multiannual Financial
-                                Framework (MFF).</p>
+                                within the relevant heading of the multiannual financial
+                                framework (MFF).</p>
                         </content>
                     </indent>
                     <indent>
