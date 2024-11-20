@@ -106,7 +106,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
 
   //leosEditorExtension > requestToc
   requestToc(...args) {
-    this.requestTocAndAncestors([]);
+    // this.requestTocAndAncestors([]);
+
+    this.requestTocAndAncestors(args[0]['elementIds'], args[0]['documentRef']);
   }
 
   // leosEditorExtension > actionHandler
@@ -539,11 +541,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     });
   }
 
-  private requestTocAndAncestors(elementdIds) {
+  private requestTocAndAncestors(elementdIds, documentRef) {
     this.documentService
-      .fetchTocAndAncestors(elementdIds)
+      .fetchTocAndAncestors(elementdIds, documentRef)
       .pipe(take(1))
       .subscribe((response) => {
+        // pass also the document reference associated with the request
+        response["documentRef"] = documentRef;
         this.receiveToc(JSON.stringify(response));
       });
   }
