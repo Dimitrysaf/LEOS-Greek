@@ -354,13 +354,15 @@ export class MergeContributionsService {
           this.emptyMergeActionList();
           this.documentService.reloadDocument();
           if (!resp.mergeStatus) {
+            const countUndo = mergeActions.filter((mAction) => mAction.action === ContributionActionAttrValue.UNDO).length;
+            const onlyUndo =  countUndo === mergeActions.length;
             this.dialogService.openDialog(
               new EuiDialogConfig({
                 title: this.translateService.instant(
-                  'page.editor.actions-merge-contributions.title',
+                  onlyUndo ? 'page.editor.actions-undo-merge-contributions.title' : 'page.editor.actions-merge-contributions.title',
                 ),
                 content: this.translateService.instant(
-                  'page.editor.actions-merge-contributions.content',
+                  onlyUndo ? 'page.editor.actions-undo-merge-contributions.content' : 'page.editor.actions-merge-contributions.content',
                 ),
                 acceptLabel: this.translateService.instant('global.actions.continue'),
                 hasDismissButton: false,

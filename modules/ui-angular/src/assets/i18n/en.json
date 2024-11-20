@@ -289,6 +289,8 @@
   "page.collection.drafts.last-updated-on-by": "Last updated on {{ date }} by {{ name }}",
   "page.editor.actions-merge-contributions.title": "Merging not fully completed",
   "page.editor.actions-merge-contributions.content": "Some changes could not be merged. Please do this manually if necessary.",
+  "page.editor.actions-undo-merge-contributions.title": "Undo not fully completed",
+  "page.editor.actions-undo-merge-contributions.content": "Some changes could not be undone. These could be surely related to elements' indentation. Please do this manually if necessary.",
   "page.editor.actions-dropdown.label": "Actions",
   "page.editor.actions-dropdown.save-version": "Save this version",
   "page.editor.actions-dropdown.save-version.modal": "Save this version",
