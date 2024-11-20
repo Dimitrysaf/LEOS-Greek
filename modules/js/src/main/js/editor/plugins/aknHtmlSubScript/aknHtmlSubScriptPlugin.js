@@ -44,7 +44,7 @@ define(function aknHtmlSubScriptPluginModule(require) {
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, "subscript");
+        leosCommandStateHandler.changeCommandState(event.editor, "subscript");
     }
 
     // return plugin module

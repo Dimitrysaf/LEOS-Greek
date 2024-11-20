@@ -40,7 +40,7 @@ define(function leosMathematicalFormulaPluginModule(require) {
     };
     
     function _onSelectionChange(event) {   
-        leosCommandStateHandler.changeCommandState(event, 'mathjax', changeStateElements, true);
+        leosCommandStateHandler.changeCommandState(event.editor, 'mathjax', changeStateElements, true);
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);

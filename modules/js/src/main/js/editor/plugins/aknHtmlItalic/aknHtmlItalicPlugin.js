@@ -57,7 +57,7 @@ define(function aknHtmlItalicPluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, "italic");
+        leosCommandStateHandler.changeCommandState(event.editor, "italic");
     }
 
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);

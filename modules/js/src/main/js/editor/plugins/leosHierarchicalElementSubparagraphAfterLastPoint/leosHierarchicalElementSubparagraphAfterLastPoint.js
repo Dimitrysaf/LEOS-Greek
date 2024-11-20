@@ -76,14 +76,14 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
         var cmd = evtDataArray[1];
         _setCurrentShiftCtrlEnterStatus(editor, cmd);
         event.editor = editor;
-        leosCommandStateHandler.changeCommandState(event, CMD_NAME, null, true);
+        leosCommandStateHandler.changeCommandState(event.data[0], CMD_NAME, null, true);
     }
 
     var _handleCKEvent = function _handleCKEvent(event) {
         var editor = event.editor;
         var cmd = event.listenerData;
         _setCurrentShiftCtrlEnterStatus(editor, cmd);
-        leosCommandStateHandler.changeCommandState(event, CMD_NAME, null, true);
+        leosCommandStateHandler.changeCommandState(event.editor, CMD_NAME, null, true);
     }
 
     var _setCurrentShiftCtrlEnterStatus = function _setCurrentShiftCtrlEnterStatus(editor, cmd) {

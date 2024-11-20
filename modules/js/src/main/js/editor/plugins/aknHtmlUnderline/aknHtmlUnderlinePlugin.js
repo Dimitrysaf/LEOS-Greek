@@ -58,7 +58,7 @@ define(function aknHtmlUnderlinePluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, "underline", null, true);
+        leosCommandStateHandler.changeCommandState(event.editor, "underline", null, true);
     }
     
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
