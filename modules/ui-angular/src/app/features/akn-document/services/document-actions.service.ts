@@ -273,7 +273,7 @@ export abstract class DocumentActionsService {
       this.pageMode === PageMode.Contribution &&
       this.buildMergeContributionsSection();
     const finalizeSection =
-      this.isDocumentTypeTheSame(this.documentService.documentType, 'STAT_FINANC_LEGIS')
+      this.isDocumentTypeTheSame(this.documentService.documentType, 'STAT_DIGIT_FINANC_LEGIS')
       && !this.isClonedProposal()
       && !this.profile
       && this.hasUpdatePermission

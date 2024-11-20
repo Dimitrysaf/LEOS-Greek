@@ -1,18 +1,18 @@
 <html xmlns="dummyURL">
     <head>
         <meta charset="UTF-8"/>
-        <link href="css/stat_financ_legis.css" rel="stylesheet" type="text/css"/>
+        <link href="css/stat_digit_financ_legis.css" rel="stylesheet" type="text/css"/>
 
     </head>
 
     <body>
         <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-                    id="STAT_FINANC_LEGIS-clbyybmds0000sc470jvhb6hk-en">
-            <doc name="STAT_FINANC_LEGIS">
+                    id="STAT_DIGIT_FINANC_LEGIS-clbyybmds0000sc470jvhb6hk-en">
+            <doc name="STAT_DIGIT_FINANC_LEGIS">
                 <preface id="_akn_lWPsgY">
                     <longTitle id="_akn_DVouVk">
                         <aknP id="_akn_kVbQcI">
-                            <docType id="_akn_6vDVFS" refersTo="~_STAT_FINANC_LEGIS">LEGISLATIVE FINANCIAL STATEMENT
+                            <docType id="_akn_6vDVFS" refersTo="~STAT_DIGIT_FINANC_LEGIS">LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT
                             </docType>
                             <docTitle id="_preface_doctitle">Legislative Financial Statement</docTitle>
                         </aknP>

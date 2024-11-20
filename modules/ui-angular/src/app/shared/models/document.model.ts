@@ -210,7 +210,7 @@ export type DocumentType =
   | 'MEMORANDUM'
   | 'BILL'
   | 'ANNEX'
-  | 'STAT_FINANC_LEGIS'
+  | 'STAT_DIGIT_FINANC_LEGIS'
   | 'COUNCIL_EXPLANATORY'
   | 'MEDIA'
   | 'CONFIG'

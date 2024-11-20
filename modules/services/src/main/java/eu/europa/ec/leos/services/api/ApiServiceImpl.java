@@ -676,7 +676,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     docVerSeriesIds.add(annex.getVersionSeriesId());
                     break;
                 }
-                case STAT_FINANC_LEGIS: {
+                case STAT_DIGIT_FINANC_LEGIS: {
                     FinancialStatement financialStatement = (FinancialStatement) document;
                     DocumentVO financialStatementVO = createFinancialStatementVO(financialStatement);
                     proposalVO.addChildDocument(financialStatementVO);
@@ -708,7 +708,7 @@ public abstract class ApiServiceImpl implements ApiService {
         DocumentVO financialDocumentVO =
                 new DocumentVO(financialStatement.getId(),
                         financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
-                        LeosCategory.STAT_FINANC_LEGIS,
+                        LeosCategory.STAT_DIGIT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
                         Date.from(financialStatement.getLastModificationInstant()), financialStatement.isTrackChangesEnabled());
 
@@ -1162,10 +1162,10 @@ public abstract class ApiServiceImpl implements ApiService {
                 }
 
                 Optional<String> financialStatementName =
-                        contentFiles.keySet().stream().filter((n) -> n.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))).findFirst();
+                        contentFiles.keySet().stream().filter((n) -> n.startsWith(String.valueOf(LeosCategory.STAT_DIGIT_FINANC_LEGIS))).findFirst();
                 if (financialStatementName.isPresent()) {
                     boolean existsStatFinancial =
-                            clonedContentFiles.keySet().stream().filter((n) -> n.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))).count() > 0;
+                            clonedContentFiles.keySet().stream().filter((n) -> n.startsWith(String.valueOf(LeosCategory.STAT_DIGIT_FINANC_LEGIS))).count() > 0;
                     if (!existsStatFinancial) {
                         byte[] htmlBytes = Files.readAllBytes(((File) contentFiles.get(financialStatementName.get())).toPath());
                         String contentFileName = financialStatementName.get();
@@ -1175,13 +1175,13 @@ public abstract class ApiServiceImpl implements ApiService {
                         String htmlContent = new String(htmlBytes, StandardCharsets.UTF_8);
                         MilestoneDocumentView milestoneView = new MilestoneDocumentView(htmlContent, version, contentFileNameWithoutHtml, false, null);
                         for (String key : docVersionOriginalMap.keySet()) {
-                            if (key.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                            if (key.startsWith(String.valueOf(LeosCategory.STAT_DIGIT_FINANC_LEGIS))) {
                                 version = docVersionOriginalMap.get(key);
                                 break;
                             }
                         }
                         milestoneView.setVersion(version);
-                        milestoneView.setLeosCategory(LeosCategory.STAT_FINANC_LEGIS);
+                        milestoneView.setLeosCategory(LeosCategory.STAT_DIGIT_FINANC_LEGIS);
                         milestoneView.setOrder(1);
                         milestoneView.setContentStatus("Deleted");
                         // Checks if this is rejected
@@ -1252,12 +1252,12 @@ public abstract class ApiServiceImpl implements ApiService {
                         } else if (annexAddedMap.containsKey(contentFileName.concat(ACCEPTED_ADDED))) {
                             milestoneView.setContentStatus("Accepted_Added");
                         }
-                    } else if (category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
+                    } else if (category.equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
                         milestoneView.setOrder(1);
                         Boolean existsStatFinancial = false;
                         if (isToBeCompared) {
                             for (String x : unzippedFiles.keySet()) {
-                                if (x.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                                if (x.startsWith(String.valueOf(LeosCategory.STAT_DIGIT_FINANC_LEGIS))) {
                                     existsStatFinancial = true;
                                     break;
                                 }

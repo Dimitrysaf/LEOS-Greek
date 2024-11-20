@@ -942,7 +942,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         updatePointStructure(document);
         updateParagraphStructure(document);
         long preProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", preProcessingTime, (System.currentTimeMillis() - preProcessingTime));
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", (System.currentTimeMillis() - preProcessingTime));
         return nodeToByteArray(document);
     }
 
@@ -976,8 +976,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         updateParagraphStructure(document);
         long postProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
-        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms",
-                postProcessingTime, (System.currentTimeMillis() - postProcessingTime));
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", (System.currentTimeMillis() - postProcessingTime));
         return nodeToByteArray(document);
     }
 
@@ -2556,8 +2555,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 case PROP_ACT:
                     category = LeosCategory.PROPOSAL;
                     break;
-                case STAT_FINANC_LEGIS:
-                    category = LeosCategory.STAT_FINANC_LEGIS;
+                case STAT_DIGIT_FINANC_LEGIS:
+                    category = LeosCategory.STAT_DIGIT_FINANC_LEGIS;
                     break;
                 default:
                     category = LeosCategory.MEDIA;

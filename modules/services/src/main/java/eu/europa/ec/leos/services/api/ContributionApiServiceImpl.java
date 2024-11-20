@@ -102,7 +102,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
@@ -286,7 +286,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         String contributionHtml = documentContentService.getDocumentForContributionAsHtml(
                 contributionContent, contextPath,
                 securityContext.getPermissions(contributionVersion));
-        if (document.getMetadata().get().getCategory().equals(STAT_FINANC_LEGIS)) {
+        if (document.getMetadata().get().getCategory().equals(STAT_DIGIT_FINANC_LEGIS)) {
             Document doc = XercesUtils.createXercesDocument(contributionHtml.getBytes(StandardCharsets.UTF_8));
             contributionHtml = new String(LeosXercesUtils.wrapWithPageOrientationDivs(doc), UTF_8);
         }
@@ -369,7 +369,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
             mergeResult = mergeContributionService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
             byte[] xmlContent = mergeResult.getMergedContent();
-            if (!document.getMetadata().get().getCategory().equals(LeosCategory.MEMORANDUM) && !document.getMetadata().get().getCategory().equals(STAT_FINANC_LEGIS)) {
+            if (!document.getMetadata().get().getCategory().equals(LeosCategory.MEMORANDUM) && !document.getMetadata().get().getCategory().equals(STAT_DIGIT_FINANC_LEGIS)) {
                 xmlContent = this.numberService.renumberArticles(xmlContent, false);
                 xmlContent = this.numberService.renumberRecitals(xmlContent);
                 xmlContent = this.numberService.renumberLevel(xmlContent);
@@ -542,7 +542,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private DocumentVO getFinancialStatementVO(FinancialStatement fs) {
         return new DocumentVO(fs.getId(),
                 fs.getMetadata().exists(m -> m.getLanguage() != null) ? fs.getMetadata().get().getLanguage() : "EN",
-                STAT_FINANC_LEGIS,
+                STAT_DIGIT_FINANC_LEGIS,
                 fs.getLastModifiedBy(),
                 Date.from(fs.getLastModificationInstant()), fs.isTrackChangesEnabled());
     }
@@ -570,7 +570,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         DocumentVO financialDocumentVO =
                 new DocumentVO(financialStatement.getId(),
                         financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
-                        LeosCategory.STAT_FINANC_LEGIS,
+                        LeosCategory.STAT_DIGIT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
                         Date.from(financialStatement.getLastModificationInstant()), financialStatement.isTrackChangesEnabled());
 
@@ -680,7 +680,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 billContext.executeRemoveBillAnnex();
             }
             documentViewService.contextExecuteUpdateProposalAsync(proposal);
-        } else if (category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
+        } else if (category.equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
             Proposal clonedProposal = this.proposalService.findProposalByPackagePath(leosClonedPackage.getPath());
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(clonedProposal.getClonedFrom(), Proposal.class);
             Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
@@ -698,14 +698,14 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 financialStatementContext.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
                 financialStatementContext.useType(proposal.getMetadata().get().getType());
                 String actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
-                financialStatementContext.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
+                financialStatementContext.useActionMessage(ContextActionService.STAT_DIGIT_FINANC_LEGIS_ADDED, actionMessage);
                 financialStatementContext.useCollaborators(proposal.getCollaborators());
                 financialStatementContext.useCloneProposal(proposal.isClonedProposal());
                 financialStatementContext.useOriginRef(proposal.getOriginRef());
                 financialStatementContext.useLanguage(metadata.getLanguage());
                 financialStatementContext.useTranslated(false);
                 FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
-                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
+                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS);
             } else {
                 List<FinancialStatement> financialStatementList = financialStatementService.findFinancialStatementByPackagePath(leosPackage.getPath());
                 if (!financialStatementList.isEmpty()) {

@@ -28,7 +28,6 @@ import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
-import io.atlassian.fugue.Pair;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,6 +35,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.DEC_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.DIR_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
+import static eu.europa.ec.leos.services.support.XmlHelper.REG_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX;
 
 
 public class DocumentApiUtil {
@@ -110,7 +117,7 @@ public class DocumentApiUtil {
                         documentVO.getVersionSeriesId(),
                         metadataVO.getEeaRelevance());
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 metaData = new FinancialStatementMetadata(metadataVO.getDocStage(),
                         metadataVO.getDocType(),
                         metadataVO.getDocPurpose(),
@@ -142,15 +149,16 @@ public class DocumentApiUtil {
     }
 
     public static Class getDocumentType(String docRef) {
-        if (docRef.startsWith("REG") || docRef.startsWith("DIR") || docRef.startsWith("DEC")) {
+        if (docRef.startsWith(REG_FILE_PREFIX) || docRef.startsWith(DIR_FILE_PREFIX) ||
+                docRef.startsWith(DEC_FILE_PREFIX)) {
             return Bill.class;
-        } else if (docRef.startsWith("STAT_FINANC_LEGIS")) {
+        } else if (docRef.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)) {
             return FinancialStatement.class;
-        } else if (docRef.startsWith("EXPL_MEMORANDUM")) {
+        } else if (docRef.startsWith(MEMORANDUM_FILE_PREFIX)) {
             return Memorandum.class;
-        } else if (docRef.startsWith("ANNEX")) {
+        } else if (docRef.startsWith(ANNEX_FILE_PREFIX)) {
             return Annex.class;
-        } else if(docRef.startsWith("main")) {
+        } else if(docRef.startsWith(PROPOSAL_FILE)) {
             return Proposal.class;
         } else {
             return null;

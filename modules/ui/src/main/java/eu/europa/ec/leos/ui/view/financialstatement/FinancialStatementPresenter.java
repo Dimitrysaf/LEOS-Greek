@@ -363,7 +363,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     @Subscribe
     public void afterClosedWindow(WindowClosedEvent<MilestoneExplorer> windowClosedEvent) {
         milestoneExplorerOpened = false;
-        eventBus.post(new NavigationRequestEvent(Target.STAT_FINANC_LEGIS, getDocumentRef()));
+        eventBus.post(new NavigationRequestEvent(Target.STAT_DIGIT_FINANC_LEGIS, getDocumentRef()));
     }
 
     @Subscribe
@@ -451,7 +451,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     }
 
     private String getDocumentRef() {
-        return (String) httpSession.getAttribute(id + "." + SessionAttribute.STAT_FINANC_LEGIS.name());
+        return (String) httpSession.getAttribute(id + "." + SessionAttribute.STAT_DIGIT_FINANC_LEGIS.name());
     }
 
     private String getRevisionRef() {
@@ -839,7 +839,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         DocumentVO financialStatementVO =
                 new DocumentVO(financialStatement.getId(),
                         financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
-                        LeosCategory.STAT_FINANC_LEGIS,
+                        LeosCategory.STAT_DIGIT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
                         Date.from(financialStatement.getLastModificationInstant()), financialStatement.isTrackChangesEnabled());
         financialStatementVO.setProposalRef(proposalRef);

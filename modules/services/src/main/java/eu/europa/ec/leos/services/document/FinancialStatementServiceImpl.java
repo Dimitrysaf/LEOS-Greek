@@ -55,14 +55,14 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.c
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX;
 
 @Service
 public class FinancialStatementServiceImpl implements FinancialStatementService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementServiceImpl.class);
 
-    public static final String STAT_FINANC_LEGIS_NAME_PREFIX = "STAT_FINANC_LEGIS-";
-    public static final String STAT_FINANC_LEGIS_DOC_EXTENSION = ".xml";
+    public static final String XML_DOC_EXTENSION = ".xml";
 
     private final FinancialStatementRepository financialStatementRepository;
     private final PackageRepository packageRepository;
@@ -127,9 +127,12 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         LOG.trace("Creating FinancialStatement... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         final String FinancialStatementUid = Cuid.createCuid();
         final String language = metadata.getLanguage();
-        StringBuilder refBuilder = new StringBuilder(STAT_FINANC_LEGIS_NAME_PREFIX).append(FinancialStatementUid).append("-").append(language.toLowerCase());
+        StringBuilder refBuilder = new StringBuilder(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX).
+                append(DOC_FILE_NAME_SEPARATOR).
+                append(FinancialStatementUid).append(DOC_FILE_NAME_SEPARATOR).
+                append(language.toLowerCase());
         final String ref = refBuilder.toString();
-        final String fileName = refBuilder.append(STAT_FINANC_LEGIS_DOC_EXTENSION).toString();
+        final String fileName = refBuilder.append(XML_DOC_EXTENSION).toString();
         metadata = metadata
                 .builder()
                 .withRef(ref)
@@ -147,9 +150,12 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         LOG.trace("Creating cloned FinancialStatement... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         final String FinancialStatementUid = Cuid.createCuid();
         final String language = metadata.getLanguage();
-        StringBuilder refBuilder = new StringBuilder(STAT_FINANC_LEGIS_NAME_PREFIX).append(FinancialStatementUid).append("-").append(language.toLowerCase());
+        StringBuilder refBuilder = new StringBuilder(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX).
+                append(DOC_FILE_NAME_SEPARATOR).
+                append(FinancialStatementUid).append(DOC_FILE_NAME_SEPARATOR).
+                append(language.toLowerCase());
         final String ref = refBuilder.toString();
-        final String fileName = refBuilder.append(STAT_FINANC_LEGIS_DOC_EXTENSION).toString();
+        final String fileName = refBuilder.append(XML_DOC_EXTENSION).toString();
         metadata = metadata
                 .builder()
                 .withRef(ref)
@@ -206,7 +212,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         context.useCloneProposal(useCloneProposal);
         context.useOriginRef(cloneOriginRef);
         String actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
-        context.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
+        context.useActionMessage(ContextActionService.STAT_DIGIT_FINANC_LEGIS_ADDED, actionMessage);
         context.executeCreateFinancialStatement();
     }
 

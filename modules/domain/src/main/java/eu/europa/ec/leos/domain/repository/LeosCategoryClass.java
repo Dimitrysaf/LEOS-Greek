@@ -16,7 +16,7 @@ public enum LeosCategoryClass {
     ANNEX(Annex.class),
     COUNCIL_EXPLANATORY(Explanatory.class),
     COVERPAGE(Proposal.class),
-    STAT_FINANC_LEGIS(FinancialStatement.class);
+    STAT_DIGIT_FINANC_LEGIS(FinancialStatement.class);
 
     private Class<? extends XmlDocument> clazz;
 

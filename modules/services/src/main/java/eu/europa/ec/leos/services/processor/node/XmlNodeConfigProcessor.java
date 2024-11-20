@@ -101,9 +101,9 @@ public interface XmlNodeConfigProcessor {
             case COUNCIL_EXPLANATORY:
                 showAs = "Council Explanatory";
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 showAs = "Legislative Financial Statement";
-                refersToList.add("~STAT_FINANC_LEGIS");
+                refersToList.add("~STAT_DIGIT_FINANC_LEGIS");
                 break;
             default:
                 throw new IllegalArgumentException("Invalid configuration");

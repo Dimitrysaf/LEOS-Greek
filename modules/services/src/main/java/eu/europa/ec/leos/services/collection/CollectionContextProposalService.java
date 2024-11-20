@@ -31,7 +31,6 @@ import eu.europa.ec.leos.services.collection.document.ExplanatoryContextService;
 import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
 import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
-import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
@@ -53,7 +52,7 @@ import java.util.Map;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 
 @Service
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})
@@ -122,11 +121,11 @@ public class CollectionContextProposalService extends CollectionContextService {
             proposal = proposalService.addComponentRef(proposal, memorandumCreated.getName(), LeosCategory.MEMORANDUM);
         }
 
-        FinancialStatement financialStatement = cast(categoryTemplateMap.get(STAT_FINANC_LEGIS));
+        FinancialStatement financialStatement = cast(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS));
         if (financialStatement != null) {
             FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
             financialStatementContext.usePackage(leosPackage);
-            String financialStatementTemplate = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
+            String financialStatementTemplate = categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName();
             financialStatementContext.useDocTemplate(financialStatementTemplate);
             financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + financialStatementTemplate));
             financialStatementContext.usePurpose(purpose);
@@ -136,7 +135,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
             financialStatementContext.useCollaborators(proposal.getCollaborators());
             FinancialStatement financialStatementCreated = financialStatementContext.executeCreateFinancialStatement();
-            proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_FINANC_LEGIS);
+            proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_DIGIT_FINANC_LEGIS);
         }
 
         BillContextService billContext = billContextProvider.get();

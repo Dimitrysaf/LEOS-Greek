@@ -187,7 +187,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                             child.setSource(updatedContent);
                             memorandumService.updateMemorandum(child.getId(), updatedContent);
                             break;
-                        case STAT_FINANC_LEGIS:
+                        case STAT_DIGIT_FINANC_LEGIS:
                             updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getFinancialStatementId(),
                                     cloneProposalMetadataVO);
                             child.setSource(updatedContent);

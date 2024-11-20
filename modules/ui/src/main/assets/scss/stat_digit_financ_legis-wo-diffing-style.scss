@@ -1,0 +1,43 @@
+doc[name="STAT_DIGIT_FINANC_LEGIS" i] longTitle[leos\:origin="ec"] {
+    font-weight: normal;
+}
+
+doc[name="STAT_DIGIT_FINANC_LEGIS" i] table[leos\:origin="ec"] > tr:first-child {
+    font-weight: normal;
+}
+
+akomaNtoso doc[name="STAT_DIGIT_FINANC_LEGIS" i] coverPage[leos\:origin="ec"] container[name=mainDocLanguage] {
+    font-weight: normal;
+}
+
+akomaNtoso doc[name="STAT_DIGIT_FINANC_LEGIS" i] coverPage[leos\:origin="ec"] container[name=docLabel] > * {
+    font-weight: normal;
+}
+
+doc[name="STAT_DIGIT_FINANC_LEGIS" i] part > num[leos\:origin="ec"], doc[name="STAT_DIGIT_FINANC_LEGIS" i] part[leos\:origin="ec"] > heading {
+    font-weight: normal;
+}
+
+doc[name="STAT_DIGIT_FINANC_LEGIS" i] aknTitle > num[leos\:origin="ec"], doc[name="STAT_DIGIT_FINANC_LEGIS" i] aknTitle[leos\:origin="ec"] > heading {
+    font-weight: normal;
+}
+
+doc[name="STAT_DIGIT_FINANC_LEGIS" i] chapter[leos\:origin="ec"] > num, doc[name="STAT_DIGIT_FINANC_LEGIS" i] chapter[leos\:origin="ec"] > heading {
+    font-weight: normal;
+}
+
+doc[name="STAT_DIGIT_FINANC_LEGIS" i] section > num[leos\:origin="ec"], doc[name="STAT_DIGIT_FINANC_LEGIS" i] section[leos\:origin="ec"] > heading {
+    font-weight: normal;
+}
+
+doc[name="STAT_DIGIT_FINANC_LEGIS" i] article > heading[leos\:origin="ec"], doc[name="STAT_DIGIT_FINANC_LEGIS" i] .cke_editable article[leos\:origin="ec"] .akn-article-heading {
+    font-weight: normal;
+}
+
+akomaNtoso doc[name="STAT_DIGIT_FINANC_LEGIS" i] mainbody[leos\:origin="ec"], akomaNtoso doc[name="STAT_DIGIT_FINANC_LEGIS" i] preface[leos\:origin="ec"] {
+  font-weight: normal;
+}
+
+doc[name="STAT_DIGIT_FINANC_LEGIS" i] .leos-authnote marker[leos\:origin="ec"] {
+    font-weight: normal;
+}

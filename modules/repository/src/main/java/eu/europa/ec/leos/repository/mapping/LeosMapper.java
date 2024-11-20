@@ -31,14 +31,14 @@ public class LeosMapper {
         documentCategoryMap = new HashMap<>();
 
         // FIXME move this mapping somewhere else or implement in better way?!!!
-        documentCategoryMap.put(LeosDocument.class, EnumSet.of(PROPOSAL, MEMORANDUM, COUNCIL_EXPLANATORY, BILL, ANNEX, MEDIA, CONFIG, LEG, EXPORT, STAT_FINANC_LEGIS));
-        documentCategoryMap.put(XmlDocument.class, EnumSet.of(PROPOSAL, MEMORANDUM, COUNCIL_EXPLANATORY, BILL, ANNEX, STAT_FINANC_LEGIS));
+        documentCategoryMap.put(LeosDocument.class, EnumSet.of(PROPOSAL, MEMORANDUM, COUNCIL_EXPLANATORY, BILL, ANNEX, MEDIA, CONFIG, LEG, EXPORT, STAT_DIGIT_FINANC_LEGIS));
+        documentCategoryMap.put(XmlDocument.class, EnumSet.of(PROPOSAL, MEMORANDUM, COUNCIL_EXPLANATORY, BILL, ANNEX, STAT_DIGIT_FINANC_LEGIS));
         documentCategoryMap.put(Proposal.class, singleton(PROPOSAL));
         documentCategoryMap.put(Memorandum.class, singleton(MEMORANDUM));
         documentCategoryMap.put(Explanatory.class, singleton(COUNCIL_EXPLANATORY));
         documentCategoryMap.put(Bill.class, singleton(BILL));
         documentCategoryMap.put(Annex.class, singleton(ANNEX));
-        documentCategoryMap.put(FinancialStatement.class, singleton(STAT_FINANC_LEGIS));
+        documentCategoryMap.put(FinancialStatement.class, singleton(STAT_DIGIT_FINANC_LEGIS));
         documentCategoryMap.put(MediaDocument.class, singleton(MEDIA));
         documentCategoryMap.put(ConfigDocument.class, singleton(CONFIG));
         documentCategoryMap.put(LegDocument.class, singleton(LEG));
@@ -51,7 +51,7 @@ public class LeosMapper {
         categoryDocumentMap.put(COUNCIL_EXPLANATORY, Explanatory.class);
         categoryDocumentMap.put(BILL, Bill.class);
         categoryDocumentMap.put(ANNEX, Annex.class);
-        categoryDocumentMap.put(STAT_FINANC_LEGIS, FinancialStatement.class);
+        categoryDocumentMap.put(STAT_DIGIT_FINANC_LEGIS, FinancialStatement.class);
         categoryDocumentMap.put(MEDIA, MediaDocument.class);
         categoryDocumentMap.put(CONFIG, ConfigDocument.class);
         categoryDocumentMap.put(LEG, LegDocument.class);

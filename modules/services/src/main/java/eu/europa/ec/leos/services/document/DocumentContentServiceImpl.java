@@ -54,7 +54,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
@@ -113,7 +113,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 return isAnnexComparisonRequired((Annex) xmlDocument, securityContext);
             case BILL:
                 return true;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 return isFinancialStatementComparisonRequired(contentBytes);
             case PROPOSAL:
                 return true;
@@ -135,7 +135,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 return getOriginalBill((Bill) xmlDocument);
             case PROPOSAL:
                 return getOriginalProposal((Proposal) xmlDocument);
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 return getOriginalFinancialStatement((FinancialStatement) xmlDocument);
             default:
                 throw new UnsupportedOperationException("No transformation supported for this category");
@@ -171,7 +171,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                     return new String[]{currentDocumentEditableXml};
                 }
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 if (isComparisonRequired(xmlDocument, securityContext)) {
                     originalDocument = getOriginalFinancialStatement((FinancialStatement) xmlDocument);
                 } else {
@@ -196,7 +196,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                                     byte[] coverPageContent) {
         String content = transformationService.toEditableXml(getContentInputStream(xmlDocument), contextPath, xmlDocument.getCategory(),
                 securityContext.getPermissions(xmlDocument), getContentInputStream(coverPageContent));
-        if (STAT_FINANC_LEGIS.equals(xmlDocument.getCategory())) {
+        if (STAT_DIGIT_FINANC_LEGIS.equals(xmlDocument.getCategory())) {
             final Document document = XercesUtils.createXercesDocument(content.getBytes(XmlHelper.UTF_8));
             final byte[] node = LeosXercesUtils.wrapWithPageOrientationDivs(document);
             content = new String(node, XmlHelper.UTF_8);
@@ -421,7 +421,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                     contentBytes = getCoverPageContent(getContent(originalDocument));
                 }
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 originalDocument = getOriginalFinancialStatement((FinancialStatement) xmlDocument);
                 contentBytes = getContent(originalDocument);
                 break;
@@ -448,7 +448,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 case BILL:
                     contentBytes = getContent(billService.findBillByRef(xmlDocument.getMetadata().get().getRef()));
                     break;
-                case STAT_FINANC_LEGIS:
+                case STAT_DIGIT_FINANC_LEGIS:
                     contentBytes = getContent(financialStatementService.findFinancialStatementByRef(xmlDocument.getMetadata().get().getRef()));
                     break;
                 case PROPOSAL:
@@ -477,7 +477,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             case BILL:
                 billService.updateBill((Bill) xmlDocument, xmlContent, versionComment);
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 financialStatementService.updateFinancialStatement((FinancialStatement) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
                 break;
             case PROPOSAL:
@@ -523,7 +523,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             case COVERPAGE:
                 document = proposalService.findProposalByRef(documentRef);
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 document = financialStatementService.findFinancialStatementByRef(documentRef);
                 break;
             default:
@@ -553,7 +553,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             case COVERPAGE:
                 document = proposalService.getProposalByRef(documentRef);
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 document = financialStatementService.getFinancialStatementByRef(documentRef);
                 break;
             default:
@@ -582,7 +582,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             case COVERPAGE:
                 document = proposalService.findProposal(documentId);
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 document = financialStatementService.findFinancialStatement(documentId);
                 break;
             default:
@@ -610,7 +610,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 document = proposalService.updateProposal((Proposal) document, xmlContent, message);
                 updateDocPurposeInChildDocuments((Proposal) document, message);
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 document = financialStatementService.updateFinancialStatement((FinancialStatement) document, xmlContent, message);
                 break;
             default:

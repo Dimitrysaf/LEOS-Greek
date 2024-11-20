@@ -1,9 +1,9 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
-    <doc name="STAT_FINANC_LEGIS">
+    <doc name="STAT_DIGIT_FINANC_LEGIS">
         <preface xml:id="_akn_LkjX3b">
             <longTitle xml:id="_akn_9zW3oQ">
                 <p xml:id="_akn_nCWGiy">
-                    <docType refersTo="~_STAT_FINANC_LEGIS" xml:id="_akn_wCQRn1">LEGISLATIVE FINANCIAL STATEMENT</docType>
+                    <docType refersTo="~STAT_DIGIT_FINANC_LEGIS" xml:id="_akn_wCQRn1">LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT</docType>
                     <docType xml:id="_preface_doctitle">Legislative Financial Statement</docType>
                 </p>
             </longTitle>
