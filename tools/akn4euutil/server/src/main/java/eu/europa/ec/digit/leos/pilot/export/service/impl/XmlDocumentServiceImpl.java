@@ -52,7 +52,7 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     public static final String DIR_FILE_PREFIX = "DIR";
     public static final String DEC_FILE_PREFIX = "DEC";
     public static final String MEMORANDUM_FILE_PREFIX = "EXPL_MEMORANDUM";
-    public static final String STAT_FINANC_LEGIS_FILE_PREFIX = "STAT_FINANC_LEGIS";
+    public static final String STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX = "STAT_DIGIT_FINANC_LEGIS";
 
     public XmlDocumentServiceImpl(TemplateEngineService templateEngineService) {
         this.templateEngineService = templateEngineService;
@@ -96,8 +96,8 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
         } else if (styleSheetFileName.startsWith(REG_FILE_PREFIX) || styleSheetFileName.startsWith(DEC_FILE_PREFIX)
                 || styleSheetFileName.startsWith(DIR_FILE_PREFIX)) {
             cssFileName = "bill.css";
-        } else if (styleSheetFileName.startsWith(STAT_FINANC_LEGIS_FILE_PREFIX)) {
-            cssFileName = "stat_financ_legis.css";
+        } else if (styleSheetFileName.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)) {
+            cssFileName = "stat_digit_financ_legis.css";
         } else if (styleSheetFileName.startsWith(ANNEX_FILE_PREFIX)) {
             cssFileName = "annex.css";
         } else if (styleSheetFileName.startsWith(ConvertUtil.PROPOSAL_FILE_PREFIX)) {

@@ -43,14 +43,14 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
     public FinancialStatement createFinancialStatementFromContent(String path, String name, FinancialStatementMetadata metadata, byte[] content) {
         logger.debug("Creating FinancialStatement From Content... [tpath=" + path + ", name=" + name + "]");
         return leosRepository.createDocumentFromContent(path, name, metadata, FinancialStatement.class,
-                LeosCategory.STAT_FINANC_LEGIS.name(), content);
+                LeosCategory.STAT_DIGIT_FINANC_LEGIS.name(), content);
     }
 
     @Override
     public FinancialStatement createClonedFinancialStatementFromContent(String path, String name, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content) {
         logger.debug("Creating FinancialStatement From Content... [tpath=" + path + ", name=" + name + "]");
         return leosRepository.createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, FinancialStatement.class,
-                LeosCategory.STAT_FINANC_LEGIS.name(), content);
+                LeosCategory.STAT_DIGIT_FINANC_LEGIS.name(), content);
     }
 
     @Override

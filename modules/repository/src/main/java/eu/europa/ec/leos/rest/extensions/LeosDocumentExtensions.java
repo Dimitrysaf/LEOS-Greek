@@ -13,7 +13,6 @@
  */
 package eu.europa.ec.leos.rest.extensions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.domain.repository.Content;
@@ -34,7 +33,6 @@ import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Profile;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.Structure;
-import eu.europa.ec.leos.domain.repository.metadata.ProfileMetaData;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
@@ -100,7 +98,7 @@ public class LeosDocumentExtensions {
                     throw new IllegalStateException("Incompatible types! [category=" + category + ", mappedType=" + Annex.class.getSimpleName() + ", wantedType=" + type.getSimpleName() + ']');
                 }
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 if (type.isAssignableFrom(FinancialStatement.class)) {
                     leosDocument = (T) toFinancialStatement(document, fetchContent);
                 } else {

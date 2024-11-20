@@ -90,7 +90,7 @@ public class CmisDocumentExtensions {
                     throw new IllegalStateException("Incompatible types! [category=" + category + ", mappedType=" + Annex.class.getSimpleName() + ", wantedType=" + type.getSimpleName() + ']');
                 }
                 break;
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 if (type.isAssignableFrom(FinancialStatement.class)) {
                     leosDocument = (T) toFinancialStatement(document, fetchContent, oldVersions);
                 } else {

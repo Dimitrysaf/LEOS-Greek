@@ -35,7 +35,7 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         All_CONFIG_MAP.put(LeosCategory.MEMORANDUM, createMemorandumConfig());
         All_CONFIG_MAP.put(LeosCategory.ANNEX, createAnnexConfig());
         All_CONFIG_MAP.put(LeosCategory.COUNCIL_EXPLANATORY, createExplanatoryConfig());
-        All_CONFIG_MAP.put(LeosCategory.STAT_FINANC_LEGIS, createFinancialStatementConfig());
+        All_CONFIG_MAP.put(LeosCategory.STAT_DIGIT_FINANC_LEGIS, createFinancialStatementConfig());
     }
 
     private static Map<String, XmlNodeConfig> createProposalConfig() {

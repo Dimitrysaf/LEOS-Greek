@@ -337,7 +337,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Override
     public void displayComparison(HashMap<ComparisonDisplayMode, Object> htmlResult) {
-        eventBus.post(new ComparisonResponseEvent(htmlResult, LeosCategory.STAT_FINANC_LEGIS.name().toLowerCase()));
+        eventBus.post(new ComparisonResponseEvent(htmlResult, LeosCategory.STAT_DIGIT_FINANC_LEGIS.name().toLowerCase()));
     }
 
     @Override

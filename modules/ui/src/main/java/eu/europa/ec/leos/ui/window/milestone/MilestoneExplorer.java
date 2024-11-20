@@ -35,9 +35,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.ui.component.LeosDisplayField;
 import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataRequest;
 import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataResponse;
@@ -84,9 +82,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
-import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 public class MilestoneExplorer extends AbstractWindow {
 
@@ -380,7 +375,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 return "Annex " + annexNumber + versionLabel;
             case COVERPAGE:
                 return showCoverPage ? messageHelper.getMessage(COVER_PAGE_TAB_TITLE_KEY) + " " + versionLabel : "";
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 return "Financial Statement" + versionLabel;
             default:
                 return "";
@@ -421,7 +416,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 } else {
                     LeosCategory category = xmlContentProcessor.identifyCategory(key,
                             xmlContent.getBytes(StandardCharsets.UTF_8));
-                    if (!category.equals(LeosCategory.ANNEX) && !category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
+                    if (!category.equals(LeosCategory.ANNEX) && !category.equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
                         String tabName = getTabName(category, 0, version);
                         TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
                         if (isCompared) {
@@ -492,7 +487,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 LeosCategory category = xmlContentProcessor.identifyCategory(key,
                         xmlContent.getBytes(StandardCharsets.UTF_8));
 
-                if (category != null && category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
+                if (category != null && category.equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
                     String tabName = getTabName(category, 0, version);
                     TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
                     if (isCompared) {

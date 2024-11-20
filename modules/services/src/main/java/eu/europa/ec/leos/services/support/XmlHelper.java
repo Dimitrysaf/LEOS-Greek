@@ -270,11 +270,11 @@ public class XmlHelper {
     public static final String DIR_FILE_PREFIX = "DIR";
     public static final String DEC_FILE_PREFIX = "DEC";
     public static final String MEMORANDUM_FILE_PREFIX = "EXPL_MEMORANDUM";
-    public static final String STAT_FINANC_LEGIS_FILE_PREFIX = "STAT_FINANC_LEGIS";
+    public static final String STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX = "STAT_DIGIT_FINANC_LEGIS";
     public static final String PROPOSAL_FILE = "main";
     public static final String PROP_ACT = "PROP_ACT";
     public static final String COUNCIL_EXPLANATORY = "EXPL_COUNCIL";
-    public static final String STAT_FINANC_LEGIS = "STAT_FINANC_LEGIS";
+    public static final String STAT_DIGIT_FINANC_LEGIS = "STAT_DIGIT_FINANC_LEGIS";
 
     public static final String CONTENT_REMOVED_CLASS = "leos-content-removed";
     public static final String CONTENT_NEW_CLASS = "leos-content-new";

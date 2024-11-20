@@ -298,7 +298,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           return sortOrder(4);
         case 'ANNEX':
           return sortOrder(6);
-        case 'STAT_FINANC_LEGIS':
+        case 'STAT_DIGIT_FINANC_LEGIS':
           return sortOrder(5);
         default:
           return sortOrder(9);
@@ -373,7 +373,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.tmpSelectedTab = this.activeTabIndex;
     if (accept) {
       if (!this.evaluateState(doc.state)) {
-        if (doc.type === 'STAT_FINANC_LEGIS') {
+        if (doc.type === 'STAT_DIGIT_FINANC_LEGIS') {
           this.dialogService.openDialog({
             title: this.translateService.instant(
               'page.collection.drafts.financial-statement.delete.confirm-dialog.title',

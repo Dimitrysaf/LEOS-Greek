@@ -55,7 +55,7 @@ public class TransformationMandateService extends TransformationServiceImpl {
             case BILL:
             case COVERPAGE:
             case PROPOSAL:
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
                 template = getEditableXHtmlTemplate();
                 break;
             default:

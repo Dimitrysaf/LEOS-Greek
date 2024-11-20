@@ -293,7 +293,7 @@ public class LeosApiController {
             case ANNEX:
             case BILL:
             case MEMORANDUM:
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
             case COVERPAGE:
             case PROPOSAL:
             case COUNCIL_EXPLANATORY:

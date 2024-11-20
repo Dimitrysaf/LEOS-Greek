@@ -50,7 +50,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
 import static eu.europa.ec.leos.services.support.XmlHelper.FINANCIAL_STATEMENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL;
-import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Service
@@ -195,7 +195,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     }
                 } else if (filterType.getSimpleName().equalsIgnoreCase(FINANCIAL_STATEMENT)) {
                     Optional<String> fileToFind = containedDocuments.stream()
-                            .filter(containedFile -> containedFile.startsWith(STAT_FINANC_LEGIS + "-"))
+                            .filter(containedFile -> containedFile.startsWith(STAT_DIGIT_FINANC_LEGIS + "-"))
                             .findFirst();
                     if (fileToFind.isPresent()) {
                         FinancialStatement doc = (FinancialStatement) findVersionByVersionedReference(fileToFind.get(), filterType);

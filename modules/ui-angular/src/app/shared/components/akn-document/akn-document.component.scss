@@ -38,7 +38,7 @@
     margin-right: 12px;
   }
 
-  akomantoso > doc[name='STAT_FINANC_LEGIS'] > {
+  akomantoso > doc[name='STAT_DIGIT_FINANC_LEGIS'] > {
     :not(mainbody) {
       border-left: $border;
       border-right: $border;
@@ -76,11 +76,11 @@
     }
   }
 
-  akomantoso > *:not(coverpage):not(doc[name='STAT_FINANC_LEGIS']) {
+  akomantoso > *:not(coverpage):not(doc[name='STAT_DIGIT_FINANC_LEGIS']) {
     padding: 1px;
   }
 
-  akomantoso > *:not(coverpage):not(doc[name='STAT_FINANC_LEGIS']) > {
+  akomantoso > *:not(coverpage):not(doc[name='STAT_DIGIT_FINANC_LEGIS']) > {
     * {
       border-left: $border;
       border-right: $border;

@@ -917,7 +917,7 @@ export class DocumentEditorComponent
         return this.tranlsateService.instant('global.breadcrumb.memorandum');
       case 'coverPage':
         return this.tranlsateService.instant('global.breadcrumb.cover.page');
-      case 'stat_financ_legis':
+      case 'stat_digit_financ_legis':
         return this.tranlsateService.instant(
           'global.breadcrumb.financial-statement',
         );

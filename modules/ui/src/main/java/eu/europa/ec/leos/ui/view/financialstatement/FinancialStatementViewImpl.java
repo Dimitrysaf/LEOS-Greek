@@ -35,7 +35,7 @@ public class FinancialStatementViewImpl extends AbstractLeosView<FinancialStatem
 
     @Override
     protected String[] getParameterKeys() {
-        String[] PARAM_KEYS = {SessionAttribute.STAT_FINANC_LEGIS.name(), SessionAttribute.REVISION_VERSION.name()};
+        String[] PARAM_KEYS = {SessionAttribute.STAT_DIGIT_FINANC_LEGIS.name(), SessionAttribute.REVISION_VERSION.name()};
         return PARAM_KEYS;
     }
 }

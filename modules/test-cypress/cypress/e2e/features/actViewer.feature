@@ -56,7 +56,7 @@ Feature: act viewer page Regression Features
         And  extract recent "leg" file present in download folder
         Then xml files having separator "-" present in download folder contain below names
             | fileName          |
-            | STAT_FINANC_LEGIS |
+            | STAT_DIGIT_FINANC_LEGIS |
             | ANNEX             |
             | ANNEX             |
             | EXPL_MEMORANDUM   |

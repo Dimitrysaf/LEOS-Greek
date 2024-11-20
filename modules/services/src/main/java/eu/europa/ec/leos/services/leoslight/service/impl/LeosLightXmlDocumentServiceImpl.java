@@ -136,7 +136,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         // Build toc_docName.js file
         RenderedDocument tocHtmlDocumentJS = new RenderedDocument();
 
-        if (xmlDocumentName.startsWith(XmlHelper.STAT_FINANC_LEGIS)) {
+        if (xmlDocumentName.startsWith(XmlHelper.STAT_DIGIT_FINANC_LEGIS)) {
             Document document = XercesUtils.createXercesDocument(xmlContent);
             byte[] htmlRenditionContent = LeosXercesUtils.wrapWithPageOrientationDivs(document);
             htmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));

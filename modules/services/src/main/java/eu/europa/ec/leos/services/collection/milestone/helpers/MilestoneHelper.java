@@ -1,7 +1,6 @@
 package eu.europa.ec.leos.services.collection.milestone.helpers;
 
 import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
@@ -19,14 +18,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.COUNCIL_EXPLANATORY;
 import static eu.europa.ec.leos.services.support.XmlHelper.DEC_FILE_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIR_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
-import static eu.europa.ec.leos.services.support.XmlHelper.REG_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
-import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX;
 
 public class MilestoneHelper {
     private MilestoneHelper(){
@@ -43,7 +37,7 @@ public class MilestoneHelper {
     private static final String MILESTONE_DIR = "/milestone/";
 
     public static Map<String, Object> filterAndSortFiles(Map<String, Object> files, String fileFilter) {
-        final List<String> tabOrder = Arrays.asList(XmlHelper.ANNEX_FILE_PREFIX, XmlHelper.STAT_FINANC_LEGIS_FILE_PREFIX, XmlHelper.REG_FILE_PREFIX,
+        final List<String> tabOrder = Arrays.asList(XmlHelper.ANNEX_FILE_PREFIX, XmlHelper.STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX, XmlHelper.REG_FILE_PREFIX,
                 DIR_FILE_PREFIX,
                 DEC_FILE_PREFIX,
                 XmlHelper.MEMORANDUM_FILE_PREFIX);
@@ -132,9 +126,9 @@ public class MilestoneHelper {
                     } else {
                         docsAddedMap.put(annexFilename, value);
                     }
-                } else if (entryKey.startsWith(STAT_FINANC_LEGIS_FILE_PREFIX)) {
+                } else if (entryKey.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)) {
                     final String docFilename = key.substring(0, key.indexOf(XML));
-                    Optional<String> acceptedDoc = xmlFiles.keySet().stream().filter(doc -> doc.startsWith(STAT_FINANC_LEGIS_FILE_PREFIX)).findFirst();
+                    Optional<String> acceptedDoc = xmlFiles.keySet().stream().filter(doc -> doc.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)).findFirst();
                     //Populate list of new annexes from contribution which are rejected
                     Optional<String> rejectedDoc = legDocument.getContainedDocuments().stream().filter(
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(docFilename)).findFirst();
@@ -246,9 +240,9 @@ public class MilestoneHelper {
                         docsDeletedMap.put(originalEntryKey, entry.getValue());
                     }
                 }
-            } else if (originalEntryKey.startsWith(STAT_FINANC_LEGIS_FILE_PREFIX)) {
+            } else if (originalEntryKey.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)) {
                 final String docFilename = entry.getKey().substring(0, entry.getKey().indexOf(XML));
-                Optional<String> acceptedDoc = xmlFiles.keySet().stream().filter(doc -> doc.startsWith(STAT_FINANC_LEGIS_FILE_PREFIX)).findFirst();
+                Optional<String> acceptedDoc = xmlFiles.keySet().stream().filter(doc -> doc.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)).findFirst();
                 //Populate list of new docs from contribution which are rejected
                 Optional<String> rejectedAnnex = originalLegDocument.getContainedDocuments().stream().filter(
                         fileName -> fileName.contains(PROCESSED) && fileName.startsWith(docFilename)).findFirst();

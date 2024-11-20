@@ -11,7 +11,7 @@
     <!-- Routing all requests to spring -->
     <sec:http use-expressions="true" entry-point-ref="http403EntryPoint">
         <sec:custom-filter after="PRE_AUTH_FILTER" ref="jeePreAuthenticatedFilter"/>
-        <sec:session-management session-fixation-protection="newSession"/>
+        <sec:session-management session-fixation-protection="none"/>
         <sec:csrf disabled="true"/> <!--Already handled by vaadin -->
         <!-- Done to allow download (FileDownloader Vaadin Component is using iframes -->
         <sec:headers>

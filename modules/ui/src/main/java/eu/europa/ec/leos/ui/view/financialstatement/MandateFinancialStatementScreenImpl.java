@@ -98,21 +98,21 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
     @Override
     public void populateComparisonContent(String comparedContent, String comparedInfo, FinancialStatement original, FinancialStatement current) {
         ExportVersions<FinancialStatement> exportVersions = new ExportVersions<>(original, current);
-        doubleComparisonComponent.populateMarkedContent(comparedContent, LeosCategory.STAT_FINANC_LEGIS, comparedInfo, exportVersions);
+        doubleComparisonComponent.populateMarkedContent(comparedContent, LeosCategory.STAT_DIGIT_FINANC_LEGIS, comparedInfo, exportVersions);
         doubleComparisonComponent.setSimpleComparison();
     }
 
     @Override
     public void populateDoubleComparisonContent(String comparedContent, String comparedInfo, FinancialStatement original, FinancialStatement intermediate, FinancialStatement current) {
         ExportVersions<FinancialStatement> exportVersions = new ExportVersions<>(original, intermediate, current);
-        doubleComparisonComponent.populateDoubleComparisonContent(comparedContent, LeosCategory.STAT_FINANC_LEGIS, comparedInfo, exportVersions);
+        doubleComparisonComponent.populateDoubleComparisonContent(comparedContent, LeosCategory.STAT_DIGIT_FINANC_LEGIS, comparedInfo, exportVersions);
         doubleComparisonComponent.setDoubleComparison();
     }
 
     @Override
     public void showVersion(String content, String versionInfo) {
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, doubleComparisonComponent));
-        doubleComparisonComponent.populateDoubleComparisonContent(content.replaceAll("(?i) id=\"", " id=\"doubleCompare-"), LeosCategory.STAT_FINANC_LEGIS, versionInfo, null);
+        doubleComparisonComponent.populateDoubleComparisonContent(content.replaceAll("(?i) id=\"", " id=\"doubleCompare-"), LeosCategory.STAT_DIGIT_FINANC_LEGIS, versionInfo, null);
         doubleComparisonComponent.removeComparison();
     }
 
@@ -165,7 +165,7 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
     @Override
     public void cleanComparedContent() {
         final String versionInfo = messageHelper.getMessage("document.compare.version.caption.double");
-        doubleComparisonComponent.populateDoubleComparisonContent("", LeosCategory.STAT_FINANC_LEGIS, versionInfo, null);
+        doubleComparisonComponent.populateDoubleComparisonContent("", LeosCategory.STAT_DIGIT_FINANC_LEGIS, versionInfo, null);
         doubleComparisonComponent.removeComparison();
     }
 

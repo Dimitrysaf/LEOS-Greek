@@ -59,7 +59,7 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.COUNCIL_EXPLANATORY;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 
 public abstract class CollectionContextService {
 
@@ -369,10 +369,10 @@ public abstract class CollectionContextService {
                     idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(billRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(billRef, docChild.getRef());
                     break;
-                case STAT_FINANC_LEGIS:
+                case STAT_DIGIT_FINANC_LEGIS:
                     FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
                     financialStatementContext.usePackage(leosPckg);
-                    String docTemplate = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
+                    String docTemplate = categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName();
                     financialStatementContext.useDocTemplate(docTemplate);
                     financialStatementContext.useTemplate(metadata.getTemplate());
                     financialStatementContext.usePurpose(purpose);
@@ -390,7 +390,7 @@ public abstract class CollectionContextService {
                     financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
                     FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
                     String financialStatementRef = financialStatement.getMetadata().get().getRef();
-                    proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
+                    proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS);
                     idsAndUrlsHolder.setFinancialStatementId(financialStatementRef);
                     idsAndUrlsHolder.setFinancialStatementUrl(urlBuilder.buildFinancialStatementViewUrl(financialStatementRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(financialStatementRef, docChild.getRef());
@@ -413,7 +413,7 @@ public abstract class CollectionContextService {
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
         financialStatementContext.usePackage(leosPackage);
-        String docTemplate = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
+        String docTemplate = categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName();
         Option<ProposalMetadata> metadataOption = proposal.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
         ProposalMetadata metadata = metadataOption.get();
@@ -428,7 +428,7 @@ public abstract class CollectionContextService {
         financialStatementContext.useOriginRef(originRef);
         financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
         FinancialStatement financialStatement = financialStatementContext.executeCreateFinancialStatement();
-        proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
+        proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS);
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 

@@ -20,5 +20,5 @@ public enum SessionAttribute {
     BILL_REF,
     ANNEX_REF,
     REVISION_VERSION,
-    STAT_FINANC_LEGIS
+    STAT_DIGIT_FINANC_LEGIS
 }

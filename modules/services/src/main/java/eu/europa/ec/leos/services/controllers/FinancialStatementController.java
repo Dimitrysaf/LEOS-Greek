@@ -48,10 +48,8 @@ import java.util.Objects;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
-// This controller is going to be used as a Generic controller for all documents
-// The 'financial-statement' request path will be replaced by any document category.
 @RestController
-@RequestMapping(value = "/secured/stat_financ_legis")
+@RequestMapping(value = "/secured/stat_digit_financ_legis")
 public class FinancialStatementController {
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementController.class);
     private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";

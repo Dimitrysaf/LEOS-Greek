@@ -386,7 +386,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         Node nodeToBeRemoved = XercesUtils.getElementById(document, elementId);
         String tagName = nodeToBeRemoved.getNodeName().toLowerCase();
         String docType = getAttributeValueByXpath(xmlContent, xPathCatalog.getXPathForDoc(), XmlHelper.XML_NAME);
-        if (docType == null || !docType.equals(LeosCategory.STAT_FINANC_LEGIS.name())) {
+        if (docType == null || !docType.equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS.name())) {
             document = restoreNumElementOnIntermediateNodes(document, elementId, null, tagName);
         }
         if (accept) {
