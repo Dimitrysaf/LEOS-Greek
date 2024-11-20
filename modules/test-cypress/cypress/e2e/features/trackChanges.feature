@@ -409,7 +409,6 @@ Feature: Track Changes Feature
     And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 2 contains value "(1)"
     And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of recital 2 contains value "(2)"
 
-
   @renumberingTrackChanges @local
   Scenario: test renumbering of paragraphs when we add or delete paragraph
     Given navigate to edit drafting application with "User1"
@@ -660,9 +659,143 @@ Feature: Track Changes Feature
     And "Article 2" is showing as track changes deleted in num of article 7 of bill
     And "Article 6" is showing as track changes inserted in num of article 7 of bill
     And "MOVED from Article 2" is showing as soft move label in num of article 7 of bill
-    And  soft move label with title "MOVED from Article 2" is  displayed
+    And  soft move label with title "MOVED from Article 2" is displayed
     When click on soft move label with title "MOVED from Article 2"
-    Then soft move label with title "MOVED to Article 6" is  displayed
+    Then soft move label with title "MOVED to Article 6" is displayed
+    When mouseover and click on article 4
+    Then ck editor window is displayed
+    When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on paragraph mode icon two times present in ck editor panel
+    Then li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "1." in edition mode
+    And  li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "1." in edition mode
+    And  li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "delete" in edition mode
+    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "2." in edition mode
+    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "2." in edition mode
+    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "delete" in edition mode
+    And  li 3 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "3." in edition mode
+    And  li 3 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "3." in edition mode
+    And  li 3 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "delete" in edition mode
+    And  li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "4." in edition mode
+    And  li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "4." in edition mode
+    And  li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "delete" in edition mode
+    And  li 5 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "5." in edition mode
+    And  li 5 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "5." in edition mode
+    And  li 5 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "delete" in edition mode
+    And  li 6 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "6." in edition mode
+    And  li 6 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "6." in edition mode
+    And  li 6 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "delete" in edition mode
+    And  li 7 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "7." in edition mode
+    And  li 7 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "7." in edition mode
+    And  li 7 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "delete" in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  paragraph 1 of article 4 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 1 of article 4 contains attribute "leos:tc-original-number" with value "1."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 1 of article 4 contains value "1."
+    And  paragraph 2 of article 4 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 2 of article 4 contains attribute "leos:tc-original-number" with value "2."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 4 contains value "2."
+    And  paragraph 3 of article 4 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 3 of article 4 contains attribute "leos:tc-original-number" with value "3."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 3 of article 4 contains value "3."
+    And  paragraph 4 of article 4 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 4 of article 4 contains attribute "leos:tc-original-number" with value "4."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 4 of article 4 contains value "4."
+    And  paragraph 5 of article 4 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 5 of article 4 contains attribute "leos:tc-original-number" with value "5."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 5 of article 4 contains value "5."
+    And  paragraph 6 of article 4 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 6 of article 4 contains attribute "leos:tc-original-number" with value "6."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 6 of article 4 contains value "6."
+    And  paragraph 7 of article 4 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 7 of article 4 contains attribute "leos:tc-original-number" with value "7."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 7 of article 4 contains value "7."
+    When mouseover and click on article 4
+    Then ck editor window is displayed
+    When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on paragraph mode icon present in ck editor panel
+    Then li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "1." in edition mode
+    And  li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "1." in edition mode
+    And  li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    Then li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "2." in edition mode
+    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "2." in edition mode
+    And  li 2 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    Then li 3 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "3." in edition mode
+    And  li 3 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "3." in edition mode
+    And  li 3 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    Then li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "4." in edition mode
+    And  li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "4." in edition mode
+    And  li 4 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    Then li 5 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "5." in edition mode
+    And  li 5 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "5." in edition mode
+    And  li 5 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    Then li 6 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "6." in edition mode
+    And  li 6 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "6." in edition mode
+    And  li 6 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    Then li 7 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "7." in edition mode
+    And  li 7 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "7." in edition mode
+    And  li 7 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  paragraph 1 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 1 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 1 of article 4 doesn't contain "del" tag
+    And  paragraph 2 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 2 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 2 of article 4 doesn't contain "del" tag
+    And  paragraph 3 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 3 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 3 of article 4 doesn't contain "del" tag
+    And  paragraph 4 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 4 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 4 of article 4 doesn't contain "del" tag
+    And  paragraph 5 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 5 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 5 of article 4 doesn't contain "del" tag
+    And  paragraph 6 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 6 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 6 of article 4 doesn't contain "del" tag
+    And  paragraph 7 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 7 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 7 of article 4 doesn't contain "del" tag
+    When mouseover and click on article 5
+    Then ck editor window is displayed
+    When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on paragraph mode icon present in ck editor panel
+    Then li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "1." in edition mode
+    And  li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "UNNUMBERED" in edition mode
+    And  li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "insert" in edition mode
+    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "2." in edition mode
+    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "UNNUMBERED" in edition mode
+    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "insert" in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  paragraph 1 of article 5 contains attribute "leos:action-number" with value "insert"
+    And  paragraph 1 of article 5 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 1 of article 5 contains value "1."
+    And  ins tag of num tag of paragraph 1 of article 5 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
+    And  paragraph 2 of article 5 contains attribute "leos:action-number" with value "insert"
+    And  paragraph 2 of article 5 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 2 of article 5 contains value "2."
+    And  ins tag of num tag of paragraph 1 of article 5 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
+    When mouseover and click on article 5
+    Then ck editor window is displayed
+    When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on paragraph mode icon two times present in ck editor panel
+    Then li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-num" in edition mode
+    And  li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
+    And  li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    Then li 2 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-num" in edition mode
+    And  li 2 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
+    And  li 2 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  paragraph 1 of article 5 doesn't contain attribute "leos:action-number"
+    And  paragraph 1 of article 5 doesn't contain attribute "leos:tc-original-number"
+    And  paragraph 1 of article 5 doesn't contain num tag
+    And  paragraph 2 of article 5 doesn't contain attribute "leos:action-number"
+    And  paragraph 2 of article 5 doesn't contain attribute "leos:tc-original-number"
+    And  paragraph 2 of article 5 doesn't contain num tag
 
   @movePointInAnnexTrackChanges @local
   Scenario: move of point inside annex using 3 dots and drag and drop
@@ -739,3 +872,45 @@ Feature: Track Changes Feature
     And  num of level 5 contains attribute "leos:action" with value "insert"
     And  num value of level 5 contains "1.3."
     And  "MOVED from point 1.1" is showing as soft move label in num of level 5
+
+  @importOJTrackChanges @local
+  Scenario: import from office journal
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation import OJ Testing with track changes" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When click on import from oj button in ribbon toolbar
+    Then "Import from the Official Journal of the European Union" dialog box window is displayed
+    When select option "DIRECTIVE" for type field
+    And  select option "2016" for year field
+    And  provide value "2102" in Nr. field
+    And  click on search button in import office journal window
+    Then bill content is appeared in import office journal window
+    When click on checkbox of recital 1
+    When click on checkbox of recital 2
+    When click on checkbox of recital 3
+    When click on checkbox of article 1
+    When click on checkbox of article 2
+    When click on checkbox of article 3
+    When click on import button
+    Then 3 recitals are added in legal act by import oj
+    Then 3 articles are added in legal act by import oj
+    And  recital 3 contains attribute "leos:action" with value "insert"
+    And  recital 4 contains attribute "leos:action" with value "insert"
+    And  recital 5 contains attribute "leos:action" with value "insert"
+    And  article 4 contains attribute "leos:action" with value "insert"
+    And  article 5 contains attribute "leos:action" with value "insert"
+    And  article 6 contains attribute "leos:action" with value "insert"
+    When click on versions pane accordion
+    Then last subversion of recent changes version card contains "0.1.1Import element(s) inserted"

@@ -275,5 +275,9 @@ class legalActPage {
     clickSoftMoveLabelWithTitle(label) {
         this.elements.leosSoftMoveLabel().contains(label).click();
     }
+
+    getTagFromNumTagOfParagraphFromArticle(paragraphNumber, articleNumber, tagName) {
+        return this.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).children(tagName);
+    }
 }
 export default new legalActPage();
