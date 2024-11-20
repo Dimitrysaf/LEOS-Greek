@@ -267,6 +267,11 @@ Then('ins tag of num tag of paragraph {int} of article {int} contains attribute 
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName).should('have.attr', attributeName).and('equal', attributeValue);
 });
 
+Then('ins tag with attribute {string} and value {string} of num tag of paragraph {int} of article {int} contains value {string}', function (attributeName, attributeValue, paragraphNumber, articleNumber, value) {
+    const tagName = 'ins';
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
 Then('del tag with attribute {string} and value {string} of num tag of paragraph {int} of article {int} contains value {string}', function (attributeName, attributeValue, paragraphNumber, articleNumber, value) {
     const tagName = 'del';
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
@@ -405,6 +410,18 @@ When(/^click on soft move label with title "([^"]*)"$/, function (label) {
     legalActPage.clickSoftMoveLabelWithTitle(label);
 });
 
-When(/^soft move label with title "([^"]*)" is  displayed$/, function (label) {
+When(/^soft move label with title "([^"]*)" is displayed$/, function (label) {
     legalActPage.elements.leosSoftMoveLabel().contains(label).should('be.visible');
+});
+
+Then(/^paragraph (\d+) of article (\d+) doesn't contain attribute "([^"]*)"$/, function (paragraphNumber, articleNumber, attributeName) {
+    legalActPage.getParagraphFromArticle(paragraphNumber, articleNumber).should('not.have.attr', attributeName);
+});
+
+Then(/^num tag of paragraph (\d+) of article (\d+) doesn't contain "([^"]*)" tag$/, function (paragraphNumber, articleNumber, tagName) {
+    legalActPage.getTagFromNumTagOfParagraphFromArticle(paragraphNumber, articleNumber, tagName).should('not.exist');
+});
+
+Then(/^article (\d+) contains attribute "([^"]*)" with value "([^"]*)"$/, function (articleNumber, attributeName, attributeValue) {
+    legalActPage.getArticle(articleNumber).should('have.attr', attributeName).and('equal', attributeValue);
 });
