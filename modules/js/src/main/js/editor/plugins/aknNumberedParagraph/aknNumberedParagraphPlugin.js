@@ -667,7 +667,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, CMD_NAME, null, true);
+        leosCommandStateHandler.changeCommandState(event.editor, CMD_NAME, null, true);
     }
 
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);

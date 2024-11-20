@@ -54,7 +54,7 @@ define(function aknAuthorialNotePluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, widgetName, changeStateElements, true);
+        leosCommandStateHandler.changeCommandState(event.editor, widgetName, changeStateElements, true);
         var refConfig = leosPluginUtils.getRefConfig(event.editor);
         if(!refConfig || !refConfig.authorialNote) {
             event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);

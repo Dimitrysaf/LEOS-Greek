@@ -44,7 +44,7 @@ define(function aknHtmlSuperScriptPluginModule(require) {
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, "superscript");
+        leosCommandStateHandler.changeCommandState(event.editor, "superscript");
     }
 
     // return plugin module

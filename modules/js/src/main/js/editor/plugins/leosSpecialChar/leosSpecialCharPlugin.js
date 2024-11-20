@@ -36,7 +36,7 @@ define(function leosSpecialCharPluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, 'specialchar', changeStateElements, true);
+        leosCommandStateHandler.changeCommandState(event.editor, 'specialchar', changeStateElements, true);
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);

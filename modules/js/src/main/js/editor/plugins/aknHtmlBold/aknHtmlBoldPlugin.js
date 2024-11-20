@@ -57,7 +57,7 @@ define(function aknHtmlBoldPluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, "bold");
+        leosCommandStateHandler.changeCommandState(event.editor, "bold");
     }
     
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);

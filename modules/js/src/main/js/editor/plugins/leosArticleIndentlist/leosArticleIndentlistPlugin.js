@@ -591,8 +591,8 @@ define(function leosArticleIndentListPluginModule(require) {
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, "outdent");
-        leosCommandStateHandler.changeCommandState(event, "indent");
+        leosCommandStateHandler.changeCommandState(event.editor, "outdent");
+        leosCommandStateHandler.changeCommandState(event.editor, "indent");
     }
 
     // return plugin module

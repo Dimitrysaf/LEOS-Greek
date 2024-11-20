@@ -152,7 +152,7 @@ define(function leosTablePluginModule(require) {
 	}
     
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, 'table', changeStateElements);
+        leosCommandStateHandler.changeCommandState(event.editor, 'table', changeStateElements);
     }
 
     function _removeEmptyTableHeading(event) {
