@@ -7,7 +7,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_141__p\" class=\"guidance-green-block\"><span id=\"_141__p-guidance\">[Please limit the general objective to max 1 - 2.<br> The general objective(s) shall explain how the Programme contributes to the achievement of the policy.<br>The general objectives should be specific, measurable, attainable, relevant and time-bound.<br>Please follow the Better Regulation Guidelines in drafting the objectives.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_131__p\" class=\"guidance-green-block\"><span id=\"_131__p-guidance\" style><p>[Please limit the number of general objectives to 1-2.</p><p>The general objective(s) should explain how the programme contributes to the achievement of the policy.</p><p>The general objectives should be specific, measurable, attainable, relevant and time-bound.</p><p>Please follow the better regulation guidelines in drafting the general objectives.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -16,7 +16,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_142__p\" class=\"guidance-green-block\"><span id=\"_142__p-guidance\">[Please limit the specific objective(s) to 2 - 3.<br>The specific objective(s) should be linked to the general one(s) and translate in concrete terms how the general objective(s) will be pursued.<br>The specific objectives should be specific, measurable, attainable, relevant and time-bound.<br>Please follow the Better Regulation Guidelines in drafting the objectives.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_132__p\" class=\"guidance-green-block\"><span id=\"_132__p-guidance\"><p>[Please limit the number of specific objective(s) to 2-3.</p><p>The specific objective(s) should be linked to the general one(s) and translate in specific terms how the general objective(s) will be pursued.</p><p>The specific objectives should be specific, measurable, attainable, relevant and time-bound.</p><p>Please follow the better regulation guidelines in drafting the specific objectives.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -25,7 +25,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_144__p\" class=\"guidance-green-block\"><span id=\"_144__p-guidance\">[A limited core set of indicators (i.e. one per objective) should be clearly defined and should generate information in a continuous and systematic way on implementation and performance.<br>The indicators should be relevant, accepted, credible, easy and robust.<br>Over the time indicators should be comparable and consistent for concepts, definitions and methods.<br> DGs should ensure the quality of indicators, the relevant aspects being:<br>(a) Effectiveness and timeliness: indicators should allow to monitor performance by providing information on progress on a regular basis and on achievements along the programming period.<br>(b) Efficiency: processes should be optimized for collection and processing of data, avoiding unnecessary or duplicative requests for information<br>(c) Relevance of the indicators and the need to limit the associated administrative burden.<br>(d) Clarity: indicators should be delivered in a clear and understandable form, with supporting metadata and in a form that facilitates proper interpretation and meaningful communication.<br>Each indicator should be accompanied by targets and baseline.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_134__p\" class=\"guidance-green-block\"><span id=\"_134__p-guidance\"><p>[A limited core set of indicators (i.e. one per objective) should be clearly defined and should generate information on implementation and performance in a continuous and systematic way.</p><p>The indicators should be relevant, accepted, credible, easy and robust.</p><p>Over time, the indicators should be comparable and consistent in terms of concepts, definitions and methods.</p><p>DGs should ensure the quality of indicators, the relevant aspects being:</p><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 30px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">(a)</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">effectiveness and timeliness: indicators should make it possible to monitor performance by providing information on progress on a regular basis and on achievements throughout the programming period;</p></td></tr><tr><td style=\"text-align: center; width: 30px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">(b)</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">efficiency: processes should be optimised for collection and processing of data, avoiding unnecessary or duplicative requests for information;</p></td></tr><tr><td style=\"text-align: center; width: 30px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">(c)</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">relevance of the indicators and the need to limit the associated administrative burden; and</p></td></tr><tr><td style=\"text-align: center; width: 30px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">(d)</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">clarity: indicators should be delivered in a clear and understandable form, with supporting metadata and facilitating proper interpretation and meaningful communication.]</p></td></tr></table><p>Each indicator should be accompanied by targets and a baseline.</p></span></guidance>"
     },
     {
       "targets": [
@@ -34,7 +34,7 @@
           "position": "BEFORE-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_17__p\" class=\"guidance-green-block\"><span id=\"_17__p-guidance\">[If more than one management mode is indicated, please provide details in the 'Comments' section]</span></guidance>"
+      "content": "<guidance id=\"guidance-_17__p\" class=\"guidance-green-block\"><span id=\"_17__p-guidance\"><p>[If more than one budget implementation method is indicated, please provide details in the 'Comments' section.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -43,7 +43,7 @@
           "position": "BEFORE-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_21__p\" class=\"guidance-green-block\"><span id=\"_21__p-guidance\">[Specify frequency and conditions.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_21__p\" class=\"guidance-green-block\"><span id=\"_21__p-guidance\"><p>[Specify frequency and conditions.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -52,7 +52,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_221__p\" class=\"guidance-green-block\"><span id=\"_221__p-guidance\">[DGs are to <i id=\"guidance-_221__p_i_1\">explain why</i> the management mode(s), funding implementation mechanism(s), payment modalities, and control strategy proposed are <i id=\"guidance-_221__p_i_2\">considered to be the most appropriate solutions</i> in this case - not only in terms of the policy/programme objectives but also in terms of balancing the internal control objectives (control effectiveness, efficiency and economy; i.e. low errors, fast contracting/paying and low control costs) - knowing that complexity of programmes can impact the error rates and (together with the volumes of transactions to be processed) also the costs of controls.<br><i id=\"guidance-_221__p_i_3\">Remark: Such justification is especially crucial when the programme is split into segments, with a deviating delivery set-up for some of them</i>.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_221__p\" class=\"guidance-green-block\"><span id=\"_221__p-guidance\"><p>[DGs are to explain why the budget implementation method(s), funding implementation mechanism(s), payment modalities, and control strategy proposed are considered to be the most appropriate solutions in this case – not only in terms of the policy/programme objectives but also in terms of balancing the internal control objectives (control effectiveness, efficiency and economy; i.e. low errors, fast contracting/paying and low control costs) – knowing that complexity of programmes can impact the error rates and (together with the volumes of transactions to be processed)  the costs of controls.</p><p>Remark: this explanation is especially crucial if the programme is split into segments, with a deviating delivery set-up for some of them.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -61,7 +61,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_222__p\" class=\"guidance-green-block\"><span id=\"_222__p-guidance\">[This includes explaining how the root causes of high error rates in the previous programme(s) are being addressed now, e.g. by simplifying previously complex modalities which were prone to error and/or by intensifying the (ex-ante and/or ex-post) controls for inherently high-risk activities.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_222__p\" class=\"guidance-green-block\"><span id=\"_222__p-guidance\"><p>[This includes explaining how the root causes of high error rates in the previous programme(s) are being addressed now, e.g. by simplifying previously complex modalities that were prone to error and/or by intensifying the (ex-ante and/or ex-post) controls for inherently high-risk activities.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -70,7 +70,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_223__p\" class=\"guidance-green-block\"><span id=\"_223__p-guidance\">[The costs of controls are to be estimated at Commission level and, for shared and indirect management, also (separately) at the level of Member States or Entrusted Entities. Also the source of the information (related to the cost of controls at the level of Member States or Entrusted Entities) and how they were estimated should be presented.<br>If for the whole or part of the programme the estimated total cost of controls (i.e. those of the Commission plus, if applicable, those of the Member States or the Entrusted Entities) are relatively high, then this should be explained by referring to possible cost drivers such as the specific risk-profile, the (dis)economies of scale in terms of number and size of the DG's typical transactions processed, complexity of delivery mechanisms, etc.<br>Remark: Such justification is especially crucial when the programme is split into segments, with a deviating delivery set-up for some of them.<br>In terms of expected error rate(s), at the stage of the legislative proposals the aim is to maintain the error rate below the threshold of 2%. A different materiality threshold could only be discussed on a case-by-case basis in the light of the legislative debate, notably when the Legislative Authority would not (fully) endorse the proposed programme simplifications and/or would cap the controls, which would have consequences on the expected error rate. This would then require a coordinated approach.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_223__p\" class=\"guidance-green-block\"><span id=\"_223__p-guidance\"><p>[The costs of controls are to be estimated at Commission level and, for shared and indirect management, also (separately) at the level of Member States or entrusted entities. Also the source of the information (related to the cost of controls at the level of Member States or entrusted entities) and how the costs were estimated should be presented.</p><p>If for the whole or part of the programme the estimated total costs of controls (i.e. those of the Commission plus, if applicable, those of the Member States or the entrusted entities) are relatively high, then this should be explained by referring to possible cost drivers such as the specific risk profile, the (dis)economies of scale in terms of number and size of the DG's typical transactions processed, the complexity of delivery mechanisms, etc.</p><p>Remark: this explanation is especially crucial if the programme is split into segments, with a deviating delivery set-up for some of them.</p><p>In terms of expected error rate(s), at the stage of the legislative proposals the aim is to maintain the error rate below the threshold of 2%. A different materiality threshold can only be discussed on a case-by-case basis in the light of the legislative debate, in particular if the legislative authority would not (fully) endorse the proposed programme simplifications and/or would cap the controls, which would have consequences on the expected error rate. This would then require a coordinated approach.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -79,7 +79,7 @@
           "position": "BEFORE-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_23__p\" class=\"guidance-green-block\"><span id=\"_23__p-guidance\">[Specify existing or envisaged prevention and protection measures, e.g. from the anti-fraud strategy.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_23__p\" class=\"guidance-green-block\"><span id=\"_23__p-guidance\"><p>[Specify existing or envisaged prevention and protection measures, e.g. from the anti-fraud strategy.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -88,16 +88,25 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_31-1__p\" class=\"guidance-green-block\"><span id=\"_31-1__p-guidance\">[Please note that an Excel tool is available on the BUDGpedia page on the Legislative Financial and Digital Statement to help you with the calculations. You are strongly advised to use it to facilitate filling in this template.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_31-1__p\" class=\"guidance-green-block\"><span id=\"_31-1__p-guidance\"><p>[Please note that an Excel tool is available on the BUDGpedia page on the Legislative Financial and Digital Statement to help you with the calculations. You are strongly advised to use it to facilitate filling in this template.</p><p>Please insert as many budget lines as needed in the two tables below.]</p></span></guidance>"
     },
     {
       "targets": [
         {
-          "destinationPath": "(//level)[26]/subparagraph[1]",
+          "destinationPath": "(//level)[29]/subparagraph[4]",
           "position": "BEFORE-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_31-2__p\" class=\"guidance-green-block\"><span id=\"_31-2__p-guidance\">[Please insert as many budget lines as needed in the two tables below.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_32-1-1_1__p\" class=\"guidance-green-block\"><span id=\"_32-1-1_1__p-guidance\"><p>[Optional: if more than one DG is involved in the proposal, please fill in the below tables; if not, please delete them.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[29]/subparagraph[6]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-1-1_2__p\" class=\"guidance-green-block\"><span id=\"_32-1-1_2__p-guidance\"><p>[Optional: if more than one operational heading is affected by the proposal / initiative, fill in the below tables.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -106,7 +115,43 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_32-1-1__p\" class=\"guidance-green-block\"><span id=\"_32-1-1__p-guidance\">[This section should be filled in using the 'budget data of an administrative nature' to be firstly inserted in the Annex to the Legislative Financial and Digital Statement (Annex 5 - <i>If you report the use of appropriations under Heading 7, completing Annex 5 is a compulsory requirement.</i> - to the Commission Decision on the internal rules for the implementation of the Commission section of the general budget of the European Union), which is uploaded to DECIDE for interservice consultation purposes.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_32-1-1_3__p\" class=\"guidance-green-block\"><span id=\"_32-1-1_3__p-guidance\"><p>[This section should be filled in using the 'budget data of an administrative nature' to be firstly inserted in the Annex to the Legislative Financial and Digital Statement (Annex 5 - <i>If you report the use of appropriations under Heading 7, completing Annex 5 is a compulsory requirement.</i> - to the Commission Decision on the internal rules for the implementation of the Commission section of the general budget of the European Union), which is uploaded to DECIDE for interservice consultation purposes.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[30]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-1-2_1__p\" class=\"guidance-green-block\"><span id=\"_32-1-2_1__p-guidance\"><p>[Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the table in Section 3.2.1.2. If not, please delete the whole section.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[30]/subparagraph[4]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-1-2_2__p\" class=\"guidance-green-block\"><span id=\"_32-1-2_2__p-guidance\"><p>[Optional: if more than one DG is involved in the proposal, please fill in the below tables; if not, please delete them.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[30]/subparagraph[6]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-1-2_3__p\" class=\"guidance-green-block\"><span id=\"_32-1-2_3__p-guidance\"><p>[Optional: if more than one operational heading is affected by the proposal / initiative, fill in the below tables.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[30]/subparagraph[8]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-1-2_4__p\" class=\"guidance-green-block\"><span id=\"_32-1-2_4__p-guidance\"><p>[Optional: if more than one DG is involved in the proposal, please fill in the below tables; if not, please delete them.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -115,7 +160,25 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_32-1-2__p\" class=\"guidance-green-block\"><span id=\"_32-1-2__p-guidance\">[This section should be filled in using the 'budget data of an administrative nature' to be firstly inserted in the Annex to the Legislative Financial and Digital Statement (Annex 5 - <i>If you report the use of appropriations under Heading 7, completing Annex 5 is a compulsory requirement.</i> - to the Commission Decision on the internal rules for the implementation of the Commission section of the general budget of the European Union), which is uploaded to DECIDE for interservice consultation purposes.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_32-1-2_5__p\" class=\"guidance-green-block\"><span id=\"_32-1-2_5__p-guidance\"><p>[This section should be filled in using the 'budget data of an administrative nature' to be firstly inserted in the Annex to the Legislative Financial and Digital Statement (Annex 5  - <i>If you report the use of appropriations under Heading 7, completing Annex 5 is a compulsory requirement.</i> - to the Commission Decision on the internal rules for the implementation of the Commission section of the general budget of the European Union), which is uploaded to DECIDE for interservice consultation purposes.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[34]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-3-2__p\" class=\"guidance-green-block\"><span id=\"_32-3-2__p-guidance\"><p>[Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the tables in Sections 3.2.3.2. and 3.2.3.3. If not, please delete both sections.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[38]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-4-2__p\" class=\"guidance-green-block\"><span id=\"_32-4-2__p-guidance\"><p>[Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the tables in Sections 3.2.4.2. and 3.2.4.3. If not, please delete both sections.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -124,7 +187,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_32-4-3-1__p\" class=\"guidance-green-block\"><span id=\"_32-4-3-1__p-guidance\">[Based on the detailed description in Annex V to the LFDS (<i>For the purpose of estimating workload and staff needs, you may use the guidance on workload assessment prepared by DG HR.</i>), the above tables should be accompanied by either of the below clarifications, depending on the option.<br><br>Option 1: The additional human resources required for this proposal are fully covered by redeployments within the DG/service or exceptionally, from redeployments from the limited Commission redeployment pool, following the internal process applicable to that end. The duly justified clarification shall accompany the tables above and below. [Please refer to the Annex to the LFDS to identify redeployments within the DGs as clearly as possible]. If this option is applicable, the following comment should be included:<br><br>Considering the overall strained situation in Heading 7, in terms of both staffing and the level of appropriations, the human resources required will be met by staff from the DG who are already assigned to the management of the action and/or have been redeployed within the DG or other Commission services.<br><br>Option 2: Exceptionally, if internal redeployments within the implementing DGs appear for duly substantiated reasons impossible or insufficient, the proposal may require additional human resources. The latter will be paid as appropriate (<i>Please note that such exception needs to be agreed with central services before the launch of the ISC.</i>) from an administrative support line of the programme/initiative or by a fee as external assigned revenue.<br><br>In this case, please specify the type of staff by filling in the below table.<br><br>Please specify how many of the staff requested for the initiative are already in place in the DG/service (current staff) and how many additional staff are requested (in the column corresponding to the type of budget from which they are to be financed).<br><br>Please fill in the table to illustrate this for staff at 'cruising speed' level.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_32-4-3-1__p\" class=\"guidance-green-block\"><span id=\"_32-4-3-1__p-guidance\"><p>[Based on the detailed description in Annex V to the LFDS <i>(For the purpose of estimating workload and staff needs, you may use the guidance on workload assessment prepared by DG HR)</i>, the above tables should be accompanied by either of the below clarifications, depending on the option.</p><p>Option 1: The additional human resources required for this proposal are fully covered by redeployments within the DG/service or exceptionally, from redeployments from the limited Commission redeployment pool, following the internal process applicable to that end. The duly justified clarification shall accompany the tables above and below. [Please refer to the Annex to the LFDS to identify redeployments within the DGs as clearly as possible]. If this option is applicable, the following comment should be included:</p><p>Considering the overall strained situation in Heading 7, in terms of both staffing and the level of appropriations, the human resources required will be met by staff from the DG who are already assigned to the management of the action and/or have been redeployed within the DG or other Commission services.</p><p>Option 2: Exceptionally, if internal redeployments within the implementing DGs appear for duly substantiated reasons impossible or insufficient, the proposal may require additional human resources. The latter will be paid as appropriate <i>(Please note that such exception needs to be agreed with central services before the launch of the ISC)</i> from an administrative support line of the programme/initiative or by a fee as external assigned revenue.</p><p>In this case, please specify the type of staff by filling in the below table.</p><p>Please specify how many of the staff requested for the initiative are already in place in the DG/service (current staff) and how many additional staff are requested (in the column corresponding to the type of budget from which they are to be financed).</p><p>Please fill in the table to illustrate this for staff at 'cruising speed' level.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -133,7 +196,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_32-4-3-2__p\" class=\"guidance-green-block\"><span id=\"_32-4-3-2__p-guidance\">[Please explain briefly below why the tasks included in the proposal at stake cannot be covered fully by existing HR resources and internal redeployments within the DG already implementing the action or within the Commission services.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_32-4-3-2__p\" class=\"guidance-green-block\"><span id=\"_32-4-3-2__p-guidance\"><p>[Please explain briefly below why the tasks included in the proposal at stake cannot be covered fully by existing HR resources and internal redeployments within the DG already implementing the action or within the Commission services.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -142,7 +205,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_32-6-1__p\" class=\"guidance-green-block\"><span id=\"_32-6-1__p-guidance\">[Explain what reprogramming is required, specifying the budget lines concerned and the corresponding amounts. Please provide an excel table in the case of major reprogramming.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_32-6-1__p\" class=\"guidance-green-block\"><span id=\"_32-6-1__p-guidance\"><p>[Explain what reprogramming is required, specifying the budget lines concerned and the corresponding amounts. Please provide an excel table in the case of major reprogramming.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -151,7 +214,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_32-6-2__p\" class=\"guidance-green-block\"><span id=\"_32-6-2__p-guidance\">[Explain what is required, specifying the headings and budget lines concerned, the corresponding amounts, and the instruments proposed to be used.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_32-6-2__p\" class=\"guidance-green-block\"><span id=\"_32-6-2__p-guidance\"><p>[Explain what is required, specifying the headings and budget lines concerned, the corresponding amounts, and the instruments proposed to be used.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -160,7 +223,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_32-6-3__p\" class=\"guidance-green-block\"><span id=\"_32-6-3__p-guidance\">[Explain what is required, specifying the headings and budget lines concerned and the corresponding amounts.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_32-6-3__p\" class=\"guidance-green-block\"><span id=\"_32-6-3__p-guidance\"><p>[Explain what is required, specifying the headings and budget lines concerned and the corresponding amounts.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -169,7 +232,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_41-1__p\" class=\"guidance-green-block\"><span id=\"_41-1__p-guidance\">[Guidance and online tooling will be made available through GoPro in order to help you complete the below sections. You are strongly advised to use it to ensure compliance with Regulation (EU) 2024/903 of the European Parliament and of the Council of 13 March 2024 laying down measures for a high level of public sector interoperability across the Union (Interoperable Europe Act) (OJ L, 2024/903, 22.3.2024, ELI: http://data.europa.eu/eli/reg/2024/903/oj).</span></guidance>"
+      "content": "<guidance id=\"guidance-_41-1__p\" class=\"guidance-green-block\"><span id=\"_41-1__p-guidance\"><p>[Guidance and online tooling will be made available through GoPro in order to help you complete the below sections. You are strongly advised to use it to ensure compliance with Regulation (EU) 2024/903 of the European Parliament and of the Council of 13 March 2024 laying down measures for a high level of public sector interoperability across the Union (Interoperable Europe Act) (OJ L, 2024/903, 22.3.2024, ELI: http://data.europa.eu/eli/reg/2024/903/oj).</p></span></guidance>"
     },
     {
       "targets": [
@@ -178,7 +241,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_41-2__p\" class=\"guidance-green-block\"><span id=\"_41-2__p-guidance\"><br>When completing this Section, it is acceptable to present the information in a table format, where appropriate.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_41-2__p\" class=\"guidance-green-block\"><span id=\"_41-2__p-guidance\"><p>When completing this Section, it is acceptable to present the information in a table format, where appropriate.]</p></span></guidance>"
     },
     {
       "targets": [
@@ -187,7 +250,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_4-1-1__p\" class=\"guidance-green-block\"><span id=\"_4-1-1__p-guidance\">[If the policy initiative is assessed as having no requirement of digital relevance, please provide an explanation as to why digital means cannot be utilised to enhance policy implementation by making it simpler, quicker, more transparent, and/or more cost-effective. Please also explain why the 'digital by default' principle, which prioritises digital delivery of public services, is not applicable.<br><br>Otherwise, please enumerate the requirements of digital relevance as follows:]</span></guidance>"
+      "content": "<guidance id=\"guidance-_4-1-1__p\" class=\"guidance-green-block\"><span id=\"_4-1-1__p-guidance\"><p>[If the policy initiative is assessed as having no requirement of digital relevance, please provide an explanation as to why digital means cannot be utilised to enhance policy implementation by making it simpler, quicker, more transparent, and/or more cost-effective. Please also explain why the ‘digital by default’ principle, which prioritises digital delivery of public services, is not applicable.</p><p>Otherwise, please enumerate the requirements of digital relevance as follows:]</p></span></guidance>"
     },
     {
       "targets": [
@@ -196,7 +259,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_4-1-2__p\" class=\"guidance-green-block\"><span id=\"_4-1-2__p-guidance\"><br>[...] - <i>Please insert as many requirement lines as needed and identify each requirement distinctly (like R1, R2, etc.) to ease cross-referencing in the following sections.</i><br><br>[A requirement of digital relevance is an obligation or criterion of a legal, organisational, semantic or technical nature, set in a paragraph or an article of a legal text that concerns:<br><br><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">collection, processing, generation, exchange or sharing of data;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">the automation or digitalisation of stakeholders' processes;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">the use of new or existing digital solutions; and/or</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">digital public services, that is, digital services provided by Union entities or public sector bodies to one another or to natural or legal persons in the Union.</td></tr></table><br>For each requirement of digital relevance listed, please include:<br><br><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">the reference to the legal provision containing this requirement (for example, 'Article 7(2)');</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">a high-level description of the requirement;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">the stakeholder categories affected by this requirement (EU institutions, bodies and agencies, Member States, businesses, the general public, or others); and</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">the high-level processes affected by this requirement (such as notification, management of registries, procurement, etc.).]</td></tr></table></span></guidance>"
+      "content": "<guidance id=\"guidance-_4-1-2__p\" class=\"guidance-green-block\"><span id=\"_4-1-2__p-guidance\"><p>[...] - <i>Please insert as many requirement lines as needed and identify each requirement distinctly (like R1, R2, etc.) to ease cross-referencing in the following sections.</i></p><p>[A requirement of digital relevance is an obligation or criterion of a legal, organisational, semantic or technical nature, set in a paragraph or an article of a legal text that concerns:</p><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">collection, processing, generation, exchange or sharing of data;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">the automation or digitalisation of stakeholders' processes;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">the use of new or existing digital solutions; and/or</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">digital public services, that is, digital services provided by Union entities or public sector bodies to one another or to natural or legal persons in the Union.</p></td></tr></table><p>For each requirement of digital relevance listed, please include:</p><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">the reference to the legal provision containing this requirement (for example, 'Article 7(2)');</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">a high-level description of the requirement;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">the stakeholder categories affected by this requirement (EU institutions, bodies and agencies, Member States, businesses, the general public, or others); and</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">the high-level processes affected by this requirement (such as notification, management of registries, procurement, etc.).]</p></td></tr></table></span></guidance>"
     },
     {
       "targets": [
@@ -205,7 +268,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_42__p\" class=\"guidance-green-block\"><span id=\"_42__p-guidance\">[For each requirement of digital relevance identified in Section 4.1 that mandates the collection, processing, generation, exchange or sharing of data, please:<br><br><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">provide a high-level description of the data in scope and any related standards/specifications;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">explain how the requirement is aligned with the European Data Strategy and its various aspects;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">confirm that the once-only principle has been followed, and that the possibility to reuse existing data has been explored;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">specifically for data flows, identify the stakeholders that are to provide and receive the data, respectively, and indicate what triggers the data exchange (for example, a reporting obligation) and with what frequency.]</td></tr></table></span></guidance>"
+      "content": "<guidance id=\"guidance-_42__p\" class=\"guidance-green-block\"><span id=\"_42__p-guidance\"><p>[For each requirement of digital relevance identified in Section 4.1 that mandates the collection, processing, generation, exchange or sharing of data, please:</p><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">provide a high-level description of the data in scope and any related standards/specifications;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">explain how the requirement is aligned with the European Data Strategy and its various aspects;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">confirm that the once-only principle has been followed, and that the possibility to reuse existing data has been explored;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">specifically for data flows, identify the stakeholders that are to provide and receive the data, respectively, and indicate what triggers the data exchange (for example, a reporting obligation) and with what frequency.]</p></td></tr></table></span></guidance>"
     },
     {
       "targets": [
@@ -214,7 +277,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_43__p\" class=\"guidance-green-block\"><span id=\"_43__p-guidance\">[A digital solution is a digital service, platform, system, application, tool or infrastructure, designed to automate, manage, or improve specific processes, services, or operations through the use of digital technologies.<br><br>For each requirement of digital relevance identified in Section 4.1 that mandates a digital solution, please provide a description of the digital solution's mandated functionality, the body that will be responsible for this digital solution, and other relevant aspects such as reusability and accessibility.<br><br>Explain whether the digital solution intends to make use of AI technologies and how the digital solution complies with the requirements and obligations of the AI Act (AI risk assessment). Likewise, explain how the digital solution complies with the requirements and obligations of the EU cybersecurity framework, and other applicable digital policies and legislative enactments (such as eIDAS, Single Digital Gateway, etc.).]</span></guidance>"
+      "content": "<guidance id=\"guidance-_43__p\" class=\"guidance-green-block\"><span id=\"_43__p-guidance\"><p>[A digital solution is a digital service, platform, system, application, tool or infrastructure, designed to automate, manage, or improve specific processes, services, or operations through the use of digital technologies.</p><p>For each requirement of digital relevance identified in Section 4.1 that mandates a digital solution, please provide a description of the digital solution's mandated functionality, the body that will be responsible for this digital solution, and other relevant aspects such as reusability and accessibility.</p><p>Explain whether the digital solution intends to make use of AI technologies and how the digital solution complies with the requirements and obligations of the AI Act (AI risk assessment). Likewise, explain how the digital solution complies with the requirements and obligations of the EU cybersecurity framework, and other applicable digital policies and legislative enactments (such as eIDAS, Single Digital Gateway, etc.).]</p></span></guidance>"
     },
     {
       "targets": [
@@ -223,7 +286,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_44__p\" class=\"guidance-green-block\"><span id=\"_44__p-guidance\">[For each requirement of digital relevance identified in Section 4.1. that concerns digital public services, please assess and document:<br><br>(a) whether it requires interaction across Member State borders, among EU entities or between EU entities and public sector bodies, by means of their network and information systems; and<br><br>(b) whether it has an effect on 'cross-border interoperability', understood as the ability of EU entities and public sector bodies to interact with each other across borders by sharing data, information and knowledge through digital processes in line with the legal, organisational, semantic and technical requirements related to such cross-border interaction.<br><br>If both of the aforementioned conditions apply, please:<br><br><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">describe the digital public services affected by the requirement;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">assess the impact of the requirement on cross-border interoperability;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">list the Interoperable Europe solutions identified for (re)use; (<i>As per Regulation (EU) 2024/903 (Interoperable Europe Act), Interoperable Europe Solutions are interoperability solutions recommended by the Interoperable Europe Board and consequently published on the Interoperable Europe portal.</i>)</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">list other relevant interoperability solutions; and</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">describe the detected remaining barriers to cross-border interoperability.</td></tr></table><br><br>Please refer to the guidelines on interoperability assessment for further support. Be aware that the minimum content of the interoperability assessment report is set out in Annex I of Regulation (EU) 2024/903 (Interoperable Europe Act).]</span></guidance>"
+      "content": "<guidance id=\"guidance-_44__p\" class=\"guidance-green-block\"><span id=\"_44__p-guidance\"><p>[For each requirement of digital relevance identified in Section 4.1. that concerns digital public services, please assess and document:</p><p>(a) whether it requires interaction across Member State borders, among EU entities or between EU entities and public sector bodies, by means of their network and information systems; and</p><p>(b) whether it has an effect on ‘cross-border interoperability’, understood as the ability of EU entities and public sector bodies to interact with each other across borders by sharing data, information and knowledge through digital processes in line with the legal, organisational, semantic and technical requirements related to such cross-border interaction.</p><p>If both of the aforementioned conditions apply, please:</p><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">describe the digital public services affected by the requirement;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">assess the impact of the requirement on cross-border interoperability;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">list the Interoperable Europe solutions identified for (re)use <i>(As per Regulation (EU) 2024/903 (Interoperable Europe Act), Interoperable Europe Solutions are interoperability solutions recommended by the Interoperable Europe Board and consequently published on the Interoperable Europe portal.)</i>;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">list other relevant interoperability solutions; and</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">describe the detected remaining barriers to cross-border interoperability.</p></td></tr></table><p>Please refer to the guidelines on interoperability assessment for further support. Be aware that the minimum content of the interoperability assessment report is set out in Annex I of Regulation (EU) 2024/903 (Interoperable Europe Act).]</p></span></guidance>"
     },
     {
       "targets": [
@@ -232,7 +295,7 @@
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-_45__p\" class=\"guidance-green-block\"><span id=\"_45__p-guidance\">[To facilitate the smooth implementation of the requirements of digital relevance identified in Section 4.1., it is important to plan specific implementation measures well ahead. These measures may include adopting implementing/delegated acts or guidelines, or designing policy implementation pilots, ICT procurement procedures, sandboxing, capacity building, stakeholder engagement, feedback mechanisms, technology support, awareness-raising campaigns, etc.<br><br>Even if the requirements may change during the inter-institutional negotiations, sharing the proposed digital implementation measures timely and transparently builds trust and partnership.<br><br>For this reason, please list here the planned digital implementation measures. For each measure:<table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">briefly describe the measure and indicate the requirement(s) of digital relevance identified in Section 4.1., that it will support;</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">specify the Commission's role in implementing the measure and list the stakeholders to be involved; and</td></tr><tr><td style=\"text-align: center; width: 20px; border: unset;\">&#8226;</td><td style=\"border: unset;\">indicate the expected timeline of the measure.</td></tr></table><br><br>NB: In case the initial Commission proposal evolves considerably during the legislative negotiations, it should be considered to update information laid down in the LFDS for any financial and/or digital aspects, as necessary, with the aim to support the negotiation process and create clarity for all parties concerned.]</span></guidance>"
+      "content": "<guidance id=\"guidance-_45__p\" class=\"guidance-green-block\"><span id=\"_45__p-guidance\"><p>[To facilitate the smooth implementation of the requirements of digital relevance identified in Section 4.1., it is important to plan specific implementation measures well ahead. These measures may include adopting implementing/delegated acts or guidelines, or designing policy implementation pilots, ICT procurement procedures, sandboxing, capacity building, stakeholder engagement, feedback mechanisms, technology support, awareness-raising campaigns, etc.</p><p>Even if the requirements may change during the inter-institutional negotiations, sharing the proposed digital implementation measures timely and transparently builds trust and partnership.</p><p>For this reason, please list here the planned digital implementation measures. For each measure:</p><table style=\"border-width: 0;\"><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">briefly describe the measure and indicate the requirement(s) of digital relevance identified in Section 4.1., that it will support;</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">specify the Commission’s role in implementing the measure and list the stakeholders to be involved; and</p></td></tr><tr><td style=\"text-align: center; width: 20px; vertical-align: top; border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">&#8226;</p></td><td style=\"border: unset;\"><p style=\"padding: unset; margin-top: unset; margin-bottom: 8px;\">indicate the expected timeline of the measure.</p></td></tr></table><p>NB: In case the initial Commission proposal evolves considerably during the legislative negotiations, it should be considered to update information laid down in the LFDS for any financial and/or digital aspects, as necessary, with the aim to support the negotiation process and create clarity for all parties concerned.]</p></span></guidance>"
     }
   ],
   "structure": [
