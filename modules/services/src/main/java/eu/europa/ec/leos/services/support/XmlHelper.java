@@ -227,8 +227,6 @@ public class XmlHelper {
     public static final String LEOS_AUTO_NUM_OVERWRITE = "leos:auto-num-overwrite";
     public static final String LEOS_RENUMBERED = "leos:renumbered";
 
-    public static final String COVERPAGE_EEA_RELEVANCE_ID = "_coverpage__eearelevance";
-
     public static final String EMPTY_STRING = "";
     public static final String NON_BREAKING_SPACE = "\u00A0";
     public static final String CLASS_ATTR = "class";

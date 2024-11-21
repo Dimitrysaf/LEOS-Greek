@@ -965,9 +965,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     }
 
     private List<MergeActionVO> getEEARelevanceMergeActions(List<MergeActionVO> mergeActions) {
-        return mergeActions.stream()
-                .filter(mergeAction -> mergeAction.getElementId().equals(XmlHelper.COVERPAGE_EEA_RELEVANCE_ID))
-                .collect(Collectors.toList());
+        return null;
     }
 
     private Proposal updateEEARelevance(Proposal proposal, ApplyContributionsRequestEvent event) {

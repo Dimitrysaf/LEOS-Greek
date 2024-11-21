@@ -88,15 +88,15 @@
       "list": [
         {
           "index": "1",
-          "content": "<article xml:id=\"_art_3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num xml:id=\"art_3__num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art_3_Q27Lyk\">Addressees</heading><paragraph xml:id=\"art_3__para_1\"><content xml:id=\"art_3__para_1__content\"><p xml:id=\"art_3__para_1__content__p\">This Decision is addressed to the Member States.</p></content></paragraph></article>"
+          "content": "<article xml:id=\"art3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num xml:id=\"art3Num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art3Q27Lyk\">Addressees</heading><paragraph xml:id=\"art3Para1\"><content xml:id=\"art3Para1Content\"><p xml:id=\"art3Para1ContentP\">This Decision is addressed to the Member States.</p></content></paragraph></article>"
         },
         {
           "index": "2",
-          "content": "<article xml:id=\"_art_3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><num xml:id=\"art_3__num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art_3_Q27Lyk\">Addressees</heading><paragraph xml:id=\"art_3__para_1\"><content xml:id=\"art_3__para_1__content\"><p xml:id=\"art_3__para_1__content__p\">This Decision is addressed to the Member States in accordance with the Treaties.</p></content></paragraph></article>"
+          "content": "<article xml:id=\"art3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><num xml:id=\"art3Num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art3Q27Lyk\">Addressees</heading><paragraph xml:id=\"art3Para1\"><content xml:id=\"art3Para1Content\"><p xml:id=\"art3Para1ContentP\">This Decision is addressed to the Member States in accordance with the Treaties.</p></content></paragraph></article>"
         },
 		{
           "index": "3",
-          "content": "<article xml:id=\"_art_3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"3\"><num xml:id=\"art_3__num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art_3_Q27Lyk\">Addressees</heading><paragraph xml:id=\"art_3__para_1\"><content xml:id=\"art_3__para_1__content\"><p xml:id=\"art_3__para_1__content__p\">This Decision is addressed to [...].</p></content></paragraph></article>"
+          "content": "<article xml:id=\"art3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"3\"><num xml:id=\"art3Num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art3Q27Lyk\">Addressees</heading><paragraph xml:id=\"art3Para1\"><content xml:id=\"art3Para1Content\"><p xml:id=\"art3Para1ContentP\">This Decision is addressed to [...].</p></content></paragraph></article>"
         }
       ]
     }
