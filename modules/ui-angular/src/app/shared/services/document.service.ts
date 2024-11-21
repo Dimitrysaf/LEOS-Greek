@@ -848,15 +848,7 @@ export class DocumentService {
   }
 
   fetchTocAndAncestors(elementIds: string[], documentRefParam: string) {
-    let documentType =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     const documentRef = (!!documentRefParam && documentRefParam.trim().length > 0) ? documentRefParam: this.documentRef;
-    if(documentRef.toLowerCase().startsWith("annex")){
-      documentType = "annex";
-    }else if(documentRef.toLowerCase().startsWith("reg")){
-      documentType = "bill";
-    }
-
     const params =
       elementIds?.length > 0
         ? {
@@ -864,7 +856,7 @@ export class DocumentService {
           }
         : {};
     return this.http.get(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/fetch-toc-ancestors`,
+      `${apiBaseUrl}/secured/document/${documentRef}/fetch-toc-ancestors`,
       {
         params,
       },

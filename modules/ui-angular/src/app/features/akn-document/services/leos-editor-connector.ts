@@ -106,8 +106,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
 
   //leosEditorExtension > requestToc
   requestToc(...args) {
-    // this.requestTocAndAncestors([]);
-
     this.requestTocAndAncestors(args[0]['elementIds'], args[0]['documentRef']);
   }
 

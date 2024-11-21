@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.services.api.DocumentApiService;
+import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.dto.request.DoubleCompareRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadVersionRequest;
@@ -28,6 +29,7 @@ import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,10 +62,13 @@ public class DocumentController {
     private static final String ERROR_OCCURRED_WHILE_REQUESTING_EXPORT_TO_E_CONSILIUM = "Error occurred while requesting export to eConsilium";
 
     private final DocumentApiService documentApiService;
+    private GenericDocumentApiService genericDocumentApiService;
 
     @Autowired
-    public DocumentController(DocumentApiService documentApiService) {
+    public DocumentController(DocumentApiService documentApiService,
+                              GenericDocumentApiService genericDocumentApiService) {
         this.documentApiService = documentApiService;
+        this.genericDocumentApiService = genericDocumentApiService;
     }
 
     @RequestMapping(value = "/downloadVersion/{documentType}/{documentRef}", method = RequestMethod.POST)
@@ -292,6 +297,20 @@ public class DocumentController {
         } catch (Exception e) {
             LOG.error("Error occurred while getting annotations in LEG file by versioned Reference - " + versionedReference, e);
             return new ResponseEntity<>("Unexpected error while trying to get annotations in LEG file ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef,
+                                                       @RequestParam(value = "elementIds", required = false) List<String> elementIds) {
+        try {
+            documentRef = encodeParam(documentRef);
+            TocAndAncestorsResponse tocAncestors = this.genericDocumentApiService.fetchTocAncestor(documentRef, elementIds);
+            return ResponseEntity.ok().body(tocAncestors);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get toc ancestors {} ", e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

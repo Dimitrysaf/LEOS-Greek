@@ -789,8 +789,8 @@ define(function leosCrossReferenceDialog(require) {
             this.editor.on("receiveToc", function(event) {
                 var data = JSON.parse(event.data);
                 var tocItemsMap = data.tocItemsMap;
-                var elementAncestorsIds = data.elementAncestorsIds;
-                var docRef = data.documentRef;
+                const elementAncestorsIds = data.elementAncestorsIds;
+                const docRef = data.documentRef;
                 that.tableOfContentHandlers[docRef].handleTableOfContentLoaded(tocItemsMap[docRef], elementAncestorsIds);
             });
         }

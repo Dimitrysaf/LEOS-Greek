@@ -3,12 +3,10 @@ package eu.europa.ec.leos.services.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
-import eu.europa.ec.leos.domain.repository.document.LeosDocument;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -30,6 +28,7 @@ import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.export.ExportDW;
@@ -55,6 +54,7 @@ import eu.europa.ec.leos.services.structure.profile.ProfileService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
@@ -71,8 +71,11 @@ import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemType;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Option;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +101,7 @@ public class GenericDocumentApiService {
 
 
     private static final String PROPOSAL = "Proposal_";
+    private static final String METADATA_IS_REQUIRED = "Metadata is required!";
 
     private final LeosRepository leosRepository;
     private final ElementProcessor elementProcessor;
@@ -123,9 +127,10 @@ public class GenericDocumentApiService {
     private final DocumentLanguageContext documentLanguageContext;
     private final TokenService tokenService;
     private final ProfileService profileService;
+    private Provider<StructureContext> structureContext;
+    protected final TrackChangesContext trackChangesContext;
 
     private final Properties applicationProperties;
-
     @Autowired
     public GenericDocumentApiService(@NotNull LeosRepository leosRepository,
                                      @NotNull ElementProcessor elementProcessor,
@@ -151,7 +156,9 @@ public class GenericDocumentApiService {
                                      @NotNull LanguageGroupService languageGroupService,
                                      @NotNull DocumentLanguageContext documentLanguageContext,
                                      @NotNull TokenService tokenService,
-                                     @NotNull ProfileService profileService) {
+                                     @NotNull ProfileService profileService,
+                                     @NotNull Provider<StructureContext> structureContext,
+                                     @NotNull TrackChangesContext trackChangesContext) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
         this.xmlContentProcessor = Objects.requireNonNull(xmlContentProcessor);
@@ -177,6 +184,8 @@ public class GenericDocumentApiService {
         this.languageGroupService = languageGroupService;
         this.tokenService = tokenService;
         this.profileService = profileService;
+        this.structureContext = structureContext;
+        this.trackChangesContext = trackChangesContext;
     }
 
     public DocumentViewResponse getDocumentByRef(@NotNull String docRef) throws NotFoundException {
@@ -660,4 +669,36 @@ public class GenericDocumentApiService {
         return this.leosRepository.configNotificationsFetch();
     }
 
+    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
+        XmlDocument xmlDocument = this.findDocumentByRef(documentRef);
+        trackChangesContext.setTrackChangesEnabled(xmlDocument.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(xmlDocument.getMetadata().get().getLanguage());
+        List<String> elementAncestorsIds = null;
+        StructureContext context = structureContext.get();
+        context.useDocumentTemplate(xmlDocument.getMetadata().getOrError(() -> METADATA_IS_REQUIRED).getDocTemplate());
+        if (CollectionUtils.isNotEmpty(elementIds)) {
+            try {
+                elementAncestorsIds = this.getAncestorsIdsForElementId(xmlDocument, elementIds);
+            } catch (Exception e) {
+                LOG.warn("Could not get ancestors Ids", e);
+            }
+        }
+        // we are combining two operations (get toc + get selected element ancestors)
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
+                xmlDocument.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN);
+        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
+                context.getNumberingConfigs(), xmlDocument.getMetadata().get().getLanguage());
+    }
+
+    private List<String> getAncestorsIdsForElementId(XmlDocument xmlDocument, List<String> elementIds) {
+        Validate.notNull(xmlDocument, "XmlDocument is required");
+        Validate.notNull(elementIds, "Element id is required");
+        List<String> ancestorIds = new ArrayList<>();
+        for(String elementId : elementIds) {
+            ancestorIds.addAll(xmlContentProcessor.getAncestorsIdsForElementId(
+                    getContent(xmlDocument),
+                    elementId));
+        }
+        return ancestorIds;
+    }
 }
