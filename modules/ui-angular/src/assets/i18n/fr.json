@@ -227,6 +227,8 @@
   "page.collection.drafts.annex-reorder-dialog.hint": "Vous pouvez réorganiser les annexes en faisant glisser les éléments de la liste.",
   "page.editor.actions-merge-contributions.title": "Tout les changements n'ont pu être fusionnés",
   "page.editor.actions-merge-contributions.content": "La fusion de certains changements n'a pu être faite. S'il-vous-plaît, veuillez le faire manuellement si nécessaire.",
+  "page.editor.actions-undo-merge-contributions.title": "Tout les changements n'ont pu être annulés",
+  "page.editor.actions-undo-merge-contributions.content": "L'annulation de certains changements n'a pu être faite. Il s'agit sûrement de changements d'indentation. S'il-vous-plaît, veuillez le faire manuellement si nécessaire.",
   "page.collection.actions-dropdown.label": "Actions",
   "page.collection.actions-dropdown.share": "Partager",
   "page.collection.actions-dropdown.changeTitle": "Modifier le titre",
