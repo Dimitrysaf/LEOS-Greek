@@ -305,7 +305,7 @@ public class XmlNodeProcessorImplTest extends LeosTest {
     private static Map<String, XmlNodeConfig> setupConfigForAnnex() {
         Map<String, XmlNodeConfig> configuration = new HashMap<>();
         configuration.put("annexNumberPreface", new XmlNodeConfig("//akn:preface/akn:longTitle/akn:p/akn:docType", true,
-                Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_preface_doctype", "docType"))));
+                Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "prefaceDoctype", "docType"))));
         return configuration;
     }
 
