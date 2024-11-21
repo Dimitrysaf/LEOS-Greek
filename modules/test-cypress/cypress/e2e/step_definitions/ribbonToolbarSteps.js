@@ -29,11 +29,11 @@ Then(`zoom percentage level is showing {int} in ribbon toolbar`, function (zoomV
     ribbonToolbar.elements.zoomScrollBarInput().should('have.value', zoomVal);
 });
 
-Then(`see user guidance toggle bar is off in ribbon toolbar`, function () {
+Then(`see drafting guidance toggle bar is off in ribbon toolbar`, function () {
     ribbonToolbar.elements.seeUserGuidanceInput().invoke('show').should('not.be.checked');
 });
 
-Then(`see user guidance toggle bar is on in ribbon toolbar`, function () {
+Then(`see drafting guidance toggle bar is on in ribbon toolbar`, function () {
     ribbonToolbar.elements.seeUserGuidanceInput().invoke('show').should('be.checked');
 });
 
@@ -45,7 +45,7 @@ Then(`see track changes toggle bar is on in ribbon toolbar`, function () {
     ribbonToolbar.elements.seeTrackChangesInput().should('have.attr', 'checked', 'checked');
 });
 
-When(`click on see user guidance toggle bar`, function () {
+When(`click on see drafting guidance toggle bar`, function () {
     ribbonToolbar.clickSeeUserGuidanceToggleBtn();
 });
 
