@@ -3,7 +3,9 @@ class loginPage {
         username: () => cy.get('#username'),
         nextBtn: () => cy.get('.btn-primary'),
         password: () => cy.get('#password'),
-        signInBtn: () => cy.get('.btn-primary')
+        signInBtn: () => cy.get('.btn-primary'),
+        verificationDropDown: () => cy.get('.verif-method-dd-placeholder__icon-container'),
+        passwordVerificationMethod: () => cy.get('.verif-method-dd-options #verif-method-dd-PASSWORD')
     }
 
     enterUserName(userName) {
@@ -26,6 +28,14 @@ class loginPage {
         Cypress.session.clearCurrentSessionData();
         cy.visit(previousStringUrl + Cypress.env(urlType));
         cy.wait(1000);
+    }
+
+    clickVerificationDropDown(){
+        this.elements.verificationDropDown().click();
+    }
+
+    selectPasswordVerificationMethod() {
+        this.elements.passwordVerificationMethod().click();
     }
 }
 export default new loginPage();
