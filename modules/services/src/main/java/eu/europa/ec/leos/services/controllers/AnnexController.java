@@ -614,22 +614,6 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable(value = "documentRef") String documentRef,
-                                                       @RequestParam(value = "elementIds", required = false) List<String> elementIds) {
-        try {
-            documentRef = encodeParam(documentRef);
-            TocAndAncestorsResponse tocAncestors = this.annexApiService.fetchTocAncestor(documentRef, elementIds);
-            return ResponseEntity.ok().body(tocAncestors);
-        } catch (Exception e) {
-            LOG.error("Error occurred  while trying to get toc ancestors for annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for annex",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
     @GetMapping(value = "/{documentRef}/accept-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> acceptChange(@PathVariable("documentRef") String documentRef,

@@ -26,5 +26,4 @@ public interface AnnexApiService extends BaseDocumentService<Annex> {
 
     public DocumentViewResponse renumberAnnex(String annexRef);
 
-    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds);
 }

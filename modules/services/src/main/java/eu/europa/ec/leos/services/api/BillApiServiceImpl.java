@@ -505,26 +505,6 @@ public abstract class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
-        Bill bill = billService.findBillByRef(documentRef);
-        List<String> elementAncestorsIds = null;
-        StructureContext context = structureContext.get();
-        context.useDocumentTemplate(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-        if (CollectionUtils.isNotEmpty(elementIds)) {
-            try {
-                elementAncestorsIds = billService.getAncestorsIdsForElementId(bill, elementIds);
-            } catch (Exception e) {
-                LOG.warn("Could not get ancestors Ids", e);
-            }
-        }
-        // we are combining two operations (get toc + get selected element ancestors)
-        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
-                bill.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN);
-        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
-                context.getNumberingConfigs(), bill.getMetadata().get().getLanguage());
-    }
-
-    @Override
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());

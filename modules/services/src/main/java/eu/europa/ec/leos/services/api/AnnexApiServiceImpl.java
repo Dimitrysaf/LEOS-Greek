@@ -592,28 +592,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
-        Annex annex = this.annexService.findAnnexByRef(documentRef);
-        StructureContext context = structureContext.get();
-        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
-        populateCloneProposalMetadata(annex);
-        List<String> elementAncestorsIds = null;
-        if (CollectionUtils.isNotEmpty(elementIds)) {
-            try {
-                elementAncestorsIds = annexService.getAncestorsIdsForElementId(annex, elementIds);
-            } catch (Exception e) {
-                LOG.warn("Could not get ancestors Ids", e);
-            }
-        }
-        // we are combining two operations (get toc + get selected element ancestors)
-        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
-                annex.getMetadata().get().getRef(),
-                TocMode.SIMPLIFIED_CLEAN);
-        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
-                context.getNumberingConfigs(), annex.getMetadata().get().getLanguage());
-    }
-
-    @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED),

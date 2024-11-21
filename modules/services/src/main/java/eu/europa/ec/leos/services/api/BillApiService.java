@@ -30,8 +30,6 @@ public interface BillApiService extends BaseDocumentService<Bill> {
 
     DocumentViewResponse importElements(String documentRef, ImportElementRequest importElementRequest);
 
-    TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds);
-
     void populateCloneProposalMetadata(XmlDocument document);
 
     boolean isClonedProposal();
