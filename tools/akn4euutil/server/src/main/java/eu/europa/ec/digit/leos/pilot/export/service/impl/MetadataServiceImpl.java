@@ -116,13 +116,17 @@ class MetadataServiceImpl implements MetadataService {
         String[] contentNames = (String[]) documentZipContent.keySet().toArray(new String[0]);
 
         for (String contentName : contentNames) {
-            if (MetadataUtil.isDocumentXmlFile(contentName)) {
-                try {
-                    byte[] documentZipBytes = objectToByteArray(documentZipContent.get(contentName));
-                    xmlDocuments.add(XmlUtil.parseXml(new ByteArrayInputStream(documentZipBytes), contentName));
-                } catch(Exception e){
-                    LOG.error("Error parsing xml document", e);
+            if (!contentName.endsWith(".xml")) {
+                continue;
+            }
+            try {
+                byte[] documentZipBytes = objectToByteArray(documentZipContent.get(contentName));
+                XmlUtil.XmlFile xmlFile = XmlUtil.parseXml(new ByteArrayInputStream(documentZipBytes), contentName);
+                if (MetadataUtil.isDocumentXmlFilename(contentName) || MetadataUtil.isDocumentXmlFile(xmlFile)) {
+                    xmlDocuments.add(xmlFile);
                 }
+            } catch(Exception e){
+                LOG.error("Error parsing xml document", e);
             }
         }
 
@@ -134,12 +138,13 @@ class MetadataServiceImpl implements MetadataService {
         String[] contentNames = (String[]) documentZipContent.keySet().toArray(new String[0]);
 
         for (String contentName : contentNames) {
-            if (!MetadataUtil.isDocumentXmlFile(contentName)) {
-                try {
-                    furtherContent.put(contentName, documentZipContent.get(contentName));
-                } catch(Exception e){
-                    LOG.error("Error parsing xml document", e);
-                }
+            if (MetadataUtil.isDocumentXmlFilename(contentName)) {
+                continue;
+            }
+            try {
+                furtherContent.put(contentName, documentZipContent.get(contentName));
+            } catch(Exception e){
+                LOG.error("Error parsing xml document", e);
             }
         }
 
