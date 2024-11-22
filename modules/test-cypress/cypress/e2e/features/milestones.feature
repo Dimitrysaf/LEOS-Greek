@@ -50,12 +50,12 @@ Feature: milestone section regression features
         When click on option "View" under milestone actions
         Then user is on milestone explorer window
         And  milestone explorer window contains below tabs
-            | TabName                         |
-            | Explanatory Memorandum  [1.0.0] |
-            | Legal Act  [1.0.0]              |
-            | Financial Statement  [1.0.0]    |
-            | Annex 1  [1.0.0]                |
-            | Annex 2  [1.0.0]                |
+            | TabName                              |
+            | Explanatory Memorandum  [1.0.0]      |
+            | Legal Act  [1.0.0]                   |
+            | Digital Financial Statement  [1.0.0] |
+            | Annex 1  [1.0.0]                     |
+            | Annex 2  [1.0.0]                     |
         When click on close button in milestone explorer view
         Then user is on act viewer page
         When click on three dots under actions column of row 1 of milestones table
@@ -91,11 +91,11 @@ Feature: milestone section regression features
         And  click on option "View" under milestone actions
         Then user is on milestone explorer window
         And  milestone explorer window contains below tabs
-            | TabName                         |
-            | Cover Page  [1.0.0]             |
-            | Explanatory Memorandum  [1.0.0] |
-            | Legal Act  [1.0.0]              |
-            | Financial Statement  [1.0.0]    |
+            | TabName                              |
+            | Cover Page  [1.0.0]                  |
+            | Explanatory Memorandum  [1.0.0]      |
+            | Legal Act  [1.0.0]                   |
+            | Digital Financial Statement  [1.0.0] |
         When export button is displayed in milestone explorer window
 #         When click on export button present in milestone explorer window
 #         And  recent pdf file present in downloads folder contains below words

@@ -11,7 +11,7 @@ class actViewerPage {
         legalActLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Legal Act'),
         coverPageLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Cover Page'),
         expMemoLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Explanatory Memorandum'),
-        financialStatementLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Financial Statement'),
+        financialStatementLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Legislative Financial and Digital Statement'),
         annexesSection: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Annexes'),
         // AddBtnfinancialStatement: () => cy.xpath("//div/*[text()='Financial Statement']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Add ']"),
         // financialStatementLink: () => cy.xpath("//a/*[text()='Financial Statement']"),
