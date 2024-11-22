@@ -102,34 +102,61 @@ public class MetadataUtil {
                 "", MetadataFieldType.ADOPTION_LOCATION);
     }
 
-    public static boolean isDocumentXmlFile(final String filename) {
+    public static boolean isDocumentXmlFile(final XmlFile xmlFile) {
+        Node rootNode = xmlFile.getRootNode();
+        if (XmlUtil.isNodeEmpty(rootNode)) {
+            return false;
+        }
+        if (hasDocumentElement(rootNode, "doc")) {
+            return true;
+        }
+        return hasDocumentElement(rootNode, "bill");
+    }
+
+    private static boolean hasDocumentElement(final Node rootNode, final String docElementName) {
+        Node documentNode = XmlUtil.getChildNodeWithName(rootNode, docElementName);
+        if (XmlUtil.isNodeEmpty(documentNode)) {
+            return false;
+        }
+        if (!XmlUtil.nodeHasAttribute(documentNode, "name")) {
+            return false;
+        }
+        return XmlUtil.getNodeAttributeValue(documentNode, "name").length() > 0;
+    }
+
+    public static boolean isDocumentXmlFilename(final String filename) {
         final String lowerCaseFilename = filename.toLowerCase();
         if (!lowerCaseFilename.endsWith(".xml")) {
             return false;
         }
-        return MetadataUtil.isDocumentXmlFilename(lowerCaseFilename);
-    }
-
-    public static boolean isDocumentXmlFilename(final String filename) {
-        if (filename.startsWith("annex")) {
+        if (lowerCaseFilename.startsWith("annex")) {
             return true;
         }
-        if (filename.startsWith("bill")) {
+        if (lowerCaseFilename.startsWith("bill")) {
             return true;
         }
-        if (filename.startsWith("expl_memorandum")) {
+        if (lowerCaseFilename.startsWith("expl_memorandum")) {
             return true;
         }
-        if (filename.startsWith("main")) {
+        if (lowerCaseFilename.startsWith("main")) {
             return true;
         }
-        if (filename.startsWith("memorandum")) {
+        if (lowerCaseFilename.startsWith("memorandum")) {
             return true;
         }
-        if (filename.startsWith("reg")) {
+        if (lowerCaseFilename.startsWith("reg")) {
             return true;
         }
-        if (filename.startsWith("stat_financ")) {
+        if (lowerCaseFilename.startsWith("financial_statement")) {
+            return true;
+        }
+        if (lowerCaseFilename.startsWith("stat_financ")) {
+            return true;
+        }
+        if (lowerCaseFilename.startsWith("stat_digit_financ")) {
+            return true;
+        }
+        if (lowerCaseFilename.startsWith("expl_council")) {
             return true;
         }
         return false;

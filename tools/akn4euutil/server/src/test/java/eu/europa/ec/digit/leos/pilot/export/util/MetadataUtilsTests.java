@@ -254,6 +254,74 @@ public class MetadataUtilsTests {
         Assertions.assertEquals("PROP_ACT-COM(2022)_666-final-en.leg", legName);
     }
 
+    @Test
+    public void testIsDocumentXmlFilename() {
+        String filenameSuffix = "-cm3rbjrge0004si76xfw7zuq7-en.xml";
+
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("ANNEX" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("BILL" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_MEMORANDUM" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_COUNCIL" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("main" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("MEMORANDUM" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("FINANCIAL_STATEMENT" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_FINANCE" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_DIGIT_FINANCE" + filenameSuffix));
+        Assertions.assertFalse(MetadataUtil.isDocumentXmlFilename("main-cm3rbjrge0004si76xfw7zuq7-en.css"));
+        Assertions.assertFalse(MetadataUtil.isDocumentXmlFilename("MY_DOC" + filenameSuffix));
+    }
+
+    @Test
+    public void testIsDocumentXmlFileForDocElement() throws XmlUtilException {
+        final XmlFile xmlFile = XmlUtil.newXmlFile();
+        xmlFile.setName("EXPL_MEMORANDUM-cm3rbjrge0004si76xfw7zuq7-en.xml");
+        final Node rootNode = xmlFile.createRoot("akomaNtoso");
+
+        final Node docNode = xmlFile.newElement("doc");
+        rootNode.appendChild(docNode);
+        XmlUtil.setNodeAttributeValue(docNode, "name", "EXPL_MEMORANDUM");
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFile(xmlFile));
+    }
+
+    @Test
+    public void testIsDocumentXmlFileForBillElement() throws XmlUtilException {
+        final XmlFile xmlFile = XmlUtil.newXmlFile();
+        xmlFile.setName("REG-cm3rbjrge0004si76xfw7zuq7-en.xml");
+        final Node rootNode = xmlFile.createRoot("akomaNtoso");
+
+        final Node billNode = xmlFile.newElement("bill");
+        rootNode.appendChild(billNode);
+        XmlUtil.setNodeAttributeValue(billNode, "name", "REG");
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFile(xmlFile));
+    }
+
+    @Test
+    public void testIsDocumentXmlFileMissingDocElement() throws XmlUtilException {
+        final XmlFile xmlFile = XmlUtil.newXmlFile();
+        xmlFile.setName("MYDOC-cm3rbjrge0004si76xfw7zuq7-en.xml");
+        Node rootNode = xmlFile.createRoot("akomaNtoso");
+        Assertions.assertFalse(MetadataUtil.isDocumentXmlFile(xmlFile));
+    }
+
+    @Test
+    public void testIsDocumentXmlFileMissingNameAttribute() throws XmlUtilException {
+        final XmlFile xmlFile = XmlUtil.newXmlFile();
+        xmlFile.setName("MYDOC-cm3rbjrge0004si76xfw7zuq7-en.xml");
+        Node rootNode = xmlFile.createRoot("akomaNtoso");
+        rootNode.appendChild(xmlFile.newElement("doc"));
+        Assertions.assertFalse(MetadataUtil.isDocumentXmlFile(xmlFile));
+    }
+
+    @Test
+    public void testIsDocumentXmlFileEmptyNameAttribute() throws XmlUtilException {
+        final XmlFile xmlFile = XmlUtil.newXmlFile();
+        xmlFile.setName("MYDOC-cm3rbjrge0004si76xfw7zuq7-en.xml");
+        Node rootNode = xmlFile.createRoot("akomaNtoso");
+        XmlUtil.setNodeAttributeValue(rootNode, "name", "");
+        rootNode.appendChild(xmlFile.newElement("doc"));
+        Assertions.assertFalse(MetadataUtil.isDocumentXmlFile(xmlFile));
+    }
 
     private ApplyMetadataRequest getDummyMetadataRequest() {
         return new ApplyMetadataRequest("http://example.com/test",

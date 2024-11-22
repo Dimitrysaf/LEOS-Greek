@@ -126,7 +126,7 @@ public final class MetadataTestsUtil {
         String[] legFileContentNames = legFileContent.keySet().toArray(new String[0]);
 
         for (String contentName : legFileContentNames) {
-            if (MetadataUtil.isDocumentXmlFile(contentName)) {
+            if (MetadataUtil.isDocumentXmlFilename(contentName)) {
                 checkProcessedXml((byte[]) legFileContent.get(contentName), contentName, configuration);
             }
         }
