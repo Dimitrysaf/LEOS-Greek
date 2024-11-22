@@ -264,7 +264,7 @@
   "page.collection.drafts.explanatory.table.actions.delete-dialog.title": "Confirmation de suppression de l'exposé des motifs",
   "page.collection.drafts.explanatory.table.actions.delete-dialog.desc": "Êtes-vous sûr de vouloir supprimer l'exposé des motifs",
   "page.collection.drafts.legal-act": "Texte légal",
-  "page.collection.drafts.financial-statement.title": "Fiche financière",
+  "page.collection.drafts.financial-statement.title": "Fiche Financière et Numérique Législative",
   "page.collection.drafts.financial-statement.not-found": "Il n'y a pas de fiche financière",
   "page.collection.drafts.financial-statement.create.error": "Échec de la création de l'état financier",
   "page.collection.drafts.financial-statement.delete.error": "Échec de la suppression de l'état financier",
