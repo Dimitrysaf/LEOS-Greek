@@ -23,10 +23,8 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFie
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
-import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
-import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.*;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
-import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 
 @Service
 class MetadataServiceImpl implements MetadataService {
@@ -73,6 +73,10 @@ class MetadataServiceImpl implements MetadataService {
             LOG.error("Error applying metadata", ex);
             return buildErrorResponse(request);
         }
+    }
+
+    public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
+        CompletableFuture.runAsync(ApplyMetadataRunnable.create(inputFile, callbackUrl, this));
     }
 
     private ApplyMetadataRequest readContentXml(Map<String, Object> zipContent) throws MetadataServiceException {
@@ -327,5 +331,43 @@ class MetadataServiceImpl implements MetadataService {
             return (byte[]) obj;
         }
         return null;
+    }
+
+    public static class ApplyMetadataRunnable implements Runnable {
+        private final MetadataService metadataService;
+        private final String callbackUrl;
+        private final MultipartFile inputFile;
+
+        public ApplyMetadataRunnable(MultipartFile inputFile, String callbackUrl, MetadataService metadataService) {
+            this.metadataService = metadataService;
+            this.inputFile = inputFile;
+            this.callbackUrl = callbackUrl;
+        }
+
+        @Override
+        public void run() {
+            LOG.debug("Start apply metadata async ...");
+            final byte[] content = this.metadataService.applyMetadata(this.inputFile);
+
+            final HttpUtil.HttpClient httpClient = HttpUtil.createHttpClient();
+            final Map<String,String> requestHeaders = new HashMap<>();
+            requestHeaders.put("Content-Type", ZipUtil.APPLICATION_ZIP_VALUE);
+
+            HttpUtil.HttpResponse httpResponse = null;
+            try {
+                LOG.debug("Send ZIP to callback url ...");
+                httpResponse = httpClient.doPost(this.callbackUrl, new HashMap<>(), requestHeaders, content);
+            } catch(HttpUtil.HttpClientRequestException ex) {
+                LOG.debug("Error sending ZIP to callback url [callbackUrl: {} / statusCode: {} / message: {}]", this.callbackUrl,
+                        (httpResponse != null) ? httpResponse.getStatusCode() : "unknown",
+                        (httpResponse != null) ? httpResponse.getStatusText() : "unknown", ex);
+            } catch(Exception ex) {
+                LOG.error("Error sending ZIP to callback url [callbackUrl: {}]", this.callbackUrl, ex);
+            }
+        }
+
+        public static Runnable create(MultipartFile inputFile, String callbackUrl, MetadataService metadataService) {
+            return new ApplyMetadataRunnable(inputFile, callbackUrl, metadataService);
+        }
     }
 }

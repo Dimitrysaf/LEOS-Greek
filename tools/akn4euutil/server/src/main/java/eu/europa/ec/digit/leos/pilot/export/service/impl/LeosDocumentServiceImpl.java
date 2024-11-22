@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -79,7 +80,7 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         try {
             outputList = restClient.generateHtmlRenditions(convertDocumentInput.getTranslationsFile());
         } catch (IOException e) {
-            log.error("Error while generating html renditions - {}", e.getMessage());
+            LOG.error("Error while generating html renditions - {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return outputList.getLeosRenditionOutputs();
@@ -89,4 +90,7 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return metadataService.applyMetadata(inputFile);
     }
 
+    public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
+        this.metadataService.applyMetadataAsync(inputFile, callbackUrl);
+    }
 }
