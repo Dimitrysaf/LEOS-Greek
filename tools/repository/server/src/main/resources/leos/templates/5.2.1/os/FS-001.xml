@@ -628,7 +628,7 @@
                                     <p>Budget line</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:center;">
-                                    <p>Type of</p><p>expenditure </p>
+                                    <p>Type of<br/>expenditure</p>
                                 </td>
                                 <td colspan="4" style="border:1px solid black;text-align:center;">
                                     <p>Contribution</p>
@@ -765,7 +765,7 @@
                                     <p>Budget line</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:center;">
-                                    <p>Type of</p><p>expenditure </p>
+                                    <p>Type of<br/>expenditure</p>
                                 </td>
                                 <td colspan="4" style="border:1px solid black;text-align:center;">
                                     <p>Contribution</p>
@@ -931,46 +931,23 @@
                         <!-- rotated table (landscape) -->
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td colspan="3" rowspan="2" style="width: 48%; text-align: center;">
+                                <td colspan="3" style="width: 48%; text-align: center;">
                                     <p>DG: &lt;.......&gt;</p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td rowspan="2" style="width: 11%; text-align: center;">
-                                    <p><b>TOTAL MFF</b></p>
-                                    <p><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr>
@@ -1091,10 +1068,8 @@
                             <tr>
                                 <td rowspan="2" style="width: 28%; text-align: center;">
                                     <p>
-                                        <b>TOTAL appropriations</b>
+                                        <b>TOTAL appropriations<br/>for DG &lt;.......&gt;</b>
                                     </p>
-                                    <p>
-                                        <b>for DG &lt;.......&gt;</b></p>
                                 </td>
                                 <td style="width: 10%;">
                                     <p>Commitments</p>
@@ -1170,46 +1145,23 @@
                         <!-- rotated table -->
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td colspan="3" rowspan="2" style="width: 48%; text-align: center;">
+                                <td colspan="3" style="width: 48%; text-align: center;">
                                     <p>DG: &lt;.......&gt;</p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td rowspan="2" style="width: 11%; text-align: center;">
-                                    <p><b>TOTAL MFF</b></p>
-                                    <p><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr>
@@ -1330,10 +1282,8 @@
                             <tr>
                                 <td rowspan="2" style="width: 28%; text-align: center;">
                                     <p>
-                                        <b>TOTAL appropriations</b>
+                                        <b>TOTAL appropriations<br/>for DG &lt;.......&gt;</b>
                                     </p>
-                                    <p>
-                                        <b>for DG &lt;.......&gt;</b></p>
                                 </td>
                                 <td style="width: 10%;">
                                     <p>Commitments</p>
@@ -1411,46 +1361,23 @@
                         <!-- rotated table -->
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td colspan="3" rowspan="2" style="width: 48%;">
+                                <td colspan="3" style="width: 48%;">
                                     <p/>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td rowspan="2" style="width: 11%; text-align: center;">
-                                    <p><b>TOTAL MFF</b></p>
-                                    <p><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 9%; text-align: center;">
-                                    <p>
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr>
@@ -1534,9 +1461,7 @@
                             </tr>
                             <tr>
                                 <td rowspan="2" style="width: 28%; background: #E6E6E6; text-align: center;">
-                                    <p><b>TOTAL appropriations</b></p>
-                                    <p><b>under HEADING &lt;....&gt;</b></p>
-                                    <p>of the multiannual financial framework</p>
+                                    <p><b>TOTAL appropriations<br/>under HEADING &lt;....&gt;</b><br/>of the multiannual financial framework</p>
                                 </td>
                                 <td style="width: 10%;">
                                     <p>Commitments</p>
@@ -1614,8 +1539,7 @@
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
                                 <td style="width: 34%; text-align: center; background:#D3D3D3;">
-                                    <p><b>Heading of multiannual financial</b></p>
-                                    <p><b>framework</b></p>
+                                    <p><b>Heading of multiannual financial<br/>framework</b></p>
                                 </td>
                                 <td style="width: 7%;">
                                     <p>Number</p>
@@ -1629,46 +1553,23 @@
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td colspan="3" rowspan="2" style="width: 54%; text-align: center;">
+                                <td colspan="3" style="width: 54%; text-align: center;">
                                     <p>DG: &lt;.......&gt;</p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td rowspan="2" style="width: 10%; text-align: center;">
-                                    <p><b>TOTAL MFF</b></p>
-                                    <p><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr>
@@ -1792,10 +1693,8 @@
                             <tr>
                                 <td rowspan="2" style="width: 30%; text-align: center;">
                                     <p>
-                                        <b>TOTAL appropriations</b>
+                                        <b>TOTAL appropriations<br/>for DG &lt;.......&gt;</b>
                                     </p>
-                                    <p>
-                                        <b>for DG &lt;.......&gt;</b></p>
                                 </td>
                                 <td style="width: 9%;">
                                     <p>Commitments</p>
@@ -1869,24 +1768,23 @@
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td colspan="3" rowspan="2" style="width: 54%; text-align: center;">
+                                <td colspan="3" style="width: 54%; text-align: center;">
                                     <p>DG: &lt;.......&gt;</p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td rowspan="2" style="width: 10%; text-align: center;">
-                                    <p><b>TOTAL MFF</b></p>
-                                    <p><b>2021-2027</b></p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr>
@@ -2023,10 +1921,8 @@
                             <tr>
                                 <td rowspan="2" style="width: 30%;">
                                     <p>
-                                        <b>TOTAL appropriations</b>
+                                        <b>TOTAL appropriations<br/>for DG &lt;.......&gt;</b>
                                     </p>
-                                    <p>
-                                        <b>for DG &lt;.......&gt;</b></p>
                                 </td>
                                 <td style="width: 9%;">
                                     <p>Commitments</p>
@@ -2100,24 +1996,23 @@
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td colspan="3" rowspan="2" style="width: 48%;">
+                                <td colspan="3" style="width: 48%;">
                                     <p/>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
                                 <td style="width: 9%; text-align: center;">
-                                    <p>Year</p>
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td rowspan="2" style="width: 11%; text-align: center;">
-                                    <p><b>TOTAL MFF</b></p>
-                                    <p><b>2021-2027</b></p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr>
@@ -2223,9 +2118,7 @@
                             </tr>
                             <tr>
                                 <td rowspan="2" style="width: 28%; background: #E6E6E6; text-align: center;">
-                                    <p><b>TOTAL appropriations</b></p>
-                                    <p><b>under HEADING &lt;....&gt;</b></p>
-                                    <p>of the multiannual financial framework</p>
+                                    <p><b>TOTAL appropriations<br/>under HEADING &lt;....&gt;</b><br/>of the multiannual financial framework</p>
                                 </td>
                                 <td style="width: 10%;">
                                     <p>Commitments</p>
@@ -2300,44 +2193,21 @@
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td colspan="4" rowspan="2" style="width: 53%;"> </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td colspan="4" style="width: 53%;"> </td>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td rowspan="2" style="width: 10%; text-align: center;">
-                                    <p><b>TOTAL MFF</b></p>
-                                    <p><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr>
@@ -2423,10 +2293,7 @@
                             </tr>
                             <tr>
                                 <td rowspan="2" style="width: 30%; background: #E6E6E6; text-align: center;">
-                                    <p><b>TOTAL appropriations</b></p>
-                                    <p><b>Under Heading 1 to 6</b></p>
-                                    <p>of the multiannual financial framework</p>
-                                    <p>(Reference amount)</p>
+                                    <p><b>TOTAL appropriations<br/>Under Heading 1 to 6</b><br/>of the multiannual financial framework<br/>(Reference amount)</p>
                                 </td>
                                 <td style="width: 9%;">
                                     <p>Commitments</p>
@@ -2524,50 +2391,23 @@
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 14.4pt;">
-                                <td style="width: 60.64%; border: solid black 1.0pt; text-align: center;" colspan="4" rowspan="2">
-                                    <p>
-                                        DG: &lt;.......&gt; </p>
+                                <td style="width: 60.64%; border: solid black 1.0pt; text-align: center;" colspan="4">
+                                    <p>DG: &lt;.......&gt; </p>
                                 </td>
-                                <td style="width: 7.52%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 7.52%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 7.52%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 7.52%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 9.3%; border-top: solid black 1.0pt; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;" rowspan="2">
-                                    <p><b>TOTAL MFF 2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 7.52%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 7.52%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 7.52%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 7.52%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -2666,50 +2506,24 @@
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 15.75pt;">
-                                <td style="width: 60.64%; border: solid black 1.0pt; text-align: center;" colspan="4" rowspan="2">
+                                <td style="width: 60.64%; border: solid black 1.0pt; text-align: center;" colspan="4">
                                     <p>
                                         DG: &lt;.......&gt; </p>
                                 </td>
-                                <td style="width: 7.52%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 7.52%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 7.52%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 7.52%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 9.3%; border-top: solid black 1.0pt; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;" rowspan="2">
-                                    <p><b>TOTAL MFF 2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 7.52%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 7.52%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 7.52%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 7.52%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; text-align: center;">
-                                    <p>
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -2853,44 +2667,21 @@
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td colspan="2" rowspan="2" style="width: 53%;"> </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td colspan="2" style="width: 53%;"> </td>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td rowspan="2" style="width: 10%; text-align: center;">
-                                    <p><b>TOTAL MFF</b></p>
-                                    <p><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 8%; text-align: center;">
-                                    <p>
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr>
@@ -2997,51 +2788,24 @@
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style=" height: 21.0pt;">
-                                <td style="width: 48.88%; border: solid black 1.0pt; text-align: center;" colspan="3" rowspan="2">
+                                <td style="width: 48.88%; border: solid black 1.0pt; text-align: center;" colspan="3">
                                     <p>
                                         DG: &lt;.......&gt; </p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 9.56%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 11.8%; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 14.4pt;">
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -3214,10 +2978,8 @@
                             <tr style="height: 14.4pt;">
                                 <td style="width: 28.38%; border: solid black 1.0pt;" rowspan="2">
                                     <p style="margin: 0cm; text-align: center;">
-                                        <b> TOTAL appropriations </b>
+                                        <b>TOTAL appropriations<br/>for DG &lt;.......&gt;</b>
                                     </p>
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> for DG &lt;.......&gt;</b></p>
                                 </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -3296,51 +3058,24 @@
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 21.0pt;">
-                                <td style="width: 48.88%; border: solid black 1.0pt;" colspan="3" rowspan="2">
+                                <td style="width: 48.88%; border: solid black 1.0pt;" colspan="3">
                                     <p style="margin: 0cm; text-align: center;">
                                         DG: &lt;.......&gt; </p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 9.56%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 11.8%; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 14.4pt;">
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -3513,10 +3248,8 @@
                             <tr style="height: 14.4pt;">
                                 <td style="width: 28.38%; border: solid black 1.0pt; border-top: none;" rowspan="2">
                                     <p style="margin: 0cm; text-align: center;">
-                                        <b> TOTAL appropriations </b>
+                                        <b>TOTAL appropriations<br/>for DG &lt;.......&gt;</b>
                                     </p>
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> for DG &lt;.......&gt;</b></p>
                                 </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -3596,52 +3329,25 @@
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 15.0pt;">
-                                <td style="width: 48.64%; border-top: black; border-left: black; border-bottom: black; border-right: black; border-style: solid; border-width: 1.0pt;" colspan="3" rowspan="2">
+                                <td style="width: 48.64%; border-top: black; border-left: black; border-bottom: black; border-right: black; border-style: solid; border-width: 1.0pt;" colspan="3">
                                     <p style="margin: 0cm; text-align: center;">
                                         <b> </b>
                                     </p>
                                 </td>
-                                <td style="width: 9.86%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 9.86%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 9.86%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 9.86%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 11.92%; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 9.86%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.86%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.86%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.86%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 21.6pt;">
@@ -3741,8 +3447,7 @@
                             </tr>
                             <tr style="height: 28.2pt;">
                                 <td style="width: 28.22%; border-top: none; border-left: solid black 1.0pt; border-bottom: none; border-right: solid black 1.0pt; background: #E6E6E6;">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>under HEADING &lt;....&gt;</b></p>
+                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations<br/>under HEADING &lt;....&gt;</b></p>
                                 </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -3844,51 +3549,24 @@
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 21.0pt;">
-                                <td style="width: 48.88%; border: solid black 1.0pt; border-bottom: none;" colspan="3" rowspan="2">
+                                <td style="width: 48.88%; border: solid black 1.0pt; border-bottom: none;" colspan="3">
                                     <p style="margin: 0cm; text-align: center;">
                                         DG: &lt;.......&gt; </p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 9.56%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 11.8%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 14.4pt;">
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -4059,10 +3737,8 @@
                             <tr style="height: 14.4pt;">
                                 <td style="width: 28.38%; border-top: none; border-left: solid black 1.0pt; border-right: solid black 1.0pt;" rowspan="2">
                                     <p style="margin: 0cm; text-align: center;">
-                                        <b> TOTAL appropriations </b>
+                                        <b>TOTAL appropriations<br/>for DG &lt;.......&gt;</b>
                                     </p>
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> for DG &lt;.......&gt;</b></p>
                                 </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -4142,51 +3818,24 @@
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 21.0pt;">
-                                <td style="width: 48.88%; border: solid black 1.0pt;" colspan="3" rowspan="2">
+                                <td style="width: 48.88%; border: solid black 1.0pt;" colspan="3">
                                     <p style="margin: 0cm; text-align: center;">
                                         DG: &lt;.......&gt; </p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 9.92%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 9.56%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 11.8%; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 14.4pt;">
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -4356,10 +4005,8 @@
                             <tr style="height: 14.4pt;">
                                 <td style="width: 28.38%; border: solid black 1.0pt; border-top: none;" rowspan="2">
                                     <p style="margin: 0cm; text-align: center;">
-                                        <b> TOTAL appropriations </b>
+                                        <b>TOTAL appropriations<br/>for DG &lt;.......&gt;</b>
                                     </p>
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> for DG &lt;.......&gt;</b></p>
                                 </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -4439,52 +4086,25 @@
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 15.0pt;">
-                                <td style="width: 48.64%; border-top: black; border-left: black; border-bottom: black; border-right: black; border-style: solid; border-width: 1.0pt;" colspan="3" rowspan="2">
+                                <td style="width: 48.64%; border-top: black; border-left: black; border-bottom: black; border-right: black; border-style: solid; border-width: 1.0pt;" colspan="3">
                                     <p style="margin: 0cm; text-align: center;">
                                         <b> </b>
                                     </p>
                                 </td>
-                                <td style="width: 9.86%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 9.86%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 9.86%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 9.86%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 11.92%; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 9.86%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.86%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.86%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 9.86%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 21.6pt;">
@@ -4584,8 +4204,7 @@
                             </tr>
                             <tr style="height: 28.2pt;">
                                 <td style="width: 28.22%; border-top: none; border-left: solid black 1.0pt; border-bottom: none; border-right: solid black 1.0pt; background: #E6E6E6;">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>under HEADING &lt;....&gt;</b></p>
+                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations<br/>under HEADING &lt;....&gt;</b></p>
                                 </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -4667,22 +4286,21 @@
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 14.4pt;">
-                                <td style="width: 30.44%;" colspan="3" rowspan="2"> </td>
-                                <td style="width: 8.74%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 30.44%;" colspan="3"> </td>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 8.74%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 8.74%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 8.74%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 10.56%; border-top: solid black 1.0pt; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -4790,8 +4408,7 @@
                             </tr>
                             <tr style="height: 28.2pt;">
                                 <td style="width: 30.44%; border-top: none; border-left: solid black 1.0pt; border-right: solid black 1.0pt; background: #E6E6E6;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations under Headings 1 to 6</b></p>
-                                    <p style="margin: 0cm; text-align: center;">of the multiannual financial framework (Reference amount)</p>
+                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations under Headings 1 to 6</b><br/>of the multiannual financial framework (Reference amount)</p>
                                 </td>
                                 <td style="width: 9.42%; border: none; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;">Commitments</p>
@@ -4896,51 +4513,24 @@
                         <!-- rotated table -->
                         <table style="width: 657.0pt; margin-left: 5.9pt; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 14.4pt;">
-                                <td style="width: 394.6pt; border: solid black 1.0pt;" colspan="4" rowspan="2">
+                                <td style="width: 394.6pt; border: solid black 1.0pt;" colspan="4">
                                     <p style="margin: 0cm; text-align: center;">
                                         DG: &lt;.......&gt; </p>
                                 </td>
-                                <td style="width: 50.05pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 50.05pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 50.05pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 50.05pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 62.2pt; border-top: solid black 1.0pt; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 50.05pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 50.05pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 50.05pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 50.05pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -5040,51 +4630,24 @@
                     <content>
                         <table style="width: 657.0pt; margin-left: 5.9pt; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 15.75pt;">
-                                <td style="width: 394.6pt; border: solid black 1.0pt;" colspan="4" rowspan="2">
+                                <td style="width: 394.6pt; border: solid black 1.0pt;" colspan="4">
                                     <p style="margin: 0cm; text-align: center;">
                                         DG: &lt;.......&gt; </p>
                                 </td>
-                                <td style="width: 50.05pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 50.05pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 50.05pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 50.05pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 62.2pt; border-top: solid black 1.0pt; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 50.05pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 50.05pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 50.05pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 50.05pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -5229,49 +4792,23 @@
                         <!-- rotated table -->
                         <table style="width: 657.0pt; margin-left: 5.9pt; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 14.4pt;">
-                                <td style="width: 355.0pt; border: solid black 1.0pt;" colspan="2" rowspan="2">
+                                <td style="width: 355.0pt; border: solid black 1.0pt;" colspan="2">
                                     <p style="margin: 0cm; text-align: center;"> </p>
                                 </td>
-                                <td style="width: 58.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 58.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 58.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 58.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 70.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF 2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 58.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 58.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 58.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 58.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 28.2pt;">
@@ -5363,10 +4900,7 @@
                         <table style="text-align:center;border-collapse:collapse;margin-bottom:25px;">
                             <tr>
                                 <td rowspan="3" style="border:1px solid black;text-align:center;">
-                                    <p><b>Indicate</b></p>
-                                    <p><b>objectives and</b></p>
-                                    <p><b>outputs</b></p>
-                                    <p>&#8659;</p>
+                                    <p><b>Indicate<br/>objectives and<br/>outputs</b><br/>&#8659;</p>
                                 </td>
                                 <td style="border:1px solid black;">
                                     <p/>
@@ -5374,21 +4908,17 @@
                                 <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td colspan="2" style="border:1px solid black;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2024</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td colspan="2" style="border:1px solid black;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2025</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td colspan="2" style="border:1px solid black;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2026</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td colspan="2" style="border:1px solid black;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2027</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
                                 <td colspan="6" style="border:1px solid black;">
                                     <p>Enter as many years as necessary to show the duration of the impact (see Section 1.6)</p>
@@ -5415,8 +4945,7 @@
                                     </p>
                                 </td>
                                 <td style="border:1px solid black;">
-                                    <p>Average</p>
-                                    <p>cost</p>
+                                    <p>Average<br/>cost</p>
                                 </td>
                                 <td style="border:1px solid black;border-right:dashed;background:#E5E5E5;">
                                     <p style="transform: rotate(270deg);">No</p>
@@ -5461,12 +4990,10 @@
                                     <p>Cost</p>
                                 </td>
                                 <td style="border:1px solid black;border-right:dashed;background:#E5E5E5;">
-                                    <p>Total</p>
-                                    <p>No</p>
+                                    <p>Total<br/>No</p>
                                 </td>
                                 <td style="border:1px solid black;background:#E5E5E5;">
-                                    <p>Total</p>
-                                    <p>Cost</p>
+                                    <p>Total<br/>Cost</p>
                                 </td>
                             </tr>
                             <tr>
@@ -5925,48 +5452,25 @@
                 <content leos:editable="false" leos:deletable="false">
                     <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                         <tr style="height: 15.0pt;">
-                            <td style="width: 43.34%; border: solid black 1.0pt;" rowspan="2">
+                            <td style="width: 43.34%; border: solid black 1.0pt;">
                                 <p style="margin: 0cm; text-align: center;">
                                     <b>VOTED APPROPRIATIONS</b>
                                 </p>
                             </td>
-                            <td style="width: 11.06%; border: solid black 1.0pt; border-left: none;">
-                                <p style="margin: 0cm; text-align: center;">Year</p>
+                            <td style="width: 9%; text-align: center;">
+                                <p>Year<br/><b>2024</b></p>
                             </td>
-                            <td style="width: 11.06%; border: solid black 1.0pt; border-left: none;">
-                                <p style="margin: 0cm; text-align: center;">Year</p>
+                            <td style="width: 9%; text-align: center;">
+                                <p>Year<br/><b>2025</b></p>
                             </td>
-                            <td style="width: 11.06%; border: solid black 1.0pt; border-left: none;">
-                                <p style="margin: 0cm; text-align: center;">Year</p>
+                            <td style="width: 9%; text-align: center;">
+                                <p>Year<br/><b>2026</b></p>
                             </td>
-                            <td style="width: 11.06%; border: solid black 1.0pt; border-left: none;">
-                                <p style="margin: 0cm; text-align: center;">Year</p>
+                            <td style="width: 9%; text-align: center;">
+                                <p>Year<br/><b>2027</b></p>
                             </td>
-                            <td style="width: 12.44%; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
-                                <p style="margin: 0cm; text-align: center;"><b>2021 - 2027</b></p>
-                            </td>
-                        </tr>
-                        <tr style="height: 15.0pt;">
-                            <td style="width: 11.06%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                <p style="margin: 0cm; text-align: center;">
-                                    <b>2024</b>
-                                </p>
-                            </td>
-                            <td style="width: 11.06%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                <p style="margin: 0cm; text-align: center;">
-                                    <b>2025</b>
-                                </p>
-                            </td>
-                            <td style="width: 11.06%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                <p style="margin: 0cm; text-align: center;">
-                                    <b>2026</b>
-                                </p>
-                            </td>
-                            <td style="width: 11.06%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                <p style="margin: 0cm; text-align: center;">
-                                    <b>2027</b>
-                                </p>
+                            <td style="width: 11%; text-align: center;">
+                                <p><b>TOTAL MFF<br/>2021-2027</b></p>
                             </td>
                         </tr>
                         <tr style="height: 15.0pt;">
@@ -6187,48 +5691,25 @@
                 <content>
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 15.0pt;">
-                                <td style="width: 43.32%; border: solid black 1.0pt;" rowspan="2">
+                                <td style="width: 43.32%; border: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: center;">
                                         <b>EXTERNAL ASSIGNED REVENUES</b>
                                     </p>
                                 </td>
-                                <td style="width: 11.06%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 11.06%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 11.06%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 11.06%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 12.44%; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021 - 2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 11.06%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11.06%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11.06%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11.06%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -6450,49 +5931,23 @@
                     <content>
                         <table style="width: 500pt; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 25.95pt;">
-                                <td style="width: 188.0pt; border: solid black 1.0pt;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>VOTED APPROPRIATIONS</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>+</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>EXTERNAL ASSIGNED REVENUES</b></p>
+                                <td style="width: 188.0pt; border: solid black 1.0pt;">
+                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL<br/>VOTED APPROPRIATIONS<br/>+<br/>EXTERNAL ASSIGNED REVENUES</b></p>
                                 </td>
-                                <td style="width: 48.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 48.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 48.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 48.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 54.0pt; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021 - 2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 25.95pt;">
-                                <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -6764,44 +6219,22 @@
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 15.0pt;">
-                                <td style="width: 58.26%; border: solid black 1.0pt; border-right: solid black 1.0pt;" colspan="2" rowspan="2">
+                                <td style="width: 58.26%; border: solid black 1.0pt; border-right: solid black 1.0pt;" colspan="2">
                                     <p style="margin: 0cm; text-align: center;">
                                         <b>VOTED APPROPRIATIONS</b>
                                     </p>
                                 </td>
-                                <td style="width: 10.44%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 10.44%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 10.44%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 10.44%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -6945,8 +6378,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 16.3%; border: solid black 1.0pt; border-top: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;">Admin. Support line</p>
-                                    <p style="margin: 0cm; text-align: center;">[XX.01.YY.YY]</p>
+                                    <p style="margin: 0cm; text-align: center;">Admin. Support line<br/>[XX.01.YY.YY]</p>
                                 </td>
                                 <td style="width: 41.96%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">- at Headquarters</p>
@@ -7093,44 +6525,22 @@
                 <content>
                         <table style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 15.0pt;">
-                                <td style="width: 58.26%; border: solid black 1.0pt; border-right: solid black 1.0pt;" colspan="2" rowspan="2">
+                                <td style="width: 58.26%; border: solid black 1.0pt; border-right: solid black 1.0pt;" colspan="2">
                                     <p style="margin: 0cm; text-align: center;">
                                         <b>EXTERNAL ASSIGNED REVENUES</b>
                                     </p>
                                 </td>
-                                <td style="width: 10.44%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 10.44%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 10.44%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 10.44%; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -7275,8 +6685,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 16.3%; border: solid black 1.0pt; border-top: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;">Admin. Support line</p>
-                                    <p style="margin: 0cm; text-align: center;">[XX.01.YY.YY]</p>
+                                    <p style="margin: 0cm; text-align: center;">Admin. Support line<br/>[XX.01.YY.YY]</p>
                                 </td>
                                 <td style="width: 41.96%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">- at Headquarters</p>
@@ -7422,45 +6831,20 @@
                     <content>
                         <table style="width: 100%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 24.6pt;">
-                                <td style="width: 268.0pt; border: solid black 1.0pt; border-right: solid black 1.0pt;" colspan="2" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>VOTED APPROPRIATIONS</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>+</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>EXTERNAL ASSIGNED REVENUES</b></p>
+                                <td style="width: 268.0pt; border: solid black 1.0pt; border-right: solid black 1.0pt;" colspan="2">
+                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL<br/>VOTED APPROPRIATIONS<br/>+<br/>EXTERNAL ASSIGNED REVENUES</b></p>
                                 </td>
-                                <td style="width: 48.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 48.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 48.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 48.0pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">Year</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 24.6pt;">
-                                <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2024</b>
-                                    </p>
-                                </td>
-                                <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2025</b>
-                                    </p>
-                                </td>
-                                <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2026</b>
-                                    </p>
-                                </td>
-                                <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>2027</b>
-                                    </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -7605,8 +6989,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 75.0pt; border: solid black 1.0pt; border-top: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;">Admin. Support line</p>
-                                    <p style="margin: 0cm; text-align: center;">[XX.01.YY.YY]</p>
+                                    <p style="margin: 0cm; text-align: center;">Admin. Support line<br/>[XX.01.YY.YY]</p>
                                 </td>
                                 <td style="width: 193.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">- at Headquarters</p>
@@ -7898,50 +7281,23 @@
                     <content>
                         <table style="border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
                             <tr style="height: 26.25pt;">
-                                <td style="border: solid black 1.0pt; " rowspan="2">
+                                <td style="border: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: center;"><b>TOTAL Digital and IT appropriations</b></p>
                                 </td>
-                                <td style="width: 41.75pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 41.75pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 41.75pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 41.75pt; border-top: solid black 1.0pt; border-left: none; border-bottom: none; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        Year </p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td style="width: 49.05pt; border: solid black 1.0pt; border-left: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL MFF</b></p>
-                                    <p style="margin: 0cm; text-align: center;"><b>2021-2027</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 26.25pt;">
-                                <td style="width: 41.75pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2024 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 41.75pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2025 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 41.75pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2026 </b>
-                                    </p>
-                                </td>
-                                <td style="width: 41.75pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b> 2027 </b>
-                                    </p>
+                                <td style="width: 11%; text-align: center;">
+                                    <p><b>TOTAL MFF<br/>2021-2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 15.0pt;">
@@ -8199,21 +7555,17 @@
                                 <td style="width: 31.82%; border: solid black 1.0pt;">
                                     <p style="margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
                                 </td>
-                                <td style="width: 13.1%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2024</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 13.1%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2025</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 13.1%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2026</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 13.1%; border: solid black 1.0pt; border-left: none;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2027</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
                                 <td style="width: 15.74%; border: solid black 1.0pt; border-left: none;">
                                     <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;"> Total </p>
@@ -8347,21 +7699,17 @@
                                 </td>
                             </tr>
                             <tr style="height: 19.4pt;">
-                                <td style="width: 18.22%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2024</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 11.24%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2025</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 11.14%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2026</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 13.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="text-align: center;">Year</p>
-                                    <p style="text-align: center;"><b>2027</b></p>
+                                <td style="width: 9%; text-align: center;">
+                                    <p>Year<br/><b>2027</b></p>
                                 </td>
                             </tr>
                             <tr style="height: 19.4pt;">
