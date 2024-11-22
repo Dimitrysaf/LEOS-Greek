@@ -106,7 +106,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         String unzipPath = "/unzip/";
         Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, unzipPath);
         try {
-            String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE)).findFirst().orElse("");
+            String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE) && x.endsWith(XML_DOC_EXT)).findFirst().orElse("");
             if (unzippedFiles.containsKey(proposalFileKey)) {
                 List<DocumentVO> propChildDocs = new ArrayList<>();
                 File proposalFile = (File) unzippedFiles.get(proposalFileKey);
