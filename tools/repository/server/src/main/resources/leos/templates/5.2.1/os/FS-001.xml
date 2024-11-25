@@ -1544,7 +1544,7 @@
                                 <td style="width: 7%;">
                                     <p>Number</p>
                                 </td>
-                                <td style="width: 57%; text-align: right;"> </td>
+                                <td style="width: 57%; text-align: left;"> </td>
                             </tr>
                         </table>
                     </content>
@@ -2775,7 +2775,7 @@
                                 <td style="width: 7.92%; border: solid black 1.0pt; border-left: none; text-align: center;">
                                     <p> Number </p>
                                 </td>
-                                <td style="width: 57.3%; border: solid black 1.0pt; border-left: none; text-align: right;">
+                                <td style="width: 57.3%; border: solid black 1.0pt; border-left: none; text-align: left;">
                                     <p> </p>
                                 </td>
                             </tr>
@@ -4908,20 +4908,20 @@
                                 <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="width: 9%; text-align: center;">
+                                <td style="text-align: center;" colspan="2">
                                     <p>Year<br/><b>2024</b></p>
                                 </td>
-                                <td style="width: 9%; text-align: center;">
+                                <td style="text-align: center;" colspan="2">
                                     <p>Year<br/><b>2025</b></p>
                                 </td>
-                                <td style="width: 9%; text-align: center;">
+                                <td style="text-align: center;" colspan="2">
                                     <p>Year<br/><b>2026</b></p>
                                 </td>
-                                <td style="width: 9%; text-align: center;">
+                                <td style="text-align: center;" colspan="2">
                                     <p>Year<br/><b>2027</b></p>
                                 </td>
-                                <td colspan="6" style="border:1px solid black;">
-                                    <p>Enter as many years as necessary to show the duration of the impact (see Section 1.6)</p>
+                                <td colspan="6" style="border:1px solid black;font-size: 12px;">
+                                    <p>Enter as many years as necessary to show<br/>the duration of the impact (see Section 1.6)</p>
                                 </td>
                                 <td colspan="2" style="border:1px solid black;">
                                     <p style="text-align: center;">
