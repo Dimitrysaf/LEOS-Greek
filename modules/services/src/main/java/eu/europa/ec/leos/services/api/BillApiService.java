@@ -19,9 +19,6 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.services.document.models.DocType;
 import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
-
-import java.util.List;
 
 public interface BillApiService extends BaseDocumentService<Bill> {
     DocumentViewResponse renumberBill(String documentRef);
