@@ -52,16 +52,17 @@ class tableOfContent {
 
     clickEditBtn(){
         this.elements.editBtn().click();
-        cy.wait(500);
+        cy.wait(2000);
     }
 
     clickSaveBtn(){
         this.elements.saveBtn().click();
+        cy.wait(3000);
     }
 
     clickSaveCloseBtn(){
         this.elements.saveCloseBtn().click();
-        cy.wait(500);
+        cy.wait(3000);
     }
 
     clickCancelBtn(){

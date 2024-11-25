@@ -73,7 +73,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType);
 
-    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc);
+    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode);
 
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase,
                                              boolean completeWords, String tempUpdatedContentXML) throws Exception;

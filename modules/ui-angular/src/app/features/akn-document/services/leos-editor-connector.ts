@@ -343,6 +343,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     }
     const milliseconds = new Date().getTime();
     this.loadingService.setTaskOngoing('saving', String(milliseconds));
+    if (this.isSaveAndClose) {
+      localStorage.setItem(elemData.elementId, elemData.elementFragment);
+    }
     this.saveDocumentElement(
       this.documentService.documentRef,
       elemData.elementId,
@@ -455,7 +458,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           documentRef,
           documentType,
         );
-        this.tableOfContentService.reloadToc();
         this.coEditionService.sendUpdateDocumentEvent(documentRef);
       });
     };
@@ -513,7 +515,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           documentRef,
           documentType,
         );
-        this.tableOfContentService.reloadToc();
         this.coEditionService.sendUpdateDocumentEvent(documentRef);
       });
   }

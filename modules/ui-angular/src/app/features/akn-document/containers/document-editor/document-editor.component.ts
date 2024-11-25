@@ -24,7 +24,7 @@ import {
   BehaviorSubject,
   combineLatest,
   debounceTime,
-  filter,
+  filter, finalize,
   Observable,
   Subject, Subscription,
   take,
@@ -104,6 +104,7 @@ export class DocumentEditorComponent
   contributionForView: string;
 
   isTocPaneExpanded = true;
+  tocLoading = false;
   isAnnotationsPaneCollapsed = true;
   isContributionAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
@@ -210,6 +211,18 @@ export class DocumentEditorComponent
   ) {
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
 
+    this.tocService.isTocLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isTocLoading) => {
+        this.tocLoading = isTocLoading;
+      });
+
+    this.coEditionWSService.forceReloadBS.subscribe((reload) => {
+      if (reload) {
+        this.documentService.reloadDocument();
+      }
+    });
+
     combineLatest([this.route.params, this.route.data])
       .pipe(take(1))
       .subscribe(([params, data]) => {
@@ -230,7 +243,9 @@ export class DocumentEditorComponent
     this.documentService.refreshConnectors$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
-        this.documentService.updateElementContent(data);
+        if (!!data && !data.isClosing) {
+          this.documentService.updateElementContent(data);
+        }
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
 
@@ -524,23 +539,30 @@ export class DocumentEditorComponent
     }
   }
 
-  handleSave() {
+  handleSave(isClosing: boolean) {
+    this.loadingService.setLoading(true);
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
     this.tocService
-      .saveToc(this.documentRef, this.documentType, toc)
-      .pipe(takeUntil(this.destroy$))
+      .saveToc(this.documentRef, this.documentType, toc, isClosing)
+      .pipe(takeUntil(this.destroy$), finalize(() => this.handleAfterSave()))
       .subscribe({
         next: (res) => {
-          this.documentTocComponent.isToCDraft = false;
-          this.documentTocComponent.clearSelectedNode();
-          this.tocEditService.resetTreeHistory();
-          this.documentService.reloadDocument();
-          this.tocService.reload();
-          this.coEditionWSService.sendUpdateDocumentEvent(this.documentRef);
+          this.tocService.refreshToc(res);
         },
-        error: (err) => {},
+        error: (err) => {
+          console.log("error while saving toc: " + err);
+        },
       });
+  }
+
+  handleAfterSave() {
+    this.tocService.setBlockReloadOfToc();
+    this.documentTocComponent.isToCDraft = false;
+    this.documentTocComponent.clearSelectedNode();
+    this.tocEditService.resetTreeHistory();
+    this.coEditionWSService.sendUpdateDocumentEvent(this.documentRef);
+    this.loadingService.setLoading(false);
   }
 
   handleCancel() {
@@ -586,7 +608,7 @@ export class DocumentEditorComponent
       });
     } else {
       if (save) {
-        this.handleSave();
+        this.handleSave(true);
       }
       this.closeInlineToCEdit();
     }
@@ -594,7 +616,7 @@ export class DocumentEditorComponent
   }
 
   handleSaveAndClose() {
-    this.handleSave();
+    this.handleSave(true);
     this.closeInlineToCEdit();
   }
 

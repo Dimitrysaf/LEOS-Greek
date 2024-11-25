@@ -104,7 +104,8 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             Document document = createXercesDocument(xmlContent);
             Node node = getFirstElementByName(document, startingNode);
             if (node != null) {
-                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, documentLanguageContext.getDocumentLanguage());
+                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode,
+                        documentLanguageContext.getDocumentLanguage());
             }
             setNumberingTypeForHigherSubDivision(itemVOList);
             LOG.debug("Xerces Build table of content completed in {} ms", (System.currentTimeMillis() - startTime));

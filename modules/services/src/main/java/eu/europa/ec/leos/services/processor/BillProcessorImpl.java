@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.processor;
 
+import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -22,6 +23,7 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlHelper;
@@ -31,12 +33,15 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
@@ -58,6 +63,8 @@ import static org.apache.commons.lang3.StringUtils.replaceAll;
 
 @Service
 public class BillProcessorImpl implements BillProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BillProcessorImpl.class);
 
     protected XmlContentProcessor xmlContentProcessor;
     protected ElementProcessor elementProcessor;
@@ -370,15 +377,26 @@ public class BillProcessorImpl implements BillProcessor {
     public byte[] renumberingAndPostProcessing(byte[] docContent) {
         return renumberAndProcess(docContent, false);
     }
+
     @Override
     public byte[] renumberingAndPostProcessing(byte[] docContent, boolean renumberChildElements) {
         return renumberAndProcess(docContent, renumberChildElements);
     }
 
-    private byte[] renumberAndProcess(byte[] docContent, boolean renumberChildElements) {
+    @Override
+    public byte[] renumbering(byte[] docContent, boolean renumberChildElements) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         byte [] updatedContent = numberService.renumberRecitals(docContent);
         updatedContent = numberService.renumberArticles(updatedContent, renumberChildElements);
         updatedContent = numberService.renumberParagraph(updatedContent);
+        long postProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        LOG.trace("Finished Numbering at {}ms",
+                postProcessingTime, (System.currentTimeMillis() - postProcessingTime));
+        return updatedContent;
+    }
+
+    private byte[] renumberAndProcess(byte[] docContent, boolean renumberChildElements) {
+        byte [] updatedContent = renumbering(docContent, renumberChildElements);
         return xmlContentProcessor.doXMLPostProcessing(updatedContent);
     }
 

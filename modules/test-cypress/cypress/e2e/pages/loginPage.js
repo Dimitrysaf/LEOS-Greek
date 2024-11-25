@@ -31,7 +31,7 @@ class loginPage {
     }
 
     clickVerificationDropDown(){
-        this.elements.verificationDropDown().click();
+        this.elements.verificationDropDown().click({force: true});
     }
 
     selectPasswordVerificationMethod() {

@@ -293,7 +293,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(
@@ -303,7 +303,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType,
                 messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         documentViewService.updateProposalAsync(updatedAnnex);
-        return this.annexService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
+        return this.annexService.getTableOfContent(updatedAnnex, tocMode);
     }
 
     @Override

@@ -6,6 +6,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-routing.module';
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { DownloadEconsiliumComponent } from '@/features/akn-document/components/download-econsilium/download-econsilium.component';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { RevisionPaneGroupComponent } from '@/features/akn-document/components/revision-pane-group/revision-pane-group.component';
@@ -101,6 +102,7 @@ export const DOCUMENT_ACTIONS_SERVICE =
     SharedModule,
     MatTreeModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: AknRouteReUseStrategy },

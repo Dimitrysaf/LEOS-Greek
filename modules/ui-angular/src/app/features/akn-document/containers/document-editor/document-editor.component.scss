@@ -196,6 +196,12 @@ app-document {
   border-top: 1px solid var(--eui-base-color-grey-15);
 }
 
+.toc-loading-spinner {
+  float: right;
+  margin-top: -35px;
+  margin-right: 30px;
+}
+
 .search-versions-result {
   max-height: 200px;
   overflow: scroll;
