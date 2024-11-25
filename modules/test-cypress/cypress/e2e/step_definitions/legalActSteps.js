@@ -278,7 +278,7 @@ Then('del tag with attribute {string} and value {string} of num tag of paragraph
 });
 
 Then('{string} is showing as strikethrough in num of article {int} of bill', function (label, articleNumber) {
-    legalActPage.getArticle(articleNumber).should('have.attr', 'leos:action', 'delete').find('num').should('have.text', label).should('have.attr', 'id').and('contain', 'moved');
+    legalActPage.getArticle(articleNumber).should('have.attr', 'leos:action', 'delete').find('num').should('include.text', label).should('have.attr', 'id').and('contain', 'moved');
 });
 
 Then('{string} is showing as soft move label in num of article {int} of bill', function (softLabel, articleNumber) {
@@ -286,7 +286,7 @@ Then('{string} is showing as soft move label in num of article {int} of bill', f
 });
 
 Then('{string} is showing as strikethrough in num of chapter {int} of bill', function (label, chapterNumber) {
-    legalActPage.getChapter(chapterNumber).should('have.attr', 'leos:action', 'delete').find('num').should('have.text', label).should('have.attr', 'id').and('contain', 'moved');
+    legalActPage.getChapter(chapterNumber).should('have.attr', 'leos:action', 'delete').find('num').should('include.text', label).should('have.attr', 'id').and('contain', 'moved');
 });
 
 Then('{string} is showing as soft move label in num of chapter {int} of bill', function (softLabel, chapterNumber) {

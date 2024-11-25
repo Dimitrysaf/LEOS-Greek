@@ -137,7 +137,7 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
         return null;
     }
 

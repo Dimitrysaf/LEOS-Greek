@@ -55,6 +55,7 @@
             [isExpanded]="isTocPaneExpanded"
             (expand)="onTocPaneExpanded($event)"
           >
+            <mat-spinner *ngIf="tocLoading" class="toc-loading-spinner" diameter="15" color="black"></mat-spinner>
             <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
               <!-- Expand all -->
               <button
@@ -109,7 +110,7 @@
                 [isVersionsPaneCollapsed]="isVersionsPaneCollapsed"
                 (handleExpandAll)="expandAll()"
                 (handleUndo)="handleUndo()"
-                (handleSave)="handleSave()"
+                (handleSave)="handleSave(false)"
                 (handleCancel)="handleCancel()"
                 (handleSaveAndClose)="handleSaveAndClose()"
               >

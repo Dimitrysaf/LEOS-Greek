@@ -1,6 +1,6 @@
 class legalActPage {
     elements = {
-        closeBtn: () => cy.contains('Close'),
+        closeBtn: () => cy.get("button[translate='global.actions.close']"),
         bill: () => cy.get('bill'),
         preface: () => this.elements.bill().find('preface'),
         longTitle: () => this.elements.preface().find('longtitle'),

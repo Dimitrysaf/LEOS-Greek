@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
@@ -919,12 +920,15 @@ public class XercesUtils {
     }
 
     public static List<Node> getChildren(Node node, List<String> elementsName) {
+        elementsName =
+                elementsName.stream().filter((elt) -> elt != null)
+                        .map((eltName) -> eltName.toLowerCase()).collect(Collectors.toList());
         List<Node> children = new ArrayList<>();
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE
-                    && (elementsName.contains(child.getNodeName()) || elementsName.isEmpty())) {
+                    && (elementsName.contains(child.getNodeName().toLowerCase()) || elementsName.isEmpty())) {
                 children.add(child);
             }
         }

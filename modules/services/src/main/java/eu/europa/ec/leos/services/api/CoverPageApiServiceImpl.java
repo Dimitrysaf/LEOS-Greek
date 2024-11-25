@@ -247,7 +247,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
         throw new RuntimeException("Save toc method not allowed for Memorandum type document");
     }
 

@@ -275,7 +275,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(
@@ -284,7 +284,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         setBlockOrCrossHeading(toc);
         Explanatory updatedAnnex = explanatoryService.saveTableOfContent(explanatory, toc, structureType,
                 messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
-        return this.explanatoryService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
+        return this.explanatoryService.getTableOfContent(updatedAnnex, tocMode);
     }
 
     @Override

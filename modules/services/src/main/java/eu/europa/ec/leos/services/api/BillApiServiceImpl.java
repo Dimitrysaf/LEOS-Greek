@@ -213,7 +213,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
         Bill bill = this.billService.findBillByRef(documentRef);
         User user = securityContext.getUser();
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
@@ -221,7 +221,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Bill updatedBill = this.billService.saveTableOfContent(bill, toc,
                 messageHelper.getMessage("operation.toc.updated"), user);
         documentViewService.updateProposalAsync(bill);
-        return billService.getTableOfContent(updatedBill, TocMode.SIMPLIFIED);
+        return billService.getTableOfContent(updatedBill, tocMode);
     }
 
     @Override
@@ -584,7 +584,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         boolean splittedContentIsEmpty = false;
         Element elementToEditAfterClose = null;
 
-        newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent, true);
+        newXmlContent = billProcessor.renumbering(newXmlContent, true);
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
         final String elementLabel = generateLabel(elementId, bill);

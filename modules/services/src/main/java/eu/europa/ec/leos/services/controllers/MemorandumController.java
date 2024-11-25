@@ -250,12 +250,13 @@ public class MemorandumController {
     @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveMemorandumVersion(@PathVariable("documentRef") String documentRef,
-                                                        @RequestBody SaveTocRequestEvent saveTocRequestEvent
+                                                        @RequestBody SaveTocRequestEvent saveTocRequestEvent,
+                                                        @RequestParam(required = false, defaultValue = "SIMPLIFIED") TocMode tocMode
     ) {
         try {
             documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.memorandumApiService.saveToC(documentRef,
-                    saveTocRequestEvent.getTableOfContentItemVOs());
+                    saveTocRequestEvent.getTableOfContentItemVOs(), tocMode);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());

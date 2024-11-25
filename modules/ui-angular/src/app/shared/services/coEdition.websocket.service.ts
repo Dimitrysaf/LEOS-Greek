@@ -35,6 +35,8 @@ export class CoEditionServiceWS {
 
   private stompClient: Stomp.Client;
 
+  forceReloadBS: Subject<boolean> =
+    new Subject();
   //group per document id, used for screen 2 to indicate which document is being edited
   private groupedCoEditionsById: BehaviorSubject<
     Record<string, CoEditionVO[]>
@@ -238,6 +240,12 @@ export class CoEditionServiceWS {
         userId: this.user.login,
       }),
     );
+    const myTimeout = setTimeout(() => {
+      this.forceReloadBS.next(true);
+    }, 3000);
+    this.forceReloadBS.subscribe((value) => {
+      if (!value) clearTimeout(myTimeout);
+    });
   }
 
   checkForCoEdition(
@@ -353,6 +361,7 @@ export class CoEditionServiceWS {
   private handleCoEditionMessage(
     coEdits: CoEditionVO[] | CoEditionUpdate | CoEditionActionInfo,
   ) {
+    this.forceReloadBS.next(false);
     if ('user' in coEdits) {
       const coEditUpdate = coEdits as CoEditionUpdate;
       this.shouldUpdateBS.next(coEditUpdate);

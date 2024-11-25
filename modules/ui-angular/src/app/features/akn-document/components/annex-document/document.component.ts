@@ -28,6 +28,8 @@ import { SecurityContext } from '@angular/core';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
 import {ContributionVO} from "@/shared/models/contribution-vo.model";
+import {MOVE_TO} from "@/shared/constants";
+import {MOVE_PREFIX} from "@/shared/constants/fork-merge.constants";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -174,6 +176,9 @@ export class DocumentComponent
               coEditionUpdate.updatedElements.length > 0
             ) {
               coEditionUpdate.updatedElements.forEach((element) => {
+                if (element.alternateElementId === 'null') {
+                  element.alternateElementId = null;
+                }
                 this.updateElementContent({
                   documentRef: coEditionUpdate.documentId,
                   elementId: element.elementId,
@@ -384,7 +389,15 @@ export class DocumentComponent
     alternateElementId: string;
   }) {
     return this.isCNInstance || this.authorialNotesUpdated(data) || this.isElementDepthUpdated(data) ||
-      this.isSplitParagraphs(data) || this.isAlternateArticle(data);
+      this.isSplitParagraphs(data) || this.isAlternateArticle(data) || this.isMovedElement(data);
+  }
+
+  private isMovedElement(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    return data.elementId.includes(MOVE_PREFIX);
   }
 
   private authorialNotesUpdated(data: {
@@ -442,7 +455,7 @@ export class DocumentComponent
   private isAlternateArticle(data: {
     alternateElementId: string;
   }) {
-    return data.alternateElementId !== null;
+    return data.alternateElementId !== 'null' && data.alternateElementId !== null;
   }
 
   private updateElementInXml(data: {
