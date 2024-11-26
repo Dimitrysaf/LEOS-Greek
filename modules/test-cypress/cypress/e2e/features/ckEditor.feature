@@ -54,7 +54,7 @@ Feature: CK Editor Regression Features
         Then cke dialog window is displayed with title "Edit Footnote"
         When type "new footnote" in cke dialog textarea
         And  click on ok button in cke dialog window
-        Then authorial note with marker 1 and title "new footnote" is present inside citation in edition mode
+        Then authorial note with marker "(1)" and title "new footnote" is present inside citation in edition mode
         When click at offset 0 of child 0 of citation in edition mode
         And  click on insert special character icon present in ck editor panel
         Then cke dialog window is displayed with title "Select Special Character"
@@ -63,12 +63,12 @@ Feature: CK Editor Regression Features
         When click save and close button of ck editor
         Then ck editor window is not displayed
         And  citation 2 contains "!"
-        And  citation 2 contains authorial note with marker 1 and text "new footnote"
-        When click on authorial note with marker 1 in citation 2
+        And  citation 2 contains authorial note with marker "(1)" and text "new footnote"
+        When click on authorial note with marker "(1)" in citation 2
         Then authorial note table is displayed
         And  text of marker 1 of authorial note table is "new footnote"
         When click on marker 1 link in authorial note table
-        Then citation 2 contains authorial note with marker 1 and text "new footnote"
+        Then citation 2 contains authorial note with marker "(1)" and text "new footnote"
         When mouseover and click on recital 1
         Then ck editor window is displayed
         When select content from offset 0 till offset 7 in recital in edition mode
@@ -101,7 +101,7 @@ Feature: CK Editor Regression Features
         Then cke dialog window is displayed with title "Edit Footnote"
         When type "new footnote" in cke dialog textarea
         And  click on ok button in cke dialog window
-        Then authorial note with marker 1 and title "new footnote" is present inside recital in edition mode
+        Then authorial note with marker "(1)" and title "new footnote" is present inside recital in edition mode
         When click at offset 0 of child 0 of recital in edition mode
         And  click on insert special character icon present in ck editor panel
         Then cke dialog window is displayed with title "Select Special Character"
@@ -110,12 +110,12 @@ Feature: CK Editor Regression Features
         When click save and close button of ck editor
         Then ck editor window is not displayed
         And  recital 1 contains "!"
-        And  recital 1 contains authorial note with marker 4 and text "new footnote"
-        When click on authorial note with marker 4 in recital 1
+        And  recital 1 contains authorial note with marker "(4)" and text "new footnote"
+        When click on authorial note with marker "(4)" in recital 1
         Then authorial note table is displayed
         And  text of marker 4 of authorial note table is "new footnote"
         When click on marker 4 link in authorial note table
-        Then recital 1 contains authorial note with marker 4 and text "new footnote"
+        Then recital 1 contains authorial note with marker "(4)" and text "new footnote"
         When click on edit icon of article 1
         Then ck editor window is displayed
         When select content from offset 0 till offset 4 in numbered paragraph 1 of article in edition mode
@@ -150,7 +150,7 @@ Feature: CK Editor Regression Features
         Then cke dialog window is displayed with title "Edit Footnote"
         When type "new footnote" in cke dialog textarea
         And  click on ok button in cke dialog window
-        Then numbered paragraph 1 of article contains authorial note with marker 1 and title "new footnote" in edition mode
+        Then numbered paragraph 1 of article contains authorial note with marker "(1)" and title "new footnote" in edition mode
         When click at offset 0 of child 0 of li 1 with data-akn-element "paragraph" of article in edition mode
         And  click on insert special character icon present in ck editor panel
         Then cke dialog window is displayed with title "Select Special Character"
@@ -159,12 +159,12 @@ Feature: CK Editor Regression Features
         When click save and close button of ck editor
         Then ck editor window is not displayed
         And  paragraph 1 of article 1 contains "!"
-        And  paragraph 1 of article 1 contains authorial note with marker 5 and text "new footnote"
-        When click on authorial note with marker 5 in paragraph 1 of article 1
+        And  paragraph 1 of article 1 contains authorial note with marker "(5)" and text "new footnote"
+        When click on authorial note with marker "(5)" in paragraph 1 of article 1
         Then authorial note table is displayed
         And  text of marker 5 of authorial note table is "new footnote"
         When click on marker 5 link in authorial note table
-        Then paragraph 1 of article 1 contains authorial note with marker 5 and text "new footnote"
+        Then paragraph 1 of article 1 contains authorial note with marker "(5)" and text "new footnote"
         When mouseover and click on article 1
         Then ck editor window is displayed
         When click at offset 7 of child 0 of li 2 with data-akn-element "paragraph" of article in edition mode
@@ -233,16 +233,16 @@ Feature: CK Editor Regression Features
         Then cke dialog window is displayed with title "Edit Footnote"
         When type "new footnote" in cke dialog textarea
         And  click on ok button in cke dialog window
-        Then authorial note with marker 1 and title "new footnote" is present inside level in edition mode
+        Then authorial note with marker "(1)" and title "new footnote" is present inside level in edition mode
         And  click save and close button of ck editor
         Then ck editor window is not displayed
         ########## click footnote  ###################
-        And  level 1 contains authorial note with marker 1 and text "new footnote"
-        When click on authorial note with marker 1 in level 1
+        And  level 1 contains authorial note with marker "(1)" and text "new footnote"
+        When click on authorial note with marker "(1)" in level 1
         Then authorial note table is displayed
         And  text of marker 1 of authorial note table is "new footnote"
         When click on marker 1 link in authorial note table
-        Then level 1 contains authorial note with marker 1 and text "new footnote"
+        Then level 1 contains authorial note with marker "(1)" and text "new footnote"
         ########### create internal reference ##############
         When click on edit icon of level 1
         Then ck editor window is displayed
