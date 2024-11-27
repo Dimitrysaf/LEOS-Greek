@@ -1547,10 +1547,6 @@ public class XercesUtils {
                 }
             }
         }
-        if(!node.hasChildNodes() && !node.getNodeName().equals("documentRef")) {
-            XercesUtils.deleteElement(node);
-            return true;
-        }
         return false;
     }
 
