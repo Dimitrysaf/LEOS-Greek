@@ -49,6 +49,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
@@ -297,16 +299,14 @@ public class ProposalApiController {
     }
 
     @RequestMapping(value = "/conValidateLegFile", method = RequestMethod.POST)
-    public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) {
+    public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) throws IOException {
         validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
-        File content = new File(legFile.getName());
-        try (FileOutputStream fos = new FileOutputStream(content)) {
-            fos.write(legFile.getBytes());
-        } catch (IOException ioe) {
-            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        String result = conValidatorService.validate(content);
+        String tempConvalLegPath = System.getProperty("java.io.tmpdir") + File.separator + "convalLeg";
+        new File(tempConvalLegPath).mkdirs();
+        Path path = Paths.get(tempConvalLegPath, legFile.getOriginalFilename());
+        File file = path.toFile();
+        legFile.transferTo(file);
+        String result = conValidatorService.validate(file);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
