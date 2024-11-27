@@ -126,11 +126,12 @@ public class XmlContentProcessorHelper {
             List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode, String language) {
         List<TableOfContentItemVO> itemVOList = new ArrayList<>();
         Node child;
+        NodeList nodeList;
         if (mode.equals(TocMode.SIMPLIFIED)) {
             List<String> elementsName =
-                tocRules.keySet().stream()
-                .map((tocItem) -> tocItem.getAknTag().value().toLowerCase()).collect(Collectors.toList());
-            NodeList nodeList = node.getChildNodes();
+                tocItems.stream().filter(t -> t.isDisplay())
+                .map(tocItem -> tocItem.getAknTag().value().toLowerCase()).collect(Collectors.toList());
+            nodeList = node.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 child = nodeList.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE
@@ -139,7 +140,7 @@ public class XmlContentProcessorHelper {
                 }
             }
         } else {
-            NodeList nodeList = node.getChildNodes();
+            nodeList = node.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 child = nodeList.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {

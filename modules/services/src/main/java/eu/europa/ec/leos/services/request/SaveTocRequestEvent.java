@@ -15,18 +15,11 @@ package eu.europa.ec.leos.services.request;
  */
 
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 public class SaveTocRequestEvent {
-    private List<TableOfContentItemVO> tableOfContentItemVOs;
-    
-    public List<TableOfContentItemVO> getTableOfContentItemVOs() {
-        return tableOfContentItemVOs;
-    }
-
-    public void setTableOfContentItemVOs(List<TableOfContentItemVO> tableOfContentItemVOs) {
-        this.tableOfContentItemVOs = tableOfContentItemVOs;
-    }
-
+    @Getter @Setter private List<TableOfContentItemVO> tableOfContentItemVOs;
 }
