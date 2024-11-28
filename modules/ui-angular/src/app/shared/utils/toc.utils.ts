@@ -234,6 +234,23 @@ export const findNodeById = (
 
   return undefined;
 };
+export const findNodeSiblingById = (
+  root: TableOfContentItemVO[],
+  node: TableOfContentItemVO,
+  before: boolean,
+): TableOfContentItemVO | null => {
+  if (node && node.parentItem) {
+    const parent = findNodeById(root, node.parentItem);
+    if (parent) {
+      const index = parent.childItems.indexOf(node);
+      if (index > -1) {
+        if (before && index > 0) return parent.childItems[index-1];
+        if (!before && index < parent.childItems.length-1) return parent.childItems[index+1];
+      }
+    }
+  }
+  return undefined;
+};
 export const checkPositionAfterValidationExplanatory = (
   nodeTarget: TableOfContentItemVO,
   nodeDragged: TableOfContentItemVO,

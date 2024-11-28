@@ -12,7 +12,6 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 
 import { TocInlineEditMenuService } from './toc-inline-edit-menu.service';
-import { DocumentConfig } from '@/shared';
 import { DropdownModel } from '@/shared/dropdown.model';
 
 @Injectable()

@@ -28,7 +28,6 @@ import { SecurityContext } from '@angular/core';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
 import {ContributionVO} from "@/shared/models/contribution-vo.model";
-import {MOVE_TO} from "@/shared/constants";
 import {MOVE_PREFIX} from "@/shared/constants/fork-merge.constants";
 
 const MAIN_CONTAINER_WIDTH = 500.6;

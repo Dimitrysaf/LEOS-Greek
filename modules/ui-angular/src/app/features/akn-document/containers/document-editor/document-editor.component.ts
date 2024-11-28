@@ -541,28 +541,30 @@ export class DocumentEditorComponent
 
   handleSave(isClosing: boolean) {
     this.loadingService.setLoading(true);
+    this.tocService.resetOriginalToc();
+    this.tocService.setBlockReloadOfToc();
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
     this.tocService
-      .saveToc(this.documentRef, this.documentType, toc, isClosing)
+      .saveToc(this.documentRef, this.documentType, toc)
       .pipe(takeUntil(this.destroy$), finalize(() => this.handleAfterSave()))
       .subscribe({
         next: (res) => {
           this.tocService.refreshToc(res);
+          this.tocService.resetOriginalToc(res);
         },
         error: (err) => {
           console.log("error while saving toc: " + err);
+          this.tocService.displayOriginalToc();
         },
       });
   }
 
   handleAfterSave() {
-    this.tocService.setBlockReloadOfToc();
     this.documentTocComponent.isToCDraft = false;
-    this.documentTocComponent.clearSelectedNode();
+    this.loadingService.setLoading(false);
     this.tocEditService.resetTreeHistory();
     this.coEditionWSService.sendUpdateDocumentEvent(this.documentRef);
-    this.loadingService.setLoading(false);
   }
 
   handleCancel() {
@@ -816,6 +818,7 @@ export class DocumentEditorComponent
 
   private closeInlineToCEdit() {
     this.documentTocComponent.messageFromValidation = null;
+    this.tocService.displayOriginalToc();
     this.documentTocComponent.isDropValid = null;
     this.tocService.setIsEditMode(false);
     this.documentTocComponent.resetTreeState();
