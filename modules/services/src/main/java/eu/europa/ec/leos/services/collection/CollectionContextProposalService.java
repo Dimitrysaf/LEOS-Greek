@@ -121,6 +121,18 @@ public class CollectionContextProposalService extends CollectionContextService {
             proposal = proposalService.addComponentRef(proposal, memorandumCreated.getName(), LeosCategory.MEMORANDUM);
         }
 
+        Bill bill = cast(categoryTemplateMap.get(BILL));
+        if(bill != null) {
+            BillContextService billContext = billContextProvider.get();
+            billContext.usePackage(leosPackage);
+            billContext.useTemplate(bill);
+            billContext.usePurpose(purpose);
+            billContext.useActionMessageMap(actionMsgMap);
+            billContext.usePackageRef(proposal.getMetadata().get().getRef());
+            Bill billCreated = billContext.executeCreateBill();
+            proposal = proposalService.addComponentRef(proposal, billCreated.getName(), LeosCategory.BILL);
+        }
+
         FinancialStatement financialStatement = cast(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS));
         if (financialStatement != null) {
             FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
@@ -137,17 +149,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             FinancialStatement financialStatementCreated = financialStatementContext.executeCreateFinancialStatement();
             proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_DIGIT_FINANC_LEGIS);
         }
-
-        BillContextService billContext = billContextProvider.get();
-        billContext.usePackage(leosPackage);
-        billContext.useTemplate(cast(categoryTemplateMap.get(BILL)));
-        billContext.usePurpose(purpose);
-        billContext.useActionMessageMap(actionMsgMap);
-        billContext.usePackageRef(proposal.getMetadata().get().getRef());
-        Bill bill = billContext.executeCreateBill();
-        proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
-
     }
 
     @Override
