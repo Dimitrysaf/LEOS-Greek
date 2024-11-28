@@ -32,7 +32,6 @@ import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildErr
 import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildValidZipResponse;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class LeosDocumentApiController {
     private final LeosDocumentService leosDocumentService;
 
@@ -107,6 +106,11 @@ public class LeosDocumentApiController {
         }
     }
 
-    @RequestMapping("/test")
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String test() { return "Test RESTful service"; }
+
+    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handleOptionsRequest() {
+        return ResponseEntity.ok().build();
+    }
 }

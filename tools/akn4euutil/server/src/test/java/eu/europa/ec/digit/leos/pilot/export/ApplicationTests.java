@@ -29,6 +29,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.Assert;
@@ -90,6 +91,16 @@ class AKN4EUUtilApplicationTests {
             builder.param("isWithAnnotations", Boolean.toString(isWithAnnotations));
         }
         return mvc.perform(builder);
+    }
+
+    @Test
+    public void testCorsRequest() throws Exception {
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/test")
+                .header("Access-Control-Allow-Origin", "*");
+        MvcResult result = mvc.perform(builder)
+                .andExpect(status().isOk())
+                .andReturn();
+        Assert.hasText("*", result.getResponse().getHeader("Access-Control-Allow-Origin"));
     }
 
     @Test
