@@ -93,14 +93,14 @@
                 </citation>
                 <citation leos:editable="true" xml:id="cit_4">
                     <p xml:id="cit_4__p">Having regard to the opinion of the European Economic and Social Committee
-                        <authorialNote marker="1" placement="bottom" xml:id="authorialnote_1">
+                        <authorialNote marker="(1)" placement="bottom" xml:id="authorialnote_1">
                             <p xml:id="authorialNote_1__p">OJ C [...], [...], p. [...]</p>
                         </authorialNote>
                         ,</p>
                 </citation>
                 <citation leos:editable="true" xml:id="cit_5">
                     <p xml:id="cit_5__p">Having regard to the opinion of the Committee of the Regions
-                        <authorialNote marker="2" placement="bottom" xml:id="authorialnote_2">
+                        <authorialNote marker="(2)" placement="bottom" xml:id="authorialnote_2">
                             <p xml:id="authorialNote_2__p">OJ C [...], [...], p. [...]</p>
                         </authorialNote>
                         ,</p>

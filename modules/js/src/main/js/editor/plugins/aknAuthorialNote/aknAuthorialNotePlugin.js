@@ -80,7 +80,14 @@ define(function aknAuthorialNotePluginModule(require) {
 
     function _getLowestMarkerValue(authorialNotes) {
         var markerArray =  authorialNotes.map(function() {
-        	 return this.getAttribute("marker");
+            let localMarker = this.getAttribute("marker");
+            if(localMarker && localMarker.startsWith("(")){
+                localMarker = localMarker.substring(1);
+            }
+            if(localMarker && localMarker.endsWith(")")){
+                localMarker = localMarker.substring(0, localMarker.length-1);
+            }
+            return localMarker;
         }).get();
         return markerArray.length > 0 ? Math.min.apply(Math, markerArray) : 1;
     }

@@ -7,7 +7,7 @@
             <num class="Paragraph(numbered)" xml:id="n2">1.</num>
             <content xml:id="c1">
                 <p class="Paragraph(numbered)" xml:id="p1">Subject to paragraph 2, this Regulation
-                    <authorialNote marker="1" placement="bottom" xml:id="a1">
+                    <authorialNote marker="(1)" placement="bottom" xml:id="a1">
                         <p xml:id="ptest1">TestNote1</p>
                     </authorialNote>
                     shall apply from 1 January 2013.
@@ -18,7 +18,7 @@
             <num class="Paragraph(numbered)" xml:id="n2">2.</num>
             <content xml:id="con">
                 <p class="Paragraph(numbered)" xml:id="p2">Article 436(1) shall apply from 1 January 2015
-                    <authorialNote marker="2" placement="bottom" xml:id="a2">
+                    <authorialNote marker="(2)" placement="bottom" xml:id="a2">
                         <p xml:id="ptest2">TestNote2</p>
                     </authorialNote>
                     .
@@ -31,7 +31,7 @@
         <subparagraph xml:id="art486-aln1">
             <content xml:id="c">
                 <p class="Paragraph(unnumbered)" xml:id="p">This text should appear in the main document after merge
-                    <authorialNote marker="3" placement="bottom" xml:id="a4">
+                    <authorialNote marker="(3)" placement="bottom" xml:id="a4">
                         <p xml:id="p1">TestNoteX</p>
                     </authorialNote>
                     with the updated Article <i xml:id="i1">Official Journal of the European Union</i>.

@@ -94,14 +94,14 @@
                 </citation>
                 <citation leos:editable="true" xml:id="cit_4">
                     <p xml:id="cit_4__p">Having regard to the opinion of the European Economic and Social Committee
-                        <authorialNote marker="1" placement="bottom" xml:id="authorialnote_1">
+                        <authorialNote marker="(1)" placement="bottom" xml:id="authorialnote_1">
                             <p xml:id="authorialNote_1__p">OJ C [...], [...], p. [...]</p>
                         </authorialNote>
                         ,</p>
                 </citation>
                 <citation leos:editable="true" xml:id="cit_5">
                     <p xml:id="cit_5__p">Having regard to the opinion of the Committee of the Regions
-                        <authorialNote marker="2" placement="bottom" xml:id="authorialnote_2">
+                        <authorialNote marker="(2)" placement="bottom" xml:id="authorialnote_2">
                             <p xml:id="authorialNote_2__p">OJ C [...], [...], p. [...]</p>
                         </authorialNote>
                         ,</p>
@@ -173,7 +173,7 @@
                         <subparagraph refersTo="~INP" xml:id="impXart_1_WGq7yd_m6mTSn">
                             <content xml:id="impXart_1_WGq7yd_WZWeWi">
                                 <p xml:id="impXart_1_WGq7yd_11KFIA">The rules set out in this Regulation shall apply without prejudice to the provisions laid down in Regulation (EU) No 1306/2013 of the European Parliament and of the Council
-                                    <authorialNote marker="3" placement="bottom" xml:id="impXart_1_WGq7yd_tk2w4Y">
+                                    <authorialNote marker="(3)" placement="bottom" xml:id="impXart_1_WGq7yd_tk2w4Y">
                                         <p xml:id="impXart_1_WGq7yd_2LyBM1">Regulation (EU) No 1306/2013 of the European Parliament and of the Council of 17 December 2013 on the financing, management and monitoring of the common agriculture policy and repealing Council Regulations (EEC) No 352/78, (EC) No 165/94, (EC) No 2799/98, (EC) No 814/2000, (EC) No 1290/2005 and (EC) No 485/2008 (See page 549 of this Official Journal).</p>
                                     </authorialNote>
                                     and to the specific provisions laid down in the following Regulations (the 'Fund-specific Regulations') in accordance with the fifth paragraph of this Article:</p>

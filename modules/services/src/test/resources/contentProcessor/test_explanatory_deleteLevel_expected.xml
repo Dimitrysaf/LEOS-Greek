@@ -12,7 +12,7 @@
                     <p xml:id="body_level_1_content_p">On …, the <u xml:id="body_level_1__content__p_u_1">Commission</u> submitted
                         to the Council and the European Parliament a proposal for a Regulation of the European
                         Parliament and of the Council …
-                        <authorialNote marker="1" placement="bottom" xml:id="authorialnote_1">
+                        <authorialNote marker="(1)" placement="bottom" xml:id="authorialnote_1">
                             <p xml:id="akn_YkX30n">12345/21.</p>
                         </authorialNote>
                         , which aims at …
@@ -33,12 +33,12 @@
                     <p xml:id="body_level_3_content_p">The <u xml:id="body_level_3__content__p_u_2">Economic and Social
                         Committee
                     </u> delivered its opinion on …
-                        <authorialNote marker="2" placement="bottom" xml:id="authorialnote_2">
+                        <authorialNote marker="(2)" placement="bottom" xml:id="authorialnote_2">
                             <p xml:id="akn_xA5auZ">Not yet published in the Official Journal.</p>
                         </authorialNote>
                         . The <u xml:id="body_level_3__content__p_u_3">Committee of the Regions</u> adopted its opinion
                         on …
-                        <authorialNote marker="3" placement="bottom" xml:id="authorialnote_3">
+                        <authorialNote marker="(3)" placement="bottom" xml:id="authorialnote_3">
                             <p xml:id="akn_8AAJRu">Not yet published in the Official Journal.</p>
                         </authorialNote>
                         .
@@ -87,7 +87,7 @@
                     <p xml:id="body_level_8_content_p">In the <u xml:id="body_level_8__content__p_u_8">European
                         Parliament</u>, the Committee …. has the lead responsibility. … was appointed rapporteur. The
                         report was tabled on …; the Plenary voted on …
-                        <authorialNote marker="4" placement="bottom" xml:id="authorialnote_4">
+                        <authorialNote marker="(4)" placement="bottom" xml:id="authorialnote_4">
                             <p xml:id="akn_peUptW">12345/21.</p>
                         </authorialNote>
                         , and the proposal was referred to the … Committee to start interinstitutional negotiations.
@@ -100,7 +100,7 @@
                     <p xml:id="body_level_9_content_p">On …, the <u xml:id="body_level_9__content__p_u_9">European
                         Parliament
                     </u> adopted its legislative resolution on the proposal
-                        <authorialNote marker="5" placement="bottom" xml:id="authorialnote_5">
+                        <authorialNote marker="(5)" placement="bottom" xml:id="authorialnote_5">
                             <p xml:id="akn_PmRWX2">12345/21.</p>
                         </authorialNote>
                         , thus concluding its first reading.
@@ -113,7 +113,7 @@
                     <p xml:id="body_level_10_content_p">The <u xml:id="body_level_10__content__p_u_10">European
                         Parliament
                     </u> adopted its first-reading position
-                        <authorialNote marker="6" placement="bottom" xml:id="authorialnote_6">
+                        <authorialNote marker="(6)" placement="bottom" xml:id="authorialnote_6">
                             <p xml:id="akn_UWW0n5">12345/21.</p>
                         </authorialNote>
                         at the plenary session of ….
@@ -124,13 +124,13 @@
                 <num xml:id="body_level_11_num">11.</num>
                 <content xml:id="body_level_11_content">
                     <p xml:id="body_level_11_content_p">On …, the Council reached a partial general approach
-                        <authorialNote marker="7" placement="bottom" xml:id="authorialnote_7">
+                        <authorialNote marker="(7)" placement="bottom" xml:id="authorialnote_7">
                             <p xml:id="akn_buZcas">12345/21.</p>
                         </authorialNote>
                         on the abovementioned proposal, which constituted the mandate for the negotiations with the
                         European Parliament in the context of the ordinary legislative procedure. A General Approach was
                         adopted by the Council on …
-                        <authorialNote marker="8" placement="bottom" xml:id="authorialnote_8">
+                        <authorialNote marker="(8)" placement="bottom" xml:id="authorialnote_8">
                             <p xml:id="akn_bUJcJl">12345/21.</p>
                         </authorialNote>
                         .
@@ -162,7 +162,7 @@
                         voting in the European Parliament reflects the compromise agreement reached between the
                         institutions and should therefore
                         be acceptable to the Council
-                        <authorialNote marker="9" placement="bottom" xml:id="authorialnote_9">
+                        <authorialNote marker="(9)" placement="bottom" xml:id="authorialnote_9">
                             <p xml:id="akn_jNMaup">12345/21</p>
                         </authorialNote>
                         .

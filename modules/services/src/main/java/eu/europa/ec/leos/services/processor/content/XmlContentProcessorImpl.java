@@ -1197,9 +1197,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void modifyAuthorialNoteMarkers(Node node, int markerNumber) {
         NodeList nodeList = XercesUtils.getElementsByName(node, AUTHORIAL_NOTE);
+
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
-            XercesUtils.addAttribute(child, MARKER_ATTRIBUTE, Integer.toString(markerNumber++));
+            StringBuilder sb = new StringBuilder(5);
+            sb.append('(').append(markerNumber++).append(')');
+            XercesUtils.addAttribute(child, MARKER_ATTRIBUTE, sb.toString());
             if(XercesUtils.getAttributeValue(child, PLACEMENT) == null) {
                 XercesUtils.addAttribute(child, PLACEMENT, BOTTOM);
             }

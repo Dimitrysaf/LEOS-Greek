@@ -57,9 +57,10 @@ define(function authorialNoteWidgetModule(require) {
         	var $editable = $(editor.editable().$);
             var authorialNotes = $editable.find('*[data-akn-name="aknAuthorialNote"]');
             authorialNotes.each(function() {
-                    this.innerHTML = markerValue;
-                    this.setAttribute("marker", markerValue);
-                    markerValue = markerValue + 1;
+                let displayMarker = "(".concat(markerValue, ")");
+                this.innerHTML = displayMarker;
+                this.setAttribute("marker", displayMarker);
+                markerValue = markerValue + 1;
             });
         }
     };

@@ -434,15 +434,15 @@ Then('recital contains text {string} in edition mode', function (text) {
     ckEditorWindow.elements.pTag().should('include.text', text);
 });
 
-Then('authorial note with marker {int} and title {string} is present inside citation in edition mode', function (markerNumber, title) {
+Then('authorial note with marker {string} and title {string} is present inside citation in edition mode', function (markerNumber, title) {
     ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
 });
 
-Then('authorial note with marker {int} and title {string} is present inside recital in edition mode', function (markerNumber, title) {
+Then('authorial note with marker {string} and title {string} is present inside recital in edition mode', function (markerNumber, title) {
     ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
 });
 
-Then('authorial note with marker {int} and title {string} is present inside level in edition mode', function (markerNumber, title) {
+Then('authorial note with marker {string} and title {string} is present inside level in edition mode', function (markerNumber, title) {
     ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
 });
 
@@ -458,7 +458,7 @@ Then("numbered paragraph {int} of article doesn't contain {string} tag in editio
     ckEditorWindow.getTagElementFromParagraphOfArticle(paragraphNumber, tagName).should('not.exist');
 });
 
-Then('numbered paragraph {int} of article contains authorial note with marker {int} and title {string} in edition mode', function (paragraphNumber, markerNumber, title) {
+Then('numbered paragraph {int} of article contains authorial note with marker {string} and title {string} in edition mode', function (paragraphNumber, markerNumber, title) {
     ckEditorWindow.getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, markerNumber).should('have.attr','title', title);
 });
 

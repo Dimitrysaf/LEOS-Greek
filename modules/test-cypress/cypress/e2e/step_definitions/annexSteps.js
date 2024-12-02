@@ -62,11 +62,11 @@ Then('content of subparagraph {int} of level {int} contains a table with {int} r
     annexPage.getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', columnNumber);
 });
 
-Then('level {int} contains authorial note with marker {int} and text {string}', function (levelNumber, markerNumber, text) {
+Then('level {int} contains authorial note with marker {string} and text {string}', function (levelNumber, markerNumber, text) {
     annexPage.getAuthorialNoteWithMarkerNumberFromLevel(levelNumber, markerNumber).should('have.text', text);
 });
 
-When('click on authorial note with marker {int} in level {int}', function (markerNumber, levelNumber) {
+When('click on authorial note with marker {string} in level {int}', function (markerNumber, levelNumber) {
     annexPage.clickAuthorialNoteWithMarkerNumberFromLevel(levelNumber, markerNumber);
 });
 
