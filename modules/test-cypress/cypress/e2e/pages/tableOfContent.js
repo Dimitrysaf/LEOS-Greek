@@ -29,6 +29,17 @@ class tableOfContent {
         subVersionTitle: () => this.elements.subVersion().find('.title'),
         nodeLabel: () => cy.get(".mat-tree-node div.label[id^='node-label'], .mat-tree-node div.label-extended[id^='node-label']"),
         preambleLink: () => this.elements.nestedTreeNode().contains('Preamble').closest('div.mat-tree-node'),
+        extendedLabel: () => cy.get('div.label-extended'),
+        citationsLink: () => this.elements.extendedLabel().contains('Citations'),
+        recitalsLink: () => this.elements.extendedLabel().contains('Recitals'),
+        enactingTermsLink: () => this.elements.extendedLabel().contains('Enacting Terms'),
+        citationList: () => this.elements.citationsLink().closest('li').find('ul mat-nested-tree-node'),
+        citationLabelList: () => this.elements.citationList().find('li.node-li div.label'),
+        recitalList: () => this.elements.recitalsLink().closest('li').find('ul mat-nested-tree-node'),
+        recitalLabelList: () => this.elements.recitalList().find('li.node-li div.label'),
+        enactingTermsList: () => this.elements.enactingTermsLink().closest('li').find('ul mat-nested-tree-node'),
+        enactingTermsLabelList: () => this.elements.enactingTermsList().find('li.node-li div.label'),
+        rightAngleIconOfPreambleLink: () => this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']"),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
         labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
         revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version'),
@@ -110,11 +121,15 @@ class tableOfContent {
     }
 
     clickRightAngleIconOfPreambleLink(){
-        this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']").click();
+        this.elements.rightAngleIconOfPreambleLink().click();
     }
 
     getLabelExtended(){
         return this.elements.labelExtended();
+    }
+
+    getPreviousPlaceHolderOfNodeLabel(label){
+        return this.getCloseLiOfNodeLabel(label).prev('.drop-placeholder');
     }
 
     clickRevertToThisVersion() {

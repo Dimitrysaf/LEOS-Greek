@@ -156,11 +156,12 @@ When('drag node label {string} and drop before node label {string} in navigation
 });
 
 When('drag element {string} from element tree list and drop before node label {string} in navigation pane', function (dragElement, dropLabel) {
+    tableOfContent.getPreviousPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;');
     tableOfContent.elements.elementList().contains(dragElement)
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
         .wait(200);
-    tableOfContent.getCloseLiOfNodeLabel(dropLabel).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
+    tableOfContent.getPreviousPlaceHolderOfNodeLabel(dropLabel).trigger("mousemove", "bottom", {force: true}).trigger("mouseup", "bottom", {force: true});
 });
 
 When('drag element {string} from element tree list and drop after node label {string} in navigation pane', function (dragElement, dropLabel) {
@@ -264,4 +265,28 @@ When(/^click on move option from dropdown content$/, function () {
 
 When(/^click on place before option from dropdown content$/, function () {
     tableOfContent.clickPlaceBeforeOptionFromDropDownContent();
+});
+
+Then(/^citations section contains new element in navigation pane$/, function () {
+    tableOfContent.elements.citationList().find('div.label.leos-soft-new').should('exist');
+});
+
+Then(/^recitals section contains new element in navigation pane$/, function () {
+    tableOfContent.elements.recitalList().find('div.label.leos-soft-new').should('exist');
+});
+
+Then(/^enacting terms contains new element in navigation pane$/, function () {
+    tableOfContent.elements.enactingTermsList().find('div.label.leos-soft-new').should('exist');
+});
+
+When(/^citations section doesn't contain new element in navigation pane$/, function () {
+    tableOfContent.elements.citationList().find('div.label.leos-soft-new').should('not.exist');
+});
+
+When(/^recitals section doesn't contain new element in navigation pane$/, function () {
+    tableOfContent.elements.recitalList().find('div.label.leos-soft-new').should('not.exist');
+});
+
+When(/^enacting terms doesn't contain new element in navigation pane$/, function () {
+    tableOfContent.elements.enactingTermsList().find('div.label.leos-soft-new').should('not.exist');
 });

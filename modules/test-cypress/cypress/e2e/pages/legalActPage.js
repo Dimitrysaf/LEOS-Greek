@@ -2,6 +2,9 @@ class legalActPage {
     elements = {
         closeBtn: () => cy.get("button[translate='global.actions.close']"),
         bill: () => cy.get('bill'),
+        citation: () => cy.xpath('//citation'),
+        recital: () => cy.xpath('//recital'),
+        article: () => cy.xpath('//article'),
         preface: () => this.elements.bill().find('preface'),
         longTitle: () => this.elements.preface().find('longtitle'),
         docPurpose: () => this.elements.longTitle().find('docpurpose'),
@@ -25,6 +28,10 @@ class legalActPage {
 
     getRecital(recitalNumber) {
         return cy.xpath("//recital[" + recitalNumber + "]");
+    }
+
+    getNumTagOfRecital(recitalNumber) {
+        return this.getRecital(recitalNumber).find('num');
     }
 
     getAknpTagOfRecital(recitalNumber) {
