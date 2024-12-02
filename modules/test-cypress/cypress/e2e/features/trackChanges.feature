@@ -368,7 +368,7 @@ Feature: Track Changes Feature
     #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> tex</del> |
     #   | text  | "t to test."        |
 
-  @renumberingRecitalTrackChanges @local @focus
+  @renumberingRecitalTrackChanges @local
   Scenario: test renumbering of recital when added and edited
     Given navigate to edit drafting application with "User1"
     Then user is on home page
@@ -415,7 +415,7 @@ Feature: Track Changes Feature
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
-    When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode6.leg"
+    When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -662,7 +662,24 @@ Feature: Track Changes Feature
     And  soft move label with title "MOVED from Article 2" is displayed
     When click on soft move label with title "MOVED from Article 2"
     Then soft move label with title "MOVED to Article 6" is displayed
-    When mouseover and click on article 4
+
+  @numberedToUnnumberedViceVersaTrackChanges @local
+  Scenario: test paragraph mode plugin inside ck editor for numbered and unnumbered paragraph with track changes enabled
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on upload button
+    Then active upload window label contains "Upload a legislative document"
+    When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
+    Then active upload window label contains "Document metadata"
+    And  document title input field is displayed
+    When click on create button in upload document page
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  ribbon toolbar is maximized
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When mouseover and click on article 3
     Then ck editor window is displayed
     When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
     When click on paragraph mode icon two times present in ck editor panel
@@ -689,28 +706,28 @@ Feature: Track Changes Feature
     And  li 7 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "delete" in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
-    And  paragraph 1 of article 4 contains attribute "leos:action-number" with value "delete"
-    And  paragraph 1 of article 4 contains attribute "leos:tc-original-number" with value "1."
-    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 1 of article 4 contains value "1."
-    And  paragraph 2 of article 4 contains attribute "leos:action-number" with value "delete"
-    And  paragraph 2 of article 4 contains attribute "leos:tc-original-number" with value "2."
-    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 4 contains value "2."
-    And  paragraph 3 of article 4 contains attribute "leos:action-number" with value "delete"
-    And  paragraph 3 of article 4 contains attribute "leos:tc-original-number" with value "3."
-    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 3 of article 4 contains value "3."
-    And  paragraph 4 of article 4 contains attribute "leos:action-number" with value "delete"
-    And  paragraph 4 of article 4 contains attribute "leos:tc-original-number" with value "4."
-    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 4 of article 4 contains value "4."
-    And  paragraph 5 of article 4 contains attribute "leos:action-number" with value "delete"
-    And  paragraph 5 of article 4 contains attribute "leos:tc-original-number" with value "5."
-    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 5 of article 4 contains value "5."
-    And  paragraph 6 of article 4 contains attribute "leos:action-number" with value "delete"
-    And  paragraph 6 of article 4 contains attribute "leos:tc-original-number" with value "6."
-    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 6 of article 4 contains value "6."
-    And  paragraph 7 of article 4 contains attribute "leos:action-number" with value "delete"
-    And  paragraph 7 of article 4 contains attribute "leos:tc-original-number" with value "7."
-    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 7 of article 4 contains value "7."
-    When mouseover and click on article 4
+    And  paragraph 1 of article 3 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 1 of article 3 contains attribute "leos:tc-original-number" with value "1."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 1 of article 3 contains value "1."
+    And  paragraph 2 of article 3 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 2 of article 3 contains attribute "leos:tc-original-number" with value "2."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 3 contains value "2."
+    And  paragraph 3 of article 3 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 3 of article 3 contains attribute "leos:tc-original-number" with value "3."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 3 of article 3 contains value "3."
+    And  paragraph 4 of article 3 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 4 of article 3 contains attribute "leos:tc-original-number" with value "4."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 4 of article 3 contains value "4."
+    And  paragraph 5 of article 3 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 5 of article 3 contains attribute "leos:tc-original-number" with value "5."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 5 of article 3 contains value "5."
+    And  paragraph 6 of article 3 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 6 of article 3 contains attribute "leos:tc-original-number" with value "6."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 6 of article 3 contains value "6."
+    And  paragraph 7 of article 3 contains attribute "leos:action-number" with value "delete"
+    And  paragraph 7 of article 3 contains attribute "leos:tc-original-number" with value "7."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 7 of article 3 contains value "7."
+    When mouseover and click on article 3
     Then ck editor window is displayed
     When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
     When click on paragraph mode icon present in ck editor panel
@@ -737,28 +754,28 @@ Feature: Track Changes Feature
     And  li 7 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
-    And  paragraph 1 of article 4 doesn't contain attribute "leos:action-number"
-    And  paragraph 1 of article 4 doesn't contain attribute "leos:tc-original-number"
-    And  num tag of paragraph 1 of article 4 doesn't contain "del" tag
-    And  paragraph 2 of article 4 doesn't contain attribute "leos:action-number"
-    And  paragraph 2 of article 4 doesn't contain attribute "leos:tc-original-number"
-    And  num tag of paragraph 2 of article 4 doesn't contain "del" tag
-    And  paragraph 3 of article 4 doesn't contain attribute "leos:action-number"
-    And  paragraph 3 of article 4 doesn't contain attribute "leos:tc-original-number"
-    And  num tag of paragraph 3 of article 4 doesn't contain "del" tag
-    And  paragraph 4 of article 4 doesn't contain attribute "leos:action-number"
-    And  paragraph 4 of article 4 doesn't contain attribute "leos:tc-original-number"
-    And  num tag of paragraph 4 of article 4 doesn't contain "del" tag
-    And  paragraph 5 of article 4 doesn't contain attribute "leos:action-number"
-    And  paragraph 5 of article 4 doesn't contain attribute "leos:tc-original-number"
-    And  num tag of paragraph 5 of article 4 doesn't contain "del" tag
-    And  paragraph 6 of article 4 doesn't contain attribute "leos:action-number"
-    And  paragraph 6 of article 4 doesn't contain attribute "leos:tc-original-number"
-    And  num tag of paragraph 6 of article 4 doesn't contain "del" tag
-    And  paragraph 7 of article 4 doesn't contain attribute "leos:action-number"
-    And  paragraph 7 of article 4 doesn't contain attribute "leos:tc-original-number"
-    And  num tag of paragraph 7 of article 4 doesn't contain "del" tag
-    When mouseover and click on article 5
+    And  paragraph 1 of article 3 doesn't contain attribute "leos:action-number"
+    And  paragraph 1 of article 3 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 1 of article 3 doesn't contain "del" tag
+    And  paragraph 2 of article 3 doesn't contain attribute "leos:action-number"
+    And  paragraph 2 of article 3 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 2 of article 3 doesn't contain "del" tag
+    And  paragraph 3 of article 3 doesn't contain attribute "leos:action-number"
+    And  paragraph 3 of article 3 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 3 of article 3 doesn't contain "del" tag
+    And  paragraph 4 of article 3 doesn't contain attribute "leos:action-number"
+    And  paragraph 4 of article 3 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 4 of article 3 doesn't contain "del" tag
+    And  paragraph 5 of article 3 doesn't contain attribute "leos:action-number"
+    And  paragraph 5 of article 3 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 5 of article 3 doesn't contain "del" tag
+    And  paragraph 6 of article 3 doesn't contain attribute "leos:action-number"
+    And  paragraph 6 of article 3 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 6 of article 3 doesn't contain "del" tag
+    And  paragraph 7 of article 3 doesn't contain attribute "leos:action-number"
+    And  paragraph 7 of article 3 doesn't contain attribute "leos:tc-original-number"
+    And  num tag of paragraph 7 of article 3 doesn't contain "del" tag
+    When mouseover and click on article 4
     Then ck editor window is displayed
     When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
     When click on paragraph mode icon present in ck editor panel
@@ -770,18 +787,18 @@ Feature: Track Changes Feature
     And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "insert" in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
-    And  paragraph 1 of article 5 contains attribute "leos:action-number" with value "insert"
-    And  paragraph 1 of article 5 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
-    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 1 of article 5 contains value "1."
-    And  ins tag of num tag of paragraph 1 of article 5 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
-    And  paragraph 2 of article 5 contains attribute "leos:action-number" with value "insert"
-    And  paragraph 2 of article 5 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
-    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 2 of article 5 contains value "2."
-    And  ins tag of num tag of paragraph 1 of article 5 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
-    When mouseover and click on article 5
+    And  paragraph 1 of article 4 contains attribute "leos:action-number" with value "insert"
+    And  paragraph 1 of article 4 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 1 of article 4 contains value "1."
+    And  ins tag of num tag of paragraph 1 of article 4 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
+    And  paragraph 2 of article 4 contains attribute "leos:action-number" with value "insert"
+    And  paragraph 2 of article 4 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 2 of article 4 contains value "2."
+    And  ins tag of num tag of paragraph 1 of article 4 contains attribute "leos:tc-original-number" with value "UNNUMBERED"
+    When mouseover and click on article 4
     Then ck editor window is displayed
     When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
-    When click on paragraph mode icon two times present in ck editor panel
+    When click on paragraph mode icon present in ck editor panel
     Then li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-num" in edition mode
     And  li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
     And  li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
@@ -790,12 +807,93 @@ Feature: Track Changes Feature
     And  li 2 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
-    And  paragraph 1 of article 5 doesn't contain attribute "leos:action-number"
-    And  paragraph 1 of article 5 doesn't contain attribute "leos:tc-original-number"
-    And  paragraph 1 of article 5 doesn't contain num tag
-    And  paragraph 2 of article 5 doesn't contain attribute "leos:action-number"
-    And  paragraph 2 of article 5 doesn't contain attribute "leos:tc-original-number"
-    And  paragraph 2 of article 5 doesn't contain num tag
+    And  paragraph 1 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 1 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  paragraph 1 of article 4 doesn't contain num tag
+    And  paragraph 2 of article 4 doesn't contain attribute "leos:action-number"
+    And  paragraph 2 of article 4 doesn't contain attribute "leos:tc-original-number"
+    And  paragraph 2 of article 4 doesn't contain num tag
+
+  @rejectingTrackChanges @local
+  Scenario: to test rejecting track changes for different scenarios
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on upload button
+    Then active upload window label contains "Upload a legislative document"
+    When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
+    Then active upload window label contains "Document metadata"
+    And  document title input field is displayed
+    When click on create button in upload document page
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And  toc editing button is displayed and enabled
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When click on insert after icon of citation 4
+    Then citation 5 contains attribute "leos:action" with value "insert"
+    And  total citation count is 7
+    When click on right angle icon of preamble link
+    Then citations section contains new element in navigation pane
+    When click on insert before icon of recital 2
+    Then recital 2 contains attribute "leos:action" with value "insert"
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 3 contains value "(2)"
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of recital 3 contains value "(3)"
+    And  total recital count is 3
+    And  recitals section contains new element in navigation pane
+    When click on insert after icon of article 1
+    Then article 2 contains attribute "leos:action" with value "insert"
+    And  del tag of num tag of article 3 contains value "Article 2"
+    And  ins tag of num tag of article 3 contains value "Article 3"
+    And  del tag of num tag of article 4 contains value "Article 3"
+    And  ins tag of num tag of article 4 contains value "Article 4"
+    And  total article count is 11
+    And  enacting terms contains new element in navigation pane
+    When right click on citation 5
+    And  click on reject this change option under track changes action
+    Then total citation count is 6
+    And  citations section doesn't contain new element in navigation pane
+    When right click on recital 2
+    And  click on reject this change option under track changes action
+    Then total recital count is 2
+    And  recitals section doesn't contain new element in navigation pane
+    When right click on article 2
+    And  click on reject this change option under track changes action
+    Then total article count is 10
+    And  enacting terms doesn't contain new element in navigation pane
+    When click on close button present in legal act page
+    Then user is on act viewer page
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 1
+    When click on annex 1 link
+    Then user is on annex page
+    And  ribbon toolbar is maximized
+    And  annotation side bar is present
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When click on insert after icon of level 1
+    Then total number of level is 4
+    And  level 2 contains attribute "leos:action" with value "insert"
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of level 3 contains value "1.1."
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of level 3 contains value "2.1."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of level 4 contains value "2."
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of level 4 contains value "3."
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When drag element "Paragraph" from element tree list and drop after node label "3. Text..." in navigation pane
+    Then success message "Paragraph has been added successfully!" is displayed in navigation pane
+    And  success message disappears from table of content
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  total number of paragraph is 1
+    When right click on level 2
+    And  click on reject this change option under track changes action
+    Then total number of level is 3
+    When right click on paragraph 1
+    And  click on reject this change option under track changes action
+    Then no paragraph exists
 
   @movePointInAnnexTrackChanges @local
   Scenario: move of point inside annex using 3 dots and drag and drop

@@ -1,4 +1,4 @@
-import {When, Then} from "cypress-cucumber-preprocessor/steps";
+import {When, Then, And} from "cypress-cucumber-preprocessor/steps";
 
 require('@cypress/xpath');
 import annexPage from "../pages/annexPage";
@@ -100,4 +100,30 @@ Then(/^num value of level (\d+) contains "([^"]*)"$/, function (levelNumber, num
 
 When(/^right click on soft move label of num of level (\d+)$/, function (levelNumber) {
     annexPage.rightClickOnSoftMoveLabelOfNumOfLevel(levelNumber);
+});
+
+And('del tag with attribute {string} and value {string} of num tag of level {int} contains value {string}', function (attributeName, attributeValue, levelNumber, value) {
+    const tagName = 'del';
+    annexPage.getNumOfLevel(levelNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+Then('ins tag with attribute {string} and value {string} of num tag of level {int} contains value {string}', function (attributeName, attributeValue, levelNumber, value) {
+    const tagName = 'ins';
+    annexPage.getNumOfLevel(levelNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+Then(/^total number of paragraph is (\d+)$/, function (count) {
+    annexPage.elements.paragraph().should('have.length', count);
+});
+
+Then(/^no paragraph exists$/, function () {
+    annexPage.elements.paragraph().should('not.exist');
+});
+
+When(/^right click on level (\d+)$/, function (levelNumber) {
+    annexPage.getLevel(levelNumber).rightclick();
+});
+
+When(/^right click on paragraph (\d+)$/, function (paragraphNumber) {
+    annexPage.getParagraph(paragraphNumber).rightclick();
 });
