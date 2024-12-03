@@ -18,12 +18,9 @@ define(function aknHtmlBrPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var pluginName = "aknHtmlBr";
-    var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
 
     var pluginDefinition = {
-        init: function init(editor) {
-            //editor.on('selectionChange', _onSelectionChange, null, null, 11);
-        }
+        init: function init(editor) { }
     };
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
