@@ -206,6 +206,16 @@ public class GenericDocumentApiService {
         return this.getMajorVersionsData(documentRef, 0, 1);
     }
 
+    public boolean uploadDocument(String documentRef, VersionType versionType, String versionComment, byte[] updatedDocContent) {
+        XmlDocument document = this.findDocumentByRef(documentRef);
+        document = this.leosRepository.findDocumentById(document.getId(), XmlDocument.class, true);
+        LeosMetadata metadata = this.getDocMetadata(document);
+        document = this.leosRepository.updateDocument(document.getId(), metadata, updatedDocContent, versionType, versionComment,
+                XmlDocument.class);
+        documentViewService.updateProposalAsync(document);
+        return true;
+    }
+
     public List<TocItem> getTocItems(@NotNull String docRef) {
         XmlDocument document = this.findDocumentByRef(docRef);
         String docTemplate = this.getDocTemplate(document);

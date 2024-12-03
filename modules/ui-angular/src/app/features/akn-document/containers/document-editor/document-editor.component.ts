@@ -13,7 +13,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  EuiDialogComponent,
+  EuiDialogComponent, EuiDialogConfig,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { EuiBreadcrumbService } from '@eui/components/layout';
@@ -31,7 +31,6 @@ import {
   takeUntil,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DOCUMENT_ACTIONS_SERVICE } from '@/features/akn-document/akn-document.module';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
@@ -72,6 +71,7 @@ import { PageMode, PageModeService } from '../../services/page-mode.service';
 import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
+import {DocumentUploadComponent} from "@/features/akn-document/components/document-upload/document-upload.component";
 
 @Component({
   selector: 'app-document-editor',
@@ -171,6 +171,7 @@ export class DocumentEditorComponent
   @ViewChild('contributionAnnotationsPane', { read: ElementRef })
   contributionAnnotationsPaneElement: ElementRef;
 
+  canUploadXml: boolean;
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
@@ -397,6 +398,7 @@ export class DocumentEditorComponent
           this.contribution = contribution;
         }
       });
+    this.setPermission();
   }
 
   ngAfterViewInit(): void {
@@ -744,6 +746,24 @@ export class DocumentEditorComponent
     this.milestoneViewData = null;
   }
 
+  uploadDocument(open?: boolean) {
+    const dialog = this.dialogService.openDialog(
+      new EuiDialogConfig({
+        dialogId: 'upload-id',
+        title: this.translate.instant('page.editor.versions.upload.tooltip'),
+        bodyComponent: {
+          component: DocumentUploadComponent,
+          config: {
+            closeDialog: () => this.dialogService.closeDialog(dialog.id),
+            documentRef: this.documentRef,
+          },
+        },
+        hasFooter: false,
+      }),
+    );
+    return true;
+  }
+
   private handleContributionView(
     contributionView: DocumentViewResponse,
     contribution: ContributionVO,
@@ -949,6 +969,12 @@ export class DocumentEditorComponent
       default:
         return capitalizeFirstLetter(name);
     }
+  }
+
+  private setPermission() {
+    this.config.config.subscribe((config) => {
+      this.canUploadXml = config.userAppPermissions.includes('CAN_UPLOAD_XML_DOC');
+    });
   }
 
   private manageBreadCrumbsDocumentScreen() {

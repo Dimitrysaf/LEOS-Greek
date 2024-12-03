@@ -183,6 +183,22 @@
               >
                 <eui-icon-svg icon="eui-search"></eui-icon-svg>
               </button>
+              <button
+                euiButton
+                euiIconButton
+                euiSecondary
+                euiOutline
+                euiSizeS
+                [title]="
+                  ('page.editor.versions.upload.tooltip'
+                  ) | translate
+                "
+                (click)="uploadDocument()"
+              >
+                @if(canUploadXml) {
+                <eui-icon-svg icon="eui-file-upload"></eui-icon-svg>
+                }
+              </button>
             </div>
 
             <div

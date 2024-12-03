@@ -113,7 +113,7 @@ class tableOfContent {
     }
 
     clickShowMoreBtn(euiCardName){
-        this.elements.cardTitle().contains(euiCardName).closest('eui-card.version-panes').find('button').click();
+        this.elements.cardTitle().contains(euiCardName).closest('eui-card.version-panes').find('button.eui-u-pv-none').click();
     }
 
     clickLinkInNavigationPane(link){
