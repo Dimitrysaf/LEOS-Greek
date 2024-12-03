@@ -15,7 +15,7 @@ public interface ConfigService {
 
     LeosDocument findConfigByVersionId(final BigDecimal id) throws RepositoryException;
 
-    public void saveNotifications(String content);
+    public void saveNotifications(String content) throws RepositoryException;
 
-    public String fetchNotifications();
+    public String fetchNotifications() throws RepositoryException;
 }

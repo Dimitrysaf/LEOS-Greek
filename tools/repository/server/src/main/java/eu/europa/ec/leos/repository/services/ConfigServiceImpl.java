@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class ConfigServiceImpl implements ConfigService {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigServiceImpl.class);
+    public static final String NOTIFICATIONS_HOMEPAGE = "NOTIFICATIONS-HOMEPAGE";
 
     @Autowired
     private ConfigRepository configRepository;
@@ -47,18 +48,23 @@ public class ConfigServiceImpl implements ConfigService {
         if (hasDoc.isPresent() && !withContent) {
             return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get()));
         } else if (hasDoc.isPresent()) {
-            ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(hasDoc.get().getId());
-            if (version == null) {
-                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigVersion.class.getName());
-            }
-            ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
-            if (content == null) {
-                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigContent.class.getName());
-            }
+            ConfigContent content = getConfigContent(hasDoc.get());
             return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get(), content));
         } else {
             return Arrays.asList();
         }
+    }
+
+    private ConfigContent getConfigContent(Config config) throws RepositoryException {
+        ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
+        if (version == null) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigVersion.class.getName());
+        }
+        ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
+        if (content == null) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigContent.class.getName());
+        }
+        return content;
     }
 
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
@@ -106,14 +112,21 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
 
-    public void saveNotifications(String content) {
-        ConfigContent configContent = configContentRepository.findConfigContentByName("NOTIFICATIONS-HOMEPAGE.json");
-        configContent.setContentString(content);
-        configContentRepository.save(configContent);
+    public void saveNotifications(String content)  throws RepositoryException {
+        Optional<Config> hasDoc = configRepository.findConfigByName(NOTIFICATIONS_HOMEPAGE);
+        if (hasDoc.isPresent()){
+            ConfigContent configContent = this.getConfigContent(hasDoc.get());
+            configContent.setContentString(content);
+            configContentRepository.save(configContent);
+        }
     }
 
-    public String fetchNotifications() {
-        ConfigContent configContent = configContentRepository.findConfigContentByName("NOTIFICATIONS-HOMEPAGE.json");
+    public String fetchNotifications() throws RepositoryException {
+        Optional<Config> hasDoc = configRepository.findConfigByName(NOTIFICATIONS_HOMEPAGE);
+        ConfigContent configContent = null;
+        if (hasDoc.isPresent()){
+            configContent = this.getConfigContent(hasDoc.get());
+        }
         List<Notification> notifications = null;
         try {
             notifications = objectMapper.readValue(configContent.getContent(), new TypeReference<List<Notification>>() {});
