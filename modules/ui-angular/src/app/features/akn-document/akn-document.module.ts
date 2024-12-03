@@ -56,6 +56,7 @@ import { TableOfContentProposalEditService } from './services/table-of-content-e
 import { TableOfContentEditService } from './services/table-of-content-edit.service';
 import { ValidateTocProposalService } from './services/validate-node-drop.proposal.service';
 import { ValidateTocService } from './services/validate-node-drop.service';
+import { DocumentUploadComponent } from './components/document-upload/document-upload.component';
 
 export const DOCUMENT_ACTIONS_SERVICE =
   new InjectionToken<DocumentActionsService>('DocumentActionsService');
@@ -92,6 +93,7 @@ export const DOCUMENT_ACTIONS_SERVICE =
     ImportFromJournalComponent,
     DownloadEconsiliumComponent,
     RibbonToolbarLabelComponent,
+    DocumentUploadComponent,
   ],
   imports: [
     CommonModule,

@@ -17,9 +17,7 @@ package eu.europa.ec.leos.services.controllers;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
-import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.services.api.DocumentApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.dto.request.DoubleCompareRequest;
@@ -45,7 +43,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -69,6 +69,23 @@ public class DocumentController {
                               GenericDocumentApiService genericDocumentApiService) {
         this.documentApiService = documentApiService;
         this.genericDocumentApiService = genericDocumentApiService;
+    }
+
+    @PostMapping(value = "/upload-document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Object> uploadDocument( @RequestParam("uploadedFile") MultipartFile uploadedFile,
+            @RequestParam("checkinComment") String checkinComment, @RequestParam("versionType") VersionType versionType,
+            @RequestParam("documentRef") String documentRef) {
+        try {
+            byte[] fileBytes = uploadedFile.getBytes();
+            this.genericDocumentApiService.uploadDocument(documentRef, versionType, checkinComment, fileBytes);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception exception) {
+            LOG.error("Error occurred while uploading document REF: " + documentRef, exception);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/downloadVersion/{documentType}/{documentRef}", method = RequestMethod.POST)

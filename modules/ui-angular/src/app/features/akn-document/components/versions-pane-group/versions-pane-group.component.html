@@ -58,8 +58,7 @@
           <app-version-actions-dropdown
             [version]="version"
             *ngIf="
-              (versionCompareService.compareModeEnabled$ | async) === false &&
-              isLatestRecentVersion(version) === false
+              (versionCompareService.compareModeEnabled$ | async) === false
             "
           ></app-version-actions-dropdown>
           <input

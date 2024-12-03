@@ -1,0 +1,39 @@
+<form [formGroup]="uploadForm" enctype="multipart/form-data">
+  <div class="button-text-container">
+    <span>{{ 'page.editor.version.upload.label' | translate }}</span>
+    <eui-file-upload
+      #uploadFile
+      formControlName="xmlFile"
+      [isMultiple]="false"
+      [accept]="'.xml'"
+      (fileDrop)="onDrop()"
+      [hasResetButton]="false"
+    ></eui-file-upload>
+  </div>
+</form>
+
+<div class="app-dialog-footer-content">
+  <button euiButton (click)="closeDialog()">
+    {{ 'global.actions.cancel' | translate }}
+  </button>
+  <button euiButton euiPrimary [disabled]="!uploadForm.valid || !isValidFile" (click)="uploadDocumentAction()">
+    {{ 'page.editor.version.upload.document.button' | translate }}
+  </button>
+</div>
+<eui-card *ngIf="errorsVO && errorsVO.length > 0">
+  <eui-card-header>
+    <eui-card-header-title>
+      <span>{{ fileName }}: Not Valid</span>
+    </eui-card-header-title>
+  </eui-card-header>
+  <eui-card-content>
+    <div class="error-messages">
+      <ul>
+        <li *ngFor="let error of errorsVO">
+          {{ error.errorCode | translate }}: {{ error.objects.join(', ') }}
+        </li>
+      </ul>
+    </div>
+  </eui-card-content>
+</eui-card>
+

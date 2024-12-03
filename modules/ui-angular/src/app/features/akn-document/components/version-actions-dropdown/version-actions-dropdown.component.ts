@@ -15,6 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Version } from '@/features/akn-document/models/versions';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { VersionsPaneGroupComponent } from '@/features/akn-document/components/versions-pane-group/versions-pane-group.component';
 
 import { ViewVersionService } from '../../services/view-version.service';
 import {Observable} from "rxjs";
@@ -43,6 +44,7 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private tableOfContentService: TableOfContentService,
     public viewVersionService: ViewVersionService,
+    public versionsPaneGroupComponent: VersionsPaneGroupComponent
   ) {}
 
   ngOnInit(): void {
@@ -125,5 +127,9 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
       elem.removeEventListener('click', listener, options);
       this.removeEventListener = undefined;
     };
+  }
+
+  isLatestRecentVersion(version: Version) {
+    return this.versionsPaneGroupComponent.isLatestRecentVersion(version);
   }
 }

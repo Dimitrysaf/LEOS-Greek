@@ -1175,6 +1175,18 @@ export class DocumentService {
     );
   }
 
+  uploadDocumentWithUpdatedContent(contentData: any, file: File) {
+    const formData = new FormData();
+    formData.append('uploadedFile', file);
+    formData.append('checkinComment', contentData.checkinComment);
+    formData.append('versionType', contentData.versionType);
+    formData.append('documentRef', contentData.documentRef);
+    return this.http.post(
+      `${apiBaseUrl}/secured/document/upload-document`,
+      formData
+    );
+  }
+
   finaliseDocument() {
     const documentType = this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     return this.http
