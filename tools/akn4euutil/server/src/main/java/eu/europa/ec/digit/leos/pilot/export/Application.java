@@ -13,6 +13,8 @@
  */
 package eu.europa.ec.digit.leos.pilot.export;
 
+import eu.europa.ec.digit.leos.pilot.export.config.Akn4euCorsConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -22,6 +24,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class Application extends SpringBootServletInitializer {
+    private final Akn4euCorsConfiguration corsConfiguration;
+
+    @Autowired
+    public Application(Akn4euCorsConfiguration corsConfiguration) {
+        this.corsConfiguration = corsConfiguration;
+    }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
