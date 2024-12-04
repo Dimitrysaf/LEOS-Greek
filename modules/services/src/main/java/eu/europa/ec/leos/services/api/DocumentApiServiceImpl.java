@@ -227,33 +227,19 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
     @Override
     public String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef,
-                                                boolean removeRevisionPrefix) throws IOException {
-        String result = legService.getFeedbackAnnotationsFromLeg(legFileId, documentRef, proposalRef);
-        if (removeRevisionPrefix) {
-            result = result.replaceAll("revision-", "");
-        } else {
-            result = legService.removePermissionsStoredAnnotationsFromId(result, documentRef, legFileId);
-            result = legService.fetchFeedbackRepliesByID(documentRef, proposalRef, legFileId, result);
-        }
-        return result;
+                                                boolean isMilestone) throws IOException {
+        LegDocument legDocument = legService.findLegDocumentById(legFileId);
+        return legService.getFeedbackAnnotationsFromLeg(legDocument, documentRef, proposalRef, isMilestone);
     }
 
     @Override
     public String getFeedbackAnnotationsFromVersionedReference(String versionedReference, String proposalRef,
-                                                boolean removeRevisionPrefix) {
+                                                boolean isMilestone) {
         try {
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
             LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
             String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
-            String result = legService.getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
-
-            if (removeRevisionPrefix) {
-                result = result.replaceAll("revision-", "");
-            } else {
-                result = legService.removePermissionsStoredAnnotations(result, documentRef, legDocument.getName());
-                result = legService.fetchFeedbackRepliesByName(documentRef, proposalRef, legDocument.getName(), result);
-            }
-            return result;
+            return legService.getFeedbackAnnotationsFromLeg(legDocument, documentRef, proposalRef, isMilestone);
         } catch (Exception e) {
             return "";
         }
@@ -261,20 +247,12 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
     @Override
     public String getFeedbackAnnotationsFromVersionedReference(String versionedReference, String legFileName, String proposalRef,
-                                                               boolean removeRevisionPrefix) {
+                                                               boolean isMilestone) {
         try {
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
             LegDocument legDocument = this.legService.findLastContributionByVersionedReferenceAndName(leosPackage.getPath(), legFileName, versionedReference);
             String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
-            String result = legService.getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
-
-            if (removeRevisionPrefix) {
-                result = result.replaceAll("revision-", "");
-            } else {
-                result = legService.removePermissionsStoredAnnotations(result, documentRef, legFileName);
-                result = legService.fetchFeedbackRepliesByName(documentRef, proposalRef, legFileName, result);
-            }
-            return result;
+            return legService.getFeedbackAnnotationsFromLeg(legDocument, documentRef, proposalRef, isMilestone);
         } catch (Exception e) {
             return "";
         }
@@ -282,20 +260,12 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
     @Override
     public String getFeedbackAnnotationsFromContribution(String legFileName, String documentRef, String proposalRef,
-                                                boolean removeRevisionPrefix) {
+                                                boolean isMilestone) {
         try {
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
 
             LegDocument legDoc = legService.findLastContribution(leosPackage.getPath(), legFileName);
-            String result = legService.getFeedbackAnnotationsFromLeg(legDoc.getId(), documentRef, proposalRef);
-
-            if (removeRevisionPrefix) {
-                result = result.replaceAll("revision-", "");
-            } else {
-                result = legService.removePermissionsStoredAnnotations(result, documentRef, legFileName);
-                result = legService.fetchFeedbackRepliesByName(documentRef, proposalRef, legFileName, result);
-            }
-            return result;
+            return legService.getFeedbackAnnotationsFromLeg(legDoc, documentRef, proposalRef, isMilestone);
         } catch (IOException e) {
             return "";
         }

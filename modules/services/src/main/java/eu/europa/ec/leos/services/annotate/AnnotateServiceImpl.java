@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.annotate;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,11 +9,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.integration.rest.AnnotateStatusResponse;
 import eu.europa.ec.leos.integration.rest.SendTemporaryAnnotationsResponse;
 import eu.europa.ec.leos.security.LeosPermission;
 import org.apache.cxf.common.util.StringUtils;
-import org.apache.jena.atlas.json.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,7 @@ public class AnnotateServiceImpl implements AnnotateService {
     }
 
     @Override
-    public String getFeedbackAnnotations(String docName, String legFileName, String proposalRef) {
+    public String getFeedbackAnnotations(String docName, LegDocument legDocument, String proposalRef) {
         URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/search")
                 .queryParam("_separate_replies", true)
                 .queryParam("group", "__world__")
@@ -108,7 +109,7 @@ public class AnnotateServiceImpl implements AnnotateService {
                 .queryParam("order", "asc")
                 .queryParam("sort", "created")
                 .queryParam("metadatasets", "[{\"status\":[\"ALL\"]}]")
-                .queryParam("uri", "uri://LEOS/" + legFileName + "/revision-" + docName).build().encode().toUri();
+                .queryParam("uri", "uri://LEOS/" + legDocument.getName() + "/revision-" + docName).build().encode().toUri();
 
         try {
             return annotationProvider.searchAnnotations(uri, this.getAnnotateToken(), proposalRef);
@@ -119,7 +120,7 @@ public class AnnotateServiceImpl implements AnnotateService {
     }
 
     @Override
-    public String fetchFeedbackRepliesFromDB(String docName, String proposalRef, String legFileName, String storedAnnotations, boolean setFlag) {
+    public String fetchFeedbackRepliesFromDB(String docName, String proposalRef, LegDocument legDocument, String storedAnnotations, boolean setFlag) {
         if (StringUtils.isEmpty(storedAnnotations)) {
             return "";
         }
@@ -143,12 +144,12 @@ public class AnnotateServiceImpl implements AnnotateService {
             JsonNode repliesAnnots = annotsJson.get("replies");
             JsonNode storedRepliesJson = storedAnnotsJson.get("replies");
             for (final JsonNode reply : repliesAnnots) {
-                if (isNormalAnnot(reply) && isReplyFromRevision(reply)) {
+                if (isNormalAnnot(reply) && isReplyFromRevision(reply) && isCreatedAfterContribution(reply, legDocument)) {
                     boolean isAlreadyStored = false;
                     for (final JsonNode storedReplyAnnot : storedRepliesJson) {
                         if (reply.get("id").asText("").equals(storedReplyAnnot.get("id").asText("id"))) {
                             isAlreadyStored = true;
-                            ((ObjectNode) storedReplyAnnot).remove("feedbackReply");
+                            ((ObjectNode) storedReplyAnnot).remove("feedback");
                             break;
                         }
                     }
@@ -157,7 +158,7 @@ public class AnnotateServiceImpl implements AnnotateService {
                         for (final JsonNode storedAnnot : rowStoredAnnotsJson) {
                             if (storedAnnot.get("id").asText("").equals(refs.get(0).asText("ref"))) {
                                 if (setFlag) {
-                                    ((ObjectNode) reply).put("feedbackReply", true);
+                                    ((ObjectNode) reply).put("feedbackToBeSent", true);
                                 }
                                 ((ArrayNode) storedRepliesJson).add(reply);
                                 break;
@@ -167,7 +168,7 @@ public class AnnotateServiceImpl implements AnnotateService {
                 }
             }
             storedAnnotations =  mapper.writeValueAsString(storedAnnotsJson);
-            storedAnnotations = storedAnnotations.replaceAll("uri://LEOS/" + docName, "uri://LEOS/" + legFileName + "/revision-" + docName);
+            storedAnnotations = storedAnnotations.replaceAll("uri://LEOS/" + docName, "uri://LEOS/" + legDocument.getName() + "/revision-" + docName);
         } catch (Exception exception) {
             LOG.error("Error getting feedback annotations: ", exception);
         }
@@ -175,7 +176,7 @@ public class AnnotateServiceImpl implements AnnotateService {
     }
 
     @Override
-    public List<JsonNode> getFeedbackRepliesFromDB(String docName, String proposalRef, String storedAnnotations) {
+    public List<JsonNode> getFeedbackRepliesFromDB(String docName, String proposalRef, LegDocument legDocument, String storedAnnotations) {
         List<JsonNode> repliesList = new ArrayList<JsonNode>();
         if (StringUtils.isEmpty(storedAnnotations)) {
             return repliesList;
@@ -200,7 +201,7 @@ public class AnnotateServiceImpl implements AnnotateService {
             JsonNode repliesAnnots = annotsJson.get("replies");
             JsonNode storedRepliesJson = storedAnnotsJson.get("replies");
             for (final JsonNode reply : repliesAnnots) {
-                if (isNormalAnnot(reply) && isReplyFromRevision(reply)) {
+                if (isNormalAnnot(reply) && isReplyFromRevision(reply) && isCreatedAfterContribution(reply, legDocument)) {
                     boolean isAlreadyStored = false;
                     for (final JsonNode storedReplyAnnot : storedRepliesJson) {
                         if (reply.get("id").asText("").equals(storedReplyAnnot.get("id").asText("id"))) {
@@ -226,7 +227,7 @@ public class AnnotateServiceImpl implements AnnotateService {
     }
 
     @Override
-    public int countFeedbackRepliesFromDB(String docName, String proposalRef, String storedAnnotations) {
+    public int countFeedbackRepliesFromDB(String docName, String proposalRef, LegDocument legDocument, String storedAnnotations) {
         int count = 0;
         if (StringUtils.isEmpty(storedAnnotations)) {
             return 0;
@@ -251,7 +252,7 @@ public class AnnotateServiceImpl implements AnnotateService {
             JsonNode repliesAnnots = annotsJson.get("replies");
             JsonNode storedRepliesJson = storedAnnotsJson.get("replies");
             for (final JsonNode reply : repliesAnnots) {
-                if (isNormalAnnot(reply) && isReplyFromRevision(reply)) {
+                if (isNormalAnnot(reply) && isReplyFromRevision(reply) && isCreatedAfterContribution(reply, legDocument)) {
                     boolean isAlreadyStored = false;
                     for (final JsonNode storedReplyAnnot : storedRepliesJson) {
                         if (reply.get("id").asText("").equals(storedReplyAnnot.get("id").asText("id"))) {
@@ -301,15 +302,28 @@ public class AnnotateServiceImpl implements AnnotateService {
         }
     }
 
-    private boolean isNormalAnnot(JsonNode annot) {
+    @Override
+    public boolean isNormalAnnot(JsonNode annot) {
         return (annot != null && (annot.get("status") == null
                 || annot.get("status").get("status") == null
                 || annot.get("status").get("status").asText("").equals("NORMAL")));
     }
 
-    private boolean isReplyFromRevision(JsonNode annot) {
+    @Override
+    public boolean isReplyFromRevision(JsonNode annot) {
         return (annot != null && annot.get("uri") != null
                 && annot.get("uri").asText("").contains("revision-"));
+    }
+
+    @Override
+    public boolean isCreatedAfterContribution(JsonNode annot, LegDocument legDocument) {
+        String annotCreationStr = annot.get("created").asText(null);
+        if (annotCreationStr != null) {
+            Instant legCreationInstant = legDocument.getCreationInstant();
+            Instant annotCreationInstant = Instant.parse(annotCreationStr);
+            return annotCreationInstant.compareTo(legCreationInstant) >= 0;
+        }
+        return false;
     }
 
     private String getAnnotateToken() {
