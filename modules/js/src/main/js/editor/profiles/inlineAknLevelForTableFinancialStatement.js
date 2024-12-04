@@ -12,8 +12,8 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 ; // jshint ignore:line
-define(function aknSubParagraphFSProfileModule(require) {
-     "use strict";
+define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
+    "use strict";
 
     // require profile dependencies, if needed
     // e.g. ckEditor, plugins or utilities
@@ -27,12 +27,10 @@ define(function aknSubParagraphFSProfileModule(require) {
     plugins.push(require("plugins/leosInlineEditor/leosInlineEditorPlugin"));
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
     plugins.push(require("plugins/aknHtmlAnchor/aknHtmlAnchorPlugin"));
-    plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlBr/aknHtmlBrPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
-    plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
-    plugins.push(require("plugins/aknSubParagraphMandate/aknSubParagraphMandatePlugin"));
+    plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/leosShowblocks/leosShowblocksPlugin"));
     plugins.push(require("plugins/aknAuthorialNote/aknAuthorialNotePlugin"));
     plugins.push(require("plugins/leosTransformer/leosTransformerPlugin"));
@@ -40,10 +38,12 @@ define(function aknSubParagraphFSProfileModule(require) {
     plugins.push(require("plugins/leosMathematicalFormula/leosMathematicalFormulaPlugin"));
     plugins.push(require("plugins/aknHtmlSuperScript/aknHtmlSuperScriptPlugin"));
     plugins.push(require("plugins/aknHtmlSubScript/aknHtmlSubScriptPlugin"));
+    plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
     plugins.push(require("plugins/leosWidget/leosWidgetPlugin"));
     plugins.push(require("plugins/leosAttrHandler/leosAttrHandlerPlugin"));
     plugins.push(require("plugins/leosPaste/leosPastePlugin"));
-    plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandlerFS/leosHierarchicalElementShiftEnterHandlerFS"));
+    plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandler/leosHierarchicalElementShiftEnterHandler"));
+    plugins.push(require("plugins/leosHierarchicalElementSubparagraphAfterLastPoint/leosHierarchicalElementSubparagraphAfterLastPoint"));
     plugins.push(require("plugins/leosFloatingSpace/leosFloatingSpacePlugin"));
     plugins.push(require("plugins/leosMessageBus/leosMessageBusPlugin"));
     plugins.push(require("plugins/leosDropHandler/leosDropHandlerPlugin"));
@@ -51,9 +51,17 @@ define(function aknSubParagraphFSProfileModule(require) {
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
-    plugins.push(require("plugins/leosElementSplitHandler/leosElementSplitHandlerPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
+    plugins.push(require("plugins/aknLevelSubParagraph/aknLevelSubParagraphPlugin"));
+    plugins.push(require("plugins/aknHtmlImage/aknHtmlImagePlugin"));
+    plugins.push(require("plugins/leosBase64Image/leosBase64ImagePlugin"));
+    plugins.push(require("plugins/leosImageResize/leosImageResizePlugin"));
+    plugins.push(require("plugins/aknHeading/aknHeadingPlugin"));
+    plugins.push(require("plugins/leosAnnexOrderedList/leosAnnexOrderedListPlugin"));
+    plugins.push(require("plugins/leosAnnexList/leosAnnexListPlugin"));
+    plugins.push(require("plugins/leosAnnexIndentList/leosAnnexIndentListPlugin"));
+    plugins.push(require("plugins/aknLevel/aknLevelPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
@@ -74,7 +82,7 @@ define(function aknSubParagraphFSProfileModule(require) {
     var transformationConfigResolver = transformationConfigManager.getTransformationConfigResolverForPlugins(pluginNames);
     var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver);
 
-    var profileName = "AKN SubParagraph";
+    var profileName = "Inline AKN Financial Statement Level";
 
     // create profile configuration
     var profileConfig = {
@@ -84,7 +92,7 @@ define(function aknSubParagraphFSProfileModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
-            + "widget,lineutils,basicstyles,"
+            + "widget,lineutils,basicstyles," + "indent,"
             + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
@@ -104,11 +112,12 @@ define(function aknSubParagraphFSProfileModule(require) {
             { name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
             { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
-            { name: 'ref', items: [ 'authorialNoteWidget'] },
-            { name: 'insert', items: [ 'Mathjax', 'SpecialChar' ] },
-            { name: 'tools', items: [ 'LeosShowBlocks' ] },
+            { name: 'soft_insert', items: ['leosHierarchicalElementShiftEnterHandler', 'leosHierarchicalElementSubparagraphAfterLastPoint']},
+            { name: 'ref', items: [ 'authorialNoteWidget' ] },
+            { name: 'insert', items: [ 'Mathjax', 'SpecialChar' , "base64image", 'Table'] },
+            { name: 'paragraph', items: ['Outdent', 'Indent'] },
             '/',
-            { name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandlerFS', 'Table' ] },
+            { name: 'tools', items: [ 'LeosShowBlocks' ] },
             { name : "mode" , items: [ 'Sourcedialog' ] },
             { name : "colors" , items: [ 'BGColor' ] }
         ],

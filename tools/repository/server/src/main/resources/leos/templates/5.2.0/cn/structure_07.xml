@@ -74,8 +74,12 @@
             <sameParentAsChild>false</sameParentAsChild>
             <profiles>
                 <profile>
-                    <elementSelector>level[leos\:editable='true']</elementSelector>
+                    <elementSelector>level[leos\:editable='true']:not(:has(> content > table))</elementSelector>
                     <profileName>inlineAknLevelFinancialStatement</profileName>
+                </profile>
+                <profile>
+                    <elementSelector>level[leos\:editable='true']:has(> content > table)</elementSelector>
+                    <profileName>inlineAknLevelForTableFinancialStatement</profileName>
                 </profile>
                 <profile>
                     <elementSelector>level heading[leos\:optional='true']</elementSelector>
