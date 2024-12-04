@@ -556,14 +556,18 @@ export class ProposalDetailsService implements OnDestroy {
 
   fetchCollaborators() {
     this.loadingService.setLoading(true);
-    return this.http
-      .get<Collaborator[]>(
-        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/collaborators`,
-      )
+    return this.listCollaborators(this.proposalRef)
       .subscribe((col) => {
         this.loadingService.setLoading(false);
         this.collaboratorsBS.next(col);
       });
+  }
+
+  listCollaborators(proposalRef: string) {
+    return this.http
+      .get<Collaborator[]>(
+        `${apiBaseUrl}/secured/proposal/${proposalRef}/collaborators`,
+      )
   }
 
   isInternalUser (collaborator: Collaborator): boolean {
@@ -665,7 +669,7 @@ export class ProposalDetailsService implements OnDestroy {
     );
   }
 
-  private searchUsers(name: string): Observable<User[]> {
+  searchUsers(name: string): Observable<User[]> {
     return this.http.get<User[]>(`${apiBaseUrl}/secured/proposal/searchUser`, {
       params: { searchKey: name },
     });

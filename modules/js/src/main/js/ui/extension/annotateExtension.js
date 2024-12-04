@@ -58,6 +58,8 @@ define(function annotateExtensionModule(require) {
         connector.receiveMergeSuggestions = _receiveMergeSuggestions;
         connector.receiveDocumentMetadata = _receiveDocumentMetadata;
         connector.receiveSearchMetadata = _receiveSearchMetadata;
+        connector.receiveListCollaborators = _receiveListCollaborators;
+        connector.receiveSearchUsers = _receiveSearchUsers;
 
         connector.stateChangeHandler = _stateChangeHandler;
         connector.requestFilteredAnnotations = _requestFilteredAnnotations;
@@ -82,6 +84,16 @@ define(function annotateExtensionModule(require) {
             connector.hostBridge.requestStoredDocumentAnnotations = function(uri) {
                 if (connector.requestStoredDocumentAnnotations) {
                     connector.requestStoredDocumentAnnotations(uri);
+                }
+            }
+            connector.hostBridge.requestListCollaborators = function() {
+                if (connector.requestListCollaborators) {
+                    connector.requestListCollaborators();
+                }
+            }
+            connector.hostBridge.requestSearchUsers = function(userId) {
+                if (connector.requestSearchUsers) {
+                    connector.requestSearchUsers(userId);
                 }
             }
             connector.hostBridge.requestCountSentFeedbacks = function(feedbacks) {
@@ -180,6 +192,22 @@ define(function annotateExtensionModule(require) {
         log.debug("Stored Document Annotations received and being sent to annotate..!");
         if (connector.hostBridge && connector.hostBridge.responseStoredDocumentAnnotations && typeof connector.hostBridge.responseStoredDocumentAnnotations === 'function') {
             connector.hostBridge.responseStoredDocumentAnnotations(annotationsList)
+        }
+    }
+
+    function _receiveListCollaborators(collaboratorsList) {
+        var connector = this;
+        log.debug("List of collaborators received and being sent to annotate..!");
+        if (connector.hostBridge && connector.hostBridge.responseListCollaborators && typeof connector.hostBridge.responseListCollaborators === 'function') {
+            connector.hostBridge.responseListCollaborators(collaboratorsList)
+        }
+    }
+
+    function _receiveSearchUsers(usersList) {
+        var connector = this;
+        log.debug("Search of users' response received and being sent to annotate..!");
+        if (connector.hostBridge && connector.hostBridge.responseSearchUsers && typeof connector.hostBridge.responseSearchUsers === 'function') {
+            connector.hostBridge.responseSearchUsers(usersList)
         }
     }
 
