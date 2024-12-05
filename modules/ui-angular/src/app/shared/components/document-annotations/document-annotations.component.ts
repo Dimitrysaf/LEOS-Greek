@@ -31,6 +31,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 import { AnnotateManager } from './annotate-manager';
+import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 
 @Component({
   selector: 'app-document-annotations',
@@ -79,6 +80,7 @@ export class DocumentAnnotationsComponent
     private documentService: DocumentService,
     private milestoneService: ProposalMilestonesService,
     private mergeContributionService: MergeContributionsService,
+    private detailsService: ProposalDetailsService,
     @Optional() private ckEditorService?: CKEditorService,
   ) {}
 
@@ -108,6 +110,7 @@ export class DocumentAnnotationsComponent
       this.documentService,
       this.milestoneService,
       this.mergeContributionService,
+      this.detailsService,
       this.ckEditorService,
     );
     this.documentService.setAnnotationGetter(() =>
