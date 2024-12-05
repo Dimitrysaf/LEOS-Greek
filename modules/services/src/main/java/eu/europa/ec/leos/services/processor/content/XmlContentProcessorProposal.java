@@ -59,6 +59,7 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
@@ -104,6 +105,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.LS;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
+import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
@@ -180,9 +182,27 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         }
         updateTocItemTypeAttributes(tocItems, node, tocVo);
         if (tagName.equals(ARTICLE)) {
+            removeNumberingForParagraphInDefinitionArticle(node, tocVo.getTocItemType());
             setAttributeForNumberingInListsArticle(tocItems, node, tocVo.getTocItemType());
         }
         return node;
+    }
+
+    /**
+     *  if is definition  remove num children from paragraphs
+     * @param node
+     * @param tocItemType
+     */
+    private void removeNumberingForParagraphInDefinitionArticle(Node node, TocItemTypeName tocItemType) {
+        if(TocItemTypeName.DEFINITION.equals(tocItemType)){
+            List<Node> lists = getChildren(node, PARAGRAPH);
+            for (Node paragraph : lists) {
+                Node numChild = getFirstChild(paragraph, NUM);
+                if (numChild != null) {
+                    paragraph.removeChild(numChild);
+                }
+            }
+        }
     }
 
     private void setAttributeForNumberingInListsArticle(List<TocItem> tocItems, Node node, TocItemTypeName tocItemType) {
