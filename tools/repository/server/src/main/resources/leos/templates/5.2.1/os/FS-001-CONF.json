@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[5]/content/aknp",
+          "destinationPath": "//level[5]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -12,7 +12,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[6]/subparagraph[2]/content/aknp",
+          "destinationPath": "//level[6]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -21,7 +21,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[8]/subparagraph[2]/content/aknp",
+          "destinationPath": "//level[8]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -39,8 +39,8 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[19]/content",
-          "position": "BEFORE-WRAPPER"
+          "destinationPath": "//level[19]",
+          "position": "AFTER-WRAPPER"
         }
       ],
       "content": "<guidance id=\"guidance-_21__p\" class=\"guidance-green-block\"><span id=\"_21__p-guidance\"><p>[Specify frequency and conditions.]</p></span></guidance>"
@@ -48,7 +48,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[21]/content/aknp",
+          "destinationPath": "//level[21]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -57,7 +57,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[22]/content/aknp",
+          "destinationPath": "//level[22]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -66,7 +66,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[23]/content/aknp",
+          "destinationPath": "//level[23]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -75,8 +75,8 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[24]/content",
-          "position": "BEFORE-WRAPPER"
+          "destinationPath": "//level[24]",
+          "position": "AFTER-WRAPPER"
         }
       ],
       "content": "<guidance id=\"guidance-_23__p\" class=\"guidance-green-block\"><span id=\"_23__p-guidance\"><p>[Specify existing or envisaged prevention and protection measures, e.g. from the anti-fraud strategy.]</p></span></guidance>"
@@ -255,7 +255,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[45]/subparagraph[2]",
+          "destinationPath": "(//level)[45]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -264,7 +264,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[46]/content[1]",
+          "destinationPath": "(//level)[46]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -273,7 +273,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[47]/content[1]",
+          "destinationPath": "(//level)[47]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -282,7 +282,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[48]/content[1]",
+          "destinationPath": "(//level)[48]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -291,7 +291,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[49]/content[1]",
+          "destinationPath": "(//level)[49]",
           "position": "AFTER-WRAPPER"
         }
       ],
