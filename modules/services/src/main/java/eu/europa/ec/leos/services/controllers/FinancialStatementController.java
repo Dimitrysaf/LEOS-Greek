@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -229,10 +228,8 @@ public class FinancialStatementController {
     @GetMapping(value = "/{documentRef}/download-xml-version", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public byte[] downloadVersion(@PathVariable("documentRef") String documentRef,
-                                  @RequestParam("versionId") String versionId) {
-        DocumentViewResponse version = this.genericDocumentApiService.getVersion(versionId);
-        return version.getEditableXml().getBytes(StandardCharsets.UTF_8);
+    public byte[] downloadVersion(@RequestParam("versionId") String versionId) {
+        return this.genericDocumentApiService.getXmlContent(versionId);
     }
 
     @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -288,6 +288,12 @@ public class GenericDocumentApiService {
         return new DocumentViewResponse(reference, versionContent, versionInfoVO, null, null);
     }
 
+    public byte[] getXmlContent(@NotNull String versionId) {
+        XmlDocument document = this.findDocumentById(versionId);
+        return document.getContent().get().getSource().getBytes();
+    }
+
+
     public DocumentViewResponse showCleanVersion(String documentRef) {
         final XmlDocument document = this.findDocumentByRef(documentRef);
         final String versionContent = documentContentService.getCleanDocumentAsHtml(document, "",

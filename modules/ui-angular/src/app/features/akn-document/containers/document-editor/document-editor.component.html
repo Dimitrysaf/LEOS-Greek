@@ -183,6 +183,7 @@
               >
                 <eui-icon-svg icon="eui-search"></eui-icon-svg>
               </button>
+              @if(canUploadXml) {
               <button
                 euiButton
                 euiIconButton
@@ -195,10 +196,11 @@
                 "
                 (click)="uploadDocument()"
               >
-                @if(canUploadXml) {
+
                 <eui-icon-svg icon="eui-file-upload"></eui-icon-svg>
-                }
+
               </button>
+              }
             </div>
 
             <div
