@@ -50,6 +50,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     var CMD_NAME = "aknNumberedParagraph";
     var NUMBERED = CKEDITOR.TRISTATE_ON;
     var UNNUMBERED = CKEDITOR.TRISTATE_OFF;
+    var DISABLED = CKEDITOR.TRISTATE_DISABLED;
     var PARA_MODE = NUMBERED;
     var SWITCHED = false;
     var PARA_SELECTOR = "*[data-akn-name='aknNumberedParagraph']";
@@ -60,6 +61,12 @@ define(function aknNumberedParagraphPluginModule(require) {
     var DATA_AKN_ATTR_SOFTTRANSFROM = "data-akn-attr-softtrans_from";
     var DATA_REFERS_TO = "refersto";
     var INP = "~INP";
+
+    function blockNumbering(editor, command) {
+        if (leosPluginUtils.isDefinitionArticle(editor)) {
+            command.setState(DISABLED);
+        }
+    }
 
     var pluginDefinition = {
         icons: pluginName.toLowerCase(),
@@ -97,6 +104,7 @@ define(function aknNumberedParagraphPluginModule(require) {
             }
 
             editor.on("change", function(event) {
+                blockNumbering(editor, paraCommand);
                 var jqEditor = $(event.editor.editable().$);
                 var article = jqEditor.find("*[data-akn-name='article']");
                 if (article.length !== 0) {
@@ -123,6 +131,9 @@ define(function aknNumberedParagraphPluginModule(require) {
             editor.on("dataReady", _setCurrentParaMode, null, paraCommand);
             editor.on('afterCommandExec', _restoreParagraphStructure, null, null, 0);
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
+            editor.on('instanceReady', function(event) {
+                blockNumbering(event.editor, paraCommand);
+            });
         }
     };
 
@@ -255,6 +266,7 @@ define(function aknNumberedParagraphPluginModule(require) {
             }
         }
         cmd.setState(PARA_MODE);
+        blockNumbering(event.editor, cmd);
     }
 
     //This method toggle the existing paragraph mode (Numbered -> Un-numbered & vice-versa) based on user input.
@@ -262,6 +274,7 @@ define(function aknNumberedParagraphPluginModule(require) {
         PARA_MODE = cmd.state === NUMBERED ? UNNUMBERED : NUMBERED;
         SWITCHED = true;
         cmd.setState(PARA_MODE);
+        blockNumbering(editor, cmd);
         if (PARA_MODE === UNNUMBERED) {
             transformSubparagraphs(editor);
         }
@@ -667,7 +680,12 @@ define(function aknNumberedParagraphPluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, CMD_NAME, null, true);
+        let editor = event.editor;
+        if (leosPluginUtils.isDefinitionArticle(editor)) {
+            editor.getCommand(CMD_NAME).setState(DISABLED);
+        }else{
+            leosCommandStateHandler.changeCommandState(editor, CMD_NAME, null, true);
+        }
     }
 
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
