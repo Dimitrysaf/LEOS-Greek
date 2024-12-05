@@ -32,6 +32,7 @@ import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildErr
 import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildValidZipResponse;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class LeosDocumentApiController {
     private final LeosDocumentService leosDocumentService;
 
