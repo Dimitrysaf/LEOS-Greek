@@ -28,8 +28,8 @@ public class MetadataUtil {
     private static final String EMISSION_DATE_PARSE_PATTERN = "yyyy-MM-dd";
 
     private static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\)(\\s{0,1})([0-9]+)(\\s{0,1})([A-Za-z]{0,5})";
-
     private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/identifier/COMnumber";
+    private static final String INSERT_COTE_HREF_new = "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER";
 
     private static final String INSERT_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
 
@@ -707,20 +707,19 @@ public class MetadataUtil {
             return;
         }
 
-        Node xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, CONCLUSION_NODE_IDNEW);
-        if (xmlNodeConclusionsP == null) {
-            xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, CONCLUSION_NODE_ID);
-        }
-        if (xmlNodeConclusionsP == null) {
+        List<Node> xmlNodesP = XmlUtil.getChildNodesWithName(xmlNodeConclusions, "p");
+        if (xmlNodesP.isEmpty()) {
             return;
         }
 
-        Node xmlNodeLocation = XmlUtil.getChildNodeWithName(xmlNodeConclusionsP, "location");
-        if (xmlNodeLocation == null) {
-            return;
+        for(Node xmlNodeP : xmlNodesP) {
+            Node xmlNodeLocation = XmlUtil.getChildNodeWithName(xmlNodeP, "location");
+            if (xmlNodeLocation == null) {
+                continue;
+            }
+            XmlUtil.setNodeAttributeValue(xmlNodeLocation, REFERSTO, "~" + fieldInfo.getId());
+            xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
         }
-        XmlUtil.setNodeAttributeValue(xmlNodeLocation, REFERSTO, "~" + fieldInfo.getId());
-        xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
     }
 
     public static void processEmissionDate(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
