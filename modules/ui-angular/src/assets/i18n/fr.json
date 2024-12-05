@@ -80,7 +80,7 @@
   "page.workspace.proposal-item.updated-by": "Mise à jour le {{ updatedOn }} par {{ updatedBy }}",
   "page.workspace.proposal-item.contribution-received": "Contribution reçue",
   "page.workspace.proposal-item.contribution-done": "Contribution effectuée",
-  "page.workspace.create-button": "Créer une acte",
+  "page.workspace.create-button": "Créer un acte",
   "page.workspace.create-draft": "Créer un projet",
   "page.workspace.create-title": "Créer un nouveau document législatif",
   "page.workspace.create-title.draft": "Créer un nouveau brouillon",

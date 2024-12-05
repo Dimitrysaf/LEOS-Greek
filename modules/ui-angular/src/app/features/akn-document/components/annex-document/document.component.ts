@@ -28,7 +28,7 @@ import { SecurityContext } from '@angular/core';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
 import {ContributionVO} from "@/shared/models/contribution-vo.model";
-import {MOVE_PREFIX} from "@/shared/constants/fork-merge.constants";
+import {MOVE_PREFIX, REVISION_PREFIX} from "@/shared/constants/fork-merge.constants";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -79,9 +79,9 @@ export class DocumentComponent
     this.isCNInstance = this.environmentService.isCouncil();
 
     this.milestoneService.requestStoredDocumentAnnotations$.pipe(takeUntil(this.destroy$)).subscribe((request) => {
-      if (request && request.uri && this.contributionView && this.contribution) {
+      if (request && request.uri && request.uri.includes(REVISION_PREFIX) && this.contributionView && this.contribution) {
         this.milestoneService.sendRequestStoredDocumentAnnotationsFromVersionedRef(this.contribution.proposalRef, this.contribution.legFileName, this.contribution.versionedReference, false, request.dbg);
-      } else {
+      } else if (request && request.uri && !request.uri.includes(REVISION_PREFIX) && !this.contributionView) {
         this.milestoneService.sendEmptyStoredDocumentAnnotations(request.dbg);
       }
     });

@@ -70,6 +70,8 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     this.milestoneService.receiveStoredDocumentAnnotations$.pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result && result.annot && result.dbg && result.dbg == this.dbg) {
         this.receiveStoredDocumentAnnotations(result.annot);
+      } else if (result && result.dbg && result.dbg == this.dbg) {
+        this.receiveStoredDocumentAnnotations(null);
       }
     });
   }
