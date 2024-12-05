@@ -80,7 +80,11 @@ public class MetadataUtil {
     private static final String COVERPAGE="coverPage";
     private static final String REFERSTO="refersTo";
     private static final String VALUE="value";
-    
+
+    private static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
+            "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
+            "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
+
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
         return new ReferenceFieldInfo("_BEL_BRU",
                 "http://publications.europa.eu/resource/authority/place/BEL_BRU",
@@ -129,37 +133,8 @@ public class MetadataUtil {
         if (!lowerCaseFilename.endsWith(".xml")) {
             return false;
         }
-        if (lowerCaseFilename.startsWith("annex")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("bill")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("expl_memorandum")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("main")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("memorandum")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("reg")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("financial_statement")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("stat_financ")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("stat_digit_financ")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("expl_council")) {
-            return true;
-        }
-        return false;
+        return MetadataUtil.validXmlDocumentPrefixes.stream()
+                .anyMatch((prefix) -> lowerCaseFilename.startsWith(prefix));
     }
 
     private static boolean isMainDocumentFile(XmlFile xmlFile) {
