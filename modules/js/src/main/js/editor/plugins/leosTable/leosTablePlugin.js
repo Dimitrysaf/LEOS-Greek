@@ -69,6 +69,19 @@ define(function leosTablePluginModule(require) {
                 ck.editor.removeMenuItem('tablecell_delete'); 
                 ck.editor.removeMenuItem('tablecell_properties'); 
                 ck.editor.getCommand('tableDelete').exec = _tableDelete.bind(undefined, ck.editor);
+
+                if (ck.editor.contextMenu) {
+                    ck.editor.contextMenu.addListener(function(element) {
+                        if (element && element.getAscendant('table', true) && element.getAscendant('table', true).getAttribute('leos:deletable') === 'false') {
+                            ck.editor.contextMenu.items.map(function(item) {
+                                if(item.command === 'tableDelete'){
+                                    item.state = CKEDITOR.TRISTATE_DISABLED;
+                                }
+                                return item;
+                            });
+                        }
+                    });
+                }
             });
             editor.on('selectionChange', _onSelectionChange);
             editor.on("toHtml", _removeEmptyTableHeading, null, null, 15);
@@ -216,6 +229,9 @@ define(function leosTablePluginModule(require) {
             }, {
                 akn : "leos:editable",
                 html : "contenteditable",
+            }, {
+                akn : "leos:deletable",
+                html : "leos:deletable"
             }, {
                 html : 'data-akn-name=leosTable'
             }],
