@@ -412,6 +412,19 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     }
     this.setEditorOpenState('CLOSE');
     this.documentService.setIsEditorOpen(false);
+    if (this.isElementSaved) {
+      this.documentService.updateElementContent({
+        documentRef: this.documentService.documentRef,
+        elementId: elemData.elementId,
+        elementType: elemData.elementType,
+        elementFragment: elemData.elementFragment,
+        isClosing: true,
+        isSaved: true
+      });
+      if (!this.isSaveAndClose) {
+        this.coEditionService.sendUpdateDocumentEvent(this.documentService.documentRef, elemData.elementId, elemData.elementType, elemData.elementFragment);
+      }
+    }
     if (this.elementToEditAfterClose && this.elementToEditAfterClose !== null) {
       this.editElementAction({
         action: 'edit',

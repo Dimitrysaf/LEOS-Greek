@@ -222,6 +222,7 @@ define(function elementEditorModule(require) {
                 tocEdition: connector.getState().tocEdition
             };
             // register editor event callbacks
+            editor.on("selectionChange", _checkSelection.bind(undefined, connector, params.elementId, params.elementType))
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));
             editor.on("save", _saveElement.bind(undefined, connector, params.elementId, params.elementType));
             editor.on("requestElement", _requestElement.bind(undefined, connector));
@@ -264,6 +265,25 @@ define(function elementEditorModule(require) {
             $("inline[name='unchecked']").off();
         } else {
             throw new Error("Unable to initialize the element editor!");
+        }
+    }
+
+    function _checkSelection(connector, elementId, elementType, event) {
+        log.debug("Checking selection...");
+        var selection = event.data.selection;
+        var editor = event.editor;
+        if (!!selection
+            && !!selection.getStartElement()
+            && selection.getStartElement().getText() === "\n"
+            && selection.getSelectedText() === ""
+            && !selection.getStartElement().getNext()
+            && !selection.getStartElement().getPrevious()
+            && !!selection.getCommonAncestor()) {
+
+            var range = editor.createRange();
+            range.setStart(selection.getCommonAncestor(), 0);
+            range.setEnd(selection.getCommonAncestor(), 0);
+            editor.getSelection().selectRanges( [ range ] );
         }
     }
 
