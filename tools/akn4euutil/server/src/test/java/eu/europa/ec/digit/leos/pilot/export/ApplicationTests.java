@@ -96,7 +96,7 @@ class AKN4EUUtilApplicationTests {
     @Test
     public void testCorsRequest() throws Exception {
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/test")
-                .header("Access-Control-Allow-Origin", "*");
+                .header("Origin", "http://localhost:8080");
         MvcResult result = mvc.perform(builder)
                 .andExpect(status().isOk())
                 .andReturn();
