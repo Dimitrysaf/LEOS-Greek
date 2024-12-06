@@ -22,34 +22,21 @@ import java.util.Optional;
 import java.util.Random;
 
 public class MetadataUtil {
-
     private static final Logger LOG = LoggerFactory.getLogger(MetadataUtil.class);
-
     private static final String EMISSION_DATE_PARSE_PATTERN = "yyyy-MM-dd";
-
     private static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\)(\\s{0,1})([0-9]+)(\\s{0,1})([A-Za-z]{0,5})";
-    private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/identifier/COMnumber";
-    private static final String INSERT_COTE_HREF_new = "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER";
-
+    private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER";
     private static final String INSERT_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
-
     private static final String INTERINSTITUTIONAL_COTE_PARSE_PATTERN = "([0-9]{4})/([0-9]+) \\(([A-Za-z0-9]+)\\)";
-
     private static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "_procedure_%s_%s";
-
     private static final String INTERINSTITUTIONAL_COTE_HREF_PATTERN = "http://eur-lex.europa.eu/procedure/EN/%s_%s";
-
     private static final String INTERINSTITUTIONAL_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
-
     private static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
-
     private static final String LINKED_DOCUMENT_PARSE_PATTERN = "([A-Za-z0-9]+)\\((\\d{4})\\)(\\s?)(\\d+)(\\s?)([A-Za-z0-9]*)";
-
     private static final String CONCLUSIONS = "conclusions";
     private static final String CONCLUSIONSNEW = "_" + CONCLUSIONS;
     private static final String CONCLUSION_NODE_ID = "conclusions__p_1";
     private static final String CONCLUSION_NODE_IDNEW = "_" + CONCLUSION_NODE_ID;
-
     private static final String STATUS_CODE="statusCode";
     private static final String KEY="key";
     private static final String DOCUMENT="document";
@@ -65,14 +52,12 @@ public class MetadataUtil {
     private static final String DOCUMENTID="documentId";
     private static final String ACTION="action";
     private static final String DATE="date";
-
     private static final String ONE="1";
     private static final String ZERO="0";
     private static final String FIELD_NOT_SUPPORTED_MESSAGE="Field not supported";
     private static final String LOCATION_NOT_SUPPORTED_MESSAGE="Location not supported";
     private static final String INVALID_ISO_DATE_MESSAGE="Invalid iso date";
     private static final String INVALID_FIELD_VALUE_MESSAGE="Invalid field value";
-    
     private static final String XMLID="xml:id";
     private static final String HREF="href";
     private static final String SHOWAS="showAs";

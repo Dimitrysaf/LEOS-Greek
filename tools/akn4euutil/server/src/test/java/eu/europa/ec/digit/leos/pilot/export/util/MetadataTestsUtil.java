@@ -202,7 +202,7 @@ public final class MetadataTestsUtil {
         if (xmlNodeMeta != null) {
             Assert.notNull(XmlUtil.getNodeAttributeValue(xmlNodeMeta, "xml:id"));
             checkNodeAttributeValue(xmlNodeMeta, "href",
-                    "http://publications.europa.eu/resource/authority/identifier/COMnumber");
+                    "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER");
             checkNodeAttributeValue(xmlNodeMeta, "showAs", "COM(2012) 466");
             checkNodeAttributeValue(xmlNodeMeta, "shortForm", "COM/2012/466");
         }

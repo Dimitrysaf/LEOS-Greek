@@ -265,8 +265,14 @@ public class MetadataUtilsTests {
         Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("main" + filenameSuffix));
         Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("MEMORANDUM" + filenameSuffix));
         Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_DEL" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_IMPL" + filenameSuffix));
         Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_DEL" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_IMPL" + filenameSuffix));
         Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_DEL" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_IMPL" + filenameSuffix));
         Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("FINANCIAL_STATEMENT" + filenameSuffix));
         Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_FINANCE" + filenameSuffix));
         Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_DIGIT_FINANCE" + filenameSuffix));
