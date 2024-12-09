@@ -27,7 +27,7 @@ define(function leosToolsModule(require) {
         return new Promise((resolve, reject) => {
             const timer = setTimeout(() => {
                 reject(new Error(`Loading script timed out: ${url}`));
-            }, 1000);
+            }, 2000);
             script.onload = () => {
                 clearTimeout(timer);
                 resolve(url);
