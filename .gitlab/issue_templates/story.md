@@ -16,4 +16,17 @@ Example:
 
 # **OTHER DESCRIPTIONS / DOCUMENTATION**
 
+
+# **RELEASE AND BUILD VERSION**
+
+**_OPTIONAL delete if not a bug_**
+
+_\<The version where the issue has been identified \>_
+
+# **STEPS TO REPRODUCE**
+
+**_OPTIONAL delete if not a bug_**
+
+_\<List of exact steps needed to reproduce the issue - add screenshots if needed to help contextualize\>_
+
 _\<Mockups, images and or documentation pages, if available\>_
