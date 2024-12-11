@@ -104,10 +104,12 @@ define(function userGuidanceExtensionModule(require) {
         var $target = _getTargetObject(target);
         if(!!$target && $target[0]) {
             var before = /BEFORE/i;
-            if(before.test(target.position)) {
-                $target.prepend(content);
-            }else{
-                $target.append(content);
+            if ($target.parents('.cke_editable').length===0 && !$target.hasClass('cke_editable')) {
+                if (before.test(target.position)) {
+                    $target.prepend(content);
+                } else {
+                    $target.append(content);
+                }
             }
         }
 

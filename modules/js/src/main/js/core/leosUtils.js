@@ -317,7 +317,7 @@ define(function leosUtilsModule(require) {
     }
 
     function _cleanUpElementFragment(str) {
-        return str.replace(/>\n\s*/g, ">");
+        return str.replace(/>\n\s*/g, ">").replace(/<guidance.*<\/guidance>/g, '');
     }
 
     function _getDocContainer() {
