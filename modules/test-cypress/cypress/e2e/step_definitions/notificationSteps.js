@@ -33,3 +33,15 @@ Then(/^upload notification button is not displayed$/, function () {
 Then(/^notification card list is displayed$/, function () {
     notificationContainer.elements.appNotificationCard().should('be.visible');
 });
+
+When(/^upload a notification json file from a relative location "([^"]*)"$/, function (location) {
+    notificationContainer.uploadFile("cypress/fixtures/notifications/" + location);
+});
+
+When(/^click on upload notification button in dialog box window$/, function () {
+    notificationContainer.elements.uploadNotificationBtnInDialogBox().click();
+});
+
+Then(/^notification card body contains text "([^"]*)"$/, function (text) {
+    notificationContainer.elements.notificationCardBody().should('have.text', text);
+});
