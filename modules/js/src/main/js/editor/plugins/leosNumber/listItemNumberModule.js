@@ -169,7 +169,7 @@ define(function listItemNumberModule(require) {
             }
             return paragraphSequence;
         } else {
-            return defaultList.find(function(el){return el.name === seqName});
+            return defaultList.find(function(el){return !!el && el.name === seqName});
         }
     }
 
