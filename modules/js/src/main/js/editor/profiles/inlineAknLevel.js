@@ -118,7 +118,7 @@ define(function aknLevelProfileModule(require) {
             { name: 'paragraph', items: ['Outdent', 'Indent'] },
             '/',
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
-            { name : "mode" , items: [ 'Sourcedialog' ] },
+            {name: "mode", items: [ 'Sourcedialog', 'spellchecker' ]},
             { name : "colors" , items: [ 'BGColor' ] },
             {name: 'dapInfo', items: ['leosDapInfo']}
         ],
