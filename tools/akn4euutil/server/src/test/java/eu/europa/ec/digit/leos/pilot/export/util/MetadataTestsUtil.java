@@ -202,7 +202,7 @@ public final class MetadataTestsUtil {
         if (xmlNodeMeta != null) {
             Assert.notNull(XmlUtil.getNodeAttributeValue(xmlNodeMeta, "xml:id"));
             checkNodeAttributeValue(xmlNodeMeta, "href",
-                    "http://publications.europa.eu/resource/authority/identifier/COMnumber");
+                    "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER");
             checkNodeAttributeValue(xmlNodeMeta, "showAs", "COM(2012) 466");
             checkNodeAttributeValue(xmlNodeMeta, "shortForm", "COM/2012/466");
         }
@@ -230,14 +230,14 @@ public final class MetadataTestsUtil {
         Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "procedureIdentifier");
         Node xmlNodeDocketNumber = MetadataUtil.getXmlNodeDocketNumber(xmlNodeContainer);
         if (xmlNodeDocketNumber != null) {
-            checkNodeWithRefersToAttribute(xmlNodeDocketNumber, "_procedure_2012_227", "2012/0227 (COD)");
+            checkNodeWithRefersToAttribute(xmlNodeDocketNumber, "~_procedure_2012_227", "2012/0227 (COD)");
         }
 
         if (xmlFile.getName().startsWith("bill")) {
             Node xmlNodePreface = xmlFile.getElementByName("preface");
             xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodePreface, "procedureIdentifier");
             if (xmlNodeContainer != null) {
-                checkNodeWithRefersToAttribute(xmlNodeDocketNumber, "_procedure_2012_227", "2012/0227 (COD)");
+                checkNodeWithRefersToAttribute(xmlNodeDocketNumber, "~_procedure_2012_227", "2012/0227 (COD)");
             }
         }
     }

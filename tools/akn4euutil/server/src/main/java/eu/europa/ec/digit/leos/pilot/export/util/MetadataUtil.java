@@ -22,34 +22,21 @@ import java.util.Optional;
 import java.util.Random;
 
 public class MetadataUtil {
-
     private static final Logger LOG = LoggerFactory.getLogger(MetadataUtil.class);
-
     private static final String EMISSION_DATE_PARSE_PATTERN = "yyyy-MM-dd";
-
     private static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\)(\\s{0,1})([0-9]+)(\\s{0,1})([A-Za-z]{0,5})";
-
-    private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/identifier/COMnumber";
-
+    private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER";
     private static final String INSERT_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
-
     private static final String INTERINSTITUTIONAL_COTE_PARSE_PATTERN = "([0-9]{4})/([0-9]+) \\(([A-Za-z0-9]+)\\)";
-
     private static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "_procedure_%s_%s";
-
     private static final String INTERINSTITUTIONAL_COTE_HREF_PATTERN = "http://eur-lex.europa.eu/procedure/EN/%s_%s";
-
     private static final String INTERINSTITUTIONAL_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
-
     private static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
-
     private static final String LINKED_DOCUMENT_PARSE_PATTERN = "([A-Za-z0-9]+)\\((\\d{4})\\)(\\s?)(\\d+)(\\s?)([A-Za-z0-9]*)";
-
     private static final String CONCLUSIONS = "conclusions";
     private static final String CONCLUSIONSNEW = "_" + CONCLUSIONS;
     private static final String CONCLUSION_NODE_ID = "conclusions__p_1";
     private static final String CONCLUSION_NODE_IDNEW = "_" + CONCLUSION_NODE_ID;
-
     private static final String STATUS_CODE="statusCode";
     private static final String KEY="key";
     private static final String DOCUMENT="document";
@@ -65,14 +52,12 @@ public class MetadataUtil {
     private static final String DOCUMENTID="documentId";
     private static final String ACTION="action";
     private static final String DATE="date";
-
     private static final String ONE="1";
     private static final String ZERO="0";
     private static final String FIELD_NOT_SUPPORTED_MESSAGE="Field not supported";
     private static final String LOCATION_NOT_SUPPORTED_MESSAGE="Location not supported";
     private static final String INVALID_ISO_DATE_MESSAGE="Invalid iso date";
     private static final String INVALID_FIELD_VALUE_MESSAGE="Invalid field value";
-    
     private static final String XMLID="xml:id";
     private static final String HREF="href";
     private static final String SHOWAS="showAs";
@@ -80,7 +65,11 @@ public class MetadataUtil {
     private static final String COVERPAGE="coverPage";
     private static final String REFERSTO="refersTo";
     private static final String VALUE="value";
-    
+
+    private static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
+            "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
+            "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
+
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
         return new ReferenceFieldInfo("_BEL_BRU",
                 "http://publications.europa.eu/resource/authority/place/BEL_BRU",
@@ -103,7 +92,7 @@ public class MetadataUtil {
     }
 
     public static boolean isDocumentXmlFile(final XmlFile xmlFile) {
-        Node rootNode = xmlFile.getRootNode();
+        Node rootNode = MetadataUtil.getAkomaNtosoNode(xmlFile);
         if (XmlUtil.isNodeEmpty(rootNode)) {
             return false;
         }
@@ -129,37 +118,8 @@ public class MetadataUtil {
         if (!lowerCaseFilename.endsWith(".xml")) {
             return false;
         }
-        if (lowerCaseFilename.startsWith("annex")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("bill")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("expl_memorandum")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("main")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("memorandum")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("reg")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("financial_statement")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("stat_financ")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("stat_digit_financ")) {
-            return true;
-        }
-        if (lowerCaseFilename.startsWith("expl_council")) {
-            return true;
-        }
-        return false;
+        return MetadataUtil.validXmlDocumentPrefixes.stream()
+                .anyMatch((prefix) -> lowerCaseFilename.startsWith(prefix));
     }
 
     private static boolean isMainDocumentFile(XmlFile xmlFile) {
@@ -168,8 +128,20 @@ public class MetadataUtil {
     }
 
     private static boolean isBillDocumentFile(XmlFile xmlFile) {
-        final String fileName = xmlFile.getName();
-        return fileName.startsWith("bill");
+        final String fileName = xmlFile.getName().toLowerCase();
+        if (fileName.startsWith("bill")) {
+            return true;
+        }
+        return isBillXmlDocument(xmlFile);
+    }
+
+    private static boolean isBillXmlDocument(XmlFile xmlFile) {
+        final Node rootNode = MetadataUtil.getAkomaNtosoNode(xmlFile);
+        if (XmlUtil.isNodeEmpty(rootNode)) {
+            return false;
+        }
+        final Node billNode = XmlUtil.getChildNodeWithName(rootNode, "bill");
+        return !XmlUtil.isNodeEmpty(billNode);
     }
 
     public static XmlFile akn4euResponseToXmlFile(ApplyMetadataResponse response) throws MetadataUtilsException {
@@ -718,7 +690,7 @@ public class MetadataUtil {
         if (xmlNodeLocation == null) {
             return;
         }
-        XmlUtil.setNodeAttributeValue(xmlNodeLocation, REFERSTO, "~" + fieldInfo.getId());
+        MetadataUtil.addRefersToAttribute(xmlNodeLocation, fieldInfo.getId());
         xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
     }
 
@@ -732,20 +704,19 @@ public class MetadataUtil {
             return;
         }
 
-        Node xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, CONCLUSION_NODE_IDNEW);
-        if (xmlNodeConclusionsP == null) {
-            xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, CONCLUSION_NODE_ID);
-        }
-        if (xmlNodeConclusionsP == null) {
+        List<Node> xmlNodesP = XmlUtil.getChildNodesWithName(xmlNodeConclusions, "p");
+        if (xmlNodesP.isEmpty()) {
             return;
         }
 
-        Node xmlNodeLocation = XmlUtil.getChildNodeWithName(xmlNodeConclusionsP, "location");
-        if (xmlNodeLocation == null) {
-            return;
+        for(Node xmlNodeP : xmlNodesP) {
+            Node xmlNodeLocation = XmlUtil.getChildNodeWithName(xmlNodeP, "location");
+            if (xmlNodeLocation == null) {
+                continue;
+            }
+            MetadataUtil.addRefersToAttribute(xmlNodeLocation, fieldInfo.getId());
+            xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
         }
-        XmlUtil.setNodeAttributeValue(xmlNodeLocation, REFERSTO, "~" + fieldInfo.getId());
-        xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
     }
 
     public static void processEmissionDate(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
@@ -937,7 +908,7 @@ public class MetadataUtil {
         }
         XmlUtil.removeNodeAttributeValue(xmlNodeBlock, "class");
         XmlUtil.removeNodeAttributeValue(xmlNodeDocNumber, "class");
-        XmlUtil.setNodeAttributeValue(xmlNodeDocNumber, REFERSTO, fieldInfo.getId());
+        MetadataUtil.addRefersToAttribute(xmlNodeDocNumber, fieldInfo.getId());
         xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
     }
 
@@ -1043,7 +1014,7 @@ public class MetadataUtil {
         }
         XmlUtil.removeNodeAttributeValue(xmlNodeContainer, "class");
         XmlUtil.removeNodeAttributeValue(xmlNodeDocketNumber, "class");
-        XmlUtil.setNodeAttributeValue(xmlNodeDocketNumber, REFERSTO, fieldInfo.getId());
+        MetadataUtil.addRefersToAttribute(xmlNodeDocketNumber, fieldInfo.getId());
         xmlNodeDocketNumber.setTextContent(fieldInfo.getDisplayValue());
     }
 
@@ -1159,5 +1130,13 @@ public class MetadataUtil {
             return documentFilename;
         }
         return prefinalisationName + documentFilename.substring(pos);
+    }
+
+    private static void addRefersToAttribute(Node xmlNode, final String id) {
+        XmlUtil.setNodeAttributeValue(xmlNode, REFERSTO, "~" + id);
+    }
+
+    private static Node getAkomaNtosoNode(XmlFile xmlFile) {
+        return xmlFile.getElementByName("akomaNtoso");
     }
 }
