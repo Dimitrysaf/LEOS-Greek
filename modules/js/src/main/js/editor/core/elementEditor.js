@@ -444,7 +444,8 @@ define(function elementEditorModule(require) {
             .replaceAll(" xml:id=", " id=")
             .replaceAll("<title>", "<akntitle>")
             .replaceAll("<title ", "<akntitle ")
-            .replaceAll("</title>", "</akntitle>");
+            .replaceAll("</title>", "</akntitle>")
+            .replace(/<guidance.*¨<\/guidance>/g, '');
     }
 
     function _destroyEditor(connector, elementId, elementType, event) {
@@ -539,7 +540,8 @@ define(function elementEditorModule(require) {
             .replace(/&nbsp;/g, WHITE_SPACE)
             .replace(/&#xa0;/g, WHITE_SPACE)
             .replace(/&#160;/g, WHITE_SPACE)
-            .replace(/&amp;#xa0;/g, WHITE_SPACE);
+            .replace(/&amp;#xa0;/g, WHITE_SPACE)
+            .replace(/<guidance.*¨<\/guidance>/g, '');
     }
 
     function _isArticleWithOneNumberedParagraph(elementId, editor) {
