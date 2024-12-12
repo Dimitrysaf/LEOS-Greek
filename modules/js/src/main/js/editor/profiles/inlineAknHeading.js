@@ -84,6 +84,7 @@ define(function aknHigherElementProfileModule(require) {
             {name: 'save', items: ['leosInlineSave', 'leosInlineSaveClose', 'leosInlineCancel']},
             {name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo']},
             {name: 'insert', items: ['SpecialChar']},
+            {name: 'trackChanges', items: ['toggleDisplay']},
             {name: "colors", items: ["BGColor"]}
         ],
         //show toolbar on startup

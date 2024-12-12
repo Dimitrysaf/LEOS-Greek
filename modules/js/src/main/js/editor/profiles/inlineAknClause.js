@@ -79,7 +79,9 @@ define(function aknInlineClauseProfileModule(require) {
         // toolbar groups arrangement, optimised for a single toolbar row
         toolbarGroups : [ {
             name : "save"
-        }, {
+        },{
+            name: 'trackChanges', groups: ['toggleDisplay']
+        },{
             name : "alternatives"
         }],
         // LEOS-3418 : to save modification in the Alternatives clause.

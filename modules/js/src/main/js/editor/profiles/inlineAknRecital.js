@@ -129,7 +129,9 @@ define(function aknRecitalProfileModule(require) {
             name : "mode"
         }, {
             name : "about"
-        }, {
+        },{
+            name: 'trackChanges', groups: ['toggleDisplay']
+        },{
             name : "colors"
         } ,{
             name: 'dapInfo'
