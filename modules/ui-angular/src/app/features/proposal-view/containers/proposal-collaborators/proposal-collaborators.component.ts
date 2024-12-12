@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { EuiTableComponent } from '@eui/components/eui-table';
-import { Collaborator, Entity } from '@leos/shared';
+import {Collaborator, Entity, Permission} from '@leos/shared';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -15,7 +15,7 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 })
 export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
   translated: boolean = false;
-  roles = ['Author', 'Contributor', 'Reviewer'];
+  roles = ['Author', 'Contributor', 'Reviewer', 'Viewer'];
   dataSource: Collaborator[] = [];
   filteredData: Collaborator[] = [];
   userInputForm: FormGroup;
@@ -24,6 +24,7 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
   destroy$: Subject<any> = new Subject();
   entity: string;
   selectedRole: string;
+  permissions: Permission[];
 
   @ViewChild('collaborators') collaboratorsTable: EuiTableComponent;
   @ViewChild('confirmCollabDelete') confirmComp: ConfirmDeleteDialogComponent;
@@ -44,6 +45,9 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
         });
         this.dataSource = coll;
       });
+    this.detailsService.permissions$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((perms) => (this.permissions = perms));
     this.translated = this.detailsService.getTranslated();
   }
 
@@ -104,5 +108,6 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     if (this.selectedRole === 'OWNER') return 0;
     if (this.selectedRole === 'CONTRIBUTOR') return 1;
     if (this.selectedRole === 'REVIEWER') return 2;
+    if (this.selectedRole === 'VIEWER') return 3;
   }
 }

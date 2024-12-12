@@ -162,6 +162,7 @@ export class ProposalsFiltersComponent
           'OWNER',
           'CONTRIBUTOR',
           'REVIEWER',
+          'VIEWER',
           'SUPPORT',
           'ADMIN',
           'USER',

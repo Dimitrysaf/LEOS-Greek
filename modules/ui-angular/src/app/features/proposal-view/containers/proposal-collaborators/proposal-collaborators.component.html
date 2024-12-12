@@ -78,6 +78,11 @@
                         'page.collection.collaborators.role.reviewer' | translate
                       }}
                     </option>
+                    <option value="VIEWER">
+                      {{
+                        'page.collection.collaborators.role.viewer' | translate
+                      }}
+                    </option>
                   </select>
                 </div>
                 <div class="col-sm-2">
@@ -100,7 +105,7 @@
           </td>
           <td [ngClass]="collaboratorClass" *ngIf="!translated">
             @if(this.detailsService.isInternalUser(row)) {
-            <eui-dropdown
+            <eui-dropdown *ngIf="permissions.includes('CAN_ADD_REMOVE_COLLABORATOR')"
               [euiDisabled]="
                 (this.detailsService.hasPermissions([
                   'CAN_ADD_REMOVE_COLLABORATOR'

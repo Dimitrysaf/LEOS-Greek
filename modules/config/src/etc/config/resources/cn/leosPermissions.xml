@@ -53,6 +53,15 @@
         <default-doc-creation-role>false</default-doc-creation-role>
         <message-key>leos.doc.collaborator.type3</message-key>
     </role>
+    <role name="VIEWER">
+        <permissions>
+            <permission>CAN_READ</permission>
+        </permissions>
+        <application-role>false</application-role>
+        <collaborator>true</collaborator>
+        <default-doc-creation-role>false</default-doc-creation-role>
+        <message-key>leos.doc.collaborator.type5</message-key>
+    </role>
     <role name="SUPPORT">
         <permissions>
             <permission>CAN_READ</permission>

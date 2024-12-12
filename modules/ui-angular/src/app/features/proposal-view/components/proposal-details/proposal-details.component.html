@@ -45,6 +45,7 @@
           euiInputCheckBox
           label="EEA Relevance"
           [(ngModel)]="eeaRelevance"
+          [disabled]="!permissions.includes('CAN_ADD_REMOVE_COLLABORATOR')"
           (ngModelChange)="handleEEAChange($event)"
         />
         <label>{{ 'page.workspace.create-form.document.eea-relevance' | translate }}</label>
@@ -52,4 +53,4 @@
       <div class="col-sm-8"></div>
     </div>
   </div>
-</div>  
+</div>
