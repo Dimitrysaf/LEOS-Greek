@@ -8,10 +8,6 @@ public class NumberConfigSymbol extends NumberConfigAbstract implements NumberCo
         this.suffix = suffix;
     }
 
-    public NumberConfigSymbol() {
-        this("-", "", "");
-    }
-
     @Override
     public String getActualNumberToShow() {
         return numberToShow;
