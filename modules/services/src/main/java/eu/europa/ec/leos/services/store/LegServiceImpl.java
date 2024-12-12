@@ -125,6 +125,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
+import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
@@ -489,8 +490,7 @@ public class LegServiceImpl implements LegService {
 
         final byte[] proposalXmlContent = proposalVO.getSource();
         ExportResource proposalExportResource = new ExportResource(LeosCategory.PROPOSAL);
-        proposalExportResource.setName(generateActFileName(proposalVO.getMetadataDocument().getRef(), proposalXmlContent));
-        final Map<String, String> proposalRefsMap = buildProposalExportResource(proposalExportResource, proposalXmlContent);
+        final Map<String, String> proposalRefsMap = buildProposalExportResource(proposalExportResource, proposalVO.getName(), proposalXmlContent);
         proposalExportResource.setExportOptions(exportOptions);
         final DocumentVO memorandumVO = proposalVO.getChildDocument(LeosCategory.MEMORANDUM);
         final byte[] memorandumXmlContent = memorandumVO.getSource();
@@ -499,7 +499,7 @@ public class LegServiceImpl implements LegService {
 
         final DocumentVO billVO = proposalVO.getChildDocument(LeosCategory.BILL);
         final byte[] billXmlContent = billVO.getSource();
-        final ExportResource billExportResource = buildExportResourceBill(proposalRefsMap, proposalVO.getRef(), billXmlContent);
+        final ExportResource billExportResource = buildExportResourceBill(proposalRefsMap, proposalVO.getName(), billXmlContent);
 
         // add annexes to billExportResource
         final Map<String, String> attachmentIds = attachmentProcessor.getAttachmentsIdFromBill(billXmlContent);
@@ -513,7 +513,7 @@ public class LegServiceImpl implements LegService {
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .get();
-            final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, annexVO.getRef(), resourceId, annexXmlContent);
+            final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, annexVO.getName(), resourceId, annexXmlContent);
             billExportResource.addChildResource(annexExportResource);
         });
 
@@ -527,7 +527,7 @@ public class LegServiceImpl implements LegService {
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .get();
-            final ExportResource explanatoryExportResource = buildExportResourceExplanatory(docNumber, resourceId, explanatoryXmlContent);
+            final ExportResource explanatoryExportResource = buildExportResourceExplanatory(docNumber, resourceId, explanatoryVO.getName(), explanatoryXmlContent);
             billExportResource.addChildResource(explanatoryExportResource);
         });
         proposalExportResource.addChildResource(billExportResource);
@@ -556,7 +556,6 @@ public class LegServiceImpl implements LegService {
         // 1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
-        exportProposalResource.setName(generateActFileName(proposal.getMetadata().get().getRef(), proposalContent));
         final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal);
         legPackage.addContainedFile(proposal.getVersionedReference());
         String language = proposal.getMetadata().get().getLanguage();
@@ -591,13 +590,13 @@ public class LegServiceImpl implements LegService {
                     xmlContent = addRelevantElements(exportOptions, bill.getVersionLabel(), xmlContent);
                     xmlContent = addCommentsMetadata(exportOptions.getComments(), xmlContent);
                 }
-                enrichZipWithBill(contentToZip, exportProposalResource, proposalRefsMap, bill, proposal.getMetadata().getOrNull().getRef(), xmlContent);
+                enrichZipWithBill(contentToZip, exportProposalResource, proposalRefsMap, bill, proposal, xmlContent);
                 legPackage.addContainedFile(bill.getVersionedReference());
             } else if (Annex.class.equals(exportOptions.getFileType())) {
                 final Bill bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
                         proposalRefsMap.get(LeosCategory.BILL.name() + "_href"), Bill.class);
                 byte[] billXmlContent = bill.getContent().get().getSource().getBytes();
-                ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposal.getMetadata().getOrNull().getRef(), billXmlContent);
+                ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposal.getName(), billXmlContent);
                 exportBillResource.setExportOptions(exportOptions);
                 exportProposalResource.addChildResource(exportBillResource);
                 addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage, proposal.getMetadata().getOrNull().getRef(), billXmlContent);
@@ -625,7 +624,7 @@ public class LegServiceImpl implements LegService {
         } else {
             addMemorandumToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
             addExplanatoryToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, legPackage, proposal);
-            addBillToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
+            addBillToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, proposalRefsMap, legPackage, proposal);
             addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
 
             if (exportOptions.isWithRenditions()) {
@@ -659,7 +658,7 @@ public class LegServiceImpl implements LegService {
             addHtmlRendition(contentToZip, financialStatement.getName(), xmlContent, financialStatementStyleSheet, fsTocJson, proposalRef);
         }
 
-        final ExportResource financialStatementExportResource = buildExportResourceFinancialStatement(proposalRefsMap, xmlContent);
+        final ExportResource financialStatementExportResource = buildExportResourceFinancialStatement(proposalRefsMap, financialStatement.getName(), xmlContent);
         exportProposalResource.addChildResource(financialStatementExportResource);
     }
 
@@ -680,7 +679,7 @@ public class LegServiceImpl implements LegService {
             addHtmlRendition(contentToZip, financialStatement.getName(), xmlContent, financialStatementStyleSheet, fsTocJson, proposalRef);
         }
 
-        final ExportResource exportfinStmntResource = buildExportResourceFinancialStatement(proposalRefsMap, xmlContent);
+        final ExportResource exportfinStmntResource = buildExportResourceFinancialStatement(proposalRefsMap, financialStatement.getName(), xmlContent);
         exportfinStmntResource.setExportOptions(exportOptions);
         exportProposalResource.addChildResource(exportfinStmntResource);
         return exportfinStmntResource;
@@ -773,7 +772,7 @@ public class LegServiceImpl implements LegService {
 
     private void addBillToPackage(final LeosPackage leosPackage, final Map<String, Object> contentToZip,
                                   ExportOptions exportOptions, ExportResource exportProposalResource, final Map<String, String> proposalRefsMap,
-                                  LegPackage legPackage, String proposalRef) {
+                                  LegPackage legPackage, Proposal proposal) {
         final String billRef = proposalRefsMap.get(LeosCategory.BILL.name() + "_href");
         if (!StringUtils.isEmpty(billRef) && !billRef.equals("#")) {
             Bill bill = null;
@@ -792,10 +791,10 @@ public class LegServiceImpl implements LegService {
                     billXmlContent = bill.getContent().get().getSource().getBytes();
                     billXmlContent = addMetadataToBill(bill, billXmlContent);
                 }
-                ExportResource exportBillResource = enrichZipWithBill(contentToZip, exportProposalResource, proposalRefsMap, bill, proposalRef, billXmlContent);
+                ExportResource exportBillResource = enrichZipWithBill(contentToZip, exportProposalResource, proposalRefsMap, bill, proposal, billXmlContent);
                 legPackage.addContainedFile(bill.getVersionedReference());
 
-                addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage, proposalRef, billXmlContent);
+                addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage, proposal.getMetadata().getOrNull().getRef(), billXmlContent);
             }
         }
     }
@@ -851,7 +850,7 @@ public class LegServiceImpl implements LegService {
         if (exportOptions.getFileType().equals(Proposal.class)) {
             addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions);
         }
-        return buildProposalExportResource(exportProposalResource, xmlContent);
+        return buildProposalExportResource(exportProposalResource, proposal.getName(), xmlContent);
     }
 
     private Map<String, String> enrichZipWithProposalForClone(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Proposal proposal) {
@@ -883,7 +882,7 @@ public class LegServiceImpl implements LegService {
             addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions);
         }
 
-        return buildProposalExportResource(exportProposalResource, xmlContent);
+        return buildProposalExportResource(exportProposalResource, proposal.getName(), xmlContent);
     }
 
     private void enrichZipWithToc(final Map<String, Object> contentToZip) {
@@ -941,11 +940,11 @@ public class LegServiceImpl implements LegService {
     }
 
     private ExportResource enrichZipWithBill(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Map<String, String> proposalRefsMap,
-                                             Bill bill, String proposalRef, byte[] xmlContent) {
+                                             Bill bill, Proposal proposal, byte[] xmlContent) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
         contentToZip.put(bill.getName(), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), exportOptions, proposalRef);
+        addAnnotateToZipContent(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), exportOptions, proposal.getMetadata().getOrNull().getRef());
         if (exportOptions.getFileType().equals(Bill.class)) {
             addFilteredAnnotationsToZipContent(contentToZip, bill.getName(), exportOptions);
         }
@@ -955,10 +954,10 @@ public class LegServiceImpl implements LegService {
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
             final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
             final String coverPage = exportProposalResource.getComponentId(XmlNodeConfigProcessor.DOC_REF_COVER);
-            addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposalRef);
+            addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposal.getMetadata().getOrNull().getRef());
         }
 
-        final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposalRef, xmlContent);
+        final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposal.getName(), xmlContent);
         exportBillResource.setExportOptions(exportOptions);
         exportProposalResource.addChildResource(exportBillResource);
         return exportBillResource;
@@ -1063,8 +1062,7 @@ public class LegServiceImpl implements LegService {
         }
 
         int docNumber = annex.getMetadata().get().getIndex();
-        String docRef = annex.getMetadata().get().getRef();
-        final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, docRef, resourceId, href, xmlContent);
+        final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, annex.getName(), resourceId, href, xmlContent);
         exportBillResource.addChildResource(annexExportResource);
     }
 
@@ -1101,7 +1099,7 @@ public class LegServiceImpl implements LegService {
         }
 
         int docNumber = 0;
-        final ExportResource explanatoryExportResource = buildExportResourceExplanatory(docNumber, resourceId, href, xmlContent);
+        final ExportResource explanatoryExportResource = buildExportResourceExplanatory(docNumber, resourceId, href, explanatory.getName(), xmlContent);
         exportBillResource.addChildResource(explanatoryExportResource);
     }
 
@@ -1130,7 +1128,7 @@ public class LegServiceImpl implements LegService {
         return json;
     }
 
-    private Map<String, String> buildProposalExportResource(ExportResource exportResource, byte[] xmlContent) {
+    private Map<String, String> buildProposalExportResource(ExportResource exportResource, String docName, byte[] xmlContent) {
         Map<String, XmlNodeConfig> config = new HashMap<>();
         config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.MEMORANDUM, "xml:id"));
         config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.MEMORANDUM, "href"));
@@ -1157,6 +1155,7 @@ public class LegServiceImpl implements LegService {
 
         exportResource.setResourceId(proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
         exportResource.setComponentsIdsMap(Collections.singletonMap(XmlNodeConfigProcessor.DOC_REF_COVER, proposalRefsMap.get(XmlNodeConfigProcessor.DOC_REF_COVER)));
+        exportResource.setName(generateActFileName(docName, xmlContent));
         return proposalRefsMap;
     }
 
@@ -1168,48 +1167,50 @@ public class LegServiceImpl implements LegService {
         return memorandumExportResource;
     }
 
-    private ExportResource buildExportResourceExplanatory(int docNumber, String resourceId, String href, byte[] xmlContent) {
+    private ExportResource buildExportResourceExplanatory(int docNumber, String resourceId, String href, String docName, byte[] xmlContent) {
         ExportResource explanatoryExportResource = new ExportResource(LeosCategory.COUNCIL_EXPLANATORY);
         explanatoryExportResource.setResourceId(resourceId);
         explanatoryExportResource.setHref(href);
+        explanatoryExportResource.setName(docName.contains(XML_DOC_EXT) ? docName.substring(0, docName.lastIndexOf(XML_DOC_EXT)) : docName);
         explanatoryExportResource.setDocNumber(docNumber);
         return explanatoryExportResource;
     }
 
-    private ExportResource buildExportResourceExplanatory(int docNumber, String resourceId, byte[] xmlContent) {
-        return buildExportResourceExplanatory(docNumber, resourceId, null, xmlContent);
+    private ExportResource buildExportResourceExplanatory(int docNumber, String resourceId, String docName, byte[] xmlContent) {
+        return buildExportResourceExplanatory(docNumber, resourceId, null, docName, xmlContent);
     }
 
-    private ExportResource buildExportResourceBill(Map<String, String> proposalRefsMap, String dcoRef, byte[] xmlContent) {
+    private ExportResource buildExportResourceBill(Map<String, String> proposalRefsMap, String docName, byte[] xmlContent) {
         ExportResource billExportResource = new ExportResource(LeosCategory.BILL);
         billExportResource.setResourceId(proposalRefsMap.get(LeosCategory.BILL.name() + "_xml:id"));
         billExportResource.setHref(proposalRefsMap.get(LeosCategory.BILL.name() + "_href"));
-        billExportResource.setName(dcoRef);
+        billExportResource.setName(docName.contains(XML_DOC_EXT) ? docName.substring(0, docName.lastIndexOf(XML_DOC_EXT)) : docName);
         billExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.BILL, xmlContent));
         return billExportResource;
     }
 
-    private ExportResource buildExportResourceAnnex(int docNumber, String docRef, String resourceId, String href, byte[] xmlContent) {
+    private ExportResource buildExportResourceAnnex(int docNumber, String docName, String resourceId, String href, byte[] xmlContent) {
         ExportResource annexExportResource = new ExportResource(LeosCategory.ANNEX);
         annexExportResource.setResourceId(resourceId);
         annexExportResource.setHref(href);
-        annexExportResource.setName(docRef);
+        annexExportResource.setName(docName.contains(XML_DOC_EXT) ? docName.substring(0, docName.lastIndexOf(XML_DOC_EXT)) : docName);
         annexExportResource.setDocNumber(docNumber);
         annexExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.ANNEX, xmlContent));
         return annexExportResource;
     }
 
-    private ExportResource buildExportResourceFinancialStatement(Map<String, String> proposalRefsMap, byte[] xmlContent) {
+    private ExportResource buildExportResourceFinancialStatement(Map<String, String> proposalRefsMap, String docName, byte[] xmlContent) {
         ExportResource finStmntExportResource = new ExportResource(LeosCategory.STAT_DIGIT_FINANC_LEGIS);
         finStmntExportResource.setResourceId(proposalRefsMap.get(LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_xml:id"));
         finStmntExportResource.setHref(proposalRefsMap.get(LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_href"));
+        finStmntExportResource.setName(docName.contains(XML_DOC_EXT) ? docName.substring(0, docName.lastIndexOf(XML_DOC_EXT)) : docName);
         finStmntExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.STAT_DIGIT_FINANC_LEGIS, xmlContent));
         return finStmntExportResource;
     }
 
-    private ExportResource buildExportResourceAnnex(int docNumber, String docRef, String resourceId, byte[] xmlContent) {
+    private ExportResource buildExportResourceAnnex(int docNumber, String docName, String resourceId, byte[] xmlContent) {
         //TODO : FIXME : populate href for Proposal export
-        return buildExportResourceAnnex(docNumber, docRef, resourceId, null, xmlContent);
+        return buildExportResourceAnnex(docNumber, docName, resourceId, null, xmlContent);
     }
 
     private  Map<String, String> getCoverPage(LeosCategory leosCategory, byte[] xmlContent) {
@@ -1773,7 +1774,6 @@ public class LegServiceImpl implements LegService {
         //1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
-        exportProposalResource.setName(generateActFileName(proposal.getMetadata().get().getRef(), proposalContent));
         final Map<String, String> proposalRefsMap = enrichZipWithProposalForClone(contentToZip, exportProposalResource, proposal);
         legPackage.addContainedFile(proposal.getVersionedReference());
         String language = proposal.getMetadata().get().getLanguage();
@@ -1798,7 +1798,7 @@ public class LegServiceImpl implements LegService {
         xmlContent = addMetadataToBill(bill, xmlContent);
 
         ExportResource exportBillResource = enrichZipWithBillForClone(contentToZip, exportProposalResource,
-                proposalRefsMap, bill, proposal.getMetadata().getOrNull().getRef(), xmlContent);
+                proposalRefsMap, bill, proposal, xmlContent);
 
         //3. Add annex to package
         byte[] billXmlContent = bill.getContent().get().getSource().getBytes();
@@ -1858,12 +1858,12 @@ public class LegServiceImpl implements LegService {
     }
 
     private ExportResource enrichZipWithBillForClone(final Map<String, Object> contentToZip, ExportResource exportProposalResource,
-                                                     Map<String, String> proposalRefsMap, Bill bill, String proposalRef,
+                                                     Map<String, String> proposalRefsMap, Bill bill, Proposal proposal,
                                                      byte[] xmlContent) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
         contentToZip.put(bill.getName(), xmlContent);
         if (exportOptions.isWithAnnotations()) {
-            addAnnotateToZipContentForClone(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), proposalRef, exportOptions);
+            addAnnotateToZipContentForClone(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), proposal.getMetadata().getOrNull().getRef(), exportOptions);
             if (exportOptions.getFileType().equals(Bill.class)) {
                 addFilteredAnnotationsToZipContent(contentToZip, bill.getName(), exportOptions);
             }
@@ -1874,10 +1874,10 @@ public class LegServiceImpl implements LegService {
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
             final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
 
-            addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposalRef);
+            addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposal.getMetadata().getOrNull().getRef());
         }
 
-        final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposalRef, xmlContent);
+        final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposal.getName(), xmlContent);
         exportBillResource.setExportOptions(exportOptions);
         exportProposalResource.addChildResource(exportBillResource);
         return exportBillResource;
@@ -1939,8 +1939,7 @@ public class LegServiceImpl implements LegService {
         }
 
         int docNumber = annex.getMetadata().get().getIndex();
-        String docRef = annex.getMetadata().get().getRef();
-        final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, docRef, resourceId, href, xmlContent);
+        final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, annex.getName(), resourceId, href, xmlContent);
         exportBillResource.addChildResource(annexExportResource);
     }
 
@@ -2232,10 +2231,13 @@ public class LegServiceImpl implements LegService {
         return 0;
     }
 
-    private String generateActFileName(String documentRef, byte[] xmlContent) {
+    private String generateActFileName(String documentName, byte[] xmlContent) {
         String docCollectionXPath = xPathCatalog.getXPathProposalDocCollection();
         String docCollectionName = xmlContentProcessor.getElementValue(xmlContent, docCollectionXPath, true);
-        String cuidAndLang = documentRef.substring(documentRef.indexOf("-") + 1, documentRef.length());
+        if(documentName.contains(XML_DOC_EXT)) {
+            documentName = documentName.substring(0, documentName.lastIndexOf(XML_DOC_EXT));
+        }
+        String cuidAndLang = documentName.substring(documentName.indexOf("-") + 1, documentName.length());
         return docCollectionName.concat(DOC_FILE_NAME_SEPARATOR).concat(cuidAndLang);
     }
 }
