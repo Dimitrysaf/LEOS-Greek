@@ -79,6 +79,14 @@ And(`click on download button`, () => {
     headerPage.getLoadingIcon().should('not.exist');
 });
 
+Then(`export as pdf button is present`, () => {
+    actViewerPage.elements.exportPdfBtn().should('not.be.disabled');
+});
+
+Then(`export as legiswrite button is present`, () => {
+    actViewerPage.elements.exportLegBtn().should('not.be.disabled');
+});
+
 When(`click on milestones tab in act view page`, () => {
     actViewerPage.clickMilestonesTab();
 });

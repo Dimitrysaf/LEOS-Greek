@@ -14,18 +14,14 @@ import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Subject, takeUntil, debounceTime, skip, take } from 'rxjs';
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
-const INITIAL_QUANTITY = 1;
-
 @Component({
   selector: 'app-proposal-collaborators-dialog',
   templateUrl: './proposal-collaborators-dialog.component.html',
   styleUrls: ['./proposal-collaborators-dialog.component.css'],
 })
 export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
-  quantity = INITIAL_QUANTITY;
   collaboratorsForm: FormGroup;
-  MIN_QUANTITY_USER = 1;
-  MAX_QUANTITY_USER = 20;
+  MAX_QUANTITY_USER = 5;
   userAutocompleteData: EuiAutoCompleteItem[] = [];
   destroy$ = new Subject<any>();
 
@@ -68,50 +64,6 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
     this.detailsService.setUserAutocompleteInputChange('');
   }
 
-  handleQuantityChange(value: number) {
-    //case of adding
-    if (value > this.MAX_QUANTITY_USER) {
-      this.collaboratorsFormList.clear();
-      return;
-    }
-    if (this.collaboratorsFormList.length < value) {
-      for (let i = this.collaboratorsFormList.length; i < value; i++) {
-        this.collaboratorsFormList.push(
-          this.fb.group(
-            {
-              name: ['', Validators.required],
-              role: ['', Validators.required],
-              entity: [{ value: '', disabled: true }, Validators.required],
-              item: [{}],
-              login: ['', Validators.required],
-            },
-            { validators: (g) => this.validateCollaborator(g) },
-          ),
-        );
-      }
-      this.addSubToFormArray();
-      return;
-    }
-    //case of removing
-    if (this.collaboratorsFormList.length > value) {
-      for (let i = this.collaboratorsFormList.length; i > value; i--) {
-        this.collaboratorsFormList.removeAt(i - 1);
-      }
-    }
-  }
-
-  addSubToFormArray() {
-    this.collaboratorsFormList.controls.forEach((control) => {
-      control.valueChanges
-        .pipe(debounceTime(300), takeUntil(this.destroy$))
-        .subscribe((value) => {
-          this.detailsService.setUserAutocompleteInputChange(
-            value.item?.label ?? '',
-          );
-        });
-    });
-  }
-
   handleAddUsers(isRetry = false) {
     this.addUsersError = null;
     const collaboratorsToAdd = this.getFormCollaborators();
@@ -133,6 +85,15 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
     });
   }
 
+  handleNameChanged(i: number) {
+    this.collaboratorsFormList.controls[i].patchValue({
+      name: '',
+      entity: '',
+      role: 'OWNER',
+      login: ''
+    });
+  }
+
   handleRoleSelect(event, i: number) {
     this.collaboratorsFormList.controls[i]
       .get('role')
@@ -144,19 +105,44 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
   }
 
   get isFormValid() {
-    return (
-      this.collaboratorsForm.valid && this.quantity >= this.MIN_QUANTITY_USER
-    );
+    return this.collaboratorsForm.valid && this.collaboratorsFormList.length > 0 &&
+        this.collaboratorsFormList.length <= this.MAX_QUANTITY_USER;
   }
 
-  get isQuantityValid() {
-    return this.quantity <= this.MAX_QUANTITY_USER;
+  addCollaborator(i?: number) {
+    if (this.collaboratorsFormList.length < this.MAX_QUANTITY_USER) {
+      this.collaboratorsFormList.insert((i ?? -1) + 1,
+        this.fb.group(
+          {
+            name: ['', Validators.required],
+            role: ['OWNER', Validators.required],
+            entity: [{value: '', disabled: true}, Validators.required],
+            item: [{}],
+            login: ['', Validators.required],
+          },
+          {validators: (g) => this.validateCollaborator(g)},
+        ),
+      );
+      this.addSubToFormArray();
+    }
+  }
+
+  addSubToFormArray() {
+    this.collaboratorsFormList.controls.forEach((control) => {
+      control.valueChanges
+        .pipe(debounceTime(300), takeUntil(this.destroy$))
+        .subscribe((value) => {
+          this.detailsService.setUserAutocompleteInputChange(
+            value.item?.label ?? ''
+          );
+        });
+    });
   }
 
   removeCollaborator(i: number) {
-    this.collaboratorsFormList.removeAt(i);
-    this.quantity = Math.max(this.quantity - 1, this.MIN_QUANTITY_USER);
-    this.handleQuantityChange(this.quantity);
+    if (this.collaboratorsFormList.length > 1) {
+      this.collaboratorsFormList.removeAt(i);
+    }
   }
 
   resetModal() {
@@ -164,8 +150,8 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
     this.collaboratorsForm = this.fb.group({
       collaborators: new FormArray([]),
     });
-    this.quantity = INITIAL_QUANTITY;
-    this.handleQuantityChange(this.quantity);
+    this.addCollaborator();
+    this.addUsersError = null;
   }
 
   private setPersistedCollaborators(collaborators: Collaborator[]) {
@@ -206,7 +192,7 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
 
   private existingCollaborator(user: User) {
     return this.collaborators.some(
-      (c) => c.login === user.login && c.entity.id === user.defaultEntity.id,
+      (c) => c.login === user.login && c.entity?.id === user.defaultEntity.id,
     );
   }
 
@@ -259,7 +245,7 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
     const entityId = getEntityId(control.value.item);
 
     const isExisting = this.collaborators.some(
-      (c) => c.login === login && c.entity.id === entityId,
+      (c) => c?.login === login && c.entity?.id === entityId,
     );
     if (isExisting) {
       errors.push('existing');
@@ -269,7 +255,7 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
       (c) => c.value.item as User,
     );
     const isDuplicate = formCollaborators.some(
-      (c) => c !== user && c.login === login && getEntityId(c) === entityId,
+      (c) => c !== user && c?.login === login && getEntityId(c) === entityId,
     );
     if (isDuplicate) {
       errors.push('duplicate');

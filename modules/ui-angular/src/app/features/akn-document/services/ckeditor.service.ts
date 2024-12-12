@@ -125,7 +125,7 @@ export class CKEditorService {
         this.initMathJax(require, leosState, rootElement);
         this.initTrackChanges(require, leosState, rootElement);
         this.initMergeContribution(require, leosState, rootElement);
-        if (this.documentService.documentType === 'stat_financ_legis') {
+        if (this.documentService.documentType === 'stat_digit_financ_legis') {
           this.initDatePicker(require, leosState, rootElement);
           this.initCheckBoxes(require, rootElement);
         }

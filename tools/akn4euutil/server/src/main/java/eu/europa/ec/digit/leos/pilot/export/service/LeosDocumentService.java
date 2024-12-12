@@ -28,4 +28,6 @@ public interface LeosDocumentService {
     LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, String outputDescriptor);
 
     byte[] applyMetadata(MultipartFile inputFile);
+
+    void applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
 }

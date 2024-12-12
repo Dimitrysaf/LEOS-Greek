@@ -558,6 +558,9 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
             ),
             bodyComponent: {
               component: CoEditionDetectedDialogComponent,
+              config: {
+                coEditionAction: 'EDIT_TOC'
+              }
             },
             accept: () => this.deleteWithConfirmationCheck(newTree, item),
           });

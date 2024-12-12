@@ -13,7 +13,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  EuiDialogComponent,
+  EuiDialogComponent, EuiDialogConfig,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { EuiBreadcrumbService } from '@eui/components/layout';
@@ -24,14 +24,13 @@ import {
   BehaviorSubject,
   combineLatest,
   debounceTime,
-  filter,
+  filter, finalize,
   Observable,
   Subject, Subscription,
   take,
   takeUntil,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DOCUMENT_ACTIONS_SERVICE } from '@/features/akn-document/akn-document.module';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
@@ -72,6 +71,7 @@ import { PageMode, PageModeService } from '../../services/page-mode.service';
 import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
+import {DocumentUploadComponent} from "@/features/akn-document/components/document-upload/document-upload.component";
 
 @Component({
   selector: 'app-document-editor',
@@ -104,6 +104,7 @@ export class DocumentEditorComponent
   contributionForView: string;
 
   isTocPaneExpanded = true;
+  tocLoading = false;
   isAnnotationsPaneCollapsed = true;
   isContributionAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
@@ -170,6 +171,7 @@ export class DocumentEditorComponent
   @ViewChild('contributionAnnotationsPane', { read: ElementRef })
   contributionAnnotationsPaneElement: ElementRef;
 
+  canUploadXml: boolean;
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
@@ -210,6 +212,18 @@ export class DocumentEditorComponent
   ) {
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
 
+    this.tocService.isTocLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isTocLoading) => {
+        this.tocLoading = isTocLoading;
+      });
+
+    this.coEditionWSService.forceReloadBS.subscribe((reload) => {
+      if (reload) {
+        this.documentService.reloadDocument();
+      }
+    });
+
     combineLatest([this.route.params, this.route.data])
       .pipe(take(1))
       .subscribe(([params, data]) => {
@@ -230,7 +244,9 @@ export class DocumentEditorComponent
     this.documentService.refreshConnectors$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
-        this.documentService.updateElementContent(data);
+        if (!!data && !data.isClosing) {
+          this.documentService.updateElementContent(data);
+        }
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
 
@@ -382,6 +398,7 @@ export class DocumentEditorComponent
           this.contribution = contribution;
         }
       });
+    this.setPermission();
   }
 
   ngAfterViewInit(): void {
@@ -486,6 +503,9 @@ export class DocumentEditorComponent
         ),
         bodyComponent: {
           component: CoEditionDetectedDialogComponent,
+          config: {
+            coEditionAction: 'EDIT_TOC'
+          }
         },
         accept: () => {
           this.editInlineToC();
@@ -521,23 +541,32 @@ export class DocumentEditorComponent
     }
   }
 
-  handleSave() {
+  handleSave(isClosing: boolean) {
+    this.loadingService.setLoading(true);
+    this.tocService.resetOriginalToc();
+    this.tocService.setBlockReloadOfToc();
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
     this.tocService
       .saveToc(this.documentRef, this.documentType, toc)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), finalize(() => this.handleAfterSave()))
       .subscribe({
         next: (res) => {
-          this.documentTocComponent.isToCDraft = false;
-          this.documentTocComponent.clearSelectedNode();
-          this.tocEditService.resetTreeHistory();
-          this.documentService.reloadDocument();
-          this.tocService.reload();
-          this.coEditionWSService.sendUpdateDocumentEvent(this.documentRef);
+          this.tocService.refreshToc(res);
+          this.tocService.resetOriginalToc(res);
         },
-        error: (err) => {},
+        error: (err) => {
+          console.log("error while saving toc: " + err);
+          this.tocService.displayOriginalToc();
+        },
       });
+  }
+
+  handleAfterSave() {
+    this.documentTocComponent.isToCDraft = false;
+    this.loadingService.setLoading(false);
+    this.tocEditService.resetTreeHistory();
+    this.coEditionWSService.sendUpdateDocumentEvent(this.documentRef);
   }
 
   handleCancel() {
@@ -583,7 +612,7 @@ export class DocumentEditorComponent
       });
     } else {
       if (save) {
-        this.handleSave();
+        this.handleSave(true);
       }
       this.closeInlineToCEdit();
     }
@@ -591,7 +620,7 @@ export class DocumentEditorComponent
   }
 
   handleSaveAndClose() {
-    this.handleSave();
+    this.handleSave(true);
     this.closeInlineToCEdit();
   }
 
@@ -717,6 +746,24 @@ export class DocumentEditorComponent
     this.milestoneViewData = null;
   }
 
+  uploadDocument(open?: boolean) {
+    const dialog = this.dialogService.openDialog(
+      new EuiDialogConfig({
+        dialogId: 'upload-id',
+        title: this.translate.instant('page.editor.versions.upload.tooltip'),
+        bodyComponent: {
+          component: DocumentUploadComponent,
+          config: {
+            closeDialog: () => this.dialogService.closeDialog(dialog.id),
+            documentRef: this.documentRef,
+          },
+        },
+        hasFooter: false,
+      }),
+    );
+    return true;
+  }
+
   private handleContributionView(
     contributionView: DocumentViewResponse,
     contribution: ContributionVO,
@@ -791,6 +838,7 @@ export class DocumentEditorComponent
 
   private closeInlineToCEdit() {
     this.documentTocComponent.messageFromValidation = null;
+    this.tocService.displayOriginalToc();
     this.documentTocComponent.isDropValid = null;
     this.tocService.setIsEditMode(false);
     this.documentTocComponent.resetTreeState();
@@ -914,13 +962,19 @@ export class DocumentEditorComponent
         return this.tranlsateService.instant('global.breadcrumb.memorandum');
       case 'coverPage':
         return this.tranlsateService.instant('global.breadcrumb.cover.page');
-      case 'stat_financ_legis':
+      case 'stat_digit_financ_legis':
         return this.tranlsateService.instant(
           'global.breadcrumb.financial-statement',
         );
       default:
         return capitalizeFirstLetter(name);
     }
+  }
+
+  private setPermission() {
+    this.config.config.subscribe((config) => {
+      this.canUploadXml = config.userAppPermissions.includes('CAN_UPLOAD_XML_DOC');
+    });
   }
 
   private manageBreadCrumbsDocumentScreen() {

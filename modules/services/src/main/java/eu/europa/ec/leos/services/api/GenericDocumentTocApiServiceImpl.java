@@ -67,7 +67,7 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
         this.put(LeosCategory.MEMORANDUM, "doc");
         this.put(LeosCategory.ANNEX, "doc");
         this.put(LeosCategory.PROPOSAL, "doc");
-        this.put(LeosCategory.STAT_FINANC_LEGIS, "doc");
+        this.put(LeosCategory.STAT_DIGIT_FINANC_LEGIS, "doc");
         this.put(LeosCategory.COUNCIL_EXPLANATORY, "doc");
         this.put(LeosCategory.COVERPAGE, "coverPage");
     }};
@@ -88,7 +88,7 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
     private static final String memoStyleSheet = LeosCategory.MEMORANDUM.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String billStyleSheet = LeosCategory.BILL.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String coverPageStyleSheet = LeosCategory.COVERPAGE.name().toLowerCase() + STYLE_SHEET_EXT;
-    private static final String financialStatementStyleSheet = LeosCategory.STAT_FINANC_LEGIS.name().toLowerCase() + STYLE_SHEET_EXT;
+    private static final String financialStatementStyleSheet = LeosCategory.STAT_DIGIT_FINANC_LEGIS.name().toLowerCase() + STYLE_SHEET_EXT;
 
     @Autowired
     public GenericDocumentTocApiServiceImpl(@NotNull LeosRepository leosRepository,
@@ -179,7 +179,7 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
             // Build toc_docName.js file
             RenderedDocument tocHtmlDocumentJS = new RenderedDocument();
 
-            if (xmlDocumentName.startsWith(XmlHelper.STAT_FINANC_LEGIS)) {
+            if (xmlDocumentName.startsWith(XmlHelper.STAT_DIGIT_FINANC_LEGIS)) {
                 Document document = XercesUtils.createXercesDocument(xmlContent);
                 byte[] htmlRenditionContent = LeosXercesUtils.wrapWithPageOrientationDivs(document);
                 htmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
@@ -256,7 +256,7 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
 
     private String getStyleSheetName(String xmlDocumentName) {
         String styleSheetName = "";
-        if(xmlDocumentName.startsWith(XmlHelper.STAT_FINANC_LEGIS_FILE_PREFIX)) {
+        if(xmlDocumentName.startsWith(XmlHelper.STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)) {
             styleSheetName = financialStatementStyleSheet;
         } else if(xmlDocumentName.startsWith(XmlHelper.MEMORANDUM_FILE_PREFIX)) {
             styleSheetName = memoStyleSheet;

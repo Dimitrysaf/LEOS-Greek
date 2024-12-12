@@ -12,6 +12,8 @@ Given('navigate to edit drafting application with {string}', (user) => {
         loginPage.clickNextBtn();
         loginPage.elements.password().should('be.visible');
         loginPage.enterPassword(Cypress.env("remotePassword" + user));
+        loginPage.clickVerificationDropDown();
+        loginPage.selectPasswordVerificationMethod();
         loginPage.clickSignInBtn();
     }
 })

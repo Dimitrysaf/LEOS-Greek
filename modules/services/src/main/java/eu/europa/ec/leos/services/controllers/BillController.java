@@ -27,7 +27,6 @@ import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
-import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -213,7 +212,7 @@ public class BillController {
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs());
+            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.SIMPLIFIED);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while saving toc - " + e.getMessage());
@@ -647,20 +646,6 @@ public class BillController {
         documentRef = encodeParam(documentRef);
         DocumentViewResponse view = this.billApiService.importElements(documentRef, request);
         return ResponseEntity.ok().body(view);
-    }
-
-    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef,
-                                                       @RequestParam(value = "elementIds", required = false) List<String> elementIds) {
-        try {
-            documentRef = encodeParam(documentRef);
-            TocAndAncestorsResponse tocAncestors = this.billApiService.fetchTocAncestor(documentRef, elementIds);
-            return ResponseEntity.ok().body(tocAncestors);
-        } catch (Exception e) {
-            LOG.error("Error occurred  while trying to get toc ancestors for bill " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for bill", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
 }

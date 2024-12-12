@@ -19,14 +19,15 @@ define(function leosToolsModule(require) {
         return require.toUrl(resource);
     }
 
-    async function loadExternalJs(url) {
+    async function loadExternalJs(url, scriptId) {
         var script = document.createElement('script');
         script.src = url;
+        script.id = scriptId;
         document.head.appendChild(script);
         return new Promise((resolve, reject) => {
             const timer = setTimeout(() => {
                 reject(new Error(`Loading script timed out: ${url}`));
-            }, 1000);
+            }, 2000);
             script.onload = () => {
                 clearTimeout(timer);
                 resolve(url);

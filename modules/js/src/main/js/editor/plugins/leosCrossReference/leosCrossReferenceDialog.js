@@ -67,7 +67,7 @@ define(function leosCrossReferenceDialog(require) {
             addTabs: function addTabs(dialogDefinitionCKE) {
                 editor.LEOS.documentsMetadata.forEach(function (documentMetadata) {
                     if (documentMetadata.category !== "MEMORANDUM" && documentMetadata.category !== "COUNCIL_EXPLANATORY"
-                                && documentMetadata.category !== "STAT_FINANC_LEGIS") {
+                                && documentMetadata.category !== "STAT_DIGIT_FINANC_LEGIS") {
                         tabHandlers.addHandler(documentMetadata.ref);
                         var htmlTocTemplate = '<div id="treeContainer' + documentMetadata.ref + '" class="crTableOfContent"></div>';
                         var htmlContentTemplate = '<div><div id="contentContainer' + documentMetadata.ref + '"  class="selected-content'
@@ -84,6 +84,12 @@ define(function leosCrossReferenceDialog(require) {
                                 height: 390,
                                 /* Set the dialog state upon data from widget, this is only used for editing already existed widgets. */
                                 setup: function setup(widget) {
+                                    let tabRef = widget?.element?.find('ref')?.getItem(0)?.getAttribute('href');
+                                    if (tabRef && tabRef.lastIndexOf('.') > 0) {
+                                        tabRef = tabRef.substring(0, tabRef.lastIndexOf('.'));
+                                        this.getDialog().selectPage(tabRef);
+                                    }
+
                                     var brokenRef =  widget.element.getAttribute('leos:broken');
                                     var existingSelectedMrefId = widget.element.getId();
                                     tabHandlers.nodeContentHandlers[documentMetadata.ref].setSelectedMrefId(existingSelectedMrefId)
@@ -113,7 +119,7 @@ define(function leosCrossReferenceDialog(require) {
                                     } else {
                                         tabHandlers.nodeContentHandlers[documentMetadata.ref].setUpExisting("");
                                     }
-                                    tabHandlers.loadTableOfContent(tabHandlers.nodeContentHandlers[documentMetadata.ref].getSelectedElementIds());
+                                    tabHandlers.loadTableOfContent(tabHandlers.nodeContentHandlers[documentMetadata.ref].getSelectedElementIds(), documentMetadata.ref);
                                 },
                                 /* This function set up final state on the widget. */
                                 commit: function commit(widget) {
@@ -190,7 +196,7 @@ define(function leosCrossReferenceDialog(require) {
                 return editor.lang.leosCrossReference.bill;
             case "ANNEX":
                 return editor.lang.leosCrossReference.annex + " " + annexIndex;
-            case "STAT_FINANC_LEGIS":
+            case "STAT_DIGIT_FINANC_LEGIS":
                 return editor.lang.leosCrossReference.financialStatement;
             default:
                 return "";
@@ -771,9 +777,10 @@ define(function leosCrossReferenceDialog(require) {
             }
         },
 
-        loadTableOfContent: function loadTableOfContent(selectedNodeIds) {
+        loadTableOfContent: function loadTableOfContent(selectedNodeIds, documentRef) {
             this.editor.fire("requestToc", {
-                selectedNodeIds: Array.from(selectedNodeIds)
+                selectedNodeIds: Array.from(selectedNodeIds),
+                documentRef: documentRef
             });
         },
 
@@ -782,10 +789,9 @@ define(function leosCrossReferenceDialog(require) {
             this.editor.on("receiveToc", function(event) {
                 var data = JSON.parse(event.data);
                 var tocItemsMap = data.tocItemsMap;
-                var elementAncestorsIds = event.data.elementAncestorsIds;
-                for (const documentRef in that.nodeContentHandlers) {
-                    that.tableOfContentHandlers[documentRef].handleTableOfContentLoaded(tocItemsMap[documentRef], elementAncestorsIds);
-                }
+                const elementAncestorsIds = data.elementAncestorsIds;
+                const docRef = data.documentRef;
+                that.tableOfContentHandlers[docRef].handleTableOfContentLoaded(tocItemsMap[docRef], elementAncestorsIds);
             });
         }
 

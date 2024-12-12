@@ -6,6 +6,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-routing.module';
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { DownloadEconsiliumComponent } from '@/features/akn-document/components/download-econsilium/download-econsilium.component';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { RevisionPaneGroupComponent } from '@/features/akn-document/components/revision-pane-group/revision-pane-group.component';
@@ -55,6 +56,7 @@ import { TableOfContentProposalEditService } from './services/table-of-content-e
 import { TableOfContentEditService } from './services/table-of-content-edit.service';
 import { ValidateTocProposalService } from './services/validate-node-drop.proposal.service';
 import { ValidateTocService } from './services/validate-node-drop.service';
+import { DocumentUploadComponent } from './components/document-upload/document-upload.component';
 
 export const DOCUMENT_ACTIONS_SERVICE =
   new InjectionToken<DocumentActionsService>('DocumentActionsService');
@@ -91,6 +93,7 @@ export const DOCUMENT_ACTIONS_SERVICE =
     ImportFromJournalComponent,
     DownloadEconsiliumComponent,
     RibbonToolbarLabelComponent,
+    DocumentUploadComponent,
   ],
   imports: [
     CommonModule,
@@ -101,6 +104,7 @@ export const DOCUMENT_ACTIONS_SERVICE =
     SharedModule,
     MatTreeModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: AknRouteReUseStrategy },

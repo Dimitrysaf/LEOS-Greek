@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { EuiTableComponent } from '@eui/components/eui-table';
-import { Collaborator, Entity, User, UserEntity } from '@leos/shared';
-import { debounceTime, filter, Subject, take, takeUntil } from 'rxjs';
+import { Collaborator, Entity } from '@leos/shared';
+import { Subject, takeUntil } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
@@ -71,7 +71,7 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     this.detailsService.deleteCollaborator({
       userId: collab.login,
       roleName: collab.role,
-      connectedDG: collab.entity.organizationName,
+      connectedDG: collab.entity?.organizationName,
     });
     this.collaboratorToDelete = null;
   }

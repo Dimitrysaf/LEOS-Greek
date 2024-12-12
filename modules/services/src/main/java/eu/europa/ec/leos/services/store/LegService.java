@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 public interface LegService {
-    
+
     LegDocument findLastLegByVersionedReference(String path, String versionedReference) throws Exception;
 
     LegDocument findLastContribution(String path, String legFileName);
+
+    List<LegDocument> listSentContributions(String path, String legFileName);
 
     LegDocument findLastContributionByVersionedReference(String path, String versionedReference) throws Exception;
 
@@ -74,11 +76,11 @@ public interface LegService {
 
     String storeLegDocumentTemporary(final byte[] bytes);
 
-    String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef) throws IOException;
+    String getFeedbackAnnotationsFromLeg(LegDocument legDoc, String documentRef, String proposalRef, boolean isMilestone) throws IOException;
 
     String fetchFeedbackRepliesByID(String documentRef, String proposalRef, String legFileId, String storedAnnots);
 
-    String fetchFeedbackRepliesByName(String documentRef, String proposalRef, String legFileName, String storedAnnots);
+    String fetchFeedbackRepliesByName(String documentRef, String proposalRef, LegDocument legDoc, String storedAnnots);
 
     String removePermissionsStoredAnnotationsFromId(String storedFeedbackAnnotations, String documentRef, String legFileId);
 

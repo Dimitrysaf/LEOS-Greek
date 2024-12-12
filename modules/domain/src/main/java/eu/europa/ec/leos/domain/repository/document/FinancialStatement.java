@@ -23,7 +23,7 @@ public final class FinancialStatement extends XmlDocument {
                               Option<FinancialStatementMetadata> metadata, String baseRevisionId, boolean trackChangesEnabled,
                                 String contributionStatus, String clonedFrom) {
 
-        super(LeosCategory.STAT_FINANC_LEGIS, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
+        super(LeosCategory.STAT_DIGIT_FINANC_LEGIS, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
                 collaborators, milestoneComments, content, trackChangesEnabled);
         this.metadata = metadata;

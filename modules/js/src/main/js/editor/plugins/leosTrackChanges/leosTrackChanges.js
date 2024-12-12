@@ -276,6 +276,19 @@ define(function leosTrackChangesModule(require) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
             var range = editor.getSelection().getRanges()[0];
+
+            if(selectedElement.getName() === 'div') {
+                let lastEditable = this.findLastEditable(selectedElement);
+                if (lastEditable) {
+                    // Create a range for the last <li> or <p>
+                    range = editor.createRange();
+                    range.selectNodeContents(lastEditable);
+                    // Apply the range to the editor's selection
+                    editor.getSelection().selectRanges([range]);
+                    selectedElement = lastEditable;
+                }
+            }
+
             if (core.isTrackChangeElement(selectedElement, core.DELETE_ACTION)) {
                 if (range && range.root.getFirst().getName() === core.ARTICLE &&
                   (range.endOffset - range.startOffset) <= 1 && !range.collapsed) {
@@ -294,6 +307,32 @@ define(function leosTrackChangesModule(require) {
             this.setToEditablePosition(editor, tcElement, toEnd);
             editor.fire('unlockSnapshot');
             return tcElement;
+        },
+
+        findLastEditable(selectedElement) {
+            let result = this.findLastByTag(selectedElement, 'p');
+            if (!result) {
+                result = this.findLastByTag(selectedElement, 'li');
+            }
+            return result;
+        },
+
+        findLastByTag(element, tagName){
+            let lastChild = element.getLast();
+            while (lastChild) {
+                // If the last child is an <tagName>, return it
+                if (lastChild.getName && lastChild.getName() === tagName) {
+                    return lastChild;
+                }
+                // If the last child is a container (like <ul> or <ol>), recurse into it
+                if (lastChild.getChildren && lastChild.getChildren().count() > 0) {
+                    let found = this.findLastByTag(lastChild, tagName);
+                    if (found) return found;
+                }
+                // Move to the previous sibling if no <tagName> found in current branch
+                lastChild = lastChild.getPrevious();
+            }
+            return null;
         },
 
         toArray: function(list) {
@@ -526,7 +565,6 @@ define(function leosTrackChangesModule(require) {
             var mouseX = mousePosition[0], mouseY = mousePosition[1];
             return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
         }
-
     };
 
     var actions = {

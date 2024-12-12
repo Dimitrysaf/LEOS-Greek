@@ -23,6 +23,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var UTILS = require("core/leosUtils");
     var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
+    var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
 
     var LOG = require("logger");
     var SHIFT_ENTER = CKEDITOR.SHIFT + 13;
@@ -99,6 +100,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             SHIFT_ENTER_STATUS = SHIFT_ENTER_ALLOWED;
         }
         cmd.setState(SHIFT_ENTER_STATUS);
+        leosCommandStateHandler.changeCommandState(editor, CMD_NAME);
     }
 
     function _onShiftEnterKeyCommand(cmd, editor) {

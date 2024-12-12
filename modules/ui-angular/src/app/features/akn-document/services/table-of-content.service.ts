@@ -2,12 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
-  combineLatest,
   distinctUntilChanged,
   filter,
   finalize,
   forkJoin,
-  mergeMap,
   Observable,
   switchMap,
   take,
@@ -28,9 +26,11 @@ export class TableOfContentService {
   selectedNode$: Observable<TableOfContentItemVO>;
   isEditMode$: Observable<boolean>;
   isTocDraft$: Observable<boolean>;
+  isTocLoading$: Observable<boolean>;
 
   public isClonedProposal = false;
   public isTrackChangesEnabled = false;
+  private originalToc : TableOfContentItemVO[];
 
   documentRefAndCategoryBS = new BehaviorSubject<DocumentRefAndCategory | null>(
     null,
@@ -42,6 +42,9 @@ export class TableOfContentService {
   private selectedNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);
   private isEditModeBS = new BehaviorSubject<boolean>(false);
   private isTocDraftBS = new BehaviorSubject<boolean>(false);
+  private isTocLoadingBS = new BehaviorSubject<boolean>(false);
+
+  private blockReloadOfToc = false;
 
   constructor(
     private http: HttpClient,
@@ -55,16 +58,22 @@ export class TableOfContentService {
     this.tocItems$ = this.tocItemsBS.asObservable();
     this.selectedNode$ = this.selectedNodeBS.asObservable();
     this.isTocDraft$ = this.isTocDraftBS.asObservable();
+    this.isTocLoading$ = this.isTocLoadingBS.asObservable();
     this.isEditMode$ = this.isEditModeBS.asObservable();
 
-    combineLatest([this.documentRefAndCategory$, this.isEditMode$])
+    this.documentRefAndCategory$
       .pipe(
         distinctUntilChanged(),
         filter(Boolean),
-        switchMap(([options, _]) => {
-          const toc = this.getToc(options.ref, options.category);
-          const tocItems = this.getTocItems(options.ref, options.category);
-          return forkJoin([toc, tocItems]);
+        switchMap((options) => {
+          if (!this.blockReloadOfToc) {
+            const toc = this.getToc(options.ref, options.category);
+            const tocItems = this.getTocItems(options.ref, options.category);
+            return forkJoin([toc, tocItems]);
+          } else {
+            this.blockReloadOfToc = false;
+            return forkJoin([this.tocBS, this.tocItemsBS]);
+          }
         }),
       )
       .subscribe((result) => {
@@ -91,6 +100,10 @@ export class TableOfContentService {
     this.setDocumentRefAndCategory(ref, category);
   }
 
+  refreshToc(toc) {
+    this.tocBS.next(toc);
+  }
+
   reloadToc() {
     const ref = this.documentRefAndCategoryBS.value.ref;
     const category = this.documentRefAndCategoryBS.value.category;
@@ -108,21 +121,34 @@ export class TableOfContentService {
     return this.initialToc.value;
   }
 
+  displayOriginalToc() {
+    this.tocBS.next(this.originalToc);
+  }
+
+  resetOriginalToc(toc?: TableOfContentItemVO[]) {
+    if (toc) {
+      this.originalToc = toc;
+    } else {
+      this.originalToc = this.tocBS.value;
+    }
+  }
+
   saveToc(
     documentRef: string,
     documentType: string,
     toc: TableOfContentItemVO[],
   ) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
-    this.loadingService.setLoading(true);
     return this.http
       .post<TableOfContentItemVO[]>(
         `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
         {
-          tableOfContentItemVOs: toc,
-        },
-      )
-      .pipe(finalize(() => this.loadingService.setLoading(false)));
+          tableOfContentItemVOs: toc,        },
+      );
+  }
+
+  setBlockReloadOfToc() {
+    this.blockReloadOfToc = true;
   }
 
   getCurrentToc() {
@@ -151,11 +177,14 @@ export class TableOfContentService {
 
   setIsEditMode(value: boolean) {
     this.isEditModeBS.next(value);
+    if (value) {
+      this.originalToc = this.tocBS.value;
+    }
   }
 
   private getTocItems(documentRef: string, documentType: string) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
-    const tocMode = this.isEditModeBS.value ? 'NOT_SIMPLIFIED' : 'SIMPLIFIED';
+    const tocMode = 'SIMPLIFIED';
     return this.http.get<TocItem[]>(
       `${apiBaseUrl}/secured/${category}/${documentRef}/getTocItems`,
       {
@@ -166,12 +195,19 @@ export class TableOfContentService {
 
   private getToc(documentRef: string, documentType: string) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
-    const tocMode = this.isEditModeBS.value ? 'NOT_SIMPLIFIED' : 'SIMPLIFIED';
+    const tocMode = 'SIMPLIFIED';
+    this.isTocLoadingBS.next(true);
+    if (this.isEditModeBS.value) {
+      this.loadingService.setLoading(true);
+    }
     return this.http.get<TableOfContentItemVO[]>(
       `${apiBaseUrl}/secured/${category}/${documentRef}/getToc`,
       {
         params: { tocMode },
       },
-    );
+    ).pipe(finalize(() => {
+      this.loadingService.setLoading(false);
+      this.isTocLoadingBS.next(false);
+    }));
   }
 }

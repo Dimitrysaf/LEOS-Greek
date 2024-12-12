@@ -1,12 +1,10 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
-  catchError,
   map,
   Observable,
-  tap,
-  throwError,
+  tap
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
@@ -14,6 +12,7 @@ import { Document } from '@/shared';
 
 import { PackagesFavourite } from '../models/packages-favourite.model';
 import { PackagesRecentlyChanged } from '../models/packages-recent-changed.model';
+import { IS_ERROR_INTERCEPTION_ENABLED } from "@/core/services/error-handler.interceptor";
 
 @Injectable({
   providedIn: 'root',
@@ -43,7 +42,8 @@ export class LandingPageService {
   }
 
   getUserDoc(pkg: PackagesRecentlyChanged): Observable<Document> {
-    return this.http.get<Document>(`${apiBaseUrl}/secured/proposals/${pkg}`);
+    return this.http.get<Document>(`${apiBaseUrl}/secured/proposals/${pkg}`,
+      { context: new HttpContext().set(IS_ERROR_INTERCEPTION_ENABLED, (err) => !err.status) });
   }
 
   checkAndUpdateFavouriteStatus(packageRef: string): Observable<boolean> {

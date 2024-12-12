@@ -683,12 +683,11 @@ Feature: Legal Act Page Regression Features
         Then ck editor window is displayed
         When click at offset 0 of li 2 with data-akn-element "paragraph" of article in edition mode
         Then decrease indent icon is disabled in ck editor panel
-        When click on paragraph mode icon two times present in ck editor panel
+        When click on paragraph mode icon present in ck editor panel
         Then "data-akn-num" attribute is not present in li 1 with data-akn-element "paragraph" of article in edition mode
         And  "data-akn-num" attribute is not present in li 2 with data-akn-element "paragraph" of article in edition mode
         When mouseover and click on article 3
-        Then ck editor window is displayed
-        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
+        Then content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
         And  content of point 1 of list 1 of paragraph 1 of article 1 contains "line 1"
         And  content of paragraph 2 of article 1 contains "line 2"
         And  paragraph 1 of article 1 doesn't contain num tag

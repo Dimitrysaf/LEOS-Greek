@@ -59,7 +59,6 @@ import {
   TIME_TO_CLEAR_INVALID,
 } from '@/shared/constants/toc.constant';
 import { DocumentConfig } from '@/shared/models';
-import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { DragAction } from '@/shared/models/drag-action.model';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
@@ -70,7 +69,7 @@ import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import {
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
-  findNodeById,
+  findNodeById, findNodeSiblingById,
   getItemSoftStyle,
   getNumberingTypeByLanguage,
   isFirstPointOrSubparagraph,
@@ -102,6 +101,9 @@ export class DocumentTocComponent
 
   @Input() isEditMode = false;
   selectedNode: TableOfContentItemVO = null;
+  parentSelectedNode: TableOfContentItemVO = null;
+  prevSelectedNode: TableOfContentItemVO = null;
+  nextSelectedNode: TableOfContentItemVO = null;
   selectedNodeToMove: TableOfContentItemVO = null;
   isToCDraft: boolean;
   messageFromValidation: string;
@@ -365,6 +367,9 @@ export class DocumentTocComponent
 
   handleNodeSelect(node: TableOfContentItemVO, scrollTo = true) {
     this.selectedNode = node;
+    this.parentSelectedNode = findNodeById(this.treeControl.dataNodes, node.parentItem);
+    this.prevSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, node, true);
+    this.nextSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, node, false);
 
     if (!scrollTo) return;
 
@@ -503,11 +508,15 @@ export class DocumentTocComponent
     this.checkForDraft();
     this.restoreExpanded(toc);
 
+    setTimeout(() => this.rerender());
+
     setTimeout(() => {
-      if (this.selectedNode) this.handleNodeSelect(this.selectedNode, false);
+      if (this.selectedNode) {
+        this.scrollNodeIntoView(this.selectedNode);
+        this.handleNodeSelect(this.selectedNode, false);
+      }
       this.highlightInvalidNodes();
     });
-    setTimeout(() => this.rerender());
   }
 
   checkForDraft() {
@@ -574,9 +583,24 @@ export class DocumentTocComponent
 
   private scrollNodeIntoView(node: TableOfContentItemVO) {
     if (node) {
-      document
-        .querySelector(`[data-id="${node.id}"]`)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      let selectedNode = document
+        .querySelector(`[data-id="${node.id}"]`);
+      if (!selectedNode) {
+        if (this.prevSelectedNode) {
+          selectedNode = document
+            .querySelector(`[data-id="${this.prevSelectedNode.id}"]`);
+          this.selectedNode = this.prevSelectedNode;
+        } else if (this.nextSelectedNode) {
+          selectedNode = document
+            .querySelector(`[data-id="${this.nextSelectedNode.id}"]`);
+          this.selectedNode = this.nextSelectedNode;
+        } else if (this.parentSelectedNode) {
+          selectedNode = document
+            .querySelector(`[data-id="${this.parentSelectedNode.id}"]`);
+          this.selectedNode = this.parentSelectedNode;
+        }
+      }
+      selectedNode?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 

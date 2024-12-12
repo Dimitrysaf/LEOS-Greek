@@ -175,7 +175,7 @@ define(function leosTextTransformerPluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, 'transformTextSwitch', null, true);
+        leosCommandStateHandler.changeCommandState(event.editor, 'transformTextSwitch', null, true);
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);

@@ -43,16 +43,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
-// This controller is going to be used as a Generic controller for all documents
-// The 'financial-statement' request path will be replaced by any document category.
 @RestController
-@RequestMapping(value = "/secured/stat_financ_legis")
+@RequestMapping(value = "/secured/stat_digit_financ_legis")
 public class FinancialStatementController {
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementController.class);
     private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
@@ -232,10 +229,8 @@ public class FinancialStatementController {
     @GetMapping(value = "/{documentRef}/download-xml-version", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public byte[] downloadVersion(@PathVariable("documentRef") String documentRef,
-                                  @RequestParam("versionId") String versionId) {
-        DocumentViewResponse version = this.genericDocumentApiService.getVersion(versionId);
-        return version.getEditableXml().getBytes(StandardCharsets.UTF_8);
+    public byte[] downloadVersion(@RequestParam("versionId") String versionId) {
+        return this.genericDocumentApiService.getXmlContent(versionId);
     }
 
     @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_JSON_VALUE)

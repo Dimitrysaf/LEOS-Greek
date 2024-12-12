@@ -113,7 +113,7 @@
                 </citation>
                 <citation leos:editable="true" leos:origin="ec" refersTo="~legalBasis" xml:id="cit_4">
                     <p leos:origin="ec" xml:id="cit_4__p">Having regard to the opinion of the European Economic and Social Committee
-                        <authorialNote leos:origin="ec" marker="1" placement="bottom" xml:id="authorialnote_1">
+                        <authorialNote leos:origin="ec" marker="(1)" placement="bottom" xml:id="authorialnote_1">
                             <p leos:origin="ec" xml:id="authorialNote_1__p">OJ C [...], [...], p. [...]</p>
                         </authorialNote>
                         ,</p>
@@ -135,7 +135,7 @@
                 <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_label="MOVED to Recital (6)" leos:softmove_to="rec__tE15Ak" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="gautare" xml:id="movedXrec__tE15Ak">
                     <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" xml:id="movedXrecs_blWVY5">(1)</num>
                     <p leos:origin="ec" xml:id="movedXrecs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
-                        <authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="movedXrecs_je6fAW">
+                        <authorialNote leos:origin="ec" marker="(2)" placement="bottom" xml:id="movedXrecs_je6fAW">
                             <p leos:origin="ec" xml:id="movedXrecs_qfdztM">Regulation (EU) No 952/2013 of the European Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L 269, 10.10.2013, p. 1).</p>
                         </authorialNote>
                         is to ensure the security and safety of the Union and its residents, and the protection of the environment, where appropriate, in close cooperation with other authorities. The authorities responsible for Union non-customs regulatory formalities (â€˜partner competent authoritiesâ€™) and customs authorities often work in silos, creating complex and burdensome reporting obligations for traders and inefficient goods clearance processes conducive to error and fraud. To address the fragmented interoperability between customs and partner competent authorities in the management of goods clearance processes and to coordinate action in this area, the Commission and the Member States have taken a number of commitments over the years to develop single window initiatives for the clearance of goods.</p>
@@ -146,19 +146,19 @@
                         <ins leos:title="DAS Satyabrata : 2024-03-08T15:05:03.5+01:00" leos:uid="dasatya" xml:id="_recs_yLZk3h">(1)</ins>
                     </num>
                     <p leos:origin="ec" xml:id="recs_Hy6gir">In accordance with Article 4(6) of Decision No 70/2008/EC of the European Parliament and of the Council
-                        <authorialNote leos:origin="ec" marker="3" placement="bottom" xml:id="recs_xf29kl">
+                        <authorialNote leos:origin="ec" marker="(3)" placement="bottom" xml:id="recs_xf29kl">
                             <p leos:origin="ec" xml:id="recs_8i8Frp">Decision No 70/2008/EC of the European Parliament and of the Council of 15 January 2008 on a paperless environment for customs and trade (OJ L 23, 26.01.2008, p. 21).</p>
                         </authorialNote>
                         , the Member States and the CommissionÂ are to endeavour to establish and make operational a framework of single window services. As stated in theÂ  final report on Evaluation of the electronic customs implementation in the EUÂ of 21 January 2015
-                        <authorialNote leos:origin="ec" marker="4" placement="bottom" xml:id="recs_cWsSOZ">
+                        <authorialNote leos:origin="ec" marker="(4)" placement="bottom" xml:id="recs_cWsSOZ">
                             <p leos:origin="ec" xml:id="recs_drQFcU">Final report prepared by Coffey International Development, Europe Economic Research Ltd and Ramboll Management Consulting on request of the Commission.</p>
                         </authorialNote>
                         , while certain elements of that Decision remain highly relevant, other parts either have been superseded or are not concrete enough to encourage and incentivise further advances, in particular on the single window initiative. Following up on this, the Council Conclusions of 17 December 2014 on Electronic Customs and Single Window Implementation in the European Union
-                        <authorialNote leos:origin="ec" marker="5" placement="bottom" xml:id="recs_20qGYF">
+                        <authorialNote leos:origin="ec" marker="(5)" placement="bottom" xml:id="recs_20qGYF">
                             <p leos:origin="ec" xml:id="recs_daGNK9">ST16507/14.</p>
                         </authorialNote>
                         Â endorsed the Venice Declaration of 15 October 2014
-                        <authorialNote leos:origin="ec" marker="6" placement="bottom" xml:id="recs_IMMmtL">
+                        <authorialNote leos:origin="ec" marker="(6)" placement="bottom" xml:id="recs_IMMmtL">
                             <p leos:origin="ec" xml:id="recs_utP3hc">Annex to the Council Conclusions of 17 December 2014.</p>
                         </authorialNote>
                         and invited the Commission to present a proposal for the revision of Decision No 70/2008/EC.Â </p>
@@ -166,7 +166,7 @@
                 <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T07:11:20.000Z" leos:softmove_label="MOVED to Recital (3)" leos:softmove_to="rec__Epl5Gg" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.58+01:00" leos:uid="gautare" xml:id="movedXrec__Epl5Gg">
                     <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.58+01:00" xml:id="movedXrecs_dSF8Mk">(3)</num>
                     <p leos:origin="ec" xml:id="movedXrecs_ihv95P">On 1 October 2015, the Council adopted Decision (EU) 2015/1947
-                        <authorialNote leos:origin="ec" marker="7" placement="bottom" xml:id="movedXrecs_hTuPlb">
+                        <authorialNote leos:origin="ec" marker="(7)" placement="bottom" xml:id="movedXrecs_hTuPlb">
                             <p leos:origin="ec" xml:id="movedXrecs_GEZWun">Council Decision (EU) 2015/1947 of 1 October 2015 on the conclusion, on behalf of the European Union, of the Protocol Amending the Marrakesh Agreement establishing the World Trade Organisation (OJ L 284, 30.10.2015, p. 1).</p>
                         </authorialNote>
                         approving, on behalf of the Union, the Agreement on Trade Facilitation, whichÂ entered into force on 22 February 2017. ThatÂ agreement represents the most extensive effort at trade facilitation and customs reform under the World Trade Organisation. It contains provisions that aim to significantly improve goods clearance and the effective cooperation between customs and other regulatory authorities on trade facilitation and customs compliance issues. In accordance with Article 10(4) of the agreement, members are to endeavour to establish or maintain a single window, enabling traders to submit documentation and/or data requirements for the import, export or transit of goods through a single entry point to the participating authorities or agencies. Â Â </p>
@@ -181,7 +181,7 @@
                 <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T07:11:20.000Z" leos:softmove_from="movedXrec__Epl5Gg" leos:softmove_label="MOVED from Recital (3)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="rec__Epl5Gg">
                     <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="recs_dSF8Mk">(3)</num>
                     <p leos:origin="ec" xml:id="recs_ihv95P">On 1 October 2015, the Council adopted Decision (EU) 2015/1947
-                        <authorialNote leos:origin="ec" marker="8" placement="bottom" xml:id="recs_hTuPlb">
+                        <authorialNote leos:origin="ec" marker="(8)" placement="bottom" xml:id="recs_hTuPlb">
                             <p leos:origin="ec" xml:id="recs_GEZWun">Council Decision (EU) 2015/1947 of 1 October 2015 on the conclusion, on behalf of the European Union, of the Protocol Amending the Marrakesh Agreement establishing the World Trade Organisation (OJ L 284, 30.10.2015, p. 1).</p>
                         </authorialNote>
                         approving, on behalf of the Union, the Agreement on Trade Facilitation, whichÂ entered into force on 22 February 2017. ThatÂ agreement represents the most extensive effort at trade facilitation and customs reform under the World Trade Organisation. It contains provisions that aim to significantly improve goods clearance and the effective cooperation between customs and other regulatory authorities on trade facilitation and customs compliance issues. In accordance with Article 10(4) of the agreement, members are to endeavour to establish or maintain a single window, enabling traders to submit documentation and/or data requirements for the import, export or transit of goods through a single entry point to the participating authorities or agencies. Â Â </p>
@@ -192,7 +192,7 @@
                         <ins leos:title="DAS Satyabrata : 2024-03-08T15:05:03.5+01:00" leos:uid="dasatya" xml:id="_recs_0WH183">(4)</ins>
                     </num>
                     <p leos:origin="ec" xml:id="recs_uf2SeS">The EUÂ eGovernment action plan 2016-2020 set out in Commission Communication of 19 April 2016
-                        <authorialNote leos:origin="ec" marker="9" placement="bottom" xml:id="recs_gcEX8m">
+                        <authorialNote leos:origin="ec" marker="(9)" placement="bottom" xml:id="recs_gcEX8m">
                             <p leos:origin="ec" xml:id="recs_Vfkufr">Communication from the Commission to the European Parliament, the Council, the European Economic and Social Committee and the Committee of the Regions, EU eGovernment Action Plan 2016-2020 - Accelerating the digital transformation of government, COM(2016) 179 final of 19 April 2016.</p>
                         </authorialNote>
                         seeks to increase the efficiency of public services by removing existing digital barriers, reducing the administrative burden and improving the quality of interactions between national administrations. In line with this vision and the wider efforts to simplify and digitalise reporting processes for theÂ international trade in goods, the Commission developed a voluntary pilot project called European Union Customs Single Window Certificates Exchange. This project allows customs authorities to automatically verify compliance with a limited number of non-customs formalities, enabling information to be exchangedÂ between the customs systems of participating Member States and the respective Union non-customs systems managing non-customs formalities. While the project has improved clearance procedures, its voluntary nature clearly limits its potential to generate substantial benefits for customs authorities, partner competent authorities and economic operators.</p>
@@ -203,11 +203,11 @@
                         <ins leos:title="DAS Satyabrata : 2024-03-08T15:05:03.5+01:00" leos:uid="dasatya" xml:id="_recs_2cwkyM">(5)</ins>
                     </num>
                     <p leos:origin="ec" xml:id="recs_2cbuRE">To achieve a fully digital environment and an efficient goods clearance process for all parties involved in international trade, it is necessary to establish common rules for a harmonised and integrated European Union Single Window Environment for Customs (EUÂ Single Window Environment for Customs). This environment should include a set of fully integrated electronic services delivered at Union and national level to facilitate information sharing and digital cooperation between customs and partner competent authorities and to streamline goods clearance processes for economic operators. The EU Single Window Environment for Customs should be developed in alignment with the possibilities for trustworthy identification and authentication offered by the eIDAS Regulation
-                        <authorialNote leos:origin="ec" marker="10" placement="bottom" xml:id="recs_FUdpmn">
+                        <authorialNote leos:origin="ec" marker="(10)" placement="bottom" xml:id="recs_FUdpmn">
                             <p leos:origin="ec" xml:id="recs_9pdS5T">Regulation (EU) No 910/2014 of the European Parliament and of the Council of 23 July 2014 on electronic identification and trust services for electronic transactions in the internal market and repealing Directive 1999/93/EC (OJ L 257, 28.8.2014, p. 73).</p>
                         </authorialNote>
                         Â and the once-only principle where appropriate, as reiterated in the Single Digital Gateway Regulation
-                        <authorialNote leos:origin="ec" marker="11" placement="bottom" xml:id="recs_quQzuV">
+                        <authorialNote leos:origin="ec" marker="(11)" placement="bottom" xml:id="recs_quQzuV">
                             <p leos:origin="ec" xml:id="recs_tFkck6">Regulation (EU) 2018/1724 of the European Parliament and of the Council of 2 October 2018 establishing a single digital gateway to provide access to information, to procedures and to assistance and problem-solving services and amending Regulation (EU) No 1024/2012 (OJ L 295, 21.11.2018, p. 1).</p>
                         </authorialNote>
                         . To implement the EUÂ Single Window Environment for Customs, it is necessary to establish, on the basis of the pilot project, a certificates exchange system, the EUÂ Customs Single Window Certificates Exchange System (EU CSW-CERTEX), that interconnects national single window environments for customs and Union non-customs systems managing specific non-customs formalities. It is also necessary to harmonise national single window environments for customs, integrate those environments into the EU Single Window Environment for Customs, and establish a set of rules on digital administrative cooperation within the EU Single Window Environment for Customs.</p>
@@ -215,7 +215,7 @@
                 <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_from="movedXrec__tE15Ak" leos:softmove_label="MOVED from Recital (1)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.626+01:00" leos:uid="gautare" xml:id="rec__tE15Ak">
                     <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.626+01:00" leos:uid="gautare" xml:id="recs_blWVY5">(6)</num>
                     <p leos:origin="ec" xml:id="recs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
-                        <authorialNote leos:origin="ec" marker="12" placement="bottom" xml:id="recs_je6fAW">
+                        <authorialNote leos:origin="ec" marker="(12)" placement="bottom" xml:id="recs_je6fAW">
                             <p leos:origin="ec" xml:id="recs_qfdztM">Regulation (EU) No 952/2013 of the European Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L 269, 10.10.2013, p. 1).</p>
                         </authorialNote>
                         is to ensure the security and safety of the Union and its residents, and the protection of the environment, where appropriate, in close cooperation with other authorities. The authorities responsible for Union non-customs regulatory formalities (â€˜partner competent authoritiesâ€™) and customs authorities often work in silos, creating complex and burdensome reporting obligations for traders and inefficient goods clearance processes conducive to error and fraud. To address the fragmented interoperability between customs and partner competent authorities in the management of goods clearance processes and to coordinate action in this area, the Commission and the Member States have taken a number of commitments over the years to develop single window initiatives for the clearance of goods.</p>
@@ -243,11 +243,11 @@
                 <recital leos:editable="true" leos:origin="ec" xml:id="rec__m4hX6X">
                     <num leos:origin="ec" xml:id="recs_l2brpY">(12)</num>
                     <p leos:origin="ec" xml:id="recs_Ujxtpe">Where personal data is processed by two or more entitiesÂ who jointly determine the purpose and means of processing, those entities should be joint controllers. Since the Commission and theÂ Member States areÂ responsible for the functioning of EU CSW-CERTEX, theyÂ should beÂ joint controllers of the processing of personal data in EU CSW-CERTEX in accordance with Regulations (EU) 2018/1725
-                        <authorialNote leos:origin="ec" marker="13" placement="bottom" xml:id="recs_eFNpT6">
+                        <authorialNote leos:origin="ec" marker="(13)" placement="bottom" xml:id="recs_eFNpT6">
                             <p leos:origin="ec" xml:id="recs_F6PAoQ">Regulation (EU) 2018/1725 of the European Parliament and of the Council of 23 October 2018 on the protection of natural persons with regard to the processing of personal data by the Union institutions, bodies, offices and agencies and on the free movement of such data, and repealing Regulation (EC) No 45/2001 and Decision No 1247/2002/EC (OJ L 295, 21.11.2018, p. 39).</p>
                         </authorialNote>
                         and (EU) 2016/679 of the European Parliament and of the Council
-                        <authorialNote leos:origin="ec" marker="14" placement="bottom" xml:id="recs_HCPb1M">
+                        <authorialNote leos:origin="ec" marker="(14)" placement="bottom" xml:id="recs_HCPb1M">
                             <p leos:origin="ec" xml:id="recs_Q3koTj">Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation) (OJ L 119, 4.5.2016, p. 1).</p>
                         </authorialNote>
                         .Â </p>
@@ -317,7 +317,7 @@
                         <ins leos:title="DAS Satyabrata : 2024-03-08T15:05:03.501+01:00" leos:uid="dasatya" xml:id="_recs_BI2Bne">(26)</ins>
                     </num>
                     <p leos:origin="ec" xml:id="recs_mKg1iD">To ensure an efficient and effective functioning of the EU Single Window Environment for Customs, the power to adopt acts in accordance with Article 290 of the Treaty on the Functioning of the European Union (TFEU) should be delegated to the Commission in respect of amendments to the list of Union non-customs formalities covered by EU CSW-CERTEX; specification of the data elements to be exchanged through EU CSW-CERTEX and identifying the data elements that are common to both the customs declaration and the application for supporting documents together with the PCA data set for each of the relevant Union act applicable to Union non-customs formalities integrated into EU CSW-CERTEX. It is of particular importance that the Commission carry out appropriate consultations during its preparatory work, including at expert level, and that those consultations be conducted in accordance with the principles laid down in the Interinstitutional Agreement of 13 April 2016 on Better Law-Making
-                        <authorialNote leos:origin="ec" marker="15" placement="bottom" xml:id="recs_5fiW6q">
+                        <authorialNote leos:origin="ec" marker="(15)" placement="bottom" xml:id="recs_5fiW6q">
                             <p leos:origin="ec" xml:id="recs_yq8n5M">Interinstitutional Agreement between the European Parliament, the Council of the European Union and the European Commission on Better Law-Making (OJ L 123, 12.5.2016, p. 1).</p>
                         </authorialNote>
                         .Â In particular, to ensure equal participation in the preparation of delegated acts, the European Parliament and the Council receive all documents at the same time as Member States' experts, and their experts systematically have access to meetings of Commission expert groups dealing with the preparation of delegated acts.</p>

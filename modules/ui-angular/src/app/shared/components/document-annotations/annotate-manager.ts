@@ -23,6 +23,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 import { AnnotateConnector } from './annotate-connector';
+import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 
 export type AnnotateConnectorOptions = Pick<
   AnnotateConnectorState,
@@ -55,6 +56,7 @@ export class AnnotateManager {
     private documentService: DocumentService,
     private milestoneService: ProposalMilestonesService,
     private mergeContributionService: MergeContributionsService,
+    private detailsService: ProposalDetailsService,
     private ckEditorService?: CKEditorService,
   ) {
     this.ckEditorService?.openState$
@@ -80,6 +82,7 @@ export class AnnotateManager {
             this.documentService,
             this.milestoneService,
             this.mergeContributionService,
+            this.detailsService
           ),
       ),
       tap((connector) => (this.connector = connector)),

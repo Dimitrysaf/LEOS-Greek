@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
+import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -48,6 +49,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,12 +66,15 @@ public class ProposalApiController {
 
     private final ApiService apiService;
     private final FinancialStatementService financialStatementService;
+    private final ConValidatorService conValidatorService;
 
     @Autowired
     public ProposalApiController(ApiService apiService,
-                                 FinancialStatementService financialStatementService) {
+                                 FinancialStatementService financialStatementService,
+                                 ConValidatorService conValidatorService) {
         this.apiService = Objects.requireNonNull(apiService);
         this.financialStatementService = Objects.requireNonNull(financialStatementService);
+        this.conValidatorService = Objects.requireNonNull(conValidatorService);
     }
 
     @RequestMapping(value = "/{proposalRef}", method = RequestMethod.PUT)
@@ -289,6 +295,18 @@ public class ProposalApiController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         LegFileValidation result = this.apiService.validateLegFile(content);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/conValidateLegFile", method = RequestMethod.POST)
+    public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) throws IOException {
+        validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
+        String tempConvalLegPath = System.getProperty("java.io.tmpdir") + File.separator + "convalLeg";
+        new File(tempConvalLegPath).mkdirs();
+        Path path = Paths.get(tempConvalLegPath, legFile.getOriginalFilename());
+        File file = path.toFile();
+        legFile.transferTo(file);
+        String result = conValidatorService.validate(file);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

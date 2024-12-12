@@ -1,7 +1,7 @@
 package eu.europa.ec.digit.leos.pilot.export.model;
 
 import java.util.List;
-import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest.DocumentNode;
+import java.util.Optional;
 
 public class ApplyMetadataRequest {
     private final String xmlns;
@@ -82,7 +82,7 @@ public class ApplyMetadataRequest {
         private List<FieldNode> fields;
 
         public ActionNode(String name,
-                          String cleanUp){
+                          String cleanUp) {
             this.name = name;
             this.cleanUp = cleanUp;
             this.fields = null;
@@ -102,6 +102,16 @@ public class ApplyMetadataRequest {
 
         public List<FieldNode> getFields() {
             return fields;
+        }
+
+        public Optional<FieldNode> getFieldWithKey(final String keyName) {
+            try {
+                return this.fields.stream()
+                        .filter((field) -> field.key.equals(keyName))
+                        .findFirst();
+            } catch(NullPointerException ex) {
+                return Optional.empty();
+            }
         }
 
         public void setFields(List<FieldNode> fields) {

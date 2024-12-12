@@ -847,10 +847,8 @@ export class DocumentService {
     );
   }
 
-  fetchTocAndAncestors(elementIds: string[]) {
-    const documentType =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const documentRef = this.documentRef;
+  fetchTocAndAncestors(elementIds: string[], documentRefParam: string) {
+    const documentRef = (!!documentRefParam && documentRefParam.trim().length > 0) ? documentRefParam: this.documentRef;
     const params =
       elementIds?.length > 0
         ? {
@@ -858,7 +856,7 @@ export class DocumentService {
           }
         : {};
     return this.http.get(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/fetch-toc-ancestors`,
+      `${apiBaseUrl}/secured/document/${documentRef}/fetch-toc-ancestors`,
       {
         params,
       },
@@ -1174,6 +1172,18 @@ export class DocumentService {
       {
         ...data,
       },
+    );
+  }
+
+  uploadDocumentWithUpdatedContent(contentData: any, file: File) {
+    const formData = new FormData();
+    formData.append('uploadedFile', file);
+    formData.append('checkinComment', contentData.checkinComment);
+    formData.append('versionType', contentData.versionType);
+    formData.append('documentRef', contentData.documentRef);
+    return this.http.post(
+      `${apiBaseUrl}/secured/document/upload-document`,
+      formData
     );
   }
 

@@ -95,14 +95,14 @@
                 </citation>
                 <citation leos:editable="true" xml:id="cit_4">
                     <p xml:id="cit_4__p">Having regard to the opinion of the European Economic and Social Committee
-                        <authorialNote marker="1" placement="bottom" xml:id="authorialnote_1">
+                        <authorialNote marker="(1)" placement="bottom" xml:id="authorialnote_1">
                             <p xml:id="authorialNote_1__p">OJ C [...], [...], p. [...]</p>
                         </authorialNote>
                         ,</p>
                 </citation>
                 <citation leos:editable="true" xml:id="cit_5">
                     <p xml:id="cit_5__p">Having regard to the opinion of the Committee of the Regions
-                        <authorialNote marker="2" placement="bottom" xml:id="authorialnote_2">
+                        <authorialNote marker="(2)" placement="bottom" xml:id="authorialnote_2">
                             <p xml:id="authorialNote_2__p">OJ C [...], [...], p. [...]</p>
                         </authorialNote>
                         ,</p>
@@ -174,7 +174,7 @@
                         <subparagraph refersTo="~INP" xml:id="impXart_1_oq32hU_FfIRnE">
                             <content xml:id="impXart_1_oq32hU_GsPTQm">
                                 <p xml:id="impXart_1_oq32hU_TpD3U6">The rules set out in this Regulation shall apply without prejudice to the provisions laid down in Regulation (EU) No 1306/2013 of the European Parliament and of the Council
-                                    <authorialNote marker="3" placement="bottom" xml:id="impXart_1_oq32hU_YsSLS6">
+                                    <authorialNote marker="(3)" placement="bottom" xml:id="impXart_1_oq32hU_YsSLS6">
                                         <p xml:id="impXart_1_oq32hU_mAQoTG">Regulation (EU) No 1306/2013 of the European Parliament and of the Council of 17 December 2013 on the financing, management and monitoring of the common agriculture policy and repealing Council Regulations (EEC) No 352/78, (EC) No 165/94, (EC) No 2799/98, (EC) No 814/2000, (EC) No 1290/2005 and (EC) No 485/2008 (See page 549 of this Official Journal).</p>
                                     </authorialNote>
                                     and to the specific provisions laid down in the following Regulations (the 'Fund-specific Regulations') in accordance with the fifth paragraph of this Article:</p>
@@ -238,11 +238,11 @@
                             <num xml:id="impXart_2_YmXngT_kN9Bbe">(1)</num>
                             <content xml:id="impXart_2_YmXngT_0jXYD2">
                                 <p xml:id="impXart_2_YmXngT_cxKBMU">'Union strategy for smart, sustainable and inclusive growth' means the targets and shared objectives guiding the action of Member States and the Union set out in the Conclusions adopted by the European Council of 17 June 2010 as Annex I (New European Strategy for Jobs and Growth, EU Headline Targets), Council Recommendation of 13 July 2010
-                                    <authorialNote marker="4" placement="bottom" xml:id="impXart_2_YmXngT_wBrs8G">
+                                    <authorialNote marker="(4)" placement="bottom" xml:id="impXart_2_YmXngT_wBrs8G">
                                         <p xml:id="impXart_2_YmXngT_KH0SdR">Council Recommendation of 13 July 2010 on broad guidelines for the economic policies of the Member States and of the Union (OJ L 191, 23.7.2010, p. 28).</p>
                                     </authorialNote>
                                     and in Council Decision 2010/707/EU
-                                    <authorialNote marker="5" placement="bottom" xml:id="impXart_2_YmXngT_Cxsui1">
+                                    <authorialNote marker="(5)" placement="bottom" xml:id="impXart_2_YmXngT_Cxsui1">
                                         <p xml:id="impXart_2_YmXngT_YN8XI5">Council Decision 2010/707/EU of 21 October 2010 on guidelines for the employment policies of the Member States (OJ L 308, 24.11.2010, p. 46).</p>
                                     </authorialNote>
                                     , and any revision of such targets and shared objectives;</p>
@@ -318,15 +318,15 @@
                             <num xml:id="impXart_2_YmXngT_Yn73Sr">(13)</num>
                             <content xml:id="impXart_2_YmXngT_cnc7OY">
                                 <p xml:id="impXart_2_YmXngT_tmY2iu">'State aid' means aid falling under Article 107(1) TFEU which shall be deemed for the purposes of this Regulation also to include de minimis aid within the meaning of Commission Regulation (EC) No 1998/2006
-                                    <authorialNote marker="6" placement="bottom" xml:id="impXart_2_YmXngT_DwCenw">
+                                    <authorialNote marker="(6)" placement="bottom" xml:id="impXart_2_YmXngT_DwCenw">
                                         <p xml:id="impXart_2_YmXngT_eSbbNW">Commission Regulation (EC) No 1998/2006 of 15 December 2006 on the application of Articles 87 and 88 of the Treaty to de minimis aid (OJ L 379, 28.12.2006, p. 5).</p>
                                     </authorialNote>
                                     , Commission Regulation (EC) No 1535/2007
-                                    <authorialNote marker="7" placement="bottom" xml:id="impXart_2_YmXngT_ubpagq">
+                                    <authorialNote marker="(7)" placement="bottom" xml:id="impXart_2_YmXngT_ubpagq">
                                         <p xml:id="impXart_2_YmXngT_pST7Qe">Commission Regulation (EC) No 1535/2007 of 20 December 2007 on the application of Articles 87 and 88 of the EC Treaty to de minimis aid in the sector of agricultural production (OJ L 337, 21.12.2007, p. 35).</p>
                                     </authorialNote>
                                     and Commission Regulation (EC) No 875/2007
-                                    <authorialNote marker="8" placement="bottom" xml:id="impXart_2_YmXngT_JZ2H1l">
+                                    <authorialNote marker="(8)" placement="bottom" xml:id="impXart_2_YmXngT_JZ2H1l">
                                         <p xml:id="impXart_2_YmXngT_z0UjXt">Commission Regulation (EC) No 875/2007 of 24 July 2007 on the application of Articles 87 and 88 of the EC Treaty to de minimis aid in the fisheries sector and amending Regulation (EC) No 1860/2004 (OJ L 193, 25.7.2007, p. 6).</p>
                                     </authorialNote>
                                     ;</p>
@@ -348,11 +348,11 @@
                             <num xml:id="impXart_2_YmXngT_T2TsK3">(16)</num>
                             <content xml:id="impXart_2_YmXngT_YoKDZD">
                                 <p xml:id="impXart_2_YmXngT_TmwzOQ">'public law body' means any body governed by public law within the meaning of point 9 of Article 1 of Directive 2004/18/EC of the European Parliament and of the Council
-                                    <authorialNote marker="9" placement="bottom" xml:id="impXart_2_YmXngT_NOVeyq">
+                                    <authorialNote marker="(9)" placement="bottom" xml:id="impXart_2_YmXngT_NOVeyq">
                                         <p xml:id="impXart_2_YmXngT_yhKRaG">Directive 2004/18/EC of the European Parliament and of the Council of 31 March 2004 on the coordination of procedures for the award of public works contracts, public supply contracts and public service contracts (OJ L 134, 30.4.2004, p. 114).</p>
                                     </authorialNote>
                                     and any European grouping of territorial cooperation (EGTC) established in accordance with Regulation (EC) No 1082/2006 of the European Parliament and of the Council
-                                    <authorialNote marker="10" placement="bottom" xml:id="impXart_2_YmXngT_qIvIWp">
+                                    <authorialNote marker="(10)" placement="bottom" xml:id="impXart_2_YmXngT_qIvIWp">
                                         <p xml:id="impXart_2_YmXngT_mcK8Sm">Regulation (EC) No 1082/2006 of the European Parliament and of the Council of 5 July 2006 on a European grouping of territorial cooperation (EGTC) (OJ L 210, 31.7.2006, p. 19).</p>
                                     </authorialNote>
                                     , regardless of whether the EGTC is considered to be a public law body or a private law body under the relevant national implementing provisions;</p>
@@ -428,7 +428,7 @@
                             <num xml:id="impXart_2_YmXngT_zDOMMo">(28)</num>
                             <content xml:id="impXart_2_YmXngT_zXCPTk">
                                 <p xml:id="impXart_2_YmXngT_lSA06g">'SME' means a micro, small or medium sized enterprise as defined in Commission Recommendation 2003/361/EC
-                                    <authorialNote marker="11" placement="bottom" xml:id="impXart_2_YmXngT_MuZIgY">
+                                    <authorialNote marker="(11)" placement="bottom" xml:id="impXart_2_YmXngT_MuZIgY">
                                         <p xml:id="impXart_2_YmXngT_RJRoVA">Commission Recommendation of 6 May 2003 concerning the definition of micro, small and medium-sized enterprises (OJ L 124, 20.5.2003, p. 36).</p>
                                     </authorialNote>
                                     ;</p>
@@ -1439,7 +1439,7 @@
                             <num xml:id="impXart_23_Hbu6r7_ePSpOH">(b)</num>
                             <content xml:id="impXart_23_Hbu6r7_26gppq">
                                 <p xml:id="impXart_23_Hbu6r7_N8fkzy">to support the implementation of relevant Council Recommendations addressed to the Member State concerned and adopted in accordance with Articles 7(2) or 8(2) of Regulation (EU) No 1176/2011
-                                    <authorialNote marker="12" placement="bottom" xml:id="impXart_23_Hbu6r7_ypWQh4">
+                                    <authorialNote marker="(12)" placement="bottom" xml:id="impXart_23_Hbu6r7_ypWQh4">
                                         <p xml:id="impXart_23_Hbu6r7_6pcGmV">Regulation (EU) No 1176/2011 of the European Parliament and of the Council of 16 November 2011 on the prevention and correction of macroeconomic imbalances (OJ L 306, 23.11.2011, p. 25).</p>
                                     </authorialNote>
                                     of the European Parliament and of the Council provided that these amendments are deemed necessary to help correct the macro-economic imbalances; or</p>
@@ -1457,7 +1457,7 @@
                                     <num xml:id="impXart_23_Hbu6r7_go2UUz">(i)</num>
                                     <content xml:id="impXart_23_Hbu6r7_Cmt7Ry">
                                         <p xml:id="impXart_23_Hbu6r7_XQBNzb">Union financial assistance is made available to it under Council Regulation (EU) No 407/2010
-                                            <authorialNote marker="13" placement="bottom" xml:id="impXart_23_Hbu6r7_KjtuFq">
+                                            <authorialNote marker="(13)" placement="bottom" xml:id="impXart_23_Hbu6r7_KjtuFq">
                                                 <p xml:id="impXart_23_Hbu6r7_aBBIGL">Council Regulation (EU) No 407/2010 of 11 May 2010 establishing a European financial stabilisation mechanism (OJ L 118, 12.5.2010, p. 1).</p>
                                             </authorialNote>
                                             ;</p>
@@ -1467,7 +1467,7 @@
                                     <num xml:id="impXart_23_Hbu6r7_VleAn1">(ii)</num>
                                     <content xml:id="impXart_23_Hbu6r7_cJ22Oh">
                                         <p xml:id="impXart_23_Hbu6r7_hw7Kqw">financial assistance is made available to it in accordance with Council Regulation (EC) No 332/2002
-                                            <authorialNote marker="14" placement="bottom" xml:id="impXart_23_Hbu6r7_iSibGH">
+                                            <authorialNote marker="(14)" placement="bottom" xml:id="impXart_23_Hbu6r7_iSibGH">
                                                 <p xml:id="impXart_23_Hbu6r7_03CrIx">Council Regulation (EC) No 332/2002 of 18 February 2002 establishing a facility providing medium-term financial assistance for Member States' balances of payments (OJ L 53, 23.2.2002, p. 1).</p>
                                             </authorialNote>
                                             ;</p>
@@ -1477,7 +1477,7 @@
                                     <num xml:id="impXart_23_Hbu6r7_S2SQmQ">(iii)</num>
                                     <content xml:id="impXart_23_Hbu6r7_myCfdo">
                                         <p xml:id="impXart_23_Hbu6r7_aGpSR6">financial assistance is made available to it that triggers a macroeconomic adjustment programme in accordance with Regulation (EU) No 472/2013 of the European Parliament and of the Council
-                                            <authorialNote marker="15" placement="bottom" xml:id="impXart_23_Hbu6r7_VtBHwQ">
+                                            <authorialNote marker="(15)" placement="bottom" xml:id="impXart_23_Hbu6r7_VtBHwQ">
                                                 <p xml:id="impXart_23_Hbu6r7_layDNP">Regulation (EU) No 472/2013 of the European Parliament and of the Council of 21 May 2013 on the strengthening of economic and budgetary surveillance of Member States in the euro area experiencing or threatened with serious difficulties with respect to their financial stability (OJ L 140, 27.05.2013, p. 1).</p>
                                             </authorialNote>
                                             or that triggers a decision of the Council in accordance with Article 136(1) TFEU.</p>
@@ -1696,7 +1696,7 @@
                             <num xml:id="impXart_23_Hbu6r7_5K8mpx">(a)</num>
                             <content xml:id="impXart_23_Hbu6r7_4DQh0p">
                                 <p xml:id="impXart_23_Hbu6r7_o96edn">where the excessive deficit procedure is held in abeyance in accordance with Article 9 of Council Regulation (EC) No 1467/97
-                                    <authorialNote marker="16" placement="bottom" xml:id="impXart_23_Hbu6r7_U0KgUd">
+                                    <authorialNote marker="(16)" placement="bottom" xml:id="impXart_23_Hbu6r7_U0KgUd">
                                         <p xml:id="impXart_23_Hbu6r7_8sODSB">Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (OJ L 209, 2.8.1997, p. 6).</p>
                                     </authorialNote>
                                     or the Council has decided in accordance with Article 126(12) TFEU to abrogate the decision on the existence of an excessive deficit;</p>
@@ -2839,7 +2839,7 @@
                                 <subparagraph refersTo="~INP" xml:id="impXart_39_n9A4fd_3hvVfA">
                                     <content xml:id="impXart_39_n9A4fd_VLoSmk">
                                         <p xml:id="impXart_39_n9A4fd_nReTVV">securitisation, as defined in point (61) of Article 4 (1) of Regulation (EU) 575/2013 of the European Parliament and of the Council
-                                            <authorialNote marker="17" placement="bottom" xml:id="impXart_39_n9A4fd_277NoP">
+                                            <authorialNote marker="(17)" placement="bottom" xml:id="impXart_39_n9A4fd_277NoP">
                                                 <p xml:id="impXart_39_n9A4fd_TCo4pH">Regulation (EU) No 575/2013 of the European Parliament and of the Council of 26 June 2013 on prudential requirements for credit institutions and investment firms and amending Regulation (EU) No 648/2012 (OJ L 176, 27.6.2013, p. 1).</p>
                                             </authorialNote>
                                             , of any of the following:</p>
@@ -2862,7 +2862,7 @@
                         <subparagraph refersTo="~WRP" xml:id="impXart_39_n9A4fd_VE3DBy">
                             <content xml:id="impXart_39_n9A4fd_6E3dHE">
                                 <p xml:id="impXart_39_n9A4fd_JMmvXP">The financial contribution referred to in points (a) and (b) of the first subparagraph of this paragraph shall contribute to junior and/or mezzanine tranches of portfolios mentioned therein provided that the relevant financial intermediary retains a sufficient part of the risk of the portfolios at least equal to the risk retention requirement set out in Directive 2013/36/EU of the European Parliament and of the Council
-                                    <authorialNote marker="18" placement="bottom" xml:id="impXart_39_n9A4fd_DRJRAM">
+                                    <authorialNote marker="(18)" placement="bottom" xml:id="impXart_39_n9A4fd_DRJRAM">
                                         <p xml:id="impXart_39_n9A4fd_uOtrI4">Directive 2013/36/EU of the European Parliament and of the Council of 26 June 2013 on access to the activity of credit institutions and the prudential supervision of credit institutions and investment firms, amending Directive 2002/87/EC and repealing Directives 2006/48/EC and 2006/49/EC (OJ L 176, 27.6.2013, p. 338).</p>
                                     </authorialNote>
                                     and in Regulation (EU) No 575/2013 to ensure adequate alignment of interest. In the case of securitisation under point (b) of the first subparagraph of this paragraph, the financial intermediary is obliged to originate new debt finance to eligible SMEs in accordance with Article 37(4) of this Regulation.</p>
@@ -3994,7 +3994,7 @@
                     <num xml:id="impXart_55_9V7TCl_JAlKjy">4.</num>
                     <content xml:id="impXart_55_9V7TCl_7DMbzt">
                         <p xml:id="impXart_55_9V7TCl_gsWCzv">Ex ante evaluations shall incorporate, where appropriate, the requirements for strategic environmental assessment set out in Directive 2001/42/EC of the European Parliament and of the Council
-                            <authorialNote marker="19" placement="bottom" xml:id="impXart_55_9V7TCl_CwaBu6">
+                            <authorialNote marker="(19)" placement="bottom" xml:id="impXart_55_9V7TCl_CwaBu6">
                                 <p xml:id="impXart_55_9V7TCl_rAKM5Z">Directive 2001/42/EC of the European Parliament and of the Council of 27 June 2001 on the assessment of the effects of certain plans and programmes on the environment (OJ L 197, 21.7.2001, p. 30).</p>
                             </authorialNote>
                             taking into account climate change mitigation needs.</p>
@@ -5848,7 +5848,7 @@
                             <num xml:id="impXart_95_Wx7Hgm_OVzpTo">(1)</num>
                             <content xml:id="impXart_95_Wx7Hgm_wuLrR6">
                                 <p xml:id="impXart_95_Wx7Hgm_PMUY9F">'gross fixed capital formation' means all the resident producers' acquisitions, less disposals, of fixed assets during a given period and certain additions to the value of non-produced assets realised by the productive activity of producer or institutional units, as defined in Council Regulation (EC) No 2223/96
-                                    <authorialNote marker="20" placement="bottom" xml:id="impXart_95_Wx7Hgm_dl3ec8">
+                                    <authorialNote marker="(20)" placement="bottom" xml:id="impXart_95_Wx7Hgm_dl3ec8">
                                         <p xml:id="impXart_95_Wx7Hgm_xAg2kF">Council Regulation (EC) No 2223/96 of 25 June 1996 on the European system of national and regional accounts in the Community (OJ L 310, 30.11.1996, p. 1).</p>
                                     </authorialNote>
                                     ;</p>

@@ -27,6 +27,7 @@ class ckEditorWindow {
         boldIcon: () => cy.get('.cke_button__bold'),
         italicIcon: () => cy.get('.cke_button__italic'),
         changeTextCaseIcon: () => cy.get('.cke_button__transformtextswitcher'),
+        backgroundColorBtn: () => cy.get('.cke_button__bgcolor'),
         ckEditorBtn: () => cy.get('a.cke_button'),
         docPurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
         pTag: () => this.elements.ckEditableInline().find('p'),
@@ -72,6 +73,7 @@ class ckEditorWindow {
     }
 
     getCkEditableInlineElement() {
+        cy.wait(500);
         return this.elements.ckEditableInline();
     }
 
@@ -166,6 +168,10 @@ class ckEditorWindow {
 
     clickCutIcon() {
         this.elements.cutBtn().click();
+    }
+
+    clickBackgroundColorIcon() {
+        this.elements.backgroundColorBtn().click();
     }
 
     appendInCkEditorLevel(text, pTagNumber) {

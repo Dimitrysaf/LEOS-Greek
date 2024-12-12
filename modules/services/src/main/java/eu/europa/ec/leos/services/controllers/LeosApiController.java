@@ -293,7 +293,7 @@ public class LeosApiController {
             case ANNEX:
             case BILL:
             case MEMORANDUM:
-            case STAT_FINANC_LEGIS:
+            case STAT_DIGIT_FINANC_LEGIS:
             case COVERPAGE:
             case PROPOSAL:
             case COUNCIL_EXPLANATORY:
@@ -322,6 +322,7 @@ public class LeosApiController {
                 headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
                 headers.setContentLength(file.length);
                 if (!(isDownload || currentStatus == LeosLegStatus.CONTRIBUTION_SENT)) {
+                    LOG.info("While search leg file updating Leg document status... [id={}, status={}]", legDocument.getId(), LeosLegStatus.EXPORTED.name());
                     LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
                     leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
                     isStatusUpdated = true;
@@ -334,6 +335,7 @@ public class LeosApiController {
             // in case of any exception reverting to current status
             if (isStatusUpdated) {
                 LegDocument legDocument = legService.findLegDocumentById(legFileId);
+                LOG.info("While exception in search leg file updating Leg document status... [id={}, status={}]", legDocument.getId(), currentStatus);
                 LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, currentStatus);
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
             }
@@ -359,6 +361,7 @@ public class LeosApiController {
             headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
             headers.setContentLength(file.length);
             if (!(isDownload || currentStatus == LeosLegStatus.CONTRIBUTION_SENT)) {
+                LOG.info("While search leg file in any status updating Leg document status... [id={}, status={}]", legDocument.getId(), LeosLegStatus.EXPORTED.name());
                 LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
                 isStatusUpdated = true;
@@ -368,6 +371,7 @@ public class LeosApiController {
             // in case of any exception reverting to current status
             if (isStatusUpdated) {
                 LegDocument legDocument = legService.findLegDocumentById(legFileId);
+                LOG.info("While search leg file in any status updating Leg document status... [id={}, status={}]", legDocument.getId(), currentStatus);
                 LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, currentStatus);
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
             }

@@ -21,7 +21,7 @@
         @extend %defaultBoxSizing;
         @extend %pageFont;
 
-        doc[name="STAT_FINANC_LEGIS" i] {
+        doc[name="STAT_DIGIT_FINANC_LEGIS" i] {
             @extend %xmlCoverPageFS;
             @extend %xmlCoverPage;
             @extend %xmlSecondPageFS;
@@ -59,14 +59,17 @@
                 }
             }
 
-			            table * > td {
-                				text-align: left;
-			            } 
+            & content {
+                & > table {
+                    @extend %tableMargin;
+                }
+            }
+
         }
     }
     
     // AKN styles
-    doc[name="STAT_FINANC_LEGIS" i] {
+    doc[name="STAT_DIGIT_FINANC_LEGIS" i] {
         @extend %xmlAuthorialNote;
         @extend %elementActions;
         @extend %elementUserCoEdition;
@@ -76,7 +79,6 @@
         @extend %xmlPreface;
         @extend %xmlList;
         @extend %xmlTable;
-        @extend %xmlTdTableTransparent;
         @extend %xmlCoverPageFS;
         @extend %compare;
         @extend %xmlHigherElements;
@@ -99,11 +101,11 @@
         display: block;
     }
 
-    div.leos-statfinanclegis-view div.leos-doc-content doc[name="STAT_FINANC_LEGIS" i] {
+    div.leos-statfinanclegis-view div.leos-doc-content doc[name="STAT_DIGIT_FINANC_LEGIS" i] {
         @extend %soft;
     }
 
-    div.leos-statfinanclegis-view div.leos-double-comparison-content doc[name="STAT_FINANC_LEGIS" i] {
+    div.leos-statfinanclegis-view div.leos-double-comparison-content doc[name="STAT_DIGIT_FINANC_LEGIS" i] {
         @extend %doubleCompare;
     }
 }

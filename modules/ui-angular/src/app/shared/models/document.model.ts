@@ -210,7 +210,7 @@ export type DocumentType =
   | 'MEMORANDUM'
   | 'BILL'
   | 'ANNEX'
-  | 'STAT_FINANC_LEGIS'
+  | 'STAT_DIGIT_FINANC_LEGIS'
   | 'COUNCIL_EXPLANATORY'
   | 'MEDIA'
   | 'CONFIG'
@@ -234,6 +234,12 @@ export interface Collaborator {
   entity: Entity;
   role: DocumentRole;
   additionalRole?: DocumentRole;
+  clientSystem?: ClientSystem;
+}
+
+export interface ClientSystem {
+  clientId: string;
+  displayName: string;
 }
 
 export interface Entity {

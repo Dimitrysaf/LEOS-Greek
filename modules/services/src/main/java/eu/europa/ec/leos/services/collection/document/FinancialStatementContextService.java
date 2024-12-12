@@ -206,9 +206,9 @@ public class FinancialStatementContextService {
 
         if (cloneProposal) {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO("USER_ADDED_IN_CLONE_PROPOSAL", originRef);
-            financialStatement = financialStatementService.createClonedFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED), null);
+            financialStatement = financialStatementService.createClonedFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextActionService.STAT_DIGIT_FINANC_LEGIS_METADATA_UPDATED), null);
         } else {
-            financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED), null);
+            financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.STAT_DIGIT_FINANC_LEGIS_METADATA_UPDATED), null);
         }
 
         financialStatement = securityService.updateCollaborators(financialStatement.getMetadata().get().getRef(), financialStatement.getId(), collaborators, FinancialStatement.class);

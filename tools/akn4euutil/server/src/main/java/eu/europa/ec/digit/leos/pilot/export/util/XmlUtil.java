@@ -7,9 +7,11 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.OutputKeys;
@@ -49,22 +51,40 @@ public class XmlUtil {
             this.xmlDocument = null;
         }
 
-        public static String parseNode(Node node) throws TransformerException {
+        public static String parseNode(Node node) throws XmlUtilException {
             if (XmlUtil.isNodeEmpty(node)) {
                 return null;
             }
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            StreamResult result = new StreamResult(buffer);
-            DOMSource source = new DOMSource(node);
-            TransformerFactory.newInstance().newTransformer().transform(source, result);
-            String nodeContent = new String(buffer.toByteArray(), StandardCharsets.UTF_8).replaceAll("(<\\?xml.*?\\?>)", "");
-            nodeContent = nodeContent.replaceAll("xmlns(.*?)=(\".*?\")", "");
-            return nodeContent;
+            try {
+                StreamResult result = new StreamResult(buffer);
+                Node securedNode = createSecureDocumentFromNode(node);
+                DOMSource source = new DOMSource(securedNode);
+                Transformer transformer = getTransformer();
+                transformer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
+                transformer.setOutputProperty(OutputKeys.VERSION, "1.0");
+                transformer.transform(source, result);
+                String nodeContent = new String(buffer.toByteArray(), StandardCharsets.UTF_8).replaceAll("(<\\?xml.*?\\?>)", "");
+                return nodeContent.replaceAll("xmlns(.*?)=(\".*?\")", "");
+            } catch(TransformerException e) {
+                closeOutputStream(buffer);
+                throw new XmlUtilException("Error getting xml bytes", e);
+            } catch (Exception e) {
+                closeOutputStream(buffer);
+                throw new XmlUtilException("Error getting xml bytes", e);
+            }
         }
 
         public void createNewXmlDocument() throws XmlUtilException {
             try {
-                this.xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+                builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                builderFactory.setNamespaceAware(true);
+
+                this.xmlDocument = builderFactory.newDocumentBuilder().newDocument();
             } catch (ParserConfigurationException e) {
                 throw new XmlUtilException("Error creating new xml document", e);
             }
@@ -72,7 +92,14 @@ public class XmlUtil {
 
         public void parse(InputStream inputStream, String name) throws XmlUtilException {
             try {
-                this.xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+                DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+                builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                builderFactory.setNamespaceAware(true);
+
+                this.xmlDocument = builderFactory.newDocumentBuilder().parse(inputStream);
                 this.name = name;
             } catch (ParserConfigurationException | SAXException | IOException e) {
                 throw new XmlUtilException("Error parsing xml stream", e);
@@ -115,10 +142,11 @@ public class XmlUtil {
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             try {
+                Node secureNode = createSecureDocumentFromNode(this.xmlDocument);
                 StreamResult xmlStreamResult = new StreamResult(outputStream);
-                DOMSource xmlSource = new DOMSource(xmlDocument);
-                Transformer transformer = TransformerFactory.newInstance().newTransformer();
-                transformer.setOutputProperty(OutputKeys.ENCODING,"utf-8");
+                DOMSource xmlSource = new DOMSource(secureNode);
+                Transformer transformer = getTransformer();
+                transformer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
                 transformer.setOutputProperty(OutputKeys.VERSION, "1.0");
                 transformer.transform(xmlSource, xmlStreamResult);
                 byte [] xmlBytes = outputStream.toByteArray();
@@ -127,7 +155,40 @@ public class XmlUtil {
             } catch(TransformerException e){
                 closeOutputStream(outputStream);
                 throw new XmlUtilException("Error getting xml bytes", e);
+            } catch (Exception e) {
+                closeOutputStream(outputStream);
+                throw new XmlUtilException("Error getting xml bytes", e);
             }
+        }
+
+        private static Transformer getTransformer() throws TransformerConfigurationException {
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            // Secure the factory to prevent XXE attacks
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            return transformerFactory.newTransformer();
+        }
+
+        private static Node createSecureDocumentFromNode(Node node) throws Exception {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setNamespaceAware(true);
+
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            Document secureDocument = builder.newDocument();
+            if (node instanceof Document) {
+                NodeList childNodes = node.getChildNodes();
+                for (int i = 0; i < childNodes.getLength(); i++) {
+                    Node child = secureDocument.importNode(childNodes.item(i), true);
+                    secureDocument.appendChild(child);
+                }
+            } else {
+                Node importedNode = secureDocument.importNode(node, true);
+                secureDocument.appendChild(importedNode);
+            }
+            return secureDocument;
         }
 
         public Text createTextNode(String value) {
@@ -147,7 +208,7 @@ public class XmlUtil {
             this.name = name;
         }
 
-        private void closeOutputStream(OutputStream outputStream) throws XmlUtilException {
+        private static void closeOutputStream(OutputStream outputStream) throws XmlUtilException {
             try {
                 outputStream.close();
             } catch(IOException e){

@@ -29,6 +29,7 @@ define(function aknSubParagraphFSProfileModule(require) {
     plugins.push(require("plugins/aknHtmlAnchor/aknHtmlAnchorPlugin"));
     plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
+    plugins.push(require("plugins/aknHtmlBr/aknHtmlBrPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
     plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
     plugins.push(require("plugins/aknSubParagraphMandate/aknSubParagraphMandatePlugin"));

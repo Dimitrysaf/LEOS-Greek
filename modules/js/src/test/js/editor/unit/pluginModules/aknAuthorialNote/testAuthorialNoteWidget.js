@@ -64,10 +64,10 @@ define(function testAknCitationPlugin(require) {
                         spyOn($.fn, "find").and.returnValue($(authNotes));
                         
                         authorialNoteWidget._renumberAuthorialNotes.call(widget, widget.editor);
-                        expect(firstElement.getAttribute(MARKER)).toEqual("6");
-                        expect(firstElement.innerHTML).toEqual(6);
-                        expect(secondElement.getAttribute(MARKER)).toEqual("7");
-                        expect(secondElement.innerHTML).toEqual(7);
+                        expect(firstElement.getAttribute(MARKER)).toEqual("(6)");
+                        expect(firstElement.innerHTML).toEqual("(6)");
+                        expect(secondElement.getAttribute(MARKER)).toEqual("(7)");
+                        expect(secondElement.innerHTML).toEqual("(7)");
                     });
         });
     });

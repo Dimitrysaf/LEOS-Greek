@@ -65,7 +65,7 @@ define(function leosCrossReferencePluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, widgetName, null, true);
+        leosCommandStateHandler.changeCommandState(event.editor, widgetName, null, true);
         var refConfig = leosPluginUtils.getRefConfig(event.editor);
         if(!refConfig || !refConfig.internalRef) {
             event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);

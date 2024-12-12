@@ -42,6 +42,42 @@ public class AnnotationClientImpl implements AnnotationProvider {
     }
 
     @Override
+    public String updateAnnotation(URI uri, String jwtToken, String proposalRef, String annotJson) {
+        HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
+        headers.set("Content-Type", "application/json");
+        HttpEntity<?> request = new HttpEntity<>(annotJson, headers);
+        try {
+            return restTemplate.exchange(uri, HttpMethod.PATCH, request, String.class).getBody();
+        } catch (Exception ex) {
+            throw new RestClientException("Error parsing search annotations response.", ex);
+        }
+    }
+
+    @Override
+    public String createAnnotation(URI uri, String jwtToken, String proposalRef, String annotJson) {
+        HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
+        headers.set("Content-Type", "application/json");
+        HttpEntity<?> request = new HttpEntity<>(annotJson, headers);
+        try {
+            return restTemplate.exchange(uri, HttpMethod.POST, request, String.class).getBody();
+        } catch (Exception ex) {
+            throw new RestClientException("Error parsing search annotations response.", ex);
+        }
+    }
+
+    @Override
+    public void deleteAnnotation(URI uri, String jwtToken, String proposalRef, String id) {
+        HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
+        headers.set("Content-Type", "application/json");
+        HttpEntity<?> request = new HttpEntity<>(headers);
+        try {
+            restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class);
+        } catch (Exception ex) {
+            throw new RestClientException("Error deleting annotation.", ex);
+        }
+    }
+
+    @Override
     public SendTemporaryAnnotationsResponse sendTemporaryAnnotations(final byte[] legFile, final URI uri, final String jwtToken, String proposalRef) {
         final HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
         headers.set("Content-Type", "application/octet-stream");

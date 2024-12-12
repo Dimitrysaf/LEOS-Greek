@@ -11,6 +11,12 @@ import java.util.List;
 public interface AnnotationProvider {
 	String searchAnnotations(URI uri, String jwtToken, String proposalRef);
 
+	String updateAnnotation(URI uri, String jwtToken, String proposalRef, String annotJson);
+
+	String createAnnotation(URI uri, String jwtToken, String proposalRef, String annotJson);
+
+	void deleteAnnotation(URI uri, String jwtToken, String proposalRef, String id);
+
 	/**
 	 * Send a leg file that will be temporarily stored on the annotation server
 	 * <br><br>

@@ -19,7 +19,7 @@ define(function aknUnNumberedBlockListPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var $ = require('jquery');
     var blockListTransformerStamp = require("plugins/leosBlockListTransformer/blockListTransformer");
-    
+    var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
     var pluginName = "aknUnNumberedBlockList";
     
     var LOG = require("logger");
@@ -33,12 +33,27 @@ define(function aknUnNumberedBlockListPluginModule(require) {
                 if (event.editor.checkDirty()) {
                     event.editor.fire( 'lockSnapshot' );
                     var jqEditor = $(event.editor.editable().$);
-
                     var uls = jqEditor.find("ul");
                     for (var i=0; i<uls.length; i++) {
+                        var idAttrValue = uls[i].getAttribute("id");
+                        if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
+                            idAttrValue = identityHandler.generateId();
+                            uls[i].setAttribute("id", idAttrValue);
+                        }
                         uls[i].setAttribute("data-akn-name","UnNumberedBlockList");
                         var listItems = uls[i].children;
                         for (var jj = 0; jj < listItems.length; jj++) {
+                            idAttrValue = listItems[jj].getAttribute("id");
+                            if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
+                                idAttrValue = identityHandler.generateId();
+                                listItems[jj].setAttribute("id", idAttrValue);
+                            }
+                            idAttrValue = listItems[jj].getAttribute("data-akn-num-id");
+                            if (idAttrValue && $('[data-akn-num-id="' + idAttrValue + '"]').length > 1) {
+                                idAttrValue = identityHandler.generateId();
+                                listItems[jj].setAttribute("data-akn-num-id", idAttrValue);
+                            }
+
                             var previousNumber = listItems[jj].getAttribute("data-akn-num");
                             listItems[jj].setAttribute("data-akn-num","•");
                             listItems[jj].removeAttribute("data-akn-name");

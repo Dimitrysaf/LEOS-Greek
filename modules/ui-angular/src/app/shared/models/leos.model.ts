@@ -20,7 +20,7 @@ export const DOCUMENT_STYLES = {
   coverpage: 'coverpage',
   explanatory: 'explanatory',
   memorandum: 'memorandum',
-  'financial-statement': 'stat_financ_legis',
+  financialstatement: 'stat_digit_financ_legis',
 };
 
 export type Profile = {

@@ -97,12 +97,14 @@ define(function leosTrackChangesPluginModule(require) {
                 });
                 editor.addCommand("acceptOneChange", {
                     canUndo: true,
+                    editorFocus: false,
                     exec: function(editor) {
                         actions.acceptChange(editor, editor.getSelection().getStartElement(), numberModule);
                     }
                 });
                 editor.addCommand("rejectOneChange", {
                     canUndo: true,
+                    editorFocus: false,
                     exec: function(editor) {
                         actions.rejectChange(editor, editor.getSelection().getStartElement(), numberModule);
                     }

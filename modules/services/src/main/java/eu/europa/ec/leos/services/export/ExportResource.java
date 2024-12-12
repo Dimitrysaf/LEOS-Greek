@@ -24,6 +24,7 @@ public class ExportResource {
     private final LeosCategory leosCategory;
     private String resourceId;
     private String href;
+    private String name;
     private int docNumber = 0;
     private Map<String, String> componentsIdsMap;
     private List<ExportResource> childResources;
@@ -91,6 +92,14 @@ public class ExportResource {
 
     public void setHref(String href) {
         this.href = href;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

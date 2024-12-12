@@ -31,11 +31,11 @@ Feature: financial statement page regression features
     When click on option "View" under milestone actions
     Then user is on milestone explorer window
     And  milestone explorer window contains below tabs
-      | TabName                         |
-      | Explanatory Memorandum  [1.0.0] |
-      | Legal Act  [1.0.0]              |
-      | Financial Statement  [1.0.0]    |
-      | Annex 1  [1.0.0]                |
+      | TabName                              |
+      | Explanatory Memorandum  [1.0.0]      |
+      | Legal Act  [1.0.0]                   |
+      | Digital Financial Statement  [1.0.0] |
+      | Annex 1  [1.0.0]                     |
     When click on close button in milestone explorer view
     Then user is on act viewer page
     When click on drafts tab in act view page
@@ -94,6 +94,9 @@ Feature: financial statement page regression features
       | del | "[...]"                           |
       | ins | "text"                            |
     When click on finalise button in ribbon toolbar
+    Then "Finalise Document" dialog box window is displayed
+    And  dialog box body contains "All optional and tracked elements will be consolidated. Do you want to proceed?"
+    When click on confirm button in dialog box window
     Then content of level 2 contains "text" in financial statement page
     When click on versions pane accordion
     And  last subversion of recent changes version card contains "1.0.1Document finalised"

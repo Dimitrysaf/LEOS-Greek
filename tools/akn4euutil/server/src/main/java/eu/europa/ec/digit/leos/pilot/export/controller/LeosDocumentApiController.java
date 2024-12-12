@@ -94,7 +94,24 @@ public class LeosDocumentApiController {
             return buildErrorResponse("Error found while processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR, true);
         }
     }
-    
-    @RequestMapping("/test")
+
+    @RequestMapping(value = "/applyMetadata/async", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile,
+                                                @RequestParam("callbackUrl") String callbackUrl) {
+        try {
+            leosDocumentService.applyMetadataAsync(inputFile, callbackUrl);
+            return ResponseEntity.ok("Ok");
+        } catch (Exception e) {
+            return buildErrorResponse("Error found while processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR, true);
+        }
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String test() { return "Test RESTful service"; }
+
+    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handleOptionsRequest() {
+        return ResponseEntity.ok().build();
+    }
 }

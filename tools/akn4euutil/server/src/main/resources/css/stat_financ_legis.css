@@ -629,21 +629,6 @@ doc[name="STAT_FINANC_LEGIS" i] table td > aknP, doc[name="STAT_FINANC_LEGIS" i]
   padding: 5px;
 }
 
-doc[name="STAT_FINANC_LEGIS" i] [leos\:action="delete"] td.leos-gray-1,
-doc[name="STAT_FINANC_LEGIS" i] [leos\:action="delete"] td.leos-gray-2,
-doc[name="STAT_FINANC_LEGIS" i] [leos\:action="delete"] td.leos-gray-3 {
-  background-color: transparent;
-}
-doc[name="STAT_FINANC_LEGIS" i] td.leos-gray-1 {
-  background-color: #D3D3D3;
-}
-doc[name="STAT_FINANC_LEGIS" i] td.leos-gray-2 {
-  background-color: #F1F1F1;
-}
-doc[name="STAT_FINANC_LEGIS" i] td.leos-gray-3 {
-  background-color: #CCCCCC;
-}
-
 doc[name="STAT_FINANC_LEGIS" i] paragraph > content > table, doc[name="STAT_FINANC_LEGIS" i] point > content > table, doc[name="STAT_FINANC_LEGIS" i] indent > content > table, doc[name="STAT_FINANC_LEGIS" i] level > content > table {
   margin-top: 12pt;
   margin-bottom: 12pt;

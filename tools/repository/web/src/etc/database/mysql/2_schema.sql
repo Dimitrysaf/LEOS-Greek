@@ -114,7 +114,7 @@ CREATE TABLE DOCUMENT
 ( ID INT NOT NULL AUTO_INCREMENT,
   PACKAGE_ID INT NOT NULL COMMENT "The package id that document id belongs to",
   CATEGORY_ID INT NOT NULL COMMENT "Category ID for this document",
-  category_code varchar(20),
+  category_code varchar(100),
   name_ref_uq VARCHAR(700) AS (
       SUBSTRING(CASE
                     WHEN category_code IN ('LEG', 'EXPORT') THEN NULL
@@ -195,7 +195,7 @@ CREATE TABLE DOCUMENT_MILESTONE_LIST
 
 CREATE TABLE CONFIG_CATEGORIES
 ( ID INT NOT NULL AUTO_INCREMENT,
-  CATEGORY_CODE VARCHAR(30) NOT NULL COMMENT "Code of the category for configuration file",
+  CATEGORY_CODE VARCHAR(100) NOT NULL COMMENT "Code of the category for configuration file",
   CATEGORY_DESC VARCHAR(100) NOT NULL COMMENT "Description of the category code",
   AUDIT_C_BY VARCHAR(30) NOT NULL COMMENT "Audit column holding the user that created this record",
   AUDIT_C_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT "Audit column holding the date at which this record was created",

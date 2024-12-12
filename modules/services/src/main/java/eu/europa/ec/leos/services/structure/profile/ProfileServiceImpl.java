@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.structure.profile;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.light.Container;
 import eu.europa.ec.leos.vo.light.ObjectFactory;
 import eu.europa.ec.leos.vo.light.Profile;
@@ -13,14 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -82,22 +75,10 @@ public class ProfileServiceImpl implements ProfileService {
     
     private Container loadProfileContainerFromFile(byte[] fileBytes) {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema profileSchema = sf.newSchema(new StreamSource(loadSchema()));
-            jaxbUnmarshaller.setSchema(profileSchema);
-
-            Container container = (Container) jaxbUnmarshaller.unmarshal(new ByteArrayInputStream(fileBytes));
-            return container;
+            return XmlHelper.loadFromFile(fileBytes, Container.class, ObjectFactory.class, profileSchema);
         } catch (Exception e) {
             LOG.debug("Error loadProfileContainerFromFile", e);
             throw new IllegalStateException("Error loading profile configurations", e);
         }
-    }
-    
-    private InputStream loadSchema() {
-        return ProfileServiceImpl.class.getClassLoader().getResourceAsStream(profileSchema);
     }
 }

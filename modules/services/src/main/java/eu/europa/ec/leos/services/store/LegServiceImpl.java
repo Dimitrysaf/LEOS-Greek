@@ -122,6 +122,7 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.c
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
+import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -169,12 +170,13 @@ public class LegServiceImpl implements LegService {
     private static final String HTML_RENDITION = "renditions/html/";
     private static final String PDF_RENDITION = "renditions/pdf/";
     private static final String WORD_RENDITION = "renditions/word/";
-    
+    private static final String REVISION_PREFIX = "revision-";
+
     private static final String annexStyleSheet = LeosCategory.ANNEX.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String memoStyleSheet = LeosCategory.MEMORANDUM.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String billStyleSheet = LeosCategory.BILL.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String coverPageStyleSheet = LeosCategory.COVERPAGE.name().toLowerCase() + STYLE_SHEET_EXT;
-    private static final String financialStatementStyleSheet = LeosCategory.STAT_FINANC_LEGIS.name().toLowerCase() + STYLE_SHEET_EXT;
+    private static final String financialStatementStyleSheet = LeosCategory.STAT_DIGIT_FINANC_LEGIS.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String explanatoryStyleSheet = "explanatory" + STYLE_SHEET_EXT;
     private static final String RESOURCE_NOT_FOUND_MSG = "404 NOT_FOUND";
 
@@ -273,6 +275,11 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
+    public List<LegDocument> listSentContributions(String path, String legFileName) {
+        return packageRepository.listSentContributions(path, legFileName);
+    }
+
+    @Override
     public List<LegDocumentVO> getLegDocumentDetailsByUserId(String userId, String proposalId, String legStatus) {
         List<LegDocumentVO> legDocumentVOs = new ArrayList<>();
         if(!StringUtils.isEmpty(proposalId)) {
@@ -303,12 +310,12 @@ public class LegServiceImpl implements LegService {
     @Override
     public String fetchFeedbackRepliesByID(String documentRef, String proposalRef, String legFileId, String storedAnnots) {
         LegDocument legDoc = findLegDocumentById(legFileId);
-        return annotateService.fetchFeedbackRepliesFromDB(documentRef, proposalRef, legDoc.getName(), storedAnnots, true);
+        return annotateService.fetchFeedbackRepliesFromDB(documentRef, proposalRef, legDoc, storedAnnots, true);
     }
 
     @Override
-    public String fetchFeedbackRepliesByName(String documentRef, String proposalRef, String legFileName, String storedAnnots) {
-        return annotateService.fetchFeedbackRepliesFromDB(documentRef, proposalRef, legFileName, storedAnnots, true);
+    public String fetchFeedbackRepliesByName(String documentRef, String proposalRef, LegDocument legDoc, String storedAnnots) {
+        return annotateService.fetchFeedbackRepliesFromDB(documentRef, proposalRef, legDoc, storedAnnots, true);
     }
 
     private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus) {
@@ -482,6 +489,7 @@ public class LegServiceImpl implements LegService {
 
         final byte[] proposalXmlContent = proposalVO.getSource();
         ExportResource proposalExportResource = new ExportResource(LeosCategory.PROPOSAL);
+        proposalExportResource.setName(generateActFileName(proposalVO.getMetadataDocument().getRef(), proposalXmlContent));
         final Map<String, String> proposalRefsMap = buildProposalExportResource(proposalExportResource, proposalXmlContent);
         proposalExportResource.setExportOptions(exportOptions);
         final DocumentVO memorandumVO = proposalVO.getChildDocument(LeosCategory.MEMORANDUM);
@@ -491,7 +499,7 @@ public class LegServiceImpl implements LegService {
 
         final DocumentVO billVO = proposalVO.getChildDocument(LeosCategory.BILL);
         final byte[] billXmlContent = billVO.getSource();
-        final ExportResource billExportResource = buildExportResourceBill(proposalRefsMap, billXmlContent);
+        final ExportResource billExportResource = buildExportResourceBill(proposalRefsMap, proposalVO.getRef(), billXmlContent);
 
         // add annexes to billExportResource
         final Map<String, String> attachmentIds = attachmentProcessor.getAttachmentsIdFromBill(billXmlContent);
@@ -505,7 +513,7 @@ public class LegServiceImpl implements LegService {
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .get();
-            final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, resourceId, annexXmlContent);
+            final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, annexVO.getRef(), resourceId, annexXmlContent);
             billExportResource.addChildResource(annexExportResource);
         });
 
@@ -547,9 +555,10 @@ public class LegServiceImpl implements LegService {
         
         // 1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
+        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
+        exportProposalResource.setName(generateActFileName(proposal.getMetadata().get().getRef(), proposalContent));
         final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal);
         legPackage.addContainedFile(proposal.getVersionedReference());
-        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         String language = proposal.getMetadata().get().getLanguage();
         documentLanguageContext.setDocumentLanguage(language);
 
@@ -588,14 +597,14 @@ public class LegServiceImpl implements LegService {
                 final Bill bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
                         proposalRefsMap.get(LeosCategory.BILL.name() + "_href"), Bill.class);
                 byte[] billXmlContent = bill.getContent().get().getSource().getBytes();
-                ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, billXmlContent);
+                ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposal.getMetadata().getOrNull().getRef(), billXmlContent);
                 exportBillResource.setExportOptions(exportOptions);
                 exportProposalResource.addChildResource(exportBillResource);
                 addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage, proposal.getMetadata().getOrNull().getRef(), billXmlContent);
                 legPackage.addContainedFile(bill.getVersionedReference());
             } else if (FinancialStatement.class.equals(exportOptions.getFileType())) {
                 FinancialStatement financialStatement = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
-                        proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_href"), FinancialStatement.class);
+                        proposalRefsMap.get(LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_href"), FinancialStatement.class);
                 byte[] xmlContent;
                 if (exportOptions.isComparisonMode()) {
                     xmlContent = getComparedContent(exportOptions);
@@ -700,7 +709,7 @@ public class LegServiceImpl implements LegService {
     private void addFinancialStatementToPackage(final LeosPackage leosPackage, final Map<String, Object> contentToZip,
                                         ExportResource exportProposalResource, final Map<String, String> proposalRefsMap,
                                         LegPackage legPackage, String proposalRef) {
-        final String financialStatementRef = proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_href");
+        final String financialStatementRef = proposalRefsMap.get(LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_href");
         if (!StringUtils.isEmpty(financialStatementRef) && !financialStatementRef.equals("#")) {
             FinancialStatement financialStatement = null;
             try {
@@ -949,7 +958,7 @@ public class LegServiceImpl implements LegService {
             addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposalRef);
         }
 
-        final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, xmlContent);
+        final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposalRef, xmlContent);
         exportBillResource.setExportOptions(exportOptions);
         exportProposalResource.addChildResource(exportBillResource);
         return exportBillResource;
@@ -1054,7 +1063,8 @@ public class LegServiceImpl implements LegService {
         }
 
         int docNumber = annex.getMetadata().get().getIndex();
-        final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, resourceId, href, xmlContent);
+        String docRef = annex.getMetadata().get().getRef();
+        final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, docRef, resourceId, href, xmlContent);
         exportBillResource.addChildResource(annexExportResource);
     }
 
@@ -1128,8 +1138,8 @@ public class LegServiceImpl implements LegService {
         config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.BILL, "href"));
         config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.COUNCIL_EXPLANATORY, "xml:id"));
         config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.COUNCIL_EXPLANATORY, "href"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_FINANC_LEGIS, "xml:id"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_FINANC_LEGIS, "href"));
+        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_DIGIT_FINANC_LEGIS, "xml:id"));
+        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_DIGIT_FINANC_LEGIS, "href"));
         config.putAll(xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
 
         Map<String, String> proposalRefsMap = xmlNodeProcessor.getValuesFromXml(xmlContent,
@@ -1140,14 +1150,13 @@ public class LegServiceImpl implements LegService {
                         LeosCategory.MEMORANDUM.name() + "_href",
                         LeosCategory.BILL.name() + "_xml:id",
                         LeosCategory.BILL.name() + "_href",
-                        LeosCategory.STAT_FINANC_LEGIS.name() + "_xml:id",
-                        LeosCategory.STAT_FINANC_LEGIS.name() + "_href"
+                        LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_xml:id",
+                        LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_href"
                 },
                 config);
 
         exportResource.setResourceId(proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
-        exportResource.setComponentsIdsMap(Collections.singletonMap(XmlNodeConfigProcessor.DOC_REF_COVER,
-                proposalRefsMap.get(XmlNodeConfigProcessor.DOC_REF_COVER)));
+        exportResource.setComponentsIdsMap(Collections.singletonMap(XmlNodeConfigProcessor.DOC_REF_COVER, proposalRefsMap.get(XmlNodeConfigProcessor.DOC_REF_COVER)));
         return proposalRefsMap;
     }
 
@@ -1171,34 +1180,36 @@ public class LegServiceImpl implements LegService {
         return buildExportResourceExplanatory(docNumber, resourceId, null, xmlContent);
     }
 
-    private ExportResource buildExportResourceBill(Map<String, String> proposalRefsMap, byte[] xmlContent) {
+    private ExportResource buildExportResourceBill(Map<String, String> proposalRefsMap, String dcoRef, byte[] xmlContent) {
         ExportResource billExportResource = new ExportResource(LeosCategory.BILL);
         billExportResource.setResourceId(proposalRefsMap.get(LeosCategory.BILL.name() + "_xml:id"));
         billExportResource.setHref(proposalRefsMap.get(LeosCategory.BILL.name() + "_href"));
+        billExportResource.setName(dcoRef);
         billExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.BILL, xmlContent));
         return billExportResource;
     }
 
-    private ExportResource buildExportResourceAnnex(int docNumber, String resourceId, String href, byte[] xmlContent) {
+    private ExportResource buildExportResourceAnnex(int docNumber, String docRef, String resourceId, String href, byte[] xmlContent) {
         ExportResource annexExportResource = new ExportResource(LeosCategory.ANNEX);
         annexExportResource.setResourceId(resourceId);
         annexExportResource.setHref(href);
+        annexExportResource.setName(docRef);
         annexExportResource.setDocNumber(docNumber);
         annexExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.ANNEX, xmlContent));
         return annexExportResource;
     }
 
     private ExportResource buildExportResourceFinancialStatement(Map<String, String> proposalRefsMap, byte[] xmlContent) {
-        ExportResource finStmntExportResource = new ExportResource(LeosCategory.STAT_FINANC_LEGIS);
-        finStmntExportResource.setResourceId(proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_xml:id"));
-        finStmntExportResource.setHref(proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_href"));
-        finStmntExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.STAT_FINANC_LEGIS, xmlContent));
+        ExportResource finStmntExportResource = new ExportResource(LeosCategory.STAT_DIGIT_FINANC_LEGIS);
+        finStmntExportResource.setResourceId(proposalRefsMap.get(LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_xml:id"));
+        finStmntExportResource.setHref(proposalRefsMap.get(LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_href"));
+        finStmntExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.STAT_DIGIT_FINANC_LEGIS, xmlContent));
         return finStmntExportResource;
     }
 
-    private ExportResource buildExportResourceAnnex(int docNumber, String resourceId, byte[] xmlContent) {
+    private ExportResource buildExportResourceAnnex(int docNumber, String docRef, String resourceId, byte[] xmlContent) {
         //TODO : FIXME : populate href for Proposal export
-        return buildExportResourceAnnex(docNumber, resourceId, null, xmlContent);
+        return buildExportResourceAnnex(docNumber, docRef, resourceId, null, xmlContent);
     }
 
     private  Map<String, String> getCoverPage(LeosCategory leosCategory, byte[] xmlContent) {
@@ -1273,7 +1284,7 @@ public class LegServiceImpl implements LegService {
         LegDocument legDocument = findLastContributionByVersionedReference(clonedPackage.getPath(), versionedReference);
         Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().getSource().getBytes());
 
-        addFeedbackAnnotateToZipContent(legContent, documentRef, documentName, exportOptions, proposalRef, legFileName);
+        addFeedbackAnnotateToZipContent(legContent, documentRef, documentName, exportOptions, proposalRef, legDocument);
 
         return this.updateLegDocument(legDocument.getId(), ZipPackageUtil.zipByteArray(legContent), legDocument.getStatus());
     }
@@ -1311,12 +1322,11 @@ public class LegServiceImpl implements LegService {
 
     private void addPdfRendition(byte[] pdfJobZip, Map<String, Object> legContent) throws IOException {
         Map.Entry<String, Object> neededEntry = unzipJobResult(pdfJobZip).entrySet().stream()
-                .filter(pdfEntry -> pdfEntry.getKey().endsWith("_pdfa.pdf"))
+                .filter(pdfEntry -> pdfEntry.getKey().endsWith(".pdf"))
                 .findAny()
-                .orElseThrow(() -> new FileNotFoundException("Pdfa rendition not found in the pdf document job file"));
+                .orElseThrow(() -> new FileNotFoundException("Pdf rendition not found in the pdf document job file"));
 
-        String fileName = neededEntry.getKey().replace("_pdfa", "");
-        legContent.put(PDF_RENDITION + fileName, neededEntry.getValue());
+        legContent.put(PDF_RENDITION + neededEntry.getKey(), neededEntry.getValue());
     }
 
     private void addWordRenditions(byte[] wordJobZip, Map<String, Object> legContent) throws IOException {
@@ -1403,7 +1413,7 @@ public class LegServiceImpl implements LegService {
         // Build toc_docName.js file
         RenderedDocument tocHtmlDocumentJS = new RenderedDocument();
 
-        if (xmlDocumentName.startsWith(XmlHelper.STAT_FINANC_LEGIS)) {
+        if (xmlDocumentName.startsWith(XmlHelper.STAT_DIGIT_FINANC_LEGIS)) {
             Document document = XercesUtils.createXercesDocument(xmlContent);
             byte[] htmlRenditionContent = LeosXercesUtils.wrapWithPageOrientationDivs(document);
             htmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
@@ -1479,6 +1489,7 @@ public class LegServiceImpl implements LegService {
             try {
                 String annotations = annotateService.getAnnotations(ref, proposalRef);
                 annotations = processAnnotations(annotations, exportOptions);
+                annotations = filterReplies(annotations, ref, proposalRef);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
                 contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
             } catch(Exception e) {
@@ -1487,14 +1498,16 @@ public class LegServiceImpl implements LegService {
         }
     }
 
-    private void addFeedbackAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions, String proposalRef, String legFileName) {
+    private void addFeedbackAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions,
+                                                 String proposalRef, LegDocument legDoc) {
         try {
             if (exportOptions.isWithFeedbackAnnotations()) {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
-                String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
-                annotations = annotateService.fetchFeedbackRepliesFromDB(ref, proposalRef, legFileName, annotations, false);
+                String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legDoc, proposalRef);
+                List<JsonNode> feedbackReplies = annotateService.getFeedbackRepliesFromDB(ref, proposalRef, legDoc, annotations);
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
-                annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
+                annotations = addFeedbackAnnotations(annotations, legDoc, feedbackAnnotations, feedbackReplies);
+                annotations = removeFeedbackFlag(annotations);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
                 String annotFilename = creatAnnotationFileName(docName);
                 contentToZip.remove(annotFilename);
@@ -1503,6 +1516,28 @@ public class LegServiceImpl implements LegService {
         } catch(Exception e) {
             LOG.error("Exception occurred while adding annotations in LEG ", e);
         }
+    }
+
+    private String removeFeedbackFlag(String annotations) {
+        if (annotations == null || annotations.equals("")) {
+            return annotations;
+        }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode json = mapper.readTree(annotations);
+            JsonNode annotsJson = json.get("rows");
+            for (final JsonNode annot : annotsJson) {
+                ((ObjectNode) annot).remove("feedbackToBeSent");
+            }
+            JsonNode repliesJson = json.get("replies");
+            for (final JsonNode reply : repliesJson) {
+                ((ObjectNode) reply).remove("feedbackToBeSent");
+            }
+            return mapper.writeValueAsString(json);
+        } catch (Exception e) {
+            LOG.debug("Could not remove permissions on stored annotations", e);
+        }
+        return annotations;
     }
 
     @Override
@@ -1565,7 +1600,7 @@ public class LegServiceImpl implements LegService {
         return storedFeedbackAnnotations;
     }
 
-    private int countFeedbacksToBeSent(String feedbackAnnotations, String storedFeedbackAnnotations) throws JsonProcessingException {
+    private int countFeedbacksToBeSent(String feedbackAnnotations, String storedFeedbackAnnotations, LegDocument legDocument) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(feedbackAnnotations);
         JsonNode annots = json.get("rows");
@@ -1582,7 +1617,9 @@ public class LegServiceImpl implements LegService {
         }
         int count = 0;
         for (final JsonNode annot : annots) {
-            if (annot.get("status") == null || !annot.get("status").get("status").asText().equals("DELETED")) {
+            if (annotateService.isNormalAnnot(annot)
+                    && annotateService.isReplyFromRevision(annot)
+                    && annotateService.isCreatedAfterContribution(annot, legDocument)) {
                 String annotId = annot.get("id").textValue();
                 boolean added = false;
                 for (final JsonNode storedAnnot : storedAnnots) {
@@ -1597,7 +1634,9 @@ public class LegServiceImpl implements LegService {
             }
         }
         for (final JsonNode annot : replies) {
-            if (annot.get("status") == null || !annot.get("status").get("status").asText().equals("DELETED")) {
+            if (annotateService.isNormalAnnot(annot)
+                    && annotateService.isReplyFromRevision(annot)
+                    && annotateService.isCreatedAfterContribution(annot, legDocument)) {
                 String annotId = annot.get("id").textValue();
                 boolean added = false;
                 for (final JsonNode storedReply : storedReplies) {
@@ -1733,9 +1772,10 @@ public class LegServiceImpl implements LegService {
 
         //1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
+        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
+        exportProposalResource.setName(generateActFileName(proposal.getMetadata().get().getRef(), proposalContent));
         final Map<String, String> proposalRefsMap = enrichZipWithProposalForClone(contentToZip, exportProposalResource, proposal);
         legPackage.addContainedFile(proposal.getVersionedReference());
-        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         String language = proposal.getMetadata().get().getLanguage();
         //2. Add Bill to package
         Bill bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
@@ -1837,7 +1877,7 @@ public class LegServiceImpl implements LegService {
             addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposalRef);
         }
 
-        final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, xmlContent);
+        final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposalRef, xmlContent);
         exportBillResource.setExportOptions(exportOptions);
         exportProposalResource.addChildResource(exportBillResource);
         return exportBillResource;
@@ -1899,7 +1939,8 @@ public class LegServiceImpl implements LegService {
         }
 
         int docNumber = annex.getMetadata().get().getIndex();
-        final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, resourceId, href, xmlContent);
+        String docRef = annex.getMetadata().get().getRef();
+        final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, docRef, resourceId, href, xmlContent);
         exportBillResource.addChildResource(annexExportResource);
     }
 
@@ -1949,6 +1990,7 @@ public class LegServiceImpl implements LegService {
         try {
             String annotations = annotateService.getAnnotations(ref, proposalRef);
             annotations = processAnnotations(annotations, exportOptions);
+            annotations = filterReplies(annotations, ref, proposalRef);
             final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
             contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
         } catch (Exception e) {
@@ -1956,10 +1998,29 @@ public class LegServiceImpl implements LegService {
         }
     }
 
+    private String filterReplies(String annotations, String ref, String proposalRef) throws JsonProcessingException {
+        String uri = "uri://LEOS/" + ref;
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode json = mapper.readTree(annotations);
+
+        ArrayNode repliesNode = (ArrayNode) json.get("replies");
+        if (repliesNode != null) {
+            for (int i=0; i<repliesNode.size(); i++) {
+                JsonNode node = repliesNode.get(i);
+                String uriJson = node.get("uri").asText("");
+                if (!uriJson.equals(uri)) {
+                    repliesNode.remove(i);
+                }
+            }
+        }
+        return mapper.writeValueAsString(json);
+    }
+
     private String processAnnotations(String annotations, ExportOptions exportOptions) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(annotations);
         JsonNode rootNode = json.get("rows");
+        JsonNode repliesNode = json.get("replies");
         Iterator<JsonNode> itr = rootNode.elements();
         LOG.debug("Processing " + rootNode.size() + " annotations");
         List<JsonNode> modifiedList = new ArrayList<JsonNode>();
@@ -1990,11 +2051,38 @@ public class LegServiceImpl implements LegService {
 
         });
         ((ObjectNode) json).putArray("rows").removeAll().addAll(modifiedList);
+        if (repliesNode != null) {
+            List<JsonNode> modifiedRepliesList = new ArrayList<JsonNode>();
+            itr = repliesNode.elements();
+            itr.forEachRemaining(node -> {
+                String entityText = "";
+                JsonNode userInfo = node.get("user_info");
+                if (userInfo != null && exportOptions.isWithAnonymization()) {
+                    JsonNode entityName = userInfo.get("entity_name");
+                    entityText = entityName.textValue();
+                    int firstEntitySeparator = entityText.indexOf(".");
+                    entityText = firstEntitySeparator >= 0 ? entityText.substring(0, firstEntitySeparator) : entityText;
+                    ((ObjectNode) userInfo).put("display_name", entityText);
+                    ((ObjectNode) userInfo).put("entity_name", entityText);
+                    ((ObjectNode) node).put("user", entityText);
+                    JsonNode permissions = node.get("permissions");
+                    if(permissions != null) {
+                        anonymizePermission(permissions,"admin", entityText);
+                        anonymizePermission(permissions,"update", entityText);
+                        anonymizePermission(permissions,"delete", entityText);
+                    }
+                }
+                modifiedRepliesList.add(node);
+
+            });
+            ((ObjectNode) json).putArray("replies").removeAll().addAll(modifiedRepliesList);
+        }
         ((ObjectNode) json).put("total", modifiedList.size());
         return mapper.writeValueAsString(json);
     }
 
-    private String addFeedbackAnnotations(String annotations, String feedbackAnnotations) throws JsonProcessingException {
+    private String addFeedbackAnnotations(String annotations, LegDocument legDocument, String feedbackAnnotations,
+                                          List<JsonNode> repliesFeedback) throws JsonProcessingException {
         if (StringUtils.isBlank(feedbackAnnotations)) {
             LOG.debug("Didn't find any feedback annotations in DB");
             return annotations;
@@ -2020,17 +2108,31 @@ public class LegServiceImpl implements LegService {
         Iterator<JsonNode> itrFeedback = rowsNodeFeedback.elements();
         List<JsonNode> filteredList = new ArrayList<JsonNode>();
         itrFeedback.forEachRemaining((node) -> {
-            if(!isPresent(rowsNode, node)) {
+            if(!isPresent(rowsNode, node) && annotateService.isNormalAnnot(node) && annotateService.isReplyFromRevision(node)
+                    && annotateService.isCreatedAfterContribution(node, legDocument)) {
+                ((ObjectNode) node).put("feedbackToBeSent", true);
                 filteredList.add(node);
             }
         });
         Iterator<JsonNode> itrRepliesFeedback = repliesNodeFeedback.elements();
         List<JsonNode> repliesFilteredList = new ArrayList<JsonNode>();
-        itrRepliesFeedback.forEachRemaining((node) -> {
-            if(!isPresent(rowsNodeFeedback, node)) {
-                repliesFilteredList.add(node);
+        itrRepliesFeedback.forEachRemaining((reply) -> {
+            if(!isPresent(rowsNodeFeedback, reply) && annotateService.isNormalAnnot(reply) && annotateService.isReplyFromRevision(reply)
+                    && annotateService.isCreatedAfterContribution(reply, legDocument)) {
+                ((ObjectNode) reply).put("feedbackToBeSent", true);
+                repliesFilteredList.add(reply);
             }
         });
+
+        for (JsonNode reply : repliesFeedback) {
+            if (annotateService.isReplyFromRevision(reply) && annotateService.isNormalAnnot(reply)
+                    && annotateService.isReplyFromRevision(reply)
+                    && annotateService.isCreatedAfterContribution(reply,
+                    legDocument)) {
+                ((ObjectNode) reply).put("feedbackToBeSent", true);
+                repliesFilteredList.add(reply);
+            }
+        }
 
         LOG.debug("Added " + filteredList.size() + " feedback annotations from DB");
         rowsNode.addAll(filteredList);
@@ -2079,18 +2181,36 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef) throws IOException {
+    public String getFeedbackAnnotationsFromLeg(LegDocument legDocument, String documentRef, String proposalRef, boolean isMilestone) throws IOException {
         String annotFileName = "media/annot_" + documentRef + ".xml.json";
         try {
-            LegDocument legDocument = findLegDocumentById(legFileId);
-
             Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().getOrNull().getSource().getBytes());
             if (legContent.containsKey(annotFileName)) {
-                byte[] annotFileContent = (byte[]) legContent.get(annotFileName);
-                return new String(annotFileContent, StandardCharsets.UTF_8);
+                String storedAnnotations = new String((byte[]) legContent.get(annotFileName), UTF_8);
+                storedAnnotations = removePermissionsStoredAnnotationsFromId(storedAnnotations, documentRef, legDocument.getId());
+                if (isMilestone) {
+                    return storedAnnotations.replaceAll(REVISION_PREFIX, "");
+                }
+                List<JsonNode> feedbackReplies = annotateService.getFeedbackRepliesFromDB(documentRef, proposalRef, legDocument, storedAnnotations);
+                String feedbackAnnotations = annotateService.getFeedbackAnnotations(documentRef, legDocument, proposalRef);
+                return addFeedbackAnnotations(storedAnnotations, legDocument, feedbackAnnotations, feedbackReplies);
             }
         } catch (Exception e) {
-            LOG.info("Error while getting annotations in LEG file {}", legFileId);
+            LOG.info("Error while getting annotations in LEG file {}", legDocument.getId());
+            throw new IOException("Error while getting annotations in LEG file", e);
+        }
+        return "";
+    }
+
+    private String getAnnotationsFromLeg(LegDocument legDocument, String documentRef, String proposalRef) throws IOException {
+        String annotFileName = "media/annot_" + documentRef + ".xml.json";
+        try {
+            Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().getOrNull().getSource().getBytes());
+            if (legContent.containsKey(annotFileName)) {
+                return new String((byte[]) legContent.get(annotFileName), UTF_8);
+            }
+        } catch (Exception e) {
+            LOG.info("Error while getting annotations in LEG file {}", legDocument.getId());
             throw new IOException("Error while getting annotations in LEG file", e);
         }
         return "";
@@ -2102,12 +2222,20 @@ public class LegServiceImpl implements LegService {
             LeosPackage leosPackage = packageRepository.findPackageByDocumentRef(proposalRef, Proposal.class);
             LegDocument legDocument = findLastContributionByVersionedReference(leosPackage.getPath(), versionedReference);
             String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
-            String feedbackLegAnnotations = getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
-            String feedbackAnnotations = annotateService.getFeedbackAnnotations(documentRef, legFileName, proposalRef);
-            return countFeedbacksToBeSent(feedbackAnnotations, feedbackLegAnnotations);
+            String legAnnotations = getAnnotationsFromLeg(legDocument, documentRef, proposalRef);
+            String feedbackAnnotations = annotateService.getFeedbackAnnotations(documentRef, legDocument, proposalRef);
+            int countfeedbackReplies = annotateService.countFeedbackRepliesFromDB(documentRef, proposalRef, legDocument, legAnnotations);
+            return countFeedbacksToBeSent(feedbackAnnotations, legAnnotations, legDocument) + countfeedbackReplies;
         } catch(Exception e) {
             LOG.error("Exception occurred", e);
         }
         return 0;
+    }
+
+    private String generateActFileName(String documentRef, byte[] xmlContent) {
+        String docCollectionXPath = xPathCatalog.getXPathProposalDocCollection();
+        String docCollectionName = xmlContentProcessor.getElementValue(xmlContent, docCollectionXPath, true);
+        String cuidAndLang = documentRef.substring(documentRef.indexOf("-") + 1, documentRef.length());
+        return docCollectionName.concat(DOC_FILE_NAME_SEPARATOR).concat(cuidAndLang);
     }
 }

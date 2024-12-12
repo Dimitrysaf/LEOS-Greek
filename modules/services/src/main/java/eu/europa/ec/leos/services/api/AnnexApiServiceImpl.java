@@ -53,7 +53,6 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
-import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -81,7 +80,6 @@ import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -295,7 +293,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(
@@ -305,7 +303,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType,
                 messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         documentViewService.updateProposalAsync(updatedAnnex);
-        return this.annexService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
+        return this.annexService.getTableOfContent(updatedAnnex, tocMode);
     }
 
     @Override
@@ -589,28 +587,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, false);
         return documentViewService.updateDocumentView(annex);
-    }
-
-    @Override
-    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
-        Annex annex = this.annexService.findAnnexByRef(documentRef);
-        StructureContext context = structureContext.get();
-        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
-        populateCloneProposalMetadata(annex);
-        List<String> elementAncestorsIds = null;
-        if (CollectionUtils.isNotEmpty(elementIds)) {
-            try {
-                elementAncestorsIds = annexService.getAncestorsIdsForElementId(annex, elementIds);
-            } catch (Exception e) {
-                LOG.warn("Could not get ancestors Ids", e);
-            }
-        }
-        // we are combining two operations (get toc + get selected element ancestors)
-        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
-                annex.getMetadata().get().getRef(),
-                TocMode.SIMPLIFIED_CLEAN);
-        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
-                context.getNumberingConfigs(), annex.getMetadata().get().getLanguage());
     }
 
     @Override

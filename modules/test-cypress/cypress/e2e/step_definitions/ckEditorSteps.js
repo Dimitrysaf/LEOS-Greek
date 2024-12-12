@@ -434,15 +434,15 @@ Then('recital contains text {string} in edition mode', function (text) {
     ckEditorWindow.elements.pTag().should('include.text', text);
 });
 
-Then('authorial note with marker {int} and title {string} is present inside citation in edition mode', function (markerNumber, title) {
+Then('authorial note with marker {string} and title {string} is present inside citation in edition mode', function (markerNumber, title) {
     ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
 });
 
-Then('authorial note with marker {int} and title {string} is present inside recital in edition mode', function (markerNumber, title) {
+Then('authorial note with marker {string} and title {string} is present inside recital in edition mode', function (markerNumber, title) {
     ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
 });
 
-Then('authorial note with marker {int} and title {string} is present inside level in edition mode', function (markerNumber, title) {
+Then('authorial note with marker {string} and title {string} is present inside level in edition mode', function (markerNumber, title) {
     ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
 });
 
@@ -458,7 +458,7 @@ Then("numbered paragraph {int} of article doesn't contain {string} tag in editio
     ckEditorWindow.getTagElementFromParagraphOfArticle(paragraphNumber, tagName).should('not.exist');
 });
 
-Then('numbered paragraph {int} of article contains authorial note with marker {int} and title {string} in edition mode', function (paragraphNumber, markerNumber, title) {
+Then('numbered paragraph {int} of article contains authorial note with marker {string} and title {string} in edition mode', function (paragraphNumber, markerNumber, title) {
     ckEditorWindow.getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, markerNumber).should('have.attr','title', title);
 });
 
@@ -489,3 +489,8 @@ When(`click on image icon present in ck editor panel`, () => {
 When(`upload an image file from a relative location {string} in iframe {string}`, (location, iframeClass) => {
     ckEditorWindow.uploadImageFile("cypress/fixtures/images/" + location, iframeClass);
 });
+
+/*
+When(/^click on background color icon two times present in ck editor panel$/, function () {
+    ckEditorWindow.clickBackgroundColorIcon();
+});*/

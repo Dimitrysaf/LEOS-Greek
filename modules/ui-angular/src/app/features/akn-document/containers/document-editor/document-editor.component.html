@@ -55,6 +55,7 @@
             [isExpanded]="isTocPaneExpanded"
             (expand)="onTocPaneExpanded($event)"
           >
+            <mat-spinner *ngIf="tocLoading" class="toc-loading-spinner" diameter="15" color="black"></mat-spinner>
             <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
               <!-- Expand all -->
               <button
@@ -92,7 +93,7 @@
                 *ngIf="
                   showTocEditButton &&
                   !isEditMode &&
-                  !['coverPage', 'memorandum', 'stat_financ_legis'].includes(
+                  !['coverPage', 'memorandum', 'stat_digit_financ_legis'].includes(
                     documentType
                   )
                 "
@@ -109,7 +110,7 @@
                 [isVersionsPaneCollapsed]="isVersionsPaneCollapsed"
                 (handleExpandAll)="expandAll()"
                 (handleUndo)="handleUndo()"
-                (handleSave)="handleSave()"
+                (handleSave)="handleSave(false)"
                 (handleCancel)="handleCancel()"
                 (handleSaveAndClose)="handleSaveAndClose()"
               >
@@ -182,6 +183,24 @@
               >
                 <eui-icon-svg icon="eui-search"></eui-icon-svg>
               </button>
+              @if(canUploadXml) {
+              <button
+                euiButton
+                euiIconButton
+                euiSecondary
+                euiOutline
+                euiSizeS
+                [title]="
+                  ('page.editor.versions.upload.tooltip'
+                  ) | translate
+                "
+                (click)="uploadDocument()"
+              >
+
+                <eui-icon-svg icon="eui-file-upload"></eui-icon-svg>
+
+              </button>
+              }
             </div>
 
             <div
@@ -613,6 +632,7 @@
             [showStatusFilter]="showStatusFilter"
             [disableSuggestionButton]=true
             [disableHighlightButton]=true
+            operationMode="STORED"
             sidebarAppId="revision-01"
             [collapsed]="isContributionAnnotationsPaneCollapsed"
             (sidebarShown)="onContributionAnnotationsSidebarShown()"

@@ -3,7 +3,8 @@ class annexPage {
         containerBlockNum: () => cy.get("container[name='headerOfAnnex'] block[name='num']"),
         prefaceContainerBlockHeading: () => cy.get("container[name='headerOfAnnex'] block[name='heading']"),
         closeBtn: () => cy.xpath("//button[text()='Close']"),
-        level: () => cy.xpath("//level")
+        level: () => cy.xpath("//level"),
+        paragraph: () => cy.xpath("//paragraph")
     }
 
     clickCloseBtn() {
@@ -53,6 +54,10 @@ class annexPage {
 
     getLevel(levelNumber) {
         return this.elements.level().eq(levelNumber-1);
+    }
+
+    getParagraph(paragraphNumber) {
+        return this.elements.paragraph().eq(paragraphNumber-1);
     }
 
     getAuthorialNoteWithMarkerNumberFromLevel(levelNumber, markerNumber) {

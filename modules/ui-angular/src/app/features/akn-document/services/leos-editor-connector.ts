@@ -106,7 +106,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
 
   //leosEditorExtension > requestToc
   requestToc(...args) {
-    this.requestTocAndAncestors([]);
+    this.requestTocAndAncestors(args[0]['elementIds'], args[0]['documentRef']);
   }
 
   // leosEditorExtension > actionHandler
@@ -172,6 +172,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         ),
         bodyComponent: {
           component: CoEditionDetectedDialogComponent,
+          config: {
+            coEditionAction: 'EDIT_ELEMENT',
+            elementEditedId: data.elementId
+          }
         },
         accept: () => {
           this.getDocumentElement(
@@ -339,6 +343,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     }
     const milliseconds = new Date().getTime();
     this.loadingService.setTaskOngoing('saving', String(milliseconds));
+    if (this.isSaveAndClose) {
+      localStorage.setItem(elemData.elementId, elemData.elementFragment);
+    }
     this.saveDocumentElement(
       this.documentService.documentRef,
       elemData.elementId,
@@ -405,6 +412,19 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     }
     this.setEditorOpenState('CLOSE');
     this.documentService.setIsEditorOpen(false);
+    if (this.isElementSaved) {
+      this.documentService.updateElementContent({
+        documentRef: this.documentService.documentRef,
+        elementId: elemData.elementId,
+        elementType: elemData.elementType,
+        elementFragment: elemData.elementFragment,
+        isClosing: true,
+        isSaved: true
+      });
+      if (!this.isSaveAndClose) {
+        this.coEditionService.sendUpdateDocumentEvent(this.documentService.documentRef, elemData.elementId, elemData.elementType, elemData.elementFragment);
+      }
+    }
     if (this.elementToEditAfterClose && this.elementToEditAfterClose !== null) {
       this.editElementAction({
         action: 'edit',
@@ -451,7 +471,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           documentRef,
           documentType,
         );
-        this.tableOfContentService.reloadToc();
         this.coEditionService.sendUpdateDocumentEvent(documentRef);
       });
     };
@@ -538,7 +557,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           documentRef,
           documentType,
         );
-        this.tableOfContentService.reloadToc();
         this.coEditionService.sendUpdateDocumentEvent(documentRef);
       });
   }
@@ -564,11 +582,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     });
   }
 
-  private requestTocAndAncestors(elementdIds) {
+  private requestTocAndAncestors(elementdIds, documentRef) {
     this.documentService
-      .fetchTocAndAncestors(elementdIds)
+      .fetchTocAndAncestors(elementdIds, documentRef)
       .pipe(take(1))
       .subscribe((response) => {
+        // pass also the document reference associated with the request
+        response["documentRef"] = documentRef;
         this.receiveToc(JSON.stringify(response));
       });
   }

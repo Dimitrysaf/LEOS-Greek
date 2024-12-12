@@ -37,10 +37,12 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX;
@@ -48,7 +50,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
 import static eu.europa.ec.leos.services.support.XmlHelper.FINANCIAL_STATEMENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL;
-import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Service
@@ -123,7 +125,8 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         if(proposal == null) {
             return new ArrayList<>();
         }
-        final List<String> clonedMilestoneIds = proposal.getClonedMilestoneIds();
+        List<String> clonedMilestoneIds = proposal.getClonedMilestoneIds();
+        clonedMilestoneIds = clonedMilestoneIds.stream().distinct().collect(Collectors.toList());
         for (String clonedMilestoneId : clonedMilestoneIds) {
             String proposalRef = clonedMilestoneId.split(LeosDomainUtil.CMIS_PROPERTY_SPLITTER)[0];
             String legName = clonedMilestoneId.split(LeosDomainUtil.CMIS_PROPERTY_SPLITTER)[1];
@@ -135,83 +138,86 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                 continue;
             }
             LeosPackage clonedPackage = packageService.findPackageByDocumentRef(clonedProposal.getMetadata().get().getRef(), Proposal.class);
-            LegDocument legDocument = legService.findLastContribution(clonedPackage.getPath(), legName);
-            List<String> containedDocuments = legDocument.getContainedDocuments();
-            Map<String, Object> legContent;
-            try {
-                legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().getOrNull().getSource().getBytes());
-            } catch (IOException e) {
-                LOG.error("Error unzipping leg file " + legName + " for cloned proposal with reference " + proposalRef, e);
-                continue;
-            }
-            if (filterType.getSimpleName().equalsIgnoreCase(ANNEX)) {
-                Stream<String> filesToFind = containedDocuments.stream()
-                        .filter(containedFile -> containedFile.startsWith(ANNEX_DOC_TYPE + "-"));
-                filesToFind.forEach(annexVersionAndName -> {
-                    Annex annex = (Annex) findVersionByVersionedReference(annexVersionAndName, filterType);
-                    String annexName = annex.getName();
-                    byte[] annexContent = (byte[]) legContent.get(annexName);
-                    if (annex != null && annex.getMetadata().isDefined() && annex.getMetadata().get().getClonedRef() != null
-                            && annex.getMetadata().get().getClonedRef().equals(documentRef)) {
-                        ContributionLegDocumentVO<Annex> annexContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), annex,
-                                annexContent, legName, annexName, proposalRef);
-                        documentVersions.add((ContributionLegDocumentVO<T>) annexContributionLegDocumentVO);
+            List<LegDocument> legDocuments = legService.listSentContributions(clonedPackage.getPath(), legName);
+            legDocuments.sort(Comparator.comparing(LegDocument::getInitialCreationInstant));
+            for (LegDocument legDocument: legDocuments) {
+                List<String> containedDocuments = legDocument.getContainedDocuments();
+                Map<String, Object> legContent;
+                try {
+                    legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().getOrNull().getSource().getBytes());
+                } catch (IOException e) {
+                    LOG.error("Error unzipping leg file " + legName + " for cloned proposal with reference " + proposalRef, e);
+                    continue;
+                }
+                if (filterType.getSimpleName().equalsIgnoreCase(ANNEX)) {
+                    Stream<String> filesToFind = containedDocuments.stream()
+                            .filter(containedFile -> containedFile.startsWith(ANNEX_DOC_TYPE + "-"));
+                    filesToFind.forEach(annexVersionAndName -> {
+                        Annex annex = (Annex) findVersionByVersionedReference(annexVersionAndName, filterType);
+                        String annexName = annex.getName();
+                        byte[] annexContent = (byte[]) legContent.get(annexName);
+                        if (annex != null && annex.getMetadata().isDefined() && annex.getMetadata().get().getClonedRef() != null
+                                && annex.getMetadata().get().getClonedRef().equals(documentRef)) {
+                            ContributionLegDocumentVO<Annex> annexContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), annex,
+                                    annexContent, legName, annexName, proposalRef);
+                            documentVersions.add((ContributionLegDocumentVO<T>) annexContributionLegDocumentVO);
+                        }
+                    });
+                } else if (filterType.getSimpleName().equalsIgnoreCase(BILL)) {
+                    Optional<String> fileToFind = containedDocuments.stream()
+                            .filter(containedFile -> {
+                                String fileType = containedFile.substring(0, containedFile.indexOf("-"));
+                                return BILL_DOC_TYPES.contains(fileType);
+                            }).findFirst();
+                    if (fileToFind.isPresent()) {
+                        Bill doc = (Bill) findVersionByVersionedReference(fileToFind.get(), filterType);
+                        if (doc != null) {
+                            String documentName = doc.getName();
+                            byte[] docContent = (byte[]) legContent.get(documentName);
+                            ContributionLegDocumentVO<Bill> billContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                    docContent, legName, documentName, proposalRef);
+                            documentVersions.add((ContributionLegDocumentVO<T>) billContributionLegDocumentVO);
+                        }
                     }
-                });
-            } else if(filterType.getSimpleName().equalsIgnoreCase(BILL)) {
-                Optional<String> fileToFind = containedDocuments.stream()
-                        .filter(containedFile-> {
-                            String fileType = containedFile.substring(0, containedFile.indexOf("-"));
-                            return BILL_DOC_TYPES.contains(fileType);
-                        }).findFirst();
-                if (fileToFind.isPresent()) {
-                    Bill doc = (Bill) findVersionByVersionedReference(fileToFind.get(), filterType);
+                } else if (filterType.getSimpleName().equalsIgnoreCase(MEMORANDUM)) {
+                    Optional<String> fileToFind = containedDocuments.stream()
+                            .filter(containedFile -> containedFile.startsWith(MEMORANDUM_DOC_TYPE + "-"))
+                            .findFirst();
+                    if (fileToFind.isPresent()) {
+                        Memorandum doc = (Memorandum) findVersionByVersionedReference(fileToFind.get(), filterType);
+                        if (doc != null) {
+                            String documentName = doc.getName();
+                            byte[] docContent = (byte[]) legContent.get(documentName);
+                            ContributionLegDocumentVO<Memorandum> contributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                    docContent, legName, documentName, proposalRef);
+                            documentVersions.add((ContributionLegDocumentVO<T>) contributionLegDocumentVO);
+                        }
+                    }
+                } else if (filterType.getSimpleName().equalsIgnoreCase(FINANCIAL_STATEMENT)) {
+                    Optional<String> fileToFind = containedDocuments.stream()
+                            .filter(containedFile -> containedFile.startsWith(STAT_DIGIT_FINANC_LEGIS + "-"))
+                            .findFirst();
+                    if (fileToFind.isPresent()) {
+                        FinancialStatement doc = (FinancialStatement) findVersionByVersionedReference(fileToFind.get(), filterType);
+                        if (doc != null) {
+                            String documentName = doc.getName();
+                            byte[] docContent = (byte[]) legContent.get(documentName);
+                            ContributionLegDocumentVO<FinancialStatement> financialStatementContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                    docContent, legName, documentName, proposalRef);
+                            documentVersions.add((ContributionLegDocumentVO<T>) financialStatementContributionLegDocumentVO);
+                        }
+                    }
+                } else if (filterType.getSimpleName().equalsIgnoreCase(PROPOSAL)) {
+                    Proposal doc = clonedProposal;
                     if (doc != null) {
                         String documentName = doc.getName();
-                        byte[] docContent = (byte[])legContent.get(documentName);
-                        ContributionLegDocumentVO<Bill> billContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                        byte[] docContent = (byte[]) legContent.get(documentName);
+                        XPathCatalog catalog = new XPathCatalog();
+                        doc = proposalService.findProposalVersion(xmlContentProcessor.getElementValue(docContent, catalog.getXPathObjectId(), true));
+                        ContributionLegDocumentVO<Proposal> proposalContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
                                 docContent, legName, documentName, proposalRef);
-                        documentVersions.add((ContributionLegDocumentVO<T>) billContributionLegDocumentVO);
+                        documentVersions.add((ContributionLegDocumentVO<T>) proposalContributionLegDocumentVO);
                     }
-                }
-            } else if(filterType.getSimpleName().equalsIgnoreCase(MEMORANDUM)) {
-                Optional<String> fileToFind = containedDocuments.stream()
-                        .filter(containedFile -> containedFile.startsWith(MEMORANDUM_DOC_TYPE + "-"))
-                        .findFirst();
-                if (fileToFind.isPresent()) {
-                    Memorandum doc = (Memorandum) findVersionByVersionedReference(fileToFind.get(), filterType);
-                    if (doc != null) {
-                        String documentName = doc.getName();
-                        byte[] docContent = (byte[])legContent.get(documentName);
-                        ContributionLegDocumentVO<Memorandum> contributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName, proposalRef);
-                        documentVersions.add((ContributionLegDocumentVO<T>)contributionLegDocumentVO);
-                    }
-                }
-            } else if(filterType.getSimpleName().equalsIgnoreCase(FINANCIAL_STATEMENT)) {
-                Optional<String> fileToFind = containedDocuments.stream()
-                        .filter(containedFile -> containedFile.startsWith(STAT_FINANC_LEGIS + "-"))
-                        .findFirst();
-                if (fileToFind.isPresent()) {
-                    FinancialStatement doc = (FinancialStatement) findVersionByVersionedReference(fileToFind.get(), filterType);
-                    if (doc != null) {
-                        String documentName = doc.getName();
-                        byte[] docContent = (byte[])legContent.get(documentName);
-                        ContributionLegDocumentVO<FinancialStatement> financialStatementContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName, proposalRef);
-                        documentVersions.add((ContributionLegDocumentVO<T>) financialStatementContributionLegDocumentVO);
-                    }
-                }
-            }else if(filterType.getSimpleName().equalsIgnoreCase(PROPOSAL)) {
-                Proposal doc = clonedProposal;
-                if (doc != null) {
-                    String documentName = doc.getName();
-                    byte[] docContent = (byte[]) legContent.get(documentName);
-                    XPathCatalog catalog = new XPathCatalog();
-                    doc = proposalService.findProposalVersion(xmlContentProcessor.getElementValue(docContent, catalog.getXPathObjectId(), true));
-                    ContributionLegDocumentVO<Proposal> proposalContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
-                            docContent, legName, documentName, proposalRef);
-                    documentVersions.add((ContributionLegDocumentVO<T>) proposalContributionLegDocumentVO);
                 }
             }
         }
@@ -277,6 +283,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             clonedMilestoneIds.add(getClonedMilestoneId(cloneProposalRef, legDocument.getName()));
             properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID), clonedMilestoneIds);
             updatedProposal = proposalService.updateProposal(originalProposal.getMetadata().get().getRef(), originalProposal.getId(), properties);
+            LOG.info("Update contribution status after contributionDone [id={}, status={}]", legDocument.getId(), LeosLegStatus.CONTRIBUTION_SENT.name());
             updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legDocument.getId(), LeosLegStatus.CONTRIBUTION_SENT);
         } catch(Exception e) {
             LOG.error("Unexpected error occurred while updating the proposal after revision", e);

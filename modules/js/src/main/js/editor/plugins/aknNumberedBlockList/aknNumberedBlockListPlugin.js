@@ -18,7 +18,7 @@ define(function aknNumberedBlockListPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var blockListTransformerStamp = require("plugins/leosBlockListTransformer/blockListTransformer");
-    
+    var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
     var pluginName = "aknNumberedBlockList";
     
     var LOG = require("logger");
@@ -35,9 +35,25 @@ define(function aknNumberedBlockListPluginModule(require) {
 
                     var ols = jqEditor.find("ol");
                     for (var i = 0; i < ols.length; i++) {
+                        var idAttrValue = ols[i].getAttribute("id");
+                        if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
+                            idAttrValue = identityHandler.generateId();
+                            ols[i].setAttribute("id", idAttrValue);
+                        }
                         ols[i].setAttribute("data-akn-name","NumberedBlockList");
                         var listItems = ols[i].children;
                         for (var jj = 0; jj < listItems.length; jj++) {
+                            idAttrValue = listItems[jj].getAttribute("id");
+                            if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
+                                idAttrValue = identityHandler.generateId();
+                                listItems[jj].setAttribute("id", idAttrValue);
+                            }
+                            idAttrValue = listItems[jj].getAttribute("data-akn-num-id");
+                            if (idAttrValue && $('[data-akn-num-id="' + idAttrValue + '"]').length > 1) {
+                                idAttrValue = identityHandler.generateId();
+                                listItems[jj].setAttribute("data-akn-num-id", idAttrValue);
+                            }
+
                             var previousNumber = listItems[jj].getAttribute("data-akn-num");
                             var numericSequence = jj + 1 + "."; //displayed as (1., 2., 3.) etc.
                             listItems[jj].setAttribute("data-akn-num",numericSequence);

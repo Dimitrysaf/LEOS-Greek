@@ -150,7 +150,7 @@ public class XMLContentComparatorServiceImplTest extends LeosTest {
     }
 
     @Test
-    public void test_2() {
+    public void test_compare2() {
         String oldContent = new String(TestUtils.getFileContent(PROPOSAL_FOLDER, "test_2_V0.xml"));
         String newContent = new String(TestUtils.getFileContent(PROPOSAL_FOLDER, "test_2_V1.xml"));
         String expectedResult = new String(TestUtils.getFileContent(PROPOSAL_FOLDER, "test_2_expected.xml"));

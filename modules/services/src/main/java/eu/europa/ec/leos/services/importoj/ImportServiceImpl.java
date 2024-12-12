@@ -92,7 +92,8 @@ public class ImportServiceImpl implements ImportService {
             String elementType = element.getElementTagName();
 
             // Do pre-processing on the selected elements
-            String updatedElement = xmlContentProcessor.doImportedElementPreProcessing(element.getElementFragment(), elementType);
+            String elementFragment = replaceNotAllowedElements(element.getElementFragment());
+            String updatedElement = xmlContentProcessor.doImportedElementPreProcessing(elementFragment, elementType);
             if (elementType.equalsIgnoreCase(ARTICLE)) {
                 updatedElement = this.numberService.renumberImportedArticle(updatedElement);
             } else if (elementType.equalsIgnoreCase(RECITAL)) {
@@ -128,6 +129,10 @@ public class ImportServiceImpl implements ImportService {
 
         LOG.info("{} elements imported. insertTime {} ms ({} secs), numberingTime {} ms, postProcessingTime {} ms", elementIds.size(), insertTime, insertTime/1000, numberingTime, postProcessingTime);
         return documentContent;
+    }
+
+    private static String replaceNotAllowedElements(String elementFragment) {
+        return elementFragment.replace("<eol/>", " - ");
     }
 
     // check if the last article in the document has heading Entry into force, if yes articles imported before EIF article

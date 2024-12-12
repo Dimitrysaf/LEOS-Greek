@@ -5,7 +5,7 @@ export type AnnotateExtension = {
   init(connector: AnnotateConnector): void;
 };
 
-export type AnnotateOperationMode = 'READ_ONLY' | 'PRIVATE' | 'NORMAL';
+export type AnnotateOperationMode = 'READ_ONLY' | 'STORED_READ_ONLY' | 'STORED' |'PRIVATE' | 'NORMAL';
 
 /*
  * VAADIN: set in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java`

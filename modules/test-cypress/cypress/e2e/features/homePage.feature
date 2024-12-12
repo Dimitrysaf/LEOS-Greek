@@ -36,10 +36,10 @@ Feature: repository browser page Regression Features
         When click on upload notification button
         Then "Upload notifications" dialog box window is displayed
         And  upload notification button is disabled in upload notifications window
-        When click on cancel button in dialog box window
-        Then notification container is not displayed
-        When click on notification icon
+        When upload a notification json file from a relative location "notifications.json"
+        And  click on upload notification button in dialog box window
         Then notification container is displayed
+        And  notification card body contains text "TODAY CURRENTNEW VALUE It's OK YESS.... Example"
         When click on hide button in notification container
         Then notification container is not displayed
         When click on language icon

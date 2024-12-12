@@ -267,13 +267,18 @@ Then('ins tag of num tag of paragraph {int} of article {int} contains attribute 
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName).should('have.attr', attributeName).and('equal', attributeValue);
 });
 
+Then('ins tag with attribute {string} and value {string} of num tag of paragraph {int} of article {int} contains value {string}', function (attributeName, attributeValue, paragraphNumber, articleNumber, value) {
+    const tagName = 'ins';
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
 Then('del tag with attribute {string} and value {string} of num tag of paragraph {int} of article {int} contains value {string}', function (attributeName, attributeValue, paragraphNumber, articleNumber, value) {
     const tagName = 'del';
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
 });
 
 Then('{string} is showing as strikethrough in num of article {int} of bill', function (label, articleNumber) {
-    legalActPage.getArticle(articleNumber).should('have.attr', 'leos:action', 'delete').find('num').should('have.text', label).should('have.attr', 'id').and('contain', 'moved');
+    legalActPage.getArticle(articleNumber).should('have.attr', 'leos:action', 'delete').find('num').should('include.text', label).should('have.attr', 'id').and('contain', 'moved');
 });
 
 Then('{string} is showing as soft move label in num of article {int} of bill', function (softLabel, articleNumber) {
@@ -281,7 +286,7 @@ Then('{string} is showing as soft move label in num of article {int} of bill', f
 });
 
 Then('{string} is showing as strikethrough in num of chapter {int} of bill', function (label, chapterNumber) {
-    legalActPage.getChapter(chapterNumber).should('have.attr', 'leos:action', 'delete').find('num').should('have.text', label).should('have.attr', 'id').and('contain', 'moved');
+    legalActPage.getChapter(chapterNumber).should('have.attr', 'leos:action', 'delete').find('num').should('include.text', label).should('have.attr', 'id').and('contain', 'moved');
 });
 
 Then('{string} is showing as soft move label in num of chapter {int} of bill', function (softLabel, chapterNumber) {
@@ -341,19 +346,19 @@ Then('count of text {string} is {int} in citation {int}', function (text, count,
     legalActPage.getCitation(citationNumber).contains(text).should('have.length', count);
 });
 
-Then('citation {int} contains authorial note with marker {int} and text {string}', function (citationNumber, markerNumber, text) {
+Then('citation {int} contains authorial note with marker {string} and text {string}', function (citationNumber, markerNumber, text) {
     legalActPage.getAuthorialNoteWithMarkerNumberFromCitation(citationNumber, markerNumber).should('have.text', text);
 });
 
-When('click on authorial note with marker {int} in citation {int}', function (markerNumber, citationNumber) {
+When('click on authorial note with marker {string} in citation {int}', function (markerNumber, citationNumber) {
     legalActPage.clickAuthorialNoteWithMarkerNumberFromCitation(markerNumber, citationNumber);
 });
 
-Then('recital {int} contains authorial note with marker {int} and text {string}', function (recitalNumber, markerNumber, text) {
+Then('recital {int} contains authorial note with marker {string} and text {string}', function (recitalNumber, markerNumber, text) {
     legalActPage.getAuthorialNoteWithMarkerNumberFromRecital(recitalNumber, markerNumber).should('have.text', text);
 });
 
-When('click on authorial note with marker {int} in recital {int}', function (markerNumber, recitalNumber) {
+When('click on authorial note with marker {string} in recital {int}', function (markerNumber, recitalNumber) {
     legalActPage.clickAuthorialNoteWithMarkerNumberFromRecital(markerNumber, recitalNumber);
 });
 
@@ -361,11 +366,11 @@ Then('paragraph {int} of article {int} contains {string}', function (paragraphNu
     legalActPage.getParagraphFromArticle(paragraphNumber, articleNumber).should('include.text', text);
 });
 
-Then('paragraph {int} of article {int} contains authorial note with marker {int} and text {string}', function (paragraphNumber, articleNumber, markerNumber, text) {
+Then('paragraph {int} of article {int} contains authorial note with marker {string} and text {string}', function (paragraphNumber, articleNumber, markerNumber, text) {
     legalActPage.getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, articleNumber, markerNumber).should('have.text', text);
 });
 
-When('click on authorial note with marker {int} in paragraph {int} of article {int}', function (markerNumber, paragraphNumber, articleNumber) {
+When('click on authorial note with marker {string} in paragraph {int} of article {int}', function (markerNumber, paragraphNumber, articleNumber) {
     legalActPage.clickAuthorialNoteWithMarkerNumberFromParagraphOfArticle(markerNumber, paragraphNumber, articleNumber);
 });
 
@@ -393,18 +398,66 @@ Then('ins tag of aknp tag of recital {int} contains value {string}', function (r
 
 And('del tag with attribute {string} and value {string} of num tag of recital {int} contains value {string}', function (attributeName, attributeValue, recitalNumber, value) {
     const tagName = 'del';
-    legalActPage.getRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+    legalActPage.getNumTagOfRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
 });
 
 Then('ins tag with attribute {string} and value {string} of num tag of recital {int} contains value {string}', function (attributeName, attributeValue, recitalNumber, value) {
     const tagName = 'ins';
-    legalActPage.getRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+    legalActPage.getNumTagOfRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
 });
 
 When(/^click on soft move label with title "([^"]*)"$/, function (label) {
     legalActPage.clickSoftMoveLabelWithTitle(label);
 });
 
-When(/^soft move label with title "([^"]*)" is  displayed$/, function (label) {
+When(/^soft move label with title "([^"]*)" is displayed$/, function (label) {
     legalActPage.elements.leosSoftMoveLabel().contains(label).should('be.visible');
+});
+
+Then(/^paragraph (\d+) of article (\d+) doesn't contain attribute "([^"]*)"$/, function (paragraphNumber, articleNumber, attributeName) {
+    legalActPage.getParagraphFromArticle(paragraphNumber, articleNumber).should('not.have.attr', attributeName);
+});
+
+Then(/^num tag of paragraph (\d+) of article (\d+) doesn't contain "([^"]*)" tag$/, function (paragraphNumber, articleNumber, tagName) {
+    legalActPage.getTagFromNumTagOfParagraphFromArticle(paragraphNumber, articleNumber, tagName).should('not.exist');
+});
+
+Then(/^article (\d+) contains attribute "([^"]*)" with value "([^"]*)"$/, function (articleNumber, attributeName, attributeValue) {
+    legalActPage.getArticle(articleNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then(/^citation (\d+) contains attribute "([^"]*)" with value "([^"]*)"$/, function (citationNumber, attributeName, attributeValue) {
+    legalActPage.getCitation(citationNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then(/^del tag of num tag of article (\d+) contains value "([^"]*)"$/, function (articleNumber, value) {
+    legalActPage.getNumTagOfArticle(articleNumber).find('del').should('have.text', value);
+});
+
+Then(/^ins tag of num tag of article (\d+) contains value "([^"]*)"$/, function (articleNumber, value) {
+    legalActPage.getNumTagOfArticle(articleNumber).find('ins').should('have.text', value);
+});
+
+Then(/^total citation count is (\d+)$/, function (count) {
+    legalActPage.elements.citation().should('have.length', count);
+});
+
+Then(/^total recital count is (\d+)$/, function (count) {
+    legalActPage.elements.recital().should('have.length', count);
+});
+
+Then(/^total article count is (\d+)$/, function (count) {
+    legalActPage.elements.article().should('have.length', count);
+});
+
+When(/^right click on citation (\d+)$/, function (citationNumber) {
+    legalActPage.getCitation(citationNumber).rightclick();
+});
+
+When(/^right click on recital (\d+)$/, function (recitalNumber) {
+    legalActPage.getRecital(recitalNumber).rightclick();
+});
+
+When(/^right click on article (\d+)$/, function (articleNumber) {
+    legalActPage.getArticle(articleNumber).rightclick();
 });

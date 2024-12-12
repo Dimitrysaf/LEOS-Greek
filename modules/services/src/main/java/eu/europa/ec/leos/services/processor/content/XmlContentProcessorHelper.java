@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE_TRANSFORM;
@@ -56,6 +57,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAs
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsGregorianCalendar;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsInteger;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsIntegerOrZero;
+import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.getParentTagName;
@@ -124,11 +126,26 @@ public class XmlContentProcessorHelper {
             List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode, String language) {
         List<TableOfContentItemVO> itemVOList = new ArrayList<>();
         Node child;
-        NodeList nodeList = node.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            child = nodeList.item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE) {
-                addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language);
+        NodeList nodeList;
+        if (mode.equals(TocMode.SIMPLIFIED)) {
+            List<String> elementsName =
+                tocItems.stream().filter(t -> t.isDisplay())
+                .map(tocItem -> tocItem.getAknTag().value().toLowerCase()).collect(Collectors.toList());
+            nodeList = node.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                child = nodeList.item(i);
+                if (child.getNodeType() == Node.ELEMENT_NODE
+                        && (elementsName.contains(child.getNodeName().toLowerCase()) || elementsName.isEmpty())) {
+                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language);
+                }
+            }
+        } else {
+            nodeList = node.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                child = nodeList.item(i);
+                if (child.getNodeType() == Node.ELEMENT_NODE) {
+                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language);
+                }
             }
         }
         return itemVOList;
@@ -539,7 +556,7 @@ public class XmlContentProcessorHelper {
     
     public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
         List<Node> childrenToAppend = new ArrayList<>();
-        List<Node> children = XercesUtils.getChildren(node);
+        List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
             Node remainingNode = extractNonTocItemExceptNumAndHeadingAndIntro(tocItems, tocRules, children.get(i));
             if (remainingNode != null) {

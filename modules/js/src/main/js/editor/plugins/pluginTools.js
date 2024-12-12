@@ -42,8 +42,9 @@ define(function pluginToolsModule(require) {
             function (externalPlugin) {
                 var pluginName = externalPlugin.name;
                 var pluginUrl = externalPlugin.url;
-                if (!CKEDITOR.plugins.get(pluginName)) {
-                    return leosTools.loadExternalJs(pluginUrl)
+                var externalPluginScript = document.getElementById(pluginName);
+                if (!externalPluginScript) {
+                    return leosTools.loadExternalJs(pluginUrl, pluginName)
                         .then(function (resolvedUrl) {
                             LOG.debug("Adding external plugin to CKEditor:", pluginName, "=>", resolvedUrl);
                             CKEDITOR.plugins.addExternal(pluginName, resolvedUrl, "");
@@ -52,6 +53,11 @@ define(function pluginToolsModule(require) {
                         .catch(function (error) {
                             LOG.error("Failed to load plugin:", pluginName, error);  // Handle the error (optional)
                         });
+                } else {
+                    // if script was already loaded in DOM, make sure to attach the externalPluginName in the profile.externalPlugins
+                    if (CKEDITOR.plugins.get(pluginName)) {
+                        externalPluginNames += pluginName + ",";
+                    }
                 }
             });
         return Promise.all(loadPromises).then(function () {

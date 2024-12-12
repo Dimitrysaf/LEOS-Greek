@@ -35,7 +35,7 @@ public enum Target {
     MEMORANDUM(MemorandumView.VIEW_ID),
     COUNCIL_EXPLANATORY(ExplanatoryView.VIEW_ID),
     ANNEX(AnnexView.VIEW_ID),
-    STAT_FINANC_LEGIS(FinancialStatementView.VIEW_ID),
+    STAT_DIGIT_FINANC_LEGIS(FinancialStatementView.VIEW_ID),
     COVERPAGE(CoverPageView.VIEW_ID),
     LOGOUT(LogoutView.VIEW_ID),
     HOME(WorkspaceView.VIEW_ID),               //Default view

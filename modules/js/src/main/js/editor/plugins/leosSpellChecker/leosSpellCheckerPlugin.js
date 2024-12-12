@@ -26,13 +26,11 @@ define(function leosSpellCheckerPluginModule(require) {
             script.id = "qas-config"
             script.innerHTML = `{
                 window.SPELLCHECKER_CONFIG = {
-                    SUGGESTIONS_LIMIT: 4,
-                    LANGUAGE: "en-GB",
-                    API_PROTOCOL: '${serviceUrl.protocol.substring(0, serviceUrl.protocol.length - 1)}', 
-                    API_URL: '${serviceUrl.hostname}',
+                    SUGGESTIONS_LIMIT: 5,
+                    LANGUAGE: "en-GB", // LEOS will supply the language based on the document
+                    API_URL: '${serviceUrl}', 
                     API_RESOURCE_PATH_CHECK: "/check", 
                     API_RESOURCE_PATH_LANGUAGES: "/languages", 
-                    APPLICATION_SUPPLIED_LANGUAGE: false,
                     DISABLE_USER_CHOICE_LANGUAGE: false,// Disabled for cypress tests
                     DISABLE_USER_CHOICE_PROOFREADING_CHECKS: false,
                     isLeos: true
@@ -91,7 +89,7 @@ define(function leosSpellCheckerPluginModule(require) {
             if (editor.LEOS.spellCheckerName === UTILS.SPELLCHECKER.qas) {
                 editor.disableAutoInline = true;
                 editor.config.removePlugins = 'scayt,wsc';
-                _addConfigQAS(document, new URL(editor.LEOS.spellCheckerServiceUrl));
+                _addConfigQAS(document, editor.LEOS.spellCheckerServiceUrl);
             }
         }
     };

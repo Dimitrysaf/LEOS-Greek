@@ -27,7 +27,6 @@ import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
-import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -224,7 +223,7 @@ public class AnnexController {
         try {
             documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.annexApiService.saveToC(documentRef,
-                    saveTocRequestEvent.getTableOfContentItemVOs());
+                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.SIMPLIFIED);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());
@@ -613,22 +612,6 @@ public class AnnexController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable(value = "documentRef") String documentRef,
-                                                       @RequestParam(value = "elementIds", required = false) List<String> elementIds) {
-        try {
-            documentRef = encodeParam(documentRef);
-            TocAndAncestorsResponse tocAncestors = this.annexApiService.fetchTocAncestor(documentRef, elementIds);
-            return ResponseEntity.ok().body(tocAncestors);
-        } catch (Exception e) {
-            LOG.error("Error occurred  while trying to get toc ancestors for annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for annex",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
 
     @GetMapping(value = "/{documentRef}/accept-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

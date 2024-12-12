@@ -130,7 +130,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         String tagContent = xercesXmlContentProcessor.getElementByNameAndId(docContent, SUBPARAGRAPH, "art486-aln1");
         String expected = "<subparagraph xml:id=\"art486-aln1\">" +
                 "                        <content xml:id=\"c3\">" +
-                "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"8\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
+                "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"(8)\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
                 "                        </content>" +
                 "                    </subparagraph>";
         assertEquals(squeezeXmlAndRemoveAllNS(expected), squeezeXmlAndRemoveAllNS(tagContent));
@@ -147,7 +147,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         String tagContent = xercesXmlContentProcessor.getElementByNameAndId(docContent, SUBPARAGRAPH, null);
         String expected = "<subparagraph xml:id=\"art486-aln1\">" +
                 "                        <content xml:id=\"c3\">" +
-                "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"8\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
+                "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"(8)\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
                 "                        </content>" +
                 "                    </subparagraph>";
         assertEquals(squeezeXmlAndRemoveAllNS(expected), squeezeXmlAndRemoveAllNS(tagContent));
@@ -215,7 +215,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "                    <num class=\"ArticleNumber\" xml:id=\"num1\">Article 486</num>" +
                 "                    <subparagraph xml:id=\"art486-aln1\">" +
                 "                        <content xml:id=\"c\">" +
-                "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p\">This text should appear in the main document after merge<authorialNote marker=\"1\" xml:id=\"a4\"><p xml:id=\"p1\">TestNoteX</p></authorialNote> with the updated Article <i xml:id=\"i1\">Official Journal of the European Union</i>.</p>" +
+                "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p\">This text should appear in the main document after merge<authorialNote marker=\"(1)\" xml:id=\"a4\"><p xml:id=\"p1\">TestNoteX</p></authorialNote> with the updated Article <i xml:id=\"i1\">Official Journal of the European Union</i>.</p>" +
                 "                        </content>" +
                 "                    </subparagraph>" +
                 "                </article>";
@@ -248,7 +248,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "              <paragraph xml:id=\"art1-par1\">" +
                 "                <num xml:id=\"n4p\">1.</num>" +
                 "                <content xml:id=\"c4\">" +
-                "                  <p xml:id=\"p4\">Text.<authorialNote marker=\"1\" xml:id=\"a1\"><p>TestNote4</p></authorialNote>..</p>" +
+                "                  <p xml:id=\"p4\">Text.<authorialNote marker=\"(1)\" xml:id=\"a1\"><p>TestNote4</p></authorialNote>..</p>" +
                 "                </content>" +
                 "              </paragraph>" +
                 "             </article>";
@@ -266,7 +266,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "              <paragraph xml:id=\"art1-par1\">" +
                 "                <num xml:id=\"n4p\">1.</num>" +
                 "                <content xml:id=\"c4\">" +
-                "                  <p xml:id=\"p4\">Text.<authorialNote marker=\"1\" xml:id=\"a1\"><p>TestNote4</p></authorialNote>..</p>" +
+                "                  <p xml:id=\"p4\">Text.<authorialNote marker=\"(1)\" xml:id=\"a1\"><p>TestNote4</p></authorialNote>..</p>" +
                 "                </content>" +
                 "              </paragraph>" +
                 "             </article>";
@@ -284,7 +284,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "              <paragraph xml:id=\"art1-par1\">" +
                 "                <num xml:id=\"n4p\">1.</num>" +
                 "                <content xml:id=\"c4\">" +
-                "                  <p xml:id=\"p4\">Text.<authorialNote marker=\"1\" xml:id=\"a1\"><p>TestNote4</p></authorialNote>..</p>" +
+                "                  <p xml:id=\"p4\">Text.<authorialNote marker=\"(1)\" xml:id=\"a1\"><p>TestNote4</p></authorialNote>..</p>" +
                 "                </content>" +
                 "              </paragraph>" +
                 "             </article>";
@@ -559,7 +559,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     @Test
     public void test_merge_suggestion_two_tags_found_text() {
         String xmlContent = "<bill>" +
-                "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Regions<authorialNote marker=\"1\" placement=\"bottom\" xml:id=\"authorialnote_2\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
+                "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Regions<authorialNote marker=\"(1)\" placement=\"bottom\" xml:id=\"authorialnote_2\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
                 "</bill>";
         String origText = "the Committee of the Regions";
         String newText = "the Committee of the Countries";
@@ -568,7 +568,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         int end = 60;
 
         String expectedXmlContent = "<bill>" +
-                "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Countries<authorialNote marker=\"1\" placement=\"bottom\" xml:id=\"authorialnote_2\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
+                "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Countries<authorialNote marker=\"(1)\" placement=\"bottom\" xml:id=\"authorialnote_2\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
                 "</bill>";
 
         byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end, false);
@@ -580,7 +580,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     @Test
     public void test_merge_suggestion_two_tags_wrong_id() {
         String xmlContent = "<bill>" +
-                "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Regions<authorialNote xml:id=\"authorialnote_2\" marker=\"1\" placement=\"bottom\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
+                "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Regions<authorialNote xml:id=\"authorialnote_2\" marker=\"(1)\" placement=\"bottom\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
                 "</bill>";
         String origText = "the Committee of the Regions";
         String newText = "the Committee of the Countries";
@@ -597,7 +597,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     @Test
     public void test_merge_suggestion_two_tags_wrong_text() {
         String xmlContent = "<bill>" +
-                "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Regions<authorialNote xml:id=\"authorialnote_2\" marker=\"1\" placement=\"bottom\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
+                "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Regions<authorialNote xml:id=\"authorialnote_2\" marker=\"(1)\" placement=\"bottom\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
                 "</bill>";
         String origText = "the Committee of the Region";
         String newText = "the Committee of the Countries";
@@ -616,7 +616,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         Element element = xercesXmlContentProcessor.getParentElement(docContent, "c3");
         String expected = "<subparagraph xml:id=\"art486-aln1\">" +
                 "                        <content xml:id=\"c3\">" +
-                "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"8\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
+                "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"(8)\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
                 "                        </content>" +
                 "                    </subparagraph>";
 

@@ -17,18 +17,30 @@ import com.google.common.collect.ImmutableMap;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.vo.structure.OptionsType;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriUtils;
 
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -43,6 +55,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class XmlHelper {
+    protected static final Logger LOG = LoggerFactory.getLogger(XmlHelper.class);
+
     public static final Charset UTF_8 = Charset.forName("UTF-8");
     public static final String OPEN_TAG = "<";
     public static final String CLOSE_TAG = ">";
@@ -215,8 +229,6 @@ public class XmlHelper {
     public static final String LEOS_AUTO_NUM_OVERWRITE = "leos:auto-num-overwrite";
     public static final String LEOS_RENUMBERED = "leos:renumbered";
 
-    public static final String COVERPAGE_EEA_RELEVANCE_ID = "_coverpage__eearelevance";
-
     public static final String EMPTY_STRING = "";
     public static final String NON_BREAKING_SPACE = "\u00A0";
     public static final String CLASS_ATTR = "class";
@@ -258,11 +270,11 @@ public class XmlHelper {
     public static final String DIR_FILE_PREFIX = "DIR";
     public static final String DEC_FILE_PREFIX = "DEC";
     public static final String MEMORANDUM_FILE_PREFIX = "EXPL_MEMORANDUM";
-    public static final String STAT_FINANC_LEGIS_FILE_PREFIX = "STAT_FINANC_LEGIS";
+    public static final String STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX = "STAT_DIGIT_FINANC_LEGIS";
     public static final String PROPOSAL_FILE = "main";
     public static final String PROP_ACT = "PROP_ACT";
     public static final String COUNCIL_EXPLANATORY = "EXPL_COUNCIL";
-    public static final String STAT_FINANC_LEGIS = "STAT_FINANC_LEGIS";
+    public static final String STAT_DIGIT_FINANC_LEGIS = "STAT_DIGIT_FINANC_LEGIS";
 
     public static final String CONTENT_REMOVED_CLASS = "leos-content-removed";
     public static final String CONTENT_NEW_CLASS = "leos-content-new";
@@ -808,5 +820,34 @@ public class XmlHelper {
         } catch(Exception e) {
             throw new SecurityException("File path IO exception: " + path);
         }
+    }
+
+    public static <T> T loadFromFile(byte[] fileBytes, Class<T> clazz, Class objectFactory, String schemaType) {
+        try {
+            // Convert DOM to XMLStreamReader
+            XMLInputFactory xif = XMLInputFactory.newInstance();
+            xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+            xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            XMLStreamReader xsr = xif.createXMLStreamReader(new ByteArrayInputStream(fileBytes));
+
+            // Set up JAXB context and unmarshaller
+            JAXBContext jaxbContext = JAXBContext.newInstance(objectFactory);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+            // Load schema
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = sf.newSchema(new StreamSource(loadSchema(schemaType)));
+            jaxbUnmarshaller.setSchema(schema);
+
+            // Unmarshal and return the result
+            return clazz.cast(jaxbUnmarshaller.unmarshal(xsr));
+        } catch (Exception e) {
+            LOG.debug("Error in loadFromFile", e);
+            throw new IllegalStateException("Error loading configurations", e);
+        }
+    }
+
+    private static InputStream loadSchema(String schemaPath) {
+        return XmlHelper.class.getClassLoader().getResourceAsStream(schemaPath);
     }
 }

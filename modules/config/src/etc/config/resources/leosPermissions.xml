@@ -73,6 +73,7 @@
             <permission>CAN_ACCEPT_CHANGES</permission>
             <permission>CAN_REJECT_CHANGES</permission>
             <permission>CAN_VALIDATE</permission>
+            <permission>CAN_UPLOAD_XML_DOC</permission>
         </permissions>
         <application-role>true</application-role>
         <collaborator>false</collaborator>

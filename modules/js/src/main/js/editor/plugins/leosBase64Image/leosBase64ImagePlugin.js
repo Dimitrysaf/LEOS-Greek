@@ -86,7 +86,7 @@ define(function leosBase64ImagePluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, 'leosBase64ImageDialog', changeStateElements, true);
+        leosCommandStateHandler.changeCommandState(event.editor, 'leosBase64ImageDialog', changeStateElements, true);
     }
     
     pluginTools.addPlugin(pluginName, pluginDefinition);

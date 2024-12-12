@@ -12,12 +12,16 @@
   </button>
   <eui-dropdown-content>
     <div class="eui-u-flex eui-u-flex-column eui-u-flex-align-items-start">
-      <button euiDropdownItem (click)="handleCheckboxClick(version)">
+      <button
+        euiDropdownItem
+        *ngIf="isLatestRecentVersion(version) === false"
+        (click)="handleCheckboxClick(version)">
         {{ 'page.editor.versions.actions.view' | translate }}
+
       </button>
       <button
         euiDropdownItem
-        *ngIf="canRevertVersion | async"
+        *ngIf="(canRevertVersion | async) &&  isLatestRecentVersion(version) === false"
         (click)="onVersionRevert(version.documentId, version.versionNumber)"
       >
         {{ 'page.editor.versions.actions.revert' | translate }}

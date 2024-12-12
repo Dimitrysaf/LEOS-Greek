@@ -48,6 +48,9 @@ public class AnnotateExtension<T extends AbstractField<V>, V> extends LeosJavaSc
 
     public enum OperationMode {
         READ_ONLY, // Annotations open in read only. Cannot create edit or deleted new annotations
+        STORED, // Annotations are got from the HostBridge method: requestStoredAnnotations (used for milestones and contribution view)
+        STORED_READ_ONLY, // Annotations are got from the HostBridge method: requestStoredAnnotations +  read only mode(used for milestones and contribution
+        // view)
         PRIVATE,  // New annotations can only be private, i.e., only POST_TO_ME option is available - to be used in ISC context
         NORMAL // Annotations open in regular mode
     }

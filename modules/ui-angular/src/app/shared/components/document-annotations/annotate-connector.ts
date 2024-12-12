@@ -4,13 +4,14 @@ import {MergeContributionsService} from "@/features/akn-document/services/merge-
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import type {
-  AnnotateConnectorState,
+  AnnotateConnectorState, Collaborator,
   MergeSuggestionRequest,
-  Permission,
+  Permission, User,
 } from '@/shared';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
+import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 
 export type AnnotateConnectorInitialState = Omit<
   AnnotateConnectorState,
@@ -27,6 +28,8 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   /* set in `modules/js/src/main/js/ui/extension/annotateExtension.js` */
   target?: Element;
   receiveStoredDocumentAnnotations?: (annotationsList: any) => void;
+  receiveListCollaborators?: (collaboratorsList: Collaborator[]) => void;
+  receiveSearchUsers?: (usersList: User[]) => void;
   receiveUserPermissions?: (...userPermissions: Permission[]) => void;
   receiveSecurityToken?: (token: string) => void;
   receiveMergeSuggestion?: (result) => void;
@@ -57,6 +60,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     private documentService: DocumentService,
     private milestoneService: ProposalMilestonesService,
     private mergeContributionService: MergeContributionsService,
+    private detailsService: ProposalDetailsService,
   ) {
     super({ ...leosJavaScriptExtensionState, ...state }, null);
   }
@@ -66,8 +70,22 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     this.milestoneService.receiveStoredDocumentAnnotations$.pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result && result.annot && result.dbg && result.dbg == this.dbg) {
         this.receiveStoredDocumentAnnotations(result.annot);
+      } else if (result && result.dbg && result.dbg == this.dbg) {
+        this.receiveStoredDocumentAnnotations(null);
       }
     });
+  }
+
+  requestListCollaborators() {
+    this.detailsService.listCollaborators(this.getState().proposalRef).subscribe((col) => this.receiveListCollaborators(col));
+  }
+
+  requestSearchUsers(userId?: string) {
+    if (userId && userId.length > 1) {
+      this.detailsService.searchUsers(userId).subscribe((users) => this.receiveSearchUsers(users));
+    } else {
+      this.receiveSearchUsers([]);
+    }
   }
 
   requestCountSentFeedbacks(annots: []) {

@@ -469,21 +469,19 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node elementNode = XercesUtils.getElementById(document, elementId);
 
         if (elementNode != null) {
-            Node documentNode = XercesUtils.replaceElement(elementNode, newContent);
-            xmlContent = nodeToByteArray(documentNode);
-            //TODO refactor doXMLPostProcessing to work with Node in input too. To increase performance
-            xmlContent = doXMLPostProcessing(xmlContent);
-            xmlContent = processUnnumberedParagraph(xmlContent, newContent, elementId);
+            Document documentNode = (Document)XercesUtils.replaceElement(elementNode, newContent);
+            documentNode = doXMLPostProcessingOnDocument(nodeToByteArray(documentNode));
+            xmlContent = processUnnumberedParagraph(documentNode, newContent, elementId);
         }
         return xmlContent;
     }
 
-    private byte[] processUnnumberedParagraph(byte[] xmlContent, String newContent, String elementId) {
+    private byte[] processUnnumberedParagraph(Document updatedDocument , String newContent, String elementId) {
+        byte [] xmlContent = nodeToByteArray(updatedDocument);
         if (newContent.startsWith(PARA_OPEN_TAG) && newContent.contains(LIST_CLOSE)) {
             Document newNode = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8), false);
             if (newNode.getDocumentElement().getTagName().equals(PARAGRAPH)
                     && XercesUtils.getFirstChild(XercesUtils.getFirstChild(newNode), NUM) == null) {
-                Document updatedDocument = createXercesDocument(xmlContent);
                 Node updatedNode = XercesUtils.getElementById(updatedDocument, elementId);
                 if(updatedNode != null) {
                     String updatedNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(updatedNode));
@@ -505,9 +503,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         }
                         updatedNodeContent = updatedNodeContent.replaceAll(PARA_END + "[^<|>]*" + PARA_END, PARA_END);
                     }
-                    Document newDocument = createXercesDocument(xmlContent);
-                    Node newElementNode = XercesUtils.getElementById(newDocument, elementId);
-                    Node updatedDocumentNode = XercesUtils.replaceElement(newElementNode, updatedNodeContent);
+                    Node updatedDocumentNode = XercesUtils.replaceElement(updatedNode, updatedNodeContent);
                     xmlContent = nodeToByteArray(updatedDocumentNode);
                 }
             }
@@ -961,28 +957,39 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         updatePointStructure(document);
         updateParagraphStructure(document);
         long preProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", preProcessingTime, (System.currentTimeMillis() - preProcessingTime));
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", (System.currentTimeMillis() - preProcessingTime));
         return nodeToByteArray(document);
     }
 
     public void doXMLPostProcessing(Document document) {
-        Node node = document.getFirstChild();  //avoid adding id to <akomantoso> tag
-        if (XML_STYLESHEET.equals(node.getNodeName())) {
-            node = node.getNextSibling();
-        }
-        doXmlPostProcessingCommon(node);
-        specificInstanceXMLPostProcessing(node);
-        updatePointStructure(node);
-        updateParagraphStructure(node);
+        doXmlPostProcessingCommon(document);
+        specificInstanceXMLPostProcessing(document);
+        updatePointStructure(document);
+        updateParagraphStructure(document);
     }
 
-    private void doXmlPostProcessingCommon(Node node) {
-        injectTagIdsInNode(node);
-        modifyAuthorialNoteMarkers(node, 1);
-        updateReferences(node.getOwnerDocument());
-        convertAlineasToSubparagraphs(node.getOwnerDocument());
-        moveSubparagraphsInList(node.getOwnerDocument());
-        updateMetaReferences(node);
+    private void doXmlPostProcessingCommon(Document document) {
+        injectTagIdsInNode(document.getDocumentElement());
+        modifyAuthorialNoteMarkers(document, 1);
+        updateReferences(document);
+        convertAlineasToSubparagraphs(document);
+        moveSubparagraphsInList(document);
+        updateMetaReferences(document.getFirstChild());
+    }
+
+    @Override
+    public Document doXMLPostProcessingOnDocument(byte[] xmlContent) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Document document = doXmlPostProcessingCommon(xmlContent);
+
+        specificInstanceXMLPostProcessing(document);
+        updatePointStructure(document);
+        updateParagraphStructure(document);
+        long postProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms",
+                postProcessingTime, (System.currentTimeMillis() - postProcessingTime));
+        return document;
     }
 
     @Override
@@ -995,8 +1002,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         updateParagraphStructure(document);
         long postProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
-        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms",
-                postProcessingTime, (System.currentTimeMillis() - postProcessingTime));
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", (System.currentTimeMillis() - postProcessingTime));
         return nodeToByteArray(document);
     }
 
@@ -1210,9 +1216,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void modifyAuthorialNoteMarkers(Node node, int markerNumber) {
         NodeList nodeList = XercesUtils.getElementsByName(node, AUTHORIAL_NOTE);
+
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
-            XercesUtils.addAttribute(child, MARKER_ATTRIBUTE, Integer.toString(markerNumber++));
+            StringBuilder sb = new StringBuilder(5);
+            sb.append('(').append(markerNumber++).append(')');
+            XercesUtils.addAttribute(child, MARKER_ATTRIBUTE, sb.toString());
             if(XercesUtils.getAttributeValue(child, PLACEMENT) == null) {
                 XercesUtils.addAttribute(child, PLACEMENT, BOTTOM);
             }
@@ -2575,8 +2584,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 case PROP_ACT:
                     category = LeosCategory.PROPOSAL;
                     break;
-                case STAT_FINANC_LEGIS:
-                    category = LeosCategory.STAT_FINANC_LEGIS;
+                case STAT_DIGIT_FINANC_LEGIS:
+                    category = LeosCategory.STAT_DIGIT_FINANC_LEGIS;
                     break;
                 default:
                     category = LeosCategory.MEDIA;
