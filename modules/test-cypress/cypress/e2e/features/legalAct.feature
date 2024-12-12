@@ -283,7 +283,7 @@ Feature: Legal Act Page Regression Features
         And  content of point 1 of list 1 of paragraph 1 of article 6 contains "Point a"
         And  content of subparagraph 1 of paragraph 1 of article 6 contains "list sibling subparagraph"
 
-    @definitionArticle @local
+    @definitionArticle @local @focus
     Scenario: definition article should have maximum three depth
         Given navigate to edit drafting application with "User1"
         Then user is on home page
@@ -344,9 +344,9 @@ Feature: Legal Act Page Regression Features
         And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 1"
         And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(2)"
         And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 2"
-        And  num tag of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "-"
+        And  num tag of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "—"
         And  content of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point -"
-        And  num tag of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "-"
+        And  num tag of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "—"
         And  content of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point --"
         When click on toc edit button
         And  click on three vertical dots for the element contains text "Article 1" in toc
