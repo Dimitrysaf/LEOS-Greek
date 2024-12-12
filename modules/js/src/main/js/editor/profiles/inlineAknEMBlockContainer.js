@@ -121,6 +121,8 @@ define(function aknInlineEMBlockContainerProfileModule(require) {
         }, {
             name : "mode"       //Toolbar group containing Source button
         }, {
+            name: 'trackChanges', groups: ['toggleDisplay']
+        }, {
             name : "colors"
         } ]
     };

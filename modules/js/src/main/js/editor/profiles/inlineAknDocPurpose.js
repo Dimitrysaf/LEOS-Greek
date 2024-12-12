@@ -94,7 +94,8 @@ define(function aknDocPurposeModule(require) {
             {name: 'basicstyles', items: ['Subscript', 'Superscript', 'TransformTextSwitcher']},
             {name: 'insert', items: ['Mathjax', 'SpecialChar']},
             {name: 'tools', items: ['LeosShowBlocks']},
-            {name: "mode", items: ['Sourcedialog']},
+            {name: "mode", items: ['Sourcedialog', 'spellchecker']},
+            {name: 'trackChanges', items: ['toggleDisplay']},
             {name: 'colors', items: ['BGColor']},
             {name: 'dapInfo', items: ['leosDapInfo']}
         ],

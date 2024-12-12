@@ -118,9 +118,10 @@ define(function aknLevelProfileModule(require) {
             { name: 'paragraph', items: ['Outdent', 'Indent'] },
             '/',
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
-            {name: "mode", items: [ 'Sourcedialog', 'spellchecker' ]},
+            { name: "mode", items: [ 'Sourcedialog', 'spellchecker' ] },
+            { name: 'trackChanges', items: ['toggleDisplay'] },
             { name : "colors" , items: [ 'BGColor' ] },
-            {name: 'dapInfo', items: ['leosDapInfo']}
+            { name: 'dapInfo', items: ['leosDapInfo'] }
         ],
         //show toolbar on startup
         startupFocus: 'end',

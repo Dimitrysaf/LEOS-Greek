@@ -129,6 +129,8 @@ define(function aknCitationProfileModule(require) {
         }, {
             name : "about"
         },{
+            name: 'trackChanges', groups: ['toggleDisplay']
+        },{
             name : "colors"
         },{
             name: 'dapInfo'

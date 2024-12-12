@@ -45,7 +45,7 @@ Feature: cover page Regression Features
         Then long title docPurpose of cover page is "Automation Cover Page Testing"
         When click on long title of doc purpose
         Then ck editor window is displayed
-        And  14 plugins are available in ck editor window
+        And  15 plugins are available in ck editor window
         And  save button is disabled in ck editor
         And  save close button is disabled in ck editor
         And  close button is enabled in ck editor
