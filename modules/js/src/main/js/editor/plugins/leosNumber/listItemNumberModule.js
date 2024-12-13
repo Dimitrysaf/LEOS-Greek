@@ -129,7 +129,7 @@ define(function listItemNumberModule(require) {
         }, {
             type: "INDENT",
             inDefault: true,
-            format: "-",
+            format: "—",
             prefix: "",
             suffix: "",
             name: 'IndentDash',
