@@ -128,6 +128,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.LS;
 import static eu.europa.ec.leos.services.support.XmlHelper.MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
+import static eu.europa.ec.leos.services.support.XmlHelper.P;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
@@ -2605,8 +2606,8 @@ public class MergeContributionService {
 
     private Node getRealUpdatedNode(byte[] xmlContent, Node impactedNode, boolean insertion, List<TocItem> tocItemsList) {
         if (insertion && impactedNode.getNodeName().equals(LEOS_TC_INSERT_ELEMENT_NAME)) {
-            Node mainElt = getFirstAscendant(impactedNode,
-                    tocItemsList.stream().map((tocItem) -> tocItem.getAknTag().value()).collect(Collectors.toList()));
+            List<String> mainElts = tocItemsList.stream().map((tocItem) -> tocItem.getAknTag().value()).collect(Collectors.toList());
+            Node mainElt = getFirstAscendant(impactedNode, mainElts);
             if (mainElt != null) {
                 if (isListWithOnlyAddedElements(mainElt.getParentNode(), mainElt.getNodeName(), xmlContent)) {
                     return mainElt.getParentNode();
@@ -2615,8 +2616,21 @@ public class MergeContributionService {
                 if (originalMainElt == null && getId(mainElt).startsWith(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX)) {
                     originalMainElt = XercesUtils.getElementById(xmlContent, getId(mainElt).replaceAll(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, ""));
                 }
-                return originalMainElt == null || (hasAttribute(mainElt, LEOS_ACTION_NUMBER) && getAttributeValue(mainElt, LEOS_ACTION_NUMBER).equals(LEOS_TC_INSERT_ACTION)) ? mainElt :
-                        impactedNode;
+                if (originalMainElt == null || (hasAttribute(mainElt, LEOS_ACTION_NUMBER) && getAttributeValue(mainElt, LEOS_ACTION_NUMBER).equals(LEOS_TC_INSERT_ACTION))) {
+                    return mainElt;
+                } else {
+                    Node parentNode = impactedNode;
+                    Node tmpNode = null;
+                    do {
+                        tmpNode = parentNode;
+                        parentNode = parentNode.getParentNode();
+                        originalMainElt = parentNode != null ? XercesUtils.getElementById(xmlContent, getId(parentNode)) : null;
+                        if (originalMainElt == null && parentNode != null && getId(parentNode).startsWith(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX)) {
+                            originalMainElt = XercesUtils.getElementById(xmlContent, getId(parentNode).replaceAll(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, ""));
+                        }
+                    } while (originalMainElt == null && parentNode != null);
+                    return parentNode == null ? impactedNode : tmpNode;
+                }
             } else {
                 return impactedNode;
             }
