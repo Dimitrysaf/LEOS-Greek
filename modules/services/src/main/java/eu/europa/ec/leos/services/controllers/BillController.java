@@ -212,7 +212,7 @@ public class BillController {
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.SIMPLIFIED);
+            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while saving toc - " + e.getMessage());

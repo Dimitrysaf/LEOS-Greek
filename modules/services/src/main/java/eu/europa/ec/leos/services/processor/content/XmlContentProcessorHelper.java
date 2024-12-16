@@ -127,9 +127,9 @@ public class XmlContentProcessorHelper {
         List<TableOfContentItemVO> itemVOList = new ArrayList<>();
         Node child;
         NodeList nodeList;
-        if (mode.equals(TocMode.SIMPLIFIED)) {
+        if (mode.equals(TocMode.SIMPLIFIED) || mode.equals(TocMode.NOT_SIMPLIFIED)) {
             List<String> elementsName =
-                tocItems.stream().filter(t -> t.isDisplay())
+                tocItems.stream()
                 .map(tocItem -> tocItem.getAknTag().value().toLowerCase()).collect(Collectors.toList());
             nodeList = node.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
