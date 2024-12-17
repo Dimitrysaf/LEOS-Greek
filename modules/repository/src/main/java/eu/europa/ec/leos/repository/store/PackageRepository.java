@@ -21,8 +21,10 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -301,4 +303,12 @@ public interface PackageRepository {
      * @return the requested export document.
      */
     ExportDocument findExportDocumentById(String id, boolean latest);
+
+    /**
+     * Finds package with id.
+     *
+     * @param id  package id.
+     * @return list of collaborators.
+     */
+    List<CollaboratorVO> getPackageCollaborators(BigDecimal id);
 }
