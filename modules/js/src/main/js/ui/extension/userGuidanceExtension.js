@@ -39,8 +39,7 @@ define(function userGuidanceExtensionModule(require) {
     function _connectorStateChangeListener() {
         var connector = this;
         log.debug("User Guidance extension state changed...");
-        // KLUGE delay execution due to sync issues with target update
-        setTimeout(_processGuidance, 500, connector);
+        _processGuidance(connector);
     }
 
     function _receiveUserGuidance(userGuidance) {
