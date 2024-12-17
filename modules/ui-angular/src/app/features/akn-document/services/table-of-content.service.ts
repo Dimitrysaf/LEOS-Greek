@@ -184,7 +184,7 @@ export class TableOfContentService {
 
   private getTocItems(documentRef: string, documentType: string) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
-    const tocMode = 'SIMPLIFIED';
+    const tocMode = 'NOT_SIMPLIFIED';
     return this.http.get<TocItem[]>(
       `${apiBaseUrl}/secured/${category}/${documentRef}/getTocItems`,
       {
@@ -195,7 +195,7 @@ export class TableOfContentService {
 
   private getToc(documentRef: string, documentType: string) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
-    const tocMode = 'SIMPLIFIED';
+    const tocMode = 'NOT_SIMPLIFIED';
     this.isTocLoadingBS.next(true);
     if (this.isEditModeBS.value) {
       this.loadingService.setLoading(true);
