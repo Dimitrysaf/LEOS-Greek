@@ -222,6 +222,10 @@ When(`add content {string} to li {int} with data-akn-element {string} of li {int
     ckEditorWindow.addContentInFourthLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5);
 });
 
+When('select content from offset {int} till offset {int} in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode', function (offsetStart, offsetEnd, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) {
+    ckEditorWindow.selectContentInFourthLayerPointOfParagraphOfArticle(offsetStart, offsetEnd, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5);
+});
+
 When(`click at offset {int} of li {int} with data-akn-element {string} of article in edition mode`, (offset, paragraphLi, paragraphDataAknElement) => {
     ckEditorWindow.clickAtSpecificOffsetInParagraphOfArticle(offset, paragraphLi, paragraphDataAknElement);
 });
@@ -490,7 +494,10 @@ When(`upload an image file from a relative location {string} in iframe {string}`
     ckEditorWindow.uploadImageFile("cypress/fixtures/images/" + location, iframeClass);
 });
 
-/*
-When(/^click on background color icon two times present in ck editor panel$/, function () {
-    ckEditorWindow.clickBackgroundColorIcon();
-});*/
+Then(/^paragraph mode icon is disabled in ck editor panel$/, function () {
+    ckEditorWindow.elements.paragraphModeIcon().should('have.class', 'cke_button_disabled');
+});
+
+Then(/^paragraph mode icon is enabled in ck editor panel$/, function () {
+    ckEditorWindow.elements.paragraphModeIcon().should('not.be.disabled');
+});
