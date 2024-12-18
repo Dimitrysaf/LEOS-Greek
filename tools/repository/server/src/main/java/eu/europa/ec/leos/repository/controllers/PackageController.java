@@ -48,8 +48,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.europa.ec.leos.repository.controllers.requests.CreatePackageRequest;
 import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
+import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocumentList;
 import eu.europa.ec.leos.repository.model.Package;
+import eu.europa.ec.leos.repository.services.CollaboratorsService;
 import eu.europa.ec.leos.repository.services.PackageService;
 import eu.europa.ec.leos.repository.utils.RestPreconditions;
 import io.swagger.v3.oas.annotations.Operation;
@@ -70,6 +72,9 @@ public class PackageController {
 
     @Autowired
     PackageService packageService;
+
+    @Autowired
+    CollaboratorsService collaboratorsService;
 
     @PostMapping(path = "/package/create/{name}",
     consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -274,6 +279,15 @@ public class PackageController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<PackagesFavorites> toggleFavouritePackage(@PathVariable("userName") String userName, @PathVariable("ref") String ref) throws RepositoryException{
         return new ResponseEntity<>(packageService.toggleFavouritePackage(userName, ref), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/package/package-collaborators/{packageId}")
+    @Operation(summary = "Get package collaborators")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Collaborators sent", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> getPackageCollaborators(@PathVariable("packageId") BigDecimal packageId) throws RepositoryException{
+        return new ResponseEntity<>(collaboratorsService.getCollaborators(packageId), HttpStatus.OK);
     }
 
 }

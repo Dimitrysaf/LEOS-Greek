@@ -8,6 +8,7 @@ import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.controllers.requests.CreatePackageRequest;
 import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.services.CollaboratorsService;
 import eu.europa.ec.leos.repository.services.PackageService;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.junit.Before;
@@ -58,6 +59,9 @@ public class PackageIntegrationTests {
 
     @MockBean
     private PackageService packageService;
+
+    @MockBean
+    private CollaboratorsService collaboratorsService;
 
     @Autowired
     private ObjectMapper mapper;

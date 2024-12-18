@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -281,5 +283,10 @@ public class PackageRepositoryImpl implements PackageRepository {
     public ExportDocument findExportDocumentById(String id, boolean latest) {
         logger.debug("Finding Export document by ID... [id=" + id + ", latest=" + latest + "]");
         return leosRepository.findDocumentById(id, ExportDocument.class, latest);
+    }
+
+    @Override
+    public List<CollaboratorVO> getPackageCollaborators(BigDecimal packageId) {
+        return leosRepository.getPackageCollaborators(packageId);
     }
 }

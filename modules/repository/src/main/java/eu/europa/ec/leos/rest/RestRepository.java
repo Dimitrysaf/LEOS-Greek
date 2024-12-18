@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
@@ -44,6 +45,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -151,6 +153,9 @@ public class RestRepository extends AbstractRestClient {
 
     @Value("${leos.rest.repository.config.leos-client}")
     private String leosRestRepositoryLeosClient;
+
+    @Value("${leos.rest.repository.package.collaborators}")
+    private String leosRestpackageCollaborators;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -587,5 +592,23 @@ public class RestRepository extends AbstractRestClient {
                 .encode()
                 .toUriString();
         delete(urlTemplate, id);
+    }
+
+    public List<CollaboratorVO> getPackageCollaborators(BigDecimal packageId) {
+        LOGGER.trace("getPackageCollaborators ... packageId = {}", packageId);
+        String url = getUrl(leosRestpackageCollaborators);
+        String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("packageId", packageId)
+                .encode()
+                .toUriString();
+        List<LinkedHashMap<String, Object>> response = (List<LinkedHashMap<String, Object>>) getEntity(urlTemplate, Object.class, packageId);
+        List<CollaboratorVO> collaboratorVOList = new ArrayList<>();
+        for (LinkedHashMap<String, Object> map : response) {
+            CollaboratorVO collaborator = new CollaboratorVO();
+            collaborator.setRole((String) map.get("role"));
+            collaborator.setLogin((String) map.get("login"));
+            collaboratorVOList.add(collaborator);
+        }
+        return collaboratorVOList;
     }
 }

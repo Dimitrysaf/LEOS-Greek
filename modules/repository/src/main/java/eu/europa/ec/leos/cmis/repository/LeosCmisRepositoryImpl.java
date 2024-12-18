@@ -19,6 +19,7 @@ import eu.europa.ec.leos.cmis.extensions.LeosMetadataExtensions;
 import eu.europa.ec.leos.domain.common.RepositoryProfileType;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
+import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.LeosMapper;
@@ -40,7 +41,6 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.cmis.CmisRepositoryContext;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
-import eu.europa.ec.leos.rest.aop.annotation.PerformanceLogger;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
@@ -57,6 +57,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Provider;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -708,6 +709,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
 
     @Override
     public void deleteWorkflowCollaborator(BigInteger id) {
+    }
+
+    @Override
+    public List<CollaboratorVO> getPackageCollaborators(BigDecimal packageId) {
+        return null;
     }
 
     @Override
