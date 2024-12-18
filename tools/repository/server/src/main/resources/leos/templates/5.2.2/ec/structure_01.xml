@@ -83,6 +83,7 @@
         <tocItem>
             <aknTag>body</aknTag>
             <root>true</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -137,6 +138,7 @@
         <tocItem>
             <aknTag>citation</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -186,6 +188,7 @@
         <tocItem>
             <aknTag>recital</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -230,6 +233,7 @@
         <tocItem>
             <aknTag>part</aknTag>
             <root>false</root>
+            <higherElement>true</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -261,6 +265,7 @@
         <tocItem>
             <aknTag>title</aknTag>
             <root>false</root>
+            <higherElement>true</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -293,6 +298,7 @@
         <tocItem>
             <aknTag>chapter</aknTag>
             <root>false</root>
+            <higherElement>true</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -326,6 +332,7 @@
         <tocItem>
             <aknTag>section</aknTag>
             <root>false</root>
+            <higherElement>true</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -358,6 +365,7 @@
         <tocItem>
             <aknTag>article</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -475,6 +483,7 @@
         <tocItem>
             <aknTag>paragraph</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -505,6 +514,7 @@
         <tocItem>
             <aknTag>subparagraph</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -523,6 +533,7 @@
         <tocItem>
             <aknTag>list</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -541,6 +552,7 @@
         <tocItem>
             <aknTag>point</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -572,6 +584,7 @@
         <tocItem>
             <aknTag>point</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -603,6 +616,7 @@
         <tocItem>
             <aknTag>indent</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -634,6 +648,7 @@
         <tocItem>
             <aknTag>indent</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -665,6 +680,7 @@
         <tocItem>
             <aknTag>conclusions</aknTag>
             <root>true</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -683,6 +699,7 @@
         <tocItem>
             <aknTag>clause</aknTag>
             <root>true</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -706,6 +723,7 @@
         <tocItem>
             <aknTag>heading</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -730,6 +748,7 @@
         <tocItem>
             <aknTag>formula</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -1117,6 +1136,74 @@
             <list/>
         </entry>
     </tocRules>
+
+    <documentRules>
+        <rule>
+            <description>Structure validation rule</description>
+            <type>structureValidation</type>
+            <tocItem>article</tocItem>
+            <higherDivisions>
+                <type>part</type>
+                <type>title</type>
+                <type>chapter</type>
+                <type>section</type>
+            </higherDivisions>
+            <lowerDivisions>
+                <type>article</type>
+            </lowerDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.structure.validation.warning.message</errorMessage>
+        </rule>
+        <rule>
+            <description>No empty higher division rule</description>
+            <type>notEmpty</type>
+            <tocItem>body</tocItem>
+            <higherDivisions>
+                <type>part</type>
+                <type>title</type>
+                <type>chapter</type>
+                <type>section</type>
+            </higherDivisions>
+            <lowerDivisions>
+                <type>article</type>
+            </lowerDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.empty.validation.warning.message</errorMessage>
+        </rule>
+        <rule>
+            <description>Section hierarchy rule</description>
+            <type>hierarchy</type>
+            <tocItem>section</tocItem>
+            <higherDivisions>
+                <type>part</type>
+                <type>title</type>
+                <type>chapter</type>
+            </higherDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.hierarchy.validation.warning.message</errorMessage>
+        </rule>
+        <rule>
+            <description>Chapter hierarchy rule</description>
+            <type>hierarchy</type>
+            <tocItem>chapter</tocItem>
+            <higherDivisions>
+                <type>part</type>
+                <type>title</type>
+            </higherDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.hierarchy.validation.warning.message</errorMessage>
+        </rule>
+        <rule>
+            <description>Title hierarchy rule</description>
+            <type>hierarchy</type>
+            <tocItem>title</tocItem>
+            <higherDivisions>
+                <type>part</type>
+            </higherDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.hierarchy.validation.warning.message</errorMessage>
+        </rule>
+    </documentRules>
 
     <referenceConfig>
         <refConfig language="en">

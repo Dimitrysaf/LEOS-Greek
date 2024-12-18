@@ -105,6 +105,8 @@
                 [isEditMode]="isEditMode"
                 [isUndoDisabled]="disableUndoButton()"
                 [isSaveDisabled]="disableSaveButton()"
+                [isShowWarning]="showWarningIcon()"
+                [warningMessagesFromValidation]="getWarningMessages()"
                 [isCollapseToc]="isCollapseToc"
                 [isAnnotationsPaneCollapsed]="isAnnotationsPaneCollapsed"
                 [isVersionsPaneCollapsed]="isVersionsPaneCollapsed"
@@ -389,7 +391,7 @@
                 class=""
                 cdkDrag
                 [cdkDragData]="item"
-                (cdkDragMoved)="hanldeListItemDragged($event, true)"
+                (cdkDragMoved)="handleListItemDragged($event, true)"
                 *ngFor="let item of dragItems"
               >
                 <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>

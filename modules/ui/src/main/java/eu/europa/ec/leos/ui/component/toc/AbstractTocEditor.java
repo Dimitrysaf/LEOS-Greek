@@ -30,6 +30,7 @@ import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +65,8 @@ public abstract class AbstractTocEditor implements TocEditor {
     protected TocDropResult validateAction(final TreeGrid<TableOfContentItemVO> tocTree, final Map<TocItem, List<TocItem>> tableOfContentRules,
                                            final List<TableOfContentItemVO> droppedItems, final TableOfContentItemVO targetItem, final ItemPosition position) {
 
-        TocDropResult result = new TocDropResult(true, "toc.edit.window.drop.success.message",
-                droppedItems.get(0), targetItem);
+        TocDropResult result = new TocDropResult(true, false,"toc.edit.window.drop.success.message",
+                new ArrayList<>(), droppedItems.get(0), targetItem);
         TableOfContentItemVO parentItem = tocTree.getTreeData().getParent(targetItem);
         for (TableOfContentItemVO sourceItem : droppedItems) {
             if (isItemDroppedOnSameTarget(result, sourceItem, targetItem) ||
@@ -853,7 +854,8 @@ public abstract class AbstractTocEditor implements TocEditor {
     protected TocDropResult validateAgainstSoftDeletedOrMoveToItems(List<TableOfContentItemVO> droppedItems, TableOfContentItemVO targetItem, TableOfContentItemVO parentItem, ItemPosition position) {
 
         // Check if there are no soft deleted items at first level(not in children) in dropped items
-        TocDropResult tocDropResult = new TocDropResult(true, "toc.edit.window.drop.success.message", droppedItems.get(0), targetItem);
+        TocDropResult tocDropResult = new TocDropResult(true, false,
+                "toc.edit.window.drop.success.message", new ArrayList<>(), droppedItems.get(0), targetItem);
         boolean originalFound = false;
         for (TableOfContentItemVO sourceItem : droppedItems) {
             if (isSoftDeletedOrMoveToItem(sourceItem)) {
