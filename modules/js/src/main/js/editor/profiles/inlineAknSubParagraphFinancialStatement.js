@@ -105,7 +105,7 @@ define(function aknSubParagraphFSProfileModule(require) {
             { name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
             { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
-            { name: 'ref', items: [ 'authorialNoteWidget'] },
+            { name: 'ref', items: ['authorialNoteWidget', 'LeosCrossReference'] },
             { name: 'insert', items: [ 'Mathjax', 'SpecialChar' ] },
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
             '/',
