@@ -61,7 +61,9 @@ define(function leosCrossReferenceDialog(require) {
             },
             onShow: function() {
                 tabHandlers.reset();
-                this.selectPage(editor.LEOS.documentRef);
+                if (!editor.LEOS.documentRef.includes('STAT_DIGIT_FINANC_LEGIS')) {
+                    this.selectPage(editor.LEOS.documentRef);
+                }
                 centralizeDialog(this);
             },
             addTabs: function addTabs(dialogDefinitionCKE) {

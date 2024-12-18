@@ -43,6 +43,7 @@ define(function aknSubParagraphFSProfileModule(require) {
     plugins.push(require("plugins/leosWidget/leosWidgetPlugin"));
     plugins.push(require("plugins/leosAttrHandler/leosAttrHandlerPlugin"));
     plugins.push(require("plugins/leosPaste/leosPastePlugin"));
+    plugins.push(require("plugins/leosCrossReference/leosCrossReferencePlugin"));
     plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandlerFS/leosHierarchicalElementShiftEnterHandlerFS"));
     plugins.push(require("plugins/leosFloatingSpace/leosFloatingSpacePlugin"));
     plugins.push(require("plugins/leosMessageBus/leosMessageBusPlugin"));
