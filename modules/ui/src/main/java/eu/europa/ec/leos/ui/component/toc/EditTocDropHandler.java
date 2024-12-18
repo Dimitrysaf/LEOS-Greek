@@ -101,7 +101,8 @@ public class EditTocDropHandler implements TreeGridDropListener<TableOfContentIt
             
             fireTocChange(tocDropResult, checkinElements);
         } else {
-            fireTocChange(new TocDropResult(false, "toc.edit.window.drop.error.message", droppedItems.get(0), targetItem), checkinElements);
+            fireTocChange(new TocDropResult(false, false, "toc.edit.window.drop.error.message",
+                    new ArrayList<>(), droppedItems.get(0), targetItem), checkinElements);
         }
     }
 

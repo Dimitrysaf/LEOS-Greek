@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.services.api;
+package eu.europa.ec.leos.services.toc;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
@@ -10,6 +10,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
+import eu.europa.ec.leos.services.api.ProposalTocApiServiceImpl;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
@@ -17,12 +18,14 @@ import eu.europa.ec.leos.services.dto.request.NodeDropValidationRequest;
 import eu.europa.ec.leos.services.dto.response.NodeValidationResponse;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.StructureService;
 import eu.europa.ec.leos.services.structure.StructureServiceImpl;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
@@ -40,7 +43,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.inject.Provider;
-
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -84,17 +86,19 @@ public class TocApiServiceImplTest extends LeosTest {
     private ConfigurationRepository configurationRepository;
     @Mock
     private TemplateStructureService templateStructureService;
+    @Mock
+    private XPathCatalog xPathCatalog;
+    @Mock
+    private XmlContentProcessor xmlContentProcessor;
     @InjectMocks
     private TableOfContentProcessor tableOfContentProcessor = Mockito.spy(new TableOfContentProcessorImpl());
     @InjectMocks
     private StructureService structureService = spy(new StructureServiceImpl());
     @InjectMocks
-    private TocApiServiceImpl proposalTocApiServiceImpl = new ProposalTocApiServiceImpl(structureContextProvider, billService,
-            annexService, messageHelper, explanatoryService, documentLanguageContext);
+    private ProposalTocApiServiceImpl proposalTocApiServiceImpl;
 
     @Before
     public void init() {
-
         MockitoAnnotations.initMocks(this);
         xmlContent = TestUtils.getFileContent(STORE_DIR, "annexForLevelAndParagraphs.xml");
         Content.Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));

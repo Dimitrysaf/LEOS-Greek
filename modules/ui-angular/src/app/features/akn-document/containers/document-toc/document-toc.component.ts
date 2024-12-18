@@ -107,7 +107,10 @@ export class DocumentTocComponent
   selectedNodeToMove: TableOfContentItemVO = null;
   isToCDraft: boolean;
   messageFromValidation: string;
+  warningMessagesFromValidation: string[];
   isDropValid: boolean;
+  isDropWarning: boolean;
+  showWarningIcon: boolean;
   dragAction: DragAction;
   expandedNodeIds = new Set<string>();
   invalidNodes: Set<TableOfContentItemVO>;
@@ -529,6 +532,7 @@ export class DocumentTocComponent
   resetTreeState() {
     this.clearSelectedNode();
     this.isDropValid = false;
+    this.isDropWarning = false;
     const initialTreeBeforeEdit = this.tocEditService.resetTreeHistory();
     if (initialTreeBeforeEdit) {
       this.tocService.setToc(initialTreeBeforeEdit);
@@ -605,20 +609,33 @@ export class DocumentTocComponent
   }
 
   private populateValidationMessage(validationResult: NodeValidation) {
-    this.isDropValid = validationResult.success;
+    this.isDropWarning = validationResult.warning;
+    this.isDropValid = validationResult.success && !this.isDropWarning;
     if (this.targetNode !== null) {
-      this.messageFromValidation = this.translateService.instant(
-        validationResult.messageKey,
+      this.getMessageFromValidation(validationResult);
+    }
+  }
+
+  private getMessageFromValidation(validationResult: NodeValidation) {
+    if(this.isDropWarning) {
+      this.warningMessagesFromValidation = validationResult.warningMessageKeys.map((warning) =>
+        this.translateService.instant(warning)
+      );
+      this.showWarningIcon = true;
+    } else {
+      this.messageFromValidation = this.translateService.instant(validationResult.messageKey,
         {
           0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
           1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
         },
       );
+      this.showWarningIcon = false;
     }
   }
 
   private clearValidationMessage() {
     this.isDropValid = null;
+    this.isDropWarning = null;
     this.messageFromValidation = null;
   }
 
@@ -788,6 +805,7 @@ export class DocumentTocComponent
     if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged)) {
       this.populateValidationMessage({
         success: false,
+        warning: false,
         sourceItem: nodeDragged,
         targetItem: nodeTarget,
         messageKey: 'toc.edit.window.drop.moved-or-deleted-cannot-move.error',
@@ -799,9 +817,11 @@ export class DocumentTocComponent
     if (position === 'AS_CHILDREN') {
       const validationResult: NodeValidation = {
         success: true,
+        warning: false,
         targetItem: nodeTarget,
         sourceItem: nodeDragged,
         messageKey: 'toc.edit.window.drop.success.message',
+        warningMessageKeys: [],
         action: null,
       };
 

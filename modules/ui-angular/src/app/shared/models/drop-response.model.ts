@@ -6,7 +6,9 @@ export interface NodeValidationResponse {
 
 export interface NodeValidation {
   success: boolean;
+  warning: boolean;
   messageKey: string;
+  warningMessageKeys: string[]
   sourceItem: TableOfContentItemVO;
   targetItem: TableOfContentItemVO;
   action: NodeMoveAction;

@@ -22,6 +22,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -57,6 +58,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.TBLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeTag;
 
+@Slf4j
 public class TableOfContentHelper {
 
     public static final int DEFAULT_CAPTION_MAX_SIZE = 50;
@@ -155,13 +157,20 @@ public class TableOfContentHelper {
     }
 
     public static String getDisplayableTocItem(TocItem tocItem, String language, MessageHelper messageHelper) {
-        if(tocItem != null) {
-            NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
-            if (numberingType.equals(NumberingType.BULLET_NUM)) {
-                return messageHelper.getMessage("toc.item.type.bullet");
-            } else {
-                return messageHelper.getMessage("toc.item.type." + tocItem.getAknTag().value().toLowerCase());
+        try {
+            if (tocItem != null) {
+                NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
+
+                if (numberingType.equals(NumberingType.BULLET_NUM)) {
+                    return messageHelper.getMessage("toc.item.type.bullet");
+                } else {
+                    String aknTagValue = tocItem.getAknTag() != null ? tocItem.getAknTag().value().toLowerCase() : "unknown";
+                    return messageHelper.getMessage("toc.item.type." + aknTagValue);
+                }
             }
+        } catch (Exception e) {
+            log.error("An unexpected error occurred while getting toc item", e);
+            throw new RuntimeException("An unexpected error occurred while getting toc item", e);
         }
         return null;
     }

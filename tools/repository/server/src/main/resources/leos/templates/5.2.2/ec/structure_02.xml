@@ -678,7 +678,7 @@
                 <tocItem>chapter</tocItem>
                 <tocItem>section</tocItem>
             </exception>
-            <errorMessage>toc.level.only.higher.division.allowed.between</errorMessage>
+            <errorMessage>toc.level.higher.division.validation.error.message</errorMessage>
         </rule>
     </documentRules>
 

@@ -240,6 +240,41 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="higherDivisions">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="type" type="higherDivisionType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="higherDivisionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="part"/>
+            <xs:enumeration value="title"/>
+            <xs:enumeration value="chapter"/>
+            <xs:enumeration value="section"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="lowerDivisions">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="type" type="lowerDivisionType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="lowerDivisionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="division"/>
+            <xs:enumeration value="article"/>
+            <xs:enumeration value="paragraph"/>
+            <xs:enumeration value="subparagraph"/>
+            <xs:enumeration value="list"/>
+            <xs:enumeration value="point"/>
+            <xs:enumeration value="indent"/>
+            <xs:enumeration value="subpoint"/>
+            <xs:enumeration value="alinea"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="aknTag" final="restriction">
         <xs:annotation>
             <xs:documentation>All toc tags</xs:documentation>
@@ -249,7 +284,6 @@
             <xs:enumeration value="docstage"/>
             <xs:enumeration value="doctype"/>
             <xs:enumeration value="docpurpose"/>
-            <xs:enumeration value="body"/>
             <xs:enumeration value="preamble"/>
             <xs:enumeration value="citations"/>
             <xs:enumeration value="citation"/>
@@ -312,7 +346,9 @@
                     <xs:sequence>
                         <xs:element name="description" type="xs:string"/>
                         <xs:element name="type" type="xs:string"/>
-                        <xs:element name="tocItem" type="aknTag"/>
+                        <xs:element name="tocItem" type="aknTag" minOccurs="0"/>
+                        <xs:element name="higherDivisions" type="higherDivisions" minOccurs="0"/>
+                        <xs:element name="lowerDivisions" type="lowerDivisions" minOccurs="0"/>
                         <xs:element name="scope" type="xs:string"/>
                         <xs:element name="exception" minOccurs="0" type="tocIdList"/>
                         <xs:element name="errorMessage" type="xs:string"/>

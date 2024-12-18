@@ -112,7 +112,7 @@
 
     <!-- selected element show -->
   </div>
-  <div class="eui-u-display-flex eui-u-flex-column eui-u-p-xs eui-u-font-s" *ngIf="isEditMode">
+  <div class="eui-u-display-flex eui-u-flex-column eui-u-p-xs eui-u-font-s" *ngIf="isEditMode && !isDropWarning">
     <span
       euiLabel
       [euiDanger]="!isDropValid"
@@ -120,9 +120,20 @@
       euiSizeL
       class="text-wrap"
       [innerHTML]="messageFromValidation"
-    >
-    </span>
+    ></span>
   </div>
+  <ul *ngIf="isEditMode && isDropWarning">
+    <li *ngFor="let warning of warningMessagesFromValidation">
+      <div class="eui-u-display-flex eui-u-flex-column eui-u-p-xs eui-u-font-xs eui-u-border-bottom-separator eui-u-border-state-warning">
+      <span euiLabel
+            [euiWarning]="isDropWarning"
+            euiSizeS
+            class="text-wrap"
+            [innerHTML]="warning">
+      </span>
+      </div>
+    </li>
+  </ul>
   <app-confirm-delete-dialog
     #deleteTocConfirmation
     [title]="'toc.edit.window.item.selected.delete-dialog.title' | translate"

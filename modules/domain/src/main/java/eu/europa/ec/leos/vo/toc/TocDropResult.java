@@ -14,48 +14,19 @@
 
 package eu.europa.ec.leos.vo.toc;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
 public class TocDropResult {
     private boolean success;
+    private boolean warning;
     private String messageKey;
+    private List<String> warningMessageKeys;
     private TableOfContentItemVO sourceItem;
     private TableOfContentItemVO targetItem;
-
-    public TocDropResult(boolean success, String messageKey, TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem) {
-        this.success = success;
-        this.messageKey = messageKey;
-        this.sourceItem = sourceItem;
-        this.targetItem = targetItem;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getMessageKey() {
-        return messageKey;
-    }
-
-    public void setMessageKey(String messageKey) {
-        this.messageKey = messageKey;
-    }
-
-    public TableOfContentItemVO getSourceItem() {
-        return sourceItem;
-    }
-
-    public void setSourceItem(TableOfContentItemVO sourceItem) {
-        this.sourceItem = sourceItem;
-    }
-
-    public TableOfContentItemVO getTargetItem() {
-        return targetItem;
-    }
-
-    public void setTargetItem(TableOfContentItemVO targetItem) {
-        this.targetItem = targetItem;
-    }
 }
