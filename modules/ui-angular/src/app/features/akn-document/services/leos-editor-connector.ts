@@ -475,7 +475,36 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       });
     };
 
-    if (differentMessageForLast && ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType)) ||
+    let element = document.getElementById(elementData.elementId);
+    if(element.hasAttribute('leos:repeated') && element.getAttribute('leos:repeated') === 'true') {
+      if(this._state.isTrackChangesEnabled) {
+        this.dialogService.openDialog({
+          title: this.translateService.instant(
+            'page.editor.element-delete-dialog.title',
+          ),
+          content: this.translateService.instant(
+            'page.editor.element-delete-dialog.body',
+          ),
+          accept: confirmDeletion,
+          dismiss: () => {
+            this.actionManagerConnector.cancelActionElement(elementData.elementId);
+          },
+        });
+      } else {
+        this.dialogService.openDialog({
+          title: this.translateService.instant(
+            'page.editor.repeated-element-delete-confirmation.title',
+          ),
+          content: this.translateService.instant(
+            'page.editor.repeated-element-delete-confirmation.message',
+          ),
+          accept: confirmDeletion,
+          dismiss: () => {
+            this.actionManagerConnector.cancelActionElement(elementData.elementId);
+          },
+        });
+      }
+    } else if (differentMessageForLast && ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType)) ||
       (!this.isCNInstance && isLastElement))) {
       this.dialogService.openDialog({
         title: this.translateService.instant(
@@ -504,6 +533,26 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         },
       });
     }
+  }
+
+  // leosEditorExtension > actionHandler
+  private insertGroupAction(elementData: {
+    action: string;
+    elementId: string;
+    elementType: string;
+    position: string;
+  }) {
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
+    this.insertGroup(elementData.elementType.toLowerCase(), elementData.elementId, elementData.position)
+      .pipe(distinctUntilChanged())
+      .subscribe((response) => {
+        this.documentService.setDocumentRefAndCategory(
+          documentRef,
+          documentType,
+        );
+        this.coEditionService.sendUpdateDocumentEvent(documentRef);
+      });;
   }
 
   // leosEditorExtension > actionHandler
@@ -616,6 +665,18 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   ) {
     return this.http.delete<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
+    );
+  }
+
+  private insertGroup(elementName: string,
+                      elementId: string,
+                      position: string,
+  ) {
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
+    return this.http.put<DocumentViewResponse>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/insert-group`,
+      { position: position.toUpperCase() },
     );
   }
 

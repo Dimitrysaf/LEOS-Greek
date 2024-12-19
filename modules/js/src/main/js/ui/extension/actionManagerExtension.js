@@ -105,10 +105,12 @@ define(function actionManagerExtensionModule(require) {
             $rootElement.on("mouseup.actions", ".leos-editable-content", _handleDoubleClickAction.bind(undefined, connector, "edit"));
         }
         // register delegated event handlers for widgets
+        $rootElement.on("click.actions", "[data-widget-type='insert.group.before']", _handleAction.bind(undefined, connector, "insert.group.before"));
         $rootElement.on("click.actions", "[data-widget-type='insert.before']", _handleAction.bind(undefined, connector, "insert.before"));
         $rootElement.on("click.actions", "[data-widget-type='edit']", _handleAction.bind(undefined, connector, "edit"));
         $rootElement.on("click.actions", "[data-widget-type='delete']", _handleAction.bind(undefined, connector, "delete"));
         $rootElement.on("click.actions", "[data-widget-type='insert.after']", _handleAction.bind(undefined, connector, "insert.after"));
+        $rootElement.on("click.actions", "[data-widget-type='insert.group.after']", _handleAction.bind(undefined, connector, "insert.group.after"));
     }
 
     function _registerActionTriggers(connector, $rootElement) {
@@ -545,8 +547,10 @@ define(function actionManagerExtensionModule(require) {
         return actions;
     }
 
-    function _insertBeforeAndAfterIcon($element, insertBeforeAndAfterParam) {
-        var insertBeforeAndAfter;
+    function _hasBeforeAndAfter($element, optional, deletable) {
+        // If we don't have leos:optional, uses deletable because it was previously using this variable
+        // So, to avoid conflicts, we add the same old value in this case
+        let insertBeforeAndAfter = optional ? false : deletable;
         let type = _getType($element).toLowerCase();
         switch (type) {
             case 'citation':
@@ -561,7 +565,12 @@ define(function actionManagerExtensionModule(require) {
             case 'block':
             case 'crossHeading':
             case 'alinea': {
-                insertBeforeAndAfter = insertBeforeAndAfterParam;
+                let repeatable = $element.attr('leos:repeatable');
+                let action = $element.attr('leos:action');
+
+                if(repeatable && action !== 'delete') {
+                    insertBeforeAndAfter = true;
+                }
                 break;
             }
             default: insertBeforeAndAfter = false; //for all the rest false
@@ -586,30 +595,32 @@ define(function actionManagerExtensionModule(require) {
     }
 
     function _generateActions($element, editable, deletable, connector) {
-        let type = _getType($element);
-        type = type === 'level' ? 'point' : type;
-        type = type === 'alinea' || type === 'subparagraph' ? 'sub-point' : type;
-        type = type === 'crossHeading' ? 'crossheading' : type;
-        type = type === 'block' ? 'crossheading' : type;
-        let isHeadingOfAnOptionalLevel = false;
-        let optional = $element.attr('leos:optional');
-        let action = $element.attr('leos:action');
-        let leosAction = "";
-        if (optional === 'true' && $element[0] && $element[0].parentNode && $element[0].parentNode.localName === 'level') {
-            isHeadingOfAnOptionalLevel = true;
-            leosAction = $element[0].parentNode.getAttribute("leos:action");
-        }
-        // If we don't have leos:optional, uses deletable because it was previously using this variable
-        // So, to avoid conflicts, we add the same old value in this case
-        let hasBeforeAndAfter = optional ? false : deletable;
-        var insertBeforeAndAfter = _insertBeforeAndAfterIcon($element, hasBeforeAndAfter);
-        editable = editable || (editable && $element.attr('leos\:optionlist'));
-        deletable = (optional === 'true' && action !== 'delete') || _isDeletable($element, deletable, connector);
-
         let template = ['<div class="leos-actions Vaadin-Icons">']; //FIXME: we can directly create elements
 
         if(connector.getState().hasUpdatePermission) {
+            let type = _getType($element);
+            type = type === 'level' ? 'point' : type;
+            type = type === 'alinea' || type === 'subparagraph' ? 'sub-point' : type;
+            type = type === 'crossHeading' ? 'crossheading' : type;
+            type = type === 'block' ? 'crossheading' : type;
+            let isHeadingOfAnOptionalLevel = false;
+            let optional = $element.attr('leos:optional');
+            let repeatable = $element.attr('leos:repeatable');
+            let group = $element.attr('leos:group');
+            let action = $element.attr('leos:action');
+            let leosAction = "";
+            if (optional === 'true' && $element[0] && $element[0].parentNode && $element[0].parentNode.localName === 'level') {
+                isHeadingOfAnOptionalLevel = true;
+                leosAction = $element[0].parentNode.getAttribute("leos:action");
+            }
+            var insertBeforeAndAfter = _hasBeforeAndAfter($element, optional, deletable);
+            editable = editable || (editable && $element.attr('leos\:optionlist'));
+            deletable = (optional === 'true' && action !== 'delete') || _isDeletable($element, deletable, connector);
+
             if (insertBeforeAndAfter && connector.getState().tocEdition) {
+                if(group) {
+                    template.push(`<span <span data-widget-type="insert.group.before" title="Insert group before">&#xe791</span>`);
+                }
                 template.push(`<span data-widget-type="insert.before" title="Insert ${type} before">&#xe622</span>`);
             }
             if (editable) {
@@ -628,6 +639,9 @@ define(function actionManagerExtensionModule(require) {
             }
             if (insertBeforeAndAfter && connector.getState().tocEdition) {
                 template.push(`<span style="transform: rotate(180deg);" data-widget-type="insert.after" title="Insert ${type} after">&#xe623</span>`);
+                if(group) {
+                    template.push(`<span style="transform: scaleY(-1);" data-widget-type="insert.group.after" title="Insert group after">&#xe791</span>`);
+                }
             }
         }
 

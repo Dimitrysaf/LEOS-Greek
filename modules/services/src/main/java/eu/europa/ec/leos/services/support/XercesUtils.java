@@ -686,6 +686,14 @@ public class XercesUtils {
         return element;
     }
 
+    public static void removeAttributeRecursively(Node node, String attName) {
+        removeAttribute(node, XMLID);
+        NodeList nodeList = node.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            removeAttributeRecursively(nodeList.item(i), attName);
+        }
+    }
+
     public static void removeAttribute(Node node, String attName) {
         if (node.getNodeType() != Node.ELEMENT_NODE) {
             return;
@@ -949,6 +957,18 @@ public class XercesUtils {
             }
         }
         return children;
+    }
+
+    public static List<Node> getDescendantsWithAttribute(Node node, String attribute) {
+        List<Node> descendants = new ArrayList<>();
+        List<Node> children = getChildren(node);
+        for (Node child : children) {
+            if (hasAttribute(child, attribute)) {
+                descendants.add(child);
+            }
+            descendants.addAll(getDescendantsWithAttribute(child, attribute));
+        }
+        return descendants;
     }
 
     public static List<Node> getDescendants(Node node, List<String> tagNames) {

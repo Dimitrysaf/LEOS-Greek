@@ -493,6 +493,8 @@
   "page.editor.element-delete-dialog.body": "Êtes-vous sûr de vouloir supprimer cet élément ?",
   "page.editor.element-delete-dialog.optional.title": "Élément facultatif: accepter la suppression n'est pas autorisée",
   "page.editor.element-delete-dialog.optional.body": "Afin de pouvoir le réintroduire ultérieurement si nécessaire, il ne peut pas être complètement<br> supprimé dès maintenant.<br> Si vous souhaitez le supprimer complètement du texte, veuillez utiliser la nouvelle<br> fonction \"finaliser\"",
+  "page.editor.repeated-element-delete-confirmation.title": "Suppression de l'élément répété: confirmation",
+  "page.editor.repeated-element-delete-confirmation.message": "Avertissement! le suivi des modifications est désactivé. Cet élément répété va être supprimé définitivement!",
   "page.editor.track.changes.actions.accept": "Accepter ce changement",
   "page.editor.track.changes.actions.reject": "Rejeter ce changement",
   "popup.token.expired.title": "Session expirée",

@@ -539,6 +539,11 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
                 explanatory.getMetadata().get().getLanguage());
     }
 
+    @Override
+    public DocumentViewResponse insertGroup(String documentRef, String elementName, String elementId, Position position) {
+        return null;
+    }
+
     private void setBlockOrCrossHeading(List<TableOfContentItemVO> toc) {
         for (TableOfContentItemVO tocVO : toc) {
             setBlockOrCrossHeading(tocVO);

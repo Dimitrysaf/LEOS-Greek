@@ -1,0 +1,683 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <doc name="STAT_FINANC_LEGIS">
+        <meta>
+            <identification source="~PUBL">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="cm2t64wkt000iv4742f1bwmrh"/>
+                        <akn4eu:docCUID value="cm2t64wei000gv4746a8rbccz"/>
+                    </preservation>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="false"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="en"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.1.1.0"/>
+                        <akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                    </preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~PUBL">
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/PUBL" showAs="Publications Office" xml:id="PUBL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement" xml:id="STAT_FINANC_LEGIS"/>
+            </references>
+            <proprietary source="~COM">
+                <leos:templateVersion>4.1.0</leos:templateVersion>
+                <leos:docVersion>0.1.0</leos:docVersion>
+                <leos:docTemplate>FS-001</leos:docTemplate>
+                <leos:docType>REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType>
+                <leos:docPurpose xml:id="_proprietary__docpurpose">on ...</leos:docPurpose>
+                <leos:docStage xml:id="_proprietary__docstage"/>
+                <leos:template xml:id="_proprietary_template">SJ-023</leos:template>
+                <leos:ref>STAT_FINANC_LEGIS-cm2t64wkt000iv4742f1bwmrh-en</leos:ref>
+                <leos:objectId/>
+            </proprietary>
+        </meta>
+        <preface xml:id="ecpp8yl00OlVQDCdI">
+            <longTitle xml:id="ecTCf80OMteABEVwn">
+                <p xml:id="ecuVH5p0lJK7RUAob">
+                    <docType refersTo="~STAT_FINANC_LEGIS" xml:id="ecpQNT4fITNCDRP4V">LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT</docType>
+                </p>
+            </longTitle>
+        </preface>
+        <mainBody xml:id="ecW2MoqetkuhpVA9q">
+            <level class="landscape" leos:deletable="false" leos:depth="4" xml:id="ectwWeVashW71F9Bs">
+                <num xml:id="ecu2VLxJe2WhdRWvk">3.2.1.2.</num>
+                <heading leos:editable="false" leos:optional="true" xml:id="ec5OSm3dK4ZGrfkTR">
+                    <i xml:id="ecfyhNuMaP6vVO4p1">Appropriations from external assigned revenues</i>
+                </heading>
+                <subparagraph leos:editable="true" leos:group="1" leos:optional="true" leos:repeatable="true" style="text-align: right;padding-right:4%;" xml:id="ec5GkcFtiqW7HvfoC">
+                    <content xml:id="ecjHkClysbkBLqs2I">
+                        <!-- rotated table -->
+                        <table border="1" cellpadding="0" cellspacing="0" style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 480; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" xml:id="ecwB3ngJ7DjtMVQrq">
+                            <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;" xml:id="ecbQcxpUqtpT3oqNU">
+                                <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecqS5yb266traySlz">
+                                    <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecAcR5q6d6ns4D0Ph">
+                                        <b style="mso-bidi-font-weight: normal;" xml:id="ecPDE7K3osgCu1FzY">Heading of multiannual financial</b>
+                                    </p>
+                                    <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecrq1FUGKuThrS1gs">
+                                        <b style="mso-bidi-font-weight: normal;" xml:id="ec3877LsRgBqqxvv9">framework</b>
+                                    </p>
+                                </td>
+                                <td style="width: 7.92%; border: solid windowtext 1.0pt; border-left: none; mso-border-left-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecuScLwLgqikIrcV8">
+                                    <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ec6ztqU7fVZ3wvjp7">Number</p>
+                                </td>
+                                <td style="width: 57.3%; border: solid windowtext 1.0pt; border-left: none; mso-border-left-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ec3kDc81FtA0IDId6">
+                                    <p style="margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecdbFWh2r0oqED86x"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- end of rotated table-->
+                    </content>
+                </subparagraph>
+                <subparagraph leos:editable="true" leos:group="1" leos:optional="true" leos:repeatable="true" style="text-align: right;padding-right:4%;" xml:id="ecrJTWPuawRRHNysk">
+                    <content xml:id="ecsmPbGa0v49ilcwd">
+                        <!-- rotated table -->
+                        <table border="0" cellpadding="0" cellspacing="0" style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecCQRgiyhBWODwjuU">
+                            <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;" xml:id="ec0IQRUGrRhpL0Z8T">
+                                <td colspan="3" rowspan="2" style="width: 48.88%; border: solid windowtext 1.0pt; border-bottom: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecWCDb0C1UcwLGWOR">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ec8bFQseSkbjATU5u">DG: ...</p>
+                                </td>
+                                <td style="width: 9.92%; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecirUVSGba1tTqoyp">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecQlIwNrfGO2jLk3I">Year</p>
+                                </td>
+                                <td style="width: 9.92%; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecoJKMwrEdcTdPWYq">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecWQpF2YfczIL2y8N">Year</p>
+                                </td>
+                                <td style="width: 9.92%; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecKO9F4PblYoNB84S">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ectjH7STQMnO6nPKv">Year</p>
+                                </td>
+                                <td style="width: 9.56%; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecniQYa0WQBedQ77b">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecezOKyUrHC85bRPt">Year</p>
+                                </td>
+                                <td rowspan="2" style="width: 11.8%; border-top: solid windowtext 1.0pt; border-left: none; border-bottom: none; border-right: solid windowtext 1.0pt; mso-border-left-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecwl9zmcMHRPqfeyS">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecQq8MGES8fcCRxuF">
+                                        <b xml:id="eck274tzpsm7m1P0D">TOTAL MFF</b>
+                                    </p>
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecx9Lu7kqlbUi0QAL">
+                                        <b xml:id="ecgyGDj9Eu4FnTwaE">2021-2027</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 1; height: 14.4pt;" xml:id="ec47GSdqnn7ba2CsI">
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecZtjsAYKPKqWsdTH">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecCaON1TikiKPmh69">
+                                        <b xml:id="ecmCo6UqPOy1FpQsr">2024</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec5r0DkShvGbno507">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecpW0WxHfBBTsR00G">
+                                        <b xml:id="ecv6xiPFqbbhQOdMO">2025</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eci0vP5xuCGCuOm8D">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecrCueNU6VeW2RREA">
+                                        <b xml:id="ecwLUc93jgMknGf1K">2026</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecW9pCLiB3iNxDfhW">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecNx7teLfZyYkjoex">
+                                        <b xml:id="ecrmmfZK0gR9wI220">2027</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 2; height: 15.0pt;" xml:id="ecB1cZ03goE6taiFO">
+                                <td colspan="8" style="width: 100.0%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" xml:id="ecr5Nt5glG3pBvnk0">
+                                    <p style="margin: 0cm; text-align: left;" xml:id="ecFSSSyD2eF1wIYQJ">Operational appropriations</p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 3; height: 14.4pt;" xml:id="ecJbdISOelmxj0e3P">
+                                <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecQhxNIYlMiWhOPoP">
+                                    <p style="margin: 0cm; text-align: left;" xml:id="ec1mtOWCqALBQW5cK">Budget line</p>
+                                </td>
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecE7lR0r10zx0BR8Y">
+                                    <p style="margin: 0cm;" xml:id="ec0MqRCORSrt6pGar">Commitments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecRcATcWo71OcF1wJ">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecPfwdTcm8oadOTmo">(1a)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecN1NKg0TL29rG83P">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec5IhSdO48W1USuGD"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eclpq7scc3NhZqyba">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecvGyKcyzoTOCgeLg"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eckm5wyBTMTvT4H73">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec9npVEyRchFvD3Ig"/>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec5vuSCSUe7TZpeVa">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecm5y0vsxcS5rxKgm"/>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDeciqUb3Sh6jxhw">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecgbkicFA4xngRbi2">
+                                        <b xml:id="eclxG8c06Tx0Go1B3">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 4; height: 15.75pt;" xml:id="ecp6dQNQj06hdpQ2L">
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecDDh3kgHZoVC64kT">
+                                    <p style="margin: 0cm;" xml:id="ecK5b8NfPlA4wW0fR">Payments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecfIPyTdvOmiAc7H7">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecvVLrTVrfYmxH2R1">(2a)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="eckAayQ6oUpPzKGJ7">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec6d083ImpZTs08q2"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecRi77Tz7mTuZtQrz">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec3xk620EWjGYVP7C"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecumQe5S2TWc0J8Wm">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecZnflsrT93BL8tLD"/>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecC1MzC1HLoyKccKM">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecV4Am6a1ebBMm1fy"/>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecSqMsY4rLcmlm1tZ">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecIbCHujHKncYUQ8y">
+                                        <b xml:id="ec8rkLoWt8M0q1dpc">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 5; height: 15.75pt;" xml:id="ecwhwalRUCaNC1uMt">
+                                <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecngzEcgFK6Uiqmsf">
+                                    <p style="margin: 0cm;" xml:id="eca2fveoZpzdLwHp8">Budget line</p>
+                                </td>
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecRaWPoqWdOQvc1ha">
+                                    <p style="margin: 0cm;" xml:id="ec0EiuVhziStbsKtw">Commitments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ec8iNzwZDMsKpSPrT">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecY0Oibx99Zv0SoDE">(1b)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecuThIscvbWZBtBuv">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec81k3pEV2bAbKDPl"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ectPiGNfILupGIKJv">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecYUn9y9bmw52erWO"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ec2A1upTZcS3eif2y">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecCO7QqM5m7M94SWG"/>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ectyw1MyN12VqcqbT">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecuVeukipExZdnmdK"/>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecnoWp377jNIa7EQq">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecdSfcB3pduWG7iR2">
+                                        <b xml:id="ecP0Q8xS0LIVPaOAe">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 6; height: 15.75pt;" xml:id="ec7HNOrioADbavkHz">
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecLAkZQR1j3JYS4ix">
+                                    <p style="margin: 0cm;" xml:id="ecQZNI30mouIZebeF">Payments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecpO8lmjE7ystsecl">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ec1n51yMrVzAhaByo">(2b)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ec9eGIxb00vNjSyft">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecg010Kv8ufDHNFeg"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecWhbx70JcWNYSdWr">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecv8VQ4e2E85ijA7U"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ec5R7pBeeMVxSEqBP">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecQgS2EhZloPfmy14"/>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecBWrEqPQjCxSfFiw">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecNQWYzCVPhqpZa4f"/>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecZ1PRRKph2somEwI">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec2Sh0x4EWepyVA6q">
+                                        <b xml:id="ecvYSW70mDM8nYYi0">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 7; height: 14.4pt;" xml:id="ec22V0Dn5NkH8CRMH">
+                                <td colspan="8" style="width: 100.0%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecuMHmonLbax1EMwj">
+                                    <p style="margin: 0cm; text-align: left;" xml:id="ecUwtL9tSZaDjkoay">Appropriations of an administrative nature financed from the envelope of specific programmes
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 8; height: 14.4pt;" xml:id="ecfnSBNqSJrCZEMlJ">
+                                <td style="width: 28.38%; border: solid windowtext 1.0pt; border-top: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecUC6yKSzLtnznwuR">
+                                    <p style="margin: 0cm;" xml:id="ecuavYsNhc6TOpbCt">Budget line</p>
+                                </td>
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecaxWgGyrhSIwGMxW">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec5oOWGtdBSzWw6PE"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eccKJJw2aqGLSqeva">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ec5SEjtBujQDHdWzP">(3)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecj0ue2JIsg1zdkZL">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ece0lHbMvtbjc0RJS">
+                                        <b xml:id="ecMBxFo0h9D7Vyf5d"/>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecjDNo0waIeL1J2bZ">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec2IjmwA6audvfBO7">
+                                        <b xml:id="ecFWE8g2yvD29kncc"/>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDMA5ioppEHI0kyu">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecSWmz86B2Mx8KpJC">
+                                        <b xml:id="ecG5Pxb82ynrQye0D"/>
+                                    </p>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecsa3pHwFbTWkeyuy">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecTP1RazJSNofh9NO">
+                                        <b xml:id="ecHSlMjgfIhfkkcpe"/>
+                                    </p>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec4QB0LxNeZ4YN9pe">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="eccxI1JU3qSh5sR2e">
+                                        <b xml:id="ecIR02fJqSKiQpK6Y">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 9; height: 14.4pt;" xml:id="eciE00teeqvZjoIAP">
+                                <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecMV03Hd9py0OK7x2">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecbDyPlexnAE7tELe">
+                                        <b xml:id="ec57eftSr5wxvn20c">TOTAL appropriations</b>
+                                    </p>
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ec44e75iEhJn0JFKW">
+                                        <b xml:id="ecppFh3r0hVspYehW">for DG</b>
+                                        ...
+                                    </p>
+                                </td>
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecLssKeoEC9pMkoL3">
+                                    <p style="margin: 0cm;" xml:id="ecHMJEsy59jF5mwPO">Commitments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecAIozCuLoIQJfSRS">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecKrRO0f8qcYBc0cW">=1a+1b+3</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eck1COOTTd0DReOfU">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecrJAAoVbDWW4FhiL">
+                                        <b xml:id="ecOU4Cc04xl22IQlR">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecOz7rODUT88ilNMF">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ech3cZqZQaWWTv4Zo">
+                                        <b xml:id="eciO9gwz3P2yWo2vG">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec3aYkkaN4nigrCwy">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="eco0wwkrUdUH7IS0u">
+                                        <b xml:id="ecm3Ta0jZuYZGuzyL">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecojd60LjOpoa1mEJ">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecx21Q2ip4yyqIZlV">
+                                        <b xml:id="eczQIgSpQsF069mA2">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecWVtfgpn7BPoidz6">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec051FR02jGyjKj2d">
+                                        <b xml:id="ec1Abg3gJ7UGFaMin">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 10; mso-yfti-lastrow: yes; height: 14.4pt;" xml:id="ecvMqcrRar0NE2b9l">
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecYnvxERa1f5lACvf">
+                                    <p style="margin: 0cm;" xml:id="ecZo0m0F3qbJt70g3">Payments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec9BsRv6g7TKkdnUf">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecRwE5K7JM1ngguuF">=2a+2b+3</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecqIx8x2WKLEHBE9r">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="eco0NRN6gVrJ3nEsD">
+                                        <b xml:id="ectLLacVQ7oRez3Ts">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecoNhwibt030zUDcE">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecasUxw9QpyUZ5gm7">
+                                        <b xml:id="ecpUWOgJ1Km0FpuuB">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecf8SUNCK58Be4cgp">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecFCba8vkHKbms8P5">
+                                        <b xml:id="ecTe4jOBSkk6HlYgl">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecUCl3WOtBI9SRwAA">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecba8ouQwZTq2Peef">
+                                        <b xml:id="ecGAxZsYGJZYrRFYq">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecHZ2Qp7M1NcsEGFd">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="eceOrIvk0ZF3VMqD0">
+                                        <b xml:id="ecPNS0xPyy8G2OIlw">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- end of rotated table-->
+                    </content>
+                </subparagraph>
+                <subparagraph leos:editable="true" leos:group="2" leos:optional="true" leos:repeatable="true" style="text-align: right;padding-right:4%;" xml:id="ec5GkcFtiqW7HvfoB">
+                    <content xml:id="ecjHkClysbkBLqs2I">
+                        <!-- rotated table -->
+                        <table border="1" cellpadding="0" cellspacing="0" style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 480; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" xml:id="ecwB3ngJ7DjtMVQrq">
+                            <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;" xml:id="ecbQcxpUqtpT3oqNU">
+                                <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecqS5yb266traySlz">
+                                    <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecAcR5q6d6ns4D0Ph">
+                                        <b style="mso-bidi-font-weight: normal;" xml:id="ecPDE7K3osgCu1FzY">Heading of multiannual financial</b>
+                                    </p>
+                                    <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecrq1FUGKuThrS1gs">
+                                        <b style="mso-bidi-font-weight: normal;" xml:id="ec3877LsRgBqqxvv9">framework</b>
+                                    </p>
+                                </td>
+                                <td style="width: 7.92%; border: solid windowtext 1.0pt; border-left: none; mso-border-left-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecuScLwLgqikIrcV8">
+                                    <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ec6ztqU7fVZ3wvjp7">Number</p>
+                                </td>
+                                <td style="width: 57.3%; border: solid windowtext 1.0pt; border-left: none; mso-border-left-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ec3kDc81FtA0IDId6">
+                                    <p style="margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecdbFWh2r0oqED86x"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- end of rotated table-->
+                    </content>
+                </subparagraph>
+                <subparagraph leos:editable="true" leos:group="2" leos:optional="true" leos:repeatable="true" style="text-align: right;padding-right:4%;" xml:id="ecrJTWPuawRRHNysj">
+                    <content xml:id="ecsmPbGa0v49ilcwd">
+                        <!-- rotated table -->
+                        <table border="0" cellpadding="0" cellspacing="0" style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecCQRgiyhBWODwjuU">
+                            <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;" xml:id="ec0IQRUGrRhpL0Z8T">
+                                <td colspan="3" rowspan="2" style="width: 48.88%; border: solid windowtext 1.0pt; border-bottom: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecWCDb0C1UcwLGWOR">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ec8bFQseSkbjATU5u">DG: ...</p>
+                                </td>
+                                <td style="width: 9.92%; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecirUVSGba1tTqoyp">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecQlIwNrfGO2jLk3I">Year</p>
+                                </td>
+                                <td style="width: 9.92%; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecoJKMwrEdcTdPWYq">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecWQpF2YfczIL2y8N">Year</p>
+                                </td>
+                                <td style="width: 9.92%; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecKO9F4PblYoNB84S">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ectjH7STQMnO6nPKv">Year</p>
+                                </td>
+                                <td style="width: 9.56%; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecniQYa0WQBedQ77b">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecezOKyUrHC85bRPt">Year</p>
+                                </td>
+                                <td rowspan="2" style="width: 11.8%; border-top: solid windowtext 1.0pt; border-left: none; border-bottom: none; border-right: solid windowtext 1.0pt; mso-border-left-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecwl9zmcMHRPqfeyS">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecQq8MGES8fcCRxuF">
+                                        <b xml:id="eck274tzpsm7m1P0D">TOTAL MFF</b>
+                                    </p>
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecx9Lu7kqlbUi0QAL">
+                                        <b xml:id="ecgyGDj9Eu4FnTwaE">2021-2027</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 1; height: 14.4pt;" xml:id="ec47GSdqnn7ba2CsI">
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecZtjsAYKPKqWsdTH">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecCaON1TikiKPmh69">
+                                        <b xml:id="ecmCo6UqPOy1FpQsr">2024</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec5r0DkShvGbno507">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecpW0WxHfBBTsR00G">
+                                        <b xml:id="ecv6xiPFqbbhQOdMO">2025</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eci0vP5xuCGCuOm8D">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecrCueNU6VeW2RREA">
+                                        <b xml:id="ecwLUc93jgMknGf1K">2026</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecW9pCLiB3iNxDfhW">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecNx7teLfZyYkjoex">
+                                        <b xml:id="ecrmmfZK0gR9wI220">2027</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 2; height: 15.0pt;" xml:id="ecB1cZ03goE6taiFO">
+                                <td colspan="8" style="width: 100.0%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" xml:id="ecr5Nt5glG3pBvnk0">
+                                    <p style="margin: 0cm; text-align: left;" xml:id="ecFSSSyD2eF1wIYQJ">Operational appropriations</p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 3; height: 14.4pt;" xml:id="ecJbdISOelmxj0e3P">
+                                <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecQhxNIYlMiWhOPoP">
+                                    <p style="margin: 0cm; text-align: left;" xml:id="ec1mtOWCqALBQW5cK">Budget line</p>
+                                </td>
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecE7lR0r10zx0BR8Y">
+                                    <p style="margin: 0cm;" xml:id="ec0MqRCORSrt6pGar">Commitments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecRcATcWo71OcF1wJ">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecPfwdTcm8oadOTmo">(1a)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecN1NKg0TL29rG83P">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec5IhSdO48W1USuGD"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eclpq7scc3NhZqyba">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecvGyKcyzoTOCgeLg"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eckm5wyBTMTvT4H73">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec9npVEyRchFvD3Ig"/>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec5vuSCSUe7TZpeVa">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecm5y0vsxcS5rxKgm"/>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDeciqUb3Sh6jxhw">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecgbkicFA4xngRbi2">
+                                        <b xml:id="eclxG8c06Tx0Go1B3">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 4; height: 15.75pt;" xml:id="ecp6dQNQj06hdpQ2L">
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecDDh3kgHZoVC64kT">
+                                    <p style="margin: 0cm;" xml:id="ecK5b8NfPlA4wW0fR">Payments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecfIPyTdvOmiAc7H7">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecvVLrTVrfYmxH2R1">(2a)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="eckAayQ6oUpPzKGJ7">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec6d083ImpZTs08q2"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecRi77Tz7mTuZtQrz">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec3xk620EWjGYVP7C"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecumQe5S2TWc0J8Wm">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecZnflsrT93BL8tLD"/>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecC1MzC1HLoyKccKM">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecV4Am6a1ebBMm1fy"/>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecSqMsY4rLcmlm1tZ">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecIbCHujHKncYUQ8y">
+                                        <b xml:id="ec8rkLoWt8M0q1dpc">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 5; height: 15.75pt;" xml:id="ecwhwalRUCaNC1uMt">
+                                <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecngzEcgFK6Uiqmsf">
+                                    <p style="margin: 0cm;" xml:id="eca2fveoZpzdLwHp8">Budget line</p>
+                                </td>
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecRaWPoqWdOQvc1ha">
+                                    <p style="margin: 0cm;" xml:id="ec0EiuVhziStbsKtw">Commitments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ec8iNzwZDMsKpSPrT">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecY0Oibx99Zv0SoDE">(1b)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecuThIscvbWZBtBuv">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec81k3pEV2bAbKDPl"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ectPiGNfILupGIKJv">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecYUn9y9bmw52erWO"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ec2A1upTZcS3eif2y">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecCO7QqM5m7M94SWG"/>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ectyw1MyN12VqcqbT">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecuVeukipExZdnmdK"/>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecnoWp377jNIa7EQq">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecdSfcB3pduWG7iR2">
+                                        <b xml:id="ecP0Q8xS0LIVPaOAe">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 6; height: 15.75pt;" xml:id="ec7HNOrioADbavkHz">
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecLAkZQR1j3JYS4ix">
+                                    <p style="margin: 0cm;" xml:id="ecQZNI30mouIZebeF">Payments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecpO8lmjE7ystsecl">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ec1n51yMrVzAhaByo">(2b)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ec9eGIxb00vNjSyft">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecg010Kv8ufDHNFeg"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecWhbx70JcWNYSdWr">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecv8VQ4e2E85ijA7U"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ec5R7pBeeMVxSEqBP">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecQgS2EhZloPfmy14"/>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecBWrEqPQjCxSfFiw">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecNQWYzCVPhqpZa4f"/>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecZ1PRRKph2somEwI">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec2Sh0x4EWepyVA6q">
+                                        <b xml:id="ecvYSW70mDM8nYYi0">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 7; height: 14.4pt;" xml:id="ec22V0Dn5NkH8CRMH">
+                                <td colspan="8" style="width: 100.0%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecuMHmonLbax1EMwj">
+                                    <p style="margin: 0cm; text-align: left;" xml:id="ecUwtL9tSZaDjkoay">Appropriations of an administrative nature financed from the envelope of specific programmes
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 8; height: 14.4pt;" xml:id="ecfnSBNqSJrCZEMlJ">
+                                <td style="width: 28.38%; border: solid windowtext 1.0pt; border-top: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecUC6yKSzLtnznwuR">
+                                    <p style="margin: 0cm;" xml:id="ecuavYsNhc6TOpbCt">Budget line</p>
+                                </td>
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecaxWgGyrhSIwGMxW">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec5oOWGtdBSzWw6PE"/>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eccKJJw2aqGLSqeva">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ec5SEjtBujQDHdWzP">(3)</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecj0ue2JIsg1zdkZL">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ece0lHbMvtbjc0RJS">
+                                        <b xml:id="ecMBxFo0h9D7Vyf5d"/>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecjDNo0waIeL1J2bZ">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec2IjmwA6audvfBO7">
+                                        <b xml:id="ecFWE8g2yvD29kncc"/>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDMA5ioppEHI0kyu">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecSWmz86B2Mx8KpJC">
+                                        <b xml:id="ecG5Pxb82ynrQye0D"/>
+                                    </p>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecsa3pHwFbTWkeyuy">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecTP1RazJSNofh9NO">
+                                        <b xml:id="ecHSlMjgfIhfkkcpe"/>
+                                    </p>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec4QB0LxNeZ4YN9pe">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="eccxI1JU3qSh5sR2e">
+                                        <b xml:id="ecIR02fJqSKiQpK6Y">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 9; height: 14.4pt;" xml:id="eciE00teeqvZjoIAP">
+                                <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecMV03Hd9py0OK7x2">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecbDyPlexnAE7tELe">
+                                        <b xml:id="ec57eftSr5wxvn20c">TOTAL appropriations</b>
+                                    </p>
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ec44e75iEhJn0JFKW">
+                                        <b xml:id="ecppFh3r0hVspYehW">for DG</b>
+                                        ...
+                                    </p>
+                                </td>
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecLssKeoEC9pMkoL3">
+                                    <p style="margin: 0cm;" xml:id="ecHMJEsy59jF5mwPO">Commitments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecAIozCuLoIQJfSRS">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecKrRO0f8qcYBc0cW">=1a+1b+3</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eck1COOTTd0DReOfU">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecrJAAoVbDWW4FhiL">
+                                        <b xml:id="ecOU4Cc04xl22IQlR">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecOz7rODUT88ilNMF">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ech3cZqZQaWWTv4Zo">
+                                        <b xml:id="eciO9gwz3P2yWo2vG">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec3aYkkaN4nigrCwy">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="eco0wwkrUdUH7IS0u">
+                                        <b xml:id="ecm3Ta0jZuYZGuzyL">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecojd60LjOpoa1mEJ">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecx21Q2ip4yyqIZlV">
+                                        <b xml:id="eczQIgSpQsF069mA2">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecWVtfgpn7BPoidz6">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ec051FR02jGyjKj2d">
+                                        <b xml:id="ec1Abg3gJ7UGFaMin">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr style="mso-yfti-irow: 10; mso-yfti-lastrow: yes; height: 14.4pt;" xml:id="ecvMqcrRar0NE2b9l">
+                                <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecYnvxERa1f5lACvf">
+                                    <p style="margin: 0cm;" xml:id="ecZo0m0F3qbJt70g3">Payments</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; mso-border-top-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec9BsRv6g7TKkdnUf">
+                                    <p style="margin: 0cm; text-align: center;" xml:id="ecRwE5K7JM1ngguuF">=2a+2b+3</p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecqIx8x2WKLEHBE9r">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="eco0NRN6gVrJ3nEsD">
+                                        <b xml:id="ectLLacVQ7oRez3Ts">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecoNhwibt030zUDcE">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecasUxw9QpyUZ5gm7">
+                                        <b xml:id="ecpUWOgJ1Km0FpuuB">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecf8SUNCK58Be4cgp">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecFCba8vkHKbms8P5">
+                                        <b xml:id="ecTe4jOBSkk6HlYgl">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecUCl3WOtBI9SRwAA">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="ecba8ouQwZTq2Peef">
+                                        <b xml:id="ecGAxZsYGJZYrRFYq">0.000</b>
+                                    </p>
+                                </td>
+                                <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecHZ2Qp7M1NcsEGFd">
+                                    <p style="margin: 0cm; text-align: right;" xml:id="eceOrIvk0ZF3VMqD0">
+                                        <b xml:id="ecPNS0xPyy8G2OIlw">0.000</b>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- end of rotated table-->
+                    </content>
+                </subparagraph>
+            </level>
+        </mainBody>
+    </doc>
+</akomaNtoso>
