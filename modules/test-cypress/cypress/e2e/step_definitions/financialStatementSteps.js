@@ -2,6 +2,7 @@ import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import financialStatementPage from "../pages/financialStatementPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
+import legalActPage from "../pages/legalActPage";
 
 Then('user is on financial statement page', () => {
     headerPage.getCurrentPageName().should("have.text", "Digital Financial Statement");
@@ -36,4 +37,8 @@ Then('content of level {int} has below content', (levelNumber, datatable) => {
     financialStatementPage.getContentOfLevel(levelNumber).then((element) => {
         checkContentResult(element, datatable);
     });
+});
+
+Then(`{string} is added as internal reference {int} of content of level {int}`, (text, mReferenceNumber, levelNumber) => {
+    financialStatementPage.getMRefTextFromContentOfLevel(mReferenceNumber, levelNumber).should('have.text', text);
 });
