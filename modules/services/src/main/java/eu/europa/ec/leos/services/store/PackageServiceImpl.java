@@ -24,6 +24,7 @@ import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -186,5 +188,10 @@ class PackageServiceImpl implements PackageService {
     @Override
     public void useOriginRef(String originRef) {
         this.originRef = originRef;
+    }
+
+    @Override
+    public List<CollaboratorVO> getPackageCollaborators(String packageId) {
+        return packageRepository.getPackageCollaborators(new BigDecimal(packageId));
     }
 }

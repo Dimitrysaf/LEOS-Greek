@@ -146,6 +146,10 @@ public class XPathCatalog {
         return "//akn:documentCollection/@name";
     }
 
+    public String getXPathDocumentName() {
+        return "//akn:akomaNtoso/akn:doc/@name";
+    }
+
     public String getXPathElementWithSoftAction() {
         return "//akn:*[@leos:softaction]";
     }

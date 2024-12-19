@@ -27,7 +27,7 @@ class ckEditorWindow {
         boldIcon: () => cy.get('.cke_button__bold'),
         italicIcon: () => cy.get('.cke_button__italic'),
         changeTextCaseIcon: () => cy.get('.cke_button__transformtextswitcher'),
-        backgroundColorBtn: () => cy.get('.cke_button__bgcolor'),
+        //backgroundColorBtn: () => cy.get('.cke_button__bgcolor'),
         ckEditorBtn: () => cy.get('a.cke_button'),
         docPurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
         pTag: () => this.elements.ckEditableInline().find('p'),
@@ -170,9 +170,9 @@ class ckEditorWindow {
         this.elements.cutBtn().click();
     }
 
-    clickBackgroundColorIcon() {
+/*    clickBackgroundColorIcon() {
         this.elements.backgroundColorBtn().click();
-    }
+    }*/
 
     appendInCkEditorLevel(text, pTagNumber) {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).type(text);
@@ -268,6 +268,10 @@ class ckEditorWindow {
 
     addContentInFourthLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) {
         this.getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5).type(newContent);
+    }
+
+    selectContentInFourthLayerPointOfParagraphOfArticle(offsetStart, offsetEnd, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) {
+        this.getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5).invoke('attr', 'id').then(id => this.selectContent(offsetStart, offsetEnd, "#" + id));
     }
 
     deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, child, times) {

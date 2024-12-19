@@ -6,8 +6,10 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
@@ -21,8 +23,10 @@ public class ProposalTocApiServiceImpl extends TocApiServiceImpl {
 
     public ProposalTocApiServiceImpl(Provider<StructureContext> structureContextProvider,
                                      BillService billService, AnnexService annexService, MessageHelper messageHelper,
-            ExplanatoryService explanatoryService, DocumentLanguageContext documentLanguageContext) {
-        super(structureContextProvider, billService, annexService, messageHelper, explanatoryService, documentLanguageContext);
+                                     ExplanatoryService explanatoryService, DocumentLanguageContext documentLanguageContext,
+                                     XPathCatalog xPathCatalog, XmlContentProcessor xmlContentProcessor) {
+        super(structureContextProvider, billService, annexService, messageHelper, explanatoryService, documentLanguageContext,
+                xPathCatalog, xmlContentProcessor);
     }
 
     @Override

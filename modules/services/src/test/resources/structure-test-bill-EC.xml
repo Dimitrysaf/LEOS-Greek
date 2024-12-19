@@ -83,6 +83,7 @@
         <tocItem>
             <aknTag>body</aknTag>
             <root>true</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -218,6 +219,7 @@
         <tocItem>
             <aknTag>part</aknTag>
             <root>false</root>
+            <higherElement>true</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -249,6 +251,7 @@
         <tocItem>
             <aknTag>title</aknTag>
             <root>false</root>
+            <higherElement>true</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -281,6 +284,7 @@
         <tocItem>
             <aknTag>chapter</aknTag>
             <root>false</root>
+            <higherElement>true</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -314,6 +318,7 @@
         <tocItem>
             <aknTag>section</aknTag>
             <root>false</root>
+            <higherElement>true</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -346,6 +351,7 @@
         <tocItem>
             <aknTag>article</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -355,11 +361,11 @@
                     <numberingType>ARABIC</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>ARABIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>ARABIC</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>optional</itemHeading>
@@ -379,11 +385,11 @@
                             <langNumConfig langGroup="latin" auto="true">
                                 <numberingType>POINT_NUM</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="cyrillic" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="cyrillic" auto="true">
+                                <numberingType>POINT_NUM_CYRILLIC</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="greek" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="greek" auto="true">
+                                <numberingType>POINT_NUM_GREEK</numberingType>
                             </langNumConfig>
                         </subElementNumberingConfig>
                         <subElementNumberingConfig>
@@ -391,11 +397,11 @@
                             <langNumConfig langGroup="latin" auto="true">
                                 <numberingType>POINT_NUM</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="cyrillic" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="cyrillic" auto="true">
+                                <numberingType>POINT_NUM_CYRILLIC</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="greek" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="greek" auto="true">
+                                <numberingType>POINT_NUM_GREEK</numberingType>
                             </langNumConfig>
                         </subElementNumberingConfig>
                     </subElementNumberingConfigs>
@@ -412,6 +418,13 @@
                             <langNumConfig langGroup="latin" auto="true">
                                 <numberingType>POINT_NUM_DEF</numberingType>
                             </langNumConfig>
+                            <!-- Default Configuration for other languages -->
+                            <langNumConfig langGroup="cyrillic" auto="true">
+                                <numberingType>POINT_NUM_DEF_CYRILLIC</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="greek" auto="true">
+                                <numberingType>POINT_NUM_DEF_GREEK</numberingType>
+                            </langNumConfig>
                         </subElementNumberingConfig>
                         <subElementNumberingConfig>
                             <subElement>indent</subElement>
@@ -419,11 +432,11 @@
                                 <numberingType>POINT_NUM_DEF</numberingType>
                             </langNumConfig>
                             <!-- Default Configuration for other languages -->
-                            <langNumConfig langGroup="cyrillic" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="cyrillic" auto="true">
+                                <numberingType>POINT_NUM_DEF_CYRILLIC</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="greek" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="greek" auto="true">
+                                <numberingType>POINT_NUM_DEF_GREEK</numberingType>
                             </langNumConfig>
                         </subElementNumberingConfig>
                     </subElementNumberingConfigs>
@@ -436,12 +449,27 @@
             </profiles>
             <editable>true</editable>
             <template>
-                <![CDATA[<article xml:id="_${id}"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph xml:id="_${id}-par1"><num>1.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
+                <![CDATA[<article><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph><num>1.</num><content><p>${default.content.text}</p></content></paragraph><paragraph><num>2.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
+            <dapInfos>
+                <dapInfo>
+                    <dapInfoLabel>Scope and definition default articles</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Introductory+provisions</dapInfoURL>
+                </dapInfo>
+                <dapInfo>
+                    <dapInfoLabel>Other Articles</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Subdivisions+in+an+article</dapInfoURL>
+                </dapInfo>
+                <dapInfo>
+                    <dapInfoLabel>Entry into force default article</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Date+of+entry+into+force</dapInfoURL>
+                </dapInfo>
+            </dapInfos>
         </tocItem>
 
         <tocItem>
             <aknTag>paragraph</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -451,11 +479,11 @@
                     <numberingType>ARABIC_POSTFIXDOT</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -472,6 +500,7 @@
         <tocItem>
             <aknTag>subparagraph</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -490,6 +519,7 @@
         <tocItem>
             <aknTag>list</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -508,6 +538,7 @@
         <tocItem>
             <aknTag>point</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -517,11 +548,11 @@
                     <numberingType>POINT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>POINT_NUM_CYRILLIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>POINT_NUM_GREEK</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -539,6 +570,7 @@
         <tocItem>
             <aknTag>point</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -548,11 +580,11 @@
                     <numberingType>POINT_NUM_DEF</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>POINT_NUM_DEF_CYRILLIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>POINT_NUM_DEF_GREEK</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -570,6 +602,7 @@
         <tocItem>
             <aknTag>indent</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -579,11 +612,11 @@
                     <numberingType>POINT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>POINT_NUM_CYRILLIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>POINT_NUM_GREEK</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -601,6 +634,7 @@
         <tocItem>
             <aknTag>indent</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -610,11 +644,11 @@
                     <numberingType>POINT_NUM_DEF</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>POINT_NUM_DEF_CYRILLIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>POINT_NUM_DEF_GREEK</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -632,6 +666,7 @@
         <tocItem>
             <aknTag>conclusions</aknTag>
             <root>true</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -650,6 +685,7 @@
         <tocItem>
             <aknTag>clause</aknTag>
             <root>true</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -673,6 +709,7 @@
         <tocItem>
             <aknTag>heading</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -697,6 +734,7 @@
         <tocItem>
             <aknTag>formula</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -949,6 +987,74 @@
             <list/>
         </entry>
     </tocRules>
+
+    <documentRules>
+        <rule>
+            <description>Structure validation rule</description>
+            <type>structureValidation</type>
+            <tocItem>article</tocItem>
+            <higherDivisions>
+                <type>part</type>
+                <type>title</type>
+                <type>chapter</type>
+                <type>section</type>
+            </higherDivisions>
+            <lowerDivisions>
+                <type>article</type>
+            </lowerDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.structure.validation.warning.message</errorMessage>
+        </rule>
+        <rule>
+            <description>No empty higher division rule</description>
+            <type>notEmpty</type>
+            <tocItem>body</tocItem>
+            <higherDivisions>
+                <type>part</type>
+                <type>title</type>
+                <type>chapter</type>
+                <type>section</type>
+            </higherDivisions>
+            <lowerDivisions>
+                <type>article</type>
+            </lowerDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.empty.validation.warning.message</errorMessage>
+        </rule>
+        <rule>
+            <description>Section hierarchy rule</description>
+            <type>hierarchy</type>
+            <tocItem>section</tocItem>
+            <higherDivisions>
+                <type>part</type>
+                <type>title</type>
+                <type>chapter</type>
+            </higherDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.hierarchy.validation.warning.message</errorMessage>
+        </rule>
+        <rule>
+            <description>Chapter hierarchy rule</description>
+            <type>hierarchy</type>
+            <tocItem>chapter</tocItem>
+            <higherDivisions>
+                <type>part</type>
+                <type>title</type>
+            </higherDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.hierarchy.validation.warning.message</errorMessage>
+        </rule>
+        <rule>
+            <description>Title hierarchy rule</description>
+            <type>hierarchy</type>
+            <tocItem>title</tocItem>
+            <higherDivisions>
+                <type>part</type>
+            </higherDivisions>
+            <scope>drop</scope>
+            <errorMessage>toc.higher.division.hierarchy.validation.warning.message</errorMessage>
+        </rule>
+    </documentRules>
 
     <referenceConfig>
         <refConfig language="en">

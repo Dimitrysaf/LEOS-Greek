@@ -84,5 +84,18 @@
     >
       <eui-icon-svg icon="eui-close"></eui-icon-svg>
     </button>
+    <!-- Warning icon -->
+    <span *ngIf="isShowWarning">
+      <button
+        euiButton
+        euiBasicButton
+        class="eui-u-p-none"
+        euiSizeS
+        [euiTooltip]="getWarningMessages()"
+        contentAlignment="left"
+      >
+        <eui-icon-svg icon="eui-ecl-warning" set="eui" size="m" fillColor="warning-110"></eui-icon-svg>
+      </button>
+    </span>
   </div>
 </ng-container>

@@ -20,9 +20,11 @@ export class TocActionsButtonsComponent implements OnInit {
   @Input() isEditMode: boolean;
   @Input() isUndoDisabled: boolean;
   @Input() isSaveDisabled: boolean;
+  @Input() isShowWarning: boolean;
   @Input() isCollapseToc: boolean;
   @Input() isAnnotationsPaneCollapsed: boolean;
   @Input() isVersionsPaneCollapsed: boolean;
+  @Input() warningMessagesFromValidation: string[];
 
   @Output() handleUndo = new EventEmitter<void>();
   @Output() handleSave = new EventEmitter<void>();
@@ -55,5 +57,17 @@ export class TocActionsButtonsComponent implements OnInit {
 
   onExpandAll() {
     return this.handleExpandAll.emit();
+  }
+
+  getWarningMessages() {
+    if (!this.warningMessagesFromValidation || this.warningMessagesFromValidation.length === 0) {
+      return '';
+    }
+    const translatedMessages = [this.translateService.instant('toc.higher.division.generic.warning.message'),
+      ...this.warningMessagesFromValidation.map(msg => {
+        return `<li>${this.translateService.instant(msg)}</li>`;
+      })
+    ];
+    return `<ol>${translatedMessages.join('')}</ol>`;
   }
 }

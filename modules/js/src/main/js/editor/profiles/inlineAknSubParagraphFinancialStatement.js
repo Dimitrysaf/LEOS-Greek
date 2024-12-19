@@ -109,7 +109,8 @@ define(function aknSubParagraphFSProfileModule(require) {
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
             '/',
             { name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandlerFS', 'Table' ] },
-            { name : "mode" , items: [ 'Sourcedialog' ] },
+            { name: "mode", items: ['Sourcedialog', 'spellchecker'] },
+            { name: 'trackChanges', items: ['toggleDisplay'] },
             { name : "colors" , items: [ 'BGColor' ] }
         ],
         //show toolbar on startup

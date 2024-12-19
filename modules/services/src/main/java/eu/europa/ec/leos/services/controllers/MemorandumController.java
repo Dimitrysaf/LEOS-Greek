@@ -255,7 +255,7 @@ public class MemorandumController {
         try {
             documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.memorandumApiService.saveToC(documentRef,
-                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.SIMPLIFIED);
+                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());

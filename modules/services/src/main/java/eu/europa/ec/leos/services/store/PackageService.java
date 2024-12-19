@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
@@ -61,4 +62,6 @@ public interface PackageService {
     void useTranslated(Boolean isTranslated);
 
     void useOriginRef(String originRef);
+
+    List<CollaboratorVO> getPackageCollaborators(String packageId);
 }

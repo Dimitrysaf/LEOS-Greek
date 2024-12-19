@@ -57,7 +57,9 @@ import java.util.Optional;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
+import static eu.europa.ec.leos.services.support.MergeUtils.removeChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
+import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsLastChildOfNode;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
@@ -78,6 +80,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.INTRO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_NUMBER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
@@ -95,6 +98,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVED_LABEL
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_ACTION;
@@ -121,6 +125,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 import static eu.europa.ec.leos.util.LeosDomainUtil.unWrapXmlFragment;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
+
 
 @Service
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})
@@ -182,7 +187,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         }
         updateTocItemTypeAttributes(tocItems, node, tocVo);
         if (tagName.equals(ARTICLE)) {
-            removeNumberingForParagraphInDefinitionArticle(node, tocVo.getTocItemType());
+            removeNumberingForParagraphInDefinitionArticle(node, tocVo.getTocItemType(), isTrackChangesEnabled);
             setAttributeForNumberingInListsArticle(tocItems, node, tocVo.getTocItemType());
         }
         return node;
@@ -193,13 +198,22 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
      * @param node
      * @param tocItemType
      */
-    private void removeNumberingForParagraphInDefinitionArticle(Node node, TocItemTypeName tocItemType) {
+    private void removeNumberingForParagraphInDefinitionArticle(Node node, TocItemTypeName tocItemType, boolean isTrackChangesEnabled) {
         if(TocItemTypeName.DEFINITION.equals(tocItemType)){
             List<Node> lists = getChildren(node, PARAGRAPH);
             for (Node paragraph : lists) {
                 Node numChild = getFirstChild(paragraph, NUM);
                 if (numChild != null) {
-                    paragraph.removeChild(numChild);
+                    if(isTrackChangesEnabled){
+                        String currentNum = numChild.getTextContent();
+                        removeChildren(numChild);
+                        Node delNode = createElementAsLastChildOfNode(numChild.getOwnerDocument(), numChild, "del", currentNum);
+                        addAttribute(delNode, LEOS_ACTION_NUMBER, LEOS_TC_DELETE_ACTION);
+                        addAttribute(delNode, LEOS_UID, securityContext.getUser().getLogin());
+                        addAttribute(delNode, LEOS_TITLE, LeosXercesUtils.getTitleValue(securityContext));
+                    }else{
+                        paragraph.removeChild(numChild);
+                    }
                 }
             }
         }

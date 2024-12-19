@@ -466,7 +466,21 @@ export class DocumentEditorComponent
     return false;
   }
 
-  hanldeListItemDragged(event, isAdd) {
+  showWarningIcon() {
+    if(this.documentTocComponent) {
+      return this.documentTocComponent.showWarningIcon;
+    }
+    return false;
+  }
+
+  getWarningMessages() {
+    if(this.documentTocComponent) {
+      return this.documentTocComponent.warningMessagesFromValidation;
+    }
+    return [];
+  }
+
+  handleListItemDragged(event, isAdd) {
     this.documentTocComponent.dragMoved(event, isAdd);
   }
 
@@ -840,6 +854,8 @@ export class DocumentEditorComponent
     this.documentTocComponent.messageFromValidation = null;
     this.tocService.displayOriginalToc();
     this.documentTocComponent.isDropValid = null;
+    this.documentTocComponent.isDropWarning = null;
+    this.documentTocComponent.showWarningIcon = false;
     this.tocService.setIsEditMode(false);
     this.documentTocComponent.resetTreeState();
     this.documentTocComponent.clearHighlightInvalidNodes();

@@ -303,6 +303,7 @@ Feature: Legal Act Page Regression Features
         When mouseover and click on article 1
         Then ck editor window is displayed
         When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        Then paragraph mode icon is enabled in ck editor panel
         When click enter from keyboard in edition mode
         And  add content "paragraph2" to li 2 with data-akn-element "paragraph" of article in edition mode
         And  click enter from keyboard in edition mode
@@ -344,9 +345,9 @@ Feature: Legal Act Page Regression Features
         And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 1"
         And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(2)"
         And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 2"
-        And  num tag of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "-"
+        And  num tag of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "—"
         And  content of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point -"
-        And  num tag of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "-"
+        And  num tag of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "—"
         And  content of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point --"
         When click on toc edit button
         And  click on three vertical dots for the element contains text "Article 1" in toc
@@ -358,6 +359,57 @@ Feature: Legal Act Page Regression Features
         When click on close button in dialog confirm box window
         And  click on cancel button in navigation pane
         Then toc editing button is displayed and enabled
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        When select content from offset 0 till offset 7 in li 1 with data-akn-element "indent" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click delete button from keyboard in edition mode
+        And  select content from offset 0 till offset 8 in li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click delete button from keyboard in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num tag of paragraph 1 of article 1 contains "1."
+        And  content of paragraph 1 of article 1 contains "Text..."
+        And  num tag of paragraph 2 of article 1 contains "2."
+        And  content of subparagraph 1 of list 1 of paragraph 2 of article 1 contains "paragraph2"
+        And  num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+        And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
+        And  num tag of point 2 of list 1 of paragraph 2 of article 1 contains "(b)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point b"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(i)"
+        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point i"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(ii)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point ii"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(1)"
+        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 1"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(2)"
+        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 2"
+        And  article 1 doesn't contain indent tag
+        When click on toc edit button
+        And  click on three vertical dots for the element contains text "Article 1" in toc
+        And  mouseover on change type category
+        Then regular option is selected in change type category
+        When click on definition option in change type category
+        And  click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled
+        And  heading of article 1 contains "Definitions"
+        And  paragraph 1 of article 1 doesn't contain num tag
+        And  content of paragraph 1 of article 1 contains "Text..."
+        And  paragraph 2 of article 1 doesn't contain num tag
+        And  content of subparagraph 1 of list 1 of paragraph 2 of article 1 contains "paragraph2"
+        And  num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(1)"
+        And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
+        And  num tag of point 2 of list 1 of paragraph 2 of article 1 contains "(2)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point b"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(a)"
+        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point i"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(b)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point ii"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(i)"
+        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 1"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(ii)"
+        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 2"
+        And  paragraph 3 of article 1 doesn't contain num tag
+
         When mouseover and click on article 2
         Then ck editor window is displayed
         When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
@@ -403,9 +455,16 @@ Feature: Legal Act Page Regression Features
         And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point 1"
         And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(ii)"
         And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point 2"
+        When mouseover and click on article 2
+        Then ck editor window is displayed
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        Then paragraph mode icon is disabled in ck editor panel
+        When click close button of ck editor
+        Then ck editor window is not displayed
         When mouseover and click on article 3
         Then ck editor window is displayed
         When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        Then paragraph mode icon is disabled in ck editor panel
         Then increase indent icon is disabled in ck editor
         And  decrease indent icon is disabled in ck editor panel
         When click enter from keyboard in edition mode
@@ -460,6 +519,12 @@ Feature: Legal Act Page Regression Features
         And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point i"
         And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
         And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point ii"
+        When mouseover and click on article 3
+        Then ck editor window is displayed
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        Then paragraph mode icon is enabled in ck editor panel
+        When click close button of ck editor
+        Then ck editor window is not displayed
 
     @internalReference @local
     Scenario: test internal reference by uploading existing leg file

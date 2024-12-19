@@ -161,6 +161,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         String docRef = metadataMap.get(XmlNodeConfigProcessor.DOC_REF_META);
         documentVO.setId(docId != null ? docId : docName);
         documentVO.setRef(docRef != null ? docRef : docName);
+        documentVO.setName(docName);
     }
 
     @Override

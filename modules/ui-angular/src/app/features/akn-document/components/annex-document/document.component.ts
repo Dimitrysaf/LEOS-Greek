@@ -374,6 +374,7 @@ export class DocumentComponent
       } else {
         this.reloadElements(data);
       }
+      this.documentService.reloadConnectors(data, true);
       if(this.documentService.isTrackChangesEnabled()){
         this.ckeditorService.refreshStateSoftActionsConnector();
       }
