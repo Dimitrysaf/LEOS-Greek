@@ -84,7 +84,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//article[refertsto='~ART_DEF']/heading",
+          "destinationPath": "//article[@refersto='~ART_DEF']/heading",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -93,7 +93,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//article[2]/heading",
+          "destinationPath": "//article[3]/heading",
           "position": "AFTER-WRAPPER"
         }
       ],
