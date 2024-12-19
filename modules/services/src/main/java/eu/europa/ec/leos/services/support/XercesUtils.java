@@ -520,7 +520,7 @@ public class XercesUtils {
         node.getParentNode().removeChild(node);
     }
 
-    public static void replaceNodeContent(Node node, String newContentInsideNode) {
+    public static Node replaceNodeContent(Node node, String newContentInsideNode) {
         Validate.notNull(node, "Node cannot be null!");
         String startTagContent = "<" + node.getNodeName();
         String endTagContent = "</" + node.getNodeName() + ">";
@@ -533,16 +533,16 @@ public class XercesUtils {
         if (node.getParentNode() != null) {
             addSibling(nodeWithNewContent, node, false);
             deleteElement(node);
-        } else {
-            node = nodeWithNewContent;
+            return nodeWithNewContent;
         }
+        return node;
     }
 
-    public static void appendToNodeContent(Node node, String contentToAppend, boolean before) {
+    public static Node appendToNodeContent(Node node, String contentToAppend, boolean before) {
         Validate.notNull(node, "Node cannot be null!");
         String nodeContent = getContentNodeAsXmlFragment(node);
         nodeContent = before ? contentToAppend + nodeContent : nodeContent + contentToAppend;
-        replaceNodeContent(node, nodeContent);
+        return replaceNodeContent(node, nodeContent);
     }
 
     public static Node replaceElement(Node newNode, Node oldNode) {

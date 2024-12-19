@@ -1695,6 +1695,20 @@ public class MergeContributionService {
                     }
                     found = true;
                 }
+                // means that all text should be removed
+                if (!isIns && !found && nextNodeParent == null && previousNodeParent == null) {
+
+                    if (withTrackChanges) {
+                        XercesUtils.replaceElement(originalUpdatedNode,
+                                nodeToString(originalUpdatedNode).replaceFirst(Pattern.quote(contentToBeAddedOrRemoved),
+                                        nodeToString(nodeToBeAddedOrRemoved).replaceAll("\\\\", "\\\\\\\\")));
+                    } else {
+                        XercesUtils.replaceElement(originalUpdatedNode,
+                                nodeToString(originalUpdatedNode).replaceFirst(Pattern.quote(contentToBeAddedOrRemoved),
+                                        ""));
+                    }
+                    found = true;
+                }
                 if (refOriginalParentNode != null) {
                     xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refOriginalParentNode), getId(refOriginalParentNode));
                 }
@@ -2139,6 +2153,12 @@ public class MergeContributionService {
                                         (contentToBeAdded + nextContent).replaceAll("\\\\", "\\\\\\\\")));
                         found = true;
                     }
+                }
+                if (!found && previousNodeParent == null && nextNodeParent == null) {
+                    originalUpdatedNode = XercesUtils.appendToNodeContent(originalUpdatedNode,
+                            contentToBeAdded, false);
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode));
+                    found = true;
                 }
                 if (refParentToUpdateXml != null) {
                     xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refParentToUpdateXml), getId(refParentToUpdateXml));
