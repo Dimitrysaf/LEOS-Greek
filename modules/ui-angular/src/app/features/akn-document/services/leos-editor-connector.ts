@@ -536,6 +536,26 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }
 
   // leosEditorExtension > actionHandler
+  private insertGroupAction(elementData: {
+    action: string;
+    elementId: string;
+    elementType: string;
+    position: string;
+  }) {
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
+    this.insertGroup(elementData.elementType.toLowerCase(), elementData.elementId, elementData.position)
+      .pipe(distinctUntilChanged())
+      .subscribe((response) => {
+        this.documentService.setDocumentRefAndCategory(
+          documentRef,
+          documentType,
+        );
+        this.coEditionService.sendUpdateDocumentEvent(documentRef);
+      });;
+  }
+
+  // leosEditorExtension > actionHandler
   private insertElementAction(elementData: {
     action: string;
     elementId: string;
@@ -645,6 +665,18 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   ) {
     return this.http.delete<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
+    );
+  }
+
+  private insertGroup(elementName: string,
+                      elementId: string,
+                      position: string,
+  ) {
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
+    return this.http.put<DocumentViewResponse>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/insert-group`,
+      { position: position.toUpperCase() },
     );
   }
 

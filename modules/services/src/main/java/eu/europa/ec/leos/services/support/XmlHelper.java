@@ -139,6 +139,7 @@ public class XmlHelper {
     public static final String LEOS_HTML_OL_ID_ATTR = "leos:listIdAttr";
     public static final String LEOS_REF = "leos:ref";
     public static final String LEOS_OPTIONAL = "leos:optional";
+    public static final String LEOS_GROUP = "leos:group";
     public static final String INLINE_NUM = "crossHnum";
     public static final String INDENT_LEVEL_PROPERTY = "--indent-level";
     public static final String INLINE_NUM_PROPERTY = "--inline-num";

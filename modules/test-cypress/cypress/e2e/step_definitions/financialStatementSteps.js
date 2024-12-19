@@ -57,3 +57,19 @@ Then('repeated subparagraph should not exist', () => {
 Then('repeated subparagraph should have track changes action delete', () => {
     financialStatementPage.elements.repeatedSubparagraph().should('have.attr', 'leos:action').and('equal', 'delete');
 });
+
+When('click on insert group after icon of repeatable subparagraph', () => {
+    financialStatementPage.duplicateRepeatableSubparagraphGroupAfter();
+});
+
+Then('repeated subparagraph group after should exist', () => {
+    financialStatementPage.elements.repeatedSubparagraphGroupAfter().first().should('exist');
+});
+
+When('click on insert group before icon of repeatable subparagraph', () => {
+    financialStatementPage.duplicateRepeatableSubparagraphGroupBefore();
+});
+
+Then('repeated subparagraph group before should exist', () => {
+    financialStatementPage.elements.repeatedSubparagraphGroupBefore().first().should('exist');
+});

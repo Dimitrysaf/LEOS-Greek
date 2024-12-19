@@ -191,6 +191,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
+    public DocumentViewResponse insertGroup(String documentRef, String elementName, String elementId, Position position) {
+        return null;
+    }
+
+    @Override
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId,
                                               Position position) {
         throw new UnsupportedOperationException("Insert element isn't supported for memorandum");

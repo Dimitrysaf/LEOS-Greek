@@ -227,6 +227,11 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
+    public DocumentViewResponse insertGroup(String documentRef, String elementName, String elementId, Position position) {
+        return null;
+    }
+
+    @Override
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId,
                                               Position position) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);

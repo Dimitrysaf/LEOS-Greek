@@ -959,6 +959,18 @@ public class XercesUtils {
         return children;
     }
 
+    public static List<Node> getDescendantsWithAttribute(Node node, String attribute) {
+        List<Node> descendants = new ArrayList<>();
+        List<Node> children = getChildren(node);
+        for (Node child : children) {
+            if (hasAttribute(child, attribute)) {
+                descendants.add(child);
+            }
+            descendants.addAll(getDescendantsWithAttribute(child, attribute));
+        }
+        return descendants;
+    }
+
     public static List<Node> getDescendants(Node node, List<String> tagNames) {
         List<Node> descendants = new ArrayList<>();
         List<Node> children = getChildren(node);

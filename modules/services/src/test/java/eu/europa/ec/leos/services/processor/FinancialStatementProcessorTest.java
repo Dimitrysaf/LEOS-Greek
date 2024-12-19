@@ -113,7 +113,41 @@ public class FinancialStatementProcessorTest extends LeosTest {
         FinancialStatement fs = getMockedFinancialStatement(content);
         byte[] result = fsp.repeatElement(fs, "ecVfyzuWfoIDe22U0", false);
         byte[] docContentExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_lfds_subparagraph_repeat_expected.xml");
-        assertEquals(squeezeXmlAndRemoveAllNS(squeezeXmlAndRemoveAllNS(new String(docContentExpected))), squeezeXmlAndRemoveAllNS(new String(result)));
+        String expected = squeezeXmlAndRemoveAllNS(squeezeXmlAndRemoveAllNS(new String(docContentExpected)));
+        String actual = squeezeXmlAndRemoveAllNS(new String(result));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_repeatGroup_when_insert_before() {
+        byte[] xmlContent = TestUtils.getFileContent(FILE_PREFIX + "/test_lfds_subparagraph_repeat_group.xml");
+        Content content = new ContentImpl(
+                "test_lfds_subparagraph_repeat_group.xml",
+                "mime type",
+                23,
+                new SourceImpl(new ByteArrayInputStream(xmlContent)));
+        FinancialStatement fs = getMockedFinancialStatement(content);
+        byte[] result = fsp.repeatGroup(fs, "ecrJTWPuawRRHNysk", true);
+        byte[] docContentExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_lfds_subparagraph_repeat_group_before_expected.xml");
+        String expected = squeezeXmlAndRemoveAllNS(squeezeXmlAndRemoveAllNS(new String(docContentExpected)));
+        String actual = squeezeXmlAndRemoveAllNS(new String(result));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_repeatGroup_when_insert_after() {
+        byte[] xmlContent = TestUtils.getFileContent(FILE_PREFIX + "/test_lfds_subparagraph_repeat_group.xml");
+        Content content = new ContentImpl(
+                "test_lfds_subparagraph_repeat_group.xml",
+                "mime type",
+                23,
+                new SourceImpl(new ByteArrayInputStream(xmlContent)));
+        FinancialStatement fs = getMockedFinancialStatement(content);
+        byte[] result = fsp.repeatGroup(fs, "ec5GkcFtiqW7HvfoB", false);
+        byte[] docContentExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_lfds_subparagraph_repeat_group_after_expected.xml");
+        String expected = squeezeXmlAndRemoveAllNS(squeezeXmlAndRemoveAllNS(new String(docContentExpected)));
+        String actual = squeezeXmlAndRemoveAllNS(new String(result));
+        assertEquals(expected, actual);
     }
 
     private FinancialStatement getMockedFinancialStatement(Content content) {

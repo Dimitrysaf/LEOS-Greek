@@ -90,12 +90,14 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.getChildContent;
 import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.getContentByTagName;
+import static eu.europa.ec.leos.services.support.XercesUtils.getDescendantsWithAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstElementByName;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNextSibling;
 import static eu.europa.ec.leos.services.support.XercesUtils.getParentId;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.importNodeInDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateStylingAttribute;
@@ -509,6 +511,59 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
         }
         return xmlContent;
+    }
+
+    private List<Node> findAllNodesInGroup(Node parent, String groupValue) {
+        List<Node> nodeList = new ArrayList<>();
+        for(int i = 0; i < parent.getChildNodes().getLength(); i++) {
+            Node child = parent.getChildNodes().item(i);
+            if(hasAttributeWithValue(child, LEOS_GROUP, groupValue)) {
+                nodeList.add(child);
+            }
+        }
+        return nodeList;
+    }
+
+    private String findNextGroupNumber(Node node) {
+        int groupNumber = 0;
+        List<Node> nodesWithGroup = getDescendantsWithAttribute(node, LEOS_GROUP);
+        for(Node child : nodesWithGroup) {
+            int childGroupNumber = Integer.parseInt(getAttributeValue(child, LEOS_GROUP));
+            if(childGroupNumber > groupNumber) {
+                groupNumber = childGroupNumber;
+            }
+        }
+        return String.valueOf(groupNumber + 1);
+    }
+
+    @Override
+    public byte[] repeatGroup(byte[] xmlContent, String idAttributeValue, boolean before, boolean isTrackChangesEnabled) {
+        Document document = createXercesDocument(xmlContent);
+        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        if (node != null) {
+            List<Node> nodeList = findAllNodesInGroup(node.getParentNode(), getAttributeValue(node, LEOS_GROUP));
+            String newGroupNumber = findNextGroupNumber(document);
+            Node targetNode = before ? nodeList.get(0) : nodeList.get(nodeList.size()-1);
+            for(int i = 0; i < nodeList.size(); i++) {
+                Node nodeToClone = nodeList.get(i);
+                Node newNode = XercesUtils.createNodeFromXmlFragment(document, nodeToByteArray(nodeToClone), false);
+                XercesUtils.removeAttributeRecursively(newNode, XMLID);
+                XercesUtils.addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
+                XercesUtils.addAttribute(newNode, LEOS_GROUP, newGroupNumber);
+                XercesUtils.addSibling(newNode, targetNode, before);
+
+                if (isTrackChangesEnabled) {
+                    addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
+                    addAttribute(newNode, LEOS_UID, securityContext.getUser().getLogin());
+                    addAttribute(newNode, LEOS_TITLE, getTitleValue(securityContext));
+                }
+
+                if(!before) {
+                    targetNode = newNode;
+                }
+            }
+        }
+        return nodeToByteArray(document);
     }
 
     @Override

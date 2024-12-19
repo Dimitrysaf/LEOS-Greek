@@ -105,10 +105,12 @@ define(function actionManagerExtensionModule(require) {
             $rootElement.on("mouseup.actions", ".leos-editable-content", _handleDoubleClickAction.bind(undefined, connector, "edit"));
         }
         // register delegated event handlers for widgets
+        $rootElement.on("click.actions", "[data-widget-type='insert.group.before']", _handleAction.bind(undefined, connector, "insert.group.before"));
         $rootElement.on("click.actions", "[data-widget-type='insert.before']", _handleAction.bind(undefined, connector, "insert.before"));
         $rootElement.on("click.actions", "[data-widget-type='edit']", _handleAction.bind(undefined, connector, "edit"));
         $rootElement.on("click.actions", "[data-widget-type='delete']", _handleAction.bind(undefined, connector, "delete"));
         $rootElement.on("click.actions", "[data-widget-type='insert.after']", _handleAction.bind(undefined, connector, "insert.after"));
+        $rootElement.on("click.actions", "[data-widget-type='insert.group.after']", _handleAction.bind(undefined, connector, "insert.group.after"));
     }
 
     function _registerActionTriggers(connector, $rootElement) {
@@ -604,6 +606,7 @@ define(function actionManagerExtensionModule(require) {
             let isHeadingOfAnOptionalLevel = false;
             let optional = $element.attr('leos:optional');
             let repeatable = $element.attr('leos:repeatable');
+            let group = $element.attr('leos:group');
             let action = $element.attr('leos:action');
             let leosAction = "";
             if (optional === 'true' && $element[0] && $element[0].parentNode && $element[0].parentNode.localName === 'level') {
@@ -615,6 +618,9 @@ define(function actionManagerExtensionModule(require) {
             deletable = (optional === 'true' && action !== 'delete') || _isDeletable($element, deletable, connector);
 
             if (insertBeforeAndAfter && connector.getState().tocEdition) {
+                if(group) {
+                    template.push(`<span <span data-widget-type="insert.group.before" title="Insert group before">&#xe791</span>`);
+                }
                 template.push(`<span data-widget-type="insert.before" title="Insert ${type} before">&#xe622</span>`);
             }
             if (editable) {
@@ -633,6 +639,9 @@ define(function actionManagerExtensionModule(require) {
             }
             if (insertBeforeAndAfter && connector.getState().tocEdition) {
                 template.push(`<span style="transform: rotate(180deg);" data-widget-type="insert.after" title="Insert ${type} after">&#xe623</span>`);
+                if(group) {
+                    template.push(`<span style="transform: scaleY(-1);" data-widget-type="insert.group.after" title="Insert group after">&#xe791</span>`);
+                }
             }
         }
 

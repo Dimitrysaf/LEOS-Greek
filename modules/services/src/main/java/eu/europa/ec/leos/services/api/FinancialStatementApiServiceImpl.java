@@ -111,6 +111,23 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
+    public DocumentViewResponse insertGroup(String documentRef, String elementName, String elementId, Position position) {
+        FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
+        this.setStructureContext(financialStatement.getMetadata().getOrError(() -> FINANCIAL_STATEMENT_METADATA_IS_REQUIRED).getDocTemplate());
+        documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
+
+        byte[] updatedXmlContent = financialStatementProcessor.repeatGroup(financialStatement, elementId, position.equals(Position.BEFORE));
+
+        final String title = messageHelper.getMessage("operation.element.inserted", "Group of elements");
+        final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
+        final String elementLabel = "";
+        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.INSERTED, elementId, elementName, elementLabel));
+        final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+        financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent, checkinCommentJson);
+        return this.documentViewService.updateDocumentView(financialStatement);
+    }
+
+    @Override
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
         FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
         this.setStructureContext(financialStatement.getMetadata().getOrError(() -> FINANCIAL_STATEMENT_METADATA_IS_REQUIRED).getDocTemplate());

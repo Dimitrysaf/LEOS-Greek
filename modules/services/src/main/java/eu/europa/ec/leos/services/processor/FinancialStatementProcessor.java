@@ -28,4 +28,6 @@ public interface FinancialStatementProcessor {
     byte[] deleteElement(FinancialStatement document, String elementId, String tagName) throws Exception;
 
     byte[] mergeElement(FinancialStatement financialStatement, String elementContent, String tagName, String elementId);
+
+    byte[] repeatGroup(FinancialStatement document, String idAttributeValue, boolean before);
 }

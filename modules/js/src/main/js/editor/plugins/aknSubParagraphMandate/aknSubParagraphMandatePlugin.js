@@ -118,6 +118,9 @@ define(function aknSubParagraphMandatePluginModule(require) {
                 akn : "leos:repeated",
                 html : "leos:repeated"
             }, {
+                akn : "leos:group",
+                html : "leos:group"
+            }, {
                 akn : "leos:allow-soft-enter",
                 html : "data-akn-allow-soft-enter"
             }]

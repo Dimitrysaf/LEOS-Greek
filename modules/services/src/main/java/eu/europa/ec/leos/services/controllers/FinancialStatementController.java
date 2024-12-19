@@ -340,6 +340,24 @@ public class FinancialStatementController {
         }
     }
 
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-group", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> insertGroup(@PathVariable("documentRef") String documentRef,
+                                                @PathVariable("elementName") String elementName,
+                                                @PathVariable("elementId") String elementId,
+                                                @RequestBody InsertElementRequest request) {
+        try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
+            DocumentViewResponse lfds = this.financialStatementApiService.insertGroup(documentRef, elementName, elementId, request.getPosition());
+            return ResponseEntity.ok().body(lfds);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting financial statement element - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while inserting financial statement element", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> insertElement(@PathVariable("documentRef") String documentRef,

@@ -208,6 +208,9 @@ define(function aknLevelPluginModule(require) {
             }, {
                 akn : "leos:repeated",
                 html : "leos:repeated"
+            }, {
+                akn : "leos:group",
+                html : "leos:group"
             }]
         },
         rootElementsForFrom: ["level"],

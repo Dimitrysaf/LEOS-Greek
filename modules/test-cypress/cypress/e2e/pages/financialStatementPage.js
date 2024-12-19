@@ -4,6 +4,9 @@ class financialStatementPage {
         doctype: () => cy.get("docType[refersTo='~STAT_DIGIT_FINANC_LEGIS']"),
         repeatableSubparagraph: () => cy.get('subparagraph[leos\\:repeatable="true"]'),
         repeatedSubparagraph: () => cy.get('subparagraph[leos\\:repeated="true"]'),
+        repeatableSubparagraphGroup: () => cy.get('subparagraph[leos\\:repeatable="true"][leos\\:group="2"]'),
+        repeatedSubparagraphGroupAfter: () => cy.get('subparagraph[leos\\:repeated="true"][leos\\:group="3"]'),
+        repeatedSubparagraphGroupBefore: () => cy.get('subparagraph[leos\\:repeated="true"][leos\\:group="4"]'),
     }
 
     clickCloseBtn(){
@@ -39,6 +42,14 @@ class financialStatementPage {
 
     deleteRepeatedSubparagraph() {
         this.elements.repeatedSubparagraph().first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='delete']").click({ force: true }).wait(500));
+    }
+
+    duplicateRepeatableSubparagraphGroupAfter() {
+        this.elements.repeatableSubparagraphGroup().first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.group.after']").click({ force: true }).wait(500));
+    }
+
+    duplicateRepeatableSubparagraphGroupBefore() {
+        this.elements.repeatableSubparagraphGroup().first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.group.before']").click({ force: true }).wait(500));
     }
 }
 export default new financialStatementPage();

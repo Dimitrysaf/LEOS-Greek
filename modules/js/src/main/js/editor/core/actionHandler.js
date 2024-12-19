@@ -24,15 +24,27 @@ define(function actionHandlerModule(require) {
         if (connector.editorChannel) {
             let channel = connector.editorChannel;
             if(channel.bus?.subscriptions) {
+                channel.bus.unsubscribeFor({"topic": "actions.insert.group.*.element"});
                 channel.bus.unsubscribeFor({"topic": "actions.insert.*.element"});
                 channel.bus.unsubscribeFor({"topic": "actions.edit.element"});
                 channel.bus.unsubscribeFor({"topic": "actions.delete.element"});
             }
             connector.actionSubscriptions = [];
             // subscribe to editor channel action topics
+            connector.actionSubscriptions.push(channel.subscribe("actions.insert.group.*.element", _insertGroupAction.bind(undefined, connector)));
             connector.actionSubscriptions.push(channel.subscribe("actions.insert.*.element", _insertElementAction.bind(undefined, connector)));
             connector.actionSubscriptions.push(channel.subscribe("actions.edit.element", _editElementAction.bind(undefined, connector)));
             connector.actionSubscriptions.push(channel.subscribe("actions.delete.element", _deleteElementAction.bind(undefined, connector)));
+        }
+    }
+
+    function _insertGroupAction(connector, data) {
+        log.debug("Insert element action...");
+        let regExp = /(?:^insert.group)\.(\w+).*$/i;
+        let matches = regExp.exec(data.action);
+        if (matches) {
+            data.position = matches[1];
+            connector.insertGroupAction(data);
         }
     }
 
