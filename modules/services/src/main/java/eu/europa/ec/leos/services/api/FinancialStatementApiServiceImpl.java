@@ -7,11 +7,15 @@ import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.action.ActionType;
+import eu.europa.ec.leos.model.action.CheckinCommentVO;
+import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
+import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -28,6 +32,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +46,7 @@ import java.util.Map;
 public class FinancialStatementApiServiceImpl implements FinancialStatementApiService {
 
     private static final String FINANCIAL_STATEMENT_METADATA_IS_REQUIRED = "Financial statement metadata is required!";
+    private static final String OPERATION_CHECKIN_MINOR = "operation.checkin.minor";
 
     @Autowired
     FinancialStatementService financialStatementService;
@@ -105,9 +111,37 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId,
-                                              Position position) {
-        return null;
+    public DocumentViewResponse insertGroup(String documentRef, String elementName, String elementId, Position position) {
+        FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
+        this.setStructureContext(financialStatement.getMetadata().getOrError(() -> FINANCIAL_STATEMENT_METADATA_IS_REQUIRED).getDocTemplate());
+        documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
+
+        byte[] updatedXmlContent = financialStatementProcessor.repeatGroup(financialStatement, elementId, position.equals(Position.BEFORE));
+
+        final String title = messageHelper.getMessage("operation.element.inserted", "Group of elements");
+        final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
+        final String elementLabel = "";
+        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.INSERTED, elementId, elementName, elementLabel));
+        final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+        financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent, checkinCommentJson);
+        return this.documentViewService.updateDocumentView(financialStatement);
+    }
+
+    @Override
+    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
+        FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
+        this.setStructureContext(financialStatement.getMetadata().getOrError(() -> FINANCIAL_STATEMENT_METADATA_IS_REQUIRED).getDocTemplate());
+        documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
+
+        byte[] updatedXmlContent = financialStatementProcessor.repeatElement(financialStatement, elementId, position.equals(Position.BEFORE));
+
+        final String title = messageHelper.getMessage("operation.element.inserted", StringUtils.capitalize(elementName));
+        final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
+        final String elementLabel = "";
+        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.INSERTED, elementId, elementName, elementLabel));
+        final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+        financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent, checkinCommentJson);
+        return this.documentViewService.updateDocumentView(financialStatement);
     }
 
     @Override

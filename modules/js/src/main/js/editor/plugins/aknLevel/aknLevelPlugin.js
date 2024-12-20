@@ -202,7 +202,16 @@ define(function aknLevelPluginModule(require) {
             }, {
                  akn : "leos:optional",
                  html : "leos:optional"
-             }]
+             }, {
+                akn : "leos:repeatable",
+                html : "leos:repeatable"
+            }, {
+                akn : "leos:repeated",
+                html : "leos:repeated"
+            }, {
+                akn : "leos:group",
+                html : "leos:group"
+            }]
         },
         rootElementsForFrom: ["level"],
         contentWrapperForFrom: "subparagraph",

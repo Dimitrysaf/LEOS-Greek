@@ -60,6 +60,8 @@ public interface BaseDocumentService<T extends XmlDocument> {
     SaveElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment, boolean isSplit, String alternateElementId)
             throws Exception;
 
+    DocumentViewResponse insertGroup(String documentRef, String elementName, String elementId, Position position);
+
     DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position);
 
     DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId)

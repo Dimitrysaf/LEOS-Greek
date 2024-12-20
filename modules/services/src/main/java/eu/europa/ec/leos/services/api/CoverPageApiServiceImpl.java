@@ -221,6 +221,11 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
+    public DocumentViewResponse insertGroup(String documentRef, String elementName, String elementId, Position position) {
+        return null;
+    }
+
+    @Override
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId,
                                               Position position) {
         throw new UnsupportedOperationException(DELETE_ISN_T_SUPPORTED_FOR_COVER_PAGE);

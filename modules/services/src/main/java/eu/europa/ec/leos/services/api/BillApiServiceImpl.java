@@ -654,6 +654,11 @@ public abstract class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
+    public DocumentViewResponse insertGroup(String documentRef, String elementName, String elementId, Position position) {
+        return null;
+    }
+
+    @Override
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId,
                                               Position position) {
         Bill bill = this.billService.findBillByRef(documentRef);

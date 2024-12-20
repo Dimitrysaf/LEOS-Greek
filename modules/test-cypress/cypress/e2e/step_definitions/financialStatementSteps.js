@@ -2,7 +2,6 @@ import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import financialStatementPage from "../pages/financialStatementPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
-import legalActPage from "../pages/legalActPage";
 
 Then('user is on financial statement page', () => {
     headerPage.getCurrentPageName().should("have.text", "Digital Financial Statement");
@@ -39,6 +38,42 @@ Then('content of level {int} has below content', (levelNumber, datatable) => {
     });
 });
 
-Then(`{string} is added as internal reference {int} of content of level {int}`, (text, mReferenceNumber, levelNumber) => {
+Then('{string} is added as internal reference {int} of content of level {int}', (text, mReferenceNumber, levelNumber) => {
     financialStatementPage.getMRefTextFromContentOfLevel(mReferenceNumber, levelNumber).should('have.text', text);
+});
+
+When('click on insert after icon of repeatable subparagraph', () => {
+    financialStatementPage.duplicateRepeatableSubparagraph();
+});
+
+Then('repeated subparagraph should exist', () => {
+    financialStatementPage.elements.repeatedSubparagraph().first().should('exist');
+});
+
+When('click on delete icon of repeated subparagraph', () => {
+    financialStatementPage.deleteRepeatedSubparagraph();
+});
+
+Then('repeated subparagraph should not exist', () => {
+    financialStatementPage.elements.repeatedSubparagraph().should('not.exist');
+});
+
+Then('repeated subparagraph should have track changes action delete', () => {
+    financialStatementPage.elements.repeatedSubparagraph().should('have.attr', 'leos:action').and('equal', 'delete');
+});
+
+When('click on insert group after icon of repeatable subparagraph', () => {
+    financialStatementPage.duplicateRepeatableSubparagraphGroupAfter();
+});
+
+Then('repeated subparagraph group after should exist', () => {
+    financialStatementPage.elements.repeatedSubparagraphGroupAfter().first().should('exist');
+});
+
+When('click on insert group before icon of repeatable subparagraph', () => {
+    financialStatementPage.duplicateRepeatableSubparagraphGroupBefore();
+});
+
+Then('repeated subparagraph group before should exist', () => {
+    financialStatementPage.elements.repeatedSubparagraphGroupBefore().first().should('exist');
 });

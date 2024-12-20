@@ -1,0 +1,109 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//preamble/formula[1]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_1__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_1__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Citations\" target=\"_blank\">Citations</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//citations/citation[4]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-cit-4\" class=\"guidance-green-block\"><span id=\"cit-4-guidance\">[where necessary]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//citations/citation[5]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-cit-5\" class=\"guidance-green-block\"><span id=\"cit-5-guidance\">[where necessary]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/intro",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_recitalsIntro\" class=\"guidance-green-block\"><span id=\"_recitalsIntro-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/x/Yxt2F\" target=\"_blank\">Recitals</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//preamble/formula[2]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_2__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_2__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Enacting+terms\" target=\"_blank\">Enacting terms</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[1]/heading",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_art_1__heading\" class=\"guidance-green-block\"><span id=\"_art_1__heading-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Scope\" target=\"_blank\">Scope</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[@refersto='~ART_DEF']/heading",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_art_definitions_heading\" class=\"guidance-green-block\"><span id=\"_art_2_definitions_heading-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Definitions\" target=\"_blank\">Definitions</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[3]/heading",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_art_2__heading\" class=\"guidance-green-block\"><span id=\"_art_2__heading-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Date+of+entry+into+force\" target=\"_blank\">Entry into force</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-art_3\" class=\"guidance-green-block\"><span id=\"art_3-guidance\">[Choose between the three options, depending on the addressees of the act.]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "content": "<article xml:id=\"art3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num xml:id=\"art3Num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art3Q27Lyk\">Addressees</heading><paragraph xml:id=\"art3Para1\"><content xml:id=\"art3Para1Content\"><p xml:id=\"art3Para1ContentP\">This Decision is addressed to the Member States.</p></content></paragraph></article>"
+        },
+        {
+          "index": "2",
+          "content": "<article xml:id=\"art3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><num xml:id=\"art3Num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art3Q27Lyk\">Addressees</heading><paragraph xml:id=\"art3Para1\"><content xml:id=\"art3Para1Content\"><p xml:id=\"art3Para1ContentP\">This Decision is addressed to the Member States in accordance with the Treaties.</p></content></paragraph></article>"
+        },
+		{
+          "index": "3",
+          "content": "<article xml:id=\"art3\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"3\"><num xml:id=\"art3Num\" leos:editable=\"false\">Article 3</num><heading xml:id=\"art3Q27Lyk\">Addressees</heading><paragraph xml:id=\"art3Para1\"><content xml:id=\"art3Para1Content\"><p xml:id=\"art3Para1ContentP\">This Decision is addressed to [...].</p></content></paragraph></article>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "name": "structure_01"
+    }
+  ]
+}

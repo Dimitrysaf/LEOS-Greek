@@ -520,7 +520,7 @@ public class XercesUtils {
         node.getParentNode().removeChild(node);
     }
 
-    public static void replaceNodeContent(Node node, String newContentInsideNode) {
+    public static Node replaceNodeContent(Node node, String newContentInsideNode) {
         Validate.notNull(node, "Node cannot be null!");
         String startTagContent = "<" + node.getNodeName();
         String endTagContent = "</" + node.getNodeName() + ">";
@@ -533,16 +533,16 @@ public class XercesUtils {
         if (node.getParentNode() != null) {
             addSibling(nodeWithNewContent, node, false);
             deleteElement(node);
-        } else {
-            node = nodeWithNewContent;
+            return nodeWithNewContent;
         }
+        return node;
     }
 
-    public static void appendToNodeContent(Node node, String contentToAppend, boolean before) {
+    public static Node appendToNodeContent(Node node, String contentToAppend, boolean before) {
         Validate.notNull(node, "Node cannot be null!");
         String nodeContent = getContentNodeAsXmlFragment(node);
         nodeContent = before ? contentToAppend + nodeContent : nodeContent + contentToAppend;
-        replaceNodeContent(node, nodeContent);
+        return replaceNodeContent(node, nodeContent);
     }
 
     public static Node replaceElement(Node newNode, Node oldNode) {
@@ -684,6 +684,14 @@ public class XercesUtils {
         }
 
         return element;
+    }
+
+    public static void removeAttributeRecursively(Node node, String attName) {
+        removeAttribute(node, XMLID);
+        NodeList nodeList = node.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            removeAttributeRecursively(nodeList.item(i), attName);
+        }
     }
 
     public static void removeAttribute(Node node, String attName) {
@@ -949,6 +957,18 @@ public class XercesUtils {
             }
         }
         return children;
+    }
+
+    public static List<Node> getDescendantsWithAttribute(Node node, String attribute) {
+        List<Node> descendants = new ArrayList<>();
+        List<Node> children = getChildren(node);
+        for (Node child : children) {
+            if (hasAttribute(child, attribute)) {
+                descendants.add(child);
+            }
+            descendants.addAll(getDescendantsWithAttribute(child, attribute));
+        }
+        return descendants;
     }
 
     public static List<Node> getDescendants(Node node, List<String> tagNames) {
