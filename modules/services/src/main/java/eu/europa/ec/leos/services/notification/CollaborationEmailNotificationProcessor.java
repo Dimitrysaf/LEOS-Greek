@@ -74,9 +74,9 @@ public class CollaborationEmailNotificationProcessor implements EmailNotificatio
     }
 
     private String clearTrackChangesFromString(String stringWithTrackChanges) {
-        stringWithTrackChanges = "<clear xmlns:leos='urn:eu:europa:ec:leos'>" + stringWithTrackChanges + "</clear>";
+        stringWithTrackChanges = "<clear xmlns:leos=\"urn:eu:europa:ec:leos\">" + stringWithTrackChanges + "</clear>";
         return new String(xmlContentProcessor.cleanTrackChanges(stringWithTrackChanges.getBytes()))
-                .replace("<clear xmlns:leos='urn:eu:europa:ec:leos'>", "").replace("</clear>", "");
+                .replace("<clear xmlns:leos=\"urn:eu:europa:ec:leos\">", "").replace("</clear>", "");
     }
 
     private void buildEmailSubject(CollaboratorEmailNotification collaborationEmailNotification) {
