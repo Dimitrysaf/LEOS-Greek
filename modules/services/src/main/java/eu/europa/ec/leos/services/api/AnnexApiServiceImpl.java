@@ -397,6 +397,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                         PROPOSAL + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".docx";
                 ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false, true);
                 exportOptions.setExportVersions(new ExportVersions(null, annex));
+                exportOptions.setWithCoverPage(false);
                 exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while using ExportService", e);

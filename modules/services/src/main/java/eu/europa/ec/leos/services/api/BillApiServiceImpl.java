@@ -308,6 +308,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
                         PROPOSAL + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".zip";
                 ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Bill.class, false, true);
                 exportOptions.setExportVersions(new ExportVersions(null, bill));
+                exportOptions.setWithCoverPage(false);
                 exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while using ExportService", e);
