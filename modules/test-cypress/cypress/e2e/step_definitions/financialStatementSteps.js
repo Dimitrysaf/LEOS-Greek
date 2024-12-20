@@ -38,6 +38,10 @@ Then('content of level {int} has below content', (levelNumber, datatable) => {
     });
 });
 
+Then('{string} is added as internal reference {int} of content of level {int}', (text, mReferenceNumber, levelNumber) => {
+    financialStatementPage.getMRefTextFromContentOfLevel(mReferenceNumber, levelNumber).should('have.text', text);
+});
+
 When('click on insert after icon of repeatable subparagraph', () => {
     financialStatementPage.duplicateRepeatableSubparagraph();
 });

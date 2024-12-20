@@ -278,6 +278,10 @@ Then(`internal reference icon is not present in ck editor panel`, function () {
     ckEditorWindow.elements.internalReferenceIcon().should('not.exist');
 });
 
+Then(`internal reference icon is present in ck editor panel`, function () {
+    ckEditorWindow.elements.internalReferenceIcon().should('exist');
+});
+
 When('move the cursor position to offset {int} in pTag {int} of level in edition mode', (offset, pTagNumber) => {
     ckEditorWindow.moveCursorToSpecificOffsetInLevel(offset, pTagNumber);
 });

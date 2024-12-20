@@ -24,6 +24,10 @@ class financialStatementPage {
         return this.getLevel(levelNumber).find('content aknp');
     }
 
+    getMRefTextFromContentOfLevel(mReferenceNumber, levelNumber){
+        return this.getContentOfLevel(levelNumber).find('mref').eq(mReferenceNumber-1);
+    }
+
     getSubparagraphOfLevel(subparagraphNumber, levelNumber) {
         return this.getLevel(levelNumber).find('subparagraph').eq(subparagraphNumber-1);
     }

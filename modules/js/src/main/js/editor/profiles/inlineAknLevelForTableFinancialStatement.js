@@ -42,6 +42,7 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
     plugins.push(require("plugins/leosWidget/leosWidgetPlugin"));
     plugins.push(require("plugins/leosAttrHandler/leosAttrHandlerPlugin"));
     plugins.push(require("plugins/leosPaste/leosPastePlugin"));
+    plugins.push(require("plugins/leosCrossReference/leosCrossReferencePlugin"));
     plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandler/leosHierarchicalElementShiftEnterHandler"));
     plugins.push(require("plugins/leosHierarchicalElementSubparagraphAfterLastPoint/leosHierarchicalElementSubparagraphAfterLastPoint"));
     plugins.push(require("plugins/leosFloatingSpace/leosFloatingSpacePlugin"));
@@ -113,7 +114,7 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
             { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
             { name: 'soft_insert', items: ['leosHierarchicalElementShiftEnterHandler', 'leosHierarchicalElementSubparagraphAfterLastPoint']},
-            { name: 'ref', items: [ 'authorialNoteWidget' ] },
+            { name: 'ref', items: ['authorialNoteWidget', 'LeosCrossReference'] },
             { name: 'insert', items: [ 'Mathjax', 'SpecialChar' , "base64image", 'Table'] },
             { name: 'paragraph', items: ['Outdent', 'Indent'] },
             '/',
