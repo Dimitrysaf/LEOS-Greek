@@ -27,6 +27,7 @@ export type CheckBoxesConnectorState = LeosJavaScriptExtensionState & {
   checkBoxAttributeName: string;
   checkedBoxAttribute: string;
   uncheckedBoxAttribute: string;
+  hasUpdatePermission: boolean;
 };
 
 export type CheckBoxesConnectorInitialState = Omit<

@@ -1,6 +1,6 @@
-import { Component, HostBinding, OnDestroy } from '@angular/core';
+import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Subject, take, takeUntil } from 'rxjs';
+import {Observable, Subject, take, takeUntil} from 'rxjs';
 
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { DocumentService } from '@/shared/services/document.service';
@@ -10,7 +10,7 @@ import { DocumentService } from '@/shared/services/document.service';
   templateUrl: './document-search.component.html',
   styleUrls: ['./document-search.component.scss'],
 })
-export class DocumentSearchComponent implements OnDestroy {
+export class DocumentSearchComponent implements OnInit, OnDestroy {
   @HostBinding('class.isReplace') isReplace = false;
 
   form = new FormGroup({
@@ -22,6 +22,7 @@ export class DocumentSearchComponent implements OnDestroy {
   replaceText = '';
 
   private destroy$ = new Subject<void>();
+  canReplace: Observable<boolean>;
 
   constructor(public doc: DocumentService) {
     this.doc.searchParams$.pipe(take(1)).subscribe((params) => {
@@ -32,7 +33,12 @@ export class DocumentSearchComponent implements OnDestroy {
       this.doc.setSearchParams(values);
     });
   }
-
+  ngOnInit(): void {
+    this.findUpdatePermission();
+  }
+  findUpdatePermission() {
+    this.canReplace = this.doc.hasUpdatePermission();
+  }
   ngOnDestroy() {
     this.doc.toggleSearchPane(!this.isSearchActive);
     this.destroy$.next();

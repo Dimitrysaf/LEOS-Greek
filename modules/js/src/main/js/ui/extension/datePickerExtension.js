@@ -90,6 +90,9 @@ define(function datePickerExtensionModule(require) {
                 });
             }
         });
+        if (!connector.getState().hasUpdatePermission) {
+            $("button.ui-datepicker-trigger").attr("disabled", true);
+        }
     }
 
     function padZero(value) {

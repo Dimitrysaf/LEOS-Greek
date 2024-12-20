@@ -79,14 +79,19 @@ define(function checkBoxesExtensionModule(require) {
 
     function _initAndAddListenersToCheckBoxes(connector) {
         let state = connector.getState();
-        CHECKBOX_TAGNAME = state.checkBoxTagName;
-        CHECKED = state.checkedBoxValue;
-        UNCHECKED = state.uncheckedBoxValue;
-        NAME_ATTR = state.checkBoxAttributeName;
-        NAME_ATTR_CHECKED = state.checkedBoxAttribute;
-        NAME_ATTR_UNCHECKED = state.uncheckedBoxAttribute;
-        _addListeners(connector, CHECKBOX_TAGNAME, NAME_ATTR, NAME_ATTR_CHECKED);
-        _addListeners(connector, CHECKBOX_TAGNAME, NAME_ATTR, NAME_ATTR_UNCHECKED);
+        if (state.hasUpdatePermission) {
+            CHECKBOX_TAGNAME = state.checkBoxTagName;
+            CHECKED = state.checkedBoxValue;
+            UNCHECKED = state.uncheckedBoxValue;
+            NAME_ATTR = state.checkBoxAttributeName;
+            NAME_ATTR_CHECKED = state.checkedBoxAttribute;
+            NAME_ATTR_UNCHECKED = state.uncheckedBoxAttribute;
+            _addListeners(connector, CHECKBOX_TAGNAME, NAME_ATTR, NAME_ATTR_CHECKED);
+            _addListeners(connector, CHECKBOX_TAGNAME, NAME_ATTR, NAME_ATTR_UNCHECKED);
+        }else{
+            $("inline[name='checked']").off();
+            $("inline[name='unchecked']").off();
+        }
     }
     function _addListeners(connector, tagName, attrName, attrValue) {
         let target = connector.target;

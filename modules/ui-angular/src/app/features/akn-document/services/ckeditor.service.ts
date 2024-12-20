@@ -127,7 +127,7 @@ export class CKEditorService {
         this.initMergeContribution(require, leosState, rootElement);
         if (this.documentService.documentType === 'stat_digit_financ_legis') {
           this.initDatePicker(require, leosState, rootElement);
-          this.initCheckBoxes(require, rootElement);
+          this.initCheckBoxes(require, leosState, rootElement);
         }
       });
 
@@ -421,7 +421,7 @@ export class CKEditorService {
     rootElement: HTMLElement,
   ) {
     this.datePickerConnector = new DatePickerConnector(
-      leosState,
+      { ...{ hasUpdatePermission: leosState.permissions && leosState.permissions.includes('CAN_UPDATE'),}, ...leosState },
       {
         rootElement,
       },
@@ -438,7 +438,7 @@ export class CKEditorService {
     });
   }
 
-  private initCheckBoxes(require: Require, rootElement: HTMLElement) {
+  private initCheckBoxes(require: Require, leosState: any, rootElement: HTMLElement) {
     // see modules/ui/src/main/java/eu/europa/ec/leos/ui/view/financialstatement/FinancialStatementScreenImpl.java
     this.checkBoxesConnector = new CheckBoxesConnector(
       {
@@ -448,6 +448,7 @@ export class CKEditorService {
         checkBoxAttributeName: 'name',
         checkedBoxAttribute: 'checked',
         uncheckedBoxAttribute: 'unchecked',
+        hasUpdatePermission: leosState.permissions && leosState.permissions.includes('CAN_UPDATE'),
       },
       {
         rootElement,

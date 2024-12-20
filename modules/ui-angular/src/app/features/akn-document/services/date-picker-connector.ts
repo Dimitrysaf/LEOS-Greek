@@ -10,7 +10,9 @@ import { DocumentService } from '@/shared/services/document.service';
 import { apiBaseUrl } from '../../../../config';
 import { BlockDocumentEditorService } from './block-document-editor.service';
 
-export type DatePickerConnectorState = LeosJavaScriptExtensionState;
+export type DatePickerConnectorState = LeosJavaScriptExtensionState & {
+  hasUpdatePermission: boolean;
+};
 
 export type DatePickerConnectorInitialState = Omit<
   DatePickerConnectorState,

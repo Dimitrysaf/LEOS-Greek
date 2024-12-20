@@ -1,6 +1,6 @@
 export type ApplicationRole = 'USER' | 'SUPPORT' | 'ADMIN';
 
-export type DocumentRole = 'OWNER' | 'CONTRIBUTOR' | 'REVIEWER' | 'AUTHOR';
+export type DocumentRole = 'OWNER' | 'CONTRIBUTOR' | 'REVIEWER' | 'AUTHOR' | 'VIEWER';
 
 export type Role = ApplicationRole | DocumentRole;
 

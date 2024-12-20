@@ -99,7 +99,7 @@
               <button
                 euiDropdownItem
                 (click)="openMilestoneSendCopyForContributionDialog(row)"
-                *ngIf="!proposal.cloneProposalMetadataVO?.clonedProposal && !translated"
+                *ngIf="!proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
               >
                 {{
                   'page.collection.milestones.actions.send-copy-for-contribution'
@@ -110,7 +110,7 @@
                 euiDropdownItem
                 (click)="openAnnotationWarningModal(row)"
                 [disabled]="row.status !== milestoneStatus.Ready"
-                *ngIf="proposal.cloneProposalMetadataVO?.clonedProposal"
+                *ngIf="proposal.cloneProposalMetadataVO?.clonedProposal && permissions.includes('CAN_UPDATE')"
               >
                 {{
                   'page.collection.milestones.actions.send-revision-for-merge'

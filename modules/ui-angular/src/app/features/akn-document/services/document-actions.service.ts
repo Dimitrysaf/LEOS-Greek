@@ -254,11 +254,12 @@ export abstract class DocumentActionsService {
   }
 
   private buildCommonItems(): IRibbonToolbarSection[] {
-    const saveSection = !this.isMandateMemorandum() && this.buildSaveSection();
+    const saveSection = !this.isMandateMemorandum() && this.hasUpdatePermission && this.buildSaveSection();
     const searchSection = this.buildSearchSection();
     const importOJSection =
       (!this.profile || this.profile.importOJ) &&
       this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') &&
+      this.hasUpdatePermission &&
       this.buildImportOJSection();
     const exportSection = this.buildExportSection();
     const displaySection = this.buildDisplaySection();

@@ -90,6 +90,7 @@
       euiButton
       euiIconButton
       euiSecondary
+      *ngIf="(canReplace | async)"
       (click)="toggleReplace()"
     >
       <eui-icon-svg
@@ -111,7 +112,7 @@
   </div>
 
   <!-- Replace Row -->
-  <ng-container *ngIf="isReplace">
+  <ng-container *ngIf="isReplace && (canReplace | async)">
     <div class="replace-label">
       <label
         class="eui-u-m-none eui-u-p-none"
