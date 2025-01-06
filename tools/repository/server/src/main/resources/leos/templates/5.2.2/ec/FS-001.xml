@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+FS-001.xmlFS-001.xml<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="STAT_DIGIT_FINANC_LEGIS">
         <meta>
@@ -7692,62 +7692,1132 @@
                     </content>
                 </subparagraph>
             </level>
-            <level leos:depth="1" leos:deletable="false">
+            <level class="landscape" leos:deletable="false" leos:depth="1">
                 <num>4.</num>
                 <heading leos:editable="false">
                     <b>DIGITAL DIMENSIONS</b>
                 </heading>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level class="landscape" leos:deletable="false" leos:depth="2" leos:editable="true">
                 <num>4.1.</num>
-                <heading leos:editable="false">
-                    <b leos:editable="false">Requirements of digital relevance</b>
-                </heading>
                 <subparagraph>
                     <content>
-                        <p>[Requirement 1 (R1): ...]</p>
+                        <p>
+                            <b>Requirements of digital relevance</b>
+                        </p>
                     </content>
                 </subparagraph>
                 <subparagraph>
                     <content>
-                        <p>[Requirement 2 (R2): ...]</p>
+                        <p>If the policy initiative is assessed as having no requirement of digital relevance, provide an explanation as to why digital means are not used.</p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>[...]</p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>Otherwise, please list the requirements of digital relevance in the table below:</p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="font-size: 12pt; width: 90%;">
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Reference to the requirement</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Requirement description</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Actor affected or concerned by the requirement</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>High-level Processes</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Categor</b>
+                                        <b>y</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
                     </content>
                 </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level class="landscape" leos:deletable="false" leos:depth="2" leos:editable="true">
                 <num>4.2.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Data</b>
                 </heading>
-                <content>
-                    <p>[...]</p>
-                </content>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>High-level description of the data in scope and any related standards/specifications</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Type of data </b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Reference to the requirement(s)</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Standard and/or specification (if applicable)</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <b>
+                                <i>Alignment with the European Data Strategy</i>
+                            </b>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>Explain how the requirement(s) are aligned with the European Data Strategy</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>[...]</p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <b>Alignment with the once-only principle</b>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>Explain how the once-only principle has been considered how the possibility to reuse existing data explored</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>[...]</p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>Explain how newly created data is findable, accessible, interoperable and reusable, and meets high-quality standards</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>[...]</p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <b>Data flows</b>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Type of data</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Reference(s) to the requirement(s)</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Actor who provides the data</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Actor who receives the data</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Trigger for the data exchange</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Frequency (if applicable)</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </content>
+                </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level class="landscape" leos:deletable="false" leos:depth="2" leos:editable="true">
                 <num>4.3.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Digital solutions</b>
                 </heading>
-                <content>
-                    <p>[...]</p>
-                </content>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>For each digital solution, please provide the reference to the requirement(s) of digital relevance concerning it, a description of the digital solution's mandated functionality, the body that will be responsible for it, and other relevant aspects such as reusability and accessibility. Finally, explain whether the digital solution intends to make use of AI technologies</i>.</p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Digital solution</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Reference(s) to the requirement(s)</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Main mandated functionalities</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Responsible body</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>How is accessibility catered for?</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>How is reusability considered?</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Use of AI technologies (if applicable)</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Digital solution #1</p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Digital solution #2</p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>For each digital solution, explain how the digital solution complies with the requirements and obligations of the EU cybersecurity framework, and other applicable digital policies and legislative enactments (such as eIDAS, Single Digital Gateway, etc.).</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>Digital solution #1</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                            <tr>
+                                <td style="width: 147px;">
+                                    <p>
+                                        <b>Digital and/or sectorial policy (when these are applicable)</b>
+                                    </p>
+                                </td>
+                                <td style="width: 356px;">
+                                    <p>
+                                        <b>Explanation on how it aligns</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 147px;">
+                                    <p>
+                                        <b>
+                                            <i>AI Act</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 356px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 147px;">
+                                    <p>
+                                        <b>
+                                            <i>EU Cybersecurity framework</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 356px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 147px;">
+                                    <p>
+                                        <b>
+                                            <i>eIDAS</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 356px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 147px;">
+                                    <p>
+                                        <b>
+                                            <i>Single Digital Gateway and IMI</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 356px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 147px;">
+                                    <p>
+                                        <b>
+                                            <i>Others</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 356px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>Digital solution #2</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                            <tr>
+                                <td style="width: 141px;">
+                                    <p>
+                                        <b>Digital and/or sectorial policy (when these are applicable)</b>
+                                    </p>
+                                </td>
+                                <td style="width: 362px;">
+                                    <p>
+                                        <b>Explanation on how it aligns</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 141px;">
+                                    <p>
+                                        <b>
+                                            <i>AI Act</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 362px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 141px;">
+                                    <p>
+                                        <b>
+                                            <i>EU Cybersecurity framework</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 362px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 141px;">
+                                    <p>
+                                        <b>
+                                            <i>eIDAS</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 362px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 141px;">
+                                    <p>
+                                        <b>
+                                            <i>Single Digital Gateway and IMI</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 362px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 141px;">
+                                    <p>
+                                        <b>
+                                            <i>Others</i>
+                                        </b>
+                                    </p>
+                                </td>
+                                <td style="width: 362px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </content>
+                </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level class="landscape" leos:deletable="false" leos:depth="2" leos:editable="true">
                 <num>4.4.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Interoperability assessment</b>
                 </heading>
-                <content>
-                    <p>[...]</p>
-                </content>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>Describe the digital public service(s) affected by the requirements</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Digital public service or category of digital public services</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Description</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Reference(s) to the requirement(s)</b>
+                                    </p>
+                                </td>
+                                <td style="background: #D9D9D9;">
+                                    <p>
+                                        <b>Interoperable Europe Solution(s)</b>
+                                        <b>(NOT APPLICABLE)</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Other interoperability solution(s)</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Digital public service #1</p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="background: #D9D9D9;">
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Category of digital public services according to COFOG<authorialNote marker="20" placement="bottom">
+                                        <p>https://op.europa.eu/en/web/eu-vocabularies/concept-scheme/-/resource?uri=http://data.europa.eu/7yx/cofog</p>
+                                    </authorialNote> #1</p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="background: #D9D9D9;">
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <i>Assess the impact of the requirement(s) on cross-border interoperability</i>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>
+                            <b>
+                                <u>Digital public service #1</u>
+                            </b>
+                        </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Assessment</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Measures</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Potential remaining barriers</b>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Alignment with existing digital and sectorial polici</b>
+                                        <b>es. </b>
+                                        <b>Please list the applicable digital and sectorial policies identified</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p>Barrier #1 Barrier #2 <i>Barrier #3</i>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Organisational measures for a smooth cross-border digital public services delivery.</b> <b>Please list the governance measures foreseen</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>Governance measure #1 Governance measure #2 <i>Governance measure #3</i>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>Barrier #1 Barrier #2 <i>Barrier #3</i>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Measures taken to ensure a shared understanding of the data.</b> <b>Please list such measures</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>Measure #1 Measure #2 <i>Measure #3</i>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>Barrier #1 Barrier #2 <i>Barrier #3</i>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Use of commonly agreed open technical specifications and standards.</b> <b>Please list such measures</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>Measure #1 Measure #2 <i>Measure #3</i>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>Barrier #1 Barrier #2 <i>Barrier #3</i>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </content>
+                </subparagraph>
             </level>
-            <level leos:depth="2" leos:editable="true" leos:deletable="false">
+            <level class="landscape" leos:deletable="false" leos:depth="2" leos:editable="true">
                 <num>4.5.</num>
                 <heading leos:editable="false">
                     <b leos:editable="false">Measures to support digital implementation</b>
                 </heading>
                 <content>
-                    <p>[...]</p>
+                    <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                        <tr>
+                            <td>
+                                <p>
+                                    <b>Description of the measure</b>
+                                </p>
+                            </td>
+                            <td>
+                                <p>
+                                    <b>Reference(s) to the requirement(s)</b>
+                                </p>
+                            </td>
+                            <td>
+                                <p>
+                                    <b>Commission role</b> (if applicable)</p>
+                            </td>
+                            <td style="width: 117px;">
+                                <p>
+                                    <b>Actors to be involved</b> (if applicable)</p>
+                            </td>
+                            <td style="width: 11px;">
+                                <p>
+                                    <b>Expected timeline</b> (if applicable)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td style="width: 117px;">
+                                <p> </p>
+                            </td>
+                            <td style="width: 11px;">
+                                <p> </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td style="width: 117px;">
+                                <p> </p>
+                            </td>
+                            <td style="width: 11px;">
+                                <p> </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td style="width: 117px;">
+                                <p> </p>
+                            </td>
+                            <td style="width: 11px;">
+                                <p> </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td style="width: 117px;">
+                                <p> </p>
+                            </td>
+                            <td style="width: 11px;">
+                                <p> </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td style="width: 117px;">
+                                <p> </p>
+                            </td>
+                            <td style="width: 11px;">
+                                <p> </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td style="width: 117px;">
+                                <p> </p>
+                            </td>
+                            <td style="width: 11px;">
+                                <p> </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td>
+                                <p> </p>
+                            </td>
+                            <td style="width: 117px;">
+                                <p> </p>
+                            </td>
+                            <td style="width: 11px;">
+                                <p> </p>
+                            </td>
+                        </tr>
+                    </table>
                 </content>
             </level>
         </mainBody>
