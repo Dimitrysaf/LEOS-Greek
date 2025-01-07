@@ -403,8 +403,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(),
-                "guidance");
+        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate());
     }
 
     @Override

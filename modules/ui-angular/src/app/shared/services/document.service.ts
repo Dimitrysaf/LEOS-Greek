@@ -830,7 +830,11 @@ export class DocumentService {
     this.navigationSidebarCollapsedBS.next(!expanded);
   }
 
-  seeUserGuidance() {
+  setUserGuidance(value: boolean) {
+    this.userGuidanceVisibleBS.next(value);
+  }
+
+  toggleUserGuidance() {
     this.userGuidanceVisibleBS.next(!this.userGuidanceVisibleBS.value);
   }
 

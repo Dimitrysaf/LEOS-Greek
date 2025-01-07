@@ -688,7 +688,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     @Subscribe
     public void getUserGuidance(FetchUserGuidanceRequest event) {
         FinancialStatement financialStatement = financialStatementService.findFinancialStatement(documentId);
-        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(financialStatement.getMetadata().get().getDocTemplate(), "guidance");
+        String jsonGuidance = templateConfigurationService.getElementFromTemplateConfiguration(financialStatement.getMetadata().get().getDocTemplate(), "guidance");
         financialStatementScreen.setUserGuidance(jsonGuidance);
     }
 

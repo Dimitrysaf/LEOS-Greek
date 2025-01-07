@@ -390,8 +390,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        return templateConfigurationService.getTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate(),
-                "guidance");
+        return templateConfigurationService.getTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate());
     }
 
     @Override

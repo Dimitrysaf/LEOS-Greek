@@ -1214,7 +1214,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     public void getUserGuidance(FetchUserGuidanceRequest event) {
         // KLUGE temporary hack for compatibility with new domain model
         Explanatory explanatory = explanatoryService.findExplanatory(documentId);
-        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate(), "guidance");
+        String jsonGuidance = templateConfigurationService.getElementFromTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate(), "guidance");
         explanatoryScreen.setUserGuidance(jsonGuidance);
     }
     @Subscribe

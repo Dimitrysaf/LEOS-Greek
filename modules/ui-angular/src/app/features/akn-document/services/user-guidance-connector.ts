@@ -14,7 +14,7 @@ export type UserGuidanceConnectorOptions = {
 };
 
 export class UserGuidanceConnector extends AbstractJavaScriptComponent<UserGuidanceConnectorState> {
-  enableUserGuidance?: (...args: any[]) => void;
+  toggleUserGuidance?: (...args: any[]) => void;
   receiveUserGuidance?: (...args: any[]) => void;
 
   constructor(
@@ -23,14 +23,16 @@ export class UserGuidanceConnector extends AbstractJavaScriptComponent<UserGuida
     private documentService : DocumentService,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
+    this.documentService.setUserGuidance(false);
   }
 
   requestUserGuidance() {
     this.documentService.requestUserGuidance().subscribe((userGuidance) => {
       if (userGuidance && this.receiveUserGuidance) {
-        this.receiveUserGuidance(
-          JSON.stringify(userGuidance),
-        );
+        this.receiveUserGuidance(userGuidance);
+        if(userGuidance['showGuidance']) {
+          this.documentService.setUserGuidance(userGuidance['showGuidance']);
+        }
       }
     });
   }

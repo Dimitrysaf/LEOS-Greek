@@ -442,8 +442,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        return templateConfigurationService.getTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate(),
-                "guidance");
+        return templateConfigurationService.getTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate());
     }
 
     @Override

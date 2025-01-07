@@ -272,7 +272,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
             String alternateAttrVal = elementProcessor.getElementAttributeValueByNameAndId(bill, LEOS_ALTERNATIVE_ATTR,
                     elementTagName, elementId);
             if (alternateAttrVal != null && alternateAttrVal.equalsIgnoreCase("true")) {
-                jsonAlternatives = templateConfigurationService.getTemplateConfiguration(
+                jsonAlternatives = templateConfigurationService.getElementFromTemplateConfiguration(
                         bill.getMetadata().get().getDocTemplate(), "alternatives");
             }
 
@@ -402,8 +402,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Bill bill = this.billService.findBillByRef(documentRef);
-        return templateConfigurationService.getTemplateConfiguration(bill.getMetadata().get().getDocTemplate(),
-                "guidance");
+        return templateConfigurationService.getTemplateConfiguration(bill.getMetadata().get().getDocTemplate());
     }
 
     @Override

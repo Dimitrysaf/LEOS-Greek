@@ -89,9 +89,9 @@ export class CKEditorService {
   // called from document-actions-dropdown.component.html
   toggleUserGuidance() {
     this.documentService.userGuidanceVisible$.subscribe((seeUserGuidance: boolean) => {
-      this.userGuidanceConnector.enableUserGuidance(seeUserGuidance);
+      this.userGuidanceConnector.toggleUserGuidance(seeUserGuidance);
     });
-    this.documentService.seeUserGuidance();
+    this.documentService.toggleUserGuidance();
   }
 
   // called from document-editor.component
@@ -312,9 +312,8 @@ export class CKEditorService {
     require(['extension/userGuidanceExtension'], (userGuideance) => {
       userGuideance.init(this.userGuidanceConnector);
       this.userGuidanceConnector.jsDepsInited();
+      this.userGuidanceConnector.requestUserGuidance();
     });
-    this.userGuidanceConnector.requestUserGuidance();
-    this.documentService.resetUserGuidance();
   }
 
   private initRefToLink(

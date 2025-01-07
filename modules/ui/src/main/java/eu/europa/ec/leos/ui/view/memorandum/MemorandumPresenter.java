@@ -648,7 +648,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     public void getUserGuidance(FetchUserGuidanceRequest event) {
         // KLUGE temporary hack for compatibility with new domain model
         Memorandum memorandum = memorandumService.findMemorandum(documentId, true);
-        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate(), "guidance");
+        String jsonGuidance = templateConfigurationService.getElementFromTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate(), "guidance");
         memorandumScreen.setUserGuidance(jsonGuidance);
     }
 

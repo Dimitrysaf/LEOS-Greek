@@ -583,7 +583,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         String element = elementProcessor.getElement(bill, elementTagName, elementId);
         String alternateAttrVal = elementProcessor.getElementAttributeValueByNameAndId(bill, LEOS_ALTERNATIVE_ATTR, elementTagName, elementId);
         if (alternateAttrVal != null && alternateAttrVal.equalsIgnoreCase("true")) {
-            jsonAlternatives = templateConfigurationService.getTemplateConfiguration(bill.getMetadata().get().getDocTemplate(), "alternatives");
+            jsonAlternatives = templateConfigurationService.getElementFromTemplateConfiguration(bill.getMetadata().get().getDocTemplate(), "alternatives");
         }
 
         coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
@@ -1810,7 +1810,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     @Subscribe
     public void getUserGuidance(FetchUserGuidanceRequest event) {
         Bill bill = billService.findBill(documentId, true);
-        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(bill.getMetadata().get().getDocTemplate(), "guidance");
+        String jsonGuidance = templateConfigurationService.getElementFromTemplateConfiguration(bill.getMetadata().get().getDocTemplate(), "guidance");
         documentScreen.setUserGuidance(jsonGuidance);
     }
 
