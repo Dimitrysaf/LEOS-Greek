@@ -127,20 +127,25 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 LOG.error("Invalid document type");
         }
         documentLanguageContext.setDocumentLanguage(language);
-
-        TocDropResult result = validateDrop(request, xmlContent);
-
-        final String srcItemType = TableOfContentHelper.getDisplayableTocItem(result.getSourceItem().getTocItem(), language, messageHelper);
-        if (result.getMessageKey().equals("toc.level.only.higher.division.allowed.between")) {
-            result.setSourceItem(null);
-            result.setTargetItem(null);
-        } else if (result.getTargetItem() != null) {
-            final String targetItemType = TableOfContentHelper.getDisplayableTocItem(result.getTargetItem().getTocItem(), language, messageHelper);
-            result.setMessageKey(messageHelper.getMessage(result.getMessageKey(), srcItemType, targetItemType));
-        } else {
-            result.setMessageKey(messageHelper.getMessage("toc.edit.window.drop.error.root.message", srcItemType));
+        TocDropResult result;
+        try {
+            result = validateDrop(request, xmlContent);
+        } catch (Exception e) {
+            LOG.error("Failed to validate drop in toc", e);
+            throw new RuntimeException(e);
         }
-
+        if(result != null) {
+            final String srcItemType = TableOfContentHelper.getDisplayableTocItem(result.getSourceItem().getTocItem(), language, messageHelper);
+            if (result.getMessageKey().equals("toc.level.only.higher.division.allowed.between")) {
+                result.setSourceItem(null);
+                result.setTargetItem(null);
+            } else if (result.getTargetItem() != null) {
+                final String targetItemType = TableOfContentHelper.getDisplayableTocItem(result.getTargetItem().getTocItem(), language, messageHelper);
+                result.setMessageKey(messageHelper.getMessage(result.getMessageKey(), srcItemType, targetItemType));
+            } else {
+                result.setMessageKey(messageHelper.getMessage("toc.edit.window.drop.error.root.message", srcItemType));
+            }
+        }
         return new NodeValidationResponse(result);
     }
 
@@ -273,7 +278,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                         !position.equals(TocItemPosition.AS_CHILDREN)) ||
                         (sourceItem.getTocItem().isHigherElement() && !targetItem.getTocItem().isHigherElement() &&
                                 !isInHierarchy(sourceItem, tableOfContentItemVO, types, tocItem, position)) ||
-                        !isHierarchyValid(tableOfContentItemVO)) {
+                        sourceItem.getTocItem().isHigherElement() && !isHierarchyValid(tableOfContentItemVO)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
