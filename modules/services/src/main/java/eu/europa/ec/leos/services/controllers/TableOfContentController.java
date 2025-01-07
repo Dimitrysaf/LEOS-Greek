@@ -48,7 +48,7 @@ public class TableOfContentController {
             NodeValidationResponse response = this.tableOfContentService.nodeValidationDrop(nodeValidationRequest);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting document toc validation - " + e);
+            LOG.error("Error occurred while getting document toc validation - {}", e);
             return new ResponseEntity<>("Unexpected error occurred while getting document toc validation", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
