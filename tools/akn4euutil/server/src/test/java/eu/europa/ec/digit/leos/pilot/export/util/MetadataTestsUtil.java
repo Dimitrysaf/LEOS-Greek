@@ -220,7 +220,7 @@ public final class MetadataTestsUtil {
     private static void checkInterinstitutionalCote(XmlFile xmlFile) throws Exception {
         Node xmlNodeMeta = MetadataUtil.getXmlNodeMetaReferenceWithNameAttributeValue(xmlFile, "TLCReference", "procedureReference");
         if (xmlNodeMeta != null) {
-            checkNodeAttributeValue(xmlNodeMeta, "xml:id", "_procedure_2012_227");
+            checkNodeAttributeValue(xmlNodeMeta, "xml:id", "procedure_2012_227");
             checkNodeAttributeValue(xmlNodeMeta, "href", "http://eur-lex.europa.eu/procedure/EN/2012_227");
             checkNodeAttributeValue(xmlNodeMeta, "showAs", "2012/0227 (COD)");
             checkNodeAttributeValue(xmlNodeMeta, "shortForm", "2012/227/COD");
@@ -230,14 +230,14 @@ public final class MetadataTestsUtil {
         Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "procedureIdentifier");
         Node xmlNodeDocketNumber = MetadataUtil.getXmlNodeDocketNumber(xmlNodeContainer);
         if (xmlNodeDocketNumber != null) {
-            checkNodeWithRefersToAttribute(xmlNodeDocketNumber, "~_procedure_2012_227", "2012/0227 (COD)");
+            checkNodeWithRefersToAttribute(xmlNodeDocketNumber, "~procedure_2012_227", "2012/0227 (COD)");
         }
 
         if (xmlFile.getName().startsWith("bill")) {
             Node xmlNodePreface = xmlFile.getElementByName("preface");
             xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodePreface, "procedureIdentifier");
             if (xmlNodeContainer != null) {
-                checkNodeWithRefersToAttribute(xmlNodeDocketNumber, "~_procedure_2012_227", "2012/0227 (COD)");
+                checkNodeWithRefersToAttribute(xmlNodeDocketNumber, "~procedure_2012_227", "2012/0227 (COD)");
             }
         }
     }

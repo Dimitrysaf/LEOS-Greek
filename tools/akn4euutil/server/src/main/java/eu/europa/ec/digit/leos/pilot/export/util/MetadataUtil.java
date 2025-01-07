@@ -27,7 +27,7 @@ public class MetadataUtil {
     private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER";
     private static final String INSERT_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     private static final String INTERINSTITUTIONAL_COTE_PARSE_PATTERN = "([0-9]{4})/([0-9]+) \\(([A-Za-z0-9]+)\\)";
-    private static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "_procedure_%s_%s";
+    private static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "procedure_%s_%s";
     private static final String INTERINSTITUTIONAL_COTE_HREF_PATTERN = "http://eur-lex.europa.eu/procedure/EN/%s_%s";
     private static final String INTERINSTITUTIONAL_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     private static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
