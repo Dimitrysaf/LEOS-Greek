@@ -145,30 +145,27 @@ public class MetadataUtilsTests {
     public void testAddInsertCoteToCuidInMainXml() throws XmlUtilException, MetadataUtilsException {
         XmlFile xmlFile = createCuidXmlFile("main-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
         ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
-        MetadataUtil.addInsertCoteToCuid(insertCoteFieldInfo, xmlFile);
+        MetadataUtil.processInsertCote(insertCoteFieldInfo, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
-        Assertions.assertNotNull(fileCuidNode);
-        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(fileCuidNode, "value"));
+        Assertions.assertNull(fileCuidNode);
 
         Node docCuidNode = xmlFile.getElementByName("akn4eu:docCUID");
-        Assertions.assertNotNull(docCuidNode);
-        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(docCuidNode, "value"));
+        Assertions.assertNull(docCuidNode);
     }
 
     @Test
     public void testAddInsertCoteToCuidInNotMainXml() throws XmlUtilException, MetadataUtilsException {
         XmlFile xmlFile = createCuidXmlFile("notMain-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
         ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
-        MetadataUtil.addInsertCoteToCuid(insertCoteFieldInfo, xmlFile);
+        MetadataUtil.processInsertCote(insertCoteFieldInfo, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
         Assertions.assertNotNull(fileCuidNode);
         Assertions.assertEquals("cm29gm7v600276e56hvqz1k4g", XmlUtil.getNodeAttributeValue(fileCuidNode, "value"));
 
         Node docCuidNode = xmlFile.getElementByName("akn4eu:docCUID");
-        Assertions.assertNotNull(docCuidNode);
-        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(docCuidNode, "value"));
+        Assertions.assertNull(docCuidNode);
     }
 
     private XmlFile createCuidXmlFile(String filename, String cuid) throws XmlUtilException {
