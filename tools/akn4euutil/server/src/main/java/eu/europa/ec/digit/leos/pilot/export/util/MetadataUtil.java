@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 public class MetadataUtil {
     private static final Logger LOG = LoggerFactory.getLogger(MetadataUtil.class);
@@ -28,7 +27,7 @@ public class MetadataUtil {
     private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER";
     private static final String INSERT_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     private static final String INTERINSTITUTIONAL_COTE_PARSE_PATTERN = "([0-9]{4})/([0-9]+) \\(([A-Za-z0-9]+)\\)";
-    private static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "_procedure_%s_%s";
+    private static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "procedure_%s_%s";
     private static final String INTERINSTITUTIONAL_COTE_HREF_PATTERN = "http://eur-lex.europa.eu/procedure/EN/%s_%s";
     private static final String INTERINSTITUTIONAL_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     private static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
@@ -552,37 +551,10 @@ public class MetadataUtil {
         String year = fieldValue.substring(bracketIndex+1, closingBracketIndex);
         String number = readCoteNumber(fieldValue, closingBracketIndex+1);
 
-        String id = "_" + generateRandomIdentifier(5);
+        String id = IdGenerator.generateId();
         String shortValue = String.format(INSERT_COTE_SHORT_VALUE_PATTERN, type, year, number);
 
         return new ReferenceFieldInfo(id, INSERT_COTE_HREF, fieldValue, shortValue, MetadataFieldType.INSERT_COTE);
-    }
-
-    private static String generateRandomIdentifier(int length) {
-        final String characters = "abcdefghijklmnopqrstuvwxyz";
-        final String numbersAndCharacters =  "0123456789" + characters;
-        String randomIdentifier = "";
-
-        if (length > 0){
-            randomIdentifier += getRandomCharsFromString(characters, 1);
-            randomIdentifier += getRandomCharsFromString(numbersAndCharacters, length-1);
-        }
-
-        return randomIdentifier;
-    }
-
-    private static String getRandomCharsFromString(String str, int count) {
-        String result = "";
-
-        if (count > 0) {
-            Random random = new Random();
-            for (int i = 0; i < count; i++) {
-                int randomIndex = random.nextInt(str.length()-1);
-                result += str.charAt(randomIndex);
-            }
-        }
-
-        return result;
     }
 
     private static String readCoteNumber(String value, int startIndex) {
