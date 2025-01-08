@@ -1,4 +1,4 @@
-FS-001.xmlFS-001.xml<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="STAT_DIGIT_FINANC_LEGIS">
         <meta>
