@@ -19,6 +19,7 @@ import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
@@ -205,7 +206,15 @@ class MetadataServiceImpl implements MetadataService {
         for (ApplyMetadataRequest.FieldNode field : action.getFields()){
             fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles));
         }
+        if (!hasLinkedDocumentsField(action)) {
+            // Remove associatedReferences container if no linkedDocuments are set
+            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles);
+        }
         return new ApplyMetadataResponse.ActionNode(action.getName(), fieldResponses);
+    }
+
+    private boolean hasLinkedDocumentsField(ApplyMetadataRequest.ActionNode action) {
+        return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
     }
 
     private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles){

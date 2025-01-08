@@ -9,6 +9,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -72,21 +73,21 @@ public class MetadataUtil {
             "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
 
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
-        return new ReferenceFieldInfo("_BEL_BRU",
+        return new ReferenceFieldInfo("BEL_BRU",
                 "http://publications.europa.eu/resource/authority/place/BEL_BRU",
                 "Brussels",
                 "", MetadataFieldType.ADOPTION_LOCATION);
     }
 
     public static ReferenceFieldInfo getFieldInfoLocationLuxembourg(){
-        return new ReferenceFieldInfo("_LUX_LUX",
+        return new ReferenceFieldInfo("LUX_LUX",
                 "http://publications.europa.eu/resource/authority/place/LUX_LUX",
                 "Luxembourg",
                 "", MetadataFieldType.ADOPTION_LOCATION);
     }
 
     public static ReferenceFieldInfo getFieldInfoLocationStrasbourg(){
-        return new ReferenceFieldInfo("_FRA_SXB",
+        return new ReferenceFieldInfo("FRA_SXB",
                 "http://publications.europa.eu/resource/authority/place/FRA_SXB",
                 "Strasbourg",
                 "", MetadataFieldType.ADOPTION_LOCATION);
@@ -573,14 +574,13 @@ public class MetadataUtil {
     }
 
     public static MetadataFieldInfo parseLinkedDocuments(String fieldValue) throws MetadataUtilsException {
-        String[] references = fieldValue.split("-");
+        String[] references = StringUtils.hasLength(fieldValue) ? fieldValue.split("-") : new String[0];
         List<ReferenceFieldInfo> referenceFieldInfoList = new ArrayList<>();
 
         for (final String reference : references) {
             final ReferenceFieldInfo fieldInfo = parseLinkedDocumentInfo(reference);
             referenceFieldInfoList.add(fieldInfo);
         }
-
         return new MultipleReferencesFieldInfo(referenceFieldInfoList, MetadataFieldType.LINKED_DOCUMENTS);
     }
 
@@ -989,6 +989,7 @@ public class MetadataUtil {
         XmlUtil.removeNodeAttributeValue(xmlNodeDocNumber, "class");
         xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
         final Element inline = xmlFile.newElement("inline");
+        XmlUtil.setNodeAttributeValue(inline, XMLID, IdGenerator.generateId());
         XmlUtil.setNodeAttributeValue(inline, NAME, "version");
         inline.setTextContent(fieldInfo.getDisplayValue());
         xmlNodeDocNumber.appendChild(inline);
@@ -1072,19 +1073,28 @@ public class MetadataUtil {
 
     public static void processLinkedDocuments(MultipleReferencesFieldInfo fieldInfo, XmlFile xmlFile) {
         Node xmlNodeCoverpage = xmlFile.getElementByName(COVERPAGE);
-        Node xmlNodeAssociatedReferences = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "associatedReferences");
-
-        if (xmlNodeAssociatedReferences == null) {
+        if (XmlUtil.isNodeEmpty(xmlNodeCoverpage)) {
             return;
         }
-        
+
+        Node xmlNodeAssociatedReferences = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "associatedReferences");
+        if (XmlUtil.isNodeEmpty(xmlNodeAssociatedReferences)) {
+            return;
+        }
+
+        if (fieldInfo.getReferences().isEmpty()) {
+            xmlNodeCoverpage.removeChild(xmlNodeAssociatedReferences);
+            return;
+        }
+
+        XmlUtil.removeNodeAttributeValue(xmlNodeAssociatedReferences, "class");
         // remove any existing content
         if(xmlNodeAssociatedReferences.hasChildNodes()) {
             final NodeList children = xmlNodeAssociatedReferences.getChildNodes();
             for(int i = children.getLength() - 1; i >= 0; i--)
                 xmlNodeAssociatedReferences.removeChild(children.item(i));
         }
-        
+
         for (final ReferenceFieldInfo reference : fieldInfo.getReferences()) {
             final Element referenceElement = createLinkedDocumentElement(reference, xmlFile);
             xmlNodeAssociatedReferences.appendChild(referenceElement);
@@ -1092,13 +1102,15 @@ public class MetadataUtil {
     }
 
     private static Element createLinkedDocumentElement(final ReferenceFieldInfo reference, XmlFile xmlFile) {
-
-        final Element referenceElement = xmlFile.newElement("p");
+        final String xmlId = IdGenerator.generateId();
         final Element refElement = xmlFile.newElement("ref");
-        
+
+        XmlUtil.setNodeAttributeValue(refElement, XMLID, xmlId);
         refElement.setTextContent(reference.getDisplayValue());
         refElement.setAttribute(HREF, reference.getHref());
-        
+
+        final Element referenceElement = xmlFile.newElement("p");
+        XmlUtil.setNodeAttributeValue(referenceElement, XMLID, xmlId);
         referenceElement.appendChild(xmlFile.createTextNode("{"));
         referenceElement.appendChild(refElement);
         referenceElement.appendChild(xmlFile.createTextNode("}"));
