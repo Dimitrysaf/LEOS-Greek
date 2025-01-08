@@ -41,18 +41,38 @@ class TemplateConfigurationServiceImpl implements TemplateConfigurationService {
     }
 
     @Override
-    public String getTemplateConfiguration(String templateId, String confElement) {
+    public String getTemplateConfiguration(String templateId) {
+        JsonNode confJson = getConfJson(templateId);
+        return confJson != null ? confJson.toString() : null;
+    }
+
+    @Override
+    public String getElementFromTemplateConfiguration(String templateId, String confElement) {
         JsonNode confElementJson = getConfElementJson(templateId, confElement);
         return confElementJson != null ? confElementJson.toString() : null;
     }
 
     @Override
-    public JsonNode getTemplateConfigurationJson(String templateId, String confElement) {
+    public JsonNode getElementJsonFromTemplateConfiguration(String templateId, String confElement) {
         return getConfElementJson(templateId, confElement);
     }
 
     private JsonNode getConfElementJson(String templateId, String confElement) {
         LOG.trace("Getting template configuration... [templateId={}] , [confElement={}]", templateId, confElement);
+
+        JsonNode rootNode = getConfJson(templateId);
+        JsonNode templateConfJson = rootNode.get(confElement);
+        if (templateConfJson == null) {
+            throw new IllegalArgumentException("Element '" + confElement + "' not present in the '" + templateId + "-CONF'");
+        }
+
+        LOG.trace("Retrieved template configuration... [templateId={}] , [confElement={}]", templateId, confElement);
+
+        return templateConfJson;
+    }
+
+    private JsonNode getConfJson(String templateId) {
+        LOG.trace("Getting template configuration... [templateId={}]", templateId);
         String conf;
         String confFile = templateId + "-CONF";
 
@@ -65,19 +85,18 @@ class TemplateConfigurationServiceImpl implements TemplateConfigurationService {
                 ObjectMapper mapper = new ObjectMapper();
 
                 JsonNode rootNode = mapper.readTree(conf);
-                JsonNode templateConfJson = rootNode.get(confElement);
-                if (templateConfJson == null) {
-                    throw new IllegalArgumentException("Element '" + confElement + "' not present in the '" + templateId + "-CONF'");
+                if (rootNode == null) {
+                    throw new IllegalArgumentException(templateId + "-CONF.json is not present");
                 }
                 LOG.debug("Retrieved template configuration length {} for template {}", content.getLength(), templateId);
-                return templateConfJson;
+                return rootNode;
             }
         } catch (Exception exception) {
             if (exception instanceof IllegalArgumentException) {
                 throw (IllegalArgumentException) exception;
             }
-            LOG.error("Error occurred while fetching the conf for templateId: {}, confElement: {}, Error: {} ", templateId, confElement, exception.getMessage());
-            throw new IllegalArgumentException("Error occurred while fetching the conf for templateId: " + templateId + ", confElement: " + confElement + ", Error: " + exception.getMessage());
+            LOG.error("Error occurred while fetching the conf for templateId: {}, Error: {} ", templateId, exception.getMessage());
+            throw new IllegalArgumentException("Error occurred while fetching the conf for templateId: " + templateId + "-CONF.json, Error: " + exception.getMessage());
         }
         return null;
     }

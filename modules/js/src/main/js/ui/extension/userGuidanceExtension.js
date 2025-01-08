@@ -32,7 +32,7 @@ define(function userGuidanceExtensionModule(require) {
         connector.onStateChange = _connectorStateChangeListener;
 
         connector.receiveUserGuidance = _receiveUserGuidance;
-        connector.enableUserGuidance = _enableUserGuidance;
+        connector.toggleUserGuidance = _toggleUserGuidance;
     }
 
     // handle connector state change on client-side
@@ -45,8 +45,13 @@ define(function userGuidanceExtensionModule(require) {
     function _receiveUserGuidance(userGuidance) {
         var connector = this;
         log.debug("User guidance array received..!");
-        connector.guidanceArray = JSON.parse(userGuidance);
+        if(userGuidance['guidance']) {
+            connector.guidanceArray = userGuidance['guidance'];
+        }
         _setDestinationIds(connector.guidanceArray);
+        if(userGuidance['showGuidance']) {
+            connector.guidanceEnabled = userGuidance['showGuidance'];
+        }
         _processGuidance(connector);
     }
 
@@ -70,7 +75,7 @@ define(function userGuidanceExtensionModule(require) {
         }
     }
 
-    function _enableUserGuidance(enable) {
+    function _toggleUserGuidance(enable) {
         var connector = this;
         log.debug("User guidance request with value:" + enable);
         connector.guidanceEnabled = enable;

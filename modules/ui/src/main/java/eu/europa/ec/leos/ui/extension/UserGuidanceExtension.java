@@ -62,7 +62,7 @@ public class UserGuidanceExtension<T extends AbstractField<V>, V> extends LeosJa
 
     @Subscribe
     public void setGuidanceState(UserGuidanceRequest event) {
-        callFunction("enableUserGuidance", event.isEnable());
+        callFunction("toggleUserGuidance", event.isEnable());
     }
 
     private void registerServerSideAPI() {

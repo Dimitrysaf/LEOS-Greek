@@ -495,7 +495,7 @@ public class GenericDocumentApiService {
         return Optional.of(docRef)
                 .map(this::findDocumentByRef)
                 .map(this::getDocTemplate)
-                .map(template -> this.templateConfigurationService.getTemplateConfiguration(template, "guidance"))
+                .map(template -> this.templateConfigurationService.getTemplateConfiguration(template))
                 .orElse(null);
     }
 

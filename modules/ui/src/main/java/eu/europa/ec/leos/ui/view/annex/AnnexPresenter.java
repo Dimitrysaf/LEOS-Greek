@@ -519,7 +519,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     @Subscribe
     public void getUserGuidance(FetchUserGuidanceRequest event) {
         Annex annex = annexService.findAnnex(documentId, true);
-        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(annex.getMetadata().get().getDocTemplate(), "guidance");
+        String jsonGuidance = templateConfigurationService.getElementFromTemplateConfiguration(annex.getMetadata().get().getDocTemplate(), "guidance");
         annexScreen.setUserGuidance(jsonGuidance);
     }
 

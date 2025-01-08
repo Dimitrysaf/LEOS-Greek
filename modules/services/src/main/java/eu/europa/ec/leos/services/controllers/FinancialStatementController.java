@@ -287,10 +287,15 @@ public class FinancialStatementController {
     @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public String getUserGuidance(@PathVariable("documentRef") String documentRef) {
-        documentRef = encodeParam(documentRef);
-        String userGuidance = this.genericDocumentApiService.getUserGuidance(documentRef);
-        return userGuidance;
+    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+        try {
+            documentRef = encodeParam(documentRef);
+            String userGuidance = this.financialStatementApiService.fetchUserGuidance(documentRef);
+            return ResponseEntity.ok().body(userGuidance);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get user guidance for annex " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get user guidance for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -30,6 +30,7 @@ import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +69,8 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     TrackChangesProcessor<FinancialStatement> trackChangesProcessor;
     @Autowired
     GenericDocumentApiService genericDocumentApiService;
+    @Autowired
+    TemplateConfigurationService templateConfigurationService;
 
     @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
@@ -246,7 +249,8 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
 
     @Override
     public String fetchUserGuidance(String documentRef) {
-        return null;
+        FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
+        return templateConfigurationService.getTemplateConfiguration(financialStatement.getMetadata().get().getDocTemplate());
     }
 
     @Override

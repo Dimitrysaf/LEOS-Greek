@@ -553,8 +553,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        return templateConfigurationService.getTemplateConfiguration(annex.getMetadata().get().getDocTemplate(),
-                "guidance");
+        return templateConfigurationService.getTemplateConfiguration(annex.getMetadata().get().getDocTemplate());
     }
 
     @Override

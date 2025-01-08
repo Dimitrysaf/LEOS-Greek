@@ -662,7 +662,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     public void getUserGuidance(FetchUserGuidanceRequest event) {
         // KLUGE temporary hack for compatibility with new domain model
         Proposal proposal = proposalService.findProposal(documentId, true);
-        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+        String jsonGuidance = templateConfigurationService.getElementFromTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
         coverPageScreen.setUserGuidance(jsonGuidance);
     }
 
