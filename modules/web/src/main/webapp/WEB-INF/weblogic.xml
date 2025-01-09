@@ -26,7 +26,8 @@
     </session-descriptor>
 
     <container-descriptor>
-        <!-- classes must be set to false to allow packages and resources -->
+        <cache-control>no-cache</cache-control>
+        <!-- classes must be set to false, in order to allow packages and resources -->
         <prefer-web-inf-classes>false</prefer-web-inf-classes>
         <prefer-application-packages>
             <!-- SLF4J and bridges -->
