@@ -7738,7 +7738,7 @@
                                 </td>
                                 <td>
                                     <p>
-                                        <b>Actor affected or concerned by the requirement</b>
+                                        <b>Actor(s) affected or concerned by the requirement</b>
                                     </p>
                                 </td>
                                 <td>
@@ -7748,8 +7748,7 @@
                                 </td>
                                 <td>
                                     <p>
-                                        <b>Categor</b>
-                                        <b>y</b>
+                                        <b>Categories</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7893,7 +7892,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p> </p>
+                                    <p>Type of data #1</p>
                                 </td>
                                 <td>
                                     <p> </p>
@@ -7904,7 +7903,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p> </p>
+                                    <p>Type of data #2</p>
                                 </td>
                                 <td>
                                     <p> </p>
@@ -7947,7 +7946,7 @@
                 <subparagraph>
                     <content>
                         <p>
-                            <i>Explain how the once-only principle has been considered how the possibility to reuse existing data explored</i>
+                            <i>Explain how the once-only principle has been considered and how the possibility to reuse existing data has been explored</i>
                         </p>
                     </content>
                 </subparagraph>
@@ -7973,6 +7972,11 @@
                         <p>
                             <b>Data flows</b>
                         </p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <p>For each data flow, please fill the table below:</p>
                     </content>
                 </subparagraph>
                 <subparagraph>
@@ -8012,7 +8016,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p> </p>
+                                    <p>Type of data #1</p>
                                 </td>
                                 <td>
                                     <p> </p>
@@ -8032,7 +8036,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p> </p>
+                                    <p>Type of data # 2</p>
                                 </td>
                                 <td>
                                     <p> </p>
@@ -8593,12 +8597,12 @@
                                 </td>
                                 <td>
                                     <p>
-                                        <b>Measures</b>
+                                        <b>Measure(s)</b>
                                     </p>
                                 </td>
                                 <td>
                                     <p>
-                                        <b>Potential remaining barriers</b>
+                                        <b>Potential remaining barriers (if applicable)</b>
                                     </p>
                                 </td>
                             </tr>
@@ -8606,12 +8610,10 @@
                                 <td>
                                     <p>
                                         <b>Alignment with existing digital and sectorial polici</b>
-                                        <b>es. </b>
-                                        <b>Please list the applicable digital and sectorial policies identified</b>
-                                    </p>
+                                        <b>es. </b>Please list the applicable digital and sectorial policies identified</p>
                                 </td>
                                 <td>
-                                    <p> </p>
+                                    <p>Digital or sectorial policy #1  Digital or sectorial policy #2     Digital or sectorial policy #3</p>
                                 </td>
                                 <td>
                                     <p>Barrier #1 Barrier #2 <i>Barrier #3</i>
@@ -8621,8 +8623,7 @@
                             <tr>
                                 <td>
                                     <p>
-                                        <b>Organisational measures for a smooth cross-border digital public services delivery.</b> <b>Please list the governance measures foreseen</b>
-                                    </p>
+                                        <b>Organisational measures for a smooth cross-border digital public services delivery.</b> Please list the governance measures foreseen</p>
                                 </td>
                                 <td>
                                     <p>Governance measure #1 Governance measure #2 <i>Governance measure #3</i>
@@ -8636,8 +8637,7 @@
                             <tr>
                                 <td>
                                     <p>
-                                        <b>Measures taken to ensure a shared understanding of the data.</b> <b>Please list such measures</b>
-                                    </p>
+                                        <b>Measures taken to ensure a shared understanding of the data.</b> Please list such measures</p>
                                 </td>
                                 <td>
                                     <p>Measure #1 Measure #2 <i>Measure #3</i>
@@ -8651,8 +8651,7 @@
                             <tr>
                                 <td>
                                     <p>
-                                        <b>Use of commonly agreed open technical specifications and standards.</b> <b>Please list such measures</b>
-                                    </p>
+                                        <b>Use of commonly agreed open technical specifications and standards.</b> Please list such measures</p>
                                 </td>
                                 <td>
                                     <p>Measure #1 Measure #2 <i>Measure #3</i>
@@ -8672,153 +8671,160 @@
                 <heading leos:editable="false">
                     <b leos:editable="false">Measures to support digital implementation</b>
                 </heading>
-                <content>
-                    <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
-                        <tr>
-                            <td>
-                                <p>
-                                    <b>Description of the measure</b>
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    <b>Reference(s) to the requirement(s)</b>
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    <b>Commission role</b> (if applicable)</p>
-                            </td>
-                            <td style="width: 117px;">
-                                <p>
-                                    <b>Actors to be involved</b> (if applicable)</p>
-                            </td>
-                            <td style="width: 11px;">
-                                <p>
-                                    <b>Expected timeline</b> (if applicable)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td style="width: 117px;">
-                                <p> </p>
-                            </td>
-                            <td style="width: 11px;">
-                                <p> </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td style="width: 117px;">
-                                <p> </p>
-                            </td>
-                            <td style="width: 11px;">
-                                <p> </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td style="width: 117px;">
-                                <p> </p>
-                            </td>
-                            <td style="width: 11px;">
-                                <p> </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td style="width: 117px;">
-                                <p> </p>
-                            </td>
-                            <td style="width: 11px;">
-                                <p> </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td style="width: 117px;">
-                                <p> </p>
-                            </td>
-                            <td style="width: 11px;">
-                                <p> </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td style="width: 117px;">
-                                <p> </p>
-                            </td>
-                            <td style="width: 11px;">
-                                <p> </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td>
-                                <p> </p>
-                            </td>
-                            <td style="width: 117px;">
-                                <p> </p>
-                            </td>
-                            <td style="width: 11px;">
-                                <p> </p>
-                            </td>
-                        </tr>
-                    </table>
-                </content>
+                <subparagraph>
+                    <content>
+                        <p>For each measure to support digital implementation, please fill in the table below</p>
+                    </content>
+                </subparagraph>
+                <subparagraph>
+                    <content>
+                        <table border="1" cellpadding="1" cellspacing="1" style="width: 90%;">
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Description of the measure</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Reference(s) to the requirement(s)</b>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Commission role</b> (if applicable)</p>
+                                </td>
+                                <td style="width: 117px;">
+                                    <p>
+                                        <b>Actors to be involved</b> (if applicable)</p>
+                                </td>
+                                <td style="width: 11px;">
+                                    <p>
+                                        <b>Expected timeline</b> (if applicable)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Measure #1</p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="width: 117px;">
+                                    <p> </p>
+                                </td>
+                                <td style="width: 11px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Measure #2</p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="width: 117px;">
+                                    <p> </p>
+                                </td>
+                                <td style="width: 11px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Measure #3</p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="width: 117px;">
+                                    <p> </p>
+                                </td>
+                                <td style="width: 11px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="width: 117px;">
+                                    <p> </p>
+                                </td>
+                                <td style="width: 11px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="width: 117px;">
+                                    <p> </p>
+                                </td>
+                                <td style="width: 11px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="width: 117px;">
+                                    <p> </p>
+                                </td>
+                                <td style="width: 11px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td style="width: 117px;">
+                                    <p> </p>
+                                </td>
+                                <td style="width: 11px;">
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </content>
+                </subparagraph>
             </level>
         </mainBody>
     </doc>
