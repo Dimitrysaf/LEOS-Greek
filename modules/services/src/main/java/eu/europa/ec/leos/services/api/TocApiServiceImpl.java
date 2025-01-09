@@ -277,8 +277,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 if ((sourceItem.getTocItem().isHigherElement() && targetItem.getTocItem().isHigherElement() &&
                         !position.equals(TocItemPosition.AS_CHILDREN)) ||
                         (sourceItem.getTocItem().isHigherElement() && !targetItem.getTocItem().isHigherElement() &&
-                                !isInHierarchy(sourceItem, tableOfContentItemVO, types, tocItem, position)) ||
-                        sourceItem.getTocItem().isHigherElement() && !isHierarchyValid(tableOfContentItemVO)) {
+                                !isInHierarchy(sourceItem, tableOfContentItemVO, types, tocItem, position))) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
@@ -328,12 +327,12 @@ public abstract class TocApiServiceImpl implements TocApiService {
         List<TableOfContentItemVO> higherDivisions = getAllHigherDivisionsFromTree(tableOfContentItemVO);
         boolean isHierarchyValid = true;
         if(higherDivisions != null && higherDivisions.size() > 0) {
-            TableOfContentItemVO parentItem = higherDivisions.stream()
+            TableOfContentItemVO higherDivParentItem = higherDivisions.stream()
                     .filter(higherDivision -> higherDivision.getParentItem().getTocItem().isHigherElement())
                     .findFirst()
                     .orElse(null);
 
-            if(parentItem == null) {
+            if(higherDivParentItem == null) {
                 isHierarchyValid = false;
             }
         }
@@ -365,11 +364,12 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private void setInvalidStructureWarning(CheckDocumentRulesVO checkDocumentRulesVO, String errorMessage) {
-        checkDocumentRulesVO.setValidStructure(false);
-        checkDocumentRulesVO.setWarning(true);
-        checkDocumentRulesVO.getMessageKey().add(errorMessage);
+        if (!checkDocumentRulesVO.getMessageKey().contains(errorMessage)) {
+            checkDocumentRulesVO.setValidStructure(false);
+            checkDocumentRulesVO.setWarning(true);
+            checkDocumentRulesVO.getMessageKey().add(errorMessage);
+        }
     }
-
 
     private void checkLevelStructureInItem(DocumentRules.Rule rule, TableOfContentItemVO tableOfContentItemVOToCheck, CheckDocumentRulesVO checkDocumentRulesVO,
             TableOfContentItemVO sourceItem, TableOfContentItemVO targetTocItemVO, TocItemPosition position) {

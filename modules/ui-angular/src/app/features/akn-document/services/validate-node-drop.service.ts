@@ -78,7 +78,7 @@ export abstract class ValidateTocService {
         targetItem: nodeTarget,
         action: moveAction,
       };
-      if (response.result.success) {
+      if (response.result.success && !response.result.warning) {
         if (position === 'AS_CHILDREN') {
           validationResult = {
             success: true,
