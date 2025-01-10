@@ -22,7 +22,7 @@ define(function datePickerExtensionModule(require) {
     var UTILS = require("core/leosUtils");
     var dateFormats = new Map();
     dateFormats.set('yy', 'YYYY');
-    dateFormats.set('dd/mm/yy', '[DD/MM]YYYY');
+    dateFormats.set('d.m.yy', '[DD.MM]YYYY');
     var selector = "date[date]";
 
 

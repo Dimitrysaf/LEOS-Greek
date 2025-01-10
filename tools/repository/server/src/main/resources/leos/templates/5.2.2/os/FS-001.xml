@@ -306,9 +306,9 @@
                                 </num>
                                 <content>
                                     <p>in effect from
-                                        <date date="2999-01-01" period="dd/mm/yy"><placeholder>[DD/MM]YYYY</placeholder></date>
+                                        <date date="2999-01-01" period="d.m.yy"><placeholder>[DD.MM]YYYY</placeholder></date>
                                         to
-                                        <date date="2999-01-01" period="dd/mm/yy"><placeholder>[DD/MM]YYYY</placeholder></date>
+                                        <date date="2999-01-01" period="d.m.yy"><placeholder>[DD.MM]YYYY</placeholder></date>
                                     </p>
                                 </content>
                             </indent>
