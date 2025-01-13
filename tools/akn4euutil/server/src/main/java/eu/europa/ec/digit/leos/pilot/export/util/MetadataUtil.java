@@ -64,6 +64,8 @@ public class MetadataUtil {
     private static final String COVERPAGE="coverPage";
     private static final String REFERSTO="refersTo";
     private static final String VALUE="value";
+    private static final String FRBRWORK="FRBRWork";
+    private static final String PRESERVATION="preservation";
 
     private static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
@@ -92,7 +94,7 @@ public class MetadataUtil {
 
     public static boolean isDocumentXmlFile(final XmlFile xmlFile) {
         Node rootNode = MetadataUtil.getAkomaNtosoNode(xmlFile);
-        if (XmlUtil.isNodeEmpty(rootNode)) {
+        if (rootNode == null) {
             return false;
         }
         if (hasDocumentElement(rootNode, "doc")) {
@@ -103,7 +105,7 @@ public class MetadataUtil {
 
     private static boolean hasDocumentElement(final Node rootNode, final String docElementName) {
         Node documentNode = XmlUtil.getChildNodeWithName(rootNode, docElementName);
-        if (XmlUtil.isNodeEmpty(documentNode)) {
+        if (documentNode == null) {
             return false;
         }
         if (!XmlUtil.nodeHasAttribute(documentNode, "name")) {
@@ -136,11 +138,11 @@ public class MetadataUtil {
 
     private static boolean isBillXmlDocument(XmlFile xmlFile) {
         final Node rootNode = MetadataUtil.getAkomaNtosoNode(xmlFile);
-        if (XmlUtil.isNodeEmpty(rootNode)) {
+        if (rootNode == null) {
             return false;
         }
         final Node billNode = XmlUtil.getChildNodeWithName(rootNode, "bill");
-        return !XmlUtil.isNodeEmpty(billNode);
+        return (billNode != null);
     }
 
     public static XmlFile akn4euResponseToXmlFile(ApplyMetadataResponse response) throws MetadataUtilsException {
@@ -803,22 +805,29 @@ public class MetadataUtil {
     }
 
     public static void processInsertCote(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
+        MetadataUtil.addInsertCoteToMetaIdentification(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToMetaReference(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToCoverPage(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToDocumentFilename(fieldInfo, xmlFile);
-        MetadataUtil.addInsertCoteToCuid(fieldInfo, xmlFile);
+
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            MetadataUtil.removeMetaPreservation(xmlFile);
+        } else {
+            MetadataUtil.removeDocCuid(xmlFile);
+            MetadataUtil.addInsertCoteToCuid(fieldInfo, xmlFile);
+        }
     }
 
     /**
      * Add the cote value to the akn4eu:xxxxCUID nodes.
      * */
     public static void addInsertCoteToCuid(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        final Node frbrWorkNode = xmlFile.getElementByName("FRBRWork");
+        final Node frbrWorkNode = xmlFile.getElementByName(FRBRWORK);
         if (frbrWorkNode == null) {
             return;
         }
 
-        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "preservation");
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, PRESERVATION);
         if (preservationNode == null) {
             return;
         }
@@ -853,9 +862,61 @@ public class MetadataUtil {
         return insertCote.replace(" ", "_");
     }
 
+    public static void addInsertCoteToMetaIdentification(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
+        final Node identificationNode = xmlFile.getElementByName("identification");
+        if (identificationNode == null) return;
+
+        final Node frbrWorkNode = XmlUtil.getChildNodeWithName(identificationNode, FRBRWORK);
+        if (frbrWorkNode == null) return;
+
+        final Node prescriptiveNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRprescriptive");
+        if(prescriptiveNode == null) {
+            return;
+        }
+
+        final Element frbrNumber = xmlFile.newElement("FRBRnumber");
+        XmlUtil.setNodeAttributeValue(frbrNumber, VALUE, fieldInfo.getDisplayValue());
+        if (isMainDocumentFile(xmlFile)) {
+            XmlUtil.setNodeAttributeValue(frbrNumber, XMLID, "~" + fieldInfo.getId());
+        }
+        frbrWorkNode.insertBefore(frbrNumber, prescriptiveNode);
+    }
+
     public static void addInsertCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        if(isMainDocumentFile(xmlFile))
+        if(isMainDocumentFile(xmlFile)) {
             addTLCReference(fieldInfo, xmlFile, "identifier");
+        }
+    }
+
+    public static void removeMetaPreservation(XmlFile xmlFile) {
+        final Node frbrWorkNode = xmlFile.getElementByName(FRBRWORK);
+        if (frbrWorkNode == null) {
+            return;
+        }
+
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, PRESERVATION);
+        if (preservationNode == null) {
+            return;
+        }
+        frbrWorkNode.removeChild(preservationNode);
+    }
+
+    public static void removeDocCuid(XmlFile xmlFile) {
+        final Node frbrWorkNode = xmlFile.getElementByName(FRBRWORK);
+        if (frbrWorkNode == null) {
+            return;
+        }
+
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, PRESERVATION);
+        if (preservationNode == null) {
+            return;
+        }
+
+        final Node docCuidNode = XmlUtil.getChildNodeWithName(preservationNode, "akn4eu:docCUID");
+        if (docCuidNode == null) {
+            return;
+        }
+        preservationNode.removeChild(docCuidNode);
     }
 
     public static void addInsertCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
@@ -940,8 +1001,9 @@ public class MetadataUtil {
     }
 
     private static void addInterinstitutionalCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        if(isMainDocumentFile(xmlFile) || isBillDocumentFile(xmlFile))
+        if(isMainDocumentFile(xmlFile) || isBillDocumentFile(xmlFile)) {
             addTLCReference(fieldInfo, xmlFile, "procedureReference");
+        }
     }
 
     private static void addTLCReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile, String name) {
