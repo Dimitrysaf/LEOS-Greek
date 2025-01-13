@@ -433,7 +433,7 @@ public class MandateTocEditor extends AbstractTocEditor {
 
         if (!ELEMENTS_WITHOUT_CONTENT.contains(originalItem.getTocItem().getAknTag().value().toLowerCase())) {
             moveToItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
-                    EC, originalItem.getHeading(), originalItem.getNode(),
+                    EC, originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(), originalItem.getNode(),
                     originalItem.getList(), originalItem.getContent(), MOVE_TO, isSoftActionRoot, null, null);
 
             moveToItem.setNumSoftActionAttr(originalItem.getNumSoftActionAttr());
@@ -454,7 +454,7 @@ public class MandateTocEditor extends AbstractTocEditor {
             }
         } else {
             moveToItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
-                    EC, null, originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
+                    EC, null, null, null, originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                     MOVE_TO, isSoftActionRoot, null, null);
 
         }

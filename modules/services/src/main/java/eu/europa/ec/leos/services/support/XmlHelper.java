@@ -171,6 +171,7 @@ public class XmlHelper {
     public static final String LEOS_UID_ATTR = "leos:uid";
     public static final String LEOS_INITIAL_NUM_ATTR = "leos:initial-num";
     public static final String LEOS_TC_ORIGINAL_NUMBER = "leos:tc-original-number";
+    public static final String LEOS_TC_ORIGINAL_ITEM_TYPE = "leos:tc-original-item-type";
     public static final String LEOS_ACTION_ENTER = "leos:action-enter";
     public static final String LEOS_UID_ENTER = "leos:uid-enter";
     public static final String LEOS_TITLE_ENTER = "leos:title-enter";

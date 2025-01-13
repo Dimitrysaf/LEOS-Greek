@@ -2,6 +2,7 @@ package eu.europa.ec.leos.vo.toc;
 
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ public class TocItemVOBuilder {
     private String elementNumberId;
     private String originNumAttr;
     private String heading;
+    private String originalHeading;
+    private TocItemTypeName originalTocItemType;
     private String originHeadingAttr;
     private Node node;
     private String content;
@@ -82,6 +85,16 @@ public class TocItemVOBuilder {
         return this;
     }
 
+    public TocItemVOBuilder withOriginalHeading(String originalHeading) {
+        this.originalHeading = originalHeading;
+        return this;
+    }
+
+    public TocItemVOBuilder withOriginalTocItemType(TocItemTypeName originalTocItemType) {
+        this.originalTocItemType = originalTocItemType;
+        return this;
+    }
+
     public TocItemVOBuilder withOriginHeadingAttr(String originHeadingAttr) {
         this.originHeadingAttr = originHeadingAttr;
         return this;
@@ -143,8 +156,8 @@ public class TocItemVOBuilder {
     }
 
     public TableOfContentItemVO build() {
-        TableOfContentItemVO tocVO = new TableOfContentItemVO(tocItem, id, originAttr, number, originNumAttr, heading,
-                node, content);
+        TableOfContentItemVO tocVO = new TableOfContentItemVO(tocItem, id, originAttr, number, originNumAttr,
+                heading, originalHeading, originalTocItemType, node, content);
         tocVO.setElementNumberId(elementNumberId);
         tocVO.addAllChildItems(childItems);
         tocVO.setItemDepth(itemDepth);

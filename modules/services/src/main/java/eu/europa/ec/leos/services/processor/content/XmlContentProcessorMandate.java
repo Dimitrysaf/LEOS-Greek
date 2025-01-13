@@ -112,6 +112,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -176,7 +177,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         LOG.debug("buildTocItemContent for tocItemName '{}', tocItemId '{}', nodeName '{}', nodeId '{}', children {}", tocVo.getTocItem().getAknTag().value(), tocVo.getId(), node.getNodeName(), getId(node), tocVo.getChildItemsView().size());
 
         appendChildIfNotNull(buildNumNode(node, tocVo), newNode);
-        appendChildIfNotNull(buildHeadingNode(node, tocVo, user, newNode), newNode);
+        appendChildIfNotNull(buildHeadingNode(node, tocVo, tocItems, user, newNode, isTrackChangesEnabled), newNode);
         appendChildIfNotNull(getFirstChild(node, INTRO), newNode); //recitals intro
 
         if (!tocVo.getTocItemType().equals(tocItemType) && hasTocItemSoftOrigin(tocVo, EC)) {
@@ -186,7 +187,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
         if (Arrays.asList(PARAGRAPH, LEVEL).contains(tagName) && skipParagraphContent(tocVo)) {
             buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
-            buildParagraphOrLevelContent(tocItems, node, newNode, tocVo, user);
+            buildParagraphOrLevelContent(tocItems, node, newNode, tocVo, user, isTrackChangesEnabled);
         } else if (Arrays.asList(POINT, INDENT).contains(tagName) && shouldWrapWithList(tocVo.getParentItem())) {
             buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             newNode = buildPointContentAndWrapWithPoint(tocItems, numberingConfigs, node, newNode, tocVo, user, language);
@@ -429,10 +430,10 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         return numNode;
     }
 
-    private Node buildHeadingNode(Node node, TableOfContentItemVO tocVo, User user, Node newNode) {
+    private Node buildHeadingNode(Node node, TableOfContentItemVO tocVo, List<TocItem> tocItems, User user, Node newNode, boolean isTrackChangesEnabled) {
         Node headingNode = null;
         if (!LEVEL.equals(tocVo.getTocItem().getAknTag().value()) || !skipParagraphContent(tocVo)) {
-            headingNode = XmlContentProcessorHelper.extractOrBuildHeaderElement(node, tocVo, user);
+            headingNode = XmlContentProcessorHelper.extractOrBuildHeaderElement(node, tocVo, tocItems, user, securityContext.getUser().getLogin(), LeosXercesUtils.getTitleValue(securityContext), isTrackChangesEnabled);
             Node numNode = getFirstChild(node, XercesUtils.getNumTag(newNode.getNodeName()));
             if (node.getNodeName().equals(DIVISION) && numNode.getTextContent().equals(HASH_NUM_VALUE)) {
                 formatHeadingNodeForDivision(node, tocVo, headingNode);
@@ -491,13 +492,13 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         }
     }
 
-    private void buildParagraphOrLevelContent(List<TocItem> tocItems, Node node, Node newNode, TableOfContentItemVO tocVo, User user) {
+    private void buildParagraphOrLevelContent(List<TocItem> tocItems, Node node, Node newNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
         List<Node> parOrLevelChildrenNode = new ArrayList<>();
         if (tocVo.getNumber() != null && !tocVo.getNumber().isEmpty()) {
             parOrLevelChildrenNode.add(extractOrBuildNumElement(node, tocVo));
         }
         if (LEVEL.equals(tocVo.getTocItem().getAknTag().value())) {
-            Node headingNode = XmlContentProcessorHelper.extractOrBuildHeaderElement(node, tocVo, user);
+            Node headingNode = XmlContentProcessorHelper.extractOrBuildHeaderElement(node, tocVo, tocItems, user, securityContext.getUser().getLogin(), LeosXercesUtils.getTitleValue(securityContext), isTrackChangesEnabled);
             XmlContentProcessorHelper.addUserInfoIfContentHasChanged(getFirstChild(node, HEADING), headingNode, user);
             parOrLevelChildrenNode.add(headingNode);
         }

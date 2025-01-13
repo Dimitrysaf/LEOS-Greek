@@ -115,7 +115,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         if (isDeletedItem(originalItem)) {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId().replace(SOFT_DELETE_PLACEHOLDER_ID_PREFIX, ""),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
-                    EC, originalItem.getHeading(),
+                    EC, originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                     UNDELETE, null, null, null,
                     null, null, null, true,
@@ -123,7 +123,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         } else {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX +originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
-                    originalItem.getOriginNumAttr(), originalItem.getHeading(),
+                    originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                     originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
                     originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(),
@@ -468,7 +468,7 @@ public abstract class AbstractTocEditor implements TocEditor {
     protected TableOfContentItemVO copyItemToTemp(TableOfContentItemVO originalItem) {
         TableOfContentItemVO temp = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId(),
                 originalItem.getOriginAttr(), originalItem.getNumber(),
-                originalItem.getOriginNumAttr(), originalItem.getHeading(),
+                originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                 originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                 originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
                 originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(), originalItem.getNumSoftActionAttr());
@@ -509,7 +509,7 @@ public abstract class AbstractTocEditor implements TocEditor {
     protected TableOfContentItemVO copyTempItemToFinalItem(TableOfContentItemVO tempItem) {
         TableOfContentItemVO finalItem = new TableOfContentItemVO(tempItem.getTocItem(), tempItem.getId().replace(TEMP_PREFIX, ""),
                 tempItem.getOriginAttr(), tempItem.getNumber(),
-                tempItem.getOriginNumAttr(), tempItem.getHeading(),
+                tempItem.getOriginNumAttr(), tempItem.getHeading(), tempItem.getOriginalHeading(), tempItem.getOriginalTocItemType(),
                 tempItem.getNode(), tempItem.getList(), tempItem.getContent(),
                 tempItem.getSoftActionAttr(), tempItem.isSoftActionRoot(), tempItem.getSoftUserAttr(), tempItem.getSoftDateAttr(),
                 tempItem.getSoftMoveFrom(), tempItem.getSoftMoveTo(), tempItem.getSoftTransFrom(), tempItem.isUndeleted(),
@@ -827,7 +827,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         if (!MOVE_TO.equals(originalItem.getSoftActionAttr()) && !DELETE.equals(originalItem.getSoftActionAttr())) {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_DELETE_PLACEHOLDER_ID_PREFIX + originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
-                    EC, originalItem.getHeading(), originalItem.getNode(),
+                    EC, originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(), originalItem.getNode(),
                     originalItem.getList(),
                     originalItem.getContent(),
                     DELETE, isSoftActionRoot, null, null, originalItem.getSoftMoveFrom(),
@@ -836,7 +836,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         } else {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
-                    originalItem.getOriginNumAttr(), originalItem.getHeading(),
+                    originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                     originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
                     originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(),

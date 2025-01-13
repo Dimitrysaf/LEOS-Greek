@@ -528,6 +528,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   handleTypeChange(event: string) {
+    console.log("Change Article TYpe")
     const oldHeading = this.heading;
     const oldValue = this.selectedNode.tocItemType;
     this.tocType = event;

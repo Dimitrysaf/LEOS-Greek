@@ -685,7 +685,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
                         content = (type.getAknTag().value().equalsIgnoreCase(XmlHelper.RECITAL) || type.getAknTag().value().equalsIgnoreCase(XmlHelper.CITATION))
                                 ? org.springframework.util.StringUtils.capitalize(type.getAknTag().value() + "...") : "Text...";
                     }
-                    TableOfContentItemVO dragData = new TableOfContentItemVO(type, Cuid.createCuid(), null, number, null, heading, null, content);
+                    TableOfContentItemVO dragData = new TableOfContentItemVO(type, Cuid.createCuid(), null, number, null, heading, null, null, null, content);
                     Set<TableOfContentItemVO> draggedItems = new HashSet<>();
                     draggedItems.add(dragData);
                     dragSourceExtension.setDragData(draggedItems);

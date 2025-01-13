@@ -49,6 +49,8 @@ public class TableOfContentItemVO implements Serializable {
     private String initialNum;
     private String originNumAttr;
     private String heading;
+    private String originalHeading;
+    private TocItemTypeName originalTocItemType;
     private String originHeadingAttr;
     private String content;
     private Node node;
@@ -94,7 +96,8 @@ public class TableOfContentItemVO implements Serializable {
         super();
     }
 
-    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading,
+    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr,
+                                String heading, String originalHeading, TocItemTypeName originalTocItemType,
                                 Node node, String content) {
         this.tocItem = tocItem;
         this.id = id;
@@ -102,6 +105,8 @@ public class TableOfContentItemVO implements Serializable {
         this.number = number;
         this.originNumAttr = originNumAttr;
         this.heading = heading;
+        this.originalHeading = originalHeading;
+        this.originalTocItemType = originalTocItemType;
         this.node = node;
         this.content = content;
         this.isAffected = false;
@@ -109,9 +114,10 @@ public class TableOfContentItemVO implements Serializable {
         this.originalIndentLevel = 0;
     }
 
-    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading,
+    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr,
+                                String heading, String originalHeading, TocItemTypeName originalTocItemType,
                                 Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr, GregorianCalendar softDateAttr) {
-        this(tocItem, id, originAttr, number, originNumAttr, heading, node, content);
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node, content);
         this.list = list;
         this.softActionAttr = softActionAttr;
         this.isSoftActionRoot = isSoftActionRoot;
@@ -119,17 +125,18 @@ public class TableOfContentItemVO implements Serializable {
         this.softDateAttr = softDateAttr;
     }
 
-    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading,
-            Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr,
-            GregorianCalendar softDateAttr, String trackChangeAction) {
-        this(tocItem, id, originAttr, number, originNumAttr, heading, node, list, content, softActionAttr, isSoftActionRoot, softUserAttr, softDateAttr);
+    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr,
+                                String heading, String originalHeading, TocItemTypeName originalTocItemType,
+                                Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr,
+                                GregorianCalendar softDateAttr, String trackChangeAction) {
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node, list, content, softActionAttr, isSoftActionRoot, softUserAttr, softDateAttr);
         this.trackChangeAction = trackChangeAction;
     }
 
-    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading,
+    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading, String originalHeading, TocItemTypeName originalTocItemType,
                                 Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr, GregorianCalendar softDateAttr,
                                 String softMoveFrom, String softMoveTo, String softTransFrom, boolean undeleted, SoftActionType numSoftActionAttr) {
-        this(tocItem, id, originAttr, number, originNumAttr, heading, node,
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node,
                 list, content, softActionAttr, isSoftActionRoot, softUserAttr, softDateAttr);
         this.softMoveFrom = softMoveFrom;
         this.softMoveTo = softMoveTo;
@@ -138,22 +145,22 @@ public class TableOfContentItemVO implements Serializable {
         this.numSoftActionAttr = numSoftActionAttr;
     }
 
-    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading,
+    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading, String originalHeading, TocItemTypeName originalTocItemType,
             Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr, GregorianCalendar softDateAttr,
             String softMoveFrom, String softMoveTo, String softTransFrom, boolean undeleted, SoftActionType numSoftActionAttr, String trackChangeAction) {
-        this(tocItem, id, originAttr, number, originNumAttr, heading, node,
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node,
                 list, content, softActionAttr, isSoftActionRoot, softUserAttr,
                 softDateAttr, softMoveFrom, softMoveTo, softTransFrom, undeleted,
                 numSoftActionAttr);
         this.trackChangeAction = trackChangeAction;
     }
 
-    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading, String originHeadingAttr,
+    public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading, String originalHeading, TocItemTypeName originalTocItemType, String originHeadingAttr,
                                 Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr,
                                 GregorianCalendar softDateAttr, String softMoveFrom, String softMoveTo, String softTransFrom, boolean undeleted, SoftActionType numSoftActionAttr, SoftActionType headingSoftActionAttr, int itemDepth,
                                 int indentLevel, String elementNumberId, IndentedItemType indentOriginType, Integer indentOriginIndentLevel, String indentOriginNumId, String indentOriginNumValue, String indentOriginNumOrigin,
                                 String style, Boolean isAutoNumOverwritten) {
-        this(tocItem, id, originAttr, number, originNumAttr, heading, node,
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node,
                 list, content, softActionAttr, isSoftActionRoot, softUserAttr, softDateAttr);
         this.softMoveFrom = softMoveFrom;
         this.softMoveTo = softMoveTo;
@@ -219,6 +226,22 @@ public class TableOfContentItemVO implements Serializable {
 
     public void setHeading(String heading) {
         this.heading = heading;
+    }
+
+    public String getOriginalHeading() {
+        return originalHeading;
+    }
+
+    public void setOriginalHeading(String originalHeading) {
+        this.originalHeading = originalHeading;
+    }
+
+    public TocItemTypeName getOriginalTocItemType() {
+        return originalTocItemType;
+    }
+
+    public void setOriginalTocItemType(TocItemTypeName originalTocItemType) {
+        this.originalTocItemType = originalTocItemType;
     }
 
     public String getOriginHeadingAttr() {

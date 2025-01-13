@@ -161,7 +161,7 @@ public class ProposalTocEditor extends AbstractTocEditor {
         TableOfContentItemVO moveToItem;
 
         moveToItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
-                EC, originalItem.getHeading(), originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
+                EC, originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(), originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                 MOVE_TO, isSoftActionRoot,null, null, LEOS_TC_DELETE_ACTION);
 
         moveToItem.setSoftMoveTo(originalItem.getId());

@@ -377,7 +377,7 @@ public class TableOfContentHelperTest extends LeosTest {
     @Test
     public void test_firstsubpoint_FromSubpoint() {
         TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_point.xml", "art_1_ExfjFV");
-        item.addChildItem(new TableOfContentItemVO(new TocItem(), "id", CN, null, null, null,  null, ""));
+        item.addChildItem(new TableOfContentItemVO(new TocItem(), "id", CN, null, null, null, null, null, null, ""));
         TableOfContentItemVO convertedItem = indentConversionHelper.buildFirstElementFromSubElement(tocItems, item, 1, false, false, false);
 
         Node node = convertedItem.getNode();
@@ -412,7 +412,7 @@ public class TableOfContentHelperTest extends LeosTest {
     @Test
     public void test_firstsubpoint_FromPoint() {
         TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_point.xml", "art_1_8g5Tr7");
-        item.addChildItem(new TableOfContentItemVO(new TocItem(), "id", CN, null, null, null, null, ""));
+        item.addChildItem(new TableOfContentItemVO(new TocItem(), "id", CN, null, null, null, null, null, null, ""));
         TableOfContentItemVO convertedItem = indentConversionHelper.buildFirstElementFromElement(tocItems, item, 1, false, false, false);
         Node node = convertedItem.getNode();
         assertEquals(node.getNodeName(), INDENT);

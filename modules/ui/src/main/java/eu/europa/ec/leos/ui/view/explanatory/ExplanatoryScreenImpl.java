@@ -670,7 +670,7 @@ abstract class ExplanatoryScreenImpl extends VerticalLayout implements Explanato
                         content = Arrays.stream(elementlist).filter(element -> type.getAknTag().value().equalsIgnoreCase(element)).findAny().isPresent()
                                 ? StringUtils.capitalize(type.getAknTag().value() + "...") : "Text...";
                     }
-                    TableOfContentItemVO dragData = new TableOfContentItemVO(type, Cuid.createCuid(), null, number, null, heading, null, content);
+                    TableOfContentItemVO dragData = new TableOfContentItemVO(type, Cuid.createCuid(), null, number, null, heading, null, null, null, content);
                     Set<TableOfContentItemVO> draggedItems = new HashSet<>();
                     draggedItems.add(dragData);
                     dragSourceExtension.setDragData(draggedItems);

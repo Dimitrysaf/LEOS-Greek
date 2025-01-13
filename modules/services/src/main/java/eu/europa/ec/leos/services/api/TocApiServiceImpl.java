@@ -453,8 +453,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language);
             } else {
                 TocItem draggedTocItem = StructureConfigUtils.getTocItemByName(tocItems, nodeName);
-                tableOfContentItemVO = new TableOfContentItemVO(draggedTocItem, nodeId, null, null, null, null,
-                        null, null);
+                tableOfContentItemVO = new TableOfContentItemVO(draggedTocItem, nodeId, null, null, null, null, null, null, null, null);
             }
         }
         return tableOfContentItemVO;

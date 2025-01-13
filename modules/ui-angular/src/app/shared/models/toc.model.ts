@@ -8,6 +8,8 @@ export class TableOfContentItemVO {
   initialNum: string;
   originNumAttr: string;
   heading: string;
+  originalHeading: string;
+  originalTocItemType: string;
   originHeadingAttr: string;
   content: string;
   node: Node;

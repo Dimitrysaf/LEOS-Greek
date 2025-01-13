@@ -227,7 +227,7 @@ public class LegalTextComponent extends CustomComponent implements ContentPane {
                             content = (tocItem.getAknTag().value().equalsIgnoreCase(XmlHelper.RECITAL) || tocItem.getAknTag().value().equalsIgnoreCase(XmlHelper.CITATION))
                                     ? StringUtils.capitalize(tocItem.getAknTag().value() + "...") : "Text...";
                         }
-                        TableOfContentItemVO dragData = new TableOfContentItemVO(tocItem, Cuid.createCuid(), null, number, null, heading, null, content);
+                        TableOfContentItemVO dragData = new TableOfContentItemVO(tocItem, Cuid.createCuid(), null, number, null, heading, null, null, null, content);
                         Set<TableOfContentItemVO> draggedItems = new HashSet<>();
                         draggedItems.add(dragData);
                         dragSourceExtension.setDragData(draggedItems);

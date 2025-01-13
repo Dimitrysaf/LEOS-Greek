@@ -516,7 +516,7 @@ public class IndentApplyRules {
         TableOfContentItemVO list = null;
         TocItem listTocItem = StructureConfigUtils.getTocItemByName(tocItems, LIST);
         if (listTocItem != null) {
-            list = new TableOfContentItemVO(listTocItem, IdGenerator.generateId(), CN, null, CN, null, null, null);
+            list = new TableOfContentItemVO(listTocItem, IdGenerator.generateId(), CN, null, CN, null, null, null,null, null);
         }
         return list;
     }
