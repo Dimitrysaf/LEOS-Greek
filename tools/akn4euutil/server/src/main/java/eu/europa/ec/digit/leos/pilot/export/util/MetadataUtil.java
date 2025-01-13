@@ -428,12 +428,12 @@ public class MetadataUtil {
     public static ApplyMetadataResponse.FieldNode getLookupFieldInfoErrorResult(
             ApplyMetadataRequest.FieldNode field,
             MetadataUtilsException e) {
-        
+
         if(e.getMessage().equals(INVALID_FIELD_VALUE_MESSAGE)) {
-            return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE, 
+            return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE,
                     String.format(INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue(), FIELD));
         }
-        
+
         return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE,
                 String.format("tag not found (field=\"%s\", tag=\"%s\")", field.getKey(), FIELD));
     }
@@ -601,8 +601,8 @@ public class MetadataUtil {
         if(wordPos < 0) wordPos = displayValue.lastIndexOf("draft");
         if(wordPos < 0) wordPos = displayValue.length();
         final String number = displayValue.substring(closingBracketIndex+1, wordPos).trim();
-        final String href = String.format(LINKED_DOCUMENT_HREF_PATTERN, 
-                abbreviation.toLowerCase().replace("sec",  "swd"), // SEC documents are published under SWD 
+        final String href = String.format(LINKED_DOCUMENT_HREF_PATTERN,
+                abbreviation.toLowerCase().replace("sec",  "swd"), // SEC documents are published under SWD
                 year, number);
 
         return new ReferenceFieldInfo("", href, displayValue, "", MetadataFieldType.LINKED_DOCUMENTS);
@@ -669,7 +669,7 @@ public class MetadataUtil {
     }
 
     private static void addAdoptionLocationToConclusion(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        
+
         Node xmlNodeConclusions = xmlFile.getElementByName(CONCLUSIONSNEW);
         if (xmlNodeConclusions == null) {
             xmlNodeConclusions = xmlFile.getElementByName(CONCLUSIONS);
@@ -705,15 +705,15 @@ public class MetadataUtil {
         }
 
         Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
-        if (xmlNodeMainDoc == null) { 
+        if (xmlNodeMainDoc == null) {
             return;
-        }        
-        
+        }
+
         Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "placeAndDate");
         if (xmlNodeBlock == null) {
             return;
         }
-        
+
         Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeBlock, DATE);
         if (xmlNodeDate == null) {
             return;
@@ -754,7 +754,7 @@ public class MetadataUtil {
     }
 
     private static void addEmissionDateToConclusion(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        
+
         Node xmlNodeConclusions = xmlFile.getElementByName(CONCLUSIONSNEW);
         if (xmlNodeConclusions == null) {
             xmlNodeConclusions = xmlFile.getElementByName(CONCLUSIONS);
@@ -1073,12 +1073,12 @@ public class MetadataUtil {
 
     public static void processLinkedDocuments(MultipleReferencesFieldInfo fieldInfo, XmlFile xmlFile) {
         Node xmlNodeCoverpage = xmlFile.getElementByName(COVERPAGE);
-        if (XmlUtil.isNodeEmpty(xmlNodeCoverpage)) {
+        if (xmlNodeCoverpage == null) {
             return;
         }
 
         Node xmlNodeAssociatedReferences = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "associatedReferences");
-        if (XmlUtil.isNodeEmpty(xmlNodeAssociatedReferences)) {
+        if (xmlNodeAssociatedReferences == null) {
             return;
         }
 
@@ -1135,7 +1135,7 @@ public class MetadataUtil {
     }
 
     private static boolean isMetaReferenceXmlNode(Node xmlNode) {
-        return xmlNode != null 
+        return xmlNode != null
                 && XmlUtil.parentNodeNameEquals(xmlNode, "references")
                 && XmlUtil.parentNodeNameEquals(xmlNode.getParentNode(), "meta");
     }
