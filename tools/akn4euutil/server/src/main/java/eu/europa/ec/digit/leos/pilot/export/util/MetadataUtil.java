@@ -1102,15 +1102,14 @@ public class MetadataUtil {
     }
 
     private static Element createLinkedDocumentElement(final ReferenceFieldInfo reference, XmlFile xmlFile) {
-        final String xmlId = IdGenerator.generateId();
         final Element refElement = xmlFile.newElement("ref");
 
-        XmlUtil.setNodeAttributeValue(refElement, XMLID, xmlId);
+        XmlUtil.setNodeAttributeValue(refElement, XMLID, IdGenerator.generateId());
         refElement.setTextContent(reference.getDisplayValue());
         refElement.setAttribute(HREF, reference.getHref());
 
         final Element referenceElement = xmlFile.newElement("p");
-        XmlUtil.setNodeAttributeValue(referenceElement, XMLID, xmlId);
+        XmlUtil.setNodeAttributeValue(referenceElement, XMLID, IdGenerator.generateId());
         referenceElement.appendChild(xmlFile.createTextNode("{"));
         referenceElement.appendChild(refElement);
         referenceElement.appendChild(xmlFile.createTextNode("}"));
