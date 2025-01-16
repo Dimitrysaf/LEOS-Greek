@@ -84,11 +84,11 @@ public enum MetadataLanguageFormats
 
     public String getLocationDisplayValue(String locationId){
         switch (locationId) {
-            case "_BEL_BRU":
+            case "BEL_BRU":
                 return getBrussels();
-            case "_LUX_LUX":
+            case "LUX_LUX":
                 return getLuxembourg();
-            case "_FRA_SXB":
+            case "FRA_SXB":
                 return getStrasbourg();
             default:
                 throw new IllegalArgumentException();
