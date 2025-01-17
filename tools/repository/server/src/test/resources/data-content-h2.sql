@@ -5817,9 +5817,9 @@ SET @str1 = '<!--legislative_financial_statement-->
                                 </num>
                                 <content xml:id="_body__level_16__list__indent_1__list__indent_1__content">
                                     <p xml:id="_body__level_16__list__indent_1__list__indent_1__content__p">in effect from
-                                        <inline name="date" period="dd/mm/yy" xml:id="_body__level_16__list__indent_1__list__indent_1__content__p__inline_1">[DD/MM]YYYY</inline>
+                                        <inline name="date" period="d.m.yy" xml:id="_body__level_16__list__indent_1__list__indent_1__content__p__inline_1">[DD.MM]YYYY</inline>
                                         to
-                                        <inline name="date" period="dd/mm/yy" xml:id="_body__level_16__list__indent_1__list__indent_1__content__p__inline_2">[DD/MM]YYYY</inline>
+                                        <inline name="date" period="d.m.yy" xml:id="_body__level_16__list__indent_1__list__indent_1__content__p__inline_2">[DD.MM]YYYY</inline>
                                     </p>
                                 </content>
                             </indent>
