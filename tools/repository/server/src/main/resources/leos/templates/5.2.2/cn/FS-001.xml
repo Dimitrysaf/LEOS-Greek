@@ -2641,8 +2641,8 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="width: 30%; text-align: center; background: #CCCCCC;">
-                                    <p><b>TOTAL appropriations under HEADINGS 1 to 7</b></p>
+                                <td style="width: 32%; text-align: center; background: #CCCCCC;" rowspan="2">
+                                    <p><b>TOTAL appropriations under HEADINGS 1 to 7<br/>of the multiannual financial framework</b></p>
                                 </td>
                                 <td style="width: 9%;">
                                     <p>Commitments</p>
@@ -2674,9 +2674,6 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="width: 30%; text-align: center; background: #CCCCCC;">
-                                    <p>of the multiannual financial framework</p>
-                                </td>
                                 <td style="width: 9%;">
                                     <p>Payments</p>
                                 </td>
@@ -3402,8 +3399,8 @@
                                 </td>
                             </tr>
                             <tr style="height: 28.2pt;">
-                                <td style="width: 28.22%; border-top: none; border-left: solid black 1.0pt; border-bottom: none; border-right: solid black 1.0pt; background: #E6E6E6;">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations<br/>under HEADING &lt;....&gt;</b></p>
+                                <td style="width: 28.22%; border-top: none; border-left: solid black 1.0pt; border-bottom: none; border-right: solid black 1.0pt; background: #E6E6E6;" rowspan="2">
+                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations<br/>under HEADING &lt;....&gt;<br/>of the multiannual financial framework</b></p>
                                 </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -3439,10 +3436,6 @@
                                 </td>
                             </tr>
                             <tr style="height: 26.4pt;">
-                                <td style="width: 28.22%; border: solid black 1.0pt; border-top: none; background: #E6E6E6;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        of the multiannual financial framework </p>
-                                </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Payments </p>
                                 </td>
@@ -4159,8 +4152,8 @@
                                 </td>
                             </tr>
                             <tr style="height: 28.2pt;">
-                                <td style="width: 28.22%; border-top: none; border-left: solid black 1.0pt; border-bottom: none; border-right: solid black 1.0pt; background: #E6E6E6;">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations<br/>under HEADING &lt;....&gt;</b></p>
+                                <td style="width: 28.22%; border-top: none; border-left: solid black 1.0pt; border-bottom: none; border-right: solid black 1.0pt; background: #E6E6E6;" rowspan="2">
+                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations<br/>under HEADING &lt;....&gt;<br/>of the multiannual financial framework</b></p>
                                 </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -4196,10 +4189,6 @@
                                 </td>
                             </tr>
                             <tr style="height: 26.4pt;">
-                                <td style="width: 28.22%; border: solid black 1.0pt; border-top: none; background: #E6E6E6;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        of the multiannual financial framework </p>
-                                </td>
                                 <td style="width: 10.58%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Payments </p>
                                 </td>
@@ -4746,8 +4735,8 @@
                                 </td>
                             </tr>
                             <tr style="height: 28.2pt;">
-                                <td style="width: 259.0pt; border-top: none; border-left: solid black 1.0pt; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: silver;">
-                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations under HEADINGS 1 to 7</b></p>
+                                <td style="width: 370.0pt; border-top: none; border-left: solid black 1.0pt; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: silver;" rowspan="2">
+                                    <p style="margin: 0cm; text-align: center;"><b>TOTAL appropriations under HEADINGS 1 to 7<br/>of the multiannual financial framework</b></p>
                                 </td>
                                 <td style="width: 96.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Commitments </p>
@@ -4779,10 +4768,6 @@
                                 </td>
                             </tr>
                             <tr style="height: 27.0pt;">
-                                <td style="width: 259.0pt; border-top: none; border-left: solid black 1.0pt; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: silver;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        of the multiannual financial framework </p>
-                                </td>
                                 <td style="width: 96.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm;"> Payments </p>
                                 </td>
@@ -5857,7 +5842,7 @@
                     </content>
             </level>
             <level leos:depth="4" leos:deletable="false" class="landscape">
-                <num>3.2.3.3</num>
+                <num>3.2.3.3.</num>
                 <heading leos:editable="false" leos:optional="true">
                     <i>Total appropriations</i>
                 </heading>
@@ -6270,7 +6255,7 @@
                                 <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="6">
                                     <p style="margin: 0cm; text-align: left;">
                                         <b> </b>
-                                        <b> External staff (inFTEs)</b>
+                                        <b> External staff (in FTEs)</b>
                                     </p>
                                 </td>
                             </tr>
@@ -6488,7 +6473,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 58.26%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 01 (Headquarters and Commissions
+                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 01 (Headquarters and Commission's
                                         Representation Offices)</p>
                                 </td>
                                 <td style="width: 10.44%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
@@ -6792,7 +6777,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 268.0pt; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 01 (Headquarters and Commissions
+                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 01 (Headquarters and Commission's
                                         Representation Offices)</p>
                                 </td>
                                 <td style="width: 48.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
