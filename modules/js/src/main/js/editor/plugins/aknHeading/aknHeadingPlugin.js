@@ -99,6 +99,9 @@ define(function aknChapterPluginModule(require) {
             }, {
                 akn : "xml:id",
                 html : "data-akn-heading-id"
+            },{
+                akn : "class",
+                html : "data-akn-class"
             } ],
             sub : {
                 akn : "text",
