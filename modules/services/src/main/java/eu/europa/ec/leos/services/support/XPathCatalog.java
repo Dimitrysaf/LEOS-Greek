@@ -190,5 +190,14 @@ public class XPathCatalog {
         return xml.replaceAll(NAMESPACE_AKN_NAME + ":", "");
     }
 
+    public static String getXPathFinancialStatement() {
+        return "//akn:doc[@name=\"STAT_DIGIT_FINANC_LEGIS\"]";
+    }
 
+    public static String getXPathExplanatoryMemorandum() {
+        return "/akn:akomaNtoso/akn:doc[@name=\"EXPL_MEMORANDUM\"]";
+    }
+    public static String getXPathAnnex() {
+        return "/akn:akomaNtoso/akn:doc[@name=\"ANNEX\"]";
+    }
 }

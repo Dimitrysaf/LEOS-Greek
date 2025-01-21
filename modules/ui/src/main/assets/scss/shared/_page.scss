@@ -88,3 +88,186 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
         padding-top: 20pt;
     }
 }
+
+%xmlOrientation {
+    // portrait div characteristics
+    .orientation:has( *:not(.landscape)),
+    .orientation:has(.portrait),
+    .orientation:has([data-akn-class="portrait"]){
+        margin-left: -2.5cm;
+        width: 20.95cm;
+        position: relative;
+        display: block;
+        min-height: auto;
+        white-space: normal;
+        background-color: white;
+        padding: 0.5cm 1cm 0.5cm 2.5cm;
+    }
+
+    .orientation:has(.landscape),
+    .orientation:has([data-akn-class="landscape"]),
+    .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape) .orientation{
+        width: $LANDSCAPE_WIDTH;
+        margin-left: -2.5cm;
+        position: relative;
+        display: block;
+        min-height: auto;
+        white-space: normal;
+        background-color: white;
+        padding: 0.5cm 1cm 0.5cm 2.5cm;
+    }
+
+    //grouping multiple landscape together as after box-shadow
+    .orientation:has(.landscape):after,
+    .orientation:has([data-akn-class="landscape"]):after {
+        content: " ";
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: -10px;
+        width: 10px;
+        border-left: 0.3px solid dimgrey;
+    }
+
+    // selector for landscape preceded by orientation without landscape
+    & .orientation:not(*:has(.landscape)) + .orientation:has(.landscape) {
+        border-top: 0.5px solid grey;
+    }
+
+    .orientation:has(.landscape) + .orientation:has(.landscape) {
+        border-top: 0px solid !important;
+    }
+
+    /* select the first part that has as second sibling the second part*/
+    & .orientation:has(.landscape):has(+ .orientation > .portrait){
+        border-bottom: 0.5px solid grey;
+    }
+
+    /* cancel the landscape followed by landscape*/
+    & .orientation:has(.landscape):has(+ .orientation > .landscape) {
+        border-bottom: 0px !important;
+    }
+
+    & .orientation:has(.landscape):has(+ *:not(.orientation)) {
+        border-bottom: 0.5px solid grey;
+    }
+
+    & :first-child.orientation:has(.landscape){
+        border-top: 0.5px solid grey;
+    }
+
+    // orientation with landscape
+    & :last-child.orientation:has(.landscape){
+        border-bottom: 0.5px solid grey;
+    }
+
+}
+
+%xmlHigherdivision {
+    div.higherdivision:has(> part > heading.portrait, > akntitle > heading.portrait,
+                        > chapter > heading.portrait, > section > heading.portrait) + .orientation:has(.landscape),
+    div.higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"])) + .orientation:has(.landscape),
+    div.higherdivision:has(> part > heading.portrait, > akntitle > heading.portrait,
+                        > chapter > heading.portrait, > section > heading.portrait) .orientation:has(.landscape){
+        border-top: 0.5px solid grey;
+    }
+
+    div.higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape),
+    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"])){
+        width: $LANDSCAPE_WIDTH;
+        margin-left: -2.5cm;
+        position: relative;
+        display: block;
+        min-height: auto;
+        white-space: normal;
+        background-color: white;
+        padding: 0.5cm 1cm 0.5cm 2.5cm;
+        border-top: 0.3px solid grey;
+        border-bottom: 0.3px solid grey;
+        & > * > :first-child.orientation{
+            border-top: 0px;
+        }
+        & > * > :last-child.orientation{
+            border-bottom: 0px;
+        }
+    }
+
+    .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape):after,
+    .higherdivision:has(> part > div > [data-akn-class="landscape"] , > akntitle > div > [data-akn-class="landscape"],
+                        > chapter > div > [data-akn-class="landscape"], > section > div > [data-akn-class="landscape"]):after,
+    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"])):after
+    {
+        content: " ";
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: -10px;
+        width: 10px;
+        border-left: 0.3px solid dimgrey;
+    }
+
+    div.higherdivision:has(> part > heading.portrait, > akntitle > heading.portrait,
+                        > chapter > heading.portrait, > section > heading.portrait) {
+        border-top: 0px solid;
+        border-bottom: 0px solid;
+    }
+
+    // selector for landscape preceded by higherdivision without landscape
+    div.higherdivision:has(> part > heading.portrait, > akntitle > heading.portrait,
+                        > chapter > heading.portrait, > section > heading.portrait)
+    +
+    div.higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape) {
+        margin-top: 10px;
+    }
+
+    // selector for higherdivision without landscape preceded by higherdivision containing landscape
+    div.higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape)
+    +
+    div.higherdivision:has(> part > heading.portrait, > akntitle > heading.portrait,
+                        > chapter > heading.portrait, > section > heading.portrait) {
+        margin-top: 10px;
+    }
+
+    /* select the first part that has as second sibling the second part*/
+    & .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape):has(+ .higherdivision ){
+        box-shadow: 0 10px 5px -2px rgba(0, 0, 0, 0.5); // bottom shadow
+    }
+
+    /* cancel the landscape followed by landscape*/
+    & .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape):has(+ .higherdivision ):has(+ .higherdivision > * > heading.landscape)  {
+        box-shadow: 0px 0px !important;
+        border-bottom: 0px !important;
+    }
+
+    & .higherdivision:has(> * > heading.landscape):has(+ *:not(.higherdivision))  {
+        box-shadow: 0 10px 5px -5px rgba(0, 0, 0, 0.5); // bottom shadow
+    }
+
+    // define the separation border between landscape and portrait
+    .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape) .higherdivision,
+    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"]))
+    .higherdivision,
+    .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape) .orientation,
+    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"]))
+    .orientation
+    {
+        border-top: 0px solid grey !important;
+        border-bottom: 0px solid grey!important;
+    }
+
+    & :first-child.higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
+                        > chapter > heading.landscape, > section > heading.landscape),
+      :first-child.higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"]))
+    {
+        border-top: 0.3px solid grey;
+    }
+}

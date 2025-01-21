@@ -39,7 +39,7 @@ define(function aknHigherElementProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
-
+    plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -85,7 +85,8 @@ define(function aknHigherElementProfileModule(require) {
             {name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo']},
             {name: 'insert', items: ['SpecialChar']},
             {name: 'trackChanges', items: ['toggleDisplay', 'trackChangeActions']},
-            {name: "colors", items: ["BGColor"]}
+            {name: "colors", items: ["BGColor"]},
+            { name: 'orientation', items: ['leosOrientation']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

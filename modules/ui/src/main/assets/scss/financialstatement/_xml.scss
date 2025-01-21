@@ -59,6 +59,15 @@
                 }
             }
 
+            div.orientation > .landscape {
+                width: $LANDSCAPE_WIDTH;
+                margin-left: $LANDSCAPE_MARGIN_LEFT;
+                @extend %pageLayout;
+
+                & > :nth-child(1) {
+                }
+            }
+
             & content {
                 & > table {
                     @extend %tableMargin;

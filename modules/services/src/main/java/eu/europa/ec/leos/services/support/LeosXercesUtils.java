@@ -13,23 +13,22 @@ import io.atlassian.fugue.Maybe;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class LeosXercesUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosXercesUtils.class);
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+    public static final String AKN_BODY = "aknBody";
 
     public static Node buildNumElement(Node node, String numLabel, SecurityContext securityContext, boolean isTrackChangesEnabled) {
         Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
@@ -179,12 +178,13 @@ public class LeosXercesUtils {
     	return iNode;
     }
 
-    public static byte[] wrapWithPageOrientationDivs(Document document) {
+    private static byte[] wrapWithPageOrientationDivsFinancialStatement(Document document) {
         Element landscapeDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_LANDSCAPE, "");
         Element portraitDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_PORTRAIT, "");
 
         NodeList bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(MAIN_BODY));
         boolean hasLandscapeNode = XercesUtils.hasNodeContainingAttributeValue(bodyNodes, CLASS_ATTR, ORIENTATION_LANDSCAPE);
+
         if (bodyNodes.getLength() == 0 || !hasLandscapeNode) {
             return XercesUtils.nodeToByteArray(document);
         }
@@ -194,13 +194,14 @@ public class LeosXercesUtils {
         mainBody.setTextContent("");
         for (int i = 0; i < children.size(); i++) {
             Node node = children.get(i);
-            if (node.getNodeName().equals(LEVEL)) {
+            if (XmlHelper.isOrientableNode(node.getNodeName())) {
                 String orientationClass = XercesUtils.getAttributeValue(node, "class");
-                if (ORIENTATION_LANDSCAPE.equals(orientationClass)) {
-                    if (prevElement == null) {
-                        mainBody.appendChild(landscapeDiv);
-                    }
-                    if (ORIENTATION_LANDSCAPE.equals(prevElement)) {
+                if (orientationClass != null && orientationClass.contains(ORIENTATION_LANDSCAPE)) {
+
+                    if (ORIENTATION_LANDSCAPE.equals(prevElement) || (prevElement == null)) {
+                        if (prevElement == null) {
+                            mainBody.appendChild(landscapeDiv);
+                        }
                         landscapeDiv.appendChild(node);
                     } else {
                         landscapeDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_LANDSCAPE, "");
@@ -227,6 +228,144 @@ public class LeosXercesUtils {
         }
 
         return XercesUtils.nodeToByteArray(document);
+    }
+
+    /**
+     * Wrap the parent of the blockcontainer
+     * @param document
+     * @return
+     */
+    private static byte[] wrapWithPageOrientationDivsExplanatoryMemorandum(Document document) {
+        NodeList bodyNodes =  XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(BLOCKCONTAINER));
+        for (int i = 0; i < bodyNodes.getLength(); i++) {
+            Node node = bodyNodes.item(i);
+            Element orientationDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION, "");
+            Node parentNode = node.getParentNode();
+            parentNode.getParentNode().replaceChild(orientationDiv, parentNode);
+            orientationDiv.appendChild(parentNode);
+        }
+        return XercesUtils.nodeToByteArray(document);
+    }
+
+    private static byte[] wrapWithPageOrientationDivsBill(Document document) {
+        Stream.of(PART, "aknTitle", CHAPTER, SECTION).forEach( higherElement -> {
+            NodeList nodeList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(higherElement));
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                Element div = XercesUtils.createElement(document, DIV, CLASS_ATTR,  HIGHER_DIVISION, "");
+                node.getParentNode().replaceChild(div, node);
+                div.appendChild(node);
+            }
+        });
+        NodeList articleNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(ARTICLE));// instead of AKN_BODY
+        for (int i = 0; i < articleNodes.getLength(); i++) {
+            Node node = articleNodes.item(i);
+            addPortraitAttributeToNode(node);
+            Element div = XercesUtils.createElement(document, DIV, CLASS_ATTR,  ORIENTATION, "");
+            node.getParentNode().replaceChild(div, node);
+            div.appendChild(node);
+        }
+        addPortraitAttributeToHeading(document);
+        return XercesUtils.nodeToByteArray(document);
+    }
+
+    public static byte[] wrapWithPageOrientationDivs(Document document) {
+        // check if financial statement
+        NodeList bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathFinancialStatement());
+        if(bodyNodes.getLength() > 0){
+            return wrapWithPageOrientationDivsFinancialStatement(document);
+        }
+        // check if explanatory memorandum
+        bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathExplanatoryMemorandum());
+        if(bodyNodes.getLength() > 0){
+            return XercesUtils.nodeToByteArray(document);
+        }
+        // check if bill
+        bodyNodes = XercesUtils.getElementsByXPath(document,  XPathCatalog.getXPathElement("bill"));
+        if(bodyNodes.getLength() > 0){
+            return wrapWithPageOrientationDivsBill(document);
+        }
+        // check if Annex
+        bodyNodes = XercesUtils.getElementsByXPath(document,  XPathCatalog.getXPathAnnex());
+        if(bodyNodes.getLength() > 0){
+            return wrapWithPageOrientationDivsAnnex(document);
+        }
+
+        return XercesUtils.nodeToByteArray(document);
+    }
+
+    private static byte[] wrapWithPageOrientationDivsAnnex(Document document) {
+        NodeList bodyNodes =  XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement("heading"));
+        for (int i = 0; i < bodyNodes.getLength(); i++) {
+            Node node = bodyNodes.item(i);
+            Element orientationDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, HIGHER_DIVISION, "");
+            Node parentNode = node.getParentNode();
+            parentNode.getParentNode().replaceChild(orientationDiv, parentNode);
+            orientationDiv.appendChild(parentNode);
+        }
+
+        for(String nodeName : orientableNodes){
+            bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(nodeName));
+            if(bodyNodes.getLength() > 0){
+                break;
+            }
+        }
+
+        if (bodyNodes == null || bodyNodes.getLength() == 0) {
+            return XercesUtils.nodeToByteArray(document);
+        }
+        for (int i = 0; i < bodyNodes.getLength(); i++) {
+            Node node = bodyNodes.item(i);
+            String isEditable = XercesUtils.getAttributeValue(node, "leos:editable");
+            if (isEditable != null && isEditable.equals("false")) {
+                continue;
+            }
+            Node classAttr = node.getAttributes().getNamedItem(CLASS_ATTR);
+            if(classAttr == null
+                    || (!classAttr.getTextContent().contains(ORIENTATION_LANDSCAPE)
+                    && !classAttr.getTextContent().contains(ORIENTATION_PORTRAIT))){
+                XercesUtils.addAttribute(node, CLASS_ATTR, (classAttr == null ? "" : classAttr.getTextContent()) + " " + ORIENTATION_PORTRAIT );
+            }
+            Element orientationDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR,  ORIENTATION, "");
+            node.getParentNode().replaceChild(orientationDiv, node);
+
+
+            orientationDiv.appendChild(node);
+        }
+        addPortraitAttributeToHeading(document);
+        return XercesUtils.nodeToByteArray(document);
+    }
+
+    /**
+     * Add portrait attribute to heading
+     * @param document
+     */
+    private static void addPortraitAttributeToHeading(Document document) {
+        NodeList nodeList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(HEADING));
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            addPortraitAttributeToNode(nodeList.item(i));
+        }
+    }
+
+    public static String addOrientationPortraitIfNone(String elementContent) {
+
+        Document document = createXercesDocument(elementContent.getBytes(StandardCharsets.UTF_8), false);
+        Node node= document.getFirstChild();
+        addPortraitAttributeToNode(node);
+        return XercesUtils.nodeToStringSimple(node);
+    }
+
+    private static void addPortraitAttributeToNode(Node node) {
+        if(node != null) {
+            Node classAttr = node.getAttributes().getNamedItem(CLASS_ATTR);
+            if (classAttr == null
+                    || (!classAttr.getTextContent().contains(ORIENTATION_LANDSCAPE)
+                    && !classAttr.getTextContent().contains(ORIENTATION_PORTRAIT))) {
+                XercesUtils.addAttribute(node, CLASS_ATTR,
+                        classAttr == null ? ORIENTATION_PORTRAIT : new StringBuilder(classAttr.getTextContent())
+                                .append(" ").append(ORIENTATION_PORTRAIT).toString());
+            }
+        }
     }
 
     public static String removeSoftDeletedNodes(String elementContent){

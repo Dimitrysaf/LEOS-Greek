@@ -186,8 +186,9 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR,
                 messageHelper.getMessage("operation." + elementName + ".updated"));
         documentViewService.updateProposalAsync(memorandum);
-        return new SaveElementResponse(elementId, elementName,
-                elementProcessor.getElement(memorandum, elementName, elementId));
+
+        String elementContent = elementProcessor.getElement(memorandum, elementName, elementId);
+        return new SaveElementResponse(elementId, elementName, elementContent);
     }
 
     @Override

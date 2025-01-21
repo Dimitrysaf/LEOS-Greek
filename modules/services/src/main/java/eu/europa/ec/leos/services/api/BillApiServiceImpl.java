@@ -611,6 +611,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         List<Element> result = getMovedFromElements(updatedBill, newContent, elementId);
 
         documentViewService.updateProposalAsync(bill);
+        newContent = documentViewService.getEditableXml(bill, documentViewService.getProposalFromPackage(bill));
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
     }
 

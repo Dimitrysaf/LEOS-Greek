@@ -114,4 +114,5 @@ public interface ElementProcessor<T extends XmlDocument> {
     byte[] removeAttribute(byte[] xmlContent, String elementId, String attrName);
 
     String getElementAttributeValue(byte[] xmlContent, String attributeName, String tagName, String idAttributeValue);
+
 }
