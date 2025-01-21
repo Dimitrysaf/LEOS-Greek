@@ -127,3 +127,47 @@ When(/^right click on level (\d+)$/, function (levelNumber) {
 When(/^right click on paragraph (\d+)$/, function (paragraphNumber) {
     annexPage.getParagraph(paragraphNumber).rightclick();
 });
+
+Then(/^content of point (\d+) of list of point (\d+) of list of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (pointThirdLayer, pointSecondLayer, pointFirstLayer, levelNumber, content) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).children('list').children('point').eq(pointSecondLayer-1).children('list').children('point').eq(pointThirdLayer-1).find("content aknp").should('have.text', content);
+});
+
+Then(/^content of point (\d+) of list of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (pointSecondLayer, pointFirstLayer, levelNumber, content) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).children('list').children('point').eq(pointSecondLayer-1).find("content aknp").should('have.text', content);
+});
+
+Then(/^content of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (pointFirstLayer, levelNumber, content) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).find("content aknp").should('have.text', content);
+});
+
+Then(/^content of subparagraph (\d+) of list of level (\d+) contains "([^"]*)"$/, function (subparagraphNumber, levelNumber, content) {
+    annexPage.getLevel(levelNumber).children('list').children('subparagraph').eq(subparagraphNumber-1).find("content aknp").should('have.text', content);
+});
+
+And(/^del tag with attribute "([^"]*)" and value "([^"]*)" of num tag of point (\d+) of list of point (\d+) of list of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (attributeName, attributeValue, pointThirdLayer, pointSecondLayer, pointFirstLayer, levelNumber, value) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).children('list').children('point').eq(pointSecondLayer-1).children('list').children('point').eq(pointThirdLayer-1).find("del" + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+And(/^ins tag with attribute "([^"]*)" and value "([^"]*)" of num tag of point (\d+) of list of point (\d+) of list of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (attributeName, attributeValue, pointThirdLayer, pointSecondLayer, pointFirstLayer, levelNumber, value) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).children('list').children('point').eq(pointSecondLayer-1).children('list').children('point').eq(pointThirdLayer-1).find("ins" + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+And(/^del tag with attribute "([^"]*)" and value "([^"]*)" of num tag of point (\d+) of list of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (attributeName, attributeValue, pointSecondLayer, pointFirstLayer, levelNumber, value) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).children('list').children('point').eq(pointSecondLayer-1).find("del" + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+And(/^ins tag with attribute "([^"]*)" and value "([^"]*)" of num tag of point (\d+) of list of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (attributeName, attributeValue, pointSecondLayer, pointFirstLayer, levelNumber, value) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).children('list').children('point').eq(pointSecondLayer-1).find("ins" + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+And(/^del tag with attribute "([^"]*)" and value "([^"]*)" of num tag of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (attributeName, attributeValue, pointFirstLayer, levelNumber, value) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).find("del" + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+And(/^ins tag with attribute "([^"]*)" and value "([^"]*)" of num tag of point (\d+) of list of level (\d+) contains "([^"]*)"$/, function (attributeName, attributeValue, pointFirstLayer, levelNumber, value) {
+    annexPage.getLevel(levelNumber).children('list').children('point').eq(pointFirstLayer-1).find("ins" + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+And(/^del tag with attribute "([^"]*)" and value "([^"]*)" of num tag of subparagraph (\d+) of list of level (\d+) contains "([^"]*)"$/, function (attributeName, attributeValue, subParagraphNumber, levelNumber, value) {
+    annexPage.getLevel(levelNumber).children('list').children('subparagraph').eq(subParagraphNumber-1).find("del" + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
