@@ -196,12 +196,19 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                                     byte[] coverPageContent) {
         String content = transformationService.toEditableXml(getContentInputStream(xmlDocument), contextPath, xmlDocument.getCategory(),
                 securityContext.getPermissions(xmlDocument), getContentInputStream(coverPageContent));
-        if (STAT_DIGIT_FINANC_LEGIS.equals(xmlDocument.getCategory())) {
-            final Document document = XercesUtils.createXercesDocument(content.getBytes(XmlHelper.UTF_8));
-            final byte[] node = LeosXercesUtils.wrapWithPageOrientationDivs(document);
-            content = new String(node, XmlHelper.UTF_8);
+        switch (xmlDocument.getCategory()) {
+            case MEMORANDUM:
+            case COUNCIL_EXPLANATORY:
+            case ANNEX:
+            case BILL:
+            case STAT_DIGIT_FINANC_LEGIS:
+                final Document document = XercesUtils.createXercesDocument(content.getBytes(XmlHelper.UTF_8));
+                final byte[] node = LeosXercesUtils.wrapWithPageOrientationDivs(document);
+                content = new String(node, XmlHelper.UTF_8);
+                return content;
+            default:
+                return content;
         }
-        return content;
     }
 
     @Override

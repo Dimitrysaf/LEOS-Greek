@@ -74,6 +74,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -223,6 +224,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             splittedContentIsEmpty = true;
         }
         documentViewService.updateProposalAsync(annex);
+
+        newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 

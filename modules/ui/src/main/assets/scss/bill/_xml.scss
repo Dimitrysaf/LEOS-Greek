@@ -24,6 +24,10 @@
         bill {
             @extend %xmlCoverPage;
             @extend %xmlSecondPage;
+            @extend %xmlOrientation;
+            @extend %xmlHigherdivision;
+
+
         }
         meta *{
             display: none;

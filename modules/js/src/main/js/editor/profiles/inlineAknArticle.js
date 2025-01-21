@@ -60,6 +60,7 @@ define(function aknInlineArticleProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
     plugins.push(require("plugins/leosDapInfo/leosDapInfo"));
+    plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -112,7 +113,8 @@ define(function aknInlineArticleProfileModule(require) {
             {name: "mode", items: ['Sourcedialog', 'spellchecker']},
             {name: 'trackChanges', items: ['toggleDisplay', 'trackChangeActions']},
             {name: 'colors', items: ['BGColor']},
-            {name: 'dapInfo', items: ['leosDapInfo']}
+            {name: 'dapInfo', items: ['leosDapInfo']},
+            {name: 'orientation', items: ['leosOrientation']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

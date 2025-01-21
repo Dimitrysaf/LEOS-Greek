@@ -238,6 +238,8 @@ public class XmlHelper {
     public static final String DIV = "div";
     public static final String ORIENTATION_LANDSCAPE = "landscape";
     public static final String ORIENTATION_PORTRAIT = "portrait";
+    public static final String ORIENTATION  = "orientation";
+    public static final String HIGHER_DIVISION  = "higherdivision";
 
     public static final String ID_PLACEHOLDER = "${id}";
     public static final String ID_PLACEHOLDER_ESCAPED = "\\Q${id}\\E";
@@ -469,7 +471,11 @@ public class XmlHelper {
     public static boolean isParentEditableNode(String tagName) {
         return parentEditableNodes.contains(tagName) ? true : false;
     }
+    public static final ArrayList<String> orientableNodes = new ArrayList<String>(Arrays.asList(ARTICLE, LEVEL, BLOCKCONTAINER));
 
+    public static boolean isOrientableNode(String tagName) {
+        return orientableNodes.contains(tagName);
+    }
     private static final ArrayList<String> exclusionList = new ArrayList<String>(Arrays.asList(AUTHORIAL_NOTE, NUM, CLAUSE));
 
     public static boolean isExcludedNode(String tagName) {

@@ -62,7 +62,10 @@ define(function aknBlockContainerPluginModule(require) {
             html : "data-akn-attr-softdate"
         }, {
             html: ["data-akn-name", "blockContainer"].join("=")
-        }]
+        }, {
+            akn : "class",
+            html : "data-akn-class"
+        } ]
     };
 
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);

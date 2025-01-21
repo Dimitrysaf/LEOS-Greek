@@ -122,7 +122,7 @@ public class DocumentViewService<T extends XmlDocument> {
                 document.getVersionType(), versionLabel, versionComment);
     }
 
-    private String getEditableXml(T document, Proposal proposal) {
+    public String getEditableXml(T document, Proposal proposal) {
         byte[] coverPageContent = new byte[0];
         //handle cover page type
 

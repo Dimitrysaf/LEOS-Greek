@@ -766,73 +766,73 @@ Feature: Legal Act Page Regression Features
     When click close button of ck editor
     Then ck editor window is not displayed
 
-  @checksForStory1703And2060And2208 @local
-  Scenario: Checks related to specific stories: 1703, 2060 and 2208. Tests for alternatives and some track changes related to paragraph mode
-    Given navigate to edit drafting application with "User1"
-    Then user is on home page
-    When click on upload button
-    Then active upload window label contains "Upload a legislative document"
-    When upload a leg file from a relative location "PROP_ACT-cm65ct0qm005tzg88xg9uph7b-en.leg"
-    Then active upload window label contains "Document metadata"
-    And  document title input field is displayed
-    When click on create button in upload document page
-    Then user is on act viewer page
-    When click on legal act link present in act viewer page
-    Then user is on legal act page
-    When mouseover and click on article 3
-    Then ck editor window is displayed
-    When click on alternative 2 icon present in ck editor panel
-    And click dialog ok button
-    Then check content inside ckeditor is of size 3202
-    When click source button
-    And click on cancel button in source dialog
-    Then check content inside ckeditor is of size 3202
-    When mouseover and click on article 3
-    Then ck editor window is displayed
-    When append "Text" at offset 7 in numbered paragraph 1 of article in edition mode
-    Then alternative 1 and alternative 2 are present
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    Then enable track changes
-    When mouseover and click on article 5
-    Then ck editor window is displayed
-    When click on alternative 2 icon present in ck editor panel
-    And click dialog ok button
-    Then check content inside ckeditor is greater than 100
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    And num tag of paragraph 1 of article 5 should not exist
-    And num tag of paragraph 2 of article 5 should not exist
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    Then move the cursor position to offset 0 in paragraph 1 of article in edition mode
-    Then click on paragraph mode icon two times present in ck editor panel
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    And num tag of paragraph 1 of article 1 contains html '<del leos:action-number="delete" leos:title="DOE Jane'
-    And num tag of paragraph 1 of article 1 contains html '1.</del>'
-    And num tag of paragraph 2 of article 1 contains html '<del leos:action-number="delete" leos:title="DOE Jane'
-    And num tag of paragraph 2 of article 1 contains html '2.</del>'
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    And move the cursor position to offset 0 in paragraph 1 of article in edition mode
-    When click on paragraph mode icon present in ck editor panel
-    And click save and close button of ck editor
-    Then ck editor window is not displayed
-    And num tag of paragraph 1 of article 1 does not contain html '<del leos:action-number="delete" leos:title="DOE Jane'
-    And num tag of paragraph 1 of article 1 does not contain html '</del>'
-    And num tag of paragraph 1 of article 1 contains html '1.'
-    And num tag of paragraph 2 of article 1 does not contain html '<del leos:action-number="delete" leos:title="DOE Jane'
-    And num tag of paragraph 2 of article 1 does not contain html '</del>'
-    And num tag of paragraph 2 of article 1 contains html '2.'
-    When mouseover and click on article 6
-    Then ck editor window is displayed
-    And add content "test" to li 1 with data-akn-element "paragraph" of article in edition mode
-    And content inside ckeditor contains 'data-akn-tc-original-number="UNNUMBERED"'
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    And num tag of paragraph 1 of article 6 should not exist
-    And num tag of paragraph 2 of article 6 should not exist
+    @checksForStory1703And2060And2208 @local
+    Scenario: Checks related to specific stories: 1703, 2060 and 2208. Tests for alternatives and some track changes related to paragraph mode
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on upload button
+        Then active upload window label contains "Upload a legislative document"
+        When upload a leg file from a relative location "PROP_ACT-cm65ct0qm005tzg88xg9uph7b-en.leg"
+        Then active upload window label contains "Document metadata"
+        And  document title input field is displayed
+        When click on create button in upload document page
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        When mouseover and click on article 3
+        Then ck editor window is displayed
+        When click on alternative 2 icon present in ck editor panel
+        And click dialog ok button
+        Then check content inside ckeditor is of size 3202
+        When click source button
+        And click on cancel button in source dialog
+        Then check content inside ckeditor is of size 3202
+        When mouseover and click on article 3
+        Then ck editor window is displayed
+        When append "Text" at offset 7 in numbered paragraph 1 of article in edition mode
+        Then alternative 1 and alternative 2 are present
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        Then enable track changes
+        When mouseover and click on article 5
+        Then ck editor window is displayed
+        When click on alternative 2 icon present in ck editor panel
+        And click dialog ok button
+        Then check content inside ckeditor is greater than 100
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And num tag of paragraph 1 of article 5 should not exist
+        And num tag of paragraph 2 of article 5 should not exist
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        Then move the cursor position to offset 0 in paragraph 1 of article in edition mode
+        Then click on paragraph mode icon two times present in ck editor panel
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And num tag of paragraph 1 of article 1 contains html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
+        And num tag of paragraph 1 of article 1 contains html '1.</del>'
+        And num tag of paragraph 2 of article 1 contains html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
+        And num tag of paragraph 2 of article 1 contains html '2.</del>'
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        And move the cursor position to offset 0 in paragraph 1 of article in edition mode
+        When click on paragraph mode icon present in ck editor panel
+        And click save and close button of ck editor
+        Then ck editor window is not displayed
+        And num tag of paragraph 1 of article 1 does not contain html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
+        And num tag of paragraph 1 of article 1 does not contain html '</del>'
+        And num tag of paragraph 1 of article 1 contains html '1.'
+        And num tag of paragraph 2 of article 1 does not contain html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
+        And num tag of paragraph 2 of article 1 does not contain html '</del>'
+        And num tag of paragraph 2 of article 1 contains html '2.'
+        When mouseover and click on article 6
+        Then ck editor window is displayed
+        And add content "test" to li 1 with data-akn-element "paragraph" of article in edition mode
+        And content inside ckeditor contains 'data-akn-tc-original-number="UNNUMBERED"'
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And num tag of paragraph 1 of article 6 should not exist
+        And num tag of paragraph 2 of article 6 should not exist
 
   @versionPane @archiveFunctionality
   Scenario: VersionPane Archive functionality
