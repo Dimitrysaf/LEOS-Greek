@@ -166,6 +166,18 @@ And(`num tag of paragraph {int} of article {int} contains {string}`, (paragraphN
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('include.text', content);
 });
 
+And(`num tag of paragraph {int} of article {int} contains html {string}`, (paragraphNumber, articleNumber, content) => {
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('include.html', content);
+});
+
+And(`num tag of paragraph {int} of article {int} does not contain html {string}`, (paragraphNumber, articleNumber, content) => {
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).not('include.html', content);
+});
+
+And(`num tag of paragraph {int} of article {int} should not exist`, (paragraphNumber, articleNumber) => {
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('not.exist');
+});
+
 Then(`content of subparagraph refersTo {string} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphRefersTo, listNumber, paragraphNumber, articleNumber, content) => {
     legalActPage.getContentOfSubParagraphRefersToListOfParagraphOfArticle(subparagraphRefersTo, listNumber, paragraphNumber, articleNumber, content).should('have.text', content);
 });

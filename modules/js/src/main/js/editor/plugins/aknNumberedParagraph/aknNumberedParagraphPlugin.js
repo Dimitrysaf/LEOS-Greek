@@ -291,64 +291,33 @@ define(function aknNumberedParagraphPluginModule(require) {
         var paragraphs = jqEditor.find(PARA_SELECTOR);
         var rootElement = ckEditor.element.getFirst();
         var isAlternative = rootElement && rootElement.getAttribute("leos:alternative");
-        var originalNums = [];
         if (paragraphs.length > 0) {
             if (PARA_MODE === NUMBERED) {
                 var renumber = true;
                 if (ckEditor.LEOS.isTrackChangesEnabled) {
                     for (var ii = 0; ii < paragraphs.length; ii++) {
                         var dataAknNum = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM);
-                        var originalNum = paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                        if (originalNum == null && dataAknNum !== null) {
-                            leosTrackChanges.core.setOriginalNumber(paragraphs[ii], dataAknNum);
-                            originalNum = dataAknNum;
-                        }
-                        if (SWITCHED && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER) === leosTrackChanges.core.DELETE_ACTION) {
+                        leosTrackChanges.core.setOriginalNumber(paragraphs[ii], dataAknNum);
+                        if (SWITCHED && dataAknNum && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED) {
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
                             leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
-                            leosTrackChanges.core.setOriginalNumber(paragraphs[ii], originalNum);
+                            renumber = false;
                         }
-                        originalNums.push(originalNum);
                     }
                 }
                 if (renumber && !(isAlternative && rootElement.getName() === leosTrackChanges.core.ARTICLE)) {
                     renumberModule.updateNumbers([paragraphs[0].parentElement], renumberModule.getSequences('Paragraph'));
                 }
-                if (ckEditor.LEOS.isTrackChangesEnabled) {
-                    for (var ii = 0; ii < paragraphs.length; ii++) {
-                        leosTrackChanges.core.setOriginalNumber(paragraphs[ii], originalNums[ii]);
-                    }
-                }
             } else {
                 for (var ii = 0; ii < paragraphs.length; ii++) {
                     if (ckEditor.LEOS.isTrackChangesEnabled) {
                         var dataAknNum = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM);
-                        var originalNum = paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                        if (originalNum == null && dataAknNum !== null) {
-                            leosTrackChanges.core.setOriginalNumber(paragraphs[ii], dataAknNum);
-                        }
-                        if (SWITCHED && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER) === leosTrackChanges.core.INSERT_ACTION) {
-                            if (dataAknNum != originalNum && originalNum != null && originalNum !== 'NEW') {
-                                leosTrackChanges.core.setOriginalNumber(paragraphs[ii], originalNum);
-                                if (originalNum !== 'UNNUMBERED') {
-                                    paragraphs[ii].setAttribute(leosPluginUtils.DATA_AKN_NUM, originalNum);
-                                    paragraphs[ii].setAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER, leosTrackChanges.core.DELETE_ACTION);
-                                } else {
-                                    paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
-                                    paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
-                                    leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
-                                }
-                            } else if (originalNum !== 'UNNUMBERED' && originalNum !== 'NEW') {
-                                paragraphs[ii].setAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER, leosTrackChanges.core.DELETE_ACTION);
-                            } else if (paragraphs[ii].hasAttribute('NEW') && originalNum === 'NEW') {
-                                paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
-                                paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
-                                paragraphs[ii].removeAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                                paragraphs[ii].removeAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER);
-                            } else {
-                                paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
-                                paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
-                                leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
-                            }
+                        leosTrackChanges.core.setOriginalNumber(paragraphs[ii], dataAknNum);
+                        if (dataAknNum && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED) {
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                            leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
                         } else if (SWITCHED
                             || (!dataAknNum
                                 && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.UNNUMBERED
