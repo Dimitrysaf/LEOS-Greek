@@ -646,6 +646,10 @@ public class LegServiceImpl implements LegService {
 
         byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToFinancialStatement(financialStatement, xmlContent);
+        if (exportOptions.isCleanVersion()) {
+            xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
+            xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
+        }
         contentToZip.put(financialStatement.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef);
@@ -861,15 +865,19 @@ public class LegServiceImpl implements LegService {
             byte[] originalContent = addEEARelevanceMetadataToOriginalProposal((Proposal) originalProposal);
             xmlContent = simpleCompareXmlContentsForClone(originalContent, xmlContent).getBytes(UTF_8);
         }
-        List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(xmlContent, Arrays.asList("docPurpose"), true);
-        String title = !docPurposeElements.isEmpty() ?
-                xmlContentProcessor.getElementByNameAndId(xmlContent, docPurposeElements.get(0).getElementTagName(), docPurposeElements.get(0).getElementId()) :
-                null;
         if (exportOptions.isComparisonMode()) {
             xmlContent = addMetadataToProposalWithoutEEARelevanceMetadata(proposal, xmlContent);
         } else {
             xmlContent = addMetadataToProposal(proposal, xmlContent);
         }
+        if (exportOptions.isCleanVersion()) {
+            xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
+            xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
+        }
+        List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(xmlContent, Arrays.asList("docPurpose"), true);
+        String title = !docPurposeElements.isEmpty() ?
+                xmlContentProcessor.getElementByNameAndId(xmlContent, docPurposeElements.get(0).getElementTagName(), docPurposeElements.get(0).getElementId()) :
+                null;
         if (title != null) {
             xmlContent = xmlContentProcessor.replaceElementById(xmlContent, title, docPurposeElements.get(0).getElementId());
         }
@@ -1791,11 +1799,12 @@ public class LegServiceImpl implements LegService {
             // LEOS-6022: Cleaning attachments' diffing classes in contents after comparison
             xmlContent = XmlHelper.cleanDiffingClassesForTag(xmlContent, XmlHelper.ATTACHMENTS, Arrays.asList(CONTENT_ADDED_CLASS, CONTENT_REMOVED_CLASS));
             xmlContent = XmlHelper.cleanDiffingClassesForTag(xmlContent, XmlHelper.PREFACE, Arrays.asList(CONTENT_ADDED_CLASS, CONTENT_REMOVED_CLASS));
-        } else if (exportOptions.isCleanVersion()) {
+        }
+        xmlContent = addMetadataToBill(bill, xmlContent);
+        if (exportOptions.isCleanVersion()) {
             xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
             xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
-        xmlContent = addMetadataToBill(bill, xmlContent);
 
         ExportResource exportBillResource = enrichZipWithBillForClone(contentToZip, exportProposalResource,
                 proposalRefsMap, bill, proposal, xmlContent);
