@@ -168,60 +168,6 @@ Then(/^favourite icon is selected$/, function () {
     actViewerPage.elements.favouriteIcon().should('have.css', 'color','rgb(48, 48, 48)');
 });
 
-When (/^the user clicks on the Reorder button$/,()=>{
+When (/^user clicks on the reorder button$/,()=>{
     actViewerPage.clickReorderButton();
 });
-
-And (/^the user can close the dialog box by clicking the "Close" button$/,()=>{
-    actViewerPage.editDialogueCloseButton();
-});
-
-And(/^user can change the name of the annex by click the actions button$/, () => {
-    actViewerPage.lastElementOfTheAnnexRow();
-});
-
-When (/^user click on Title change from actions menu$/,()=>{
-    actViewerPage.clickChangeTitle();
-});
-
-Then (/^one Edit title dialogue box will be displayed$/,()=>{
-    actViewerPage.elements.editTitleAnnexDialogue().should('have.text' ,'Edit title')
-})
-And (/^user can clear the previous title$/,()=>{
-    actViewerPage.clearAnnexPreviousTitle()
-})
-
-And ('the user can change title of the annex to {string}',(newValue)=>{
-    actViewerPage.elements.changeTitleName().type(newValue);
-})
-
-And (/^user can save the changes$/,()=>{
-    actViewerPage.clickSaveFromEditTitleDialogue();
-})
-
-And (/^user can see the delete button on actions menu$/,()=>{
-    actViewerPage.lastElementOfTheAnnexRow();
-})
-And (/^user can click on delete the annex from the actview page$/,()=>{
-    actViewerPage.clickDeleteFromActView();
-})
-
-And (/^user can delete the annex$/,()=>{
-    actViewerPage.AnnexDeletion();
-})
-
-Then (/^user should be to see Edit Annex order dialogue box$/,()=>{
-    actViewerPage.elements.editAnnexOrderDialogue().should('have.text','Edit annex order');
-})
-
-And (/^user can do the drag and drop drop the annex from  the dialogue box$/,()=>{
-    cy.wait(5000);
-    actViewerPage.dragAndDrop();
-})
-And (/^user can close the button from the edit annex order$/,()=>{
-    actViewerPage.closeButtonFromEditAnnexOrder();
-})
-
-Then (/^one Annex deletion dialogue box will be displayed$/,()=>{
-    actViewerPage.elements.deleteFromDeleteDialogueBox().should('have.text','Annex deletion confirm');
-})

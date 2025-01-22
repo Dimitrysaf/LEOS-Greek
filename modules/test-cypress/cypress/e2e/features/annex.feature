@@ -46,28 +46,28 @@ Feature: Annex Page Regression Features
         Then user is on act viewer page
         When click on add button in annexes section
         Then total number of annexes present in act viewer page is 3
-#        When click on action icon of annex 1
-#        And  click on change title button
-#        Then "Edit title" dialog box window is displayed
-#        And  input value of dialog box window is "Annex"
-#        When provide input "Annex 1" dialog box window
-#        Then input value of dialog box window is "Annex 1"
-#        When click on save button in dialog input box window
-#        Then title of annex 1 contains "Annex 1"
-#        When click on action icon of annex 2
-#        And  click on change title button
-#        Then "Edit title" dialog box window is displayed
-#        And  input value of dialog box window is "Annex"
-#        When provide input "Annex 2" dialog box window
-#        And  click on save button in dialog input box window
-#        Then title of annex 2 contains "Annex 2"
-#        When click on action icon of annex 3
-#        And  click on change title button
-#        Then "Edit title" dialog box window is displayed
-#        And  input value of dialog box window is "Annex"
-#        When provide input "Annex 3" dialog box window
-#        When click on save button in dialog input box window
-#        Then title of annex 3 contains "Annex 3"
+        When click on action icon of annex 1
+        And  click on change title button
+        Then "Edit title" dialog box window is displayed
+        And  input value of dialog box window is "Annex"
+        When provide input "Annex 1" dialog box window
+        Then input value of dialog box window is "Annex 1"
+        When click on save button in dialog input box window
+        Then title of annex 1 contains "Annex 1"
+        When click on action icon of annex 2
+        And  click on change title button
+        Then "Edit title" dialog box window is displayed
+        And  input value of dialog box window is "Annex"
+        When provide input "Annex 2" dialog box window
+        And  click on save button in dialog input box window
+        Then title of annex 2 contains "Annex 2"
+        When click on action icon of annex 3
+        And  click on change title button
+        Then "Edit title" dialog box window is displayed
+        And  input value of dialog box window is "Annex"
+        When provide input "Annex 3" dialog box window
+        When click on save button in dialog input box window
+        Then title of annex 3 contains "Annex 3"
         When click on annex 1 link
         Then user is on annex page
         And  annotation side bar is present
@@ -142,7 +142,18 @@ Feature: Annex Page Regression Features
         ###################################### END ## LEOS-5980 ####################################
         When click on close button present in annex page
         Then user is on act viewer page
-        When click on action icon of annex 1
+        When user clicks on the reorder button
+        Then "Edit annex order" dialog box window is displayed
+        And  example box 1 contains " Annex 1"
+        And  example box 2 contains "Annex 2"
+        And  example box 3 contains "Annex 3"
+        When drag row 1 and drop on row 3 in dialog box window
+        Then example box 1 contains "Annex 2"
+        And  example box 2 contains "Annex 3"
+        And  example box 3 contains "Annex 1"
+        When click on dismiss close button in dialog box window
+        Then no dialog box window present
+        When click on action icon of annex 3
         And  click on delete button in action menu
         Then "Annex deletion confirm" dialog confirm box window is displayed
         When click on danger button in dialog box window
