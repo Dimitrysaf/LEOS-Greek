@@ -1579,14 +1579,8 @@ public class XercesUtils {
             XercesUtils.replaceElement(node.getFirstChild(), node);
             isNodeDeleted = true;
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
-            if("span".equals(node.getNodeName())) {
-                XercesUtils.deleteElement(node);
-                isNodeDeleted = true;
-            } else {
-                //removeTrackChangesAttributes(node);
-                XercesUtils.deleteElement(node);
-                isNodeDeleted = true;
-            }
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)) {
             if("span".equals(node.getNodeName())) {
                 XercesUtils.replaceElement(node.getFirstChild(), node);
