@@ -60,7 +60,7 @@ public class ModelHelper {
         Bill bill = new Bill(docId, "Proposal", "login", Instant.now(), "login", Instant.now(),
                 "", "", "", "", VersionType.MINOR, true,
                 "title", collaborators, Arrays.asList(""),
-                null, "", "", Option.some(content), Option.some(billMetadata), false);
+                null, "", "", Option.some(content), Option.some(billMetadata), false, false);
         return bill;
     }
 }

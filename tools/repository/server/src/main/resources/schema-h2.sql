@@ -157,7 +157,8 @@ CREATE TABLE DOCUMENT_VERSION
      AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
      AUDIT_LAST_M_DATE TIMESTAMP (9),
      IS_IMMUTABLE NUMBER,
-     DOCUMENT_ID NUMBER(22,0)
+     DOCUMENT_ID NUMBER(22,0),
+     IS_VERSION_ARCHIVED NUMBER(1,0) DEFAULT 0
 );
 
 CREATE TABLE CONFIG_CATEGORIES
@@ -311,7 +312,7 @@ SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
      , doc.name, doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
      , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
-     , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived, (SELECT
+     , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived, docver.is_version_archived, (SELECT
                                                                                                                                                              count(*) FROM document_property_values dpv WHERE dpv.version_id = docver.id) AS num_props
 FROM document doc, document_version docver, document_content docxml, document_categories_v doccat, "PACKAGE" pkg
 WHERE docver.DOCUMENT_ID = doc.ID

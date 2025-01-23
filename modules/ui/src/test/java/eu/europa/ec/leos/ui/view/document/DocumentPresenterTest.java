@@ -256,7 +256,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         final Bill document = new Bill(docId, "Proposal", "login", Instant.now(), "login", Instant.now(),
                             documentVersion, "", documentVersion, "", VersionType.MINOR, true,
                             docName, collaborators, Arrays.asList(""), "", "", "",
-                            Option.some(content), Option.some(billMetadata), false);
+                            Option.some(content), Option.some(billMetadata), false, false);
     
         String displayableContent = "document displayable content";
         List<TableOfContentItemVO> tableOfContentItemVoList = Collections.emptyList();
@@ -351,7 +351,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         final Bill document = new Bill(docId, "Proposal", "login", Instant.now(), "login", Instant.now(),
                 documentVersion, "", documentVersion, "", VersionType.MINOR, true,
                 docName, collaborators, Arrays.asList(""), "", "", "",
-                Option.some(content), Option.some(billMetadata), false);
+                Option.some(content), Option.some(billMetadata), false, false);
 
         String displayableContent = "document displayable content";
         List<TableOfContentItemVO> tableOfContentItemVoList = Collections.emptyList();
@@ -432,7 +432,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         return new Bill(docId, "Proposal", "login", Instant.now(), "login", Instant.now(),
                 documentVersion, "", documentVersion, "", VersionType.MINOR, true,
                 docTitle, collaborators, Arrays.asList(""), "", "","",
-                Option.some(content), Option.some(billMetadata), false);
+                Option.some(content), Option.some(billMetadata), false, false);
     }
     
     @Test

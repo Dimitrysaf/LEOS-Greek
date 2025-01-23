@@ -1249,7 +1249,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                 source.getContributionStatus(),
                 source.getClonedFrom(),
                 source.getMetadata(),
-                source.isTrackChangesEnabled());
+                source.isTrackChangesEnabled(), false);
     }
 
     @Subscribe

@@ -207,7 +207,8 @@ public class LeosDocumentExtensions {
                 getContributionStatus(d),
                 getClonedFrom(d),
                 LeosRepositoryMetadataExtensions.getMemorandumMetadataOption(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d),
+                isVersionArchived(d));
     }
 
     private static Bill toLeosBill(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -224,7 +225,8 @@ public class LeosDocumentExtensions {
                 getClonedFrom(d),
                 contentOption(d, fetchContent),
                 LeosRepositoryMetadataExtensions.getBillMetadataOption(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d),
+                isVersionArchived(d));
     }
 
     private static Annex toLeosAnnex(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -242,7 +244,8 @@ public class LeosDocumentExtensions {
                 getClonedFrom(d),
                 contentOption(d, fetchContent),
                 LeosRepositoryMetadataExtensions.getAnnexMetadataOption(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d),
+                isVersionArchived(d));
     }
 
     private static FinancialStatement toFinancialStatement(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -259,7 +262,8 @@ public class LeosDocumentExtensions {
                 getBaseRevisionId(d),
                 isTrackChangesEnabled(d),
                 getContributionStatus(d),
-                getClonedFrom(d));
+                getClonedFrom(d),
+                isVersionArchived(d));
     }
 
     private static MediaDocument toLeosMediaDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -520,6 +524,14 @@ public class LeosDocumentExtensions {
             Boolean trackChangesEnabled =
                     Boolean.parseBoolean((String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED)));
             return trackChangesEnabled;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static boolean isVersionArchived(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
+        try {
+            return document.getVersionArchived();
         } catch (Exception e) {
             return false;
         }

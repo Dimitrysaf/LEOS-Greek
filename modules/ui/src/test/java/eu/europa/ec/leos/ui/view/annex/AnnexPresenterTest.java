@@ -395,7 +395,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         return new Annex(docId, "Annex", "login", Instant.now(), "login", Instant.now(),
                     documentVersion, "", documentVersion, "", VersionType.MINOR, true,
                     docTitle, Collections.emptyList(), Arrays.asList(""), docId+"0.1.0"+"Document Created", false, "", "",
-                    Option.some(content), Option.some(annexMetadata), false);
+                    Option.some(content), Option.some(annexMetadata), false, false);
     }
     
     @Test

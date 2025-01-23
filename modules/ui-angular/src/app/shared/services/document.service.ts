@@ -994,6 +994,20 @@ export class DocumentService {
   //   this.versionIdBS.next(versionNumber);
   // }
 
+  checkVersion(versionLabel: string) {
+    return this.http
+      .get<Version>(`${apiBaseUrl}/secured/document/document-version/${this.documentType}/${this.documentRef}/${versionLabel}`)
+      .pipe(map((version: Version) => version.versionArchived));
+  }
+
+  archiveVersion(version: Version) {
+    return this.http
+      .post(
+        `${apiBaseUrl}/secured/document/archive-version/${this.documentRef}/${version.cmisVersionNumber}`,
+        {},
+      ).subscribe(() => this.reloadView());
+  }
+
   resetZoomValues() {
     this.resetZoomBS.next(null);
   }

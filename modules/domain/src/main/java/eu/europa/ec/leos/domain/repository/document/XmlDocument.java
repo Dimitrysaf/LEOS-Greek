@@ -23,9 +23,9 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
                           String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
                           VersionType versionType, boolean isLatestVersion, String title,
                           List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
-                          boolean trackChangesEnabled) {
+                          boolean trackChangesEnabled, boolean isVersionArchived) {
         super(category, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant, versionSeriesId,
-                cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
+                cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, isVersionArchived, content);
         this.securityData = new SecurityData(collaborators);
         this.title = title;
         this.milestoneComments = milestoneComments;
@@ -35,9 +35,9 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
     protected XmlDocument(LeosCategory category, String id, String name, String createdBy,
                           Instant creationInstant, String lastModifiedBy, Instant lastModificationInstant,
                           String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
-                          VersionType versionType, boolean isLatestVersion, Option<Content> content) {
+                          VersionType versionType, boolean isLatestVersion,  boolean isVersionArchived, Option<Content> content) {
         this(category, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant, versionSeriesId, cmisVersionLabel,
-                versionLabel, versionComment, versionType, isLatestVersion, null, null, null, content, false);
+                versionLabel, versionComment, versionType, isLatestVersion, null, null, null, content, false, isVersionArchived);
         this.securityData = null;
     }
 

@@ -12,4 +12,6 @@ public interface Versionable {
     VersionType getVersionType();
 
     boolean isLatestVersion();
+
+    boolean isVersionArchived();
 }

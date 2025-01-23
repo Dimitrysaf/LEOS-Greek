@@ -717,6 +717,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public void archiveDocumentVersion(String documentRef, String version) {
+
+    }
+
+    @Override
     public Map<String, Object> findDocumentMetadataByRef(String ref, Class type) {
         return null;
     }

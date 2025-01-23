@@ -190,7 +190,7 @@ public class CmisDocumentExtensions {
                 getContributionStatus(d),
                 getClonedFrom(d),
                 getMemorandumMetadataOption(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d), false);
     }
 
     private static Bill toLeosBill(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -207,7 +207,7 @@ public class CmisDocumentExtensions {
                 getClonedFrom(d),
                 contentOption(d, fetchContent),
                 getBillMetadataOption(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d), false);
     }
 
     private static Annex toLeosAnnex(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -225,7 +225,7 @@ public class CmisDocumentExtensions {
                 getClonedFrom(d),
                 contentOption(d, fetchContent),
                 getAnnexMetadataOption(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d), false);
     }
 
     private static FinancialStatement toFinancialStatement(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -242,7 +242,7 @@ public class CmisDocumentExtensions {
                 getBaseRevisionId(d),
                 isTrackChangesEnabled(d),
                 getContributionStatus(d),
-                getClonedFrom(d));
+                getClonedFrom(d), false);
     }
 
     private static MediaDocument toLeosMediaDocument(Document d, boolean fetchContent) {

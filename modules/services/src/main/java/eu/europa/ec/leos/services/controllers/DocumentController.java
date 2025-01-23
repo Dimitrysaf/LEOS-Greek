@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.DocumentApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.dto.request.DoubleCompareRequest;
@@ -328,6 +329,37 @@ public class DocumentController {
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get toc ancestors {} ", e.getMessage());
             return new ResponseEntity<>("Error occurred  while trying to get toc ancestors ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/archive-version/{documentRef}/{version}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> archiveVersion(@PathVariable("documentRef") String documentRef,
+                                                 @PathVariable("version") String version) {
+        try {
+            documentRef = encodeParam(documentRef);
+            version = encodeParam(version);
+            this.genericDocumentApiService.archiveVersion(documentRef, version);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred archiving version ", e.getMessage());
+            return new ResponseEntity<>("Error occurred archiving version", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/document-version/{documentType}/{documentRef}/{version}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getDocumentVersion(@PathVariable("documentType") String documentType,
+                                                     @PathVariable("documentRef") String documentRef, @PathVariable("version") String version) {
+        try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
+            VersionVO versionVO = genericDocumentApiService.getDocumentByVersion(documentCategory, documentRef, version);
+            return new ResponseEntity<>(versionVO, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting document version: " + version, e);
+            return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

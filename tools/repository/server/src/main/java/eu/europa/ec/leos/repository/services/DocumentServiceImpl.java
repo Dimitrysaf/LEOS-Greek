@@ -299,6 +299,21 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public LeosDocument archiveDocumentVersion(final String docRef, String version) throws Exception {
+        DocumentV documentV = findDocumentVByVersion(docRef, version);
+        if(documentV != null) {
+            BigDecimal documentId = documentV.getDocumentId();
+            DocumentVersion documentVersion = documentVersionRepository.findDocumentVersionByVersionLabelAndDocumentId(version, documentId).orElse(null);
+            if(documentVersion != null) {
+                documentVersion.setVersionArchived(true);
+                documentVersion.setComments("Version archived");
+                documentVersionRepository.save(documentVersion);
+            }
+        }
+        return new LeosDocument();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDocumentByVersionId(BigDecimal id) throws RepositoryException {
         DocumentV docView = documentVRepository.findVersionByVersionId(id)
                 .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName()));
@@ -434,6 +449,12 @@ public class DocumentServiceImpl implements DocumentService {
         Optional<DocumentV> docView = documentVRepository.findDocumentByVersion(docRef, versionLabel);
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docView.isPresent() ? ConversionUtils.fetchCollaborators(collaboratorsService,
                 docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
+    }
+
+    public DocumentV findDocumentVByVersion(final String docRef, final String versionLabel) {
+        LOG.info("Find Document by version: docRef={}, versionLabel={}", docRef, versionLabel);
+        Optional<DocumentV> docView = documentVRepository.findDocumentByVersion(docRef, versionLabel);
+        return docView.orElse(null);
     }
 
     @Override
@@ -1017,6 +1038,7 @@ public class DocumentServiceImpl implements DocumentService {
         // These values are not used
         docVersion.setIsVersionSeriesCheckedOut(false);
         docVersion.setVersionSeriesId(labelVersion);
+        docVersion.setVersionArchived(false);
 
         return documentVersionRepository.save(docVersion);
     }

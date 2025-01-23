@@ -125,6 +125,13 @@ public class VersionsUtil {
     public static <D extends XmlDocument> List<VersionVO> buildVersionResponse(List<D> versions, MessageHelper messageHelper, UserHelper userHelper) {
         List<VersionVO> allVersions = new ArrayList<>();
         versions.forEach(doc -> {
+            VersionVO versionVO = getVersionVO(messageHelper, userHelper, doc);
+            allVersions.add(versionVO);
+        });
+        return allVersions;
+    }
+
+    public static <D extends XmlDocument> VersionVO getVersionVO(MessageHelper messageHelper, UserHelper userHelper, D doc) {
             final String checkinCommentJson;
             if (doc.getMilestoneComments().size() > 0) {
                 // Only the first comment is related to the document changes. All other comments, if presents,
@@ -148,8 +155,7 @@ public class VersionsUtil {
             versionVO.setCheckinCommentVO(checkinCommentVO);
             versionVO.setVersionedReference(doc.getVersionedReference());
             versionVO.setCreatedBy(userHelper.convertToPresentation(doc.getLastModifiedBy()));
-            allVersions.add(versionVO);
-        });
-        return allVersions;
+        versionVO.setVersionArchived(doc.isVersionArchived());
+        return versionVO;
     }
 }

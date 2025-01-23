@@ -956,7 +956,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 source.getBaseRevisionId(),
                 source.isTrackChangesEnabled(),
                 source.getContributionStatus(),
-                source.getClonedFrom());
+                source.getClonedFrom(), false);
     }
 
     @Subscribe

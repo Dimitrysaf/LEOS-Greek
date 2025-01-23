@@ -16,6 +16,6 @@ public final class MediaDocument extends LeosDocument {
 
         super(LeosCategory.MEDIA, id, name, createdBy, creationInstant, lastModifiedBy,
                 lastModificationInstant, versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType,
-                isLatestVersion, content);
+                isLatestVersion, false, content);
     }
 }
