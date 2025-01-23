@@ -190,7 +190,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
                 "811868491", "1.0.393", "1.0.393", "Contribution merge action", VersionType.MAJOR,
                 true, "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL establishing the European Union Single Window Environment for " +
                 "Customs and amending Regulation (EU) No 952/2013", null, Arrays.asList(""), "", "",
-                "", Option.some(content), Option.some(billMetadata), true);
+                "", Option.some(content), Option.some(billMetadata), true, false);
     }
 
     protected MessageHelper getMessageHelper() {

@@ -93,6 +93,10 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     return this.isRecent && this.subVersions[0] === version;
   }
 
+  isMinorVersion(version: Version): boolean {
+    return version.versionType === 'MINOR';
+  }
+
   protected onSelectVersion(version: Version, inputChangeEvent: Event) {
     const checked = (inputChangeEvent.target as HTMLInputElement).checked;
     const currentVersions = this.versionCompareService.getVersionCompareIds();

@@ -1109,6 +1109,13 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    public void archiveDocumentVersion(String docRef, String version) {
+        logger.trace("Archiving document {} version {}", docRef, version);
+        repository.archiveDocumentVersion(docRef, version);
+    }
+
+    @Override
+    @PerformanceLogger
     public FavouritePackageResponse getFavouritePackage(String ref, String userId) {
         logger.trace("Finding package for document... [ref=" + ref + ']');
         return repository.getFavouritePackage(ref, userId);

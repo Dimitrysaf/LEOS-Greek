@@ -69,6 +69,8 @@ public class LeosDocument {
 
     private BigDecimal milestoneId;
 
+    private Boolean isVersionArchived = false;
+
     private Map<String, Object> metadata = new HashMap<>();
 
     public LeosDocument() {}
@@ -82,11 +84,11 @@ public class LeosDocument {
         this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
         this.setRef(doc.getRef());
         this.setVersionId(doc.getVersionId());
-
         this.isLatestVersion = doc.isLatestVersion();
         this.versionLabel = doc.getVersionLabel();
         this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
         this.comments = doc.getComments();
+        this.isVersionArchived = doc.isVersionArchived();
 
         this.packageId = doc.getPackageId().toString();
 
@@ -110,6 +112,7 @@ public class LeosDocument {
         this.setVersionId(doc.getVersionId());
 
         this.isLatestVersion = doc.isLatestVersion();
+        this.isVersionArchived = doc.isVersionArchived();
         this.versionLabel = doc.getVersionLabel();
         this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
         this.comments = doc.getComments();
@@ -413,6 +416,14 @@ public class LeosDocument {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Boolean isVersionArchived() {
+        return isVersionArchived;
+    }
+
+    public void setIsVersionArchived(Boolean versionArchived) {
+        isVersionArchived = versionArchived;
     }
 
     @Override

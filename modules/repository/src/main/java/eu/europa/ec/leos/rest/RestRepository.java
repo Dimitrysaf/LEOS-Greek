@@ -129,6 +129,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestFindPackageByDocumentRefURI;
     @Value("${leos.rest.repository.archive.document}")
     private String leosRestArchiveDocumentURI;
+    @Value("${leos.rest.repository.archive.document.version}")
+    private String leosRestArchiveDocumentVersionURI;
     @Value("${leos.rest.repository.find.document.search.versions}")
     private String leosRestSearchVersionsURI;
     @Value("${leos.rest.repository.find.recent.packages.uri}")
@@ -610,5 +612,12 @@ public class RestRepository extends AbstractRestClient {
             collaboratorVOList.add(collaborator);
         }
         return collaboratorVOList;
+    }
+
+    public LeosDocument archiveDocumentVersion(String docRef, String version) {
+        LOGGER.trace("Archive document {} version {}]", docRef, version);
+        String url = getUrl(leosRestArchiveDocumentVersionURI);
+        LeosDocument resp = putEntity(url, null, LeosDocument.class, docRef, version);
+        return resp;
     }
 }

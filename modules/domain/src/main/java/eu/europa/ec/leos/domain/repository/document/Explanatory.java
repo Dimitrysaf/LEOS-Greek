@@ -23,7 +23,7 @@ public final class Explanatory extends XmlDocument {
 
         super(LeosCategory.COUNCIL_EXPLANATORY, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
-                collaborators, milestoneComments, content, trackChangesEnabled);
+                collaborators, milestoneComments, content, trackChangesEnabled, false);
         this.baseRevisionId = baseRevisionId;
         this.liveDiffingRequired = liveDiffingRequired;
         this.metadata = metadata;

@@ -18,6 +18,7 @@ export type Version = {
 
   createdBy: string;
   legFileName: string; // to be used for the milestone explorer view
+  versionArchived: boolean;
 };
 
 export type VersionType = 'MAJOR' | 'INTERMEDIATE' | 'MINOR';

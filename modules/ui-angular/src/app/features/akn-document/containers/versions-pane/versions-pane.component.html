@@ -3,13 +3,16 @@
     class="eui-u-display-block eui-u-width-100"
     [subVersions]="(doc.recentChanges$ | async) ?? []"
   ></app-versions-pane-group>
-  <app-versions-pane-group
-    class="eui-u-display-block eui-u-width-100"
-    *ngFor="let version of versions; trackByProperty: 'cmisVersionNumber'"
-    [majorVersion]="version"
-    [subVersions]="version.subVersions ?? []"
-    (exploreMilestone)="exploreMilestone.emit($event)"
-  ></app-versions-pane-group>
+  <ng-container *ngFor="let version of versions; trackByProperty: 'cmisVersionNumber'">
+    <ng-container *ngIf="!isVersionArchived(version)">
+      <app-versions-pane-group
+        class="eui-u-display-block eui-u-width-100"
+        [majorVersion]="version"
+        [subVersions]="version.subVersions ?? []"
+        (exploreMilestone)="exploreMilestone.emit($event)"
+      ></app-versions-pane-group>
+    </ng-container>
+  </ng-container>
   <eui-card-content *ngIf="hasMore">
     <button
       class="eui-u-pv-none eui-u-pl-none eui-u-pr-xs"

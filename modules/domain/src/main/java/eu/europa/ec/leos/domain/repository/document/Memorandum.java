@@ -19,10 +19,11 @@ public final class Memorandum extends XmlDocument {
                       Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel,
                       String versionComment, VersionType versionType, boolean isLatestVersion, String title,
                       List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
-                      String contributionStatus, String clonedFrom, Option<MemorandumMetadata> metadata, boolean trackChangesEnabled) {
+                      String contributionStatus, String clonedFrom, Option<MemorandumMetadata> metadata
+            , boolean trackChangesEnabled, boolean isVersionArchived) {
 
         super(LeosCategory.MEMORANDUM, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title, collaborators, milestoneComments, content, trackChangesEnabled);
+                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title, collaborators, milestoneComments, content, trackChangesEnabled, isVersionArchived);
         this.metadata = metadata;
         this.contributionStatus = contributionStatus;
         this.clonedFrom = clonedFrom;

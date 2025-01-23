@@ -151,6 +151,19 @@ public class DocumentController {
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
+    @PutMapping(path = "/document/archive-version/{docRef}/{version}",
+            consumes = {},
+            produces = {MediaType.APPLICATION_JSON_VALUE} )
+    @Operation(summary = "Archive document version")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents Moved", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> archiveDocumentVersion(@PathVariable("docRef") String docRef,
+                                                         @PathVariable("version") String version) throws Exception {
+        LeosDocument leosDocument = documentService.archiveDocumentVersion(docRef, version);
+        return ResponseEntity.ok(RestPreconditions.checkFound(leosDocument, HttpStatus.NOT_FOUND, "No version found"));
+    }
+
     @GetMapping(path = "/documents/find-by-collaborator/{userName}",
             consumes = {},
             produces = {MediaType.APPLICATION_JSON_VALUE})

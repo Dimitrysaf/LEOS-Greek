@@ -157,6 +157,8 @@ public class DocumentV implements Serializable {
     private String title;
     @Column(name = "NUM_PROPS", updatable = false)
     private int numProps;
+    @Column(name = "IS_VERSION_ARCHIVED", updatable = false)
+    private Boolean isVersionArchived;
 
     public DocumentV() {
     }
@@ -475,5 +477,13 @@ public class DocumentV implements Serializable {
 
     public int getNumProps() {
         return numProps;
+    }
+
+    public Boolean isVersionArchived() {
+        return isVersionArchived;
+    }
+
+    public void setVersionArchived(Boolean versionArchived) {
+        isVersionArchived = versionArchived;
     }
 }

@@ -23,9 +23,10 @@ public abstract class LeosDocument implements Auditable, Versionable {
     protected LeosDocument(LeosCategory category, String id, String name, String createdBy, Instant creationInstant,
                            String lastModifiedBy, Instant lastModificationInstant, String versionSeriesId,
                            String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType,
-                           boolean isLatestVersion, Option<Content> content) {
+                           boolean isLatestVersion, boolean isVersionArchived, Option<Content> content) {
         this.auditData = new AuditData(createdBy, creationInstant, lastModifiedBy, lastModificationInstant);
-        this.versionData = new VersionData(versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion);
+        this.versionData = new VersionData(versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType
+                , isLatestVersion, isVersionArchived);
         this.category = category;
         this.id = id;
         this.name = name;
@@ -87,5 +88,5 @@ public abstract class LeosDocument implements Auditable, Versionable {
     public VersionType getVersionType() {
         return versionData.getVersionType();
     }
-
+    public boolean isVersionArchived() { return versionData.isVersionArchived(); }
 }

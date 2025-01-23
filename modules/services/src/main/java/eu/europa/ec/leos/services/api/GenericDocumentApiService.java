@@ -5,6 +5,7 @@ import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
@@ -705,6 +706,16 @@ public class GenericDocumentApiService {
                 xmlDocument.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
                 context.getNumberingConfigs(), xmlDocument.getMetadata().get().getLanguage());
+    }
+
+    public void archiveVersion(String documentRef, String version) {
+        LOG.info("Version will be archive with doc ref {} and ver {)",documentRef, version);
+        this.leosRepository.archiveDocumentVersion(documentRef, version);
+    }
+
+    public VersionVO getDocumentByVersion(LeosCategoryClass documentType, String docRef, String version) {
+        XmlDocument leosDocument = (XmlDocument) leosRepository.findDocumentByVersion( LeosCategoryClass.valueOf(documentType.name()).getClazz(), docRef, version);
+        return VersionsUtil.getVersionVO(messageHelper, userHelper, leosDocument);
     }
 
     private List<String> getAncestorsIdsForElementId(XmlDocument xmlDocument, List<String> elementIds) {

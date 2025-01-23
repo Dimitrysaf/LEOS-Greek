@@ -21,11 +21,11 @@ public final class FinancialStatement extends XmlDocument {
                               String versionComment, VersionType versionType, boolean isLatestVersion, String title,
                               List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
                               Option<FinancialStatementMetadata> metadata, String baseRevisionId, boolean trackChangesEnabled,
-                                String contributionStatus, String clonedFrom) {
+                                String contributionStatus, String clonedFrom,  boolean isVersionArchived) {
 
         super(LeosCategory.STAT_DIGIT_FINANC_LEGIS, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
-                collaborators, milestoneComments, content, trackChangesEnabled);
+                collaborators, milestoneComments, content, trackChangesEnabled, isVersionArchived);
         this.metadata = metadata;
         this.baseRevisionId = baseRevisionId;
         this.contributionStatus = contributionStatus;

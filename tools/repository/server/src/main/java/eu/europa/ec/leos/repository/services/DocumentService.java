@@ -38,6 +38,8 @@ public interface DocumentService {
 
     LeosDocument archiveDocument(final String ref, String userId) throws Exception;
 
+    LeosDocument archiveDocumentVersion(final String docRef, String version) throws Exception;
+
     void deleteDocumentByVersionId(BigDecimal id) throws RepositoryException;
 
     void deleteDocumentByRef(String ref) throws RepositoryException;

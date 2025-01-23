@@ -77,11 +77,11 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = true AND d.ref = ?1")
     Page<DocumentV> findAllMajors(String docRef, Pageable pageable);
 
-    @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel LIKE ?2")
+    @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel LIKE ?2 AND d.isVersionArchived = false")
     Page<DocumentV> findRecentMinorVersions(String docRef, String lastMajorId, Pageable pageable);
 
     @Query(value = "SELECT * FROM (SELECT COUNT(DISTINCT VERSION_ID) mvc FROM DOCUMENT_V d WHERE d.is_major_version = 0 and d.ref = ?1 and version_label LIKE" +
-            " ?2) ", nativeQuery = true)
+            " ?2 and d.is_version_archived = 0) ", nativeQuery = true)
     long getRecentMinorVersionsCount(String docRef, String versionLabel);
 
     @Query(value = "SELECT COUNT(*) FROM DOCUMENT_V d WHERE (d.IS_ARCHIVED IS NULL OR d.IS_ARCHIVED = 0) AND d.PACKAGE_ID in (SELECT p.ID from PACKAGE p " +

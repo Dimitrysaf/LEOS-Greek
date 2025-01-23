@@ -47,6 +47,8 @@ public class LeosDocument {
 
     private Map<String, Object> metadata = new HashMap<>();
 
+    private Boolean versionArchived = false;
+
     public LeosDocument() {}
 
     public String getCreatedBy() {
@@ -163,6 +165,14 @@ public class LeosDocument {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Boolean getVersionArchived() {
+        return versionArchived;
+    }
+
+    public void setVersionArchived(Boolean versionArchived) {
+        this.versionArchived = versionArchived;
     }
 
     @Override

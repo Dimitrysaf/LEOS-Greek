@@ -20,11 +20,11 @@ public final class Bill extends XmlDocument {
                 String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType, boolean isLatestVersion,
                 String title, List<Collaborator> collaborators, List<String> milestoneComments,
                 String baseRevisionId, String contributionStatus, String clonedFrom,
-                Option<Content> content, Option<BillMetadata> metadata, boolean trackChangesEnabled) {
+                Option<Content> content, Option<BillMetadata> metadata, boolean trackChangesEnabled, boolean isVersionArchived) {
 
         super(LeosCategory.BILL, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title, collaborators,
-                milestoneComments, content, trackChangesEnabled);
+                milestoneComments, content, trackChangesEnabled, isVersionArchived);
         this.metadata = metadata;
         this.baseRevisionId = baseRevisionId;
         this.contributionStatus = contributionStatus;
