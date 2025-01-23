@@ -21,8 +21,10 @@ define(function datePickerExtensionModule(require) {
     var jqueryUi = require("jqueryUi");
     var UTILS = require("core/leosUtils");
     var dateFormats = new Map();
-    dateFormats.set('yy', 'YYYY');
-    dateFormats.set('d.m.yy', '[DD.MM]YYYY');
+    var yearFormat = 'yy';
+    var dmyFormat = 'd.m.yy';
+    dateFormats.set(yearFormat, 'YYYY');
+    dateFormats.set(dmyFormat, '[DD.MM]YYYY');
     var selector = "date[date]";
 
 
@@ -46,6 +48,10 @@ define(function datePickerExtensionModule(require) {
                 var idAttr = $(this).attr('id');
                 var element = $('#'+idAttr);
                 var format = $(this).attr('period');
+                if(!dateFormats.get(format)){
+                    $(this).attr('period', dmyFormat);
+                    format = $(this).attr('period');
+                }
                 var formName = $(this).attr('date');
                 var hiddenInput = document.createElement('input');
                 hiddenInput.name = formName;
