@@ -663,7 +663,7 @@ Feature: Track Changes Feature
     When click on soft move label with title "MOVED from Article 2"
     Then soft move label with title "MOVED to Article 6" is displayed
 
-  @numberedToUnnumberedViceVersaTrackChanges @local @focus
+  @numberedToUnnumberedViceVersaTrackChanges @local
   Scenario: test paragraph mode plugin inside ck editor for numbered and unnumbered paragraph with track changes enabled
     Given navigate to edit drafting application with "User1"
     Then user is on home page
