@@ -31,8 +31,8 @@ public class ExternalSystemACLServiceImpl implements ExternalSystemACLService {
 
     @Override
     public Optional<AccessDTO> getAccess(String url, String userId) {
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("userId", userId);
+        url=url.replace("${userId}", userId);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
         List<AccessDTO> list = getListResponseEntity(uriBuilder.toUriString());
         return list.stream().findFirst();
     }
