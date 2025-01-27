@@ -18,11 +18,11 @@ import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.integration.ExternalSystemACLService;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
-import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
@@ -33,6 +33,7 @@ import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.annotate.AnnotateService;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.compare.LeosTextComparatorImpl;
 import eu.europa.ec.leos.services.compare.TextComparator;
@@ -155,10 +156,15 @@ public class LegServiceImplTest {
     @Mock
     private CloneContext cloneContext;
     @Mock
-    private IndentHelper indentHelper;;
+    private IndentHelper indentHelper;
     @Mock
     private TrackChangesContext trackChangesContext;
-
+    @Mock
+    WorkflowCollaboratorService workflowCollaboratorService;
+    @Mock
+    ExternalSystemACLService externalSystemACLService;
+    @Mock
+    PackageService packageService;
     @InjectMocks
     private TableOfContentProcessor tableOfContentProcessor = spy(new TableOfContentProcessorImpl());
 
@@ -197,7 +203,11 @@ public class LegServiceImplTest {
     private ProposalService proposalService = spy(
             new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor,
                     packageRepository, xPathCatalog,
-                    tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext));
+                    tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext,
+                    securityContext,
+                    workflowCollaboratorService,
+                    externalSystemACLService,
+                    packageService));
 
     @InjectMocks
     private LegServiceImpl legService;
