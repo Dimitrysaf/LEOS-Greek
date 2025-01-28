@@ -60,14 +60,16 @@ export class TocActionsButtonsComponent implements OnInit {
   }
 
   getWarningMessages() {
-    if (!this.warningMessagesFromValidation || this.warningMessagesFromValidation.length === 0) {
-      return '';
+    if (this.isEditMode) {
+      if (!this.warningMessagesFromValidation || this.warningMessagesFromValidation.length === 0) {
+        return '';
+      }
+      const translatedMessages = [this.translateService.instant('toc.higher.division.generic.warning.message'),
+        ...this.warningMessagesFromValidation.map(msg => {
+          return `<li>${this.translateService.instant(msg)}</li>`;
+        })
+      ];
+      return `<ol>${translatedMessages.join('')}</ol>`;
     }
-    const translatedMessages = [this.translateService.instant('toc.higher.division.generic.warning.message'),
-      ...this.warningMessagesFromValidation.map(msg => {
-        return `<li>${this.translateService.instant(msg)}</li>`;
-      })
-    ];
-    return `<ol>${translatedMessages.join('')}</ol>`;
   }
 }

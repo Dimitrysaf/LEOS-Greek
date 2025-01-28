@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
 import {
   BehaviorSubject,
   distinctUntilChanged,
@@ -9,18 +9,22 @@ import {
   Observable,
   switchMap,
   take,
+  map,
+  of,
 } from 'rxjs';
-import { apiBaseUrl } from 'src/config';
+import {apiBaseUrl} from 'src/config';
 
-import { TableOfContentItemVO } from '@/shared/models/toc.model';
-import { DocumentRefAndCategory } from '@/shared/services/document.service';
-import { LoadingService } from '@/shared/services/loading.service';
+import {TableOfContentItemVO} from '@/shared/models/toc.model';
+import {DocumentRefAndCategory} from '@/shared/services/document.service';
+import {LoadingService} from '@/shared/services/loading.service';
 
-import { TocItem } from '../models/ckeditor';
+import {TocItem} from '../models/ckeditor';
+import {NodeValidation, NodeValidationResponse} from "@/shared/models/drop-response.model";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class TableOfContentService {
   toc$: Observable<TableOfContentItemVO[]>;
+  tocValidation$: Observable<NodeValidation>;
   tocItems$: Observable<TocItem[]>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory>;
   selectedNode$: Observable<TableOfContentItemVO>;
@@ -30,13 +34,15 @@ export class TableOfContentService {
 
   public isClonedProposal = false;
   public isTrackChangesEnabled = false;
-  private originalToc : TableOfContentItemVO[];
+  private originalToc: TableOfContentItemVO[];
+  private originalValidationResult: NodeValidation;
 
   documentRefAndCategoryBS = new BehaviorSubject<DocumentRefAndCategory | null>(
     null,
   );
 
   private tocBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
+  private tocValidationBS = new BehaviorSubject<NodeValidation>(null);
   private initialToc = new BehaviorSubject<TableOfContentItemVO[]>(null);
   private tocItemsBS = new BehaviorSubject<TocItem[]>(null);
   private selectedNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);
@@ -55,6 +61,7 @@ export class TableOfContentService {
       .pipe(filter(Boolean));
 
     this.toc$ = this.tocBS.asObservable();
+    this.tocValidation$ = this.tocValidationBS.asObservable();
     this.tocItems$ = this.tocItemsBS.asObservable();
     this.selectedNode$ = this.selectedNodeBS.asObservable();
     this.isTocDraft$ = this.isTocDraftBS.asObservable();
@@ -69,17 +76,38 @@ export class TableOfContentService {
           if (!this.blockReloadOfToc) {
             const toc = this.getToc(options.ref, options.category);
             const tocItems = this.getTocItems(options.ref, options.category);
-            return forkJoin([toc, tocItems]);
+
+            return toc.pipe(
+              switchMap((tocResult) =>
+                this.getTocValidation(options.ref, options.category, tocResult).pipe(
+                  map((response: NodeValidationResponse) => {
+                    // Transform NodeValidationResponse to NodeValidation
+                    const validationResult: NodeValidation = {
+                      ...response.result,
+                    };
+                    return {validationResult};
+                  }),
+                  switchMap(({validationResult}) =>
+                    forkJoin([
+                      of(tocResult),
+                      of(validationResult),
+                      tocItems
+                    ])
+                  )
+                )
+              ));
           } else {
             this.blockReloadOfToc = false;
-            return forkJoin([this.tocBS, this.tocItemsBS]);
+            return forkJoin([this.tocBS, this.tocValidationBS, this.tocItemsBS]);
           }
         }),
       )
-      .subscribe((result) => {
-        this.tocBS.next(result[0]);
-        this.tocItemsBS.next(result[1]);
+      .subscribe(([tocResult, validationResult, tocItems]) => {
+        this.tocBS.next(tocResult);
+        this.tocValidationBS.next(validationResult);
+        this.tocItemsBS.next(tocItems);
       });
+
   }
 
   setIsClonedProposal(isClonedProposal: boolean) {
@@ -91,7 +119,7 @@ export class TableOfContentService {
   }
 
   setDocumentRefAndCategory(ref: string, category: string) {
-    this.documentRefAndCategoryBS.next({ ref, category });
+    this.documentRefAndCategoryBS.next({ref, category});
   }
 
   reload() {
@@ -100,16 +128,44 @@ export class TableOfContentService {
     this.setDocumentRefAndCategory(ref, category);
   }
 
-  refreshToc(toc) {
+  refreshToc(toc, ref: string, category: string) {
     this.tocBS.next(toc);
+    this.getTocValidation(ref, category, toc)
+      .pipe(take(1)) // Take the first emission if it emits multiple values
+      .subscribe((response) => {
+        let validationResult: NodeValidation = {
+          ...response.result
+        }
+        this.originalValidationResult = validationResult;
+        this.tocValidationBS.next(validationResult); // Update validation
+      });
   }
 
   reloadToc() {
     const ref = this.documentRefAndCategoryBS.value.ref;
     const category = this.documentRefAndCategoryBS.value.category;
     this.getToc(ref, category)
-      .pipe(take(1))
-      .subscribe((toc) => this.tocBS.next(toc));
+      .pipe(
+        take(1),
+        switchMap((toc: TableOfContentItemVO[]) =>
+          this.getTocValidation(ref, category, toc).pipe(
+            map((response: NodeValidationResponse) => {
+              // Transform NodeValidationResponse to NodeValidation
+              const validationResult: NodeValidation = {
+                ...response.result,
+              };
+              return {validationResult};
+            }),
+            switchMap(({validationResult}) =>
+              forkJoin([
+                of(toc),
+                of(validationResult),
+              ])
+            ))
+        )).subscribe(([toc, validationResult]) => {
+      this.tocBS.next(toc); // Update toc
+      this.tocValidationBS.next(validationResult); // Update validation result
+    });
   }
 
   returnInitialToc() {
@@ -123,6 +179,7 @@ export class TableOfContentService {
 
   displayOriginalToc() {
     this.tocBS.next(this.originalToc);
+    this.tocValidationBS.next(this.originalValidationResult);
   }
 
   resetOriginalToc(toc?: TableOfContentItemVO[]) {
@@ -130,6 +187,7 @@ export class TableOfContentService {
       this.originalToc = toc;
     } else {
       this.originalToc = this.tocBS.value;
+      this.originalValidationResult = this.tocValidationBS.value;
     }
   }
 
@@ -143,7 +201,8 @@ export class TableOfContentService {
       .post<TableOfContentItemVO[]>(
         `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
         {
-          tableOfContentItemVOs: toc,        },
+          tableOfContentItemVOs: toc,
+        },
       );
   }
 
@@ -179,6 +238,7 @@ export class TableOfContentService {
     this.isEditModeBS.next(value);
     if (value) {
       this.originalToc = this.tocBS.value;
+      this.originalValidationResult = this.tocValidationBS.value;
     }
   }
 
@@ -188,7 +248,7 @@ export class TableOfContentService {
     return this.http.get<TocItem[]>(
       `${apiBaseUrl}/secured/${category}/${documentRef}/getTocItems`,
       {
-        params: { tocMode },
+        params: {tocMode},
       },
     );
   }
@@ -203,11 +263,33 @@ export class TableOfContentService {
     return this.http.get<TableOfContentItemVO[]>(
       `${apiBaseUrl}/secured/${category}/${documentRef}/getToc`,
       {
-        params: { tocMode },
+        params: {tocMode},
       },
     ).pipe(finalize(() => {
       this.loadingService.setLoading(false);
       this.isTocLoadingBS.next(false);
     }));
+  }
+
+  private prepareTocForSave(node: TableOfContentItemVO[]) {
+    for (const n of node) {
+      n['childItemsView'] = [];
+      if (n.childItems && n.childItems.length > 0) {
+        this.prepareTocForSave(n.childItems);
+      }
+    }
+  }
+
+  private getTocValidation(documentRef: string, documentType: string, toc: TableOfContentItemVO[]) {
+    const category = documentType === 'coverpage' ? 'coverPage' : documentType;
+    this.prepareTocForSave(toc);
+    return this.http.post<NodeValidationResponse>(
+      `${apiBaseUrl}/secured/toc/validate-toc`,
+      {
+        documentType: category.toUpperCase(),
+        documentRef,
+        tableOfContentItemVOs: toc
+      },
+    );
   }
 }

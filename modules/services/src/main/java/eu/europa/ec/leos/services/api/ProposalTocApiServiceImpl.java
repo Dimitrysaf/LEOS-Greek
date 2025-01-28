@@ -6,6 +6,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
+import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
@@ -21,11 +22,11 @@ import javax.inject.Provider;
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
 public class ProposalTocApiServiceImpl extends TocApiServiceImpl {
 
-    public ProposalTocApiServiceImpl(Provider<StructureContext> structureContextProvider,
+    public ProposalTocApiServiceImpl(Provider<StructureContext> structureContextProvider, ProposalService proposalService,
                                      BillService billService, AnnexService annexService, MessageHelper messageHelper,
                                      ExplanatoryService explanatoryService, DocumentLanguageContext documentLanguageContext,
                                      XPathCatalog xPathCatalog, XmlContentProcessor xmlContentProcessor) {
-        super(structureContextProvider, billService, annexService, messageHelper, explanatoryService, documentLanguageContext,
+        super(structureContextProvider, proposalService, billService, annexService, messageHelper, explanatoryService, documentLanguageContext,
                 xPathCatalog, xmlContentProcessor);
     }
 
