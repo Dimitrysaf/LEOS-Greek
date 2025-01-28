@@ -40,6 +40,7 @@ java-build:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       - if: $CI_PIPELINE_SOURCE == "web"
       - if: $CI_PIPELINE_SOURCE == "schedule"
+  interruptible: true
 
 cypress-test-for-local:
   variables:
@@ -78,6 +79,7 @@ cypress-test-for-local:
     paths:
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
+  interruptible: true
 
 cypress-test-for-non-local:
   stage: test
