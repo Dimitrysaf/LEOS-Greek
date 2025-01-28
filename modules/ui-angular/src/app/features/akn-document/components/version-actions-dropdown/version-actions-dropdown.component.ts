@@ -32,13 +32,16 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   @Input() isMilestone?: boolean;
   @Output() exploreMilestone = new EventEmitter<Version>();
   @ViewChild('versionRevertDialog') versionRevertDialog: EuiDialogComponent;
+  @ViewChild('versionArchiveDialog') versionArchiveDialog: EuiDialogComponent;
   @ViewChild('versionAlreadyMessage') versionAlreadyMessage : EuiMessageBoxComponent;
   disabled: boolean;
   canArchiveVersion: boolean;
   versionModalText: string;
+  archiveModalText: string;
   versionToRevert = '';
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
   canRevertVersion: any;
+  versionToArchive: Version;
 
   private removeEventListener?: () => void;
 
@@ -169,4 +172,26 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     return this.isMinorVersion(version) && this.canArchiveVersion && !this.isLatestRecentVersion(version)
   }
 
+  onCancelArchive() {
+    this.versionModalText = '';
+    this.versionRevertDialog.closeDialog();
+  }
+
+  onAcceptArchive() {
+    this.versionRevertDialog.closeDialog();
+    this.versionModalText = '';
+    this.doc.archiveVersion(this.versionToArchive);
+  }
+
+  archiveVersion(version: Version) {
+    this.versionToArchive = version;
+    this.translate
+      .get('page.editor.versions.archive.modal-text-version', {
+        versionNumber: `${version.cmisVersionNumber}`,
+      })
+      .subscribe((res) => {
+        this.archiveModalText = res;
+      });
+    this.versionArchiveDialog.openDialog();
+  }
 }
