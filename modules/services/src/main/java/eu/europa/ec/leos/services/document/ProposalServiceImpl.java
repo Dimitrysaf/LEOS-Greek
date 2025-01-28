@@ -33,6 +33,7 @@ import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
@@ -50,12 +51,10 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -294,7 +293,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public Proposal findProposalByRef(String ref) {
         LOG.trace("Finding Proposal by ref... [ref=" + ref + "]");
         Proposal proposal = proposalRepository.findProposalByRef(ref);
-        doubleCheckPotentialWorkflowCollaborator(ref, proposal);
+        if (!securityContext.hasPermission(proposal, LeosPermission.CAN_SEE_ALL_DOCUMENTS)) {
+            doubleCheckPotentialWorkflowCollaborator(ref, proposal);
+        }
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
     }
