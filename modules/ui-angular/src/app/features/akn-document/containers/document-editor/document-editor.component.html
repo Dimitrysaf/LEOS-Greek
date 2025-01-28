@@ -90,8 +90,7 @@
                 }}"
                 [position]="'right'"
                 (click)="handleEdit()"
-                *ngIf="
-                  showTocEditButton &&
+                *ngIf="showTocEditButton &&
                   !isEditMode &&
                   !['coverPage', 'memorandum', 'stat_digit_financ_legis'].includes(
                     documentType
@@ -100,6 +99,20 @@
               >
                 <eui-icon-svg size="s" set="" icon="eui-ecl-edit"></eui-icon-svg>
               </button>
+              <!-- Warning icon -->
+              <span *ngIf="!isEditMode && showWarningIcon()">
+                <button
+                  euiButton
+                  euiBasicButton
+                  class="eui-u-p-none"
+                  euiSizeS
+                  [euiTooltip]="showWarningMessages()"
+                  contentAlignment="left"
+                  [euiAccent]="true"
+                >
+                  <eui-icon-svg icon="eui-ecl-warning" set="eui" size="s" class="eui-u-color-accent-75"></eui-icon-svg>
+                </button>
+              </span>
               <!-- Actions menu-->
               <app-toc-actions-buttons
                 [isEditMode]="isEditMode"
@@ -675,7 +688,7 @@
 <!-- unsaved data dialog -->
 <eui-dialog
   #unSavedDialog
-  [title]="getTranlsations('page.editor.toc.unsaved-changes-dialog.title')"
+  [title]="getTranslations('page.editor.toc.unsaved-changes-dialog.title')"
   [isHandleCloseOnAccept]="true"
   [isHandleCloseOnDismiss]="true"
 >
@@ -688,7 +701,7 @@
         euiButton
         class="mr-2"
         euiSecondary
-        (click)="hanldeUnSaveDialogClose(false)"
+        (click)="handleUnSaveDialogClose(false)"
       >
         {{ 'page.editor.toc.unsaved-changes-dialog.close' | translate }}
       </button>
@@ -696,7 +709,7 @@
         class=""
         euiButton
         euiPrimary
-        (click)="hanldeUnSaveDialogClose(true)"
+        (click)="handleUnSaveDialogClose(true)"
       >
         {{ 'page.editor.toc.unsaved-changes-dialog.save' | translate }}
       </button>

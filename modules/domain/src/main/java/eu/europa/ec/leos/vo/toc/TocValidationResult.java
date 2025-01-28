@@ -21,17 +21,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class TocDropResult {
+public class TocValidationResult {
     private boolean success;
     private boolean warning;
-    private String messageKey;
     private List<String> warningMessageKeys;
-    private TableOfContentItemVO sourceItem;
-    private TableOfContentItemVO targetItem;
-
-    public TocDropResult(boolean success, boolean warning, List<String> warningMessageKeys) {
-        this.success = success;
-        this.warning = warning;
-        this.warningMessageKeys = warningMessageKeys;
-    }
 }

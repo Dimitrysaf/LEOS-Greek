@@ -109,7 +109,7 @@ export class DocumentTocComponent
   messageFromValidation: string;
   warningMessagesFromValidation: string[];
   isDropValid: boolean;
-  isDropWarning: boolean;
+  isTreeValidationWarning: boolean;
   showWarningIcon: boolean;
   dragAction: DragAction;
   expandedNodeIds = new Set<string>();
@@ -196,14 +196,20 @@ export class DocumentTocComponent
       )
       .subscribe(([toc, config]) => {
         //expand the default nodes if the expanded state is empty
-        if (!this.expandedNodeIds.size) {
+
           this.setByDefaultExpandedNodes(toc);
-        }
+
         this.expandNodesFromHistory(toc);
         this.setTree(toc);
       });
 
     this.validateTocService.dropValidationResult$
+      .pipe(takeUntil(this.destroy$), filter(Boolean))
+      .subscribe((result) => {
+        this.handleNodeValidationResult(result);
+      });
+
+    this.tocService.tocValidation$
       .pipe(takeUntil(this.destroy$), filter(Boolean))
       .subscribe((result) => {
         this.handleNodeValidationResult(result);
@@ -532,7 +538,6 @@ export class DocumentTocComponent
   resetTreeState() {
     this.clearSelectedNode();
     this.isDropValid = false;
-    this.isDropWarning = false;
     const initialTreeBeforeEdit = this.tocEditService.resetTreeHistory();
     if (initialTreeBeforeEdit) {
       this.tocService.setToc(initialTreeBeforeEdit);
@@ -609,33 +614,33 @@ export class DocumentTocComponent
   }
 
   private populateValidationMessage(validationResult: NodeValidation) {
-    this.isDropWarning = validationResult.warning;
-    this.isDropValid = validationResult.success && !this.isDropWarning;
-    if (this.targetNode !== null) {
-      this.getMessageFromValidation(validationResult);
-    }
+    this.isTreeValidationWarning = validationResult.warning;
+    this.isDropValid = validationResult.success && !this.isTreeValidationWarning;
+    this.getMessageFromValidation(validationResult);
   }
 
   private getMessageFromValidation(validationResult: NodeValidation) {
-    if(this.isDropWarning) {
+    if(this.isTreeValidationWarning) {
       this.warningMessagesFromValidation = validationResult.warningMessageKeys.map((warning) =>
         this.translateService.instant(warning)
       );
       this.showWarningIcon = true;
     } else {
-      this.messageFromValidation = this.translateService.instant(validationResult.messageKey,
-        {
-          0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
-          1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
-        },
-      );
+      if(validationResult.sourceItem && validationResult.targetItem) {
+        this.messageFromValidation = this.translateService.instant(validationResult.messageKey,
+          {
+            0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
+            1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
+          },
+        );
+      }
       this.showWarningIcon = false;
     }
   }
 
   private clearValidationMessage() {
     this.isDropValid = null;
-    this.isDropWarning = null;
+    //this.isTreeValidationWarning = null;
     this.messageFromValidation = null;
   }
 

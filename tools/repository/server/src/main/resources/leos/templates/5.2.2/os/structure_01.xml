@@ -11,6 +11,7 @@
         <tocItem>
             <aknTag>preface</aknTag>
             <root>true</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -102,6 +103,7 @@
         <tocItem>
             <aknTag>preamble</aknTag>
             <root>true</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -120,6 +122,7 @@
         <tocItem>
             <aknTag>citations</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -170,6 +173,7 @@
         <tocItem>
             <aknTag>recitals</aknTag>
             <root>false</root>
+            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
