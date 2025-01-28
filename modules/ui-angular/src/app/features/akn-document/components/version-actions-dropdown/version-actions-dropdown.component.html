@@ -31,7 +31,7 @@
       </button>
       <button euiDropdownItem
               *ngIf="shouldArchive(version)"
-              (click)="this.doc.archiveVersion(version)">
+              (click)="archiveVersion(version)">
         {{ 'page.editor.versions.actions.archive' | translate }}
       </button>
       <button
@@ -67,6 +67,24 @@
 >
   <p>{{ versionModalText }}</p>
   <p>{{ 'page.editor.versions.restore.modal-text' | translate }}</p>
+</eui-dialog>
+
+<eui-dialog
+  #versionArchiveDialog
+  [title]="'page.editor.versions.archive.title' | translate"
+  [acceptLabel]="'page.editor.versions.archive.button' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancelArchive()"
+  (close)="onCancelArchive()"
+  (accept)="onAcceptArchive()"
+  (dismiss)="onCancelArchive()"
+>
+  <p>{{ archiveModalText }}</p>
+  <p>{{ 'page.editor.versions.archive.text-version' | translate }}</p>
 </eui-dialog>
 
 <eui-message-box
