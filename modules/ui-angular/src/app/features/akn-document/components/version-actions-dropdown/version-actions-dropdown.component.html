@@ -7,7 +7,7 @@
     "
     [disabled]="disabled"
     style="border: none; cursor: pointer; background-color: white;"
-  >
+    (click)="checkVersion()">
     <eui-icon-svg icon="eui-ellipsis-vertical" size="xs"></eui-icon-svg>
   </button>
   <eui-dropdown-content>
@@ -28,6 +28,11 @@
       </button>
       <button euiDropdownItem (click)="doc.versionExport(version)">
         {{ 'page.editor.versions.actions.export' | translate }}
+      </button>
+      <button euiDropdownItem
+              *ngIf="shouldArchive(version)"
+              (click)="archiveVersion(version)">
+        {{ 'page.editor.versions.actions.archive' | translate }}
       </button>
       <button
         euiDropdownItem
@@ -63,3 +68,35 @@
   <p>{{ versionModalText }}</p>
   <p>{{ 'page.editor.versions.restore.modal-text' | translate }}</p>
 </eui-dialog>
+
+<eui-dialog
+  #versionArchiveDialog
+  [title]="'page.editor.versions.archive.title' | translate"
+  [acceptLabel]="'page.editor.versions.archive.button' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancelArchive()"
+  (close)="onCancelArchive()"
+  (accept)="onAcceptArchive()"
+  (dismiss)="onCancelArchive()"
+>
+  <p>{{ archiveModalText }}</p>
+  <p>{{ 'page.editor.versions.archive.text-version' | translate }}</p>
+</eui-dialog>
+
+<eui-message-box
+  #versionAlreadyMessage
+  [title]="'page.editor.versions.actions.block.on.archived.version' | translate"
+  [dismissLabel]="'global.actions.close' | translate"
+  [width]="'35vw'"
+  [height]="'20vw'"
+  [isDraggable]="true"
+  [isClosedOnEscape]="true"
+  [hasAcceptButton]="false"
+  [typeClass]="'info'"
+>
+  <p>{{ 'page.editor.versions.actions.error.already.archive.version' | translate }}</p>
+</eui-message-box>

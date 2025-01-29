@@ -187,7 +187,7 @@ export class DocumentEditorComponent
     private router: Router,
     private translate: TranslateService,
     private cdkEditor: CKEditorService,
-    private tranlsateService: TranslateService,
+    private translateService: TranslateService,
     private config: AppConfigService,
     private coEditionWSService: CoEditionServiceWS,
     private dialogService: EuiDialogService,
@@ -480,6 +480,21 @@ export class DocumentEditorComponent
     return [];
   }
 
+  showWarningMessages() {
+    if(this.documentTocComponent && !this.isEditMode) {
+      if (!this.documentTocComponent.warningMessagesFromValidation || this.documentTocComponent.warningMessagesFromValidation.length === 0) {
+        return '';
+      }
+      const translatedMessages = [this.translateService.instant('toc.higher.division.generic.warning.message'),
+        ...this.documentTocComponent.warningMessagesFromValidation.map(msg => {
+          return `<li>${this.translateService.instant(msg)}</li>`;
+        })
+      ];
+      return `<ol>${translatedMessages.join('')}</ol>`;
+    }
+  }
+
+
   handleListItemDragged(event, isAdd) {
     this.documentTocComponent.dragMoved(event, isAdd);
   }
@@ -512,7 +527,7 @@ export class DocumentEditorComponent
     const coEdition = this.coEditionWSService.checkForCoEdition('EDIT_TOC');
     if (coEdition) {
       this.dialogService.openDialog({
-        title: this.tranlsateService.instant(
+        title: this.translateService.instant(
           'page.editor.co-edition-detected.title',
         ),
         bodyComponent: {
@@ -552,6 +567,7 @@ export class DocumentEditorComponent
         if (newSelectedNode)
           this.documentTocComponent.handleNodeSelect(newSelectedNode);
       }
+      this.tocService.refreshToc(oldToc, this.documentRef, this.documentType);
     }
   }
 
@@ -566,7 +582,7 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$), finalize(() => this.handleAfterSave()))
       .subscribe({
         next: (res) => {
-          this.tocService.refreshToc(res);
+          this.tocService.refreshToc(res, this.documentRef, this.documentType);
           this.tocService.resetOriginalToc(res);
         },
         error: (err) => {
@@ -585,7 +601,6 @@ export class DocumentEditorComponent
 
   handleCancel() {
     if (this.documentTocComponent.isToCDraft) {
-      //TODO: handle confirm you want to discard changes
       this.unSavedDialog.openDialog();
       //reset toc state
       this.documentTocComponent.isToCDraft = false;
@@ -597,29 +612,29 @@ export class DocumentEditorComponent
   getTocItemDisplayTitle(item: TocItem) {
     const numType = getNumberingTypeByLanguage(item,  this.documentConfig.langGroup);
     if (numType === 'BULLET_NUM') {
-      return this.tranlsateService.instant('toc.item.type.bullet');
+      return this.translateService.instant('toc.item.type.bullet');
     }
     if (item.aknTag === 'CROSS_HEADING') {
-      return this.tranlsateService.instant('toc.item.type.crossheading');
+      return this.translateService.instant('toc.item.type.crossheading');
     } else {
-      return this.tranlsateService.instant(
+      return this.translateService.instant(
         'toc.item.type.' + item.aknTag.toLowerCase(),
       );
     }
   }
 
-  getTranlsations(msg: string) {
-    return this.tranlsateService.instant(msg);
+  getTranslations(msg: string) {
+    return this.translateService.instant(msg);
   }
 
-  hanldeUnSaveDialogClose(save: boolean) {
+  handleUnSaveDialogClose(save: boolean) {
     if (this.documentTocComponent.invalidNodes?.size > 0) {
       this.appShellService.growl({
         severity: 'danger',
-        summary: this.tranlsateService.instant(
+        summary: this.translateService.instant(
           'global.notifications.title.error',
         ),
-        detail: this.tranlsateService.instant(
+        detail: this.translateService.instant(
           'page.editor.toc.invalid-node.save-and-close-error',
         ),
         life: 4000,
@@ -854,7 +869,7 @@ export class DocumentEditorComponent
     this.documentTocComponent.messageFromValidation = null;
     this.tocService.displayOriginalToc();
     this.documentTocComponent.isDropValid = null;
-    this.documentTocComponent.isDropWarning = null;
+    this.documentTocComponent.isTreeValidationWarning = null;
     this.documentTocComponent.showWarningIcon = false;
     this.tocService.setIsEditMode(false);
     this.documentTocComponent.resetTreeState();
@@ -888,11 +903,11 @@ export class DocumentEditorComponent
         let content = '';
 
         if (item.itemNumber === 'MANDATORY' || item.itemNumber === 'OPTIONAL') {
-          number = this.tranlsateService.instant('toc.item.type.number');
+          number = this.translateService.instant('toc.item.type.number');
         }
 
         if (item.itemHeading === 'MANDATORY') {
-          heading = this.tranlsateService.instant(
+          heading = this.translateService.instant(
             'toc.item.type.' + item.aknTag.toLowerCase() + '.heading',
           );
         }
@@ -973,13 +988,13 @@ export class DocumentEditorComponent
   private getBreadCrumbsDocumentName(name: string): string {
     switch (this.documentType) {
       case 'bill':
-        return this.tranlsateService.instant('global.breadcrumb.bill');
+        return this.translateService.instant('global.breadcrumb.bill');
       case 'memorandum':
-        return this.tranlsateService.instant('global.breadcrumb.memorandum');
+        return this.translateService.instant('global.breadcrumb.memorandum');
       case 'coverPage':
-        return this.tranlsateService.instant('global.breadcrumb.cover.page');
+        return this.translateService.instant('global.breadcrumb.cover.page');
       case 'stat_digit_financ_legis':
-        return this.tranlsateService.instant(
+        return this.translateService.instant(
           'global.breadcrumb.financial-statement',
         );
       default:
@@ -1000,17 +1015,17 @@ export class DocumentEditorComponent
     this.breadcrumbService.setBreadcrumb([
       {
         id: 'home',
-        label: this.tranlsateService.instant('app.breadcrumb.home'),
+        label: this.translateService.instant('app.breadcrumb.home'),
         link: `/home`,
       },
       {
         id: 'workspace',
-        label: this.tranlsateService.instant('global.breadcrumb.proposals'),
+        label: this.translateService.instant('global.breadcrumb.proposals'),
         link: `/workspace`,
       },
       {
         id: 'proposal_view',
-        label: this.tranlsateService.instant('global.breadcrumb.proposal_view'),
+        label: this.translateService.instant('global.breadcrumb.proposal_view'),
         link: `/collection/${this.documentConfig.proposalMetadata.ref}`,
       },
       {

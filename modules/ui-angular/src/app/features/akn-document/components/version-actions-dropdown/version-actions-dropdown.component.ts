@@ -15,10 +15,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { Version } from '@/features/akn-document/models/versions';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { AppConfigService } from '@/core/services/app-config.service';
 import { VersionsPaneGroupComponent } from '@/features/akn-document/components/versions-pane-group/versions-pane-group.component';
 
 import { ViewVersionService } from '../../services/view-version.service';
-import {Observable} from "rxjs";
+import Observable from "rxjs";
+import {EuiMessageBoxComponent} from "@eui/components/eui-message-box";
 
 @Component({
   selector: 'app-version-actions-dropdown',
@@ -30,16 +32,22 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   @Input() isMilestone?: boolean;
   @Output() exploreMilestone = new EventEmitter<Version>();
   @ViewChild('versionRevertDialog') versionRevertDialog: EuiDialogComponent;
+  @ViewChild('versionArchiveDialog') versionArchiveDialog: EuiDialogComponent;
+  @ViewChild('versionAlreadyMessage') versionAlreadyMessage : EuiMessageBoxComponent;
   disabled: boolean;
+  canArchiveVersion: boolean;
   versionModalText: string;
+  archiveModalText: string;
   versionToRevert = '';
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
-  canRevertVersion: Observable<boolean>;
+  canRevertVersion: any;
+  versionToArchive: Version;
 
   private removeEventListener?: () => void;
 
   constructor(
     public doc: DocumentService,
+    private config: AppConfigService,
     private elementRef: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private tableOfContentService: TableOfContentService,
@@ -51,6 +59,7 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     this.interceptClicks(this.elementRef.nativeElement);
     this.disabled = this.version.mostRecentVersion;
     this.findUpdatePermission();
+    this.setArchivePermission();
   }
 
   findUpdatePermission() {
@@ -59,6 +68,16 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.removeEventListener?.();
+  }
+
+  checkVersion() {
+    this.doc.checkVersion(this.version.cmisVersionNumber).subscribe({
+      next: (isArchived: boolean) => {
+        if (isArchived) {
+          this.showVersionAlreadyArchived();
+        }
+      }
+    });
   }
 
   onVersionRevert(
@@ -75,6 +94,12 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     this.versionToRevert = version;
     this.versionRevertDialog.openDialog();
   }
+
+  showVersionAlreadyArchived() {
+    this.versionAlreadyMessage.openMessageBox();
+    this.doc.reloadView();
+  }
+
 
   onBaseChange(version: any) {
     this.doc.changeBaseVersion(version);
@@ -131,5 +156,42 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
 
   isLatestRecentVersion(version: Version) {
     return this.versionsPaneGroupComponent.isLatestRecentVersion(version);
+  }
+
+  isMinorVersion(version: Version) {
+    return this.versionsPaneGroupComponent.isMinorVersion(version);
+  }
+
+  private setArchivePermission() {
+    this.config.config.subscribe((config) => {
+      this.canArchiveVersion = config.userAppPermissions.includes('CAN_ARCHIVE_VERSION');
+    });
+  }
+
+  shouldArchive(version: Version): boolean {
+    return this.isMinorVersion(version) && this.canArchiveVersion && !this.isLatestRecentVersion(version)
+  }
+
+  onCancelArchive() {
+    this.versionModalText = '';
+    this.versionRevertDialog.closeDialog();
+  }
+
+  onAcceptArchive() {
+    this.versionRevertDialog.closeDialog();
+    this.versionModalText = '';
+    this.doc.archiveVersion(this.versionToArchive);
+  }
+
+  archiveVersion(version: Version) {
+    this.versionToArchive = version;
+    this.translate
+      .get('page.editor.versions.archive.modal-text-version', {
+        versionNumber: `${version.cmisVersionNumber}`,
+      })
+      .subscribe((res) => {
+        this.archiveModalText = res;
+      });
+    this.versionArchiveDialog.openDialog();
   }
 }

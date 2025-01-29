@@ -84,6 +84,9 @@ public class DocumentVersion implements Serializable {
     private String comments;
     @Column(name = "DOCUMENT_ID", precision = 22, scale = 0)
     private BigDecimal documentId;
+    @Column(name = "IS_VERSION_ARCHIVED", nullable = false)
+    private Boolean isVersionArchived;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "version")
     private Collection<DocumentContent> documentContentCollection;
 
@@ -215,6 +218,14 @@ public class DocumentVersion implements Serializable {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public Boolean getVersionArchived() {
+        return isVersionArchived;
+    }
+
+    public void setVersionArchived(Boolean versionArchived) {
+        isVersionArchived = versionArchived;
     }
 
     @XmlTransient

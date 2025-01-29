@@ -28,7 +28,7 @@ public final class LegDocument extends LeosDocument {
                        String packageId) {
 
         super(LeosCategory.LEG, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
+                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, false, content);
         this.milestoneComments = milestoneComments;
         this.initialCreatedBy = initialCreatedBy;
         this.initialCreationInstant = initialCreationInstant;

@@ -16,7 +16,7 @@ public final class Structure extends XmlDocument {
                      Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
                      VersionType versionType, boolean isLatestVersion, Option<Content> content, Option<StructureMetaData> metadata) {
         super(LeosCategory.STRUCTURE, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
+                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, false, content);
         this.metadata = metadata;
     }
 

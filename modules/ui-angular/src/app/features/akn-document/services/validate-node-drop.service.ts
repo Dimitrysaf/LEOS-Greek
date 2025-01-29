@@ -78,7 +78,7 @@ export abstract class ValidateTocService {
         targetItem: nodeTarget,
         action: moveAction,
       };
-      if (response.result.success) {
+      if (response.result.success && !response.result.warning) {
         if (position === 'AS_CHILDREN') {
           validationResult = {
             success: true,
@@ -285,7 +285,7 @@ export abstract class ValidateTocService {
     const toc = cloneDeep(treeData);
     this.prepareTocForSave(toc);
     return this.http.post<NodeValidationResponse>(
-      `${apiBaseUrl}/secured/toc/${documentRef}/validate-node-drop`,
+      `${apiBaseUrl}/secured/toc/validate-node-drop`,
       {
         tableOfContentItemVOs: toc,
         draggedNodeId,

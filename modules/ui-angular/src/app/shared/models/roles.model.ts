@@ -33,4 +33,5 @@ export type Permission =
   | 'CAN_ACCEPT_CHANGES'
   | 'CAN_REJECT_CHANGES'
   | 'CAN_VALIDATE'
-  | 'CAN_UPLOAD_XML_DOC';
+  | 'CAN_UPLOAD_XML_DOC'
+  | 'CAN_ARCHIVE_VERSION';

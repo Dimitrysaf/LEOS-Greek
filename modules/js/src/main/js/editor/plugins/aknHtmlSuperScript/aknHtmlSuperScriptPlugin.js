@@ -17,11 +17,18 @@ define(function aknHtmlSuperScriptPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var pluginName = "aknHtmlSuperScript";
+    var commandName = "superscript";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 
     var pluginDefinition = {
         init: function init(editor) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
+            editor.on("afterCommandExec", function (event) {
+                if(event.data.command.name === commandName) {
+                    aknHTMLPluginsUtils.resolveNestedStyleElements(event);
+                }
+            }, null, null, 99);
         }
     };
 

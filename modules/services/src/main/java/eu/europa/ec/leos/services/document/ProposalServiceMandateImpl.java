@@ -20,12 +20,16 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
+import eu.europa.ec.leos.integration.ExternalSystemACLService;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -51,9 +55,17 @@ public class ProposalServiceMandateImpl extends ProposalServiceImpl {
                                       XmlNodeConfigProcessor xmlNodeConfigProcessor, PackageRepository packageRepository,
                                       XPathCatalog xPathCatalog, TableOfContentProcessor tableOfContentProcessor,
                                       MessageHelper messageHelper, TrackChangesContext trackChangesContext,
-                                      DocumentLanguageContext documentLanguageContext) {
+                                      DocumentLanguageContext documentLanguageContext,
+                                      SecurityContext securityContext,
+                                      WorkflowCollaboratorService workflowCollaboratorService,
+                                      ExternalSystemACLService externalSystemACLService,
+                                      PackageService packageService) {
         super(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository,
-                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext);
+                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext,
+                securityContext,
+                workflowCollaboratorService,
+                externalSystemACLService,
+                packageService);
     }
 
     @Override

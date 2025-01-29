@@ -7,6 +7,7 @@ import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
+import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
@@ -45,11 +46,11 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
 
     private static final int MAX_INDENT_LEVEL = 4;
 
-    public MandateTocApiServiceImpl(Provider<StructureContext> structureContextProvider,
+    public MandateTocApiServiceImpl(Provider<StructureContext> structureContextProvider, ProposalService proposalService,
                                     BillService billService, AnnexService annexService, MessageHelper messageHelper,
                                     ExplanatoryService explanatoryService, DocumentLanguageContext documentLanguageContext,
                                     XPathCatalog xPathCatalog, XmlContentProcessor xmlContentProcessor) {
-        super(structureContextProvider, billService, annexService, messageHelper, explanatoryService, documentLanguageContext,
+        super(structureContextProvider, proposalService, billService, annexService, messageHelper, explanatoryService, documentLanguageContext,
                 xPathCatalog, xmlContentProcessor);
     }
 

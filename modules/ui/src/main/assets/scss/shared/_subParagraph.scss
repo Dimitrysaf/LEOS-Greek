@@ -24,6 +24,11 @@ $LIST_SPACING: 40px;
         @extend %paddedText;
         display: block;
       }
+
+      & > num {
+        float: left;
+        padding-top: 7px;
+      }
     }
 
     paragraph {

@@ -66,4 +66,8 @@ export class VersionsPaneComponent implements OnInit {
       this.updateVersions();
     }
   }
+
+  protected isVersionArchived(version: Version): boolean {
+    return version.versionArchived;
+  }
 }

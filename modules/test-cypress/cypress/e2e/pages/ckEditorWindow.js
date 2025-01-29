@@ -33,6 +33,9 @@ class ckEditorWindow {
         pTag: () => this.elements.ckEditableInline().find('p'),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
         ckEditorDialogOkBtn: () => cy.get('.cke_dialog_ui_button_ok'),
+        ckEditorDialogCancelBtnFromSourceDialog: () => cy.get('.cke_dialog_ui_button_cancel').eq(1),
+        ckEditorLeosAlternative1Btn: () => cy.get('.cke_button__leosalternatives1'),
+        ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2'),
     }
 
     uploadImageFile(location, iframeClass){
@@ -50,6 +53,14 @@ class ckEditorWindow {
 
     clickCkEditorDialogOkBtn() {
         this.elements.ckEditorDialogOkBtn().click();
+    }
+
+    clickCkEditorDialogCancelBtnFromSourceDialog() {
+        this.elements.ckEditorDialogCancelBtnFromSourceDialog().click();
+    }
+
+    clickCkEditorLeosAlternative2Btn() {
+        this.elements.ckEditorLeosAlternative2Btn().click();
     }
 
     addTextAtCurrentCursorPositionWhenCKEditorOpen(newContent) {
@@ -128,6 +139,10 @@ class ckEditorWindow {
 
     clickBoldIcon(){
         this.elements.boldIcon().click();
+    }
+
+    clickSourceIcon(){
+        this.elements.sourceBtn().click();
     }
 
     clickItalicIcon(){

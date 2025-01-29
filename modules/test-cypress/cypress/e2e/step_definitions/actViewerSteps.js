@@ -1,6 +1,7 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import actViewerPage from "../pages/actViewerPage";
 import headerPage from "../pages/headerPage";
+/// <reference types="cypress" />
 
 Then('user is on act viewer page', () => {
     headerPage.getCurrentPageName().should("have.text", "Act View");
@@ -165,4 +166,8 @@ When(/^click on favourite icon$/, function () {
 
 Then(/^favourite icon is selected$/, function () {
     actViewerPage.elements.favouriteIcon().should('have.css', 'color','rgb(48, 48, 48)');
+});
+
+When (/^user clicks on the reorder button$/,()=>{
+    actViewerPage.clickReorderButton();
 });

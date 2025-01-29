@@ -21,11 +21,11 @@ public final class Annex extends XmlDocument {
                  Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
                  VersionType versionType, boolean isLatestVersion, String title, List<Collaborator> collaborators,
                  List<String> milestoneComments, String baseRevisionId, boolean liveDiffingRequired, String contributionStatus, String clonedFrom,
-                 Option<Content> content, Option<AnnexMetadata> metadata, boolean trackChangesEnabled) {
+                 Option<Content> content, Option<AnnexMetadata> metadata, boolean trackChangesEnabled, boolean isVersionArchived) {
 
         super(LeosCategory.ANNEX, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title, collaborators,
-                milestoneComments, content, trackChangesEnabled);
+                milestoneComments, content, trackChangesEnabled, isVersionArchived);
         this.metadata = metadata;
         this.baseRevisionId = baseRevisionId;
         this.contributionStatus = contributionStatus;

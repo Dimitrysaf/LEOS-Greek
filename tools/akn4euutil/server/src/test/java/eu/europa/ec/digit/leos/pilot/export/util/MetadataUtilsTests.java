@@ -11,6 +11,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFi
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -145,30 +146,27 @@ public class MetadataUtilsTests {
     public void testAddInsertCoteToCuidInMainXml() throws XmlUtilException, MetadataUtilsException {
         XmlFile xmlFile = createCuidXmlFile("main-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
         ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
-        MetadataUtil.addInsertCoteToCuid(insertCoteFieldInfo, xmlFile);
+        MetadataUtil.processInsertCote(insertCoteFieldInfo, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
-        Assertions.assertNotNull(fileCuidNode);
-        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(fileCuidNode, "value"));
+        Assertions.assertNull(fileCuidNode);
 
         Node docCuidNode = xmlFile.getElementByName("akn4eu:docCUID");
-        Assertions.assertNotNull(docCuidNode);
-        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(docCuidNode, "value"));
+        Assertions.assertNull(docCuidNode);
     }
 
     @Test
     public void testAddInsertCoteToCuidInNotMainXml() throws XmlUtilException, MetadataUtilsException {
         XmlFile xmlFile = createCuidXmlFile("notMain-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
         ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
-        MetadataUtil.addInsertCoteToCuid(insertCoteFieldInfo, xmlFile);
+        MetadataUtil.processInsertCote(insertCoteFieldInfo, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
         Assertions.assertNotNull(fileCuidNode);
         Assertions.assertEquals("cm29gm7v600276e56hvqz1k4g", XmlUtil.getNodeAttributeValue(fileCuidNode, "value"));
 
         Node docCuidNode = xmlFile.getElementByName("akn4eu:docCUID");
-        Assertions.assertNotNull(docCuidNode);
-        Assertions.assertEquals("COM(2024)_1811", XmlUtil.getNodeAttributeValue(docCuidNode, "value"));
+        Assertions.assertNull(docCuidNode);
     }
 
     private XmlFile createCuidXmlFile(String filename, String cuid) throws XmlUtilException {
@@ -195,6 +193,59 @@ public class MetadataUtilsTests {
         Node docCuidNode = xmlFile.newElement("akn4eu:docCUID");
         XmlUtil.setNodeAttributeValue(docCuidNode, "value", cuid);
         preservationNode.appendChild(docCuidNode);
+
+        return xmlFile;
+    }
+
+    @Test
+    public void testAssociatedReferences() throws MetadataUtilsException,XmlUtilException {
+        final MultipleReferencesFieldInfo referencesFieldInfo = (MultipleReferencesFieldInfo) MetadataUtil.parseLinkedDocuments("{SEC(2021) 11 jcwtest5} - {SWD(2021) 42 final} - {SWD(2021) 43 final}");
+        final XmlFile xmlFile = createAssociatedReferencesXmlFile("main.xml");
+        MetadataUtil.processLinkedDocuments(referencesFieldInfo, xmlFile);
+
+        Node referencesContainer = xmlFile.getElementByName("container");
+        Assertions.assertFalse(XmlUtil.isNodeEmpty(referencesContainer));
+        Assertions.assertFalse(XmlUtil.nodeHasAttribute(referencesContainer, "class"));
+        Assertions.assertTrue(referencesContainer.hasChildNodes());
+
+        NodeList childNodes = referencesContainer.getChildNodes();
+        Assertions.assertEquals(3, childNodes.getLength());
+        for (int i=0; i<childNodes.getLength(); i++) {
+            final Node referenceNode = childNodes.item(i);
+            String xmlId = XmlUtil.getNodeAttributeValue(referenceNode, "xml:id");
+            Assertions.assertNotNull(xmlId);
+            Assertions.assertFalse(xmlId.isEmpty());
+            Assertions.assertFalse(xmlId.startsWith("_"));
+        }
+    }
+
+    @Test
+    public void testMissingAssociatedReferences() throws MetadataUtilsException,XmlUtilException {
+        final MultipleReferencesFieldInfo referencesFieldInfo = (MultipleReferencesFieldInfo) MetadataUtil.parseLinkedDocuments("");
+        final XmlFile xmlFile = createAssociatedReferencesXmlFile("main.xml");
+        MetadataUtil.processLinkedDocuments(referencesFieldInfo, xmlFile);
+
+        Node referencesContainer = xmlFile.getElementByName("container");
+        Assertions.assertTrue(XmlUtil.isNodeEmpty(referencesContainer));
+    }
+
+    private XmlFile createAssociatedReferencesXmlFile(String filename) throws XmlUtilException {
+        XmlFile xmlFile = XmlUtil.newXmlFile();
+        xmlFile.setName(filename);
+        Node rootNode = xmlFile.createRoot("doc");
+
+        Node coverpageNode = xmlFile.newElement("coverPage");
+        XmlUtil.setNodeAttributeValue(coverpageNode, "xml:id", "coverpage__container");
+        rootNode.appendChild(coverpageNode);
+
+        Node referencesContainerNode = xmlFile.newElement("container");
+        XmlUtil.setNodeAttributeValue(referencesContainerNode, "name", "associatedReferences");
+        XmlUtil.setNodeAttributeValue(referencesContainerNode, "class", "template");
+        XmlUtil.setNodeAttributeValue(referencesContainerNode, "xml:id", "coverpage__container_associatedReferences");
+        coverpageNode.appendChild(referencesContainerNode);
+
+        Node referenceNode = xmlFile.newElement("p");
+        XmlUtil.setNodeAttributeValue(referenceNode, "xml:id", "coverpage__container_2__p");
 
         return xmlFile;
     }

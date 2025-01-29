@@ -17,7 +17,7 @@ public final class Profile extends XmlDocument {
                      Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
                      VersionType versionType, boolean isLatestVersion, Option<Content> content, Option<ProfileMetaData> metadata) {
         super(LeosCategory.LIGHT_PROFILE, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
+                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, false, content);
         this.metadata = metadata;
     }
 

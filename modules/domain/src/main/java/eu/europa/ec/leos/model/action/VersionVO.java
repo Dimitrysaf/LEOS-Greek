@@ -27,6 +27,7 @@ public class VersionVO {
     //milestone related
     private String legFileName;
     private String createdBy;
+    private boolean isVersionArchived;
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
@@ -112,6 +113,14 @@ public class VersionVO {
 
     public void setMostRecentVersion(boolean mostRecentVersion) {
         this.mostRecentVersion = mostRecentVersion;
+    }
+
+    public boolean isVersionArchived() {
+        return isVersionArchived;
+    }
+
+    public void setVersionArchived(boolean archived) {
+        isVersionArchived = archived;
     }
 
     @Override

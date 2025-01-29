@@ -3,13 +3,17 @@ package eu.europa.ec.leos.services.document;
 
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.integration.ExternalSystemACLService;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -43,6 +47,14 @@ public class ProposalServiceImplTest {
     TrackChangesContext trackChangesContext;
     @Mock
     DocumentLanguageContext documentLanguageContext;
+    @Mock
+    SecurityContext securityContext;
+    @Mock
+    WorkflowCollaboratorService workflowCollaboratorService;
+    @Mock
+    ExternalSystemACLService externalSystemACLService;
+    @Mock
+    PackageService packageService;
 
     @InjectMocks
     private XPathCatalog xPathCatalog = spy(new XPathCatalog());
@@ -61,7 +73,11 @@ public class ProposalServiceImplTest {
 
         proposalService = new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor,
                 xmlNodeConfigProcessor, packageRepository,
-                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext);
+                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext,
+                securityContext,
+                workflowCollaboratorService,
+                externalSystemACLService,
+                packageService);
 
         //DO the actual call
         CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
@@ -83,7 +99,11 @@ public class ProposalServiceImplTest {
         String expectedDocRefId = "body_cmp_3__dref_1";
         
         proposalService = new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor,
-                xmlNodeConfigProcessor, packageRepository, xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext);
+                xmlNodeConfigProcessor, packageRepository, xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext,
+                securityContext,
+                workflowCollaboratorService,
+                externalSystemACLService,
+                packageService);
         
         // Call
         Map<String, String> hrefIdMap = proposalService.getExplanatoryDocumentRef(xmlContent);

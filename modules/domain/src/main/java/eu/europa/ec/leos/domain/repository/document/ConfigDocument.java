@@ -13,6 +13,6 @@ public final class ConfigDocument extends LeosDocument {
                           VersionType versionType, boolean isLatestVersion, Option<Content> content) {
 
         super(LeosCategory.CONFIG, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
+                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, false, content);
     }
 }

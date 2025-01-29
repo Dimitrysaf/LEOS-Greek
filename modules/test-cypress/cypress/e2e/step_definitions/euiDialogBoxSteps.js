@@ -57,3 +57,23 @@ And(`click on confirm button in dialog confirm box window`, function () {
 When(/^click on cancel button in dialog box window$/, function () {
     euiDialogBoxPage.clickCancelBtn();
 });
+
+Then(/^example box (\d+) contains "([^"]*)"$/, function (boxNumber, content) {
+    euiDialogBoxPage.elements.exampleBoxNgContent().eq(boxNumber-1).should('include.text', content);
+});
+
+Then(/^no dialog box window present$/, function () {
+    euiDialogBoxPage.elements.dialogBox().should('not.exist');
+});
+
+When(/^click on dismiss close button in dialog box window$/, function () {
+    euiDialogBoxPage.clickDismissCloseBtn();
+});
+
+When(/^drag row (\d+) and drop on row (\d+) in dialog box window$/, function (dragRow, dropRow) {
+    euiDialogBoxPage.elements.exampleBoxNgContent().eq(dragRow-1)
+        .trigger("mousedown", {button: 0, force: true})
+        .trigger("mousemove", 0, 10, {force: true})
+        .wait(200);
+    euiDialogBoxPage.elements.exampleBoxNgContent().eq(dropRow-1).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
+});

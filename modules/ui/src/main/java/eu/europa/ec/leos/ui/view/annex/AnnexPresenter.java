@@ -1852,7 +1852,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 source.getClonedFrom(),
                 updatedContentOptionObj,
                 source.getMetadata(),
-                source.isTrackChangesEnabled()
+                source.isTrackChangesEnabled(), false
         );
     }
 

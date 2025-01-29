@@ -188,6 +188,6 @@ public class FinancialStatementProcessorTest extends LeosTest {
                 "",
                 false,
                 "",
-                "");
+                "", false);
     }
 }

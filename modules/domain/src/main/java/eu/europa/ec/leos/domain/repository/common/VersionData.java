@@ -10,14 +10,17 @@ public class VersionData implements Versionable {
     private final VersionType versionType;
     private final boolean isLatestVersion;
     private final String cmisVersionLabel;
+    private final boolean isVersionArchived;
 
-    public VersionData(String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType, boolean isLatestVersion) {
+    public VersionData(String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment
+            , VersionType versionType, boolean isLatestVersion, boolean isVersionArchived) {
         this.versionSeriesId = versionSeriesId;
         this.cmisVersionLabel = cmisVersionLabel;
         this.versionLabel = versionLabel;
         this.versionComment = versionComment;
         this.versionType = versionType;
         this.isLatestVersion = isLatestVersion;
+        this.isVersionArchived = isVersionArchived;
     }
 
     @Override
@@ -49,6 +52,9 @@ public class VersionData implements Versionable {
     public boolean isLatestVersion() {
         return isLatestVersion;
     }
+
+    @Override
+    public boolean isVersionArchived() { return isVersionArchived; }
 
     @Override
     public String toString() {

@@ -22,7 +22,7 @@ public final class ExportDocument extends LeosDocument {
                           LeosExportStatus status, List<String> comments, String exportRef) {
 
         super(LeosCategory.EXPORT, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
+                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, false, content);
         this.initialCreatedBy = initialCreatedBy;
         this.initialCreationInstant = initialCreationInstant;
         this.status = status;

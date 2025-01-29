@@ -252,18 +252,12 @@ define(function leosTrackChangesPluginModule(require) {
                     core.setOriginalNumber(element, event.data.previousNumber);
                     if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
                         && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
-                        && element.getAttribute(leosPluginUtils.DATA_AKN_NUM) &&
-                        element.getAttribute(core.DATA_AKN_ACTION_NUMBER) !== core.DELETE_ACTION) {
+                        && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                         if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         } else {
                             core.removeTrackChangesAttributesForNumbering(element);
                         }
-                    } else if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
-                      && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
-                      && element.getAttribute(leosPluginUtils.DATA_AKN_NUM) &&
-                      element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.DELETE_ACTION) {
-                        core.addTrackChangesAttributesForNumbering(editor, element, core.DELETE_ACTION);
                     } else if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
                         && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
                         && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {

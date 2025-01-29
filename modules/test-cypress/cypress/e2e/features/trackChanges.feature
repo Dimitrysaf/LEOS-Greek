@@ -732,25 +732,25 @@ Feature: Track Changes Feature
     When click at offset 2 of li 1 with data-akn-element "paragraph" of article in edition mode
     When click on paragraph mode icon present in ck editor panel
     Then li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "1." in edition mode
-    And  li 1 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "1." in edition mode
+    And  li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
     And  li 1 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     Then li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "2." in edition mode
-    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "2." in edition mode
+    And  li 2 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
     And  li 2 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     Then li 3 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "3." in edition mode
-    And  li 3 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "3." in edition mode
+    And  li 3 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
     And  li 3 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     Then li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "4." in edition mode
-    And  li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "4." in edition mode
+    And  li 4 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
     And  li 4 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     Then li 5 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "5." in edition mode
-    And  li 5 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "5." in edition mode
+    And  li 5 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
     And  li 5 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     Then li 6 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "6." in edition mode
-    And  li 6 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "6." in edition mode
+    And  li 6 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
     And  li 6 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     Then li 7 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "7." in edition mode
-    And  li 7 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "7." in edition mode
+    And  li 7 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-tc-original-number" in edition mode
     And  li 7 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-action-number" in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed

@@ -1,6 +1,7 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import ckEditorWindow from "../pages/ckEditorWindow";
 import annexPage from "../pages/annexPage";
+import annotationBar from "../pages/annotationBar";
 
 And('click delete button from keyboard in edition mode', () => {
     ckEditorWindow.clickDeleteFromKeyboardWhenCKEditorOpen();
@@ -104,6 +105,10 @@ Then(`special character button is enabled in ck editor`, () => {
 
 Then(`show blocks button is enabled in ck editor`, () => {
     ckEditorWindow.elements.showBlockBtn().should('not.be.disabled');
+});
+
+Then(`click source button`, () => {
+    ckEditorWindow.clickSourceIcon();
 });
 
 Then(`source button is enabled in ck editor`, () => {
@@ -378,6 +383,10 @@ When('click on undo icon present in ck editor panel', function () {
     ckEditorWindow.clickUndoIcon();
 });
 
+When('click on alternative 2 icon present in ck editor panel', function () {
+    ckEditorWindow.clickCkEditorLeosAlternative2Btn();
+});
+
 When('click on redo icon present in ck editor panel', function () {
     ckEditorWindow.clickRedoIcon();
 });
@@ -494,6 +503,10 @@ When(`click on image icon present in ck editor panel`, () => {
     ckEditorWindow.clickInsertImageIcon();
 });
 
+Then('click on cancel button in source dialog', () => {
+    ckEditorWindow.clickCkEditorDialogCancelBtnFromSourceDialog();
+});
+
 When(`upload an image file from a relative location {string} in iframe {string}`, (location, iframeClass) => {
     ckEditorWindow.uploadImageFile("cypress/fixtures/images/" + location, iframeClass);
 });
@@ -504,4 +517,32 @@ Then(/^paragraph mode icon is disabled in ck editor panel$/, function () {
 
 Then(/^paragraph mode icon is enabled in ck editor panel$/, function () {
     ckEditorWindow.elements.paragraphModeIcon().should('not.be.disabled');
+});
+
+Then('check content inside ckeditor is of size {int}', function (size) {
+    cy.window().then((win) => {
+        const focusedElement = win.document.querySelectorAll(':focus');
+        expect(focusedElement.length).to.equal(1);
+        expect(focusedElement[0].innerHTML.length).to.equal(size);
+    });
+});
+
+Then('content inside ckeditor contains {string}', function (text) {
+    cy.window().then((win) => {
+        const focusedElement = win.document.querySelectorAll(':focus');
+        expect(focusedElement[0].innerHTML).contains(text);
+    });
+});
+
+Then('alternative 1 and alternative 2 are present', () => {
+    ckEditorWindow.elements.ckEditorLeosAlternative1Btn().should('be.visible');
+    ckEditorWindow.elements.ckEditorLeosAlternative2Btn().should('be.visible');
+})
+
+Then('check content inside ckeditor is greater than {int}', function (size) {
+    cy.window().then((win) => {
+        const focusedElement = win.document.querySelectorAll(':focus');
+        expect(focusedElement.length).to.equal(1);
+        expect(focusedElement[0].innerHTML.length).to.greaterThan(size);
+    });
 });

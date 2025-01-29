@@ -422,4 +422,6 @@ public interface LeosRepository {
     void deleteWorkflowCollaborator(BigInteger id);
 
     List<CollaboratorVO> getPackageCollaborators(BigDecimal packageId);
+
+    void  archiveDocumentVersion(String documentRef, String version);
 }

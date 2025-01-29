@@ -27,13 +27,22 @@ import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.integration.ExternalSystemACLService;
+import eu.europa.ec.leos.integration.dto.AccessDTO;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.security.LeosPermission;
+import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
+import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
+import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
@@ -41,12 +50,11 @@ import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
-import org.apache.commons.lang.StringEscapeUtils;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -54,11 +62,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
@@ -74,6 +78,7 @@ import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedPro
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.getLeosDateFromString;
 
+@AllArgsConstructor
 public abstract class ProposalServiceImpl implements ProposalService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProposalServiceImpl.class);
@@ -88,31 +93,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
     private final MessageHelper messageHelper;
     protected final TrackChangesContext trackChangesContext;
     protected DocumentLanguageContext documentLanguageContext;
+    protected SecurityContext securityContext;
+    protected WorkflowCollaboratorService workflowCollaboratorService;
+    protected ExternalSystemACLService externalSystemACLService;
+    protected PackageService packageService;
 
     protected static final String PROPOSAL_NAME_PREFIX = "main";
-
-    @Autowired
-    public ProposalServiceImpl(ProposalRepository proposalRepository,
-                               XmlNodeProcessor xmlNodeProcessor,
-                               XmlContentProcessor xmlContentProcessor,
-                               XmlNodeConfigProcessor xmlNodeConfigProcessor,
-                               PackageRepository packageRepository,
-                               XPathCatalog xPathCatalog,
-                               TableOfContentProcessor tableOfContentProcessor,
-                               MessageHelper messageHelper,
-                               TrackChangesContext trackChangesContext,
-                               DocumentLanguageContext documentLanguageContext) {
-        this.proposalRepository = proposalRepository;
-        this.xmlNodeProcessor = xmlNodeProcessor;
-        this.xmlContentProcessor = xmlContentProcessor;
-        this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
-        this.packageRepository = packageRepository;
-        this.xPathCatalog = xPathCatalog;
-        this.tableOfContentProcessor = tableOfContentProcessor;
-        this.messageHelper = messageHelper;
-        this.trackChangesContext = trackChangesContext;
-        this.documentLanguageContext = documentLanguageContext;
-    }
 
     @Override
     public Proposal findProposal(String id) {
@@ -307,8 +293,46 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public Proposal findProposalByRef(String ref) {
         LOG.trace("Finding Proposal by ref... [ref=" + ref + "]");
         Proposal proposal = proposalRepository.findProposalByRef(ref);
+        if (!securityContext.hasPermission(proposal, LeosPermission.CAN_SEE_ALL_DOCUMENTS)) {
+            doubleCheckPotentialWorkflowCollaborator(ref, proposal);
+        }
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
+    }
+
+    private void doubleCheckPotentialWorkflowCollaborator(String ref, Proposal proposal) {
+        String userName = securityContext.getUserName();
+        Optional<Collaborator> collab = proposal.getCollaborators().stream()
+                .filter(u -> u.getLogin().equals(userName))
+                .findFirst();
+        if (collab.isPresent()){
+            return;//user exists naturally (not as an entity)
+        }
+        Optional<Collaborator> workflowCollaborator = proposal.getCollaborators().stream()
+                .filter(u ->
+                    u.getLeosClientId()!=null &&
+                    securityContext.getUser().getEntities().stream()
+                            .anyMatch(v -> v.getName().equals(u.getEntity()))
+                ).findFirst();
+        if (workflowCollaborator.isPresent()) { //remote call to ACL is needed
+            Collaborator collaborator = workflowCollaborator.get();
+            String leosClientId = collaborator.getLeosClientId();
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(ref, Proposal.class);
+            Optional<WorkflowCollaboratorDTO> workflowCollaboratorDTO = workflowCollaboratorService.getCollaborators(leosPackage.getName(), leosClientId);
+            if (workflowCollaboratorDTO.isPresent()) {
+                WorkflowCollaboratorDTO workflowCollaboratorDTO1 = workflowCollaboratorDTO.get();
+                String userCheckCallbackUrl = workflowCollaboratorDTO1.getUserCheckCallbackUrl();
+                Optional<AccessDTO> accessDTO = externalSystemACLService.getAccess(userCheckCallbackUrl, userName);
+                if (!accessDTO.isPresent()) {
+                    throw new CollaboratorException(messageHelper.getMessage("collaborator.message.workflow-user.notPresent",
+                            userName,
+                            securityContext.getUser().getConnectedEntity(),
+                            workflowCollaboratorDTO1.getClientSystemId(),
+                            userCheckCallbackUrl));
+                }
+            }
+
+        }
     }
 
     @Override
