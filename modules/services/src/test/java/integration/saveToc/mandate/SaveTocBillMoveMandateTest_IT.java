@@ -19,12 +19,20 @@ import static integration.saveToc.TocVOCreateUtils.getElementById;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import eu.europa.ec.leos.model.user.Entity;
+import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
+import eu.europa.ec.leos.test.support.model.ModelHelper;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,6 +45,19 @@ import integration.saveToc.TocVOCreateMandateUtils;
 public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
 
     private static final Logger log = LoggerFactory.getLogger(SaveTocBillMoveMandateTest_IT.class);
+
+    @Mock
+    private SecurityContext securityContext;
+
+    @Before
+    public void onSetup() throws Exception {
+        super.onSetUp();
+        List<Entity> entities = new ArrayList<Entity>();
+        entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
+        User user = ModelHelper.buildUser(45L, "jane", "jane", entities);
+        when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.getUserName()).thenReturn("jane");
+    }
 
     @Ignore
     @Test

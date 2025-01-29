@@ -28,8 +28,8 @@
             </point>
             <point leos:origin="ec" xml:id="__akn_article_XiUbXW_ncxthR">
                 <num leos:origin="ec" xml:id="__akn_article_XiUbXW_rGtW0E">
-                    <del leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">(c)</del>
-                    <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(b)</ins>
+                    <del leos:action-number="delete" leos:tc-original-number="(c)" leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">(c)</del>
+                    <ins leos:action-number="insert" leos:tc-original-number="(c)" leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(b)</ins>
                 </num>
                 <content leos:origin="ec" xml:id="__akn_article_XiUbXW_rULzWV">
                     <p leos:origin="ec" xml:id="__akn_article_XiUbXW_iaV1kI">w4t34t34t34t34</p>
@@ -39,8 +39,8 @@
                    leos:softdate="2022-09-21T14:43:15+02:00" leos:softmove_from="movedX__akn_article_XiUbXW_qUcDga"
                    leos:softuser="DOE Jane(DGT)" xml:id="tempX__akn_article_XiUbXW_qUcDga">
                 <num leos:origin="ls" xml:id="__akn_article_XiUbXW_CEPhFu">
-                    <del leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(d)</del>
-                    <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(c)</ins>
+                    <del leos:action-number="delete" leos:tc-original-number="(d)" leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(d)</del>
+                    <ins leos:action-number="insert" leos:tc-original-number="(d)" leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(c)</ins>
                 </num>
                 <content leos:origin="ec" xml:id="__akn_article_XiUbXW_eNJKLe">
                     <p leos:origin="ec" xml:id="__akn_article_XiUbXW_bWAioz">34t34tergergergerg</p>
