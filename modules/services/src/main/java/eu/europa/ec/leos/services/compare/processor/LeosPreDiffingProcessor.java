@@ -9,6 +9,7 @@ import org.w3c.dom.NodeList;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 public class LeosPreDiffingProcessor {
 
@@ -16,7 +17,7 @@ public class LeosPreDiffingProcessor {
 
     public String adjustTrackChanges(String content) {
 
-        Document document = XercesUtils.createXercesDocument(content.getBytes());
+        Document document = XercesUtils.createXercesDocument(content.getBytes(UTF_8));
         NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         for (int countElements = 0; countElements < elements.getLength(); countElements++) {
             Node element = elements.item(countElements);
