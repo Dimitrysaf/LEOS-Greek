@@ -761,7 +761,7 @@ Feature: Legal Act Page Regression Features
         Then ck editor window is not displayed
 
     @checksForStory1703And2060And2208 @local
-    Scenario: Checks related to specific stories: 1703, 2060 and 2208
+    Scenario: Checks related to specific stories: 1703, 2060 and 2208. Tests for alternatives and some track changes related to paragraph mode
         Given navigate to edit drafting application with "User1"
         Then user is on home page
         When click on upload button

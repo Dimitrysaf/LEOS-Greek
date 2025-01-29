@@ -75,6 +75,18 @@ class ckEditorWindow {
         this.elements.ckEditableInline().type('{enter}');
     }
 
+    clickEndFromKeyboardWhenCKEditorOpen() {
+        this.elements.ckEditableInline().type('{end}');
+    }
+
+    clickRightArrowFromKeyboardWhenCKEditorOpen() {
+        this.elements.ckEditableInline().type('{rightarrow}');
+    }
+
+    clickDownArrowFromKeyboardWhenCKEditorOpen() {
+        this.elements.ckEditableInline().type('{downarrow}');
+    }
+
     clickBackspaceFromKeyboardWhenCKEditorOpen() {
         this.elements.ckEditableInline().type('{backspace}');
     }
