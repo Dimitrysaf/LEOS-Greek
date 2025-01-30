@@ -37,7 +37,7 @@ import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.compare.LeosTextComparatorImpl;
 import eu.europa.ec.leos.services.compare.TextComparator;
-import eu.europa.ec.leos.services.compare.XMLContentComparatorServiceImplMandate;
+import eu.europa.ec.leos.services.compare.XMLContentComparatorServiceImpl;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
@@ -194,7 +194,7 @@ public class LegServiceImplTest {
 
     @InjectMocks
     private ContentComparatorService contentComparatorService = spy(
-            new XMLContentComparatorServiceImplMandate(messageHelper, textComparator, securityContext, xmlContentProcessor));
+            new XMLContentComparatorServiceImpl(messageHelper, textComparator, securityContext, xmlContentProcessor, cloneContext));
 
     @InjectMocks
     protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());

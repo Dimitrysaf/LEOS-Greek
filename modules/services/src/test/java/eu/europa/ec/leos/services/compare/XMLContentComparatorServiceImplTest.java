@@ -55,8 +55,8 @@ public class XMLContentComparatorServiceImplTest extends LeosTest {
     private XmlContentProcessor xmlContentProcessor = new XmlContentProcessorProposal();
 
     @InjectMocks
-    protected ContentComparatorService proposalCompareService = new XMLContentComparatorServiceImplProposal(messageHelper,
-            textComparator, cloneContext, securityContext, xmlContentProcessor);
+    protected ContentComparatorService proposalCompareService = new XMLContentComparatorServiceImpl(messageHelper,
+            textComparator, securityContext, xmlContentProcessor, cloneContext);
 
     @Before
     public void onSetUp() throws Exception {
