@@ -250,7 +250,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node childNode = nodeList.item(i);
             if (childNode.getNodeType() != Node.TEXT_NODE) {
-                doCleanSoftAction(childNode);
+                boolean isNodeDeleted = doCleanSoftAction(childNode);
+                if (isNodeDeleted) {
+                    i--;
+                }
                 cleanSoftActionForElement(childNode);
             }
         }
@@ -268,14 +271,17 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node childNode = nodeList.item(i);
             if (childNode.getNodeType() != Node.TEXT_NODE) {
-                doCleanSoftAction(childNode);
+                boolean isNodeDeleted = doCleanSoftAction(childNode);
+                if (isNodeDeleted) {
+                    i--;
+                }
                 removeMiscAttributes(childNode);
                 cleanSoftActionAndRemoveMiscAttributesForElement(childNode);
             }
         }
     }
 
-    private void doCleanSoftAction(Node node) {
+    private boolean doCleanSoftAction(Node node) {
         SoftActionType softAction = getSoftAction(node);
         if (softAction != null) {
             switch (softAction) {
@@ -291,9 +297,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 case MOVE_TO:
                 case DELETE:
                     XercesUtils.deleteElement(node);
-                    break;
+                    return true;
             }
         }
+        return false;
     }
 
     private SoftActionType getSoftAction(Node node) {

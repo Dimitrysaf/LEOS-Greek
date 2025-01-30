@@ -60,7 +60,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ENTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_NUMBER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
@@ -1559,10 +1561,18 @@ public class XercesUtils {
                 boolean isNodeDeleted = doCleanTrackChanges(childNode);
                 if(isNodeDeleted) {
                     index--;
+                    if (nodeList.getLength() == 0) {
+                        XercesUtils.deleteElement(node);
+                        return true;
+                    }
                 } else {
                     isNodeDeleted = cleanTrackChangesForElement(childNode);
                     if(isNodeDeleted) {
                         index--;
+                        if (nodeList.getLength() == 0) {
+                            XercesUtils.deleteElement(node);
+                            return true;
+                        }
                     }
                 }
             }
@@ -1581,7 +1591,7 @@ public class XercesUtils {
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
             XercesUtils.deleteElement(node);
             isNodeDeleted = true;
-        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)) {
+        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) || hasAttributeWithValue(node, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION)) {
             if("span".equals(node.getNodeName())) {
                 XercesUtils.replaceElement(node.getFirstChild(), node);
                 isNodeDeleted = true;
@@ -1603,6 +1613,8 @@ public class XercesUtils {
         XercesUtils.removeAttribute(node, LEOS_UID_NUMBER);
         XercesUtils.removeAttribute(node, LEOS_UID_ENTER);
         XercesUtils.removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
+        XercesUtils.removeAttribute(node, LEOS_SOFT_USER_ATTR);
+        XercesUtils.removeAttribute(node, LEOS_SOFT_DATE_ATTR);
     }
 
 
