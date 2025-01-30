@@ -318,13 +318,18 @@ define(function aknNumberedParagraphPluginModule(require) {
                             paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
                             paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
                             leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
-                        } else if (SWITCHED
-                            || (!dataAknNum
-                                && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.UNNUMBERED
-                                && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.NEW)
-                            || (dataAknNum
-                                && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED
-                                && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER) === leosTrackChanges.core.INSERT_ACTION)) {
+                        } else if (dataAknNum && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.NEW) {
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                        } else if (SWITCHED) {
+                            leosTrackChanges.core.addTrackChangesAttributesForNumbering(ckEditor, paragraphs[ii], leosTrackChanges.core.DELETE_ACTION);
+                        } else if (!dataAknNum
+                            && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.UNNUMBERED
+                            && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.NEW) {
+                            leosTrackChanges.core.addTrackChangesAttributesForNumbering(ckEditor, paragraphs[ii], leosTrackChanges.core.DELETE_ACTION);
+                        } else if (dataAknNum
+                            && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED
+                            && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER) === leosTrackChanges.core.INSERT_ACTION) {
                             leosTrackChanges.core.addTrackChangesAttributesForNumbering(ckEditor, paragraphs[ii], leosTrackChanges.core.DELETE_ACTION);
                         }
                     } else {

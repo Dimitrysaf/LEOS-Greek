@@ -11,6 +11,18 @@ And('click enter from keyboard in edition mode', () => {
     ckEditorWindow.clickEnterFromKeyboardWhenCKEditorOpen();
 })
 
+And('click end from keyboard in edition mode', () => {
+    ckEditorWindow.clickEndFromKeyboardWhenCKEditorOpen();
+})
+
+And('click right arrow from keyboard in edition mode', () => {
+    ckEditorWindow.clickRightArrowFromKeyboardWhenCKEditorOpen();
+})
+
+And('click down arrow from keyboard in edition mode', () => {
+    ckEditorWindow.clickDownArrowFromKeyboardWhenCKEditorOpen();
+})
+
 And('click backspace from keyboard in edition mode', function () {
     ckEditorWindow.clickBackspaceFromKeyboardWhenCKEditorOpen();
 });
@@ -265,6 +277,18 @@ When(`click at offset {int} of p tag {int} of li {int} with data-akn-element {st
 
 Then(`p tag {int} of li {int} with data-akn-element {string} of article contains {string} in edition mode`, (pTag, paragraphLi, paragraphDataAknElement, content) => {
     ckEditorWindow.getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement).invoke('text').should('contain', content);
+});
+
+Then(`p tag {int} of li {int} with data-akn-element {string} of article contains html {string} in edition mode`, (pTag, paragraphLi, paragraphDataAknElement, content) => {
+    ckEditorWindow.getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement).should('include.html', content);
+});
+
+Then(`p tag {int} of li {int} with data-akn-element {string} of article should have {string} with value {string} in edition mode`, (pTag, paragraphLi, paragraphDataAknElement, attributeName, attributeValue) => {
+    ckEditorWindow.getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName, attributeValue);
+});
+
+Then(`p tag {int} of li {int} with data-akn-element {string} of article should not have {string} in edition mode`, (pTag, paragraphLi, paragraphDataAknElement, attributeName) => {
+    ckEditorWindow.getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement).should('not.have.attr', attributeName);
 });
 
 Then(`{string} attribute is not present in li {int} with data-akn-element {string} of article in edition mode`, (attribute, li, dataAknElement) => {
