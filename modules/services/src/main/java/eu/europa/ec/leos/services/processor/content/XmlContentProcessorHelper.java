@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -50,6 +51,7 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentProcess
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl.NBSP;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
+import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsLastChildOfNode;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForType;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
@@ -61,6 +63,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.getParentTagName;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasDescendantWithAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
@@ -78,6 +81,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
 import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.INTRO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_NUMBER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_CROSSHEADING_TYPE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
@@ -99,13 +103,20 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_TRANS_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ELEMENT_NAME;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_ORIGINAL_ITEM_TYPE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_ORIGINAL_NUMBER;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
@@ -310,11 +321,26 @@ public class XmlContentProcessorHelper {
 
         // get the heading
         String heading = null;
+        String originalHeading = null;
+        TocItemTypeName originalTocItemType = null;
         String originHeadingAttr = null;
         SoftActionType headingSoftActionAttribute = null;
         Node headingNode = getFirstChild(node, HEADING);
         if (headingNode != null) {
-            heading = StringEscapeUtils.escapeXml10(trimmedXml(headingNode.getTextContent())); //
+            Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
+            Node insNode = getFirstChild(headingNode, LEOS_TC_INSERT_ELEMENT_NAME);
+            if(delNode != null) {
+                originalHeading = StringEscapeUtils.escapeXml10(trimmedXml(delNode.getTextContent()));
+                String tocItemType = getAttributeValue(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE);
+                if(StringUtils.isNotBlank(tocItemType)) {
+                    originalTocItemType = TocItemTypeName.valueOf(tocItemType);
+                }
+            }
+            if(insNode != null) {
+                heading = StringEscapeUtils.escapeXml10(trimmedXml(insNode.getTextContent()));
+            } else {
+                heading = StringEscapeUtils.escapeXml10(trimmedXml(headingNode.getTextContent())); //
+            }
             originHeadingAttr = getAttributeValue(headingNode, LEOS_ORIGIN_ATTR);
             headingSoftActionAttribute = getAttributeForSoftAction(headingNode, LEOS_SOFT_ACTION_ATTR);
         }
@@ -345,7 +371,7 @@ public class XmlContentProcessorHelper {
         TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems, tagName, XercesUtils.getAttributes(node));
 
         // build the table of content item and return it
-        TableOfContentItemVO item =  new TableOfContentItemVO(tocItem, elementId, originAttr, number, originNumAttr, heading, originHeadingAttr, node, list, content,
+        TableOfContentItemVO item =  new TableOfContentItemVO(tocItem, elementId, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, originHeadingAttr, node, list, content,
                 softActionAttr, isSoftActionRoot, softUserAttr, softDateAttr, softMovedFrom, softMovedTo, softTransFrom, false,
                 numSoftActionAttribute, headingSoftActionAttribute, elementDepth,
                 indentLevel, numId, indentOriginType, indentOriginDepth, indentOriginNumId, indentOriginNumValue, indentOriginNumOrigin,
@@ -524,34 +550,74 @@ public class XmlContentProcessorHelper {
         return newNum;
     }
     
-    public static Node extractOrBuildHeaderElement(Node node, TableOfContentItemVO tocVo, User user) {
+    public static Node extractOrBuildHeaderElement(Node node, TableOfContentItemVO tocVo, List<TocItem> tocItems, User user, String userLogin, String title, boolean isTrackChangesEnabled) {
         Node headingNode = null;
         String newHeading =  StringEscapeUtils.unescapeXml(tocVo.getHeading());
         if ((tocVo.getTocItem().getItemHeading().equals(OptionsType.MANDATORY) ||
                 tocVo.getTocItem().getItemHeading().equals(OptionsType.OPTIONAL)) &&
                         ((newHeading != null) && !StringUtils.isEmpty(newHeading.replaceAll(NBSP, EMPTY_STRING).trim()))) {
-            headingNode = extractOrBuildHeaderElement(node, newHeading);
+            headingNode = extractOrBuildHeaderElement(node, tocItems, newHeading, isTrackChangesEnabled, userLogin, title);
             if (tocVo.isUndeleted()) {
                 XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, EMPTY_STRING, true);
             }
         } else if (tocVo.getTocItem().getItemHeading().equals(OptionsType.OPTIONAL)
                 && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
-            headingNode = extractOrBuildHeaderElement(node, EMPTY_STRING);
+            headingNode = extractOrBuildHeaderElement(node, tocItems, EMPTY_STRING, isTrackChangesEnabled, userLogin, title);
             XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
             updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null);
         }
         return headingNode;
     }
 
-    private static Node extractOrBuildHeaderElement(Node node, String newHeading) {
+    private static Node extractOrBuildHeaderElement(Node node, List<TocItem> tocItems, String newHeading, boolean isTrackChangesEnabled, String userLogin, String title) {
         Node headingNode = XercesUtils.getFirstChild(node, HEADING);
         if (headingNode == null) {
             headingNode = createElement(node.getOwnerDocument(), HEADING, newHeading);
-        } else if (!headingNode.getTextContent().equals(newHeading)) {
-            headingNode = headingNode.cloneNode(false);
-            headingNode.setTextContent(newHeading);
+        } else {
+            if(isTrackChangesEnabled) {
+                TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems,  headingNode.getNodeName(), XercesUtils.getAttributes(headingNode));
+
+                Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
+                Node insNode = getFirstChild(headingNode, LEOS_TC_INSERT_ELEMENT_NAME);
+                if(delNode != null) {
+                    if(delNode.getTextContent().equals(newHeading)) {
+                        // Switched back original type
+                        headingNode = headingNode.cloneNode(false);
+                        headingNode.setTextContent(null);
+                        headingNode.setTextContent(newHeading);
+                    } else {
+                        // Changed to another type
+                        headingNode = addTrackChangeElements(node.getOwnerDocument(), headingNode, delNode.getTextContent(), newHeading, userLogin, title);
+                        addAttribute(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE, tocItemType.value());
+                    }
+                } else {
+                    if (!headingNode.getTextContent().equals(newHeading)) {
+                        // Changed to new type for the first time
+                        headingNode = addTrackChangeElements(node.getOwnerDocument(), headingNode, headingNode.getTextContent(), newHeading, userLogin, title);
+                        addAttribute(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE, tocItemType.value());
+                    }
+                }
+            } else {
+                headingNode = headingNode.cloneNode(false);
+                headingNode.setTextContent(newHeading);
+            }
         }
         return headingNode;
+    }
+
+    private static Node addTrackChangeElements(Document document, Node node, String oldContent, String newContent, String userLogin, String title) {
+        node = node.cloneNode(false);
+        node.setTextContent(null);
+
+        Node deletedNum = createElementAsLastChildOfNode(document, node, LEOS_TC_DELETE_ELEMENT_NAME, oldContent);
+        addAttribute(deletedNum, LEOS_UID, userLogin);
+        addAttribute(deletedNum, LEOS_TITLE, title);
+
+        Node insertedNum = createElementAsLastChildOfNode(document, node, LEOS_TC_INSERT_ELEMENT_NAME, newContent);
+        addAttribute(insertedNum, LEOS_UID, userLogin);
+        addAttribute(insertedNum, LEOS_TITLE, title);
+
+        return node;
     }
     
     public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {

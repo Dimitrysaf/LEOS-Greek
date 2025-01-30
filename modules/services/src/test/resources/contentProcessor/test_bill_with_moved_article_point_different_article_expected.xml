@@ -256,8 +256,8 @@
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_v01SHK">
                             <num leos:origin="ec" xml:id="_art_1_32Oyqp">
-                                <del leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">(c)</del>
-                                <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(b)</ins>
+                                <del leos:action-number="delete" leos:tc-original-number="(c)" leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">(c)</del>
+                                <ins leos:action-number="insert" leos:tc-original-number="(c)" leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(b)</ins>
                             </num>
                             <content leos:origin="ec" xml:id="_art_1_pL3jdf">
                                 <p leos:origin="ec" xml:id="_art_1_2RXeaM">weewhwehh</p>

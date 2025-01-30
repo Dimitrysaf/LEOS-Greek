@@ -151,7 +151,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
         // 2. Store the node details in temp variables
         Node numNode = buildNumNode(node, tocVo);
-        Node headingNode = buildHeadingNode(node, tocVo, user);
+        Node headingNode = buildHeadingNode(node, tocVo, user, isTrackChangesEnabled);
         Node introNode = getFirstChild(node, INTRO);  //recitals intro
         List<Node> childrenNode = XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
 
@@ -807,8 +807,9 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         return cloneContext != null && cloneContext.isClonedProposal();
     }
 
-    private Node buildHeadingNode(Node node, TableOfContentItemVO tocVo, User user) {
-        Node headingNode = XmlContentProcessorHelper.extractOrBuildHeaderElement(node, tocVo, user);
+    private Node buildHeadingNode(Node node, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
+        Node headingNode = XmlContentProcessorHelper.extractOrBuildHeaderElement(node, tocVo, tocItems, user, securityContext.getUser().getLogin(), LeosXercesUtils.getTitleValue(securityContext), isTrackChangesEnabled);
         if (isTrackChangesEnabled()) {
             XmlContentProcessorHelper.addUserInfoIfContentHasChanged(getFirstChild(node, HEADING), headingNode, user);
         }

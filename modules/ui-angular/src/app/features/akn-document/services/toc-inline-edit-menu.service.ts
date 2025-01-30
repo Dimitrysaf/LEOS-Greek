@@ -63,8 +63,6 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   private heading: string;
-  private previousHeading: string;
-  private previousType: string;
   private isReadyToMove = false;
 
   private itemsBS = new BehaviorSubject<DropdownModel[]>([]);
@@ -282,8 +280,8 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
     const selectedNode = this.targetNodeBS.value;
     const toc = this.tocService.getCurrentToc();
     const tocItems = this.tocService.getCurrentTocItems();
-    const oldHeading = this.heading;
-    const oldValue = selectedNode.tocItemType;
+    const currentType = selectedNode.tocItemType;
+    const originalType = selectedNode.originalTocItemType;
     // Get the maxDepth for list
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(
@@ -331,17 +329,17 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
     convertArticle(
       tocItems,
       selectedNode,
-      oldValue.toUpperCase(),
+      currentType.toUpperCase(),
       newType.toUpperCase(),
       this.documentConfig.langGroup,
     );
     if (
-      this.previousType &&
-      this.previousType.toLowerCase() === newType.toLowerCase()
+      originalType &&
+      originalType.toLowerCase() === newType.toLowerCase()
     ) {
       selectedNode.isAffected = false;
-      if (oldHeading !== '') {
-        this.heading = this.previousHeading;
+      if (selectedNode.originalHeading && selectedNode.originalHeading !== '') {
+        this.heading = selectedNode.originalHeading;
         selectedNode.heading = this.heading;
       } else {
         this.heading = this.translateService.instant(
@@ -349,6 +347,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
             selectedNode.tocItemType.toLowerCase() +
             '.article.heading',
         );
+        selectedNode.originalHeading = selectedNode.heading;
         selectedNode.heading = this.heading;
       }
     } else {
@@ -358,10 +357,9 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
           selectedNode.tocItemType.toLowerCase() +
           '.article.heading',
       );
+      selectedNode.originalHeading = selectedNode.heading;
       selectedNode.heading = this.heading;
     }
-    this.previousType = oldValue;
-    this.previousHeading = oldHeading;
     this.tocEditService.handleNodeChanges(toc);
   }
 

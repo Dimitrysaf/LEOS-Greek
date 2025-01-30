@@ -43,6 +43,8 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
                 tableOfContentItemVO.getNumber(),
                 tableOfContentItemVO.getOriginNumAttr(),
                 tableOfContentItemVO.getHeading(),
+                tableOfContentItemVO.getOriginalHeading(),
+                tableOfContentItemVO.getOriginalTocItemType(),
                 tableOfContentItemVO.getNode(),
                 tableOfContentItemVO.getContent());
 

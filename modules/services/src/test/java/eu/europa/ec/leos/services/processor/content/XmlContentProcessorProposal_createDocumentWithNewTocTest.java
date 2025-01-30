@@ -74,11 +74,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
         List<TableOfContentItemVO> articleVOs = new ArrayList<TableOfContentItemVO>();
         TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486 <placeholder>[…]</placeholder>",
-                null, "<content><p>1ste article</p></content>", null, null);
+                null, "<content><p>1ste article</p></content>", null, null, null, null);
 
         articleVOs.add(art1);
 
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
@@ -100,11 +100,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         List<TableOfContentItemVO> articleVOs = new ArrayList<TableOfContentItemVO>();
 
         TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486 <placeholder>[…]</placeholder>", null,
-                "<content><p>1ste article</p></content>", null, null);
+                "<content><p>1ste article</p></content>", null, null, null, null);
 
         articleVOs.add(art1);
 
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
@@ -129,17 +129,17 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
         List<TableOfContentItemVO> articleVOs = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, null, null, "487 added", null, "2de article added", null, null);
-        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488 added", null, "3th article added", null, null);
-        TableOfContentItemVO art4 = new TableOfContentItemVO(tocItemArticle, "art489", null, " 489", null, "4th article", null, null);
+        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null,null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, null, null, "487 added", null, "2de article added", null, null,null, null);
+        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488 added", null, "3th article added", null, null,null, null);
+        TableOfContentItemVO art4 = new TableOfContentItemVO(tocItemArticle, "art489", null, " 489", null, "4th article", null, null, null, null);
 
         articleVOs.add(art1);
         articleVOs.add(art2);
         articleVOs.add(art3);
         articleVOs.add(art4);
 
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
@@ -179,14 +179,14 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
         List<TableOfContentItemVO> articleVOs = new ArrayList<TableOfContentItemVO>();
 
-        TableOfContentItemVO pref = new TableOfContentItemVO(tocItemPreface, "1", null, null, null, null, null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article became 1the", null, null);
-        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, "art488", null, "Article 488", null, "3th article became 2the", null, null);
+        TableOfContentItemVO pref = new TableOfContentItemVO(tocItemPreface, "1", null, null, null, null, null, null, null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article became 1the", null, null, null, null);
+        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, "art488", null, "Article 488", null, "3th article became 2the", null, null, null, null);
         tableOfContentItemVOList.add(pref);
         articleVOs.add(art2);
         articleVOs.add(art3);
 
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
@@ -211,11 +211,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
         List<TableOfContentItemVO> articleVOs = new ArrayList<TableOfContentItemVO>();
 
-        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null);
+        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null, null, null);
 
         articleVOs.add(sec1);
 
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
@@ -246,14 +246,14 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         tableOfContentItemVOList.add(bodyVO);
 
-        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null);
-        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null,  null);
-        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, "sect2", null, "Section 2", null, "Paragraphs", null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null);
-        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, "art488", null, "Article 488", null, "3th article", null, null);
+        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null,  null, null);
+        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, "sect2", null, "Section 2", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null, null, null);
+        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, "art488", null, "Article 488", null, "3th article", null, null, null, null);
 
         bodyVO.addChildItem(sec1);
         sec1.addChildItem(art1);
@@ -301,13 +301,13 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         tableOfContentItemVOList.add(bodyVO);
 
-        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null);
-        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, "sect2", null, "Section 2", null, "Paragraphs", null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null);
-        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, "art488", null, "Article 488", null, "3th article", null, null);
+        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, "sect2", null, "Section 2", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null, null, null);
+        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, "art488", null, "Article 488", null, "3th article", null, null, null, null);
 
         bodyVO.addChildItem(sec1);
         bodyVO.addChildItem(sec2);
@@ -344,14 +344,14 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         tableOfContentItemVOList.add(bodyVO);
 
-        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null);
-        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null);
-        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, null, null, "Section 2", null, null, null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null);
-        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488", null, "3th article", null, null);
+        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null, null, null);
+        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, null, null, "Section 2", null, null, null, null, null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null, null, null);
+        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488", null, "3th article", null, null, null, null);
 
         bodyVO.addChildItem(sec1);
         sec1.addChildItem(art1);
@@ -395,13 +395,13 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         tableOfContentItemVOList.add(bodyVO);
-        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null);
-        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null);
-        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, null, null, "Section 2", null, null, null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null);
-        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488", null, "3th article", null, null);
+        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null, null, null);
+        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, null, null, "Section 2", null, null, null, null, null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null, null, null);
+        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488", null, "3th article", null, null, null, null);
 
         bodyVO.addChildItem(sec1);
         sec1.addChildItem(art1);
@@ -440,11 +440,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "<hcontainer><content><p>test</p></content>" + "</hcontainer>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         tableOfContentItemVOList.add(bodyVO);
 
-        TableOfContentItemVO artNew = new TableOfContentItemVO(tocItemArticle, null, null, "485", null, "0ste article", null, null);
-        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null);
+        TableOfContentItemVO artNew = new TableOfContentItemVO(tocItemArticle, null, null, "485", null, "0ste article", null, null, null, null);
+        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null, null, null);
 
         bodyVO.addChildItem(artNew);
         bodyVO.addChildItem(art1);
@@ -481,13 +481,13 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         tableOfContentItemVOList.add(bodyVO);
 
-        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null);
-        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null);
-        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, "Section 2", null, "Section 2", null, null, null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null);
+        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null, null, null);
+        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, "Section 2", null, "Section 2", null, null, null, null, null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null, null, null);
 
         bodyVO.addChildItem(sec1);
         sec1.addChildItem(sec2);
@@ -526,14 +526,14 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         tableOfContentItemVOList.add(bodyVO);
 
-        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, null, null, null, null, null);
-        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null);
-        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, null, null, "Section 2", null, "Paragraphs", null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null);
-        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488", null, "3th article", null, null);
+        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, null, null, null, null, null, null, null);
+        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null, null, null);
+        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, null, null, "Section 2", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null, null, null);
+        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488", null, "3th article", null, null, null, null);
 
         bodyVO.addChildItem(sec1);
         sec1.addChildItem(art1);
@@ -576,16 +576,16 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "</section>" + "</part>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null);
+        TableOfContentItemVO bodyVO = new TableOfContentItemVO(tocItemBody, BODY, null, null, null, null, null, null, null, null);
         tableOfContentItemVOList.add(bodyVO);
 
-        TableOfContentItemVO part1 = new TableOfContentItemVO(tocItemPart, "part1", null, "Part 1", null, "part1", null, null);
-        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null);
-        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null);
-        TableOfContentItemVO part2 = new TableOfContentItemVO(tocItemPart, null, null, "Part 2", null, "part2", null, null);
-        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, null, null, "Section 2", null, "Paragraphs", null, null);
-        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null);
-        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488", null, "3th article", null, null);
+        TableOfContentItemVO part1 = new TableOfContentItemVO(tocItemPart, "part1", null, "Part 1", null, "part1", null, null, null, null);
+        TableOfContentItemVO sec1 = new TableOfContentItemVO(tocItemSection, "sect1", null, "Section 1", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art1 = new TableOfContentItemVO(tocItemArticle, "art486", null, "Article 486", null, "1ste article", null, null, null, null);
+        TableOfContentItemVO part2 = new TableOfContentItemVO(tocItemPart, null, null, "Part 2", null, "part2", null, null, null, null);
+        TableOfContentItemVO sec2 = new TableOfContentItemVO(tocItemSection, null, null, "Section 2", null, "Paragraphs", null, null, null, null);
+        TableOfContentItemVO art2 = new TableOfContentItemVO(tocItemArticle, "art487", null, "Article 487", null, "2de article", null, null, null, null);
+        TableOfContentItemVO art3 = new TableOfContentItemVO(tocItemArticle, null, null, "488", null, "3th article", null, null, null, null);
 
         bodyVO.addChildItem(part1);
         part1.addChildItem(sec1);
@@ -642,10 +642,10 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
-        TableOfContentItemVO body1 = new TableOfContentItemVO(tocItemBody, "body1", null, null, null, null, null, null);
-        TableOfContentItemVO part1 = new TableOfContentItemVO(tocItemPart, "part1", null, "Part I", null, "LEOS (Proof-Of-Concept)", null, null);
-        TableOfContentItemVO title1 = new TableOfContentItemVO(tocItemTitle, "titl1", null, "Title I", null, "Example Document", null, null);
-        TableOfContentItemVO ch1 = new TableOfContentItemVO(tocItemChapter, "chap1", null, null, null, null, null, null);
+        TableOfContentItemVO body1 = new TableOfContentItemVO(tocItemBody, "body1", null, null, null, null, null, null, null, null);
+        TableOfContentItemVO part1 = new TableOfContentItemVO(tocItemPart, "part1", null, "Part I", null, "LEOS (Proof-Of-Concept)", null, null, null, null);
+        TableOfContentItemVO title1 = new TableOfContentItemVO(tocItemTitle, "titl1", null, "Title I", null, "Example Document", null, null, null, null);
+        TableOfContentItemVO ch1 = new TableOfContentItemVO(tocItemChapter, "chap1", null, null, null, null, null, null, null, null);
 
         tableOfContentItemVOList.add(body1);
         body1.addChildItem(part1);

@@ -261,6 +261,8 @@ public class TocVOCreateUtils {
                 .withContent(originalElement.getContent())
                 .withOriginNumAttr(originalElement.getOriginNumAttr())
                 .withHeading(originalElement.getHeading())
+                .withOriginalHeading(originalElement.getOriginalHeading())
+                .withOriginalTocItemType(originalElement.getOriginalTocItemType())
                 .withChildItems(originalElement.getChildItems()) //copy children
                 .withSoftActionAttr(SoftActionType.MOVE_TO)
                 .withIsSoftActionRoot(true)
@@ -293,6 +295,8 @@ public class TocVOCreateUtils {
                 .withContent(originalElement.getContent())
                 .withOriginNumAttr(instance)
                 .withHeading(originalElement.getHeading())
+                .withOriginalHeading(originalElement.getOriginalHeading())
+                .withOriginalTocItemType(originalElement.getOriginalTocItemType())
                 .withChildItems(originalElement.getChildItems()) //copy children
                 .withSoftActionAttr(SoftActionType.MOVE_FROM)
                 .withIsSoftActionRoot(true)
