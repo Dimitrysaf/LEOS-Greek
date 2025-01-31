@@ -1,4 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
 import euiDialogBoxPage from "../pages/euiDialogBoxPage";
 
 Then(`{string} dialog confirm box window is displayed`, (headerValue) => {
@@ -77,3 +77,9 @@ When(/^drag row (\d+) and drop on row (\d+) in dialog box window$/, function (dr
         .wait(200);
     euiDialogBoxPage.elements.exampleBoxNgContent().eq(dropRow-1).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
 });
+
+And(/^click on archive button$/, function () {
+    euiDialogBoxPage.clickArchiveBtn();
+});
+
+

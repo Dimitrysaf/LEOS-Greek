@@ -45,5 +45,10 @@ class euiDialogBoxPage {
     clickCancelBtn() {
         this.elements.cancelBtn().click();
     }
+
+    clickArchiveBtn(){
+        this.elements.acceptBtn().click();
+        cy.wait(2000);
+    }
 }
 export default new euiDialogBoxPage();

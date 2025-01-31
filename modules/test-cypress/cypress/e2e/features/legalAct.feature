@@ -192,7 +192,6 @@ Feature: Legal Act Page Regression Features
         Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
         When click on save and close button in navigation pane
         Then toc editing button is displayed and enabled
-        And  enacting terms contains node label "Article 2 - Article heading... 1.Text..."
         When click on "Article 2 - Article heading... 1.Text..." link in navigation pane
         Then article 2 is displayed
         Then heading of article 2 contains "Article heading..."
@@ -224,6 +223,13 @@ Feature: Legal Act Page Regression Features
         And  navigation pane is minimized
         And  "No changes after last version" subtitle is displayed under recent changes version card
         And  app-versions-pane-group 2 contains card header title "Version 0.2.0 - major version"
+        When click on navigation pane accordion
+        When click on toc edit button
+        And  drag node label "Article 1 - Scope 1. Text..." and drop before node label "Article 6 - Entry into force This Regulation" in navigation pane
+        When click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled
+        And  enacting terms contains "Article 5 - Scope 1. Text..." at index 4 in navigation pane
+        And  enacting terms contains "Article 6 - Entry into force This Regulation" at index 5 in navigation pane
 
     @indentOutdent @paragraphMode @local
     Scenario: test indent and out-dent scenario inside article
@@ -827,3 +833,45 @@ Feature: Legal Act Page Regression Features
         Then ck editor window is not displayed
         And num tag of paragraph 1 of article 6 should not exist
         And num tag of paragraph 2 of article 6 should not exist
+
+    @versionPane @archiveFunctionality
+    Scenario: VersionPane Archive functionality
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation Article Testing" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        When click enter from keyboard in edition mode
+        And  add content "line 1" to li 2 with data-akn-element "paragraph" of article in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        When click on versions pane accordion
+        And  title of last 1 minor versions from recent changes eui-card contains "Article 1 updated"
+        When click on three vertical dots of eui-card containing "Article 1 updated" with index 0 in version pane
+        Then only below options are displayed in dropdown content
+            | dropdownContent        |
+            | Export this version    |
+        When click on insert after icon of article 1
+        Then heading of article 2 contains "Article heading..."
+        And  title of last 1 minor versions from recent changes eui-card contains " inserted"
+        And  click on show more button in "Recent changes" eui-card
+        When click on three vertical dots of eui-card containing "Article 1 updated" with index 1 in version pane
+        Then only below options are displayed in dropdown content
+            | dropdownContent        |
+            | View this version  |
+            | Revert to this version |
+            | Export this version    |
+            | Archive this version    |
+        When click on archive this version
+        Then "Archive Version" dialog box window is displayed
+        And  click on archive button
+        Then subversion of recent changes version card doesn't contain "Article 1 updated"

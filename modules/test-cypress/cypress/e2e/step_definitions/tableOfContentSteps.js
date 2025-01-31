@@ -127,6 +127,10 @@ Then(`title of last {int} minor versions from recent changes eui-card contains {
     })
 });
 
+When(`click on three vertical dots of eui-card containing {string} with index {int} in version pane`, function (versionTitle, index) {
+    tableOfContent.clickThreeDotsOfVersionCard(versionTitle, index);
+});
+
 When(`click on right angle icon of preamble link`, () => {
     tableOfContent.clickRightAngleIconOfPreambleLink();
 });
@@ -148,11 +152,12 @@ When('drag node label {string} and drop to node label {string} in navigation pan
 });
 
 When('drag node label {string} and drop before node label {string} in navigation pane', function (dragLabel, dropLabel) {
+    tableOfContent.getPreviousPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;');
     tableOfContent.getNodeLabelText(dragLabel)
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
         .wait(200);
-    tableOfContent.getNodeLabelText(dropLabel).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
+    tableOfContent.getPreviousPlaceHolderOfNodeLabel(dropLabel).trigger("mousemove", "bottom", {force: true}).trigger("mouseup", "bottom", {force: true});
 });
 
 When('drag element {string} from element tree list and drop before node label {string} in navigation pane', function (dragElement, dropLabel) {
@@ -194,6 +199,9 @@ Then('enacting terms contains node label {string}', function (label) {
 
 When('click on revert to this version', function () {
     tableOfContent.clickRevertToThisVersion()
+});
+When('click on archive this version', function () {
+    tableOfContent.archiveThisVersion();
 });
 
 When('click on three vertical dots of card header title {string} in version pane', function (headerTitle) {
@@ -289,4 +297,14 @@ When(/^recitals section doesn't contain new element in navigation pane$/, functi
 
 When(/^enacting terms doesn't contain new element in navigation pane$/, function () {
     tableOfContent.elements.enactingTermsList().find('div.label.leos-soft-new').should('not.exist');
+});
+
+Then ('enacting terms contains {string} at index {int} in navigation pane',function(label,index){
+    tableOfContent.elements.enactingTermsList().eq(index)
+        .should('contain', label)
+
+});
+Then ("subversion of recent changes version card doesn't contain {string}",function(label){
+    tableOfContent.elements.cardContentOfRecentChanges()
+        .should('not.have.text', label.trim());
 });
