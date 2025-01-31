@@ -43,6 +43,7 @@ class tableOfContent {
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
         labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
         revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version'),
+        archiveThisVersionBtn: () => cy.get("button").contains('Archive this version'),
         dropdownContent: () => cy.get("eui-dropdown-content[role='menu']"),
         dropdownItemContentTextList: () => this.elements.dropdownContent().find('.eui-u-flex-align-items-start button .eui-dropdown-item__content-text'),
         contributionCard: () => cy.get('eui-card.revisions-pane').eq(0),
@@ -73,7 +74,7 @@ class tableOfContent {
 
     clickSaveCloseBtn(){
         this.elements.saveCloseBtn().click();
-        cy.wait(3000);
+        cy.wait(4000);
     }
 
     clickCancelBtn(){
@@ -136,8 +137,17 @@ class tableOfContent {
         this.elements.revertToThisVersionBtn().click();
     }
 
+    archiveThisVersion() {
+        this.elements.archiveThisVersionBtn().click();
+    }
+
     clickThreeDotsOfCardHeader(headerTitle) {
         this.elements.cardTitle().contains(headerTitle).closest('eui-card-header').find('button eui-icon-svg').click();
+    }
+
+    clickThreeDotsOfVersionCard(versionTitle, index) {
+        this.elements.subVersionTitle().contains(versionTitle).closest('eui-card-content').find('button eui-icon-svg')
+            .eq(index).click();
     }
 
     getNodeLabelText(label){

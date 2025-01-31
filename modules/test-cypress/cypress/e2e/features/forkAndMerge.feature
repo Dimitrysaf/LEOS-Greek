@@ -112,7 +112,7 @@ Feature: fork and merge features
     And  enable track changes toggle bar is on in ribbon toolbar
     When click on toc edit button
     And  click on "Article 1 - Scope 1. Text..." link in navigation pane
-    And  drag node label "Article 1 - Scope 1. Text..." and drop before node label "Article 3 - Entry into force This Regulation" in navigation pane
+    And  drag node label "Article 1 - Scope 1. Text..." and drop to node label "Article 3 - Entry into force This Regulation" in navigation pane
     And  "Article  1" is showing as soft move title in navigation pane
     And  "MOVED" is showing as soft move label with soft move title " Article  1" in navigation pane
     And  "Article  #" is showing as soft move title in navigation pane
@@ -239,7 +239,7 @@ Feature: fork and merge features
     And  enable track changes toggle bar is on in ribbon toolbar
     When click on toc edit button
     And  click on "Article 1 - Scope 1. Text..." link in navigation pane
-    And  drag node label "Article 1 - Scope 1. Text..." and drop before node label "Article 3 - Entry into force This Regulation" in navigation pane
+    And  drag node label "Article 1 - Scope 1. Text..." and drop to node label "Article 3 - Entry into force This Regulation" in navigation pane
     And  "Article  1" is showing as soft move title in navigation pane
     And  "MOVED" is showing as soft move label with soft move title " Article  1" in navigation pane
     And  "Article  #" is showing as soft move title in navigation pane
