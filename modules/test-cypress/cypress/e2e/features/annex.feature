@@ -285,7 +285,7 @@ Feature: Annex Page Regression Features
         When click on save and close button in navigation pane
         Then toc editing button is displayed and enabled
 
-    @CasesForStory2303 @local @focus
+    @CasesForStory2303 @local
     Scenario: Cases for story 2303
         Given navigate to edit drafting application with "User1"
         Then user is on home page
