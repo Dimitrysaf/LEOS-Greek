@@ -284,3 +284,63 @@ Feature: Annex Page Regression Features
         And  success message disappears from table of content
         When click on save and close button in navigation pane
         Then toc editing button is displayed and enabled
+
+    @CasesForStory2303 @local @focus
+    Scenario: Cases for story 2303
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on upload button
+        Then active upload window label contains "Upload a legislative document"
+        When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode7.leg"
+        Then active upload window label contains "Document metadata"
+        And  document title input field is displayed
+        When click on create button in upload document page
+        Then user is on act viewer page
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 1
+        When click on annex 1 link
+        Then user is on annex page
+        And ribbon toolbar is maximized
+        And annotation side bar is present
+        And enable track changes
+        And click on edit icon of level 1
+        And ck editor window is displayed
+        And click end from keyboard in edition mode
+        And click enter from keyboard in edition mode
+        And add "Test" at current cursor position in edition mode
+        And click on increase indent icon present in ck editor panel
+        And click enter from keyboard in edition mode
+        And add "Test" at current cursor position in edition mode
+        And click on increase indent icon present in ck editor panel
+        And click enter from keyboard in edition mode
+        And add "Test" at current cursor position in edition mode
+        And click on increase indent icon present in ck editor panel
+        And click enter from keyboard in edition mode
+        And add "Test" at current cursor position in edition mode
+        And click on increase indent icon present in ck editor panel
+        And click save and close button of ck editor
+        Then ck editor window is not displayed
+        And click on edit icon of level 1
+        And ck editor window is displayed
+        And click down arrow from keyboard in edition mode
+        And click down arrow from keyboard in edition mode
+        And click down arrow from keyboard in edition mode
+        And click down arrow from keyboard in edition mode
+        And click on decrease indent icon present in ck editor panel
+        And click on decrease indent icon present in ck editor panel
+        And click on decrease indent icon present in ck editor panel
+        And click on decrease indent icon present in ck editor panel
+        And click save and close button of ck editor
+        Then ck editor window is not displayed
+        And click on edit icon of level 1
+        And ck editor window is displayed
+        And click down arrow from keyboard in edition mode
+        And click down arrow from keyboard in edition mode
+        And click down arrow from keyboard in edition mode
+        And click down arrow from keyboard in edition mode
+        And click end from keyboard in edition mode
+        And click enter from keyboard in edition mode
+        And add "Test" at current cursor position in edition mode
+        And click save and close button of ck editor
+        Then ck editor window is not displayed
+        Then attribute 'leos:indent-origin-num-id' of subparagraph 2 of list 1 of level 1 should not be equal to same attribute in subparagraph 1 of same level

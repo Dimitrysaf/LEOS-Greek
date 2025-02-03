@@ -611,6 +611,7 @@ define(function leosTrackChangesPluginModule(require) {
                     if (elementToRemoveAttribute) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
+                        elementToRemoveAttribute.removeAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUM_ID);
                         event.editor.fire("handleTcIndent", { data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
                     }
                 }

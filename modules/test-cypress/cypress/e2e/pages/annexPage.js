@@ -91,5 +91,14 @@ class annexPage {
     rightClickOnSoftMoveLabelOfNumOfLevel(levelNumber) {
         this.getSoftMoveLabelOfNumOfLevel(levelNumber).rightclick();
     }
+
+    getSubparagraphOfListOfLevel(levelNumber, listNumber, subparagraphNumber) {
+        return this.getLevel(levelNumber).children('list').eq(listNumber - 1).children("subparagraph").eq(subparagraphNumber - 1);
+    }
+
+    getSubparagraphOfLevel(levelNumber, subparagraphNumber) {
+        return this.getLevel(levelNumber).children("subparagraph").eq(subparagraphNumber - 1);
+    }
+
 }
 export default new annexPage();
