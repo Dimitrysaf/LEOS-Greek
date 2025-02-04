@@ -50,8 +50,8 @@ public class ContentComparatorServiceTest extends LeosTest {
     private XmlContentProcessor xmlContentProcessor = new XmlContentProcessorProposal();
 
     @InjectMocks
-    private ContentComparatorService contentComparatorService = new XMLContentComparatorServiceImplProposal(messageHelper,
-            textComparator, cloneContext, securityContext, xmlContentProcessor);
+    private ContentComparatorService contentComparatorService = new XMLContentComparatorServiceImpl(messageHelper,
+            textComparator, securityContext, xmlContentProcessor, cloneContext);
 
     @Test
     public void test_img_diff_attributes_values() {

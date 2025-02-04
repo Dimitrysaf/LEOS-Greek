@@ -1604,7 +1604,7 @@ public class XercesUtils {
         return isNodeDeleted;
     }
 
-    private static void removeTrackChangesAttributes(Node node) {
+    public static void removeTrackChangesAttributes(Node node) {
         XercesUtils.removeAttribute(node, LEOS_ACTION_ATTR);
         XercesUtils.removeAttribute(node, LEOS_ACTION_NUMBER);
         XercesUtils.removeAttribute(node, LEOS_ACTION_ENTER);

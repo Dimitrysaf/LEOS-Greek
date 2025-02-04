@@ -26,13 +26,16 @@ public class LeosPreDiffingProcessor {
                 if ((XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION))
                         || element.getNodeName().equals("del")) {
                     element.getParentNode().removeChild(element);
-                } else if ((XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION))
-                        || element.getNodeName().equals("ins")) {
+                } else if (element.getNodeName().equals("ins") || (XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null
+                        && element.getNodeName().equalsIgnoreCase("inline")
+                        && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION))) {
                     for(int countChildren = 0; countChildren < element.getChildNodes().getLength(); countChildren++) {
                         Node child = element.getChildNodes().item(countChildren);
                         element.getParentNode().insertBefore(child, element);
                     }
                     element.getParentNode().removeChild(element);
+                } else if (XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION)) {
+                    XercesUtils.removeTrackChangesAttributes(element);
                 }
             }
         }

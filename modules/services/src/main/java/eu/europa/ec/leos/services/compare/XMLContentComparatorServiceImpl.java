@@ -17,6 +17,7 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -25,6 +26,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -64,6 +66,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttribut
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INITIAL_NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
@@ -83,7 +86,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 
-public abstract class XMLContentComparatorServiceImpl implements ContentComparatorService {
+@Service
+public class XMLContentComparatorServiceImpl implements ContentComparatorService {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLContentComparatorServiceImpl.class);
     private static final String FAKE = "</fake>";
@@ -93,14 +97,16 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
     protected TextComparator textComparator;
     protected SecurityContext securityContext;
     protected XmlContentProcessor xmlContentProcessor;
+    protected CloneContext cloneContext;
 
     @Autowired
-    protected XMLContentComparatorServiceImpl(MessageHelper messageHelper, TextComparator textComparator,
-                                           SecurityContext securityContext, XmlContentProcessor xmlContentProcessor) {
+    public XMLContentComparatorServiceImpl(MessageHelper messageHelper, TextComparator textComparator,
+                                           SecurityContext securityContext, XmlContentProcessor xmlContentProcessor, CloneContext cloneContext) {
         this.messageHelper = messageHelper;
         this.textComparator = textComparator;
         this.securityContext = securityContext;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.cloneContext = cloneContext;
     }
 
     @Override
@@ -162,20 +168,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
             XercesUtils.addAttribute(node, attrName, attrValue);
         }
         addToResultNode(context, node);
-    }
-
-    protected String getStartTagValueForRemovedElement(Element newElement, ContentComparatorContext context) {
-        String attrValue;
-        if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
-            if (context.getIntermediateContentElements() != null && newElement!= null && context.getIntermediateContentElements().get(newElement.getTagId()) == null) {
-                attrValue = context.getRemovedIntermediateValue();
-            } else {
-                attrValue = context.getRemovedOriginalValue();
-            }
-        } else {
-            attrValue = context.getRemovedValue();
-        }
-        return attrValue;
     }
 
     private void computeDifferencesAtNodeLevel(ContentComparatorContext context) {
@@ -305,21 +297,7 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                             compareRevertedChanges(context);
                         }
                         intermediateContentChildIndex++;
-
-                        if (intermediateContentChildIndex < context.getIntermediateContentRoot().getChildren().size() &&
-                                isCurrentElementIgnoredInNewContent(context)) {
-                            // There are still children to process in intermediate
-                            oldContentChildIndex++;
-                            newContentChildIndex++;
-                        }
                     } else { //No more children in intermediate check for remaining child elements in new/old versions
-                        if (isIgnoredElement(context.getIntermediateElement()) && !isCurrentElementIgnoredInNewContent(context)) {
-                            // LEOS-4392: compare contents of old and new only as element was moved in intermediate but
-                            // restored in new so no change needs to be displayed for its child elements just print as is
-                            compareElementContents(new ContentComparatorContext.Builder(context)
-                                    .withThreeWayDiff(false)
-                                    .build());
-                        }
                         oldContentChildIndex++;
                         newContentChildIndex++;
                     }
@@ -331,9 +309,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                         intermediateContentChildIndex++;
                     } else {
                         // element did not changed relative position so check if it's content is changed and should be compared
-                        if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
-                            appendIndentedAndRemovedIntermediateParent(context, context.getOldElement());
-                        }
                         if (!isElementIndexLessThanRootChildren(context.getIntermediateContentRoot(), intermediateContentChildIndex)) {
                             context.setIntermediateElement(null);
                         }
@@ -394,7 +369,7 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                     }
                     oldContentChildIndex++;
                 }
-                if ((shouldIncrementIntermediateIndex(context) && newContentIncremented) || containsDeletedElementInNewContent(context)) {
+                if ((shouldIncrementIntermediateIndex(context) && newContentIncremented)) {
                     intermediateContentChildIndex++;
                 }
             } else if (context.getIndexOfNewElementInOldContent() >= oldContentChildIndex && context.getIndexOfOldElementInNewContent() > newContentChildIndex) {
@@ -505,10 +480,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
             int intermediateContentIndexForChildren = intermediateContentChildIndex;
             while ((isElementIndexLessThanRootChildren(context.getNewContentRoot(), newContentIndexForChildren))) {
                 Element newElementChild = context.getNewContentRoot().getChildren().get(newContentIndexForChildren);
-                // append removed parent
-                if (newContentIndexForChildren >= intermediateContentIndexForChildren) {
-                    appendIndentedAndRemovedParent(context, newElementChild);
-                }
 
                 if (Boolean.TRUE.equals(context.getThreeWayDiff()) && isElementIndexLessThanRootChildren(context.getIntermediateContentRoot(), intermediateContentIndexForChildren)) {
                     Element intermediateElementChild = context.getIntermediateContentRoot().getChildren().get(intermediateContentIndexForChildren);
@@ -526,15 +497,8 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                         continue; //skip to next iteration till deleted content is fully displayed
                     }
                 }
-                // Checks if list introduction has been removed in next list
-                if (oldContentChildIndex == newContentIndexForChildren) {
-                    manageNextListWithRemovedIntro(context, newElementChild);
-                }
                 if (!shouldIgnoreElement(newElementChild)) {
                     appendAddedElementContent(context.setIndexOfOldElementInNewContent(newContentIndexForChildren).setNewElement(newElementChild));
-                } else if (shouldIgnoreElement(newElementChild) && hasIndentedChild(context.getNewContentRoot())) {
-                    // Case when move to elements have been indented
-                    appendIndentedDeletedOrMovedToContent(context, newElementChild);
                 }
                 newContentIndexForChildren++;
                 intermediateContentIndexForChildren = incrementIntermediateIndexIfRequired(context, newElementChild, intermediateContentIndexForChildren);
@@ -596,11 +560,11 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                 if (isElementContentEqual(context) && !containsIgnoredElements(node)) {
                     node = buildNode(context.getNewElement());
                 } else if (!shouldIgnoreElement(context.getNewElement()) && ((isAddedNonIgnoredElement(context.getIntermediateElement().getNode()) &&
-                        !shouldIgnoreElement(context.getIntermediateElement()) && !isIgnoredElement(context.getIntermediateElement())) ||
+                        !shouldIgnoreElement(context.getIntermediateElement())) ||
                         shouldIgnoreElement(context.getIntermediateElement()))) { // build start tag for moved/added element with added styles
                     node = buildNodeForAddedElement(context);
                 } else if (shouldIgnoreElement(context.getNewElement())) {
-                    node = buildNodeForRemovedElement(context.getNewElement(), context, context.getIntermediateContentElements());
+                    node = buildNodeForRemovedElement(context.getNewElement());
                 } else if (isActionRoot(node) || (isListIntroAndFirstSubpoint(context.getNewElement()) && isActionRoot(node.getParentNode().getParentNode()))) {
                     node = buildNodeForAddedElement(context);
                 } else if (context.getOldElement() == null && !shouldIgnoreElement(context.getNewElement()) && !shouldIgnoreElement(context.getIntermediateElement())) { //build start tag for added element in intermediate
@@ -656,7 +620,7 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                 addToResultNode(context, node);
                 computeDifferencesAtNodeLevel(newContext);
             }
-        } else if (shouldDisplayRemovedContent(context.getOldElement(), context.getIndexOfOldElementInNewContent())) {
+        } else if (shouldDisplayRemovedContent(context.getIndexOfOldElementInNewContent())) {
             //element removed in the new version
             appendRemovedElementContent(context);
         }
@@ -729,9 +693,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                 .withOldContentNode(context.getIntermediateContentNode())
                 .build();
         appendRemovedElementContentIfRequired(newContext);
-        if (shouldAddElement(newContext.getOldElement(), newContext.getNewContentElements()) && !containsDeletedElementInNewContent(newContext)) {
-            appendAddedElementContentIfRequired(newContext);
-        }
     }
 
     protected Node buildNode(Element element, String attrName, String attrValue) {
@@ -773,52 +734,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
         return indexOfOldElementInNewContent == -1;
     }
 
-    protected boolean isActionRoot(Node node) {
-        return XercesUtils.containsAttributeWithValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, Boolean.TRUE.toString());
-    }
-
-    protected boolean shouldIgnoreRenumbering(Element element) {
-        return NUM.equals(element.getTagName())
-                && (isSoftAction(element.getParent().getNode(), SoftActionType.MOVE_FROM)
-                || isSoftAction(element.getParent().getNode(), SoftActionType.ADD));
-    }
-
-    protected boolean isElementInItsOriginalPosition(Element element) {
-        if (element != null &&
-                (isSoftAction(element.getNode(), SoftActionType.ADD)
-                        || isSoftAction(element.getNode(), SoftActionType.TRANSFORM)
-                        || isSoftAction(element.getNode(), SoftActionType.MOVE_FROM))) {
-            return false;
-        } else if (element != null && isListIntroAndFirstSubpoint(element)) {
-            return (!isSoftAction(element.getParent().getParent().getNode(), SoftActionType.ADD)
-                    && !isSoftAction(element.getParent().getParent().getNode(), SoftActionType.TRANSFORM)
-                    && !isSoftAction(element.getParent().getParent().getNode(), SoftActionType.MOVE_FROM));
-        }
-        return true;
-    }
-
-    protected boolean isElementMovedOrTransformed(Element element) {
-        return isSoftAction(element.getNode(), SoftActionType.MOVE_FROM) || isSoftAction(element.getNode(), SoftActionType.TRANSFORM);
-    }
-
-    protected abstract boolean shouldIgnoreElement(Element element);
-
-    protected Node getChangedElementContent(Node contentNode, Element element, String attrName, String attrValue) {
-        Node node = null;
-        if (!shouldIgnoreElement(element)) {
-            node = XercesUtils.getElementById(contentNode, element.getTagId());
-            if (node == null) {
-                //LEOS-5691:If getElementById returns null, look for element by Name (Only case with metadata elements)
-                node = XercesUtils.getFirstElementByName(contentNode, element.getTagName());
-            }
-            // Lists should not be marked as added
-            if (attrName != null && attrValue != null && !isList(element)) {
-                XercesUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
-            }
-        }
-        return node;
-    }
-
     protected boolean containsSoftDeleteElement(Element element, Map<String, Element> contentElements) {
         return element != null && contentElements.containsKey(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + element.getTagId());
     }
@@ -827,12 +742,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
         return element != null && (contentElements.containsKey(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + element.getParent().getTagId())
                 && contentElements.containsKey(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + element.getParent().getTagId())
                 && !shouldIgnoreElement(contentElements.get(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + element.getParent().getTagId())));
-    }
-
-    protected boolean containsSoftTransformedElement(Map<String, Element> contentElements, Element element) {
-        return element != null && element.getTagId().contains(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX) &&
-                contentElements.containsKey(element.getTagId().replace(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING));
-
     }
 
     protected boolean containsSoftMoveToElement(Map<String, Element> contentElements, Element element) {
@@ -850,38 +759,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
             return attrValue == null;
         }
         return false;
-    }
-
-    protected boolean containsAddedNonIgnoredElements(Node node) {
-        boolean containsAddedNonIgnoredElement = false;
-        if (isAddedNonIgnoredElement(node)) {
-            containsAddedNonIgnoredElement = true;
-        } else {
-            NodeList nodeList = node.getChildNodes();
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                containsAddedNonIgnoredElement = containsAddedNonIgnoredElements(nodeList.item(i));
-                if (containsAddedNonIgnoredElement) {
-                    break;
-                }
-            }
-        }
-        return containsAddedNonIgnoredElement;
-    }
-
-    protected boolean shouldCompareElements(Element oldElement, Element newElement) {
-        return newElement == null || oldElement == null
-                || !(isSoftAction(newElement.getNode(), SoftActionType.MOVE_FROM) && !isSoftAction(oldElement.getNode(), SoftActionType.MOVE_FROM))
-                && !(isSoftAction(newElement.getNode(), SoftActionType.TRANSFORM) && !isSoftAction(oldElement.getNode(), SoftActionType.TRANSFORM));
-    }
-
-    protected int getIndexOfIgnoredElementInNewContent(ContentComparatorContext context) {
-        Element element = null;
-        if (context.getNewContentElements().containsKey(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId())) {
-            element = context.getNewContentElements().get(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId());
-        } else if (context.getNewContentElements().containsKey(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId())) {
-            element = context.getNewContentElements().get(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId());
-        }
-        return element != null ? context.getNewContentRoot().getChildren().indexOf(element) : -1;
     }
 
     protected final int getBestMatchInList(List<Element> childElements, Element element) {
@@ -929,34 +806,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
             }
         }
         return bestRank > 0 ? foundPosition : -1;
-    }
-
-    // This functions appends removed CN indented element when this element is not anymore child of new content root
-    protected void appendIndentedAndRemovedParent(ContentComparatorContext context, Element element) {
-    }
-
-    // This functions appends removed CN indented element when this element is not anymore child of new content root
-    protected void appendIndentedAndRemovedIntermediateParent(ContentComparatorContext context, Element element) {
-    }
-
-    protected String getRemovedNumContent(ContentComparatorContext context) {
-        return (context.getOldElement().getNode()).getTextContent();
-    }
-
-    protected boolean containsIgnoredElements(Node node) {
-        boolean containsIgnoredElement = false;
-        if (containsIgnoredElement(node)) {
-            containsIgnoredElement = true;
-        } else {
-            NodeList nodeList = node.getChildNodes();
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                containsIgnoredElement = containsIgnoredElements(nodeList.item(i));
-                if (containsIgnoredElement) {
-                    break;
-                }
-            }
-        }
-        return containsIgnoredElement;
     }
 
     protected boolean containsIgnoredElement(Node node) {
@@ -1228,53 +1077,9 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
         return element != null && element.getTagName().equals(LIST);
     }
 
-    protected abstract boolean isCurrentElementNonIgnored(Node node);
-
-    protected abstract boolean isCurrentElementIgnored(Node node);
-
-    protected abstract boolean isCurrentElementIgnoredInNewContent(ContentComparatorContext context);
-
-    protected abstract boolean containsDeletedElementInNewContent(ContentComparatorContext context);
-
-    protected abstract boolean isIgnoredElement(Element element);
-
-    protected abstract boolean shouldAddElement(Element oldElement, Map<String, Element> contentElements);
-
-    protected abstract void appendAddedElementContent(ContentComparatorContext context);
-
-    protected abstract void appendRemovedElementContent(ContentComparatorContext context);
-
-    protected abstract void appendRemovedContent(ContentComparatorContext context);
-
-    protected abstract void appendIndentedDeletedOrMovedToContent(ContentComparatorContext context, Element element);
-
-    protected abstract Node buildNodeForAddedElement(Element newElement, Element oldElement, ContentComparatorContext context);
-
-    protected abstract Node buildNodeForAddedElement(ContentComparatorContext context);
-
-    protected abstract Node buildNodeForRemovedElement(Element element, ContentComparatorContext context, Map<String, Element> contentElements);
-
-    protected boolean shouldBeMarkedAsAdded(ContentComparatorContext context) {
-        return true;
-    }
-
-    protected abstract boolean shouldDisplayRemovedContent(Element elementOldContent, int indexOfOldElementInNewContent);
-
-    protected boolean isElementImpactedByIndention(Map<String, Element> otherContextElements, Element element) {
-        return false;
-    }
-
     @Override
     public String[] twoColumnsCompareContents(ContentComparatorContext context) {
         return new String[]{context.getLeftResultBuilder().toString(), context.getRightResultBuilder().toString()};
-    }
-
-    protected void manageNextListWithRemovedIntro(ContentComparatorContext context, Element newElementChild) {
-    }
-
-    public boolean isListWrapping(Element element) {
-        return (element != null
-                && element.getTagName().equals(XmlHelper.SUBPARAGRAPH));
     }
 
     public Element getIntroFromFirstList(Element element) {
@@ -1387,16 +1192,395 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
         }
     }
 
-    protected void appendSoftDeletedListWrapperOfPreviousList(ContentComparatorContext context, Element element) {
-        Element previousSibling = getPreviousListFromSubParagraph(element);
-        Element listWrapper = getListWrapper(previousSibling);
-        if (isSoftDeletedOrSoftMovedTo(listWrapper)) {
-            String attrName = context.getAttrName();
-            String attrValue = getStartTagValueForRemovedElement(listWrapper, context);
-            if (attrName != null && attrValue != null) {
-                XercesUtils.addAttribute(listWrapper.getNode(), attrName, attrValue);
+    private boolean isClonedProposalOrContribution() {
+        return (cloneContext != null && (cloneContext.isClonedProposal() || cloneContext.isContribution()));
+    }
+
+    protected boolean shouldDisplayRemovedContent(int indexOfOldElementInNewContent) {
+        return isElementRemovedFromContent(indexOfOldElementInNewContent);
+    }
+
+    protected boolean containsIgnoredElements(Node node) {
+        if (isClonedProposalOrContribution()) {
+            boolean containsIgnoredElement = false;
+            if (containsIgnoredElement(node)) {
+                containsIgnoredElement = true;
+            } else {
+                NodeList nodeList = node.getChildNodes();
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    containsIgnoredElement = containsIgnoredElements(nodeList.item(i));
+                    if (containsIgnoredElement) {
+                        break;
+                    }
+                }
             }
-            addToResultNode(context, listWrapper.getNode());
+            return containsIgnoredElement;
         }
+        return false;
+    }
+
+    protected boolean containsAddedNonIgnoredElements(Node node) {
+        if (isClonedProposalOrContribution()) {
+            boolean containsAddedNonIgnoredElement = false;
+            if (isAddedNonIgnoredElement(node)) {
+                containsAddedNonIgnoredElement = true;
+            } else {
+                NodeList nodeList = node.getChildNodes();
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    containsAddedNonIgnoredElement = containsAddedNonIgnoredElements(nodeList.item(i));
+                    if (containsAddedNonIgnoredElement) {
+                        break;
+                    }
+                }
+            }
+            return containsAddedNonIgnoredElement;
+        }
+        return false;
+    }
+
+    protected boolean isElementInItsOriginalPosition(Element element) {
+        if (isClonedProposalOrContribution()) {
+            if (element != null &&
+                    (isSoftAction(element.getNode(), SoftActionType.ADD)
+                            || isSoftAction(element.getNode(), SoftActionType.TRANSFORM)
+                            || isSoftAction(element.getNode(), SoftActionType.MOVE_FROM))) {
+                return false;
+            } else if (element != null && isListIntroAndFirstSubpoint(element)) {
+                return (!isSoftAction(element.getParent().getParent().getNode(), SoftActionType.ADD)
+                        && !isSoftAction(element.getParent().getParent().getNode(), SoftActionType.TRANSFORM)
+                        && !isSoftAction(element.getParent().getParent().getNode(), SoftActionType.MOVE_FROM));
+            }
+            return true;
+        }
+        return true;
+    }
+
+    protected boolean shouldIgnoreElement(Element element) {
+        return element != null
+                && (isSoftAction(element.getNode(), SoftActionType.DELETE)
+                || isSoftAction(element.getNode(), SoftActionType.MOVE_TO)
+                || withPlaceholderPrefix(element.getNode(), SOFT_DELETE_PLACEHOLDER_ID_PREFIX))
+                && !isSoftAction(element.getNode(), SoftActionType.DELETE_TRANSFORM);
+    }
+
+    protected boolean isElementMovedOrTransformed(Element element) {
+        if (isClonedProposalOrContribution()) {
+            return isSoftAction(element.getNode(), SoftActionType.MOVE_FROM) || isSoftAction(element.getNode(), SoftActionType.TRANSFORM);
+        }
+        return false;
+    }
+
+    protected boolean shouldCompareElements(Element oldElement, Element newElement) {
+        if (isClonedProposalOrContribution()) {
+            return newElement == null || oldElement == null
+                    || !(isSoftAction(newElement.getNode(), SoftActionType.MOVE_FROM) && !isSoftAction(oldElement.getNode(), SoftActionType.MOVE_FROM))
+                    && !(isSoftAction(newElement.getNode(), SoftActionType.TRANSFORM) && !isSoftAction(oldElement.getNode(), SoftActionType.TRANSFORM));
+        }
+        return true;
+    }
+
+    protected boolean shouldIgnoreRenumbering(Element element) {
+        if (isClonedProposalOrContribution()) {
+            return NUM.equals(element.getTagName())
+                    && (isSoftAction(element.getParent().getNode(), SoftActionType.MOVE_FROM)
+                    || isSoftAction(element.getParent().getNode(), SoftActionType.ADD));
+        }
+        return false;
+    }
+
+    protected boolean isActionRoot(Node node) {
+        if (isClonedProposalOrContribution()) {
+            return XercesUtils.containsAttributeWithValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, Boolean.TRUE.toString());
+        }
+        return false;
+    }
+
+    protected Node buildNodeForAddedElement(Element newElement, Element oldElement, ContentComparatorContext context) {
+        return buildNode(context.getNewElement(), context.getStartTagAttrName(), context.getStartTagAttrValue());
+    }
+
+    protected Node getChangedElementContent(Node contentNode, Element element, String attrName, String attrValue) {
+        Node node = null;
+        if (isClonedProposalOrContribution()) {
+            if (!shouldIgnoreElement(element)) {
+                node = XercesUtils.getElementById(contentNode, element.getTagId());
+                if (node == null) {
+                    //LEOS-5691:If getElementById returns null, look for element by Name (Only case with metadata elements)
+                    node = XercesUtils.getFirstElementByName(contentNode, element.getTagName());
+                }
+                // Lists should not be marked as added
+                if (attrName != null && attrValue != null && !isList(element)) {
+                    XercesUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
+                }
+            }
+        } else {
+            node = element.getNode();
+            XercesUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
+        }
+        return node;
+    }
+
+    protected void appendAddedElementContent(ContentComparatorContext context) {
+        if (isClonedProposalOrContribution()) {
+            appendAddedElement(context);
+        } else {
+            Node node = getChangedElementContent(context.getNewElement().getNode(), context.getNewElement(), context.getAttrName(), context.getAddedValue());
+            addToResultNode(context, node);
+        }
+    }
+
+    private void appendAddedElement(ContentComparatorContext context) {
+        String newElementTagId = context.getNewElement().getTagId();
+        if (Boolean.TRUE.equals(context.getDisplayRemovedContentAsReadOnly()) && !shouldIgnoreElement(context.getNewElement())) {
+            if (newElementTagId != null) {
+                if (context.getOldContentElements().containsKey(newElementTagId.replace(
+                        SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))) {
+                    //append the soft movedFrom element content compared to the original content and ignore its renumbering
+                    Element transformedElementInOldContent = context.getOldContentElements().get(context.getNewElement().
+                            getTagId().replace(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING));
+                    compareElementContents(new ContentComparatorContext.Builder(context)
+                            .withOldElement(transformedElementInOldContent)
+                            .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
+                            .withIgnoreElements(Boolean.TRUE)
+                            .withIgnoreRenumbering(Boolean.TRUE)
+                            .withStartTagAttrName(context.getAttrName())
+                            .withStartTagAttrValue(context.getAddedValue())
+                            .build());
+                } else if (!newElementTagId.startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX)
+                        && !newElementTagId.startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)
+                        && !newElementTagId.startsWith(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX)) {
+                    compareElementContents(new ContentComparatorContext.Builder(context)
+                            .withIndexOfOldElementInNewContent(-1)
+                            .withOldElement(null)
+                            .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
+                            .withIgnoreElements(Boolean.TRUE)
+                            .withIgnoreRenumbering(Boolean.TRUE)
+                            .withStartTagAttrName(context.getAttrName())
+                            .withStartTagAttrValue(context.getAddedValue())
+                            .build());
+                }
+            } else {
+                Node node = getChangedElementContent(context.getNewContentNode(), context.getNewElement(), context.getAttrName(), context.getAddedValue());
+                addToResultNode(context, node);
+            }
+        } else {
+            Node node = getNonIgnoredChangedElementContent(context.getNewContentNode(), context.getNewElement(), context.getAttrName(), context.getAddedValue());
+            addToResultNode(context, node);
+        }
+    }
+
+    protected void appendRemovedElementContent(ContentComparatorContext context) {
+        if (isClonedProposalOrContribution()) {
+            appendSoftRemovedElementContent(context);
+        } else if (!isConvertedAlineaToIntro(context.getOldElement(), context.getNewElement())
+                && !isConvertedSubparagraphToIntro(context.getOldElement(), context.getNewElement())) {
+            Node node = getChangedElementContent(context.getOldElement().getNode(), context.getOldElement(), context.getAttrName(), context.getRemovedValue());
+            addToResultNode(context, node);
+        }
+    }
+
+    protected void appendRemovedContent(ContentComparatorContext context) {
+        if (isClonedProposalOrContribution()) {
+            if ((isSoftAction(context.getOldElement().getNode(), SoftActionType.ADD)) ||
+                    (isSoftAction(context.getOldElement().getNode(), SoftActionType.MOVE_FROM) && !context.getNewContentElements().containsKey(context.getOldElement().getTagId()))) {
+                //If element is added in old content but deleted in the new one look for leos:softAction="add" in old element OR
+                //If element contains soft action move_from in old content but deleted in new content display the move_from element as deleted
+                Node node = getChangedElementContent(context.getOldContentNode(), context.getOldElement(), context.getAttrName(), context.getRemovedValue());
+                addReadOnlyAttributes(node);
+                addToResultNode(context, node);
+            } else if (containsSoftMoveToElement(context.getNewContentElements(), context.getOldElement()) &&
+                    containsSoftDeleteElement(context.getOldElement(), context.getNewContentElements())) {
+                //If element is soft deleted in new content then print the deleted element from new content
+                appendSoftActionPrefix(context, SOFT_MOVE_PLACEHOLDER_ID_PREFIX);
+            } else if (containsSoftDeleteElement(context.getOldElement(), context.getNewContentElements())) {
+                //If element is soft deleted in new content then print the deleted element from new content
+                appendSoftActionPrefix(context, SOFT_DELETE_PLACEHOLDER_ID_PREFIX);
+            } else if (context.getOldElement().getTagName().equals(NUM)
+                    && context.getOldElement().getParent().getTagId().equals(context.getNewElement().getParent().getTagId())
+                    && isElementIndentedInOtherContext(context.getNewContentElements(), context.getOldElement().getParent())) {
+                // Removed num on indentation should be marked as "removed"
+                String attrValue = getStartTagValueForRemovedElementFromAncestor(context);
+                Node node = getChangedElementContent(context.getOldContentNode(), context.getOldElement(), context.getAttrName(), attrValue);
+                addToResultNode(context, node);
+            }
+        } else {
+            appendRemovedElementContent(context);
+        }
+    }
+
+    private void appendSoftActionPrefix(ContentComparatorContext context, String softActionPrefix) {
+        Element softDeletedNewElement = context.getNewContentElements().get(softActionPrefix + context.getOldElement().getTagId());
+        Node node = softDeletedNewElement.getNode();
+        XercesUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), context.getRemovedValue());
+        addReadOnlyAttributes(node);
+        addToResultNode(context, node);
+    }
+
+    private String getStartTagValueForRemovedElementFromAncestor(ContentComparatorContext context) {
+        return context.getRemovedValue();
+    }
+
+    protected boolean isCurrentElementNonIgnored(Node node) {
+        if (isClonedProposalOrContribution()) {
+            return isSoftAction(node, SoftActionType.MOVE_FROM);
+        }
+        return false;
+    }
+
+    protected int getIndexOfIgnoredElementInNewContent(ContentComparatorContext context) {
+        if (isClonedProposalOrContribution()) {
+            Element element = null;
+            if (context.getNewContentElements().containsKey(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId())) {
+                element = context.getNewContentElements().get(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId());
+            } else if (context.getNewContentElements().containsKey(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId())) {
+                element = context.getNewContentElements().get(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId());
+            }
+            return element != null ? context.getNewContentRoot().getChildren().indexOf(element) : -1;
+        }
+        return -1;
+    }
+
+    private void appendSoftRemovedElementContent(ContentComparatorContext context) {
+        if (context.getOldElement() == null) {
+            return;
+        }
+
+        if (Boolean.TRUE.equals(context.getDisplayRemovedContentAsReadOnly()) && !shouldIgnoreElement(context.getOldElement())) {
+            if (context.getOldElement().getTagId() != null) {
+                if (containsSoftMoveToTransformedElement(context.getNewContentElements(), context.getOldElement())) {
+                    //append the soft movedTo element content
+                    Element softMovedToTansformedElement = context.getNewContentElements().get(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX +
+                            context.getOldElement().getParent().getTagId());
+                    appendMovedOrTransformedContent(context, softMovedToTansformedElement);
+                } else if (context.getNewContentElements().containsKey(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX +
+                        context.getOldElement().getParent().getTagId())) {
+                    //element was soft deleted, and it's ID was prepended with SOFT_DELETE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX
+                    Element softDeletedTransformedElement = context.getNewContentElements().get(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX +
+                            context.getOldElement().getParent().getTagId());
+                    int indexOfSoftDeletedElementInNewContent = getBestMatchInList(softDeletedTransformedElement.getParent().getChildren(),
+                            softDeletedTransformedElement);
+
+                    compareElementContents(new ContentComparatorContext.Builder(context)
+                            .withIndexOfOldElementInNewContent(indexOfSoftDeletedElementInNewContent)
+                            .withNewElement(softDeletedTransformedElement)
+                            .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
+                            .withIgnoreElements(Boolean.FALSE)
+                            .withIgnoreRenumbering(Boolean.FALSE)
+                            .withStartTagAttrName(context.getAttrName())
+                            .withStartTagAttrValue(getStartTagValueForRemovedElement(softDeletedTransformedElement, context))
+                            .build());
+                } else if (containsSoftMoveToElement(context.getNewContentElements(), context.getOldElement())) {
+                    //append the soft movedTo element content
+                    appendMovedToElementWithoutContent(context);
+                } else if (containsSoftDeleteElement(context.getOldElement(), context.getNewContentElements())) {
+                    //element was soft deleted, and it's ID was prepended with SOFT_DELETE_PLACEHOLDER_ID_PREFIX
+                    Element softDeletedNewElement = context.getNewContentElements().get(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId());
+                    int indexOfSoftDeletedElementInNewContent = getBestMatchInList(softDeletedNewElement.getParent().getChildren(), softDeletedNewElement);
+
+                    String oldNum = XercesUtils.getAttributeValue(softDeletedNewElement.getNode(), LEOS_INITIAL_NUM);
+                    if (oldNum != null) {
+                        Node newNumNode = XercesUtils.getFirstChild(softDeletedNewElement.getNode(), NUM);
+                        newNumNode.setTextContent(oldNum);
+                    }
+
+                    compareElementContents(new ContentComparatorContext.Builder(context)
+                            .withIndexOfOldElementInNewContent(indexOfSoftDeletedElementInNewContent)
+                            .withNewElement(softDeletedNewElement)
+                            .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
+                            .withIgnoreElements(Boolean.FALSE)
+                            .withIgnoreRenumbering(Boolean.FALSE)
+                            .withStartTagAttrName(context.getAttrName())
+                            .withStartTagAttrValue(getStartTagValueForRemovedElement(softDeletedNewElement, context))
+                            .build());
+                } else if (!isSoftAction(context.getNewElement().getNode(), SoftActionType.TRANSFORM) && !isSoftAction(context.getOldElement().getNode(), SoftActionType.TRANSFORM)
+                        && !context.getNewContentElements().containsKey(context.getOldElement().getTagId()) &&
+                        !isElementTransformedFrom(context.getNewContentRoot().getNode(), LEOS_SOFT_TRANS_FROM, context.getOldElement().getTagId())) {
+                    //Element is added/present in old content but deleted from new content, so just display the deleted content
+                    String attrValue = getStartTagValueForRemovedElementFromAncestor(context);
+                    Node node = getChangedElementContent(context.getOldContentNode(), context.getOldElement(), context.getAttrName(), attrValue);
+                    addReadOnlyAttributes(node);
+                    addToResultNode(context, node);
+                }
+            } else {
+                appendRemovedContent(context);
+            }
+        } else if (!context.getNewContentElements().containsKey(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + context.getOldElement().getParent().getTagId())
+                && !context.getOldElement().getTagId().equals(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + context.getOldElement().getParent().getTagId())
+                && (context.getNewContentElements().containsKey(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + context.getOldElement().getParent().getTagId())
+                || (context.getNewContentElements().containsKey(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + context.getOldElement().getParent().getTagId())))) {
+            //append the soft movedTo element
+            appendMovedToElementWithoutContent(context);
+        } else if (context.getOldElement().getTagId().equals(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + context.getOldElement().getParent().getTagId())
+                && (containsSoftDeleteElement(context.getOldElement(), context.getNewContentElements())
+                || context.getNewContentElements().containsKey(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId()))) {
+
+            Element movedOrDeletedTransformedElement = context.getNewContentElements().get((context.getNewContentElements().containsKey(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId())
+                    ? SOFT_MOVE_PLACEHOLDER_ID_PREFIX : SOFT_DELETE_PLACEHOLDER_ID_PREFIX) + context.getOldElement().getTagId());
+            String attrValue = getStartTagValueForRemovedElement(movedOrDeletedTransformedElement, context);
+            Node node = getNonIgnoredChangedElementContent(context.getNewContentNode(), movedOrDeletedTransformedElement, context.getAttrName(), attrValue);
+            addToResultNode(context, node);
+        }
+    }
+
+    private void appendMovedOrTransformedContent(ContentComparatorContext context, Element element) {
+        Node node = XercesUtils.getElementById(context.getNewContentNode(), element.getTagId());
+        XercesUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), context.getRemovedValue());
+        addReadOnlyAttributes(node);
+        addToResultNode(context, node);
+    }
+
+    private void appendMovedToElementWithoutContent(ContentComparatorContext context) {
+        Element softMovedToElement = context.getNewContentElements().get(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId());
+        if (softMovedToElement != null) {
+            appendMovedOrTransformedContent(context, softMovedToElement);
+        }
+    }
+
+    protected String getStartTagValueForRemovedElement(Element newElement, ContentComparatorContext context) {
+        if(isClonedProposalOrContribution()) {
+            String attrValue;
+            if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
+                if (context.getIntermediateContentElements() != null && newElement!= null && context.getIntermediateContentElements().get(newElement.getTagId()) == null) {
+                    attrValue = context.getRemovedIntermediateValue();
+                } else {
+                    attrValue = context.getRemovedOriginalValue();
+                }
+            } else {
+                attrValue = context.getRemovedValue();
+            }
+            return attrValue;
+        }
+        return context.getRemovedValue();
+    }
+
+    protected Node buildNodeForAddedElement(ContentComparatorContext context) {
+        return buildNode(context.getNewElement());
+    }
+
+    protected Node buildNodeForRemovedElement(Element element) {
+        return buildNode(element);
+    }
+
+    protected String getRemovedNumContent(ContentComparatorContext context) {
+        if (isClonedProposalOrContribution()) {
+            return context.getNewElement().getNode().getTextContent();
+        } else {
+            return (context.getOldElement().getNode()).getTextContent();
+        }
+    }
+
+    protected boolean shouldBeMarkedAsAdded(ContentComparatorContext context) {
+        return !isClonedProposalOrContribution() || (!elementImpactedByIndentation(context)
+                && (context.getOldElement() == null
+                || isSoftAction(context.getNewElement().getNode(), SoftActionType.MOVE_FROM)
+                || isSoftAction(context.getNewElement().getNode(), SoftActionType.ADD)
+                || !(context.getOldElement().getTagId().equals(context.getNewElement().getTagId()))));
+    }
+
+    protected boolean isElementImpactedByIndention(Map<String, Element> otherContextElements, Element element) {
+        return (isElementIndentedInOtherContext(otherContextElements, element)
+                || IndentContentComparatorHelper.hasIndentedParent(otherContextElements, element)
+                || IndentContentComparatorHelper.hasIndentedChild(otherContextElements, element)
+                || IndentContentComparatorHelper.hasIndentedChild(otherContextElements, element.getParent()));
     }
 }
