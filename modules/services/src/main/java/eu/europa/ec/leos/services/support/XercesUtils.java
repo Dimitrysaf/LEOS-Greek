@@ -1598,6 +1598,8 @@ public class XercesUtils {
             } else {
                 removeTrackChangesAttributes(node);
             }
+        } else if(hasAttribute(node, LEOS_ACTION_NUMBER) || hasAttribute(node, LEOS_ACTION_ENTER)) {
+            removeTrackChangesAttributes(node);
         }
         return isNodeDeleted;
     }
