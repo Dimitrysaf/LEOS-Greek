@@ -112,6 +112,12 @@ Then('ins tag with attribute {string} and value {string} of num tag of level {in
     annexPage.getNumOfLevel(levelNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
 });
 
+Then('attribute {string} of subparagraph {int} of list {int} of level {int} should not be equal to same attribute in subparagraph {int} of same level', function (attributeName, subparagraphNumber1, listNumber, levelNumber, subparagraphNumber2) {
+    annexPage.getSubparagraphOfListOfLevel(levelNumber, listNumber, subparagraphNumber1).invoke('attr', attributeName).then((attributeValue) => {
+        annexPage.getSubparagraphOfLevel(levelNumber, subparagraphNumber2).should('not.have.attr', attributeName, attributeValue);
+    })
+});
+
 Then(/^total number of paragraph is (\d+)$/, function (count) {
     annexPage.elements.paragraph().should('have.length', count);
 });
