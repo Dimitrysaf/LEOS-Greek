@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start-mock-server": "nodemon --watch ./mock ./mock/server.js",
-    "start-serve": "cross-env NODE_ENV=development eui-scripts serve-app --configuration=proxy-mock",
+    "start-server": "cross-env NODE_ENV=development eui-scripts serve-app --configuration=proxy-mock",
     "start": "cross-env NODE_ENV=development npm-run-all --parallel start-mock-server start-serve",
     "start-proxy": "cross-env NODE_ENV=development eui-scripts serve-app --configuration=proxy",
     "start-leos-proxy": "cross-env NODE_ENV=development eui-scripts serve-app ",

@@ -113,37 +113,37 @@ public abstract class AbstractMilestoneService implements MilestoneService{
      * No mechanism to skip the update if the file is already in FILE_READY status
      */
     @Override
-    public LegDocument updateMilestoneRendition(String documentId, String jobId, byte[] pdfJobZip, byte[] wordJobZip) {
+    public LegDocument updateMilestoneRendition(String legId, String jobId, byte[] pdfJobZip, byte[] wordJobZip) {
         if (jobId != null && !jobId.isEmpty()
-            && documentId != null && !documentId.isEmpty()
+            && legId != null && !legId.isEmpty()
             && pdfJobZip != null && wordJobZip != null) {
             long stamp = updateMilestoneLock.writeLock();
             try {
                 if (pdfJobZip.length > 0 && wordJobZip.length > 0) {
-                    LOG.trace("Call to updateMilestoneRendition for Leg document  with jobId={} in the same package with any document that has documentId={} may be SUCCESSFUL.", jobId, documentId);
-                    return updateMilestone(documentId, jobId, pdfJobZip, wordJobZip);
+                    LOG.trace("Call to updateMilestoneRendition for Leg document with jobId={} in the same package with any document that has legId={} may be SUCCESSFUL.", jobId, legId);
+                    return updateMilestone(legId, jobId, pdfJobZip, wordJobZip);
                 } else {
-                    LOG.warn("The files are empty: documentId={}, jobId={}, pdfJobZip={} and wordJobZip={}. Changing leg file status to {}.",
-                            documentId, jobId, pdfJobZip, wordJobZip, LeosLegStatus.FILE_ERROR.name());
-                    return updateMilestone(documentId, jobId);
+                    LOG.warn("The files are empty: legId={}, jobId={}, pdfJobZip={} and wordJobZip={}. Changing leg file status to {}.",
+                            legId, jobId, pdfJobZip, wordJobZip, LeosLegStatus.FILE_ERROR.name());
+                    return updateMilestone(legId, jobId);
                 }
             } catch (Exception e) {
-                LOG.error("coDeCallback for documentId={} with jobId={} FAILED. Changing leg file status to {}.",
-                        documentId, jobId, LeosLegStatus.FILE_ERROR.name());
-                return updateMilestone(documentId, jobId);
+                LOG.error("coDeCallback for legId={} with jobId={} FAILED. Changing leg file status to {}.",
+                        legId, jobId, LeosLegStatus.FILE_ERROR.name());
+                return updateMilestone(legId, jobId);
             } finally {
                 updateMilestoneLock.unlockWrite(stamp);
             }
         } else {
-            LOG.warn("documentId, jobId either null or empty: documentId={} with jobId={}", documentId, jobId);
+            LOG.warn("legId, jobId either null or empty: legId={} with jobId={}", legId, jobId);
             return null;
         }
     }
 
-    private LegDocument updateMilestone(String documentId, String jobId) {
-        LOG.trace("Updating the status to {} of the Leg document that has jobId={} and is in the same package with any document that has documentId={}.",LeosLegStatus.FILE_ERROR.name(), jobId, documentId);
-        LegDocument legDocument = legService.findLegDocumentByAnyDocumentIdAndJobId(documentId, jobId);
-        if(legDocument != null ){
+    private LegDocument updateMilestone(String legId, String jobId) {
+        LOG.trace("Updating the status to {} of the Leg document that has jobId={} and is in the same package with any document that has legId={}.",LeosLegStatus.FILE_ERROR.name(), jobId, legId);
+        LegDocument legDocument = legService.findLegDocumentById(legId);
+        if (legDocument != null) {
             if(!LeosLegStatus.FILE_ERROR.equals(legDocument.getStatus())){
                 return legService.updateLegDocument(legDocument.getMilestoneRef(), legDocument.getId(), LeosLegStatus.FILE_ERROR);
             } else {
@@ -154,9 +154,9 @@ public abstract class AbstractMilestoneService implements MilestoneService{
         }
     }
 
-    private LegDocument updateMilestone(String documentId, String jobId, byte[] pdfJobZip, byte[] wordJobZip) {
-        LOG.trace("Updating status to {} and content with pdf and word renditions of the Leg document that has jobId={} and is in the same package with any document that has documentId={}.", LeosLegStatus.FILE_READY.name(), jobId, documentId);
-        LegDocument legDocument = legService.findLegDocumentByAnyDocumentIdAndJobId(documentId, jobId);
+    private LegDocument updateMilestone(String legId, String jobId, byte[] pdfJobZip, byte[] wordJobZip) {
+        LOG.trace("Updating status to {} and content with pdf and word renditions of the Leg document that has jobId={} and is in the same package with any document that has legId={}.", LeosLegStatus.FILE_READY.name(), jobId, legId);
+        LegDocument legDocument = legService.findLegDocumentById(legId);
         if(legDocument != null){
             if(LeosLegStatus.IN_PREPARATION.equals(legDocument.getStatus())){
                 return legService.updateLegDocument(legDocument.getId(), pdfJobZip, wordJobZip);

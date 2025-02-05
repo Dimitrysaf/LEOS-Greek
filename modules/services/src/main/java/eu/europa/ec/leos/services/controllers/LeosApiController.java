@@ -428,7 +428,7 @@ public class LeosApiController {
         }
 
         try {
-            List<LegDocument> legFiles = legService.findLegDocumentByProposal(proposal.getId());
+            List<LegDocument> legFiles = legService.findLegDocumentByAnyDocumentId(proposal.getId());
             return new ResponseEntity<>(legFiles, HttpStatus.OK);
         } catch (Exception ex) {
             LOG.error("Error occurred while getting milestones for proposal {}. {}", proposalRef, ex.getMessage(), ex);
