@@ -321,7 +321,7 @@ public class LegServiceImpl implements LegService {
 
     private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus) {
         LegDocumentVO legDocumentVO = null;
-        List<LegDocument> legDocuments = findLegDocumentByProposal(proposal.getId());
+        List<LegDocument> legDocuments = this.findLegDocumentByAnyDocumentId(proposal.getId());
         if (!legDocuments.isEmpty()) {
             legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
             LegDocument leg = legDocuments.get(0);
@@ -1305,21 +1305,22 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public LegDocument findLegDocumentByAnyDocumentIdAndJobId(String documentId, String jobId) {
-        LOG.trace("Finding Leg Document by proposal id and job id... [proposalId={}, jobId={}]", documentId, jobId);
-        LegDocument legDocument = packageRepository.findLegDocumentById(documentId, true);
-        return legDocument;
-    }
-
-    @Override
     public List<LegDocument> findLegDocumentByStatus(LeosLegStatus leosLegStatus) {
         return packageRepository.findDocumentsByStatus(leosLegStatus, LegDocument.class);
     }
 
     @Override
-    public List<LegDocument> findLegDocumentByProposal(String proposalId) {
-        LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposalId);
+    public List<LegDocument> findLegDocumentByAnyDocumentId(String documentId) {
+        LeosPackage leosPackage = packageRepository.findPackageByDocumentId(documentId);
         return packageRepository.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+    }
+
+    @Override
+    public LegDocument findLegDocumentByAnyDocumentIdAndJobId(String documentId, String jobId) {
+        LOG.trace("Finding Leg Document by document id and job id... [documentId={}, jobId={}]", documentId, jobId);
+        List<LegDocument> legDocuments = this.findLegDocumentByAnyDocumentId(documentId);
+        LegDocument legFile = legDocuments.stream().filter(l -> l.getJobId().equals(jobId)).findFirst().get();
+        return legFile;
     }
 
     private byte[] updateContentWithPdfAndWordRenditions(byte[] pdfJobZip, byte[] wordJobZip, Content content) throws IOException {
