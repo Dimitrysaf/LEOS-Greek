@@ -65,6 +65,7 @@ public class MetadataUtil {
     private static final String COVERPAGE="coverPage";
     private static final String REFERSTO="refersTo";
     private static final String VALUE="value";
+    private static final String CLASS="class";
     private static final String FRBRWORK="FRBRWork";
     private static final String PRESERVATION="preservation";
 
@@ -721,6 +722,7 @@ public class MetadataUtil {
         XmlUtil.setNodeAttributeValue(xmlNodeDate, DATE, fieldInfo.getId());
 
         String displayValue = MetadataUtil.readEmissionDataDisplayValue(fieldInfo, xmlFile);
+        removeClassAttribute(xmlNodeDate);
         xmlNodeDate.setTextContent(displayValue);
     }
 
@@ -777,6 +779,7 @@ public class MetadataUtil {
         }
 
         XmlUtil.setNodeAttributeValue(xmlNodeDate, DATE, fieldInfo.getId());
+        removeClassAttribute(xmlNodeDate);
         String displayValue = MetadataUtil.readEmissionDataDisplayValue(fieldInfo, xmlFile);
         xmlNodeDate.setTextContent(displayValue);
     }
@@ -939,8 +942,8 @@ public class MetadataUtil {
         if (xmlNodeDocNumber == null) {
             return;
         }
-        XmlUtil.removeNodeAttributeValue(xmlNodeBlock, "class");
-        XmlUtil.removeNodeAttributeValue(xmlNodeDocNumber, "class");
+        removeClassAttribute(xmlNodeBlock);
+        removeClassAttribute(xmlNodeDocNumber);
         MetadataUtil.addRefersToAttribute(xmlNodeDocNumber, fieldInfo.getId());
         xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
     }
@@ -986,7 +989,7 @@ public class MetadataUtil {
         if (xmlNodeDocNumber == null) {
             return;
         }
-        XmlUtil.removeNodeAttributeValue(xmlNodeDocNumber, "class");
+        removeClassAttribute(xmlNodeDocNumber);
         xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
         final Element inline = xmlFile.newElement("inline");
         XmlUtil.setNodeAttributeValue(inline, XMLID, IdGenerator.generateId());
@@ -1047,8 +1050,8 @@ public class MetadataUtil {
         if (xmlNodeDocketNumber == null) {
             return;
         }
-        XmlUtil.removeNodeAttributeValue(xmlNodeContainer, "class");
-        XmlUtil.removeNodeAttributeValue(xmlNodeDocketNumber, "class");
+        removeClassAttribute(xmlNodeContainer);
+        removeClassAttribute(xmlNodeDocketNumber);
         MetadataUtil.addRefersToAttribute(xmlNodeDocketNumber, fieldInfo.getId());
         xmlNodeDocketNumber.setTextContent(fieldInfo.getDisplayValue());
     }
@@ -1087,7 +1090,7 @@ public class MetadataUtil {
             return;
         }
 
-        XmlUtil.removeNodeAttributeValue(xmlNodeAssociatedReferences, "class");
+        removeClassAttribute(xmlNodeAssociatedReferences);
         // remove any existing content
         if(xmlNodeAssociatedReferences.hasChildNodes()) {
             final NodeList children = xmlNodeAssociatedReferences.getChildNodes();
@@ -1183,5 +1186,9 @@ public class MetadataUtil {
 
     private static Node getAkomaNtosoNode(XmlFile xmlFile) {
         return xmlFile.getElementByName("akomaNtoso");
+    }
+    
+    private static void removeClassAttribute(Node xmlNode) {
+        XmlUtil.removeNodeAttributeValue(xmlNode, CLASS);
     }
 }
