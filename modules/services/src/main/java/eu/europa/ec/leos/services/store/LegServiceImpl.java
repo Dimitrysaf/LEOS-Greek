@@ -1786,6 +1786,8 @@ public class LegServiceImpl implements LegService {
         final Map<String, String> proposalRefsMap = enrichZipWithProposalForClone(contentToZip, exportProposalResource, proposal);
         legPackage.addContainedFile(proposal.getVersionedReference());
         String language = proposal.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
+
         //2. Add Bill to package
         Bill bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
                 proposalRefsMap.get(LeosCategory.BILL.name() + "_href"), Bill.class);
