@@ -11,7 +11,6 @@
         <tocItem>
             <aknTag>preface</aknTag>
             <root>true</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -84,7 +83,6 @@
         <tocItem>
             <aknTag>body</aknTag>
             <root>true</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -103,7 +101,6 @@
         <tocItem>
             <aknTag>preamble</aknTag>
             <root>true</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -122,7 +119,6 @@
         <tocItem>
             <aknTag>citations</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -173,7 +169,6 @@
         <tocItem>
             <aknTag>recitals</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
@@ -369,7 +364,6 @@
         <tocItem>
             <aknTag>article</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>true</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -487,7 +481,6 @@
         <tocItem>
             <aknTag>paragraph</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -518,7 +511,6 @@
         <tocItem>
             <aknTag>subparagraph</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -537,7 +529,6 @@
         <tocItem>
             <aknTag>list</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -556,7 +547,6 @@
         <tocItem>
             <aknTag>point</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -588,7 +578,6 @@
         <tocItem>
             <aknTag>point</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
@@ -620,7 +609,6 @@
         <tocItem>
             <aknTag>indent</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -652,7 +640,6 @@
         <tocItem>
             <aknTag>indent</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -684,7 +671,6 @@
         <tocItem>
             <aknTag>conclusions</aknTag>
             <root>true</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
@@ -703,7 +689,6 @@
         <tocItem>
             <aknTag>clause</aknTag>
             <root>true</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -727,7 +712,6 @@
         <tocItem>
             <aknTag>heading</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -752,7 +736,6 @@
         <tocItem>
             <aknTag>formula</aknTag>
             <root>false</root>
-            <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
@@ -1156,7 +1139,7 @@
                 <type>article</type>
             </lowerDivisions>
             <scope>drop</scope>
-            <errorMessage>toc.higher.division.structure.validation.warning.message</errorMessage>
+            <errorMessage>toc.higher.division.structure.validation.warning.message.</errorMessage>
         </rule>
         <rule>
             <description>No empty higher division rule</description>

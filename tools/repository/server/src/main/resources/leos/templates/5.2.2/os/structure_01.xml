@@ -210,18 +210,6 @@
                     <numberingType>ARABIC_PARENTHESIS</numberingType>
                 </langNumConfig>
             </autoNumbering>
-            <soleNumbering>
-                <langNumConfig langGroup="latin" auto="true">
-                    <numberingType>SOLE_RECITAL</numberingType>
-                </langNumConfig>
-                <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="true">
-                    <numberingType>SOLE_RECITAL_CYRILLIC</numberingType>
-                </langNumConfig>
-                <langNumConfig langGroup="greek" auto="true">
-                    <numberingType>SOLE_RECITAL_GREEK</numberingType>
-                </langNumConfig>
-            </soleNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -398,18 +386,6 @@
                     <numberingType>ARABIC</numberingType>
                 </langNumConfig>
             </autoNumbering>
-            <soleNumbering>
-                <langNumConfig langGroup="latin" auto="true">
-                    <numberingType>SOLE_ARTICLE</numberingType>
-                </langNumConfig>
-                <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="true">
-                    <numberingType>SOLE_ARTICLE_CYRILLIC</numberingType>
-                </langNumConfig>
-                <langNumConfig langGroup="greek" auto="true">
-                    <numberingType>SOLE_ARTICLE_GREEK</numberingType>
-                </langNumConfig>
-            </soleNumbering>
             <itemHeading>optional</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>false</numberEditable>
@@ -932,44 +908,6 @@
         <numberingConfig>
             <type>NONE</type>
             <numbered>false</numbered>
-        </numberingConfig>
-
-        <numberingConfig>
-            <type>SOLE_ARTICLE</type>
-            <label>sole.article</label>
-            <numbered>true</numbered>
-            <prefix></prefix>
-            <suffix></suffix>
-        </numberingConfig>
-
-        <numberingConfig>
-            <type>SOLE_ARTICLE_CYRILLIC</type>
-            <label>sole.article.cyrillic</label>
-            <numbered>true</numbered>
-        </numberingConfig>
-
-        <numberingConfig>
-            <type>SOLE_ARTICLE_GREEK</type>
-            <label>sole.article.greek</label>
-            <numbered>true</numbered>
-        </numberingConfig>
-
-        <numberingConfig>
-            <type>SOLE_RECITAL</type>
-            <label>sole.recital</label>
-            <numbered>true</numbered>
-        </numberingConfig>
-
-        <numberingConfig>
-            <type>SOLE_RECITAL_CYRILLIC</type>
-            <label>sole.recital.cyrillic</label>
-            <numbered>true</numbered>
-        </numberingConfig>
-
-        <numberingConfig>
-            <type>SOLE_RECITAL_GREEK</type>
-            <label>sole.recital.greek</label>
-            <numbered>true</numbered>
         </numberingConfig>
 
         <numberingConfig>

@@ -1,0 +1,21 @@
+{
+  "showGuidance": false,
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//preface/container/block[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preface__container__block__num\" class=\"guidance-green-block\"><span id=\"_preface__container__block__num-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Annexes\" target=\"_blank\">Annexes</a></span></guidance>"
+    }
+  ],
+  "alternatives": [
+  ],
+  "structure": [
+    {
+      "name": "structure_02"
+    }
+  ]
+}
