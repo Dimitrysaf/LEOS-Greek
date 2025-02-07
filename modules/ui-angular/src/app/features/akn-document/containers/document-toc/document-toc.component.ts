@@ -671,7 +671,7 @@ export class DocumentTocComponent
           ) {
             n.number = HASH_NUM_VALUE;
           }
-          label += n.number;
+          n.label ? label = n.label : label += n.number;
           if (shoudlAddMovedLabel) {
             label += SPAN_END_TAG;
             label += this.getMovedLabel();

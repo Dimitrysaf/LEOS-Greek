@@ -17,6 +17,8 @@ public interface NumberConfig {
 
     void setComplex(boolean isComplex);
     boolean isComplex();
+    boolean isSoleNumbering();
+    String getSoleNumberLabel();
 
     int getComplexValue();
     String getComplexValueToShow();

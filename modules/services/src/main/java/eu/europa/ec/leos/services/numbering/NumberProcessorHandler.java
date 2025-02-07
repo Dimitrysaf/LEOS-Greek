@@ -11,7 +11,9 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
+import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueForElementId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
@@ -238,14 +241,23 @@ public abstract class NumberProcessorHandler {
                     }
                     LOG.trace("Skipping SoftChanged {} '{}', number '{}'", elementName, getId(node), getNodeNum(node));
                 } else if (!deletedNumber(numNode)) {
+                    NumberConfig soleNumConf = checkForSoleNumbering(elementName, language, nodeList.size());
+                    final NumberConfig numConf = soleNumConf != null ? soleNumConf : numberConfig;
                     numberProcessors.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
                             .findFirst()
-                            .ifPresent(val -> val.renumber(node, numberConfig, renumberChildren, language));
+                            .ifPresent(val -> val.renumber(node, numConf, renumberChildren, language));
                 }
                 removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
             }
         }
+    }
+
+    private NumberConfig checkForSoleNumbering(String elementName, String language, int elementCount) {
+        if (elementCount == 1) {
+            return numberConfigFactory.getSoleNumberingConfig(elementName, language);
+        }
+        return null;
     }
 
     private boolean deletedNumber(Node numNode) {

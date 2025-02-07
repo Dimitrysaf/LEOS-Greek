@@ -59,7 +59,7 @@ public class NumberProcessorAbstract {
             String insertedNum = XercesUtils.getContentByTagName(node, NUM);
             LOG.trace("{} (depth {}) '{}', skipping calculated number '{}', keeping manual insertion '{}'", node.getNodeName(), depth, getId(node), elementNum, insertedNum);
         } else {
-            elementNum = messageHelper.getMessage("numbering.label." + elementName, elementNum);
+            elementNum = numberConfig.isSoleNumbering() ? messageHelper.getMessage(numberConfig.getSoleNumberLabel()) : messageHelper.getMessage("numbering.label." + elementName, elementNum);
             buildNumElement(node, elementNum, securityContext, trackChangesContext.isTrackChangesEnabled());
             LOG.trace("{} (depth {}) '{}' numbered to '{}'", elementName, depth, elementId, elementNum);
         }
