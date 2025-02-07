@@ -45,6 +45,8 @@
             <package-name>org.apache.commons.lang.*</package-name>
             <!-- Xerces -->
             <package-name>org.apache.xerces.*</package-name>
+            <!-- Jackson -->
+            <package-name>com.fasterxml.jackson.*</package-name>
         </prefer-application-packages>
         <prefer-application-resources>
             <resource-name>org/slf4j/impl/StaticLoggerBinder.class</resource-name>

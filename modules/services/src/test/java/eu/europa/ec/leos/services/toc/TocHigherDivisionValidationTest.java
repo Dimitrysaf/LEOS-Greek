@@ -137,7 +137,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
     public void testAddingSectionAsSibling() {
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("bill_ckn5qw5dr0085sv00o919q56w-en");
-        request.setDocumentType(LeosCategory.BILL);
+        request.setDocumentType("BILL");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_7e3vkt6");
         request.setDraggedNodeId(draggedNodeIds);
@@ -162,7 +162,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
     public void testAddingArticleAsSibling() {
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("bill_ckn5qw5dr0085sv00o919q56w-en");
-        request.setDocumentType(LeosCategory.BILL);
+        request.setDocumentType("BILL");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_7e3vkt6");
         request.setDraggedNodeId(draggedNodeIds);
@@ -187,7 +187,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
     public void testAddingEmptyHigherDivision() {
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("bill_ckn5qw5dr0085sv00o919q56w-en");
-        request.setDocumentType(LeosCategory.BILL);
+        request.setDocumentType("BILL");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_7e3vkt6");
         request.setDraggedNodeId(draggedNodeIds);

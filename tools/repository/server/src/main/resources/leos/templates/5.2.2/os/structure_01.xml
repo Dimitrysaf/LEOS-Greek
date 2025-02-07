@@ -1156,7 +1156,7 @@
                 <type>article</type>
             </lowerDivisions>
             <scope>drop</scope>
-            <errorMessage>toc.higher.division.structure.validation.warning.message.</errorMessage>
+            <errorMessage>toc.higher.division.structure.validation.warning.message</errorMessage>
         </rule>
         <rule>
             <description>No empty higher division rule</description>
