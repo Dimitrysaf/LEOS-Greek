@@ -139,7 +139,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_7e3vkt6");
         request.setDraggedNodeId(draggedNodeIds);
@@ -163,7 +163,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_tylpbc5");
         request.setDraggedNodeId(draggedNodeIds);
@@ -187,7 +187,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_d4haocm");
         request.setDraggedNodeId(draggedNodeIds);
@@ -211,7 +211,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_d4haocm");
         request.setDraggedNodeId(draggedNodeIds);
@@ -235,7 +235,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_d4haocm");
         request.setDraggedNodeId(draggedNodeIds);
@@ -259,7 +259,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("ecfcuY33QDVSdpahh");
         request.setDraggedNodeId(draggedNodeIds);
@@ -283,7 +283,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("ec2T4Rali2vdE9oht");
         request.setDraggedNodeId(draggedNodeIds);
@@ -307,7 +307,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_d4haocm");
         request.setDraggedNodeId(draggedNodeIds);
@@ -331,7 +331,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_d4haocm");
         request.setDraggedNodeId(draggedNodeIds);
@@ -355,7 +355,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_d4haocm");
         request.setDraggedNodeId(draggedNodeIds);
@@ -379,7 +379,7 @@ public class TocApiServiceImplTest extends LeosTest {
 
         NodeDropValidationRequest request = new NodeDropValidationRequest();
         request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
-        request.setDocumentType(LeosCategory.ANNEX);
+        request.setDocumentType("ANNEX");
         List<String> draggedNodeIds = new ArrayList<>();
         draggedNodeIds.add("_d4haocm");
         request.setDraggedNodeId(draggedNodeIds);
