@@ -339,7 +339,7 @@ define(function annotateExtensionModule(require) {
                 "websocketUrl":`${webSocketUrl}`
              }],
              "spellChecker": {
-                "enabled": `${annotateState.spellCheckerName === UTILS.SPELLCHECKER.wsc}`,
+                "name": `${annotateState.spellCheckerName}`,
                 "serviceUrl": `${annotateState.spellCheckerServiceUrl}`,
                 "sourceUrl": `${annotateState.spellCheckerSourceUrl}`
              }
