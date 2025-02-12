@@ -54,6 +54,25 @@ When('click on edit icon of article {int}', articleNumber => {
     legalActPage.clickEditIconOfArticle(articleNumber);
 })
 
+When('mouseover on article {int}', articleNumber => {
+    legalActPage.mouseHoverOnArticle(articleNumber);
+})
+
+Then('only below widgets are present in show all action menu of article {int}', function (articleNumber, datatable) {
+    const actualOptionList = [];
+    datatable.hashes().forEach((element) => {
+        actualOptionList.push(element.widget);
+    });
+    legalActPage.getAllWidgetOfArticle(articleNumber)
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    .map((el) => el.getAttribute('data-widget-type'))
+            )
+        })
+        .should('deep.equal', actualOptionList)
+});
+
 When('click on close button present in legal act page', () => {
     legalActPage.clickCloseBtn();
 })
