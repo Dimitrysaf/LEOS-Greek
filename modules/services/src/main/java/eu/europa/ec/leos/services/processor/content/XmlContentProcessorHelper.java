@@ -389,8 +389,16 @@ public class XmlContentProcessorHelper {
         item.setInitialNum(initialNumber);
         item.setTocItemType(tocItemType);
         item.setTrackChangeAction(trackChangeAction);
-        item.setLabel(label != null ? label : null);
+        setItemLabel(label, item);
         return item;
+    }
+
+    private static void setItemLabel(String label, TableOfContentItemVO item) {
+        if (label != null && !(item.getSoftActionAttr() != null
+                && (item.getSoftActionAttr().getSoftAction().equalsIgnoreCase(DELETE.getSoftAction())
+                || item.getSoftActionAttr().getSoftAction().equalsIgnoreCase(MOVE_TO.getSoftAction())))) {
+            item.setLabel(label);
+        }
     }
 
     private static boolean wasMaybeAnUnumberedParagraph(Node item, IndentedItemType indentOriginType) {

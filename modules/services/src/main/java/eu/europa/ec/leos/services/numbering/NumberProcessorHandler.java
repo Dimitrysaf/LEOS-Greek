@@ -24,6 +24,7 @@ import org.w3c.dom.NodeList;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueForElementId;
@@ -34,10 +35,14 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getNodeNum;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
+import static eu.europa.ec.leos.services.support.XmlHelper.MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 
@@ -241,7 +246,7 @@ public abstract class NumberProcessorHandler {
                     }
                     LOG.trace("Skipping SoftChanged {} '{}', number '{}'", elementName, getId(node), getNodeNum(node));
                 } else if (!deletedNumber(numNode)) {
-                    NumberConfig soleNumConf = checkForSoleNumbering(elementName, language, nodeList.size());
+                    NumberConfig soleNumConf = checkForSoleNumbering(elementName, language, nodeList);
                     final NumberConfig numConf = soleNumConf != null ? soleNumConf : numberConfig;
                     numberProcessors.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
@@ -253,7 +258,14 @@ public abstract class NumberProcessorHandler {
         }
     }
 
-    private NumberConfig checkForSoleNumbering(String elementName, String language, int elementCount) {
+    private NumberConfig checkForSoleNumbering(String elementName, String language, List<Node> nodeList) {
+        List<Node> list = nodeList.stream().filter(node -> !((node.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ATTR) != null
+                && (node.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ATTR).getNodeValue()
+                .equalsIgnoreCase(MOVE_TO) || node.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ATTR).getNodeValue()
+                .equalsIgnoreCase(LEOS_SOFT_ACTION_DELETE) || node.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ATTR).getNodeValue()
+                .equalsIgnoreCase(LEOS_SOFT_ACTION_DELETE))) || (node.getAttributes().getNamedItem(LEOS_ACTION_ATTR) != null
+                && node.getAttributes().getNamedItem(LEOS_ACTION_ATTR).getNodeValue().equalsIgnoreCase(LEOS_TC_DELETE_ACTION)))).collect(Collectors.toList());
+        int elementCount = list != null ? list.size() : 0;
         if (elementCount == 1) {
             return numberConfigFactory.getSoleNumberingConfig(elementName, language);
         }
