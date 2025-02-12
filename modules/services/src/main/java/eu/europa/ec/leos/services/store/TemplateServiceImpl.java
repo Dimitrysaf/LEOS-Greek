@@ -100,39 +100,41 @@ class TemplateServiceImpl implements TemplateService {
         boolean itemShouldBeProcessed = true;
         ObjectMapper objectMapper = new ObjectMapper();
         String catalogConf = templateConfigurationService.getTemplateConfiguration("catalog");
-        JsonNode catalogNode = objectMapper.readTree(catalogConf).get("catalog");
+        JsonNode catalogNode = objectMapper.readTree(catalogConf);
         if (catalogNode != null && catalogNode.get(catalogItem.getKey()) != null) {
             if (catalogNode.get(catalogItem.getKey()).get("environments") != null) {
-                itemShouldBeProcessed = checkJsonNode(catalogItem, catalogNode);
+                itemShouldBeProcessed = checkJsonNodeForCatalog(catalogItem, catalogNode.get(catalogItem.getKey()));
             }
             if (catalogNode.get(catalogItem.getKey()).get("list-of-environments") != null) {
                 JsonNode listEnvironmentJsonNode = catalogNode.get(catalogItem.getKey()).get("list-of-environments");
                 for (JsonNode itemEnvironmentJsonNode : listEnvironmentJsonNode) {
-                    itemShouldBeProcessed = checkJsonNode(catalogItem, itemEnvironmentJsonNode);
+                    if (itemEnvironmentJsonNode.get("environments") != null) {
+                        itemShouldBeProcessed = checkJsonNodeForCatalog(catalogItem, itemEnvironmentJsonNode);
+                    }
                 }
             }
         }
         return itemShouldBeProcessed;
     }
 
-    private boolean checkJsonNode(CatalogItem catalogItem, JsonNode catalogNode) {
+    private boolean checkJsonNodeForCatalog(CatalogItem catalogItem, JsonNode catalogNode) {
         boolean itemShouldBeProcessed = true;
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        String environments = catalogNode.get(catalogItem.getKey()).get("environments").asText();
+        String environments = catalogNode.get("environments").asText();
         if (!environments.contains(leosEnvironment) && !environments.contains("all")) {
             itemShouldBeProcessed = false;
         }
         String startDateStr = "";
-        if (catalogNode.get(catalogItem.getKey()).get("start-date") != null) {
-            startDateStr = catalogNode.get(catalogItem.getKey()).get("start-date").asText();
+        if (catalogNode.get("start-date") != null) {
+            startDateStr = catalogNode.get("start-date").asText();
             LocalDateTime startDate = LocalDateTime.parse(startDateStr, dateTimeFormatter);
             if (LocalDateTime.now().isBefore(startDate)) {
                 itemShouldBeProcessed = false;
             }
         }
         String endDateStr = "";
-        if (catalogNode.get(catalogItem.getKey()).get("end-date") != null) {
-            endDateStr = catalogNode.get(catalogItem.getKey()).get("end-date").asText();
+        if (catalogNode.get("end-date") != null) {
+            endDateStr = catalogNode.get("end-date").asText();
             LocalDateTime endDate = LocalDateTime.parse(endDateStr, dateTimeFormatter);
             if (LocalDateTime.now().isAfter(endDate)) {
                 itemShouldBeProcessed = false;
