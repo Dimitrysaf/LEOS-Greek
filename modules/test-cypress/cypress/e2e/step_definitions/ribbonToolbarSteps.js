@@ -144,3 +144,7 @@ When(/^click on cancel button in document search bar$/, function () {
 Then(/^document search bar is not present$/, function () {
     ribbonToolbar.elements.documentSearchBar().should('not.exist');
 });
+
+Then(/^mark as done button is displayed in the ribbon toolbar$/, function () {
+    ribbonToolbar.elements.markAsDoneBtn().should('be.visible');
+});

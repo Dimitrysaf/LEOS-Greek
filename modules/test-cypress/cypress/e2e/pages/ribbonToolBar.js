@@ -13,6 +13,7 @@ class ribbonToolBar {
         enableTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('.eui-slide-toggle__container'),
         seeTrackChangesInput: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('input'),
         seeTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('.eui-slide-toggle__container'),
+        markAsDoneBtn: () => cy.get('button#MARK_AS_DONE_ACTION_ID'),
         appZoomScrollBar: () => cy.get('app-zoom-scrollbar'),
         zoomScrollBarInput: () => this.elements.appZoomScrollBar().find('input'),
         zoomInScrollBar: () => this.elements.appZoomScrollBar().find("eui-icon-svg[icon='eui-add']"),

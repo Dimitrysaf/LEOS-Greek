@@ -85,6 +85,8 @@ module.exports = defineConfig({
     "localDraftingUrl": "localhost:8080/leos-pilot/ui",
     "devDraftingUrl": "intragate.development.ec.europa.eu/decide-drafting/ui/",
     "localImportProposalApiUrl": "http://localhost:8080/leos-pilot/api/secured/editlight/importProposal",
+    "localImportDocumentApiUrl": "http://localhost:8080/leos-pilot/api/secured/leos-light/import-document",
+    "localContextTokenApiUrl": "http://localhost:8080/leos-pilot/api/leos-light/context-token",
     "devImportProposalApiUrl": "https://intragate.development.ec.europa.eu/decide-drafting/api/secured/editlight/importProposal",
     "bearerTokenLocalUser1": 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTcxODExNjQ1MSwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjo0ODczNzkwMDUxLCJpYXQiOjE3MTgxMTY0NTEsInVzZXIiOiJqYW5lIn0.xekTwcJXri0tfCWkmt4niIeNDErsi7VWRnZT6SSX4rc',
     "bearerTokenRemoteUser1": 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTcxODExNjczNywiaXNzIjoiUTJ4cFpXNTBTV1JPYjI1TWIyTmhiRVZ1ZG1seWIyNXRaVzUwY3ciLCJleHAiOjE3MTgxMjAzMzcsImlhdCI6MTcxODExNjczNywidXNlciI6Im4wMDAxODFoIn0.AFdV2VKO44zRPqgUpt0oQHzfXeU10sHPiRAXEgCkmFk'
