@@ -14,6 +14,8 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -91,6 +93,10 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
     protected Provider<StructureContext> structureContextProvider;
     @Autowired
     protected DocumentLanguageContext documentLanguageContext;
+    @Autowired
+    protected NumberConfigFactory numberConfigFactory;
+    @Autowired
+    protected MessageHelper messageHelper;
 
     public List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode) {
         LOG.trace("Start building TOC from tag {} and mode {}", startingNode, mode);
@@ -105,7 +111,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             Node node = getFirstElementByName(document, startingNode);
             if (node != null) {
                 itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode,
-                        documentLanguageContext.getDocumentLanguage());
+                        documentLanguageContext.getDocumentLanguage(), messageHelper);
             }
             setNumberingTypeForHigherSubDivision(itemVOList);
             LOG.debug("Xerces Build table of content completed in {} ms", (System.currentTimeMillis() - startTime));

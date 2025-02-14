@@ -62,9 +62,23 @@ public class NumberConfigFactory {
     }
 
     public NumberConfig getNumberConfigByNumberingType(NumberingType numberingType) {
+        return getNumberConfig(numberingType);
+    }
+
+    private NumberConfig getNumberConfig(NumberingType numberingType) {
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
         NumberingConfig numberingConfig = getNumberingByName(numberingConfigs, numberingType);
         return getNumberConfig(numberingType, numberingConfig);
+    }
+
+    public NumberConfig getSoleNumberingConfig(String elementName, String language) {
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, elementName);
+        if (tocItem.getSoleNumbering() != null) {
+            NumberingType numberingType = StructureConfigUtils.getSoleNumberingTypeByLanguage(tocItem, language);
+            return getNumberConfig(numberingType);
+        }
+        return null;
     }
 
     private NumberConfig getNumberConfig(NumberingType numberingType, NumberingConfig numberingConfig) {
@@ -98,6 +112,13 @@ public class NumberConfigFactory {
                 return new NumberConfigSymbol(numberingConfig.getSequence(), prefix, suffix);
             case HIGHER_ELEMENT_NUM:
                 return new NumberConfigArabic("","");
+            case SOLE_ARTICLE:
+            case SOLE_ARTICLE_CYRILLIC:
+            case SOLE_ARTICLE_GREEK:
+            case SOLE_RECITAL:
+            case SOLE_RECITAL_CYRILLIC:
+            case SOLE_RECITAL_GREEK:
+                return new SoleNumberConfig(numberingConfig.getLabel(), true);
             case NONE:
                 return null;
             default:

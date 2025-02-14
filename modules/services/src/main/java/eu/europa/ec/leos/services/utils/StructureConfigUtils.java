@@ -365,6 +365,19 @@ public class StructureConfigUtils {
         return numberingType;
     }
 
+    public static NumberingType getSoleNumberingTypeByLanguage(TocItem tocItem, String language) {
+        NumberingType numberingType = NumberingType.NONE;
+        if(tocItem.getSoleNumbering() != null) {
+            String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), language);
+            Optional<LangNumConfig> langNumConfig = tocItem.getSoleNumbering().getLangNumConfigs().stream().filter(config ->
+                    config.getLangGroup().equalsIgnoreCase(group)).findFirst();
+            if (langNumConfig.isPresent()) {
+                numberingType = langNumConfig.get().getNumberingTypes().get(0);
+            }
+        }
+        return numberingType;
+    }
+
     private static NumberingType getNumberingTypeByLangConfigAndLanguage(List<LangNumConfig> langNumConfigs, String lang) {
         NumberingType numberingType;
         String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), lang);

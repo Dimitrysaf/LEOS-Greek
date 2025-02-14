@@ -151,6 +151,15 @@ When('drag node label {string} and drop to node label {string} in navigation pan
     tableOfContent.getNodeLabelText(dropLabel).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
 });
 
+When('drag node label {string} and drop after node label {string} in navigation pane', function (dragLabel, dropLabel) {
+    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;');
+    tableOfContent.getNodeLabelText(dragLabel)
+        .trigger("mousedown", {button: 0, force: true})
+        .trigger("mousemove", 0, 10, {force: true})
+        .wait(200);
+    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).trigger("mousemove", "top", {force: true}).trigger("mouseup", "top", {force: true});
+});
+
 When('drag node label {string} and drop before node label {string} in navigation pane', function (dragLabel, dropLabel) {
     tableOfContent.getPreviousPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;');
     tableOfContent.getNodeLabelText(dragLabel)
