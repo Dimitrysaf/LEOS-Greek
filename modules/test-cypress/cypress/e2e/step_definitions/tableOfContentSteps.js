@@ -156,8 +156,8 @@ When('drag node label {string} and drop after node label {string} in navigation 
     tableOfContent.getNodeLabelText(dragLabel)
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
-        .wait(200);
-    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).trigger("mousemove", "top", {force: true}).trigger("mouseup", "top", {force: true});
+        .wait(500);
+    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).trigger("mousemove", "top", {force: true}).trigger("mouseup", "top", {force: true}).wait(500);
 });
 
 When('drag node label {string} and drop before node label {string} in navigation pane', function (dragLabel, dropLabel) {

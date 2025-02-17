@@ -6,6 +6,7 @@ class trackChangesActionsPage {
 
     clickRejectThisChangeBtn() {
         this.elements.rejectThisChangeBtn().click();
+        cy.wait(500);
     }
 }
 export default new trackChangesActionsPage();
