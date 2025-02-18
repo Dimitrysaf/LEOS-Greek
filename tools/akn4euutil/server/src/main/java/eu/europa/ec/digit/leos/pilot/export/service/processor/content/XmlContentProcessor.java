@@ -11,14 +11,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.digit.leos.pilot.export.service;
+package eu.europa.ec.digit.leos.pilot.export.service.processor.content;
 
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosCategory;
 
 import java.util.List;
+import java.util.Map;
 
-public interface LeosLegDocumentService {
-    LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, List<LeosRenditionOutput> renditionOutputs);
+public interface XmlContentProcessor {
+
+    String getAttributeValueByXpath(byte[] xmlContent, String xPath, String attrName) throws Exception;
+
+    LeosCategory identifyCategory(String docName, byte[] xmlContent) throws Exception;
+
+    byte[] removeElements(byte[] xmlContent, String xpath, int parentsToRemove) throws Exception;
+
+    List<Map<String, String>> getElementsAttributesByPath(byte[] xmlContent, String xPath) throws Exception;
+
+    String getElementValue(byte[] xmlContent, String xPath) throws Exception;
 }

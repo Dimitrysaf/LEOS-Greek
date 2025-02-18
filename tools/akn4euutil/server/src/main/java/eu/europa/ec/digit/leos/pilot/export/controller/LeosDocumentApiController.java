@@ -62,8 +62,7 @@ public class LeosDocumentApiController {
     @RequestMapping(value = "/updateWithTranslations", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> updateWithTranslations(@RequestParam MultipartFile inputFile,
-                                                         @RequestParam MultipartFile translationsFile,
-                                                         @RequestParam(required = false) String outputDescriptor) {
+                                                         @RequestParam MultipartFile translationsFile) {
 
         if (translationsFile.isEmpty() || !translationsFile.getContentType().equalsIgnoreCase("application/zip")) {
             return ResponseEntity.badRequest().body("The translations file must be a .zip file.");
@@ -73,7 +72,7 @@ public class LeosDocumentApiController {
                     inputFile,
                     translationsFile
             );
-            LeosConvertDocumentOutput convertDocumentOutput = leosDocumentService.updateWithTranslations(convertDocumentInput, outputDescriptor);
+            LeosConvertDocumentOutput convertDocumentOutput = leosDocumentService.updateWithTranslations(convertDocumentInput);
             return buildValidZipResponse(convertDocumentOutput.getOutputFile(), convertDocumentOutput.getOutputFileName());
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);

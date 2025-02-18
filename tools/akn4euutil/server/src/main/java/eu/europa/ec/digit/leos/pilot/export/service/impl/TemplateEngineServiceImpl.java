@@ -16,6 +16,9 @@ package eu.europa.ec.digit.leos.pilot.export.service.impl;
 import eu.europa.ec.digit.leos.pilot.export.exception.TemplateEngineException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.service.TemplateEngineService;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportLW;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportOptions;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportResource;
 import freemarker.ext.dom.NodeModel;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -28,6 +31,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -35,10 +39,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @Service
 public class TemplateEngineServiceImpl implements TemplateEngineService {
+
     @Value("${leos.freemarker.xml.to.html}")
     private String renditionTemplate;
+
+    @Value("${leos.freemarker.ftl.export.legiswrite.pdf}")
+    private String exportTemplateLW_pdf;
+
+    @Value("${leos.freemarker.ftl.export.legiswrite.word}")
+    private String exportTemplateLW_word;
+
     private final FreeMarkerConfigurer freemarkerConfiguration;
 
     private static final Logger LOG = LoggerFactory.getLogger(TemplateEngineServiceImpl.class);
@@ -79,5 +93,47 @@ public class TemplateEngineServiceImpl implements TemplateEngineService {
             throw new TemplateEngineException("Couldn't process template", e);
         }
         return writer.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public ByteArrayOutputStream createContentFile(ExportOptions exportOptions, ExportResource exportRootNode) throws Exception {
+        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+
+        LOG.trace("Creating content file document...");
+        try {
+            Map<String, ExportResource> resources = new HashMap<>();
+            resources.put("resource_tree", exportRootNode);
+            String templateName = getTemplateName(exportOptions);
+            StringWriter outputWriter = new StringWriter();
+            Template template = freemarkerConfiguration.getConfiguration().getTemplate(templateName);
+            template.process(resources, outputWriter);
+            String result = outputWriter.getBuffer().toString();
+            byteOutputStream.write(result.getBytes(UTF_8));
+        } catch (Exception ex) {
+            LOG.error("Error while creating content xml file {}", ex.getMessage());
+            throw ex;
+        }
+        return byteOutputStream;
+    }
+
+    private String getTemplateName(ExportOptions exportOptions) {
+        String templateName;
+        if (exportOptions instanceof ExportLW) {
+            templateName = getTemplate(exportOptions.getExportOutput(), exportTemplateLW_pdf, exportTemplateLW_word);
+        } else {
+            throw new IllegalStateException("Not possible!!!");
+        }
+        return templateName;
+    }
+
+    protected String getTemplate(ExportOptions.Output exportOutput, String pdfTemplate, String wordTemplate) {
+        switch (exportOutput) {
+            case PDF:
+                return pdfTemplate;
+            case WORD:
+                return wordTemplate;
+            default:
+                throw new IllegalStateException("Not possible!!!");
+        }
     }
 }

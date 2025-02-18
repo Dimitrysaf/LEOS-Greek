@@ -13,41 +13,13 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.model;
 
+import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+@Data
 public class LeosConvertDocumentInput {
-
     private MultipartFile inputFile;
     private boolean isWithAnnotations;
     private MultipartFile translationsFile;
-
-    public MultipartFile getMain() {
-        return main;
-    }
-
-    public void setMain(MultipartFile main) {
-        this.main = main;
-    }
-
     private MultipartFile main;
-
-    public MultipartFile getInputFile() {
-        return inputFile;
-    }
-
-    public void setInputFile(MultipartFile inputFile) {
-        this.inputFile = inputFile;
-    }
-
-    public void setWithAnnotations(boolean withAnnotations) {
-        isWithAnnotations = withAnnotations;
-    }
-
-    public MultipartFile getTranslationsFile() {
-        return translationsFile;
-    }
-
-    public void setTranslationsFile(MultipartFile translationsFile) {
-        this.translationsFile = translationsFile;
-    }
 }

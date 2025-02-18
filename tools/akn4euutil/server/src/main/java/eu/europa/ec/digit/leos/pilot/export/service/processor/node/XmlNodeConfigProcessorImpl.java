@@ -11,10 +11,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.services.processor.node;
+package eu.europa.ec.digit.leos.pilot.export.service.processor.node;
 
 import cool.graph.cuid.Cuid;
-import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosCategory;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -34,7 +34,6 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         All_CONFIG_MAP.put(LeosCategory.BILL, createBillConfig());
         All_CONFIG_MAP.put(LeosCategory.MEMORANDUM, createMemorandumConfig());
         All_CONFIG_MAP.put(LeosCategory.ANNEX, createAnnexConfig());
-        All_CONFIG_MAP.put(LeosCategory.COUNCIL_EXPLANATORY, createExplanatoryConfig());
         All_CONFIG_MAP.put(LeosCategory.STAT_DIGIT_FINANC_LEGIS, createFinancialStatementConfig());
     }
 
@@ -87,21 +86,6 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         memorandumConfigMap.putAll(otherConfig);
 
         return memorandumConfigMap;
-    }
-
-    private static Map<String, XmlNodeConfig> createExplanatoryConfig() {
-        Map<String, XmlNodeConfig> explanatoryConfigMap = new HashMap<>();
-
-        explanatoryConfigMap.putAll(populateMetadataConfigMap());
-
-        final Map<String, XmlNodeConfig> prefaceConfig = new HashMap<>(4);
-        prefaceConfig.put(EXPLANATORY_TITLE_PREFACE, new XmlNodeConfig("//akn:preface/akn:longTitle/akn:p/akn:docTitle", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "docTitle"))));
-        explanatoryConfigMap.putAll(prefaceConfig);
-
-        final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();
-        explanatoryConfigMap.putAll(otherConfig);
-
-        return explanatoryConfigMap;
     }
 
     private static Map<String, XmlNodeConfig> createAnnexConfig() {

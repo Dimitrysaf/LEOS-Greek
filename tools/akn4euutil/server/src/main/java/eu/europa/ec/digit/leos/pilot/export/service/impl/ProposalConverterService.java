@@ -11,14 +11,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.digit.leos.pilot.export.service;
 
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
+package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
-import java.util.List;
+import eu.europa.ec.digit.leos.pilot.export.model.DocumentVO;
 
-public interface LeosLegDocumentService {
-    LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, List<LeosRenditionOutput> renditionOutputs);
+import java.io.File;
+import java.util.Map;
+
+public interface ProposalConverterService {
+
+    DocumentVO createDocument(String docName, File docFile, boolean canModifySource);
+
+    DocumentVO createProposalFromLegFile(Map<String, Object> contentToZip, boolean canUpdateSource);
 }
