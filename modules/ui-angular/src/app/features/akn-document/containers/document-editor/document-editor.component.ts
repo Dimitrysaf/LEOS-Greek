@@ -586,7 +586,7 @@ export class DocumentEditorComponent
           this.tocService.resetOriginalToc(res);
         },
         error: (err) => {
-          console.log("error while saving toc: " + err);
+          console.log("Error while saving toc: " + err);
           this.tocService.displayOriginalToc();
         },
       });
