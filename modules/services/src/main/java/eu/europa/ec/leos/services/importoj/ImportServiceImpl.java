@@ -88,7 +88,12 @@ public class ImportServiceImpl implements ImportService {
             }
             // Get id of the last element in the document
             String xPath = xPathCatalog.getXPathLastElement(element.getElementTagName());
-            String elementId = xmlContentProcessor.getElementIdByPath(documentContent, xPath);
+            String elementId = null;
+            try {
+                elementId = xmlContentProcessor.getElementIdByPath(documentContent, xPath);
+            } catch (IllegalArgumentException exception) {
+                LOG.info("Element with xpath {} not found in document with id {}",xPath, bill.getId());
+            }
             String elementType = element.getElementTagName();
 
             // Do pre-processing on the selected elements
