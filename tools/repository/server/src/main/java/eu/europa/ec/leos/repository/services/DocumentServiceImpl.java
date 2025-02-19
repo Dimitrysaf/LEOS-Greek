@@ -143,7 +143,8 @@ public class DocumentServiceImpl implements DocumentService {
             doc.setAuditLastMBy(userName);
             doc.setAuditLastMDate(LocalDateTime.now());
             doc.setPackageId(pkg);
-            doc.setDocStage(metadata.get(PropertiesMetadata.DOC_STAGE.getLeosName()) == null ? "-" :
+            // TODO: Remove this line for docStage after the completion of ticket https://code.europa.eu/leos/core/-/issues/2359
+            doc.setDocStage(metadata.get(PropertiesMetadata.DOC_STAGE.getLeosName()) == null ? " " :
                     (String) metadata.get(PropertiesMetadata.DOC_STAGE.getLeosName()));
             doc.setDocTemplate(metadata.get(PropertiesMetadata.DOC_TEMPLATE.getLeosName()) == null ? "-" :
                     (String) metadata.get(PropertiesMetadata.DOC_TEMPLATE.getLeosName()));

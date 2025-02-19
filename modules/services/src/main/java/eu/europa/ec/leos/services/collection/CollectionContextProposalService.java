@@ -40,6 +40,7 @@ import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
@@ -55,6 +56,7 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 
 @Service
+@Scope("prototype")
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})
 public class CollectionContextProposalService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextProposalService.class);

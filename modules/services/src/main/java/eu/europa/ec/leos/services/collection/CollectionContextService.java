@@ -47,6 +47,7 @@ import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 
 import javax.inject.Provider;
 import java.io.IOException;
@@ -60,7 +61,6 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.COUNCIL_EXPLANATO
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
-
 public abstract class CollectionContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextService.class);
@@ -673,7 +673,9 @@ public abstract class CollectionContextService {
         boolean skipItr = false;
         for (CatalogItem item : catalogItems) {
             tp = getTemplateProperties(tp, item.getItems(), templateId, isGetChildren);
-            if (tp.containsKey(TEMPLATE) && item.isEnabled() && (item.isMandatory() != null && item.isMandatory())) {
+            if (tp.containsKey(TEMPLATE) && tp.containsKey(PROCEDURE_TYPE) && !isGetChildren) {
+                skipItr = true;
+            } else if (tp.containsKey(TEMPLATE) && item.isEnabled() && (item.isMandatory() != null && item.isMandatory())) {
                 // This method adds in object tp
                 fillTemplate(tp, item, DOCUMENT_MANDATORY_TEMPLATES);
             } else if (tp.containsKey(TEMPLATE) && item.isEnabled() && (item.isDefaultDocument() != null && item.isDefaultDocument())) {
