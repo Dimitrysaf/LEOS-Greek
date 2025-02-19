@@ -125,6 +125,31 @@ public class ZipUtil {
         return unzippedFiles;
     }
 
+    public static Map<String, File> unzipByteArrayToFile(byte[] zippedData) throws IOException {
+        Map<String, File> unzippedFiles = new HashMap<>();
+        File dir = new File("packages");
+        if (!dir.exists()) dir.mkdirs();
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zippedData))) {
+            ZipEntry ze;
+            while ((ze = zis.getNextEntry()) != null) {
+                if (ze.isDirectory()) {
+                    continue;
+                }
+                File outputFile = new File(dir.getName(), ze.getName());
+                outputFile.getParentFile().mkdirs();
+                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+                unzippedFiles.put(ze.getName(), outputFile);
+            }
+        }
+        return unzippedFiles;
+    }
+
     public static Map<String, Object> unzipFiles(File file, String unzipPath) {
         Map<String, Object> unzippedFiles = new HashMap<>();
         final File destDir = new File(System.getProperty("java.io.tmpdir") + unzipPath +
@@ -219,9 +244,6 @@ public class ZipUtil {
         return false;
     }
     
-    /**
-     * @see https://snyk.io/research/zip-slip-vulnerability
-     */
     private static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
         File destFile = new File(destinationDir, zipEntry.getName());
         String destDirPath = destinationDir.getCanonicalPath();

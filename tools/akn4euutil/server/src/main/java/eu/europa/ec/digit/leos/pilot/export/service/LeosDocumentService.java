@@ -25,7 +25,7 @@ public interface LeosDocumentService {
 
     byte[] getRenditions(LeosConvertDocumentInput convertDocumentInput);
 
-    LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, String outputDescriptor);
+    LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput);
 
     byte[] applyMetadata(MultipartFile inputFile);
 

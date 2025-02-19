@@ -14,7 +14,13 @@
 package eu.europa.ec.digit.leos.pilot.export.service;
 
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportOptions;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportResource;
+
+import java.io.ByteArrayOutputStream;
 
 public interface XmlDocumentService {
+
     byte[] xmlToHtmlPackage(LeosConvertDocumentInput convertDocumentInput);
+    ByteArrayOutputStream createContentFile(ExportOptions exportOptions, ExportResource exportRootNode) throws Exception;
 }

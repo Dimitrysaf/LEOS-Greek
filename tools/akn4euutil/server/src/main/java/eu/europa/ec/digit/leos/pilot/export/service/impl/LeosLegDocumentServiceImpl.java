@@ -19,8 +19,13 @@ import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.ConvertDocumentService;
+import eu.europa.ec.digit.leos.pilot.export.service.LegPackage;
+import eu.europa.ec.digit.leos.pilot.export.service.LegService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
+import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportLW;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportOptions;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import lombok.Data;
@@ -32,6 +37,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,7 +48,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.DOC_EXT;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_EXT;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_JS_PATH;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_RENDITION_PATH;
@@ -49,9 +55,12 @@ import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_RENDITI
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_RENDITION_WORD_PATH;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_TOC;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.JS_EXT;
+import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.LEGISWRITE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.PDF_EXT;
+import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.PDF_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.PROPOSAL_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.XML_EXT;
+import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.ZIP_EXT;
 
 @Service
 public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
@@ -61,16 +70,21 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
     public static final String DOCUMENT_REF = "documentRef";
     public static final String HREF = "href";
     public static final String DASH = "-";
+    protected final static String ZIP_PACKAGE_NAME = "AkomaNtoso2LegisWrite";
 
     private final ConvertDocumentService convertDocumentService;
+    private final LegService legService;
+    private final XmlDocumentService xmlDocumentService;
 
     @Autowired
-    public LeosLegDocumentServiceImpl(ConvertDocumentService convertDocumentService) {
+    public LeosLegDocumentServiceImpl(ConvertDocumentService convertDocumentService, LegService legService, XmlDocumentService xmlDocumentService) {
         this.convertDocumentService = convertDocumentService;
+        this.legService = legService;
+        this.xmlDocumentService = xmlDocumentService;
     }
 
     public LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput,
-                                                            List<LeosRenditionOutput> renditionOutputs, String outputDescriptor) {
+                                                            List<LeosRenditionOutput> renditionOutputs) {
         try {
             Map<String, Object> contentToZip = ZipUtil.unzipByteArray(convertDocumentInput.getInputFile().getBytes());
             Map<String, Object> translationMap = ZipUtil.unzipByteArray(convertDocumentInput.getTranslationsFile().getBytes());
@@ -114,27 +128,46 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
                 contentToZip.put(output.getHtmlTocJSFilename(), output.getHtmlTocJS());
             });
 
-            if (outputDescriptor != null && !outputDescriptor.isEmpty()) {
-                byte[] convertedDocument = this.convertDocumentService.convertDocument(ZipUtil.zipByteArray(contentToZip),
-                        outputFilename, outputDescriptor);
-                Map<String, Object> convertedDocumentMap = ZipUtil.unzipByteArray(convertedDocument);
-                convertedDocumentMap.keySet().stream().filter(entryKey -> entryKey.endsWith(".zip")).findFirst()
-                        .ifPresent(entryKey -> {
+            ExportLW exportOptionsPDF = new ExportLW(ExportOptions.Output.PDF);
+            ExportLW exportOptionsWord = new ExportLW(ExportOptions.Output.WORD);
+            LegPackage legPackage = legService.createLegPackage(contentToZip, exportOptionsWord);
+            File pdfPackage = createZipFile(legPackage, "job1.zip", exportOptionsPDF);
+            File legisWritePackage = createZipFile(legPackage, "job2.zip", exportOptionsWord);
+
+            Map<String, File> packages = new HashMap<>();
+            packages.put(exportOptionsPDF.getFilePrefix() + ZIP_PACKAGE_NAME, pdfPackage);
+            packages.put(exportOptionsWord.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
+
+            byte[] convertedDocument = this.convertDocumentService.convertDocument(ZipUtil.zipByteArray(new HashMap<>(packages)),
+                    outputFilename);
+            Map<String, Object> convertedDocumentMap = ZipUtil.unzipByteArray(convertedDocument);
+            convertedDocumentMap.keySet().stream().forEach(entryKey -> {
+                try {
+                    Map<String, Object> documentMap = ZipUtil.unzipByteArray((byte[]) convertedDocumentMap.get(entryKey));
+                    documentMap.keySet().stream().forEach(documentKey -> {
+                        if (documentKey.endsWith(ZIP_EXT)) {
                             try {
-                                Map<String, Object> documentMap = ZipUtil.unzipByteArray((byte[]) convertedDocumentMap.get(entryKey));
-                                documentMap.keySet().stream().forEach(documentKey -> {
-                                    if (documentKey.endsWith(PDF_EXT)) {
-                                        contentToZip.put(HTML_RENDITION_PDF_PATH + renditions.getOutputPdfFileName(), documentMap.get(documentKey));
-                                    } else if (documentKey.endsWith(DOC_EXT)) {
-                                        contentToZip.put(HTML_RENDITION_WORD_PATH + renditions.getOutputWordFileName().concat(DOC_EXT), documentMap.get(documentKey));
-                                    }
-                                });
+                                Map<String, Object> renditionMap = ZipUtil.unzipByteArray((byte[]) documentMap.get(documentKey));
+                                if (documentKey.startsWith(LEGISWRITE_PREFIX)) {
+                                    renditionMap.keySet().stream().forEach(renditionKey ->
+                                            contentToZip.put(HTML_RENDITION_WORD_PATH + renditionKey,
+                                                    renditionMap.get(renditionKey)));
+                                } else if (documentKey.startsWith(PDF_PREFIX)) {
+                                    renditionMap.keySet().stream().forEach(renditionKey ->
+                                            contentToZip.put(HTML_RENDITION_PDF_PATH + renditionKey,
+                                                    renditionMap.get(renditionKey)));
+                                }
                             } catch (IOException e) {
                                 LOG.info(ISSUE_CONVERTING_DOCUMENT, e);
                                 throw new LegDocumentException(ISSUE_CONVERTING_DOCUMENT, e);
                             }
-                        });
-            }
+                        }
+                    });
+                } catch (IOException e) {
+                    LOG.info(ISSUE_CONVERTING_DOCUMENT, e);
+                    throw new LegDocumentException(ISSUE_CONVERTING_DOCUMENT, e);
+                }
+            });
             return new LeosConvertDocumentOutput(outputFilename, ZipUtil.zipByteArray(contentToZip));
         } catch (IOException e) {
             LOG.info(ISSUE_CONVERTING_DOCUMENT, e);
@@ -142,6 +175,17 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
         } catch (Exception e) {
             LOG.info(ISSUE_CONVERTING_DOCUMENT, e);
             throw new LegDocumentException(ISSUE_CONVERTING_DOCUMENT, e);
+        }
+    }
+
+    protected File createZipFile(LegPackage legPackage, String jobFileName, ExportOptions exportOptions) throws Exception {
+        try (ByteArrayOutputStream contentFileContent = xmlDocumentService.createContentFile(exportOptions,
+                legPackage.getExportResource())) {
+            Map<String, Object> contentToZip = new HashMap<>();
+            contentToZip.put("content.xml", contentFileContent);
+            String propActFileName = legPackage.getExportResource().getName() + ".leg";
+            contentToZip.put(propActFileName, legPackage.getFile());
+            return ZipUtil.zipFiles(jobFileName, contentToZip);
         }
     }
 

@@ -11,14 +11,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.digit.leos.pilot.export.service;
+package eu.europa.ec.digit.leos.pilot.export.service.processor.content;
 
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
+import java.util.Map;
 
-import java.util.List;
+public interface AttachmentProcessor {
 
-public interface LeosLegDocumentService {
-    LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, List<LeosRenditionOutput> renditionOutputs);
+    Map<String, String> getAttachmentsIdFromBill(byte[] xmlContent) throws Exception;
 }

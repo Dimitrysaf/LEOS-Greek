@@ -69,9 +69,9 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return xmlDocumentService.xmlToHtmlPackage(convertDocumentInput);
     }
 
-    public LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, String outputDescriptor) {
+    public LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput) {
         List<LeosRenditionOutput> renditionOutputs = getRenditionOutputs(convertDocumentInput);
-        return leosLegDocumentService.updateWithTranslations(convertDocumentInput, renditionOutputs, outputDescriptor);
+        return leosLegDocumentService.updateWithTranslations(convertDocumentInput, renditionOutputs);
     }
 
     private List<LeosRenditionOutput> getRenditionOutputs(LeosConvertDocumentInput convertDocumentInput) {
