@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.importoj;
 
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
 
@@ -22,6 +23,6 @@ public interface ImportService {
     
     String getAknDocument(String type, int year, int number);
     
-    byte[] insertSelectedElements(Bill bill, byte[] importedContent, List<String> elementIds);
+    byte[] insertSelectedElements(Bill bill, byte[] importedContent, List<String> elementIds, List<TableOfContentItemVO> tocList);
     
 }

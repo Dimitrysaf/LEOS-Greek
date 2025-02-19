@@ -59,7 +59,7 @@ export class ImportFromJournalComponent
   }>;
   importManager: ImportManager;
   docLoaded = false;
-  allArticlesSelected = false;
+  allEnactingItemsSelected = false;
   allRecitalsSelected = false;
   searching = false;
   importing = false;
@@ -96,7 +96,7 @@ export class ImportFromJournalComponent
       this.importManager.count$
         .pipe(filter((count) => count === 0))
         .subscribe(() => {
-          this.allArticlesSelected = false;
+          this.allEnactingItemsSelected = false;
           this.allRecitalsSelected = false;
         });
     }
@@ -150,9 +150,9 @@ export class ImportFromJournalComponent
     }
   }
 
-  toggleSelectAllArticles(select = !this.allArticlesSelected) {
-    this.allArticlesSelected = select;
-    this.importManager?.selectAllElements(select, 'article');
+  toggleSelectAllEnactingItems(select = !this.allEnactingItemsSelected) {
+    this.allEnactingItemsSelected = select;
+    this.importManager?.selectAllEnactingItems(select);
   }
 
   toggleSelectAllRecitals(select = !this.allRecitalsSelected) {

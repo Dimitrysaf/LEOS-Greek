@@ -46,6 +46,10 @@ export class ImportManager {
     });
   }
 
+  selectAllEnactingItems(value: boolean) {
+    this.connector.selectAllEnactingItems(value);
+  }
+
   selectAllElements(value: boolean, elementName: ElementName) {
     this.connector.selectAllElements(value, elementName);
   }

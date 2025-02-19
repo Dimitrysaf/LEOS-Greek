@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.OptionsType;
@@ -126,6 +127,14 @@ public class NumberServiceProposal implements NumberService {
             return new String(renumberedContent);
         }
         return xmlContentAsString;
+    }
+
+    @Override
+    public String renumberImportedHigherSubDivision(String xmlContentAsString, String language, String elementName) {
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
+        byte[] initialContent = xmlContentAsString.getBytes(UTF_8);
+        byte[] renumberedContent = renumberHigherSubDivisions(initialContent, language, elementName, tocItems);
+        return XmlHelper.addLeosNamespace(new String(renumberedContent));
     }
 
     private byte[] renumberDocument(byte[] xmlContent, String elementName, boolean namespaceEnabled, boolean renumberChildren) {

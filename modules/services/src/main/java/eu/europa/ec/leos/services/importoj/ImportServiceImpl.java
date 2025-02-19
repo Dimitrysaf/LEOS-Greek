@@ -23,20 +23,32 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Node;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFragment;
+import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
+import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
+import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
+import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
+import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 
 @Service
 public class ImportServiceImpl implements ImportService {
@@ -76,12 +88,17 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    public byte[] insertSelectedElements(Bill bill, byte[] importedContent, List<String> elementIds) {
+    public byte[] insertSelectedElements(Bill bill, byte[] importedContent, List<String> elementIds, List<TableOfContentItemVO> tocList) {
         LOG.info("Importing {} elements...", elementIds.size());
-        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
+        String language = bill.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         byte[] documentContent = getContent(bill);
         long startTime = System.currentTimeMillis();
+        List<String> importedElementIds = new ArrayList<>();
         for (String id : elementIds) {
+            if(importedElementIds.contains(id)) {
+                continue;
+            }
             Element element = xmlContentProcessor.getElementById(importedContent, id);
             if (element == null) {
                 throw new IllegalStateException("One of the IDs passed from FE is not present in the document. ID: " + id);
@@ -96,10 +113,16 @@ public class ImportServiceImpl implements ImportService {
             }
             String elementType = element.getElementTagName();
 
+            Node elementNode = createNodeFromXmlFragment(element.getElementFragment().getBytes());
+            removeUnselectedChildNodes(elementNode, elementIds);
+            importedElementIds.addAll(getElementIds(elementNode));
+            String elementFragment = nodeToString(elementNode);
+
             // Do pre-processing on the selected elements
-            String elementFragment = replaceNotAllowedElements(element.getElementFragment());
-            String updatedElement = xmlContentProcessor.doImportedElementPreProcessing(elementFragment, elementType);
-            if (elementType.equalsIgnoreCase(ARTICLE)) {
+            String updatedElement = xmlContentProcessor.doImportedElementPreProcessing(replaceNotAllowedElements(elementFragment), elementType);
+            if (Arrays.asList(PART, TITLE, CHAPTER, SECTION).contains(elementType.toLowerCase())) {
+                updatedElement = this.numberService.renumberImportedHigherSubDivision(updatedElement, language, elementType);
+            } else if (elementType.equalsIgnoreCase(ARTICLE)) {
                 updatedElement = this.numberService.renumberImportedArticle(updatedElement);
             } else if (elementType.equalsIgnoreCase(RECITAL)) {
                 updatedElement = this.numberService.renumberImportedRecital(updatedElement);
@@ -111,6 +134,8 @@ public class ImportServiceImpl implements ImportService {
                 documentContent = xmlContentProcessor.insertElementByTagNameAndId(documentContent, updatedElement,
                         element.getElementTagName(), elementId, checkIfLastArticleIsEntryIntoForce(documentContent, element, elementId,
                                 documentLanguageContext.getDocumentLanguage()), bill.isTrackChangesEnabled());
+            } else if (Arrays.asList(PART, TITLE, CHAPTER, SECTION).contains(elementType.toLowerCase())) {
+                documentContent = xmlContentProcessor.appendElementToTag(documentContent, BODY, updatedElement, true);
             } else if (elementType.equalsIgnoreCase(ARTICLE)) {
                 documentContent = xmlContentProcessor.appendElementToTag(documentContent, BODY, updatedElement, true);
             } else if (elementType.equalsIgnoreCase(RECITAL)) {
@@ -124,6 +149,7 @@ public class ImportServiceImpl implements ImportService {
         // Renumber
         documentContent = this.numberService.renumberRecitals(documentContent);
         documentContent = this.numberService.renumberArticles(documentContent);
+        documentContent = this.numberService.renumberHigherSubDivisions(documentContent, tocList);
         endTime = System.currentTimeMillis();
         long numberingTime = endTime - startTime;
         startTime = System.currentTimeMillis();
@@ -134,6 +160,32 @@ public class ImportServiceImpl implements ImportService {
 
         LOG.info("{} elements imported. insertTime {} ms ({} secs), numberingTime {} ms, postProcessingTime {} ms", elementIds.size(), insertTime, insertTime/1000, numberingTime, postProcessingTime);
         return documentContent;
+    }
+
+    private void removeUnselectedChildNodes(Node elementNode, List<String> selectedElementIds) {
+        for(int i = 0; i < elementNode.getChildNodes().getLength(); i++) {
+            Node childNode = elementNode.getChildNodes().item(i);
+            if(Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITAL).contains(childNode.getNodeName().toLowerCase())) {
+                if (!selectedElementIds.contains(getAttributeValue(childNode, XMLID))) {
+                    elementNode.removeChild(childNode);
+                    i--;
+                } else {
+                    removeUnselectedChildNodes(childNode, selectedElementIds);
+                }
+            }
+        }
+    }
+
+    private List<String> getElementIds(Node element) {
+        List<String> elementIds = new ArrayList<>();
+        elementIds.add(getAttributeValue(element, XMLID));
+        for(int i = 0; i < element.getChildNodes().getLength(); i++) {
+            Node child = element.getChildNodes().item(i);
+            if(Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITAL).contains(child.getNodeName().toLowerCase())) {
+                elementIds.addAll(getElementIds(child));
+            }
+        }
+        return elementIds;
     }
 
     private static String replaceNotAllowedElements(String elementFragment) {

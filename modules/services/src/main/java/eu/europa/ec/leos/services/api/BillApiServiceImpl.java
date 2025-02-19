@@ -489,9 +489,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
             Bill bill = billService.findBillByRef(documentRef);
             this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
             BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required");
-            byte[] newXmlContent = importService.insertSelectedElements(bill,
-                    aknDocument.getBytes(StandardCharsets.UTF_8), elementIds
-            );
+            byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds, this.getToc(documentRef, TocMode.NOT_SIMPLIFIED));
             String notificationMsg =
                     "document.import.element.inserted" + (elementIds.stream().anyMatch(s -> s.startsWith("rec_"))
                             ? ".recitals" : "") +

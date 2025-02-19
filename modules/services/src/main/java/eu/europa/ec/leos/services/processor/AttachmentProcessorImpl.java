@@ -17,6 +17,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.jena.sparql.util.RomanNumeral;
 import org.slf4j.Logger;
@@ -128,7 +129,11 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
 
         for (String elementRef : attachmentsElements.keySet()) {
             try {
-                String elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef));
+                String xPath = xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef);
+                String elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPath);
+                if (StringUtils.isBlank(elementId)) {
+                    throw new AssertionError("Didn't found a node in xpath: " + xPath + ", namespace: true");
+                }
                 String updatedElement = createDocumentRefTag(elementId, elementRef, attachmentsElements.get(elementRef));
                 xmlContent = xmlContentProcessor.replaceElementById(xmlContent, updatedElement, elementId);
             } catch (Exception e) {

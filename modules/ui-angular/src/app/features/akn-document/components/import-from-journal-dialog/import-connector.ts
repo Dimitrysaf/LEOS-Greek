@@ -15,6 +15,7 @@ export class ImportConnector extends AbstractJavaScriptComponent<ImportConnector
   /* set in `modules/js/src/main/js/ui/extension/importElementExtension.js` */
   requestSelectedElements?: () => void;
   selectAllElements?: (value: boolean, elementName: ElementName) => void;
+  selectAllEnactingItems?: (value: boolean) => void;
 
   constructor(private options: ImportConnectorOptions) {
     super({ ...leosJavaScriptExtensionState }, null);

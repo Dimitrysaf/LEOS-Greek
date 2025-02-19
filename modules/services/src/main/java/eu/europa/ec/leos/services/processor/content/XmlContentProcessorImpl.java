@@ -1827,13 +1827,24 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent.getBytes(StandardCharsets.UTF_8));
         Node node = document.getFirstChild();
         node = setAttributeForDefinitionArticle(node);
-        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + XercesUtils.getId(node).replaceAll("_", "");
-        String newIdAttrValue = IdGenerator.generateId(idPrefix);
-        addAttribute(node, XMLID, newIdAttrValue);
+        generateId(node);
         String updatedElement = nodeToString(node);
         updatedElement = removeSelfClosingElements(updatedElement);
         return updatedElement;
     }
+
+    private void generateId(Node node) {
+        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + XercesUtils.getId(node).replaceAll("_", "");
+        String newIdAttrValue = IdGenerator.generateId(idPrefix);
+        addAttribute(node, XMLID, newIdAttrValue);
+        for(int i = 0; i < node.getChildNodes().getLength(); i++) {
+            Node child = node.getChildNodes().item(i);
+            if(Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITAL).contains(child.getNodeName().toLowerCase())) {
+                generateId(child);
+            }
+        }
+    }
+
 
     private Node setAttributeForDefinitionArticle(Node node) {
         if (is(node, ARTICLE)) {
@@ -1890,7 +1901,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getFirstElementByXPath(document, xPath);
         if (node == null) {
-            throw new IllegalArgumentException("Didn't found a node in xpath: " + xPath + ", namespace: true");
+            return null;
         }
         return XercesUtils.getAttributeValue(node, XMLID);
     }

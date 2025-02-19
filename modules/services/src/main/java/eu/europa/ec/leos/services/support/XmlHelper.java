@@ -581,8 +581,7 @@ public class XmlHelper {
     }
 
     public static String addLeosNamespace(String str) {
-        return str.replaceFirst(">", " xmlns:leos=\"urn:eu:europa:ec:leos\">")
-                .replaceFirst(">", " xmlns=\"http://docs\\.oasis-open\\.org/legaldocml/ns/akn/3\\.0\">");
+        return str.replaceFirst(">", " xmlns:leos=\"urn:eu:europa:ec:leos\">");
     }
 
     public static String addDummyNamespace(String str) {
