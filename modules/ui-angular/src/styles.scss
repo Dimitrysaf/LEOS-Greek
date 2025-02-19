@@ -72,6 +72,10 @@ eui-icon-svg > svg > use {
   font-style: normal;
 }
 
+.eui-dropdown-item__content-text > .eui-label {
+  overflow: unset !important;
+}
+
 .eui-page-column--no-scrollbars > .eui-page-column__body {
   overflow: unset;
   padding: 0;
