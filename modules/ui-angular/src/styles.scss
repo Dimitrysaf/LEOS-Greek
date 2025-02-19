@@ -68,6 +68,10 @@ eui-icon-svg > svg > use {
   white-space: normal !important;
 }
 
+.eui-dropdown-item__content {
+  overflow: unset !important;
+}
+
 .eui-dropdown-item__content-text {
   font-style: normal;
 }
