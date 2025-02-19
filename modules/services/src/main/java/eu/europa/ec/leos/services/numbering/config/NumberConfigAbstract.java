@@ -121,6 +121,12 @@ public abstract class NumberConfigAbstract implements NumberConfig {
         return isComplex;
     }
 
+    @Override
+    public boolean isSoleNumbering() { return false; }
+
+    @Override
+    public String getSoleNumberLabel() { return null; }
+
     public String getPrefix() {
         return prefix;
     }

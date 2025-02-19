@@ -36,6 +36,7 @@
             <xs:element name="display" type="xs:boolean" default="false"/>
             <xs:element name="itemNumber" type="optionsType" default="none"/>
             <xs:element name="autoNumbering" type="autoNumbering" minOccurs="0"/>
+            <xs:element name="soleNumbering" type="autoNumbering" minOccurs="0"/>
             <xs:element name="itemHeading" type="optionsType" default="none"/>
             <xs:element name="itemDescription" type="xs:boolean" default="false"/>
             <xs:element name="numberEditable" type="xs:boolean" default="false"/>
@@ -75,6 +76,13 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="soleNumbering">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="langNumConfig" type="langNumConfig"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
     <xs:complexType name="langNumConfig">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">
             <xs:element name="numberingType" type="numberingType"/>
@@ -106,7 +114,8 @@
             <xs:documentation>Number configuration. Example: 1), 1., (a), etc</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="type" type="numberingType" default="NONE"/>
+            <xs:element name="type" type="numberingType" default="NONE"  minOccurs="0"/>
+            <xs:element name="label" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="numbered" type="xs:boolean" default="false"/>
             <xs:element name="prefix" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="suffix" type="xs:string" default="" minOccurs="0"/>
@@ -115,7 +124,6 @@
             <xs:element name="regex" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="regexJS" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="msgValidationError" type="xs:string" default="" minOccurs="0"/>
-
             <!-- ATTENTION: Make sure that all configNumbers indicated in the list levels are present in the plugin listItemNumberModule.js -->
             <xs:element name="levels" type="levels" minOccurs="0"/>
             <xs:element name="level" type="xs:string" default="" minOccurs="0"/>
@@ -206,6 +214,12 @@
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="NONE"/>
+            <xs:enumeration value="SOLE_ARTICLE"/>
+            <xs:enumeration value="SOLE_ARTICLE_CYRILLIC"/>
+            <xs:enumeration value="SOLE_ARTICLE_GREEK"/>
+            <xs:enumeration value="SOLE_RECITAL"/>
+            <xs:enumeration value="SOLE_RECITAL_CYRILLIC"/>
+            <xs:enumeration value="SOLE_RECITAL_GREEK"/>
             <xs:enumeration value="ARABIC"/>
             <xs:enumeration value="ARABIC_POSTFIXDOT"/>
             <xs:enumeration value="ARABIC_PARENTHESIS"/>

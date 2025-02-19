@@ -46,6 +46,10 @@ class legalActPage {
         return this.getArticle(articleNumber).find('num');
     }
 
+    getAllWidgetOfArticle(articleNumber) {
+       return this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('span'));
+    }
+
     getChapter(chapterNumber) {
         return cy.get('chapter').eq(chapterNumber-1);
     }
@@ -56,6 +60,10 @@ class legalActPage {
 
     mouseHoverAndClickOnArticle(articleNumber) {
         this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).realClick({ position: "topLeft" }));
+    }
+
+    mouseHoverOnArticle(articleNumber) {
+        this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }));
     }
 
     mouseHoverAndClickOnCitation(citationNumber) {

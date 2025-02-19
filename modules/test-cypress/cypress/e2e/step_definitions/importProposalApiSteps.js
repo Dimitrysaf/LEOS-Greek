@@ -16,7 +16,6 @@ Given('Send a POST request to import act', () => {
         .then((fileContent) => {
             const formData = new FormData();
             formData.append('legFile', fileContent, '/legFiles/PROP_ACT-clxkd3t4k000uok58ltymp0m5-es.leg');
-
             cy.request({
                 method: 'POST',
                 url: url,
@@ -29,6 +28,7 @@ Given('Send a POST request to import act', () => {
             }).as('apiResponse');
         });
 });
+
 Then('the response status code should be 200 or match failure conditions', () => {
     cy.get('@apiResponse').then((response) => {
         const decode = new TextDecoder('utf-8');
@@ -52,3 +52,54 @@ Then('the response status code should be 200 or match failure conditions', () =>
     });
 });
 
+Given('user {string} calls import document api with xml file {string} and language {string} and navigate to edit drafting using leos light url', function (user, xmlFile, lang) {
+    let bearerToken, url, contextToken, documentUrl;
+    bearerToken = Cypress.env('bearerTokenLocalUser1');
+    url = Cypress.env('localContextTokenApiUrl');
+    cy.request({
+        method: 'GET',
+        url: url,
+        qs: {
+            clientId: 'dgtClientId',
+            user: Cypress.env('local' + user),
+            role: 'OWNER',
+            systemName: 'DGT_EDIT'
+        }
+    }).then((response) => {
+        expect(response.status).to.eq(200);
+        contextToken = response.body;
+    });
+    url = Cypress.env('localImportDocumentApiUrl');
+    cy.fixture("/xmlFiles/"+xmlFile, 'binary')
+        .then(Cypress.Blob.binaryStringToBlob)
+        .then((fileContent) => {
+            const formData = new FormData();
+            formData.append('inputFile', fileContent, "/xmlFiles/"+xmlFile);
+            formData.append('language', lang);
+            formData.append('callbackAddress', '');
+            cy.request({
+                method: 'POST',
+                url: url,
+                headers: {
+                    'Authorization': 'Bearer ' + bearerToken,
+                    'Content-Type': 'multipart/form-data'
+                },
+                body: formData,
+                failOnStatusCode: false
+            }).as('importDocumentApiResponse');
+        });
+    cy.get('@importDocumentApiResponse').then((response) => {
+        const decode = new TextDecoder('utf-8');
+        const responseBody = decode.decode(response.body);
+        expect(response.status).to.eq(200);
+        //expect(responseBody).to.include('New document created');
+        expect(responseBody).to.include('documentUrl');
+        const jsonResponse = JSON.parse(responseBody);
+        documentUrl = jsonResponse.documentUrl;
+        documentUrl = documentUrl.replace("http://","");
+        cy.log(contextToken);
+        cy.log(documentUrl);
+        cy.visit("http" + "://" + Cypress.env('local' + user) + ":" + Cypress.env('localPassword') + "@" + documentUrl + "?clientContext=" + contextToken);
+        cy.wait(5000);
+    });
+});

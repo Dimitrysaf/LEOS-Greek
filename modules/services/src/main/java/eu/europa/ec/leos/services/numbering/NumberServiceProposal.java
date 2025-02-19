@@ -140,8 +140,13 @@ public class NumberServiceProposal implements NumberService {
     }
 
     @Override
-    public String renumberImportedRecital(String xmlContent) {
-        return xmlContent;
+    public String renumberImportedRecital(String xmlContentAsString) {
+        byte[] initialContent = xmlContentAsString.getBytes(UTF_8);
+        byte[] renumberedContent = renumberDocument(initialContent, RECITAL, false, true);
+        if (!Arrays.equals(initialContent, renumberedContent)) {
+            return new String(renumberedContent);
+        }
+        return xmlContentAsString;
     }
 
     @Override

@@ -1,4 +1,4 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {
   BehaviorSubject,
@@ -282,6 +282,7 @@ export class TableOfContentService {
 
   private getTocValidation(documentRef: string, documentType: string, toc: TableOfContentItemVO[]) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     this.prepareTocForSave(toc);
     return this.http.post<NodeValidationResponse>(
       `${apiBaseUrl}/secured/toc/validate-toc`,
@@ -290,6 +291,7 @@ export class TableOfContentService {
         documentRef,
         tableOfContentItemVOs: toc
       },
+      { headers }
     );
   }
 }

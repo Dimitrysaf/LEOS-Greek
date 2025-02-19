@@ -105,7 +105,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     @Override
     public NodeValidationResponse nodeValidationDrop(NodeDropValidationRequest request) {
-        Result output = getDocContentAndSetContext(request.getDocumentRef(), request.getDocumentType());
+        Result output = getDocContentAndSetContext(request.getDocumentRef(), LeosCategory.caseInsensitiveValueOf(request.getDocumentType()));
         TocDropResult result = new TocDropResult(true, false, new ArrayList<>());
         if(output != null) {
             documentLanguageContext.setDocumentLanguage(output.language);
@@ -160,7 +160,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     public NodeValidationResponse validateToc(TocValidationRequest request) {
-        Result output = getDocContentAndSetContext(request.getDocumentRef(), request.getDocumentType());
+        Result output = getDocContentAndSetContext(request.getDocumentRef(), LeosCategory.caseInsensitiveValueOf(request.getDocumentType()));
         TocDropResult result = new TocDropResult(true, false, new ArrayList<>());
         if (output != null) {
             documentLanguageContext.setDocumentLanguage(output.language);
@@ -568,7 +568,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (nodeId != null) {
             Node node = getElementById(document, nodeId);
             if (node != null) {
-                tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language);
+                tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, null);
             } else {
                 TocItem draggedTocItem = StructureConfigUtils.getTocItemByName(tocItems, nodeName);
                 tableOfContentItemVO = new TableOfContentItemVO(draggedTocItem, nodeId, null, null, null, null, null, null, null, null);

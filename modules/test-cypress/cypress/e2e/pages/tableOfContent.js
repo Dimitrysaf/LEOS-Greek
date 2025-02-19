@@ -133,6 +133,10 @@ class tableOfContent {
         return this.getCloseLiOfNodeLabel(label).prev('.drop-placeholder');
     }
 
+    getNextPlaceHolderOfNodeLabel(label){
+        return this.getCloseLiOfNodeLabel(label).next('.drop-placeholder');
+    }
+
     clickRevertToThisVersion() {
         this.elements.revertToThisVersionBtn().click();
     }

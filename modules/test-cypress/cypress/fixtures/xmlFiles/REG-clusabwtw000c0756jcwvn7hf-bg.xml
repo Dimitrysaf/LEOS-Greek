@@ -1,0 +1,700 @@
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+	<bill name="REG">
+		<meta>
+			<identification source="~_COM">
+				<FRBRWork>
+					<FRBRthis value=""/>
+					<FRBRuri value=""/>
+					<FRBRdate date="2999-01-01" name=""/>
+					<FRBRauthor href=""/>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="clzgslf17000b4756tumxjays"/>
+                        <akn4eu:docCUID value="clzgslejk00094756vbfzhk59"/>
+						<akn4eu:docTranslationVersion value="1.0"/>
+                    </preservation>
+					<FRBRcountry value="EU"/>
+					<FRBRprescriptive value="true"/>
+				</FRBRWork>
+				<FRBRExpression>
+					<FRBRthis value=""/>
+					<FRBRuri value=""/>
+					<FRBRdate date="2999-01-01" name=""/>
+					<FRBRauthor href=""/>
+					<FRBRlanguage language="bg"/>
+					<FRBRtranslation href="REG-clzgslf17000b4756tumxjays-en.xml" fromLanguage="en" by="~_DGT"/>
+				</FRBRExpression>
+				<FRBRManifestation>
+					<FRBRthis value=""/>
+					<FRBRuri value=""/>
+					<FRBRdate date="2999-01-01" name=""/>
+					<FRBRauthor href=""/>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+						<akn4eu:akn4euVersion value="4.1.0.0"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+					</preservation>
+				</FRBRManifestation>
+			</identification>
+			<references source="~_COM">
+				<TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+				<TLCOrganization xml:id="_DGT" href="http://publications.europa.eu/resource/authority/corporate-body/DGT" showAs="Directorate-General for Translation"/>
+				<TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="_CONSIL"/>
+				<TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="_EP"/>
+				<TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="_COM"/>
+				<TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="_PRESID"/>
+				<TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="_REG"/>
+				<TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="_legalBasis"/>
+				<TLCReference href="http://publications.europa.eu/resource/authority/language/BUL" name="language" showAs="bg" xml:id="_language"/>
+				<TLCReference href="http://eur-lex.europa.eu/procedure/BG/2022_379"
+					name="procedureReference" shortForm="2022/84/COD" showAs="2022/0379 (COD)"
+					xml:id="_procedure_2022_379"/>
+				
+				<TLCReference href="http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER" name="identifier" shortForm="AAA/YYYY/NNN" showAs="AAA(YYYY) NNN" xml:id="_azs3y"/>
+				<TLCConcept href="http://publications.europa.eu/resource/subdivision-content/ART_DEF" showAs="Article on definitions" xml:id="_ART_DEF"/>
+			</references>
+			<proprietary source="~_COM">
+				<leos:templateVersion>3.1.0</leos:templateVersion>
+				<leos:docVersion>0.1.0</leos:docVersion>
+				<leos:template>SJ-023</leos:template>
+				<leos:docTemplate>BL-023</leos:docTemplate>
+				<leos:docPurpose xml:id="_proprietary__docpurpose">относно пруденциалните изисквания за кредитните институции и инвестиционните посредници и за изменение на Регламент (ЕС) № 648/2012  </leos:docPurpose>
+				<leos:docStage xml:id="_proprietary__docstage">Предложение за</leos:docStage>
+				<leos:ref>REG-clusabwtw000c0756jcwvn7hf-bg</leos:ref>
+				<leos:docType xml:id="_proprietary__doctype">РЕГЛАМЕНТ НА ЕВРОПЕЙСКИЯ ПАРЛАМЕНТ И НА СЪВЕТА</leos:docType>
+				<leos:objectId>105698</leos:objectId>
+				<leos:eeaRelevance>(Текст от значение за ЕИП)</leos:eeaRelevance>
+			</proprietary>
+		</meta>
+		<preface xml:id="_preface">
+			<container name="procedureIdentifier" xml:id="_preface__procedureIdentifier">
+				<p xml:id="_preface__procedureIdentifier__p">
+					<docketNumber refersTo="~_procedure_2022_379" xml:id="_preface__procedureIdentifier__p__docketNumber">2022/0379(COD)</docketNumber>
+				</p>
+			</container>
+			<longTitle xml:id="_preface__longtitle">
+				<p xml:id="_preface__longtitle__p">
+					<docStage xml:id="_preface__longtitle__p__docstage">Предложение за</docStage>
+					<docType refersTo="~_REG" xml:id="_preface__longtitle__p__doctype">РЕГЛАМЕНТ НА ЕВРОПЕЙСКИЯ ПАРЛАМЕНТ И НА СЪВЕТА</docType>
+					<docPurpose xml:id="_preface__longtitle__p__docpurpose">относно пруденциалните изисквания за кредитните институции и инвестиционните посредници и за изменение на Регламент (ЕС) № 648/2012 </docPurpose>
+				</p>
+			</longTitle>
+		</preface>
+		<preamble xml:id="_preamble">
+			<formula name="actingEntity" xml:id="_preamble__formula_1">
+				<p xml:id="_preamble__formula_1__p">ЕВРОПЕЙСКИЯТ ПАРЛАМЕНТ И СЪВЕТЪТ НА ЕВРОПЕЙСКИЯ СЪЮЗ,</p>
+			</formula>
+			<citations leos:editable="false" xml:id="_cits">
+				<citation leos:editable="true" refersTo="~_legalBasis" xml:id="_cit_1">
+					<p xml:id="_cit_1__p">като взеха предвид Договора за функционирането на Европейския съюз, и по-специално член 114 от него,</p>
+				</citation>
+				<citation leos:editable="true" xml:id="_cit_2">
+					<p xml:id="_cit_2__p">като взеха предвид предложението на Европейската комисия,</p>
+				</citation>
+				<citation leos:editable="true" xml:id="_cit_3">
+					<p xml:id="_cit_3__p">след предаване на проекта на законодателния акт на националните парламенти,</p>
+				</citation>
+				<citation leos:editable="true" xml:id="_cit_4">
+					<p xml:id="_cit_4__p">като взеха предвид становището на Европейския икономически и социален комитет, <authorialNote marker="1" placement="bottom" xml:id="_authorialnote_1">
+							<p xml:id="_authorialNote_1__p">OJ C [...], [...], p. [...]</p>
+						</authorialNote>,</p>
+				</citation>
+				<citation leos:editable="true" xml:id="_cit_5">
+					<p xml:id="_cit_5__p">като взеха предвид становището на Комитета на регионите,<authorialNote marker="2" placement="bottom" xml:id="_authorialnote_2">
+							<p xml:id="_authorialNote_2__p">OJ C [...], [...], p. [...]</p>
+						</authorialNote>,</p>
+				</citation>
+				<citation leos:editable="true" xml:id="_cit_6">
+					<p xml:id="_cit_6__p">в съответствие с обикновената законодателна процедура,A</p>
+				</citation>
+			</citations>
+			<recitals leos:editable="false" xml:id="_recs">
+				<intro xml:id="_recitalsIntro">
+					<p xml:id="_recs_intro">като имат предвид, че:</p>
+				</intro>
+				<recital leos:editable="true" xml:id="_rec_1">
+					<num xml:id="_rec_1__num">(1)</num>
+					<p xml:id="_rec_1__p">В декларацията на Г-20 от 2 април 2009 г. относно укрепването на финансовата система се настоява за съгласувани в международен план усилия за повишаване на прозрачността и засилване на отчетността и регулирането чрез подобряване на количеството и качеството на капитала в банковата система, след като бъде осигурено икономическото възстановяване. В декларацията се призовава и за въвеждането на допълнителна мярка, която не зависи от риска, за ограничаване на ливъриджа в банковата система, както и за разработването на рамка за по-устойчиви ликвидни буфери. В отговор на предоставения от Г-20 мандат, през септември 2009 г. Групата на управители на централни банки и ръководители на надзорни органи постигна съгласие по редица мерки за засилване на регулирането на банковия сектор. Тези мерки бяха утвърдени от ръководителите на държавите от Г-20 на срещата на високо равнище в Питсбърг от 24 и 25 септември 2009 г. и подробно представени през декември 2009 г. През юли и септември 2010 г. Групата на управители на централни банки и ръководители на надзорни органи излезе с две допълнителни съобщения относно разработването и калибрирането на тези нови мерки, а през декември 2010 г. Базелският комитет по банков надзор публикува окончателните мерки, известни като рамката Базел III.</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_rec_2">
+					<num xml:id="_rec_2__num">(2)</num>
+					<p xml:id="_rec_2__p">Групата на високо равнище по въпросите на финансовия надзор в ЕС, председателствана от Жак дьо Ларозиер (наричана по-долу "групата дьо Ларозиер"), прикани Съюза да разработи <authorialNote marker="3" placement="bottom" xml:id="_akn_fV9Gov_YbJ73m">
+							<p xml:id="_akn_fV9Gov_5qzxeP">Виж стр. 338 от настоящия брой на Официален вестник.</p>
+						</authorialNote> по-хармонизирани инструменти за финансово регулиране. Във връзка с бъдещата архитектура на европейските надзорни органи Европейският съвет от 18 и 19 юни 2009 г. също подчерта необходимостта от създаване на „единен европейски наръчник“, приложим за всички кредитни институции и инвестиционни посредници на вътрешния пазар.</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_bill__akn_recital_Md41vj">
+					<num xml:id="_akn_Jsy5Oz_KX6d0f">(3)</num>
+					<p xml:id="_akn_Jsy5Oz_S81wOY">Както се посочва в доклада на групата "дьо Ларозиер“ от 25 февруари 2009 г. (наричан по-долу "докладът" дьо Ларозиер"), "дадена държава членка следва да бъде в състояние да приеме по-строги национални регулаторни мерки, които се считат за подходящи на национално ниво за поддържане на финансовата стабилност, при условие че се спазват принципите на вътрешния пазар и договорените минимални основни стандарти".</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_bill__akn_recital_7aa4fq">
+					<num xml:id="_akn_Jsy5Oz_sq444Y">(4)</num>
+					<p xml:id="_akn_Jsy5Oz_DVZAgW">Директива 2006/48/ЕО на Европейския парламент и на Съвета от 14 юни 2006 г. относно предприемането и осъществяването на дейност от кредитните институции (3) и в Директива 2006/49/ЕО на Европейския парламент и на Съвета от 14 юни 2006 г. относно капиталовата адекватност на инвестиционните посредници и кредитните институции<authorialNote marker="4" placement="bottom" xml:id="_akn_Jsy5Oz_BQeHum">
+							<p xml:id="_akn_Jsy5Oz_e947lk">ОВ L 177, 30.6.2006 г., стр. 201.</p>
+						</authorialNote> бяха неколкократно съществено изменяни. Много от разпоредбите на директиви 2006/48/ЕО и 2006/49/ЕО са приложими както за кредитните институции, така и за инвестиционните посредници. От съображения за яснота и с цел да се осигури последователното прилагане на тези разпоредби, те следва да се обединят в нови правни актове, приложими както към кредитните институции, така и към инвестиционните посредници, а именно настоящия регламент и Директива 2013/36/ЕС на Европейския парламент и на Съвета от (5). За по-голяма достъпност разпоредбите на приложенията към директиви 2006/48/ЕО и 2006/49/ЕО следва да бъдат включени в постановителната част на Директива 2013/36/ЕС и на настоящия регламент.</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_bill__akn_recital_qqjlC0">
+					<num xml:id="_akn_Jsy5Oz_T1MI7I">(5)</num>
+					<p xml:id="_akn_Jsy5Oz_s0yR3t">Настоящият регламент и Директива 2013/36/ЕС заедно следва да съставляват правната рамка, уреждаща правилата за достъпа до осъществяване на дейност за кредитни институции и инвестиционни посредници (наричани по-долу заедно "институциите"), както и приложимите за тях надзорна рамка и пруденциални правила. Поради това настоящият регламент следва да се разглежда съвместно с посочената директива.</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_bill__akn_recital_OGupzY">
+					<num xml:id="_akn_Jsy5Oz_EkrGZy">(6)</num>
+					<p xml:id="_akn_Jsy5Oz_pDxFgg">Директива 2013/36/ЕС, основаваща се на член 53, параграф 1 от Договора за функционирането на Европейския съюз (ДФЕС), следва, наред с другото, да съдържа разпоредбите, уреждащи правилата за достъпа до осъществяване на дейност от институциите, условията и реда за тяхното управление и надзорната рамка, като например разпоредби, уреждащи лицензирането на дейността, придобиването на квалифицирано дялово участие, упражняването на свободата на установяване и на предоставяне на услуги, правомощията на компетентните органи на държавата членка по произход и приемащата държава членка в това отношение, както и относно началния капитал и надзорния преглед на институциите.</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_bill__akn_recital_OXlgnY">
+					<num xml:id="_akn_Jsy5Oz_8r1QXx">(7)</num>
+					<p xml:id="_akn_Jsy5Oz_d7150q">Настоящия регламент следва, наред с другото, да съдържа пруденциалните изисквания за институциите, които се ограничават до функционирането на пазарите на банкови и финансови услуги и имат за цел да се гарантира финансовата стабилност на участниците на тези пазари, както и високо ниво на защита на инвеститорите и вложителите. Настоящият регламент има за цел да допринесе осезаемо за безпрепятственото функциониране на вътрешния пазар и поради това следва да се основава на разпоредбите на член 114 ДФЕС, тълкувани в съответствие с трайната практика на Съда на Европейския съюз.</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_bill__akn_recital_oCk6LE">
+					<num xml:id="_akn_Jsy5Oz_rU8tHQ">(8)</num>
+					<p xml:id="_akn_Jsy5Oz_VTP3dt">Въпреки че директиви 2006/48/ЕО и 2006/49/ЕО хармонизираха до известна степен правилата на държавите членки в областта на пруденциалния надзор, те съдържат значителен брой варианти и възможности държавите членки да налагат по-строги правила от установените в тях. Това води до различия между националните правила, които биха могли да възпрепятстват трансграничното предоставяне на услуги и свободата на установяване и по този начин да създадат пречки за безпрепятственото функциониране на вътрешния пазар.</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_bill__akn_recital_7NRY6B">
+					<num xml:id="_akn_Jsy5Oz_qLZqo5">(9)</num>
+					<p xml:id="_akn_Jsy5Oz_eKRL2T">От съображения за правна сигурност и поради необходимостта от равнопоставеност в рамките на Съюза прилагането на единен набор от правила за всички участници на пазара е ключов елемент за функционирането на вътрешния пазар. За да се избегнат нарушения на функционирането на пазара и случаите на регулаторен арбитраж, минимални пруденциални изисквания следва да гарантират максимална хармонизация. Поради това преходните периоди, предвидени в настоящия регламент, са изключително важни за гладкото въвеждане на настоящия регламент и за избягване на несигурност на пазарите</p>
+				</recital>
+				<recital leos:editable="true" xml:id="_bill__akn_recital_HOhcqb">
+					<num xml:id="_akn_Jsy5Oz_cpHWHk">(10)</num>
+					<p xml:id="_akn_Jsy5Oz_uKbWP1">Във връзка с работата на Групата по прилагане на стандарти към Базелския комитет по банков надзор (БКБН) по отношение на мониторинга и прегледа на прилагането на рамката Базел III от държавите членки, Комисията следва периодично да предоставя актуализирани доклади, най-малкото след публикуването от БКБН на всеки доклад за напредъка, свързани с прилагането и въвеждането на национално равнище на рамката Базел III в други основни юрисдикции, включително оценка на съгласуваността на законодателството или разпоредбите на другите държави с международните минимални стандарти, за да се установят различия, които биха могли да породят опасения относно условията на равнопоставеност.</p>
+				</recital>
+				
+			</recitals>
+			<formula name="enactingFormula" xml:id="_preamble__formula_2">
+				<p xml:id="_preamble__formula_2__p">ПРИЕХА НАСТОЯЩИЯ РЕГЛАМЕНТ:</p>
+			</formula>
+		</preamble>
+		<body xml:id="_body">
+            <title leos:depth="1" xml:id="__akn_title_OT6bVf">
+				<num xml:id="_akn_aONKCF">ДЯЛ I</num>
+				<heading xml:id="_akn_V7wvu9">ПРЕДМЕТ, ОБХВАТ И ОПРЕДЕЛЕНИЯ</heading>
+				<article leos:listIdAttr="__akn_article_7ODmUz_4vScQO" xml:id="__akn_article_7ODmUz">
+					<num leos:editable="false" xml:id="__akn_article_7ODmUz_oLIpvA">Член 1</num>
+					<heading xml:id="__akn_article_7ODmUz_5vgcMl">Обхват</heading>
+					<paragraph xml:id="__akn_article_7ODmUz_MOktIs">
+						<list xml:id="__akn_article_7ODmUz_xJLxOO">
+							<subparagraph refersTo="~_INP" xml:id="__akn_article_7ODmUz_0kGipz">
+								<content xml:id="__akn_article_7ODmUz_arP3Ig">
+									<p xml:id="__akn_article_7ODmUz_fRqzff">С настоящия регламент се установяват единни правила относно общите пруденциални изисквания, които институциите, подлежащи на надзор съгласно Директива 2013/36/ЕС, трябва да спазват по отношение на следните елементи<authorialNote marker="5" placement="bottom" xml:id="__akn_article_7ODmUz_PkrqFT">
+											<p xml:id="__akn_article_7ODmUz_qRZtZL">ОВ L 331, 15.12.2010 г., стр. 1.</p>
+										</authorialNote>:</p>
+								</content>
+							</subparagraph>
+							<point xml:id="__akn_article_7ODmUz_4vScQO_JVtLJi">
+								<num xml:id="__akn_article_7ODmUz_UM5amJ">a)</num>
+								<content xml:id="__akn_article_7ODmUz_XwqcL4">
+									<p xml:id="__akn_article_7ODmUz_SIYHVl">капиталови изисквания по отношение на изцяло количествено измерими, еднотипни и стандартизирани елементи на кредитния, пазарния и операционния риск и сетълмент риска;</p>
+								</content>
+							</point>
+							<point xml:id="__akn_article_7ODmUz_xJLxOO_VIBpIF">
+								<num xml:id="__akn_article_7ODmUz_6Pv8Lo">б)</num>
+								<content xml:id="__akn_article_7ODmUz_CwAs1d">
+									<p xml:id="__akn_article_7ODmUz_OEXTYe">изисквания за ограничаване на големите експозиции;</p>
+								</content>
+							</point>
+							<point xml:id="__akn_article_7ODmUz_xJLxOO_yfs7oc">
+								<num xml:id="__akn_article_7ODmUz_CrL4LI">в)</num>
+								<content xml:id="__akn_article_7ODmUz_kLcO1I">
+									<p xml:id="__akn_article_7ODmUz_nbbx3M">след влизането в сила на посочения в член 460 делегиран акт — ликвидни изисквания по отношение на изцяло количествено измерими, еднотипни и стандартизирани елементи на ликвидния риск;</p>
+								</content>
+							</point>
+							<point xml:id="__akn_article_7ODmUz_xJLxOO_rBHaUT">
+								<num xml:id="__akn_article_7ODmUz_8qJRI6">г)</num>
+								<content xml:id="__akn_article_7ODmUz_a2O9ga">
+									<p xml:id="__akn_article_7ODmUz_zs2Mj5">изисквания за отчитане във връзка с букви а). б) ив), както и с ливъриджа;</p>
+								</content>
+							</point>
+							<point xml:id="__akn_article_7ODmUz_xJLxOO_CdUMyx">
+								<num xml:id="__akn_article_7ODmUz_FP0gHr">д)</num>
+								<content xml:id="__akn_article_7ODmUz_vspNFC">
+									<p xml:id="__akn_article_7ODmUz_ZG3Kfu">изисквания за публично оповестяване.</p>
+								</content>
+							</point>
+						</list>
+					</paragraph>
+					<paragraph xml:id="__akn_article_7ODmUz_0o9iYM">
+						<content xml:id="__akn_article_7ODmUz_DgV7rh">
+							<p xml:id="__akn_article_7ODmUz_9XfHMj">Настоящият регламент не урежда изискванията за публично оповестяване на информация от компетентните органи в областта на пруденциалното регулиране и надзор върху институциите, определени в Директива 2013/36/ЕС.</p>
+						</content>
+					</paragraph>
+				</article>
+				<article leos:listIdAttr="_akn_article_vorBjs" xml:id="__akn_article_dTiX6w">
+					<num leos:editable="false" xml:id="__akn_article_dTiX6w_3Oftrl">Член 2</num>
+					<heading xml:id="__akn_article_dTiX6w_R0gqWd">Надзорни правомощия</heading>
+					<paragraph xml:id="__akn_article_dTiX6w-par1">
+						<content xml:id="__akn_article_dTiX6w_CHXE6h">
+							<p xml:id="__akn_article_dTiX6w_fTFcTM">За да се осигури спазването на разпоредбите <mref xml:id="__akn_article_dTiX6w_iGY1qy">Член <ref href="REG-clusabwtw000c0756jcwvn7hf-bg/__akn_article_lzFV0M" xml:id="__akn_article_dTiX6w_tD992C">9</ref>
+								</mref>на настоящия регламент, компетентните органи разполагат с правомощията и следват процедурите, определени в Директива 2013/36/ЕС.</p>
+						</content>
+					</paragraph>
+				</article>
+				<article leos:listIdAttr="_akn_article_poVol3" xml:id="__akn_article_NnhV13">
+					<num leos:editable="false" xml:id="__akn_article_NnhV13_arZwXM">Член 3</num>
+					<heading xml:id="__akn_article_NnhV13_8enOgt">Прилагане на по-строги изисквания от институциите</heading>
+					<paragraph xml:id="__akn_article_NnhV13-par1">
+						<content xml:id="__akn_article_NnhV13_JyqNoL">
+							<p xml:id="__akn_article_NnhV13_CFo10q">Настоящият регламент не възпрепятства институциите да притежават собствен капитал и негови компоненти, надхвърлящи изискванията по настоящия регламент, или да прилагат мерки, по-строги от предвидените в него.</p>
+						</content>
+					</paragraph>
+				</article>
+				<article leos:listIdAttr="_akn_article_DAemvv" xml:id="__akn_article_Egptc9">
+					<num leos:editable="false" xml:id="__akn_article_Egptc9_WksxXf">Член 4</num>
+					<heading xml:id="__akn_article_Egptc9_S8okwT">Определения, които са специфични за капиталовите изисквания за кредитен риск</heading>
+					<paragraph xml:id="__akn_article_Egptc9-par1">
+						<list xml:id="__akn_article_Egptc9_1wHf1x">
+							<subparagraph refersTo="~_INP" xml:id="__akn_article_Egptc9_xOQps0">
+								<content xml:id="__akn_article_Egptc9_JnfME0">
+									<p xml:id="__akn_article_Egptc9_cQqYCE">За целите на трета част, дял II се прилагат следните определения:</p>
+								</content>
+							</subparagraph>
+							<point xml:id="_akn_article_DAemvv_L1CeRR">
+								<num xml:id="__akn_article_Egptc9_VH80GU">a)</num>
+								<content xml:id="__akn_article_Egptc9_rGJ4Yd">
+									<p xml:id="__akn_article_Egptc9_9aWdYr">„експозиция“ означава актив или задбалансова позиция;<mref xml:id="__akn_article_Egptc9_efCrc6">Съображение <ref href="REG-clusabwtw000c0756jcwvn7hf-bg/_akn_Jsy5Oz_KhIorA" xml:id="__akn_article_Egptc9_JbHp6f">(1)</ref>
+										</mref>
+									</p>
+								</content>
+							</point>
+							<point xml:id="__akn_article_Egptc9_1wHf1x_so4X8O">
+								<num xml:id="__akn_article_Egptc9_Rpa5V9">б)</num>
+								<content xml:id="__akn_article_Egptc9_Vlzzon">
+									<p xml:id="__akn_article_Egptc9_XabNRN">„загуба“ означава икономическата загуба, включително съществена промяна в стойността на вземанията поради дисконтиране и съществените преки и непреки разходи, свързани със събирането на вземанията по съответния инструмент;$%</p>
+								</content>
+							</point>
+							<point xml:id="__akn_article_Egptc9_1wHf1x_q1PInV">
+								<num xml:id="__akn_article_Egptc9_m5EY5N">в)</num>
+								<subparagraph xml:id="__akn_article_Egptc9_HShQkd">
+									<content xml:id="__akn_article_Egptc9_vdMOkQ">
+										<p xml:id="__akn_article_Egptc9_5En9OG">„очаквана загуба“ или „EL“ означава съотношението между размера на очакваната загуба по дадена експозиция при потенциално неизпълнение от контрагент или при разсейване в рамките на една година към остатъчните към момента на неизпълнението непогасени задължения;</p>
+									</content>
+								</subparagraph>
+								<subparagraph xml:id="__akn_article_Egptc9_vnWxsu">
+									<content xml:id="__akn_article_Egptc9_5HMR4u">
+										<table border="1" cellpadding="1" cellspacing="1" style="width: 90%;" xml:id="__akn_article_Egptc9_eAjrDD">
+											<tr xml:id="__akn_article_Egptc9_6AQT7M">
+												<td xml:id="__akn_article_Egptc9_E1T337">
+													<p xml:id="__akn_article_Egptc9_KQl1pS">превишение на максималните размери(като процент от приемливия капитал)</p>
+												</td>
+												<td xml:id="__akn_article_Egptc9_DqYhdU">
+													<p xml:id="__akn_article_Egptc9_w2oqUG">Колона2: коефициенти</p>
+												</td>
+											</tr>
+											<tr xml:id="__akn_article_Egptc9_h9NthN">
+												<td xml:id="__akn_article_Egptc9_7YquZt">
+													<p xml:id="__akn_article_Egptc9_az4Jf8">До 40 %</p>
+												</td>
+												<td xml:id="__akn_article_Egptc9_Iq8G5A">
+													<p xml:id="__akn_article_Egptc9_jZwLfe">200 %</p>
+												</td>
+											</tr>
+											<tr xml:id="__akn_article_Egptc9_rF4bLh">
+												<td xml:id="__akn_article_Egptc9_qwQVGr">
+													<p xml:id="__akn_article_Egptc9_rpVW3A">От 40 % до 60 %</p>
+												</td>
+												<td xml:id="__akn_article_Egptc9_poVT3a">
+													<p xml:id="__akn_article_Egptc9_A2m89p">300 %</p>
+												</td>
+											</tr>
+											<tr xml:id="__akn_article_Egptc9_UQWVhz">
+												<td xml:id="__akn_article_Egptc9_PJGqaB">
+													<p xml:id="__akn_article_Egptc9_JGq9a8">От 60 % до 80 %</p>
+												</td>
+												<td xml:id="__akn_article_Egptc9_aBXxZj">
+													<p xml:id="__akn_article_Egptc9_aatkY4">400 %</p>
+												</td>
+											</tr>
+										</table>
+									</content>
+								</subparagraph>
+							</point>
+						</list>
+					</paragraph>
+				</article>
+			</title>
+			<title leos:depth="1" xml:id="__akn_title_kqduQN">
+				<num xml:id="_akn_yKa2tz">ДЯЛ II</num>
+				<heading xml:id="_akn_90I1TD">РАВНИЩЕ НА ПРИЛАГАНЕ НА ИЗИСКВАНИЯТА</heading>
+				<chapter leos:depth="2" xml:id="__akn_chapter_uwAkdw">
+					<num xml:id="_akn_4HDsPa">ГЛАВА 1</num>
+					<heading xml:id="_akn_BHoc2W">Прилагане на изискванията на индивидуална основа</heading>
+					<article leos:listIdAttr="_akn_article_JzUREG" xml:id="__akn_article_ySh4VE">
+						<num leos:editable="false" xml:id="__akn_article_ySh4VE_LhBZwM">Член 5</num>
+						<heading xml:id="__akn_article_ySh4VE_cZSqlT">Общи принципи</heading>
+						<paragraph xml:id="__akn_article_ySh4VE-par1">
+							<num xml:id="__akn_article_ySh4VE_iCILDf">1.</num>
+							<content xml:id="__akn_article_ySh4VE_IVUfay">
+								<p xml:id="__akn_article_ySh4VE_PILKeM">Институциите изпълняват задълженията, определени във втора - пета част и осма част, на индивидуална основа.</p>
+							</content>
+						</paragraph>
+						<paragraph xml:id="_akn_article_JzUREG_H5L6CY">
+							<num xml:id="__akn_article_ySh4VE_66H5wK">2.</num>
+							<content xml:id="__akn_article_ySh4VE_ouIKsT">
+								<p xml:id="__akn_article_ySh4VE_q7Qewb">Всяка институция, която е дъщерно предприятие в държавата членка, в която е лицензирана и обект на надзор, или предприятие майка, както и всяка институция, която е включена в консолидацията съгласно член 19, не е задължена да изпълнява посочените в членове 89, 90 и 91 задължения на индивидуална основа.</p>
+							</content>
+						</paragraph>
+						<paragraph xml:id="_akn_article_JzUREG_7Nqaz7">
+							<num xml:id="__akn_article_ySh4VE_vGTLuE">3.</num>
+							<content xml:id="__akn_article_ySh4VE_5VylIY">
+								<p xml:id="__akn_article_ySh4VE_b34UMS">Всяка институция, която е предприятие майка, или дъщерно предприятие, както и всяка институция, която е включена в консолидацията съгласно член 19, не е задължена да изпълнява посочените в осма част задължения на индивидуална основа</p>
+							</content>
+						</paragraph>
+						<paragraph xml:id="_akn_article_JzUREG_jw2u3L">
+							<num xml:id="__akn_article_ySh4VE_waHWE3">4.</num>
+							<content xml:id="__akn_article_ySh4VE_yUNXPK">
+								<p xml:id="__akn_article_ySh4VE_6LrtBU">Кредитните институции и инвестиционните посредници, които са получили лиценз за предоставяне на инвестиционните услуги и дейностите, изброени в раздел А, точки 3 и 6 от приложение I към Директива 2004/39/ЕО, изпълняват посочените в шеста част задължения на индивидуална основа. До изготвянето на доклада на Комисията в съответствие с член 508, параграф 3 компетентните органи могат да освобождават инвестиционните посредници от посочените в шеста част задължения в зависимост от естеството, мащаба и сложността на дейностите на инвестиционните посредници<mref xml:id="__akn_article_ySh4VE_jNIhWI">
+										<ref href="REG-clusabwtw000c0756jcwvn7hf-bg/_akn_MjtQyd_6lyU41" xml:id="__akn_article_ySh4VE_ydOysU">първи</ref> цитат</mref>
+								</p>
+							</content>
+						</paragraph>
+						<paragraph xml:id="_akn_article_JzUREG_tJqZJF">
+							<num xml:id="__akn_article_ySh4VE_1I10pP">5.</num>
+							<content xml:id="__akn_article_ySh4VE_eWkxZf">
+								<p xml:id="__akn_article_ySh4VE_F0d0T0">Институциите, с изключение на инвестиционните посредници по член 95, параграф 1 и член 96, параграф 1 и на институциите, за които компетентните органи са приложили дерогацията по член 7, параграф 1 или параграф 3, изпълняват посочените в седма част задължения на индивидуална основа.</p>
+							</content>
+						</paragraph>
+					</article>
+					<article leos:listIdAttr="_akn_article_cVfJPT" xml:id="_bill__akn_article_xdHE3Z">
+						<num leos:editable="false" xml:id="_bill__akn_article_xdHE3Z_x67IxS">Член 6</num>
+						<heading xml:id="_bill__akn_article_xdHE3Z_6cn1fC">Дерогация от прилагането на пруденциалните изисквания на индивидуална основа</heading>
+						<paragraph xml:id="_bill__akn_article_xdHE3Z-par1">
+							<num xml:id="_bill__akn_article_xdHE3Z_YyWFvA">1.</num>
+							<list xml:id="_bill__akn_article_xdHE3Z_GACwfj">
+								<subparagraph refersTo="~_INP" xml:id="_bill__akn_article_xdHE3Z_YzOrrY">
+									<content xml:id="_bill__akn_article_xdHE3Z_muhQGG">
+										<p xml:id="_bill__akn_article_xdHE3Z_8J76Sv">Компетентните органи могат да освободят от изискванията на член 6, параграф 1 дъщерно предприятие на дадена институция, когато дъщерното предприятие и институцията подлежат на лицензиране <mref xml:id="_bill__akn_article_xdHE3Z_Rv9xlh">Член 8(1), точка <ref href="REG-clusabwtw000c0756jcwvn7hf-bg/_bill__akn_article_6sLyFD_2xvY6W_LGPwbi" xml:id="_bill__akn_article_xdHE3Z_KbD6go">б)</ref>
+											</mref>и надзор от същата <i xml:id="_bill__akn_article_xdHE3Z_5S0M8a">държава членка</i> и дъщерното предприятие е включено в надзора на консолидирана основа на институцията, която е п<sub xml:id="_bill__akn_article_xdHE3Z_YkFncH">редприятието майка</sub>, и когато са изпълнени всички <b xml:id="_bill__akn_article_xdHE3Z_0BBhMu">изброени по-долу условия</b>, за да се осигури адекватно разпределение на собствения капитал между предприятието майка и дъщерното предприятие:</p>
+									</content>
+								</subparagraph>
+								<point xml:id="_akn_article_cVfJPT_cl4eVU">
+									<num xml:id="_bill__akn_article_xdHE3Z_ObHUFP">a)</num>
+									<content xml:id="_bill__akn_article_xdHE3Z_1coDTe">
+										<p xml:id="_bill__akn_article_xdHE3Z_RPdZoF">понастоящем няма и не се предвиждат съществени практически или правни пречки за бързо прехвърляне на собствен капитал или за изплащане на задължения от предприятието майка;</p>
+									</content>
+								</point>
+								<point xml:id="_bill__akn_article_xdHE3Z_GACwfj_xqZajE">
+									<num xml:id="_bill__akn_article_xdHE3Z_bGvQkM">б)</num>
+									<content xml:id="_bill__akn_article_xdHE3Z_RSqA8I">
+										<p xml:id="_bill__akn_article_xdHE3Z_88cOYF">компетентният орган приема, че предприятието майка управлява дъщерното предприятие разумно, а самото предприятие майка със съгласието на компетентния орган е заявило, че гарантира поетите от дъщерното предприятие задължения, или рисковете в дъщерното предприятие са пренебрежимо малки;</p>
+									</content>
+								</point>
+								<point xml:id="_bill__akn_article_xdHE3Z_GACwfj_h3HrM2">
+									<num xml:id="_bill__akn_article_xdHE3Z_fVPI4Q">в)</num>
+									<content xml:id="_bill__akn_article_xdHE3Z_qZoZII">
+										<p xml:id="_bill__akn_article_xdHE3Z_xMtZKD">процедурите за оценка, измерване и контрол на риска на предприятието майка обхващат дъщерното предприятие;</p>
+									</content>
+								</point>
+								<point xml:id="_bill__akn_article_xdHE3Z_GACwfj_RJpjSZ">
+									<num xml:id="_bill__akn_article_xdHE3Z_vBQzYq">г)</num>
+									<content xml:id="_bill__akn_article_xdHE3Z_NFy14m">
+										<p xml:id="_bill__akn_article_xdHE3Z_iRla3j">предприятието майка държи повече от 50 % от акциите с право на глас в капитала на дъщерното предприятие или има право да назначава или отстранява мнозинството от членовете на управителния му орган.</p>
+									</content>
+								</point>
+							</list>
+						</paragraph>
+						<paragraph xml:id="_bill__akn_article_xdHE3Z_GACwfj_wObvZW">
+							<num xml:id="_bill__akn_article_xdHE3Z_wahIl9">2.</num>
+							<content xml:id="_bill__akn_article_xdHE3Z_zSyWnQ">
+								<p xml:id="_bill__akn_article_xdHE3Z_Bk1XYY">Компетентните органи могат да се възползват от възможността, предвидена в параграф 1, когато предприятието майка е финансов холдинг или финансов холдинг със смесена дейност, учреден в същата държава членка като институцията, при условие че то подлежи на същия надзор като упражнявания над институциите, и по-специално на стандартите, предвидени в член 11, параграф 1.</p>
+							</content>
+						</paragraph>
+						<paragraph xml:id="_akn_article_cVfJPT_M3bScp">
+							<num xml:id="_bill__akn_article_xdHE3Z_PGFP7L">3.</num>
+							<list xml:id="_bill__akn_article_xdHE3Z_jEE3xF">
+								<subparagraph refersTo="~_INP" xml:id="_bill__akn_article_xdHE3Z_QaTRyi">
+									<content xml:id="_bill__akn_article_xdHE3Z_iKGmUH">
+										<p xml:id="_bill__akn_article_xdHE3Z_j6Twoi">Компетентните органи могат да освободят от изискванията на член 6, параграф 1 институция майка в държава членка, когато тази институция подлежи на лицензиране и надзор от същата държава членка, включена е в надзора на консолидирана основа и са изпълнени всички изброени по-долу условия, за да се осигури адекватно разпределение на собствения капитал<mref xml:id="_bill__akn_article_xdHE3Z_9ntu1x">Член 1, първи параграф, точка <ref href="REG-clusabwtw000c0756jcwvn7hf-bg/__akn_article_7ODmUz_4vScQO_JVtLJi" xml:id="_bill__akn_article_xdHE3Z_eTzlll">a)</ref>
+											</mref> между предприятието майка и дъщерните предприятия:</p>
+									</content>
+								</subparagraph>
+								<point xml:id="_akn_article_cVfJPT_yU0a7K">
+									<num xml:id="_bill__akn_article_xdHE3Z_unTDJa">a)</num>
+									<content xml:id="_bill__akn_article_xdHE3Z_GOqfeo">
+										<p xml:id="_bill__akn_article_xdHE3Z_Farl56"> към момента няма и не се предвиждат съществени практически или правни пречки за бързо прехвърляне на собствен капитал или за изплащане на задължения към институцията майка в държава членка;</p>
+									</content>
+								</point>
+								<point xml:id="_bill__akn_article_xdHE3Z_jEE3xF_1zGo0q">
+									<num xml:id="_bill__akn_article_xdHE3Z_56WU61">б)</num>
+									<content xml:id="_bill__akn_article_xdHE3Z_AsfCmL">
+										<p xml:id="_bill__akn_article_xdHE3Z_riiwp9">процедурите за оценка, измерване и контрол на риска от значение за консолидирания надзор обхващат институцията майка в държава членка.</p>
+									</content>
+								</point>
+								<subparagraph refersTo="~_WRP" xml:id="_bill__akn_article_xdHE3Z_oYuB6s">
+									<content xml:id="_bill__akn_article_xdHE3Z_NKtVrn">
+										<p xml:id="_bill__akn_article_xdHE3Z_wprYz1">Компетентният орган, който прилага настоящия параграф, информира компетентните органи на всички останали държави членки.</p>
+									</content>
+								</subparagraph>
+							</list>
+						</paragraph>
+					</article>
+					<article leos:listIdAttr="_akn_article_9KlrGZ" xml:id="_bill__akn_article_oHhQ5o">
+						<num leos:editable="false" xml:id="_bill__akn_article_oHhQ5o_Hc0iJJ">Член 7</num>
+						<heading xml:id="_bill__akn_article_oHhQ5o_8KQuMW">Дерогация от прилагането на ликвидните изисквания на индивидуална основа</heading>
+						<paragraph xml:id="_bill__akn_article_oHhQ5o-par1">
+							<num xml:id="_bill__akn_article_oHhQ5o_lJdxyP">1.</num>
+							<content xml:id="_bill__akn_article_oHhQ5o_OsKnYs">
+								<p xml:id="_bill__akn_article_oHhQ5o_luiQ9t">При спазване на параграфи 2 и 3 от настоящия член и на член 144, параграф 3 от Директива 2013/36/ЕС, компетентните органи могат да разрешат, след преценка на всеки отделен случай, на институции майки да включват в изчисляването на изискванията към тях по член 6, параграф 1 дъщерни предприятия, които отговарят на условията, предвидени в член 7, параграф 1, букви в) и г), и чиито съществени експозиции или съществени задължения са към тази институция майка.</p>
+							</content>
+						</paragraph>
+						<paragraph xml:id="_akn_article_9KlrGZ_lT0Jxo">
+							<num xml:id="_bill__akn_article_oHhQ5o_06w2Za">2.</num>
+							<content xml:id="_bill__akn_article_oHhQ5o_rNKJtM">
+								<p xml:id="_bill__akn_article_oHhQ5o_meBfYB">Предвиденото в параграф 1 третиране се разрешава само когато институцията майка представи на компетентните органи пълна информация за наличието на обстоятелства и договорености, включително правни договорености, съгласно които няма съществени практически или правни пречки — и не се предвиждат такива — за бързо прехвърляне на собствен капитал или за изплащане на задълженията, когато станат изискуеми, от дъщерното предприятие към предприятието майка</p>
+							</content>
+						</paragraph>
+						<paragraph xml:id="_akn_article_9KlrGZ_bXck2a">
+							<num xml:id="_bill__akn_article_oHhQ5o_AnVARH">3.</num>
+							<content xml:id="_bill__akn_article_oHhQ5o_EcpVl8">
+								<p xml:id="_bill__akn_article_oHhQ5o_pEcACB">Когато компетентен орган използва предвидената в параграф 1 възможност за преценка, той периодично информира, но не по-рядко от веднъж годишно, компетентните органи на всички останали държави членки за това как е използван параграф 1 и за обстоятелствата и договореностите, посочени в параграф 2. Когато дъщерното предприятие е в трета държава, компетентните органи предоставят същата информация и на компетентните органи на тази трета държава.</p>
+							</content>
+						</paragraph>
+					</article>
+					<article leos:listIdAttr="_akn_article_fm7OA9" xml:id="_bill__akn_article_6sLyFD">
+						<num leos:editable="false" xml:id="_bill__akn_article_6sLyFD_EiPLa9">Член 8</num>
+						<heading xml:id="_bill__akn_article_6sLyFD_7O2uY7">Освобождаване за кредитни институции, които са дълготрайно свързани с централен орган</heading>
+						<paragraph xml:id="_bill__akn_article_6sLyFD-par1">
+							<num xml:id="_bill__akn_article_6sLyFD_0gJS9A">1.</num>
+							<list xml:id="_bill__akn_article_6sLyFD_2xvY6W">
+								<subparagraph refersTo="~_INP" xml:id="_bill__akn_article_6sLyFD_mqBC1f">
+									<content xml:id="_bill__akn_article_6sLyFD_wkgWTY">
+										<p xml:id="_bill__akn_article_6sLyFD_vAxLzi">Компетентните органи могат, в съответствие с националното си право, да освободят частично или изцяло от изискванията, определени от втора част до осма част, една или повече кредитни институции, разположени в същата държава членка и дълготрайно свързани с централен орган, който извършва надзор над тях и е установен в същата държава членка, ако са изпълнени следните условия:</p>
+									</content>
+								</subparagraph>
+								<point xml:id="_akn_article_fm7OA9_2zNNNo">
+									<num xml:id="_bill__akn_article_6sLyFD_21lRzB">a)</num>
+									<content xml:id="_bill__akn_article_6sLyFD_nrLSHL">
+										<p xml:id="_bill__akn_article_6sLyFD_Z3ifVb">задълженията на централния орган и свързаните институции са солидарни и някои от задълженията на свързаните институции са напълно гарантирани от централния орган;</p>
+									</content>
+								</point>
+								<point xml:id="_bill__akn_article_6sLyFD_2xvY6W_LGPwbi">
+									<num xml:id="_bill__akn_article_6sLyFD_3KHlQZ">б)</num>
+									<content xml:id="_bill__akn_article_6sLyFD_N09uo0">
+										<p xml:id="_bill__akn_article_6sLyFD_xcsrcB">платежоспособността и ликвидността на централния орган и на всички свързани институции се наблюдават като едно цяло въз основа на консолидираните отчети на въпросните институции;</p>
+									</content>
+								</point>
+								<point xml:id="_bill__akn_article_6sLyFD_2xvY6W_HZPFKG">
+									<num xml:id="_bill__akn_article_6sLyFD_UjbTFD">в)</num>
+									<content xml:id="_bill__akn_article_6sLyFD_MaCV3z">
+										<p xml:id="_bill__akn_article_6sLyFD_8YXyFZ">ръководството на централния орган има право да дава инструкции на ръководствата на свързаните институции.</p>
+									</content>
+								</point>
+								<subparagraph refersTo="~_WRP" xml:id="_bill__akn_article_6sLyFD_CQWUYH">
+									<content xml:id="_bill__akn_article_6sLyFD_1DOedE">
+										<p xml:id="_bill__akn_article_6sLyFD_M8MUmv">Държавите членки могат да запазят и да продължат да използват действащото си националното законодателство относно прилагането на освобождаването, посочено в първа алинея, доколкото то не противоречи на настоящия регламент и на Директива 2013/36/ЕС.</p>
+									</content>
+								</subparagraph>
+							</list>
+						</paragraph>
+						<paragraph refersTo="~_WRP" xml:id="_akn_article_fm7OA9_nJtw3d">
+							<num xml:id="_bill__akn_article_6sLyFD_GyQn0L">2.</num>
+							<content xml:id="_bill__akn_article_6sLyFD_4GaB2R">
+								<p xml:id="_bill__akn_article_6sLyFD_gTIJFY">Ако компетентните органи са се уверили, че условията по параграф 1 са изпълнени и ако задълженията или ангажиментите на централния орган са изцяло гарантирани от свързаните институции, компетентните органи могат да освободят централния орган от прилагането на втора - осма част на индивидуална основа.</p>
+							</content>
+						</paragraph>
+					</article>
+				</chapter>
+			</title>
+			<title leos:depth="1" xml:id="__akn_title_neQncj">
+				<num xml:id="_akn_x9hmS8">Дял III</num>
+				<heading xml:id="_akn_iR0Pbk">ОБЩИ ИЗИСКВАНИЯ, ОЦЕНКА И ДОКЛАДВАНЕ</heading>
+				<chapter leos:depth="2" xml:id="__akn_chapter_ZdWRLR">
+					<num xml:id="_akn_lTSU0H">ГЛАВА 1</num>
+					<heading xml:id="_akn_4AWIOM">Минимален размер на собствения капитал</heading>
+					<section leos:depth="3" xml:id="__akn_section_cP4jIw">
+						<num xml:id="_akn_Vqzd7I">Раздел 1</num>
+						<heading xml:id="_akn_b3vhCG">Капиталови изисквания към институциите</heading>
+						<article leos:listIdAttr="_akn_article_36lCXx" xml:id="__akn_article_lzFV0M">
+							<num leos:editable="false" xml:id="__akn_article_lzFV0M_sRtStt">Член 9</num>
+							<heading xml:id="__akn_article_lzFV0M_Cdai1W">Изискване за начален капитал при действащо предприятие</heading>
+							<paragraph xml:id="__akn_article_lzFV0M-par1">
+								<num xml:id="__akn_article_lzFV0M_xTKo2n">1.</num>
+								<content xml:id="__akn_article_lzFV0M_kLBWqK">
+									<p xml:id="__akn_article_lzFV0M_vASEUF">Собственият капитал на дадена институция не може да спадне под размера на началния капитал, изискван при лицензирането ѝ.</p>
+								</content>
+							</paragraph>
+							<paragraph xml:id="_akn_article_36lCXx_LEhja8">
+								<num xml:id="__akn_article_lzFV0M_qhddy8">2.</num>
+								<content xml:id="__akn_article_lzFV0M_xZp9Ph">
+									<p xml:id="__akn_article_lzFV0M_rXVZcF">Съществуващите към 1 януари 1993 г. кредитни институции, размерът на чийто собствен капитал не достига нивото на изисквания начален капитал, могат да продължат да упражняват дейността си. В този случай размерът на собствения им капитал не може да падне под най-високото ниво, достигнато след 22 декември 1989 г.</p>
+								</content>
+							</paragraph>
+							<paragraph xml:id="_akn_article_36lCXx_aM7e4l">
+								<num xml:id="__akn_article_lzFV0M_DLbDY7">3.</num>
+								<content xml:id="__akn_article_lzFV0M_Sncn14">
+									<p xml:id="__akn_article_lzFV0M_TDwhEg">Лицензирани инвестиционни посредници и дружества, попадащи в обхвата на член 6 от Директива 2006/49/ЕО, които са съществували преди 31 декември 1995 г. и чийто собствен капитал не достига размера на изисквания началния капитал, могат да продължат да упражняват своята дейност. Собственият капитал на такива дружества или инвестиционни посредници не трябва да пада под най-високото референтно равнище, изчислено след датата на уведомяване, посочена в Директива 93/6/ЕИО на Съвета от 15 март 1993 г. относно капиталовата адекватност на инвестиционните посредници и кредитните институции(28). Това референтно равнище е средното дневно равнище на собствения капитал, изчислено за шестмесечния период, предхождащ датата на изчисление. То се изчислява на всеки шест месеца по отношение на съответния предходен период.</p>
+								</content>
+							</paragraph>
+							<paragraph xml:id="_akn_article_36lCXx_Vhqix8">
+								<num xml:id="__akn_article_lzFV0M_JuZJYK">4.</num>
+								<content xml:id="__akn_article_lzFV0M_d7n9IX">
+									<p xml:id="__akn_article_lzFV0M_B1b1kx">Когато контролът върху дадена институция, попадаща в посочената в параграф 2 или 3 категория, бъде поет от физическо или юридическо лице, различно от лицето, контролирало институцията преди това, размерът на нейния собствен капитал трябва да достигне размера на изисквания начален капитал.</p>
+								</content>
+							</paragraph>
+							<paragraph xml:id="_akn_article_36lCXx_DV9F7A">
+								<num xml:id="__akn_article_lzFV0M_kzKGKv">5.</num>
+								<content xml:id="__akn_article_lzFV0M_GjozhI">
+									<p xml:id="__akn_article_lzFV0M_zBcciy">При сливане на две или повече институции, попадащи в посочената в параграф 2 или 3 категория, размерът на собствения капитал на институцията след сливането не трябва да спада под общия собствен капитал на слелите се институции в момента на сливането, при условие че не е достигнат размерът на изисквания начален капитал.</p>
+								</content>
+							</paragraph>
+							<paragraph xml:id="_akn_article_36lCXx_aq1012">
+								<num xml:id="__akn_article_lzFV0M_sldnzx">6.</num>
+								<content xml:id="__akn_article_lzFV0M_FFoOQp">
+									<p xml:id="__akn_article_lzFV0M_jjojIV">Когато компетентните органи преценят, че за да се осигури платежоспособността на дадена институция е необходимо посоченото в параграф 1 изискване да бъде спазено, разпоредбите в параграфи 2—5 не се прилагат.</p>
+								</content>
+							</paragraph>
+						</article>
+						<article leos:listIdAttr="_akn_article_MPtsVE" xml:id="_bill__akn_article_yAsGZB">
+							<num leos:editable="false" xml:id="_bill__akn_article_yAsGZB_Nst6NQ">Член 10</num>
+							<heading xml:id="_bill__akn_article_yAsGZB_WJn99i">Дерогация за несъществен търговски портфейл</heading>
+							<paragraph xml:id="_bill__akn_article_yAsGZB-par1">
+								<num xml:id="_bill__akn_article_yAsGZB_wMrEiZ">1.</num>
+								<list xml:id="_bill__akn_article_yAsGZB_j9CGp9">
+									<subparagraph refersTo="~_INP" xml:id="_bill__akn_article_yAsGZB_YcqlAb">
+										<content xml:id="_bill__akn_article_yAsGZB_GE59NK">
+											<p xml:id="_bill__akn_article_yAsGZB_PgnzGH">Институциите могат да заменят капиталовото изискване в член 92, параграф 3, буква б) с капиталовото изискване, изчислено в съответствие с буква а) от посочения параграф по отношение на дейността по търговския им портфейл, при условие че размерът на балансовата и задбалансовата дейност в търговския портфейл отговаря на следните две условия:</p>
+										</content>
+									</subparagraph>
+									<point xml:id="_akn_article_MPtsVE_pcGR1e">
+										<num xml:id="_bill__akn_article_yAsGZB_pms41c">a)</num>
+										<content xml:id="_bill__akn_article_yAsGZB_CIJ5Po">
+											<p xml:id="_bill__akn_article_yAsGZB_3m68GL">той обичайно не достига 5 % от общите активи и 15 милиона евро;</p>
+										</content>
+									</point>
+									<point xml:id="_bill__akn_article_yAsGZB_j9CGp9_OgCaZP">
+										<num xml:id="_bill__akn_article_yAsGZB_xT5JWq">б)</num>
+										<content xml:id="_bill__akn_article_yAsGZB_0dgzSD">
+											<p xml:id="_bill__akn_article_yAsGZB_wfDRV2">той никога не превишава 6 % от общите активи и 20 милиона евро.</p>
+										</content>
+									</point>
+								</list>
+							</paragraph>
+							<paragraph xml:id="_akn_article_MPtsVE_1o05ju">
+								<num xml:id="_bill__akn_article_yAsGZB_99qAZG">2.</num>
+								<list xml:id="_bill__akn_article_yAsGZB_0FAepW">
+									<subparagraph refersTo="~_INP" xml:id="_bill__akn_article_yAsGZB_43XZsY">
+										<content xml:id="_bill__akn_article_yAsGZB_UjJy8O">
+											<p xml:id="_bill__akn_article_yAsGZB_0UUC56">Когато се изчислява размерът на балансовата и задбалансовата дейност институциите прилагат следното:</p>
+										</content>
+									</subparagraph>
+									<point xml:id="_akn_article_MPtsVE_r2Rk15">
+										<num xml:id="_bill__akn_article_yAsGZB_4Y8Q0b">a)</num>
+										<content xml:id="_bill__akn_article_yAsGZB_jjzhwk">
+											<p xml:id="_bill__akn_article_yAsGZB_Zoxhvv">дълговите инструменти се оценяват по пазарни цени или по номинална стойност, капиталовите инструменти — по пазарната им цена, а дериватите — в съответствие с номиналната или пазарна стойност на базисните инструменти.</p>
+										</content>
+									</point>
+									<point xml:id="_bill__akn_article_yAsGZB_0FAepW_mG44r7">
+										<num xml:id="_bill__akn_article_yAsGZB_WTYzMo">б)</num>
+										<content xml:id="_bill__akn_article_yAsGZB_HXYz23">
+											<p xml:id="_bill__akn_article_yAsGZB_MVpCBC">абсолютните стойности на дългите и късите позиции се сумират се сумират.</p>
+										</content>
+									</point>
+								</list>
+							</paragraph>
+							<paragraph xml:id="_akn_article_MPtsVE_hKEKA2">
+								<num xml:id="_bill__akn_article_yAsGZB_VYMscH">3.</num>
+								<content xml:id="_bill__akn_article_yAsGZB_oFs0x1">
+									<p xml:id="_bill__akn_article_yAsGZB_F0x8nc">Когато дадена институция престане да отговаря на условието, посочено в параграф 1, буква б), тя незабавно уведомява компетентния орган. Ако след оценка от компетентния орган, последният установи и уведоми институцията, че изискването в параграф 1, буква а) не е изпълнено, институцията престава да използва параграф 1 от началото на следващия отчетен период.</p>
+								</content>
+							</paragraph>
+						</article>
+					</section>
+				</chapter>
+			</title>
+			<title leos:depth="1" xml:id="__akn_title_pSnofS">
+				<num xml:id="_akn_WzrLGw">ДЯЛ IV</num>
+				<heading xml:id="_akn_gcRZKw">КАПИТАЛОВИ ИЗИСКВАНИЯ ЗА ПАЗАРЕН РИСК</heading>
+				<chapter leos:depth="2" xml:id="__akn_chapter_vB6XYd">
+					<num xml:id="_akn_BRxr98">ГЛАВА  1</num>
+					<heading xml:id="_akn_B8HEzG">Капиталови изисквания за позиционен риск</heading>
+					<section leos:depth="3" xml:id="__akn_section_lQKeRG">
+						<num xml:id="_akn_KeLP0s">Раздел 1</num>
+						<heading xml:id="_akn_ZHzDqH">Общи разпоредби и специални инструменти</heading>
+						<article leos:listIdAttr="_akn_article_dKu31E" xml:id="__akn_article_oEGyut">
+							<num leos:editable="false" xml:id="__akn_article_oEGyut_tAQQyp">Член 11</num>
+							<heading xml:id="__akn_article_oEGyut_AoYrqV">Лихвен риск във връзка с дериватни инструменти</heading>
+							<paragraph xml:id="__akn_article_oEGyut-par1">
+								<num xml:id="__akn_article_oEGyut_JYPMrR">1.</num>
+								<content xml:id="__akn_article_oEGyut_xrMQeJ">
+									<p xml:id="__akn_article_oEGyut_wbVDLU">Институциите, които изчисляват пазарната стойност и управляват лихвения риск на дериватните инструменти, обхванати от членове 328—330, въз основа на дисконтирани парични потоци, могат с разрешението на компетентните органи да използват модели на чувствителност за изчисление на позициите, посочени в тези членове, и да ги използват за всяка облигация, която се погасява през остатъчния си матуритет, а не чрез еднократно окончателно изплащане на главницата. Разрешение се дава, ако тези модели генерират позиции, които имат същата чувствителност към промените в лихвените проценти както базисните парични потоци. Тази чувствителност се оценява по отношение на независими промени в извадка от лихвени проценти за цялата крива на доходността, с поне един пункт на чувствителност за всеки от матуритетните интервали, включени в таблица 2 от член 339. Позициите се включват в изчислението на капиталовите изисквания за общ риск във връзка с дългови инструменти.</p>
+								</content>
+							</paragraph>
+							<paragraph xml:id="_akn_article_dKu31E_lZ4s3w">
+								<num xml:id="__akn_article_oEGyut_5rlM15">2.</num>
+								<list xml:id="__akn_article_oEGyut_TPilcd">
+									<subparagraph refersTo="~_INP" xml:id="__akn_article_oEGyut_qPevFy">
+										<content xml:id="__akn_article_oEGyut_GiWlNk">
+											<p xml:id="__akn_article_oEGyut_UXzm9p">Институциите, които не използват моделите по параграф 1, могат да третират като напълно компенсиращи се всички позиции в дериватни инструменти по членове 328—330, които отговарят най-малко на следните условия:</p>
+										</content>
+									</subparagraph>
+									<point xml:id="_akn_article_dKu31E_kltrVz">
+										<num xml:id="__akn_article_oEGyut_OE7doF">a)</num>
+										<content xml:id="__akn_article_oEGyut_mVIMkR">
+											<p xml:id="__akn_article_oEGyut_x8wVbf">позициите са с една и съща стойност и в една и съща валута;</p>
+										</content>
+									</point>
+									<point xml:id="__akn_article_oEGyut_TPilcd_OWLa7h">
+										<num xml:id="__akn_article_oEGyut_urQ4nw">б)</num>
+										<content xml:id="__akn_article_oEGyut_iIXY0O">
+											<p xml:id="__akn_article_oEGyut_Fi5LEl">референтните лихвени проценти (за позициите с променлив лихвен процент) или купони (за позициите с фиксиран лихвен процент) си съответстват в голяма степен;</p>
+										</content>
+									</point>
+									<point xml:id="__akn_article_oEGyut_TPilcd_eL6AF8">
+										<num xml:id="__akn_article_oEGyut_OMBSJB">в)</num>
+										<list xml:id="__akn_article_oEGyut_jCf0uA">
+											<subparagraph refersTo="~_INP" xml:id="__akn_article_oEGyut_mVYUFk">
+												<content xml:id="__akn_article_oEGyut_8ICrQH">
+													<p xml:id="__akn_article_oEGyut_7M5pWv">следващата дата на фиксиране на лихвения процент или — за позициите с фиксиран купон — остатъчният матуритет съответства на следните граници:</p>
+												</content>
+											</subparagraph>
+											<point xml:id="__akn_article_oEGyut_TPilcd_5UBOFg">
+												<num xml:id="__akn_article_oEGyut_Otchzx">i)</num>
+												<content xml:id="__akn_article_oEGyut_PrhB9R">
+													<p xml:id="__akn_article_oEGyut_cDQsvB">по-малко от един месец: същия ден,</p>
+												</content>
+											</point>
+											<point xml:id="__akn_article_oEGyut_jCf0uA_I30uZG">
+												<num xml:id="__akn_article_oEGyut_xG8TY1">ii)</num>
+												<content xml:id="__akn_article_oEGyut_wcTDct">
+													<p xml:id="__akn_article_oEGyut_npmd8O">между един месец и една година: до седем дни,</p>
+												</content>
+											</point>
+											<point xml:id="__akn_article_oEGyut_jCf0uA_pVlDSa">
+												<num xml:id="__akn_article_oEGyut_D19bSP">iii)</num>
+												<content xml:id="__akn_article_oEGyut_qVRxWn">
+													<p xml:id="__akn_article_oEGyut_dc4OvD">над една година: до 30 дни.</p>
+												</content>
+											</point>
+										</list>
+									</point>
+								</list>
+							</paragraph>
+						</article>
+					</section>
+				</chapter>
+			</title>
+
+			<clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="_clause_1">
+				<content xml:id="_clause_1__content">
+					<p xml:id="_clause_1__content__p">Настоящият регламент е задължителен в своята цялост и се прилага пряко във всички държави членки.</p>
+				</content>
+			</clause>
+			<clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="_clause_2">
+				<content xml:id="_clause_2__content">
+					<p xml:id="_clause_2__content__p">Настоящият регламент е задължителен в своята цялост и се прилага пряко в държавите членки в съответствие с Договорите</p>
+				</content>
+			</clause>
+		</body>
+		<conclusions xml:id="_conclusions">
+			<p xml:id="_conclusions__p_1">Съставено в <location refersTo="~_BEL_BRU" xml:id="_conclusions__p__location_1">Брюксел на </location>, <date date="9999-01-01" xml:id="_akn_aviQud"/>
+			</p>
+			<block name="signatory" xml:id="_conclusions__block_1">
+				<signature xml:id="_conclusions__block_1__signature_1">
+					<organization refersTo="~_EP" xml:id="_conclusions__block_1__signature_1__organization">За Европейския парламент</organization>
+					<role refersTo="~_PRESID" xml:id="_conclusions__block_1__signature_1__role">Председател</role>
+					<person refersTo="" xml:id="_conclusions__block_1__signature_1__person">[...]</person>
+				</signature>
+				<signature xml:id="_conclusions__block_1__signature_2">
+					<organization refersTo="~_CONSIL" xml:id="_conclusions__block_1__signature_2__organization">За Съвета</organization>
+					<role refersTo="~_PRESID" xml:id="_conclusions__block_1__signature_2__role">Председател</role>
+					<person refersTo="" xml:id="_conclusions__block_1__signature_2__person">[...]</person>
+				</signature>
+			</block>
+		</conclusions>
+	</bill>
+</akomaNtoso>

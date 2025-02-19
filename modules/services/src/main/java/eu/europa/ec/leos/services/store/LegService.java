@@ -52,18 +52,11 @@ public interface LegService {
     
     LegDocument findLegDocumentById(String id);
     
-    /**
-     * Finds the Leg document that has jobId and is in the same package with any document that has @documentId.
-     *
-     * @param documentId the id of a document that is located in the same package as the Leg file
-     * @param jobId      the jobId of the Leg document
-     * @return the Leg document if found, otherwise null
-     */
-    LegDocument findLegDocumentByAnyDocumentIdAndJobId(String documentId, String jobId);
-    
     List<LegDocument> findLegDocumentByStatus(LeosLegStatus leosLegStatus);
     
-    List<LegDocument> findLegDocumentByProposal(String proposalId);
+    List<LegDocument> findLegDocumentByAnyDocumentId(String documentId);
+
+    LegDocument findLegDocumentByAnyDocumentIdAndJobId(String documentId, String jobId);
     
     String doubleCompareXmlContents(XmlDocument originalVersion, XmlDocument intermediateMajor, XmlDocument current, boolean isDocuwrite);
     String simpleCompareXmlContents(XmlDocument versionToCompare, XmlDocument currentXmlContent, boolean isDocuwrite);

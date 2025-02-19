@@ -10,6 +10,7 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.security.SecurityContext;
 import io.atlassian.fugue.Maybe;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -76,12 +77,14 @@ public class LeosXercesUtils {
                             addAttribute(deletedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
                         }
 
-                        Node insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
-                        addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
-                        addAttribute(insertedNum, LEOS_TITLE, getTitleValue(securityContext));
-                        if (POINT.equals(node.getNodeName()) || LEVEL.equals(node.getNodeName()) || RECITAL.equals(node.getNodeName())) {
-                            addAttribute(insertedNum, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION);
-                            addAttribute(insertedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
+                        if(StringUtils.isNotEmpty(numLabel)) {
+                            Node insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
+                            addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
+                            addAttribute(insertedNum, LEOS_TITLE, getTitleValue(securityContext));
+                            if (POINT.equals(node.getNodeName()) || LEVEL.equals(node.getNodeName()) || RECITAL.equals(node.getNodeName())) {
+                                addAttribute(insertedNum, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION);
+                                addAttribute(insertedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
+                            }
                         }
                     }
                 }

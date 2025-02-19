@@ -103,6 +103,14 @@ Then(`redo button is disabled in ck editor`, () => {
     ckEditorWindow.elements.redoBtn().invoke('attr', 'class').should('contain', 'disabled');
 });
 
+Then(/^internal reference icon is disabled in ck editor panel$/, function () {
+    ckEditorWindow.elements.internalReferenceIcon().should('have.class', 'cke_button_disabled');
+});
+
+Then(/^insert footnote icon is disabled in ck editor panel$/, function () {
+    ckEditorWindow.elements.insertFootNoteIcon().should('have.class', 'cke_button_disabled');
+});
+
 Then(`subscript button is enabled in ck editor`, () => {
     ckEditorWindow.elements.subScriptBtn().should('not.be.disabled');
 });

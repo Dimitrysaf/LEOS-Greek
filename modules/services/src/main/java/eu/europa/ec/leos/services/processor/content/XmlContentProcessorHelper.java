@@ -14,6 +14,8 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.i18n.MandateMessageHelper;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.support.IdGenerator;
@@ -33,6 +35,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -134,8 +138,10 @@ public class XmlContentProcessorHelper {
     private static final Logger LOG = LoggerFactory.getLogger(XmlContentProcessorHelper.class);
 
     public static List<TableOfContentItemVO> getAllChildTableOfContentItems(Node node, List<TocItem> tocItems, Map<TocItem,
-            List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode, String language) {
+            List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode, String language, MessageHelper messageHelper) {
         List<TableOfContentItemVO> itemVOList = new ArrayList<>();
+        List<NumberingConfig> numConfWithSoleNumLabel = numberingConfigs.stream().filter(numberingConfig -> StringUtils.isNotEmpty(numberingConfig.getLabel())).collect(Collectors.toList());
+        List<String> soleNumberingLabels = messageHelper!= null ? numConfWithSoleNumLabel.stream().map(numberingConfig -> messageHelper.getMessage(numberingConfig.getLabel())).collect(Collectors.toList()) : null;
         Node child;
         NodeList nodeList;
         if (mode.equals(TocMode.SIMPLIFIED) || mode.equals(TocMode.NOT_SIMPLIFIED)) {
@@ -147,7 +153,7 @@ public class XmlContentProcessorHelper {
                 child = nodeList.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE
                         && (elementsName.contains(child.getNodeName().toLowerCase()) || elementsName.isEmpty())) {
-                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language);
+                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper, soleNumberingLabels);
                 }
             }
         } else {
@@ -155,7 +161,7 @@ public class XmlContentProcessorHelper {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 child = nodeList.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
-                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language);
+                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper, soleNumberingLabels);
                 }
             }
         }
@@ -174,11 +180,11 @@ public class XmlContentProcessorHelper {
     }
 
     private static void addTocItemVoToList(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, Node node,
-            List<TableOfContentItemVO> itemVOList, TocMode mode, String language) {
-        TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language);
+            List<TableOfContentItemVO> itemVOList, TocMode mode, String language, MessageHelper messageHelper, List<String> soleNumberingLabels) {
+        TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, soleNumberingLabels);
         if (tableOfContentItemVO != null) {
             boolean isList = getTagValueFromTocItemVo(tableOfContentItemVO).equals(LIST);
-            List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language);
+            List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language, messageHelper);
             if ((!TocMode.SIMPLIFIED_CLEAN.equals(mode) || (TocMode.SIMPLIFIED_CLEAN.equals(mode) && tableOfContentItemVO.getTocItem().isDisplay()))
                     && shouldItemBeAddedToToc(tocItems, tocRules, node, tableOfContentItemVO.getTocItem())) {
                 if (TocMode.SIMPLIFIED.equals(mode) || TocMode.SIMPLIFIED_CLEAN.equals(mode)) {
@@ -234,7 +240,7 @@ public class XmlContentProcessorHelper {
     }
 
     public static TableOfContentItemVO buildTableOfContentsItemVO(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, Node node,
-            String language) {
+            String language, List<String> soleNumberingLabels) {
         if (node == null) {
             return null;
         }
@@ -265,6 +271,7 @@ public class XmlContentProcessorHelper {
 
         // get the num
         String number = null;
+        String label = null;
         String originNumAttr = null;
         String numId = null;
         SoftActionType numSoftActionAttribute = null;
@@ -280,7 +287,9 @@ public class XmlContentProcessorHelper {
                     numNode = insNode;
                 }
             }
-            number = extractNumber(numNode.getTextContent() != null ? numNode.getTextContent().trim() : null, tocItem.isNumWithType());
+            String numNodeText = numNode.getTextContent();
+            label = soleNumberingLabels != null && soleNumberingLabels.contains(numNodeText) ? numNodeText : null;
+            number = extractNumber(numNodeText != null ? numNodeText.trim() : null, tocItem.isNumWithType());
             if (indentOriginType != null && indentOriginNumValue == null
                     && !indentOriginType.equals(IndentedItemType.OTHER_SUBPARAGRAPH)
                     && !indentOriginType.equals(IndentedItemType.OTHER_SUBPOINT)
@@ -380,7 +389,16 @@ public class XmlContentProcessorHelper {
         item.setInitialNum(initialNumber);
         item.setTocItemType(tocItemType);
         item.setTrackChangeAction(trackChangeAction);
+        setItemLabel(label, item);
         return item;
+    }
+
+    private static void setItemLabel(String label, TableOfContentItemVO item) {
+        if (label != null && !(item.getSoftActionAttr() != null
+                && (item.getSoftActionAttr().getSoftAction().equalsIgnoreCase(DELETE.getSoftAction())
+                || item.getSoftActionAttr().getSoftAction().equalsIgnoreCase(MOVE_TO.getSoftAction())))) {
+            item.setLabel(label);
+        }
     }
 
     private static boolean wasMaybeAnUnumberedParagraph(Node item, IndentedItemType indentOriginType) {
@@ -498,7 +516,7 @@ public class XmlContentProcessorHelper {
                 || CN.equals(tocVo.getOriginNumAttr() != null ? tocVo.getOriginNumAttr() : tocVo.getOriginAttr()))) {
             tocVo.setNumber(null);
         }
-        if (StringUtils.isNotEmpty(tocVo.getNumber())) {
+        if (StringUtils.isNotEmpty(tocVo.getNumber()) || tocVo.getTocItem().getSoleNumbering() != null) {
             String newNum = createNumContent(tocVo);
             numNode = XercesUtils.getFirstChild(node, XercesUtils.getNumTag(getTagValueFromTocItemVo(tocVo)));
             if (numNode != null) {
@@ -669,8 +687,8 @@ public class XmlContentProcessorHelper {
             String xPath = "//*[@xml:id = '" + startingNodeId + "']";
             Node node = XercesUtils.getFirstElementByXPath(document, xPath);
             if (node != null) {
-                itemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language);
-                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language);
+                itemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, null);
+                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language, null);
                 itemVO.addAllChildItems(itemVOList);
             }
         } catch (Exception e) {
