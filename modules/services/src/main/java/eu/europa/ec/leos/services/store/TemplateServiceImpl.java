@@ -13,6 +13,9 @@
  */
 package eu.europa.ec.leos.services.store;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import eu.europa.ec.leos.domain.repository.Content;
@@ -22,16 +25,20 @@ import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.services.support.converter.DescriptionMapConverter;
 import eu.europa.ec.leos.services.support.converter.LanguageMapConverter;
 import eu.europa.ec.leos.services.support.converter.NameMapConverter;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.vo.catalog.Catalog;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,13 +55,92 @@ class TemplateServiceImpl implements TemplateService {
     @Value("${leos.templates.catalog}")
     private String templatesCatalog;
 
+    @Value("${leos.environment}")
+    private String leosEnvironment;
+
+    @Autowired
+    TemplateConfigurationService templateConfigurationService;
+
     TemplateServiceImpl(ConfigurationRepository configRepository) {
         this.configRepository = configRepository;
     }
 
     @Override
     public List<CatalogItem> getTemplatesCatalog() throws IOException {
-        return getCatalogItems(templatesCatalog);
+        List<CatalogItem> catalogList = getCatalogItems(templatesCatalog);
+        removeNotAllowedProposals(catalogList);
+        return catalogList;
+    }
+
+    private boolean removeNotAllowedProposals(List<CatalogItem> catalogList) throws JsonProcessingException {
+        boolean hasTemplate = false;
+        for (CatalogItem catalogItem : catalogList) {
+            if (catalogItem.isHidden() == null || !catalogItem.isHidden()) {
+                boolean removeThisItem = true;
+                if (catalogItem.getType().name().equals(CatalogItem.ItemType.TEMPLATE.name()) && verifyIfItemShouldBeProcessed(catalogItem)) {
+                    hasTemplate = true;
+                    removeThisItem = false;
+                }
+                if (!catalogItem.getType().name().equals(CatalogItem.ItemType.TEMPLATE.name()) && catalogItem.getItems() != null) {
+                    boolean childrenHasTemplate = removeNotAllowedProposals(catalogItem.getItems());
+                    if (childrenHasTemplate) {
+                        hasTemplate = true;
+                        removeThisItem = false;
+                    }
+                }
+                if (removeThisItem) {
+                    catalogItem.setHidden(true);
+                }
+            }
+        }
+        return hasTemplate;
+    }
+
+    private boolean verifyIfItemShouldBeProcessed(CatalogItem catalogItem) throws JsonProcessingException {
+        boolean itemShouldBeProcessed = true;
+        ObjectMapper objectMapper = new ObjectMapper();
+        String catalogConf = templateConfigurationService.getTemplateConfiguration("catalog");
+        JsonNode catalogNode = objectMapper.readTree(catalogConf);
+        if (catalogNode != null && catalogNode.get(catalogItem.getKey()) != null) {
+            if (catalogNode.get(catalogItem.getKey()).get("environments") != null) {
+                itemShouldBeProcessed = checkJsonNodeForCatalog(catalogItem, catalogNode.get(catalogItem.getKey()));
+            }
+            if (catalogNode.get(catalogItem.getKey()).get("list-of-environments") != null) {
+                JsonNode listEnvironmentJsonNode = catalogNode.get(catalogItem.getKey()).get("list-of-environments");
+                for (JsonNode itemEnvironmentJsonNode : listEnvironmentJsonNode) {
+                    if (itemEnvironmentJsonNode.get("environments") != null) {
+                        itemShouldBeProcessed = checkJsonNodeForCatalog(catalogItem, itemEnvironmentJsonNode);
+                    }
+                }
+            }
+        }
+        return itemShouldBeProcessed;
+    }
+
+    private boolean checkJsonNodeForCatalog(CatalogItem catalogItem, JsonNode catalogNode) {
+        boolean itemShouldBeProcessed = true;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String environments = catalogNode.get("environments").asText();
+        if (!environments.contains(leosEnvironment) && !environments.contains("all")) {
+            itemShouldBeProcessed = false;
+        }
+        String startDateStr = "";
+        if (catalogNode.get("start-date") != null) {
+            startDateStr = catalogNode.get("start-date").asText();
+            LocalDateTime startDate = LocalDateTime.parse(startDateStr, dateTimeFormatter);
+            if (LocalDateTime.now().isBefore(startDate)) {
+                itemShouldBeProcessed = false;
+            }
+        }
+        String endDateStr = "";
+        if (catalogNode.get("end-date") != null) {
+            endDateStr = catalogNode.get("end-date").asText();
+            LocalDateTime endDate = LocalDateTime.parse(endDateStr, dateTimeFormatter);
+            if (LocalDateTime.now().isAfter(endDate)) {
+                itemShouldBeProcessed = false;
+            }
+        }
+        return itemShouldBeProcessed;
     }
 
     private List<CatalogItem> getCatalogItems(String templatesCatalog) throws IOException {
