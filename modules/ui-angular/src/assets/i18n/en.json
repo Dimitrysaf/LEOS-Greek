@@ -639,7 +639,7 @@
   "dialog.import-from-journal.search.info-tooltip": "Please fill in your search criteria in order to search and import the official journal",
   "dialog.import-from-journal.prompt": "Select the element(s) from the document below to import",
   "dialog.import-from-journal.footer.selectAllRecitals-button": "Select all recitals",
-  "dialog.import-from-journal.footer.selectAllArticles-button": "Select all articles",
+  "dialog.import-from-journal.footer.selectAllEnactingItems-button": "Select all enacting items",
   "dialog.import-from-journal.footer.elements-selected": "Element(s) selected: {{ count }}",
   "dialog.import-from-journal.footer.import-button": "Import",
   "dialog.import-from-journal.footer.close-button": "Close",

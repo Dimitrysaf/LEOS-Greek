@@ -638,7 +638,7 @@
   "dialog.import-from-journal.search.info-tooltip": "Veuillez remplir vos critères de recherche afin de rechercher et d'importer le journal officiel",
   "dialog.import-from-journal.prompt": "Sélectionnez les éléments du document ci-dessous à importer",
   "dialog.import-from-journal.footer.selectAllRecitals-button": "Sélectionner tous les considérants",
-  "dialog.import-from-journal.footer.selectAllArticles-button": "Sélectionner tous les articles",
+  "dialog.import-from-journal.footer.selectAllEnactingItems-button": "Sélectionner tous les actes législatifs",
   "dialog.import-from-journal.footer.elements-selected": "Élément(s) sélectionné(s) : {{ count }}",
   "dialog.import-from-journal.footer.import-button": "Importer",
   "dialog.import-from-journal.footer.close-button": "Fermer",

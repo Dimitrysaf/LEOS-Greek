@@ -80,6 +80,11 @@ public class NumberServiceMandate implements NumberService {
     }
 
     @Override
+    public String renumberImportedHigherSubDivision(String xmlContentAsString, String language, String elementName) {
+        return xmlContentAsString;
+    }
+
+    @Override
     public String renumberImportedRecital(String xmlContent) {
         //No need to do pre process as this is done later stages
         return xmlContent;

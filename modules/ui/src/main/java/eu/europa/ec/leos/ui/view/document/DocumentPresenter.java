@@ -1048,7 +1048,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             if (aknDocument != null) {
                 Bill bill = getDocument();
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required");
-                byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds);
+                byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds, getListOfTableOfContent(bill, TocMode.NOT_SIMPLIFIED));
                 String notificationMsg = "document.import.element.inserted" + (elementIds.stream().anyMatch((s) -> s.startsWith("rec_")) ? ".recitals" : "") +
                         (elementIds.stream().anyMatch((s) -> s.startsWith("art_")) ? ".articles" : "");
                 updateBillContent(bill, newXmlContent, messageHelper.getMessage("operation.import.element.inserted"), notificationMsg);

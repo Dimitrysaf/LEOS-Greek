@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -81,10 +82,11 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         final Bill originalDocument = createBillForBytes(xmlStart);
         List<String> elementsIds = new ArrayList<>();
         IntStream.range(1, 100).forEach(val -> elementsIds.add("art_" + val));  //total are 155, import only first 100
+        List<TableOfContentItemVO> tocList = new ArrayList<TableOfContentItemVO>();
 
         // When
         long startTime = System.currentTimeMillis();
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, tocList);
         long endTime = System.currentTimeMillis();
 
         // Then
@@ -104,9 +106,10 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
 
         final Bill originalDocument = createBillForBytes(xmlStart);
         List<String> elementsIds = new ArrayList<>();
+        List<TableOfContentItemVO> tocList = new ArrayList<TableOfContentItemVO>();
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, tocList);
 
         // Then
         String result = new String(xmlResult);
@@ -125,9 +128,10 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         final Bill originalDocument = createBillForBytes(xmlStart);
         List<String> elementsIds = new ArrayList<>();
         elementsIds.add("art_2");
+        List<TableOfContentItemVO> tocList = new ArrayList<TableOfContentItemVO>();
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, tocList);
 
         // Then
         String result = new String(xmlResult);
@@ -146,9 +150,10 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         final Bill originalDocument = createBillForBytes(xmlStart);
         List<String> elementsIds = new ArrayList<>();
         IntStream.range(1, 2).forEach(val -> elementsIds.add("art_" + val));  //total are 155, import only 1
+        List<TableOfContentItemVO> tocList = new ArrayList<TableOfContentItemVO>();
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, tocList);
 
         // Then
         Document document = createXercesDocument(xmlResult);
@@ -171,9 +176,10 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
 
         final Bill originalDocument = createBillForBytes(xmlStart);
         List<String> elementsIds = Arrays.asList("art_1");
+        List<TableOfContentItemVO> tocList = new ArrayList<TableOfContentItemVO>();
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, tocList);
 
         // Then
         Document document = createXercesDocument(xmlResult);

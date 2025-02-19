@@ -704,7 +704,7 @@ Feature: Legal Act Page Regression Features
         Then bill content is appeared in import office journal window
         When click on select all articles button in import office journal window
         Then checkboxes of all the articles are selected
-        And  number of articles selected is 99
+        And  number of articles selected is 125
         When click on import button
         Then 102 articles are added in legal act by import oj
         When click on versions pane accordion
