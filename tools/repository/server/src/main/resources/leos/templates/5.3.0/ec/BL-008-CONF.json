@@ -1,0 +1,82 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//citations/citation[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-citation-3\" class=\"guidance-green-block\"><span id=\"clause-citation-3\">[for acts adopted after consultation of a committee under the advisory procedure]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/recital[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-recital-3\" class=\"guidance-green-block\"><span id=\"clause-recital-3\">[That recital is optional in accordance with the guidance note on explanatory documents available at:https://myintracomm.ec.europa.eu/corp/sg/fr/droit_comm/infractions/Documents/guidance_explanatory_documents_en.pdf. Please note that a thorough justification must be reflected in the summary record of the committee meeting on whether or not the Commission considers such explanatory documents to be justified.]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/recital[5]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-recital-5\" class=\"guidance-green-block\"><span id=\"clause-recital-5\">[for acts adopted after consultation of a committee under the examination procedure]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[2]/paragraph[1]/subparagraph[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-article-2\" class=\"guidance-green-block\"><span id=\"clause-article-2\">[...] - The time limit for transposition will be as short as possible and, generally, will not exceed two years</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//conclusions[1]/aknp[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose between the two options, depending on the person who signs.]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "content": "<article leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num xml:id=\"art2Num\" leos:editable=\"false\">Article 2</num><paragraph xml:id=\"art1Para1\"><num xml:id=\"art1Para1Num\">1.</num><subparagraph xml:id=\"art1Para1Sub1\"><content xml:id=\"art1Para1Sub1Content\"><p xml:id=\"art1Para1Sub1ContentP\">Member States shall bring into force the laws, regulations and administrative provisions necessary to comply with this Directive by [...] at the latest. They shall forthwith communicate to the Commission the text of those provisions.</p></content></subparagraph><subparagraph xml:id=\"art1Para1Sub2\"><content xml:id=\"art1Para1Sub2Content\"><p xml:id=\"art1Para1Sub2ContentP\">When Member States adopt those provisions, they shall contain a reference to this Directive or be accompanied by such a reference on the occasion of their official publication. Member States shall determine how such reference is to be made.</p></content></subparagraph></paragraph><paragraph xml:id=\"art2Para2\"><num xml:id=\"art2Para2Num\">2.</num><content xml:id=\"art1Para1Content\"><p xml:id=\"art1Para1ContentP\">Member States shall communicate to the Commission the text of the main provisions of national law which they adopt in the field covered by this Directive.</p></content></paragraph></article>"
+        },
+        {
+          "index": "2",
+          "content": "<article leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num xml:id=\"art2Num\" leos:editable=\"false\">Article 2</num><paragraph xml:id=\"art1Para1\"><num xml:id=\"art1Para1Num\">1.</num><subparagraph xml:id=\"art1Para1Sub1\"><content xml:id=\"art1Para1Sub1Content\"><p xml:id=\"art1Para1Sub1ContentP\">Member States shall adopt and publish, by [...] at the latest, the laws, regulations and administrative provisions necessary to comply with this Directive. They shall forthwith communicate to the Commission the text of those provisions.</p></content></subparagraph><subparagraph xml:id=\"art1Para1Sub2\"><content xml:id=\"art1Para1Sub2Content\"><p xml:id=\"art1Para1Sub2ContentP\">They shall apply those provisions from [...].</p></content></subparagraph><subparagraph xml:id=\"art1Para1Sub3\"><content xml:id=\"art1Para1Sub3Content\"><p xml:id=\"art1Para1Sub3ContentP\">When Member States adopt those provisions, they shall contain a reference to this Directive or be accompanied by such a reference on the occasion of their official publication. Member States shall determine how such reference is to be made.</p></content></subparagraph></paragraph><paragraph xml:id=\"art1Para2\"><num xml:id=\"art1Para1Num\">2.</num><content xml:id=\"art1Para2Content\"><p xml:id=\"art1Para2ContentP\">Member States shall communicate to the Commission the text of the main provisions of national law which they adopt in the field covered by this Directive.</p></content></paragraph></article>"
+        }
+      ]
+    },
+    {
+      "name": "listOption2",
+      "list": [
+        {
+          "index": "1",
+          "content": "<organization refersTo=\"~_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"~_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "2",
+          "content": "<organization refersTo=\"~_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"~_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\">On behalf of the President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "name": "structure_01"
+    }
+  ]
+}
