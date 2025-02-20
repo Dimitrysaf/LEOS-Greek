@@ -132,9 +132,9 @@ public class NumberServiceProposal implements NumberService {
     @Override
     public String renumberImportedHigherSubDivision(String xmlContentAsString, String language, String elementName) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        byte[] initialContent = xmlContentAsString.getBytes(UTF_8);
+        byte[] initialContent =  XmlHelper.addLeosNamespace(new String(xmlContentAsString)).getBytes(UTF_8);
         byte[] renumberedContent = renumberHigherSubDivisions(initialContent, language, elementName, tocItems);
-        return XmlHelper.addLeosNamespace(new String(renumberedContent));
+        return new String(renumberedContent);
     }
 
     private byte[] renumberDocument(byte[] xmlContent, String elementName, boolean namespaceEnabled, boolean renumberChildren) {

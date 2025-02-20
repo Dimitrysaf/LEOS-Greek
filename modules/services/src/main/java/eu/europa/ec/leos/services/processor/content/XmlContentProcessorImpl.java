@@ -1839,7 +1839,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         addAttribute(node, XMLID, newIdAttrValue);
         for(int i = 0; i < node.getChildNodes().getLength(); i++) {
             Node child = node.getChildNodes().item(i);
-            if(Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITAL).contains(child.getNodeName().toLowerCase())) {
+            if(OJ_IMPORT_ELEMENTS.contains(child.getNodeName().toLowerCase())) {
                 generateId(child);
             }
         }
