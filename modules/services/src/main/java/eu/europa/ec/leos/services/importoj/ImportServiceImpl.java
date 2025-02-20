@@ -43,6 +43,8 @@ import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
+import static eu.europa.ec.leos.services.support.XmlHelper.HIGHER_ELEMENTS;
+import static eu.europa.ec.leos.services.support.XmlHelper.OJ_IMPORT_ELEMENTS;
 import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
@@ -120,7 +122,7 @@ public class ImportServiceImpl implements ImportService {
 
             // Do pre-processing on the selected elements
             String updatedElement = xmlContentProcessor.doImportedElementPreProcessing(replaceNotAllowedElements(elementFragment), elementType);
-            if (Arrays.asList(PART, TITLE, CHAPTER, SECTION).contains(elementType.toLowerCase())) {
+            if (HIGHER_ELEMENTS.contains(elementType.toLowerCase())) {
                 updatedElement = this.numberService.renumberImportedHigherSubDivision(updatedElement, language, elementType);
             } else if (elementType.equalsIgnoreCase(ARTICLE)) {
                 updatedElement = this.numberService.renumberImportedArticle(updatedElement);
@@ -134,7 +136,7 @@ public class ImportServiceImpl implements ImportService {
                 documentContent = xmlContentProcessor.insertElementByTagNameAndId(documentContent, updatedElement,
                         element.getElementTagName(), elementId, checkIfLastArticleIsEntryIntoForce(documentContent, element, elementId,
                                 documentLanguageContext.getDocumentLanguage()), bill.isTrackChangesEnabled());
-            } else if (Arrays.asList(PART, TITLE, CHAPTER, SECTION).contains(elementType.toLowerCase())) {
+            } else if (HIGHER_ELEMENTS.contains(elementType.toLowerCase())) {
                 documentContent = xmlContentProcessor.appendElementToTag(documentContent, BODY, updatedElement, true);
             } else if (elementType.equalsIgnoreCase(ARTICLE)) {
                 documentContent = xmlContentProcessor.appendElementToTag(documentContent, BODY, updatedElement, true);
@@ -165,7 +167,7 @@ public class ImportServiceImpl implements ImportService {
     private void removeUnselectedChildNodes(Node elementNode, List<String> selectedElementIds) {
         for(int i = 0; i < elementNode.getChildNodes().getLength(); i++) {
             Node childNode = elementNode.getChildNodes().item(i);
-            if(Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITAL).contains(childNode.getNodeName().toLowerCase())) {
+            if(OJ_IMPORT_ELEMENTS.contains(childNode.getNodeName().toLowerCase())) {
                 if (!selectedElementIds.contains(getAttributeValue(childNode, XMLID))) {
                     elementNode.removeChild(childNode);
                     i--;
@@ -181,7 +183,7 @@ public class ImportServiceImpl implements ImportService {
         elementIds.add(getAttributeValue(element, XMLID));
         for(int i = 0; i < element.getChildNodes().getLength(); i++) {
             Node child = element.getChildNodes().item(i);
-            if(Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITAL).contains(child.getNodeName().toLowerCase())) {
+            if(OJ_IMPORT_ELEMENTS.contains(child.getNodeName().toLowerCase())) {
                 elementIds.addAll(getElementIds(child));
             }
         }
