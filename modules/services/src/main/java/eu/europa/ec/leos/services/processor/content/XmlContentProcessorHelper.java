@@ -14,7 +14,6 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.TocMode;
-import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.user.User;
@@ -35,8 +34,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -67,7 +64,6 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.getParentTagName;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasDescendantWithAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
@@ -85,7 +81,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
 import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.INTRO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_NUMBER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_CROSSHEADING_TYPE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
@@ -107,12 +102,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_TRANS_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ELEMENT_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_ORIGINAL_ITEM_TYPE;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_ORIGINAL_NUMBER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
@@ -140,8 +132,6 @@ public class XmlContentProcessorHelper {
     public static List<TableOfContentItemVO> getAllChildTableOfContentItems(Node node, List<TocItem> tocItems, Map<TocItem,
             List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode, String language, MessageHelper messageHelper) {
         List<TableOfContentItemVO> itemVOList = new ArrayList<>();
-        List<NumberingConfig> numConfWithSoleNumLabel = numberingConfigs.stream().filter(numberingConfig -> StringUtils.isNotEmpty(numberingConfig.getLabel())).collect(Collectors.toList());
-        List<String> soleNumberingLabels = messageHelper!= null ? numConfWithSoleNumLabel.stream().map(numberingConfig -> messageHelper.getMessage(numberingConfig.getLabel())).collect(Collectors.toList()) : null;
         Node child;
         NodeList nodeList;
         if (mode.equals(TocMode.SIMPLIFIED) || mode.equals(TocMode.NOT_SIMPLIFIED)) {
@@ -153,7 +143,7 @@ public class XmlContentProcessorHelper {
                 child = nodeList.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE
                         && (elementsName.contains(child.getNodeName().toLowerCase()) || elementsName.isEmpty())) {
-                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper, soleNumberingLabels);
+                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper);
                 }
             }
         } else {
@@ -161,7 +151,7 @@ public class XmlContentProcessorHelper {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 child = nodeList.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
-                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper, soleNumberingLabels);
+                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper);
                 }
             }
         }
@@ -180,8 +170,8 @@ public class XmlContentProcessorHelper {
     }
 
     private static void addTocItemVoToList(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, Node node,
-            List<TableOfContentItemVO> itemVOList, TocMode mode, String language, MessageHelper messageHelper, List<String> soleNumberingLabels) {
-        TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, soleNumberingLabels);
+            List<TableOfContentItemVO> itemVOList, TocMode mode, String language, MessageHelper messageHelper) {
+        TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, messageHelper);
         if (tableOfContentItemVO != null) {
             boolean isList = getTagValueFromTocItemVo(tableOfContentItemVO).equals(LIST);
             List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language, messageHelper);
@@ -240,7 +230,7 @@ public class XmlContentProcessorHelper {
     }
 
     public static TableOfContentItemVO buildTableOfContentsItemVO(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, Node node,
-            String language, List<String> soleNumberingLabels) {
+            String language, MessageHelper messageHelper) {
         if (node == null) {
             return null;
         }
@@ -271,10 +261,10 @@ public class XmlContentProcessorHelper {
 
         // get the num
         String number = null;
-        String label = null;
         String originNumAttr = null;
         String numId = null;
         SoftActionType numSoftActionAttribute = null;
+        String numNodeText = null;
         Node numNode = getFirstChild(node, NUM);
         if (numNode != null) {
             originNumAttr = getAttributeValue(numNode, LEOS_ORIGIN_ATTR);
@@ -287,8 +277,7 @@ public class XmlContentProcessorHelper {
                     numNode = insNode;
                 }
             }
-            String numNodeText = numNode.getTextContent();
-            label = soleNumberingLabels != null && soleNumberingLabels.contains(numNodeText) ? numNodeText : null;
+            numNodeText = numNode.getTextContent();
             number = extractNumber(numNodeText != null ? numNodeText.trim() : null, tocItem.isNumWithType());
             if (indentOriginType != null && indentOriginNumValue == null
                     && !indentOriginType.equals(IndentedItemType.OTHER_SUBPARAGRAPH)
@@ -389,15 +378,21 @@ public class XmlContentProcessorHelper {
         item.setInitialNum(initialNumber);
         item.setTocItemType(tocItemType);
         item.setTrackChangeAction(trackChangeAction);
-        setItemLabel(label, item);
+        seitemSoloNumber(numberingConfigs, item, messageHelper, numNodeText);
         return item;
     }
 
-    private static void setItemLabel(String label, TableOfContentItemVO item) {
-        if (label != null && !(item.getSoftActionAttr() != null
-                && (item.getSoftActionAttr().getSoftAction().equalsIgnoreCase(DELETE.getSoftAction())
-                || item.getSoftActionAttr().getSoftAction().equalsIgnoreCase(MOVE_TO.getSoftAction())))) {
-            item.setLabel(label);
+    private static void seitemSoloNumber(List<NumberingConfig> numberingConfigs, TableOfContentItemVO item,
+                                     MessageHelper messageHelper, String numNodeText) {
+        if (item.getTocItem().getSoleNumbering() != null) {
+            List<NumberingConfig> numConfWithSoleNumLabel = numberingConfigs.stream().filter(numberingConfig -> StringUtils.isNotEmpty(numberingConfig.getLabel())).collect(Collectors.toList());
+            List<String> soleNumberingLabels = messageHelper != null ? numConfWithSoleNumLabel.stream().map(numberingConfig -> messageHelper.getMessage(numberingConfig.getLabel())).collect(Collectors.toList()) : null;
+            String label = soleNumberingLabels != null && soleNumberingLabels.contains(numNodeText) ? numNodeText : null;
+            if ((numNodeText.equalsIgnoreCase(label) && StringUtils.isNotEmpty(label)) || (StringUtils.isEmpty(numNodeText)
+                    && StringUtils.isEmpty(label) && item.getTocItem().getAknTag().value().equalsIgnoreCase(RECITAL))) {
+                item.setNumber(label);
+                item.setSoloNumbered(true);
+            }
         }
     }
 

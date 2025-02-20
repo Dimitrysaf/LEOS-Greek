@@ -655,79 +655,96 @@ export class DocumentTocComponent
   private prepareTreeForDisplay(root: TableOfContentItemVO[]) {
     for (const n of root || []) {
       if (n) {
-        n.tocStyling = getItemSoftStyle(n);
-        let label: string = n.tocItem.itemDescription
-          ? this.getLabel(n) + SPACE
-          : '';
+        if (n.soloNumbered) {
+          n.tocStyling = getItemSoftStyle(n);
+          let soloNumElementLabel = '';
+          if (n.number && n.heading) {
+            soloNumElementLabel = n.number + NUM_HEADING_SEPARATOR + n.heading;
+          } else if (n.number) {
+            soloNumElementLabel = n.number + SPACE;
+          }
+          if (n.tocItem.contentDisplayed) {
+            soloNumElementLabel +=  soloNumElementLabel && soloNumElementLabel.length > 0 ? CONTENT_SEPARATOR : '';
+            soloNumElementLabel += removeTag(n.content);
+          }
+          n.label = soloNumElementLabel;
+        } else {
+          n.tocStyling = getItemSoftStyle(n);
+          let label: string = n.tocItem.itemDescription
+            ? this.getLabel(n) + SPACE
+            : '';
 
-        const shoudlAddMovedLabel = this.shouldAddMoveLabel(n);
-        if (shoudlAddMovedLabel) {
-          label = MOVED_TITLE_SPAN_START_TAG.concat(' ', label);
-          label += SPACE;
-        }
-        if (n.number && n.heading) {
-          if (
-            n.tocItem.aknTag.toLowerCase() === n.number.toLowerCase().trim()
-          ) {
-            n.number = HASH_NUM_VALUE;
-          }
-          n.label && !(n.trackChangeAction === 'move' || n.trackChangeAction === 'delete') ? label = n.label : label += n.number;
+          const shoudlAddMovedLabel = this.shouldAddMoveLabel(n);
           if (shoudlAddMovedLabel) {
-            label += SPAN_END_TAG;
-            label += this.getMovedLabel();
+            label = MOVED_TITLE_SPAN_START_TAG.concat(' ', label);
+            label += SPACE;
           }
-          if (n.tocItem.aknTag === TBLOCK || n.content === '') {
-            label += CONTENT_SEPARATOR;
-            label += n.heading;
-          } else if (n.content !== '') {
-            label += NUM_HEADING_SEPARATOR;
-            label += n.heading;
-          }
-        } else if (n.number) {
-          const softAction = n.numSoftActionAttr;
-          if (softAction) {
+          if (n.number && n.heading) {
             if (
-              PARAGRAPH === n.tocItem.aknTag &&
-              DELETE === softAction &&
-              MOVE_TO !== n.softActionAttr
+              n.tocItem.aknTag.toLowerCase() === n.number.toLowerCase().trim()
             ) {
-              label +=
-                '<span class="leos-soft-num-removed">' + n.number + '</span>';
-            } else if (
-              PARAGRAPH === n.tocItem.aknTag &&
-              ADD === softAction &&
-              MOVE_TO !== n.softActionAttr
-            ) {
-              label +=
-                '<span class="leos-soft-num-new">' + n.number + '</span>';
+              n.number = HASH_NUM_VALUE;
             }
-          } else {
-            if (this.isIndented(n) && n.number !== n.indentOriginNumValue) {
-              label +=
-                '<span class="leos-soft-num-new">' + n.number + '</span>';
-            } else {
-              n.label && !(n.trackChangeAction === 'move' || n.trackChangeAction === 'delete') ? label = n.label : label += n.number;
-            }
+            /*n.label && !(n.trackChangeAction === 'move' || n.trackChangeAction === 'delete') ? label = n.label :*/
+            label += n.number;
             if (shoudlAddMovedLabel) {
               label += SPAN_END_TAG;
               label += this.getMovedLabel();
             }
-          }
-        } else if (n.heading) {
-          label += n.heading;
-          if (shoudlAddMovedLabel) {
+            if (n.tocItem.aknTag === TBLOCK || n.content === '') {
+              label += CONTENT_SEPARATOR;
+              label += n.heading;
+            } else if (n.content !== '') {
+              label += NUM_HEADING_SEPARATOR;
+              label += n.heading;
+            }
+          } else if (n.number) {
+            const softAction = n.numSoftActionAttr;
+            if (softAction) {
+              if (
+                PARAGRAPH === n.tocItem.aknTag &&
+                DELETE === softAction &&
+                MOVE_TO !== n.softActionAttr
+              ) {
+                label +=
+                  '<span class="leos-soft-num-removed">' + n.number + '</span>';
+              } else if (
+                PARAGRAPH === n.tocItem.aknTag &&
+                ADD === softAction &&
+                MOVE_TO !== n.softActionAttr
+              ) {
+                label +=
+                  '<span class="leos-soft-num-new">' + n.number + '</span>';
+              }
+            } else {
+              if (this.isIndented(n) && n.number !== n.indentOriginNumValue) {
+                label +=
+                  '<span class="leos-soft-num-new">' + n.number + '</span>';
+              } else {
+                /*n.label && !(n.trackChangeAction === 'move' || n.trackChangeAction === 'delete') ? label = n.label :*/
+                label += n.number;
+              }
+              if (shoudlAddMovedLabel) {
+                label += SPAN_END_TAG;
+                label += this.getMovedLabel();
+              }
+            }
+          } else if (n.heading) {
+            label += n.heading;
+            if (shoudlAddMovedLabel) {
+              label += SPAN_END_TAG;
+              label += this.getMovedLabel();
+            }
+          } else if (shoudlAddMovedLabel) {
             label += SPAN_END_TAG;
             label += this.getMovedLabel();
           }
-        } else if (shoudlAddMovedLabel) {
-          label += SPAN_END_TAG;
-          label += this.getMovedLabel();
+          if (n.tocItem.contentDisplayed) {
+            label += label.length > 0 ? CONTENT_SEPARATOR : '';
+            label += removeTag(n.content);
+          }
+          n.label = label;
         }
-        if (n.tocItem.contentDisplayed) {
-          label += label.length > 0 ? CONTENT_SEPARATOR : '';
-          label += removeTag(n.content);
-        }
-        n.label = label;
       }
       if (n.childItems) this.prepareTreeForDisplay(n.childItems);
     }

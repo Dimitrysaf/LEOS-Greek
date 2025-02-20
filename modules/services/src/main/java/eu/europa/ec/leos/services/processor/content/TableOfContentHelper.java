@@ -97,6 +97,10 @@ public class TableOfContentHelper {
                 tocItem.setNumber(StructureConfigUtils.HASH_NUM_VALUE);
             }
             itemDescription.append(tocItem.getNumber());
+            if (tocItem.getNumber() != null || tocItem.isSoloNumbered()) {
+                itemDescription.setLength(0);
+                itemDescription.append(tocItem.getNumber());
+            }
             if (shoudlAddMovedLabel) {
                 itemDescription.append(SPAN_END_TAG).append(getMovedLabel(messageHelper));
             }

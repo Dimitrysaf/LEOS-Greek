@@ -201,11 +201,11 @@ public abstract class TocApiServiceImpl implements TocApiService {
         String language = documentLanguageContext.getDocumentLanguage();
 
         TableOfContentItemVO draggedTocItemVO = getTableOfContentItemVO(request.getDraggedNodeId().get(0),
-                request.getDraggedNodeTagName(), tocItems, numberingConfigs, document, language);
+                request.getDraggedNodeTagName(), tocItems, numberingConfigs, document, language, messageHelper);
         TableOfContentItemVO targetTocItemVO = getTableOfContentItemVO(request.getTargetNodeId(),
-                request.getTargetNodeTagName(), tocItems, numberingConfigs, document, language);
+                request.getTargetNodeTagName(), tocItems, numberingConfigs, document, language, messageHelper);
         TableOfContentItemVO parentTocItemVO = getTableOfContentItemVO(request.getParentNodeId(),
-                request.getParentNodeTagName(), tocItems, numberingConfigs, document, language);
+                request.getParentNodeTagName(), tocItems, numberingConfigs, document, language, messageHelper);
 
         TocDropResult result = new TocDropResult(true, false, "toc.edit.window.drop.success.message",
                 new ArrayList<>(), draggedTocItemVO, targetTocItemVO);
@@ -566,12 +566,12 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private static TableOfContentItemVO getTableOfContentItemVO(String nodeId, String nodeName, List<TocItem> tocItems,
-                                                                List<NumberingConfig> numberingConfigs, Document document, String language) {
+            List<NumberingConfig> numberingConfigs, Document document, String language, MessageHelper messageHelper) {
         TableOfContentItemVO tableOfContentItemVO = null;
         if (nodeId != null) {
             Node node = getElementById(document, nodeId);
             if (node != null) {
-                tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, null);
+                tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, messageHelper);
             } else {
                 TocItem draggedTocItem = StructureConfigUtils.getTocItemByName(tocItems, nodeName);
                 tableOfContentItemVO = new TableOfContentItemVO(draggedTocItem, nodeId, null, null, null, null, null, null, null, null);
