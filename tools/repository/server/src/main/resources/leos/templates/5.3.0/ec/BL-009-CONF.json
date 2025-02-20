@@ -1,0 +1,97 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//citations/citation[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-citation-3\" class=\"guidance-green-block\"><span id=\"clause-citation-3\">[for acts adopted after consultation of a committee under the advisory procedure]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/recital[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-recital-3\" class=\"guidance-green-block\"><span id=\"clause-recital-3\">[for acts adopted after consultation of a committee under the examination procedure]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[2]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose between the two options, depending on the addressees of the act.]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//conclusions[1]/aknp[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose the right option, depending on Procedure and the person who signs]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "content": "<article leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num leos:editable=\"false\">Article 2</num><paragraph leos:editable=\"true\" leos:deletable=\"true\"><content><p>This Decision is addressed to the Member States.</p></content></paragraph></article>"
+        },
+        {
+          "index": "2",
+          "content": "<article leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num leos:editable=\"false\">Article 2</num><paragraph leos:editable=\"true\" leos:deletable=\"true\"><content><p>This Decision is addressed to [...].</p></content></paragraph></article>"
+        }
+      ]
+    },
+    {
+      "name": "listOption2",
+      "list": [
+        {
+          "index": "1",
+          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "2",
+          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Executive Vice-Presiden</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "3",
+          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Vice-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "4",
+          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Member of the Commission</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "5",
+          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director-General</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "6",
+          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "7",
+          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of unit</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "8",
+          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of service </role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "name": "structure_01"
+    }
+  ]
+}
