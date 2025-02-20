@@ -31,7 +31,7 @@ define(function leosTrackChangesModule(require) {
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
         DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
-        ACCEPT: "accept", REJECT: "reject",
+        ACCEPT: "accept", REJECT: "reject", TRACKCHANGES_NUMBER_ELEMENT_SELECTOR: "li[data-akn-action-number]",
 
         DATA_AKN_SOFTACTION: "data-akn-attr-softaction", DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
         SOFTACTION_MOVE_FROM: "move_from", SOFTACTION_MOVE_TO: "move_to",
@@ -670,6 +670,30 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
+        acceptAllChanges: function(editor, numberModule) {
+            var tcTextElements = editor.document.find(core.TRACKCHANGES_ELEMENT_SELECTOR);
+            for (var i = 0; i < tcTextElements.count(); i++) {
+                this.acceptChange(editor, tcTextElements.getItem(i), numberModule);
+            }
+
+            var tcNumberElements = editor.document.find(core.TRACKCHANGES_NUMBER_ELEMENT_SELECTOR);
+            for (var i = 0; i < tcNumberElements.count(); i++) {
+                actions.acceptChange(editor, tcNumberElements.getItem(i), numberModule);
+            }
+        },
+
+        rejectAllChanges: function(editor, numberModule) {
+            var tcTextElements = editor.document.find(core.TRACKCHANGES_ELEMENT_SELECTOR);
+            for (var i = 0; i < tcTextElements.count(); i++) {
+                this.rejectChange(editor, tcTextElements.getItem(i), numberModule);
+            }
+
+            var tcNumberElements = editor.document.find(core.TRACKCHANGES_NUMBER_ELEMENT_SELECTOR);
+            for (var i = 0; i < tcNumberElements.count(); i++) {
+                actions.rejectChange(editor, tcNumberElements.getItem(i), numberModule);
+            }
+        },
+
         acceptChange: function(editor, element, numberModule) {
             if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
                 this.removeEnterAndJoinLines(element, editor);
@@ -811,8 +835,7 @@ define(function leosTrackChangesModule(require) {
                 element.remove();
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION
                 || (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW
-                    && element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION
-                    && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
+                    && element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION)) {
                 this.removeEnterAndJoinLines(element, editor);
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributesForEnter(element);

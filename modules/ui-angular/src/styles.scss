@@ -626,3 +626,17 @@ a:not([href]):not([tabindex]):not(eui-breadcrumb-item a):hover {
 .eui-tabs .eui-tab-item--secondary {
   @extend %tabStyles;
 }
+
+.cke_combo__trackchangeactions .cke_combo_text {
+  padding-left: 0px !important;
+  width: 30px !important;
+  color: white !important;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 5px;
+  background-color: rgba(46,46,46,0.91) !important;
+}
+
+.cke_combo__trackchangeactions .cke_combo_open {
+  margin: 1px 5px;
+}
