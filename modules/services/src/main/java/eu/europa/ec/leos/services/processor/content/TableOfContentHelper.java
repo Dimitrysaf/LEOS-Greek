@@ -97,7 +97,7 @@ public class TableOfContentHelper {
                 tocItem.setNumber(StructureConfigUtils.HASH_NUM_VALUE);
             }
             itemDescription.append(tocItem.getNumber());
-            if (tocItem.getNumber() != null || tocItem.isSoleNumbered()) {
+            if (tocItem.isSoleNumbered()) {
                 itemDescription.setLength(0);
                 itemDescription.append(tocItem.getNumber());
             }

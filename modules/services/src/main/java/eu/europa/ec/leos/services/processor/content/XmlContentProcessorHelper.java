@@ -378,11 +378,11 @@ public class XmlContentProcessorHelper {
         item.setInitialNum(initialNumber);
         item.setTocItemType(tocItemType);
         item.setTrackChangeAction(trackChangeAction);
-        seitemSoloNumber(numberingConfigs, item, messageHelper, numNodeText);
+        seItemSoleNumber(numberingConfigs, item, messageHelper, numNodeText);
         return item;
     }
 
-    private static void seitemSoloNumber(List<NumberingConfig> numberingConfigs, TableOfContentItemVO item,
+    private static void seItemSoleNumber(List<NumberingConfig> numberingConfigs, TableOfContentItemVO item,
                                      MessageHelper messageHelper, String numNodeText) {
         if (item.getTocItem().getSoleNumbering() != null) {
             List<NumberingConfig> numConfWithSoleNumLabel = numberingConfigs.stream().filter(numberingConfig -> StringUtils.isNotEmpty(numberingConfig.getLabel())).collect(Collectors.toList());
