@@ -27,6 +27,7 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginName = "leosTrackChanges";
 
     var pluginDefinition = {
+        requires: 'richcombo',
         init: function init(editor) {
             // Plugin not allowed COUNCIL
             if (editor.LEOS.instanceType === "COUNCIL") {
