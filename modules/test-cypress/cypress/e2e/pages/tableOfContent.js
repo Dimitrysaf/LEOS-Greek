@@ -158,6 +158,10 @@ class tableOfContent {
         return this.elements.nodeLabel().contains(label);
     }
 
+    minimizeNodeLabel(label){
+        this.elements.nodeLabel().contains(label).prev("eui-icon-svg[icon='eui-chevron-down']").click();
+    }
+
     getCloseLiOfNodeLabel(label){
         return this.elements.nodeLabel().contains(label).closest('li');
     }

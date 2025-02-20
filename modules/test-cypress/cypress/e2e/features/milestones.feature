@@ -116,3 +116,14 @@ Feature: milestone section regression features
 #             | ANNEX II                                                                                |
         When click on close button in milestone explorer view
         Then user is on act viewer page
+#        And  click on option "Download" under milestone actions
+#        And  wait for 5000 milliseconds
+#        When extract recent "leg" file present in download folder
+#        Then xml files having separator "-" present in download folder contain below names
+#            | fileName                |
+#            | STAT_DIGIT_FINANC_LEGIS |
+#            | ANNEX                   |
+#            | ANNEX                   |
+#            | EXPL_MEMORANDUM         |
+#            | main                    |
+#            | REG                     |

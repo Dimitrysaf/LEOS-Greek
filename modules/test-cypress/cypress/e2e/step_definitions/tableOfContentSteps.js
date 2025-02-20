@@ -308,12 +308,17 @@ When(/^enacting terms doesn't contain new element in navigation pane$/, function
     tableOfContent.elements.enactingTermsList().find('div.label.leos-soft-new').should('not.exist');
 });
 
-Then ('enacting terms contains {string} at index {int} in navigation pane',function(label,index){
+Then('enacting terms contains {string} at index {int} in navigation pane',function(label,index){
     tableOfContent.elements.enactingTermsList().eq(index)
         .should('contain', label)
 
 });
-Then ("subversion of recent changes version card doesn't contain {string}",function(label){
+
+Then("subversion of recent changes version card doesn't contain {string}",function(label){
     tableOfContent.elements.cardContentOfRecentChanges()
         .should('not.have.text', label.trim());
+});
+
+And("minimize {string} link in navigation pane", function (nodeLabel) {
+    tableOfContent.minimizeNodeLabel(nodeLabel);
 });
