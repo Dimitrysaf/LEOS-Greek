@@ -1,4 +1,4 @@
-image: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
+image: code.europa.eu:4567/leos/core/image-for-tests:1.0.3
 
 stages:
   - build
