@@ -680,6 +680,10 @@ define(function leosTrackChangesModule(require) {
             for (var i = 0; i < tcNumberElements.count(); i++) {
                 actions.acceptChange(editor, tcNumberElements.getItem(i), numberModule);
             }
+
+            if(tcTextElements.count() > 0 || tcNumberElements.count() > 0) {
+                editor.fire('change');
+            }
         },
 
         rejectAllChanges: function(editor, numberModule) {
@@ -691,6 +695,10 @@ define(function leosTrackChangesModule(require) {
             var tcNumberElements = editor.document.find(core.TRACKCHANGES_NUMBER_ELEMENT_SELECTOR);
             for (var i = 0; i < tcNumberElements.count(); i++) {
                 actions.rejectChange(editor, tcNumberElements.getItem(i), numberModule);
+            }
+
+            if(tcTextElements.count() > 0 || tcNumberElements.count() > 0) {
+                editor.fire('change');
             }
         },
 

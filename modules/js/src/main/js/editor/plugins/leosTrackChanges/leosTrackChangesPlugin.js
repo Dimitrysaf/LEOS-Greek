@@ -58,30 +58,32 @@ define(function leosTrackChangesPluginModule(require) {
             });
 
             // Add dropdown with Accept All & Reject All buttons
-            editor.ui.addRichCombo('trackChangeActions', {
-                label: 'TC',
-                toolbar: 'trackChanges',
-                className: 'cke_format',
-                multiSelect: false,
-                panel: {
-                    css: [editor.config.contentsCss, CKEDITOR.skin.getPath('editor')],
-                    multiSelect: false
-                },
+            if(!editor.config.isAlternativeArticle && !editor.config.isClause) {
+                editor.ui.addRichCombo('trackChangeActions', {
+                    label: 'TC',
+                    toolbar: 'trackChanges',
+                    className: 'cke_format',
+                    multiSelect: false,
+                    panel: {
+                        css: [editor.config.contentsCss, CKEDITOR.skin.getPath('editor')],
+                        multiSelect: false
+                    },
 
-                init: function () {
-                    this.add('acceptAll', 'Accept All', 'Accept All');
-                    this.add('rejectAll', 'Reject All', 'Reject All');
-                },
+                    init: function () {
+                        this.add('acceptAll', 'Accept All', 'Accept All');
+                        this.add('rejectAll', 'Reject All', 'Reject All');
+                    },
 
-                onClick: function (value) {
-                    editor.focus();
-                    if(value === 'acceptAll') {
-                        actions.acceptAllChanges(editor, numberModule);
-                    } else {
-                        actions.rejectAllChanges(editor, numberModule);
-                    }
-                },
-            });
+                    onClick: function (value) {
+                        editor.focus();
+                        if(value === 'acceptAll') {
+                            actions.acceptAllChanges(editor, numberModule);
+                        } else {
+                            actions.rejectAllChanges(editor, numberModule);
+                        }
+                    },
+                });
+            }
 
             // Add context menu accept and reject options
             if (editor.contextMenu) {
