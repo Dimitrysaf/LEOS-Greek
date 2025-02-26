@@ -99,6 +99,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_ACTION;
@@ -382,7 +383,11 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     @Override
     public void removeElement(Node node) {
         if (isTrackChangesEnabled()) {
-            super.removeElement(node);
+            if(getFirstChild(node, LEOS_TC_DELETE_ELEMENT_NAME) != null) {
+                super.removeElement(node);
+            } else {
+                XercesUtils.deleteElement(node);
+            }
         } else {
             XercesUtils.deleteElement(node);
         }
