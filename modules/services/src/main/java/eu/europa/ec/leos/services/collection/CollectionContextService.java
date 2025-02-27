@@ -288,6 +288,23 @@ public abstract class CollectionContextService {
                 .withEeaRelevance(eeaRelevance)
                 .withLanguage(language)
                 .build();
+
+        List<CatalogItem> catalogItems;
+        Map<String, String> templatePropertiesMap = new HashMap<>();
+        templatePropertiesMap.put(DOCUMENT_MANDATORY_TEMPLATES, "");
+        templatePropertiesMap.put(DOCUMENT_DEFAULT_TRUE_TEMPLATES, "");
+        templatePropertiesMap.put(DOCUMENT_DEFAULT_FALSE_TEMPLATES, "");
+        try {
+            catalogItems = templateService.getTemplatesCatalog();
+            getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
+        } catch (IOException e) {
+            LOG.error("Error occurred while retrieving catalog items " + e.getMessage());
+        }
+        loadTemplates(templatePropertiesMap, DOCUMENT_MANDATORY_TEMPLATES);
+        loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
+        String creationOptions = createJsonCreationOptions(templatePropertiesMap);
+        metadata.setCreationOptions(creationOptions);
+
         if (cloneProposal) {
             setConnectedEntity();
             proposal = proposalService.createClonedProposalFromContent(leosPckg.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());

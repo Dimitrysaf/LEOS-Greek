@@ -152,6 +152,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         context.useOriginRef(propDocument.getRef());
         addTemplateInContext(context, propDocument);
         postProcessingDocumentService.processDocument(propDocument);
+        context.useTemplateKey(propDocument.getMetadata().getTemplate());
         Proposal proposal = context.executeImportProposal();
 
         String proposalId = proposal.getMetadata().get().getRef();
