@@ -27,6 +27,7 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginName = "leosTrackChanges";
 
     var pluginDefinition = {
+        requires: 'richcombo',
         init: function init(editor) {
             // Plugin not allowed COUNCIL
             if (editor.LEOS.instanceType === "COUNCIL") {
@@ -55,6 +56,34 @@ define(function leosTrackChangesPluginModule(require) {
                     core.updateTrackChangesStyles(core.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
                 }
             });
+
+            // Add dropdown with Accept All & Reject All buttons
+            if(!editor.config.isAlternativeArticle && !editor.config.isClause) {
+                editor.ui.addRichCombo('trackChangeActions', {
+                    label: 'TC',
+                    toolbar: 'trackChanges',
+                    className: 'cke_format',
+                    multiSelect: false,
+                    panel: {
+                        css: [editor.config.contentsCss, CKEDITOR.skin.getPath('editor')],
+                        multiSelect: false
+                    },
+
+                    init: function () {
+                        this.add('acceptAll', 'Accept All', 'Accept All');
+                        this.add('rejectAll', 'Reject All', 'Reject All');
+                    },
+
+                    onClick: function (value) {
+                        editor.focus();
+                        if(value === 'acceptAll') {
+                            actions.acceptAllChanges(editor, numberModule);
+                        } else {
+                            actions.rejectAllChanges(editor, numberModule);
+                        }
+                    },
+                });
+            }
 
             // Add context menu accept and reject options
             if (editor.contextMenu) {

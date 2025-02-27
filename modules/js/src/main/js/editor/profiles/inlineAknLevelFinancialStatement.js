@@ -119,7 +119,7 @@ define(function inlineAknLevelFinancialStatementProfileModule(require) {
             '/',
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
             { name : "mode" , items: [ 'Sourcedialog', 'spellchecker'] },
-            { name: 'trackChanges', items: ['toggleDisplay'] },
+            { name: 'trackChanges', items: ['toggleDisplay', 'trackChangeActions'] },
             { name : "colors" , items: [ 'BGColor' ] }
         ],
         //show toolbar on startup

@@ -37,7 +37,7 @@ define(function ckEditorTestUtil(require) {
 
             var config = {
                 language: "en",
-                plugins: ["toolbar", "widget"],
+                plugins: ["toolbar", "widget", "richcombo"],
                 extraPlugins: extraPluginsName,
                 toolbar: [{
                     name: "trackChanges",

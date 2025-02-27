@@ -130,7 +130,7 @@ define(function aknRecitalProfileModule(require) {
         }, {
             name : "about"
         },{
-            name: 'trackChanges', groups: ['toggleDisplay']
+            name: 'trackChanges', groups: ['toggleDisplay', 'trackChangeActions']
         },{
             name : "colors"
         } ,{
