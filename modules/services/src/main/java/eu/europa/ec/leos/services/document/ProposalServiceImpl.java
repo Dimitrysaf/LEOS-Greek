@@ -593,10 +593,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
         } else {
             ref = generateProposalReference(metadata.getLanguage());
         }
+        String creationOptions = metadata.getCreationOptions();
         metadata = metadata
                 .builder()
                 .withRef(ref)
                 .build();
+        metadata.setCreationOptions(creationOptions);
         Proposal proposal = proposalRepository.createProposalFromContent(path, ref + XML_DOC_EXT, metadata, updateDataInXml(proposalDocument.getSource(), metadata));
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
