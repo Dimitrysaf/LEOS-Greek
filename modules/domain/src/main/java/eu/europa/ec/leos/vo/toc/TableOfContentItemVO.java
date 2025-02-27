@@ -91,7 +91,7 @@ public class TableOfContentItemVO implements Serializable {
     private String style;
     private Boolean isAutoNumOverwritten = false;
     private NumberingType numberingType;
-    private boolean isSoloNumbered;
+    private boolean isSoleNumbered;
 
     public TableOfContentItemVO() {
         super();
@@ -724,7 +724,7 @@ public class TableOfContentItemVO implements Serializable {
         this.numberingType = numberingType;
     }
 
-    public boolean isSoloNumbered() { return isSoloNumbered; }
+    public boolean isSoleNumbered() { return isSoleNumbered; }
 
-    public void setSoloNumbered(boolean soloNumbered) { isSoloNumbered = soloNumbered; }
+    public void setSoleNumbered(boolean soleNumbered) { isSoleNumbered = soleNumbered; }
 }

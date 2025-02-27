@@ -655,7 +655,7 @@ export class DocumentTocComponent
   private prepareTreeForDisplay(root: TableOfContentItemVO[]) {
     for (const n of root || []) {
       if (n) {
-        if (n.soloNumbered) {
+        if (n.soleNumbered) {
           n.tocStyling = getItemSoftStyle(n);
           let soloNumElementLabel = '';
           if (n.number && n.heading) {
@@ -685,7 +685,6 @@ export class DocumentTocComponent
             ) {
               n.number = HASH_NUM_VALUE;
             }
-            /*n.label && !(n.trackChangeAction === 'move' || n.trackChangeAction === 'delete') ? label = n.label :*/
             label += n.number;
             if (shoudlAddMovedLabel) {
               label += SPAN_END_TAG;
@@ -721,7 +720,6 @@ export class DocumentTocComponent
                 label +=
                   '<span class="leos-soft-num-new">' + n.number + '</span>';
               } else {
-                /*n.label && !(n.trackChangeAction === 'move' || n.trackChangeAction === 'delete') ? label = n.label :*/
                 label += n.number;
               }
               if (shoudlAddMovedLabel) {

@@ -104,6 +104,18 @@ public class LeosXercesUtils {
             } else if ((insNode != null) && node.getNodeName().equalsIgnoreCase(POINT) && !insNode.getTextContent().equals(numLabel)) {
                 insNode.setTextContent(numLabel);
             }
+        } else if(isTrackChangesEnabled && StringUtils.isNotEmpty(numLabel)) {
+            numNode = createElementAsFirstChildOfNode(node, getNumTag(node.getNodeName()), "");
+
+            //in del tag num is set as blank because this condition is where num node is not present before
+            Node deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "del", "");
+            addAttribute(deletedNum, LEOS_UID, securityContext.getUser().getLogin());
+            addAttribute(deletedNum, LEOS_TITLE, getTitleValue(securityContext));
+
+            Node insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
+            addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
+            addAttribute(insertedNum, LEOS_TITLE, getTitleValue(securityContext));
+
         } else {
             numNode = createElementAsFirstChildOfNode(node, getNumTag(node.getNodeName()), numLabel);
         }

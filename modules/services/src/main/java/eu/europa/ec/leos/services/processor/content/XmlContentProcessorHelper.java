@@ -388,10 +388,10 @@ public class XmlContentProcessorHelper {
             List<NumberingConfig> numConfWithSoleNumLabel = numberingConfigs.stream().filter(numberingConfig -> StringUtils.isNotEmpty(numberingConfig.getLabel())).collect(Collectors.toList());
             List<String> soleNumberingLabels = messageHelper != null ? numConfWithSoleNumLabel.stream().map(numberingConfig -> messageHelper.getMessage(numberingConfig.getLabel())).collect(Collectors.toList()) : null;
             String label = soleNumberingLabels != null && soleNumberingLabels.contains(numNodeText) ? numNodeText : null;
-            if ((numNodeText.equalsIgnoreCase(label) && StringUtils.isNotEmpty(label)) || (StringUtils.isEmpty(numNodeText)
+            if ((StringUtils.isNotEmpty(label) && numNodeText.equalsIgnoreCase(label)) || (StringUtils.isEmpty(numNodeText)
                     && StringUtils.isEmpty(label) && item.getTocItem().getAknTag().value().equalsIgnoreCase(RECITAL))) {
                 item.setNumber(label);
-                item.setSoloNumbered(true);
+                item.setSoleNumbered(true);
             }
         }
     }
@@ -558,7 +558,7 @@ public class XmlContentProcessorHelper {
         StringBuilder item = new StringBuilder(StringUtils.capitalize(tocVo.getTocItem().getAknTag().value()));
         String newNum = trimmedXml(tocVo.getNumber());
         if (tocVo.getTocItem().isNumWithType()) {
-            newNum = item + " " + newNum;
+            newNum = tocVo.isSoleNumbered() ? newNum : item + " " + newNum;
         }
         return newNum;
     }

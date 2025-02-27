@@ -7,6 +7,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.isSoftChanged;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -39,7 +40,7 @@ public class NumberProcessorAbstract {
     protected void renumber(Node node, NumberConfig numberConfig, String parentPrefix) {
         final String elementName = node.getNodeName();
         final String elementId = getId(node);
-        if (isNumberedElement(node)) {
+        if (isNumberedElement(node) || checkForSoleRecital(node)) {
             if (numberConfig.isComplex()) {
                 // COMPLEX numbering: CN runningInstance, mixed EC with CN elements
                 complexNumbering(node, numberConfig, elementName, elementId, parentPrefix);
@@ -48,6 +49,12 @@ public class NumberProcessorAbstract {
                 simpleNumbering(node, numberConfig, elementName, elementId, parentPrefix, 0);
             }
         }
+    }
+
+    private boolean checkForSoleRecital(Node node) {
+        return node.getNodeName().equalsIgnoreCase(RECITAL)
+                && ((node.getNextSibling() != null && node.getNextSibling().getNodeName().equalsIgnoreCase(RECITAL))
+                || (node.getPreviousSibling() != null && node.getPreviousSibling().getNodeName().equalsIgnoreCase(RECITAL)));
     }
 
     public void renumber(Node node, NumberConfig numberConfig, int index) { }
