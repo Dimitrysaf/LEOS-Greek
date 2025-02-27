@@ -30,7 +30,15 @@ class ribbonToolBar {
         searchControls: () => cy.get('div.search-controls'),
         nextBtnInSearchControl: () => this.elements.searchControls().find("button eui-icon-svg[title='Next']"),
         previousBtnInSearchControl: () => this.elements.searchControls().find("button eui-icon-svg[title='Previous']"),
-        cancelBtnInSearchControl: () => this.elements.searchControls().find("button span[translate='global.actions.cancel']")
+        cancelBtnInSearchControl: () => this.elements.searchControls().find("button span[translate='global.actions.cancel']"),
+        appRibbonToolbarSection: ()=> cy.get('app-ribbon-toolbar-section'),
+        compareContainer: ()=> this.elements.appRibbonToolbarSection().find('div#COMPARE_SECTION_ID'),
+        comparisonEUILabel: ()=> this.elements.compareContainer().next('div.eui-label'),
+        cancelVersionCompareContainer:()=>this.elements.compareContainer().find('button.section-close-icon')
+    }
+
+    clickCancelVersionCompareContainer(){
+        this.elements.cancelVersionCompareContainer().click();
     }
 
     clickFinaliseBtn() {

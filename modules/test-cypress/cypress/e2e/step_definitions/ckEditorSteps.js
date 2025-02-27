@@ -1,7 +1,6 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import ckEditorWindow from "../pages/ckEditorWindow";
 import annexPage from "../pages/annexPage";
-import annotationBar from "../pages/annotationBar";
 
 And('click delete button from keyboard in edition mode', () => {
     ckEditorWindow.clickDeleteFromKeyboardWhenCKEditorOpen();
