@@ -148,3 +148,19 @@ Then(/^document search bar is not present$/, function () {
 Then(/^mark as done button is displayed in the ribbon toolbar$/, function () {
     ribbonToolbar.elements.markAsDoneBtn().should('be.visible');
 });
+
+And ('close the comparison section from the ribbon bar',function (){
+    ribbonToolbar.clickCancelVersionCompareContainer();
+});
+
+Then(/^compare section is displayed in ribbon toolbar$/, function () {
+    ribbonToolbar.elements.compareContainer().should('be.visible');
+});
+
+Then(/^compare section is not displayed in ribbon toolbar$/, function () {
+    ribbonToolbar.elements.compareContainer().should('not.exist');
+});
+
+Then('eui-label {string} is displayed in compared section of ribbon toolbar', function (euiLabel) {
+    ribbonToolbar.elements.comparisonEUILabel().should('have.text', euiLabel);
+});

@@ -34,11 +34,11 @@ class tableOfContent {
         recitalsLink: () => this.elements.extendedLabel().contains('Recitals'),
         enactingTermsLink: () => this.elements.extendedLabel().contains('Enacting Terms'),
         citationList: () => this.elements.citationsLink().closest('li').find('ul mat-nested-tree-node'),
-        citationLabelList: () => this.elements.citationList().find('li.node-li div.label'),
+        // citationLabelList: () => this.elements.citationList().find('li.node-li div.label'),
         recitalList: () => this.elements.recitalsLink().closest('li').find('ul mat-nested-tree-node'),
-        recitalLabelList: () => this.elements.recitalList().find('li.node-li div.label'),
+        // recitalLabelList: () => this.elements.recitalList().find('li.node-li div.label'),
         enactingTermsList: () => this.elements.enactingTermsLink().closest('li').find('ul mat-nested-tree-node'),
-        enactingTermsLabelList: () => this.elements.enactingTermsList().find('li.node-li div.label'),
+        // enactingTermsLabelList: () => this.elements.enactingTermsList().find('li.node-li div.label'),
         rightAngleIconOfPreambleLink: () => this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']"),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
         labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
@@ -50,86 +50,87 @@ class tableOfContent {
         euiLabelSuccess: () => cy.get('span.eui-label--success'),
         euiLabelDanger: () => cy.get('span.eui-label--danger'),
         moveOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Move']"),
-        placeBeforeOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place before']")
+        placeBeforeOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place before']"),
+        euiCardHeaderTitle: () => cy.get('eui-card-header-title.eui-card-header__title-container-title')
     }
 
-    clickContributionsPaneButton(){
+    clickContributionsPaneButton() {
         this.elements.contributionsPaneAccordion().click();
     }
 
-    clickFirstContribution(){
+    clickFirstContribution() {
         this.elements.contributionCard().click();
 
     }
 
-    clickEditBtn(){
+    clickEditBtn() {
         this.elements.editBtn().click();
         cy.wait(2000);
     }
 
-    clickSaveBtn(){
+    clickSaveBtn() {
         this.elements.saveBtn().click();
         cy.wait(3000);
     }
 
-    clickSaveCloseBtn(){
+    clickSaveCloseBtn() {
         this.elements.saveCloseBtn().click();
         cy.wait(4000);
     }
 
-    clickCancelBtn(){
+    clickCancelBtn() {
         this.elements.cancelBtn().click();
     }
 
-    clickVersionsPaneButton(){
+    clickVersionsPaneButton() {
         this.elements.versionsPaneAccordion().click();
     }
 
-    clickNavigationPaneAccordion(){
+    clickNavigationPaneAccordion() {
         this.elements.navigationPaneAccordion().click();
     }
 
-    clickFirstNestedTreeNode(){
+    clickFirstNestedTreeNode() {
         this.elements.nestedTreeNode().first().click();
     }
 
-    getLatestRecentVersionCardContent(){
+    getLatestRecentVersionCardContent() {
         return this.elements.recentChangesVersionCardContent().find('.subversion').first();
     }
 
-    mouseHoverOnChangeTypeBtn(){
-        this.elements.changeTypeBtn().realHover({ pointer: "mouse", position: "center" });
+    mouseHoverOnChangeTypeBtn() {
+        this.elements.changeTypeBtn().realHover({pointer: "mouse", position: "center"});
     }
 
-    clickDefinitionArticleTypeBtn(){
+    clickDefinitionArticleTypeBtn() {
         this.elements.definitionArticleTypeBtn().click();
     }
 
-    clickRegularArticleTypeBtn(){
+    clickRegularArticleTypeBtn() {
         this.elements.regularArticleTypeBtn().click();
     }
 
-    clickThreeDotsOfTOCElement(ngContent){
-        this.elements.matTree().contains(ngContent).parent().find("button *[icon='eui-ellipsis-vertical']").realHover().click();
+    clickThreeDotsOfTOCElement(ngContent) {
+        this.elements.matTree().contains(ngContent).parent().find("button *[icon='eui-ellipsis-vertical']").realHover({pointer: "mouse", position: "center"}).click();
     }
 
-    clickShowMoreBtn(euiCardName){
+    clickShowMoreBtn(euiCardName) {
         this.elements.cardTitle().contains(euiCardName).closest('eui-card.version-panes').find('button.eui-u-pv-none').click();
     }
 
-    clickLinkInNavigationPane(link){
+    clickLinkInNavigationPane(link) {
         this.elements.nodeLabel().contains(link).click();
     }
 
-    clickRightAngleIconOfPreambleLink(){
+    clickRightAngleIconOfPreambleLink() {
         this.elements.rightAngleIconOfPreambleLink().click();
     }
 
-    getLabelExtended(){
+    getLabelExtended() {
         return this.elements.labelExtended();
     }
 
-    getPreviousPlaceHolderOfNodeLabel(label){
+    getPreviousPlaceHolderOfNodeLabel(label) {
         return this.getCloseLiOfNodeLabel(label).prev('.drop-placeholder');
     }
 
@@ -154,7 +155,7 @@ class tableOfContent {
             .eq(index).click();
     }
 
-    getNodeLabelText(label){
+    getNodeLabelText(label) {
         return this.elements.nodeLabel().contains(label);
     }
 
@@ -167,11 +168,11 @@ class tableOfContent {
     }
 
     getSubVersion(subVersionNumber) {
-        return this.elements.subVersion().eq(subVersionNumber-1);
+        return this.elements.subVersion().eq(subVersionNumber - 1);
     }
 
-    getCardHeaderTitle(versionPaneIndex){
-        return this.elements.appVersionsPaneGroup().eq(versionPaneIndex-1).find("eui-card-header-title");
+    getCardHeaderTitle(versionPaneIndex) {
+        return this.elements.appVersionsPaneGroup().eq(versionPaneIndex - 1).find("eui-card-header-title");
     }
 
     clickMoveOptionFromDropDownContent() {
@@ -180,6 +181,15 @@ class tableOfContent {
 
     clickPlaceBeforeOptionFromDropDownContent() {
         this.elements.placeBeforeOptionInDropDownContent().click();
+    }
+
+    clickMajorVersionCheckBox(version) {
+        this.elements.euiCardHeaderTitle().contains(version).closest('div.eui-card-header__container').find('input').click();
+    }
+
+    clickMinorVersionInEuiCard(minorVersion, EuiCard) {
+        this.elements.euiCardHeaderTitle().contains(EuiCard).closest('eui-card.version-panes').find('eui-card-content.eui-u-pb-none').scrollTo('bottom', { duration: 500 });
+        this.elements.euiCardHeaderTitle().contains(EuiCard).closest('eui-card.version-panes').find('eui-card-content div.subversions .subversion').contains(minorVersion).find('div input').click();
     }
 }
 export default new tableOfContent();

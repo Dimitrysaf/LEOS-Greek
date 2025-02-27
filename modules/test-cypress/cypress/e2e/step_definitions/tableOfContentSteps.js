@@ -322,3 +322,23 @@ Then("subversion of recent changes version card doesn't contain {string}",functi
 And("minimize {string} link in navigation pane", function (nodeLabel) {
     tableOfContent.minimizeNodeLabel(nodeLabel);
 });
+
+When ('user clicks on compare button from version pane',function(){
+    tableOfContent.elements.compareBtn().click()
+}) ;
+
+When('tick on checkbox of major version {string}', function (version) {
+    tableOfContent.clickMajorVersionCheckBox(version);
+});
+
+When('unTick on checkbox of major version {string}', function (version) {
+    tableOfContent.clickMajorVersionCheckBox(version);
+});
+
+When('unTick on checkbox of minor version {string} in {string} eui-card', function (minorVersion, EuiCard) {
+    tableOfContent.clickMinorVersionInEuiCard(minorVersion, EuiCard);
+});
+When('tick on checkbox of minor version {string} in {string} eui-card', function (minorVersion, EuiCard) {
+    tableOfContent.clickMinorVersionInEuiCard(minorVersion, EuiCard);
+});
+
