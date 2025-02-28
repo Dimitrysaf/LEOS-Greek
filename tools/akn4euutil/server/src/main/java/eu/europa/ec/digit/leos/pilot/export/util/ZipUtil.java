@@ -106,6 +106,8 @@ public class ZipUtil {
                 zipOutputStream.putNextEntry(ze);
                 zipOutputStream.write(byteArrayValue);
                 zipOutputStream.closeEntry();
+            } else {
+                LOG.error("Failed adding content {} to zip package", key);
             }
         }
     }
