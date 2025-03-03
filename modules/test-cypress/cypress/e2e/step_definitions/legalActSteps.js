@@ -584,3 +584,7 @@ When(/^right click on recital (\d+)$/, function (recitalNumber) {
 When(/^right click on article (\d+)$/, function (articleNumber) {
     legalActPage.getArticle(articleNumber).rightclick();
 });
+
+When(/^click on delete icon of article (\d+)$/, function (articleNumber) {
+    legalActPage.clickDeleteIconOfArticle(articleNumber);
+});

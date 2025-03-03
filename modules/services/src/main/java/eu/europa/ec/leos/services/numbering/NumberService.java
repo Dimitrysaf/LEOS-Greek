@@ -24,13 +24,15 @@ public interface NumberService {
 
     byte[] renumberArticles(byte[] xmlContent, boolean renumberChildElements);
 
+    String renumberImportedRecital(String content);
+
     String renumberImportedArticle(String content);
+
+    String renumberImportedHigherSubDivision(String content, String language, String elementName);
 
     byte[] renumberSpecificElementChildren(byte[] xmlContent, String tagName, String elementId);
 
     byte[] renumberRecitals(byte[] xmlContent);
-
-    String renumberImportedRecital(String content);
 
     byte[] renumberLevel(byte[] xmlContent);
 

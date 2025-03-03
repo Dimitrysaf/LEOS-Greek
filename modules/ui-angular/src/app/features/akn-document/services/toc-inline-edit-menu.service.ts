@@ -634,7 +634,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
   }
 
   private onCancelMove() {
-   // this.setIsGoingToMove(false, null);
+     this.setIsGoingToMove(false, null);
   }
 
   private isDeletedOrMoved(selectedNode: TableOfContentItemVO) {

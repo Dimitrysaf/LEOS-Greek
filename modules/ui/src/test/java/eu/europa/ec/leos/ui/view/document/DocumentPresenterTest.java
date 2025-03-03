@@ -1170,19 +1170,22 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         final Bill originalDocument = getMockedBill(content, docId,  "title", "", billMetadata, collaborators);
         final byte[] updatedDocumentContent = new byte[]{4, 5, 6};
         final Bill savedDocument = getMockedBill(content, docId, "title", "", billMetadata, collaborators);
-        
+
+        List<TableOfContentItemVO> tocList = new ArrayList<TableOfContentItemVO>();
+        when(billService.getTableOfContent(any(), any())).thenReturn(tocList);
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(importService.getAknDocument("reg", 2015, 25)).thenReturn(aknDocument);
-        when(importService.insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList)).thenReturn(updatedDocumentContent);
+        when(importService.insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList, tocList)).thenReturn(updatedDocumentContent);
         when(billService.updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"))).thenReturn(savedDocument);
 
         // DO THE ACTUAL CALL
         documentPresenter.importElements(new ImportElementRequestEvent(searchCriteria, elementIdList));
 
         verify(importService).getAknDocument("reg", 2015, 25);
-        verify(importService).insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList);
+        verify(importService).insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList, tocList);
         verify(billService).findBillByRef(docRef);
+        verify(billService).getTableOfContent(originalDocument, TocMode.NOT_SIMPLIFIED);
         verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"));
 
         verifyNoMoreInteractions(importService);

@@ -123,6 +123,10 @@ class legalActPage {
         this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.before']").click({ force: true }));
     }
 
+    clickDeleteIconOfArticle(articleNumber) {
+        this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='delete']").click({ force: true }));
+    }
+
     getIndentTagFromArticle(articleNumber) {
         return this.getArticle(articleNumber).find('indent');
     }

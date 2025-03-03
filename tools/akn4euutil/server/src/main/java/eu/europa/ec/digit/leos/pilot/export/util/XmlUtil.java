@@ -1,5 +1,6 @@
 package eu.europa.ec.digit.leos.pilot.export.util;
 
+import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -20,6 +21,12 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +35,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +46,14 @@ import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
 public class XmlUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlUtil.class);
+    public static final String XML_DOC_EXT = ".xml";
+    public static final String XML_NAME = "name";
+    public static final String NAMESPACE_AKN_NAME = "akn";
+    public static final String NAMESPACE_AKN_URI = "http://docs.oasis-open.org/legaldocml/ns/akn/3.0";
+    public static final String NAMESPACE_AKN4EU_NAME = "akn4eu";
+    public static final String NAMESPACE_AKN4EU_URI = "http://imfc.europa.eu/akn4eu";
+    public static final String TAG_AKN4EU_NAME = "akn4eu:akn4euVersion";
+
 
     public static class XmlFile {
         private Document xmlDocument;
@@ -217,6 +234,22 @@ public class XmlUtil {
         }
     }
 
+    static class XPathSanitizer {
+        private static String XPATH_PATTERN_STRING = "^(/|(\\.\\./)|(\\./)|\\.\\.//)?.*";
+        private static final Pattern VALID_XPATH_PATTERN = Pattern.compile(XPATH_PATTERN_STRING);
+
+        public static String sanitizeXPath(String xPath) throws IllegalArgumentException {
+            if (xPath == null) {
+                throw new IllegalArgumentException("XPath cannot be null");
+            }
+            // Validate against the allowed pattern
+            if (!VALID_XPATH_PATTERN.matcher(xPath).matches()) {
+                throw new IllegalArgumentException("XPath contains invalid characters "+xPath);
+            }
+            return xPath;
+        }
+    }
+
     public static XmlFile newXmlFile() throws XmlUtilException {
         XmlFile xmlFile = new XmlFile();
         xmlFile.createNewXmlDocument();
@@ -234,6 +267,11 @@ public class XmlUtil {
         }
     }
 
+    public static XmlFile parseXml(byte[] xmlContent) throws XmlUtilException {
+        InputStream inputStream = new ByteArrayInputStream(xmlContent);
+        return parseXml(inputStream, "");
+    }
+
     public static XmlFile parseXml(InputStream inputStream) throws XmlUtilException {
         return parseXml(inputStream, "");
     }
@@ -242,6 +280,34 @@ public class XmlUtil {
         XmlFile xmlFile = new XmlFile();
         xmlFile.parse(inputStream, name);
         return xmlFile;
+    }
+
+    public static Node evalXpath(String xPath, Document document) throws XPathExpressionException {
+        XPathFactory xPathFactory = XPathFactory.newInstance();
+        XPath xpath = xPathFactory.newXPath();
+        xpath.setNamespaceContext(getSimpleNamespaceContext());
+        XPathExpression expr = xpath.compile(xPath);
+        Node node = (Node) expr.evaluate(document, XPathConstants.NODE);
+        return node;
+    }
+
+    public static byte[] nodeToByteArray(Document document) throws Exception {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        transformer.transform(new DOMSource(document), new StreamResult(outputStream));
+        return outputStream.toByteArray();
+    }
+
+    public static NodeList evaluateXPath(Document document, String xPath) throws Exception {
+        XPathFactory xPathFactory = XPathFactory.newInstance();
+        XPath xpath = xPathFactory.newXPath();
+        xpath.setNamespaceContext(getSimpleNamespaceContext());
+        XPathExpression expr = xpath.compile(xPath);
+        return (NodeList) expr.evaluate(document, XPathConstants.NODESET);
     }
 
     public static boolean nodeNameEquals(Node node, String nodeName){
@@ -347,5 +413,39 @@ public class XmlUtil {
 
     public static boolean isNodeEmpty(final Node node) {
         return (node == null);
+    }
+
+    public static List<Node> deleteElementsByXPath(Node node, String xPath, boolean namespaceEnabled) {
+        List<Node> deletedNodes = new ArrayList<>();
+        NodeList nodeList = getElementsByXPath(node, xPath, namespaceEnabled);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            if (nodeList.item(i).getParentNode() != null) {
+                deletedNodes.add(nodeList.item(i).getParentNode().removeChild(nodeList.item(i)));
+            }
+        }
+        return deletedNodes;
+    }
+
+    public static NodeList getElementsByXPath(Node node, String xPathExpression, boolean namespaceEnabled) {
+        try {
+            xPathExpression = XPathSanitizer.sanitizeXPath(xPathExpression);
+            XPath xPathParser = XPathFactory.newInstance().newXPath();
+            if (namespaceEnabled) {
+                xPathParser.setNamespaceContext(getSimpleNamespaceContext());
+            }
+            NodeList nodes = (NodeList) xPathParser.evaluate(xPathExpression, node, XPathConstants.NODESET);
+            return nodes;
+        } catch (XPathExpressionException e) {
+            throw new IllegalArgumentException("Cannot find xpath " + xPathExpression);
+        }
+    }
+
+    private static SimpleNamespaceContext getSimpleNamespaceContext() {
+        SimpleNamespaceContext nsc = new SimpleNamespaceContext();
+        nsc.bindNamespaceUri("xml", "http://www.w3.org/XML/1998/namespace");
+        nsc.bindNamespaceUri("leos", "urn:eu:europa:ec:leos");
+        nsc.bindNamespaceUri(NAMESPACE_AKN4EU_NAME, NAMESPACE_AKN4EU_URI);
+        nsc.bindNamespaceUri(NAMESPACE_AKN_NAME, NAMESPACE_AKN_URI); //fake to trick the parser for the default ns
+        return nsc;
     }
 }

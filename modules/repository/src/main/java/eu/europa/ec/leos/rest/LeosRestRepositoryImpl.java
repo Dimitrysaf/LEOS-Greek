@@ -232,6 +232,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         checkSecurityContextEnsureUserIsPresent();
 
         Map<String, Object> properties = getCustomPropertiesMap(name, metadata, leosCategory);
+        properties.put(CREATION_OPTIONS, metadata.getCreationOptions());
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
                 securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
@@ -262,6 +263,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneProposalMetadataVO.getClonedFromRef());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.REVISION_STATUS), cloneProposalMetadataVO.getRevisionStatus());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), cloneProposalMetadataVO.isClonedProposal());
+        properties.put(CREATION_OPTIONS, metadata.getCreationOptions());
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
                 securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);

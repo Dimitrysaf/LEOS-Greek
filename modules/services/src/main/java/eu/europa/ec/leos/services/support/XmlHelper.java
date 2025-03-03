@@ -133,6 +133,7 @@ public class XmlHelper {
     public static final String TLC_CONCEPT = "TLCConcept";
     public static final String EXPL_COUNCIL = "EXPL_COUNCIL";
     public static final List<String> HIGHER_ELEMENTS = Arrays.asList(PART, TITLE, CHAPTER, SECTION);
+    public static final List<String> OJ_IMPORT_ELEMENTS = Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITAL);
 
     public static final String ID = "id";
     public static final String XMLID = "xml:id";
@@ -581,8 +582,7 @@ public class XmlHelper {
     }
 
     public static String addLeosNamespace(String str) {
-        return str.replaceFirst(">", " xmlns:leos=\"urn:eu:europa:ec:leos\">")
-                .replaceFirst(">", " xmlns=\"http://docs\\.oasis-open\\.org/legaldocml/ns/akn/3\\.0\">");
+        return str.replaceFirst(">", " xmlns:leos=\"urn:eu:europa:ec:leos\">");
     }
 
     public static String addDummyNamespace(String str) {

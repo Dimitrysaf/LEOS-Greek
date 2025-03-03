@@ -114,7 +114,7 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
                 {name: 'tools'},
                 {name : 'alternatives'},
                 {name: 'mode'},
-                {name: 'trackChanges', groups: ['toggleDisplay']},
+                {name: 'trackChanges', groups: ['toggleDisplay', 'trackChangeActions']},
                 {name : 'colors'}
             ],
             

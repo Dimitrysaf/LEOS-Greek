@@ -234,6 +234,7 @@ export class ProposalDraftsComponent
   private populateView() {
     const getChildDocument = (type: DocumentType) =>
       this.proposal.childDocuments.find((d) => d.category === type) ?? null;
+    this.createOptions = JSON.parse(this.proposal.creationOptions);
     this.coverpage = getChildDocument('COVERPAGE');
     this.memorandum = getChildDocument('MEMORANDUM');
     this.document = getChildDocument('BILL');

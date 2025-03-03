@@ -15,5 +15,8 @@ package eu.europa.ec.digit.leos.pilot.export.service;
 
 public interface ConvertDocumentService {
 
+    byte[] convertDocument(byte[] input, String inputFilename) throws Exception;
+
     byte[] convertDocument(byte[] input, String inputFilename, String outputDescriptor) throws Exception;
+
 }

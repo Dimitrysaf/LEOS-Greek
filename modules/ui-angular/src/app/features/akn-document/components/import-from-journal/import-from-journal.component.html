@@ -114,15 +114,15 @@
       euiSecondary
       euiOutline
       [disabled]="!docLoaded"
-      (click)="toggleSelectAllArticles()"
+      (click)="toggleSelectAllEnactingItems()"
     >
       <eui-icon-svg
-        [icon]="allArticlesSelected ? 'eui-checkbox' : 'eui-checkbox-outline'"
-        [euiPrimary]="allArticlesSelected"
+        [icon]="allEnactingItemsSelected ? 'eui-checkbox' : 'eui-checkbox-outline'"
+        [euiPrimary]="allEnactingItemsSelected"
       ></eui-icon-svg>
       <span
         euiLabel
-        translate="dialog.import-from-journal.footer.selectAllArticles-button"
+        translate="dialog.import-from-journal.footer.selectAllEnactingItems-button"
       ></span>
     </button>
   </div>

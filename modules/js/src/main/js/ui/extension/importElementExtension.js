@@ -21,16 +21,28 @@ define(function importElementExtensionModule(require) {
     
     var CHECKBOX_SELECTOR = ".leos-import-wrapper [data-element-type='import']";
     var ELEMENT_SELECTOR = ".leos-wrapped-content";
+    var WRAPPER_ELEMENT_SELECTOR = ".leos-import-wrapper";
+    var DOCUMENT_SELECTOR = ".document-wrapper";
     
     function _initImportExtension(connector) {
         connector.requestSelectedElements = _requestSelectedElements;
         connector.selectAllElements = _selectAllElements;
+        connector.selectAllEnactingItems = _selectAllEnactingItems;
         
         var rootElement = UTILS.getParentElement(connector);
         _registerImportHandler(connector, rootElement);
     }
 
     function _registerImportHandler(connector, rootElement) {
+        $(DOCUMENT_SELECTOR).on('change', CHECKBOX_SELECTOR, function() {
+            var selectedElement =  $(this).closest(WRAPPER_ELEMENT_SELECTOR);
+            var childCheckboxes = selectedElement.find(ELEMENT_SELECTOR).find(CHECKBOX_SELECTOR);
+            if ($(this).prop('checked')) {
+                childCheckboxes.prop('checked', true);
+            } else {
+                childCheckboxes.prop('checked', false);
+            }
+        });
         $(rootElement).on("click.checkbox",
                 CHECKBOX_SELECTOR, "checkbox",
                 _handleAction.bind(undefined, connector));
@@ -58,14 +70,24 @@ define(function importElementExtensionModule(require) {
         }
         connector.handleSelectionChange(data);
     }
-    
+
+    function _selectAllEnactingItems(value) {
+        var connector = this;
+        var bodyElement = $(DOCUMENT_SELECTOR).find('aknbody');
+        var checkBoxes = bodyElement.find(CHECKBOX_SELECTOR);
+        _selectCheckboxes(connector, checkBoxes, value);
+    }
+
     function _selectAllElements(value, elementName) {
-        var connector = this, count = 0;
-        var checkBoxes = $(CHECKBOX_SELECTOR);
+        var connector = this;
+        var checkBoxes = $(DOCUMENT_SELECTOR).find(`${CHECKBOX_SELECTOR}[data-wrapped-type='${elementName}']`);
+        _selectCheckboxes(connector, checkBoxes, value);
+    }
+    
+    function _selectCheckboxes(connector, checkBoxes, value) {
+        var count = 0;
         checkBoxes.each(function(idx, checkBox) {
-            if(checkBox.getAttribute("data-wrapped-type") === elementName) {
-                checkBox.checked = value;
-            }
+            checkBox.checked = value;
             if(checkBox.checked) {
                 ++count;
             }

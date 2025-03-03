@@ -744,7 +744,7 @@
               "key": "SPECIAL_LEGISLATIVE_ACTS",
               "names": {
                 "EN": "Special legislative procedure",
-                "FR": "Special legislative procedure"
+                "FR": "Procédure législative spéciale"
               },
               "languages": {},
               "descriptions": {
@@ -761,12 +761,12 @@
               "key": "COMMISSION_LEGAL_ACTS",
               "names": {
                 "EN": "Commission legal acts",
-                "FR": "Commission actes législatifs"
+                "FR": "Actes législatifs de la Commission"
               },
               "languages": {},
               "descriptions": {
                 "EN": "Commission legal acts",
-                "FR": "Commission actes législatifs"
+                "FR": "Actes législatifs de la Commission"
               },
               "items": []
             },
@@ -778,12 +778,12 @@
               "key": "COUNCIL_LEGAL_ACTS",
               "names": {
                 "EN": "Council legal acts",
-                "FR": "Council actes législatifs"
+                "FR": "Actes législatifs du Conseil"
               },
               "languages": {},
               "descriptions": {
                 "EN": "Council legal acts",
-                "FR": "Council actes législatifs"
+                "FR": "Actes législatifs du Conseil"
               },
               "items": [
                 {
