@@ -100,7 +100,8 @@ export class DocumentTocComponent
   documentConfig: DocumentConfig;
 
   @Input() isEditMode = false;
-  selectedNode: TableOfContentItemVO = null;
+  lastSelectedNode: TableOfContentItemVO = null;
+  selectedNodes: TableOfContentItemVO[] = [];
   parentSelectedNode: TableOfContentItemVO = null;
   prevSelectedNode: TableOfContentItemVO = null;
   nextSelectedNode: TableOfContentItemVO = null;
@@ -126,7 +127,7 @@ export class DocumentTocComponent
   treeControl: NestedTreeControl<TableOfContentItemVO>;
   dataSource: MatTreeNestedDataSource<TableOfContentItemVO>;
 
-  draggedItem: TableOfContentItemVO = null;
+  draggedItems: TableOfContentItemVO[] = [];
   targetNode: TableOfContentItemVO = null;
   isVisible = true;
   @ViewChild('deleteTocConfirmation')
@@ -140,7 +141,6 @@ export class DocumentTocComponent
 
   private seeTrackChanges = false;
   private trackChangesEnabled = false;
-  private alreadyDidAsyncWork = false;
 
   constructor(
     private documentService: DocumentService,
@@ -172,7 +172,7 @@ export class DocumentTocComponent
     this.tocService.selectedNode$
       .pipe(takeUntil(this.destroy$))
       .subscribe((selectedNode) => {
-        this.selectedNode = selectedNode;
+        this.lastSelectedNode = selectedNode;
       });
     this.tocService.isTocDraft$
       .pipe(takeUntil(this.destroy$))
@@ -324,7 +324,7 @@ export class DocumentTocComponent
   }
 
   isNodeSelected() {
-    return this.selectedNode !== null;
+    return this.selectedNodes.length > 0;
   }
 
   expandAll() {
@@ -378,11 +378,40 @@ export class DocumentTocComponent
       .forEach((el) => el.classList.remove('invalid-node'));
   }
 
-  handleNodeSelect(node: TableOfContentItemVO, scrollTo = true) {
-    this.selectedNode = node;
-    this.parentSelectedNode = findNodeById(this.treeControl.dataNodes, node.parentItem);
-    this.prevSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, node, true);
-    this.nextSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, node, false);
+  getDraggedNodes(node: TableOfContentItemVO): TableOfContentItemVO[] {
+    return this.isSelected(node) ? this.selectedNodes : [node];
+  }
+
+  isSelected(node: TableOfContentItemVO) {
+    for (var i = 0; i < this.selectedNodes.length; i++) {
+      let selectedNode: TableOfContentItemVO = this.selectedNodes[i];
+      if (selectedNode.id == node.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  handleNodeSelect(node: TableOfContentItemVO, $event, scrollTo = true) {
+    const lastSelectedType = this.lastSelectedNode ? this.lastSelectedNode.tocItem.aknTag : null;
+
+    if ($event && $event.shiftKey) {
+      this.document.getSelection().removeAllRanges();
+      if (lastSelectedType == null || lastSelectedType == node.tocItem.aknTag) {
+        this.selectedNodes.push(node);
+        this.lastSelectedNode = node;
+      }
+    } else if ($event) {
+      this.selectedNodes = [];
+      this.selectedNodes.push(node);
+      this.lastSelectedNode = node;
+    } else {
+      this.lastSelectedNode = node;
+    }
+
+    this.parentSelectedNode = findNodeById(this.treeControl.dataNodes, this.lastSelectedNode.parentItem);
+    this.prevSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, this.lastSelectedNode, true);
+    this.nextSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, this.lastSelectedNode, false);
 
     if (!scrollTo) return;
 
@@ -405,7 +434,7 @@ export class DocumentTocComponent
   //a node can be dropped from two sources
   //1) the ToC itself
   //2) the drag elements found on the left
-  onDrop(event: CdkDragDrop<TableOfContentItemVO>) {
+  onDrop(event: CdkDragDrop<TableOfContentItemVO[]>) {
     if (this.dragAction.targetId === null) {
       this.cancelDrop();
       return;
@@ -416,7 +445,7 @@ export class DocumentTocComponent
       this.dragAction.targetId,
     );
 
-    const nodeDragged = event.item.data as TableOfContentItemVO;
+    const nodesDragged = event.item.data;
     //TODO : Fix this => this is a hack for allowing the root to go for validation otherwise it will fail to find the nodeParent and will not send it for validaiton
     if (nodeTarget.tocItem.root) {
       nodeTarget.parentItem = nodeTarget.id;
@@ -429,7 +458,7 @@ export class DocumentTocComponent
 
     // validate Drop
     this.validateAndMove(
-      nodeDragged,
+      nodesDragged,
       nodeTarget,
       parentNode,
       this.dragAction.action,
@@ -437,20 +466,21 @@ export class DocumentTocComponent
     );
   }
 
-  dragMoved(event: CdkDragMove<TableOfContentItemVO>, isAdd: boolean = false) {
+  dragMoved(event: CdkDragMove<TableOfContentItemVO[]>, isAdd: boolean = false) {
     //introduce a small debounce , when the toc gets to large we have performance issues
     //drag moved runs on every drag and drop move , this means a lot ...
+    let draggedNodes : TableOfContentItemVO[];
     clearTimeout(this.dragTimer);
     this.dragTimer = setTimeout(() => {
       this.clearDragInfo();
-      this.selectedNode = null;
+
       let el = this.document.elementFromPoint(
         event.pointerPosition.x,
         event.pointerPosition.y,
       );
-
       const node = this.getToMatNodeFromChild(el);
       if (node) {
+        draggedNodes = this.selectedNodes;
         const targetId = node.getAttribute('data-id');
         const level = parseInt(node.getAttribute('aria-level'), 10);
 
@@ -524,9 +554,9 @@ export class DocumentTocComponent
     setTimeout(() => this.rerender());
 
     setTimeout(() => {
-      if (this.selectedNode) {
-        this.scrollNodeIntoView(this.selectedNode);
-        this.handleNodeSelect(this.selectedNode, false);
+      if (this.lastSelectedNode) {
+        this.scrollNodeIntoView(this.lastSelectedNode);
+        this.handleNodeSelect(this.lastSelectedNode, null,false);
       }
       this.highlightInvalidNodes();
     });
@@ -551,7 +581,7 @@ export class DocumentTocComponent
   }
 
   clearSelectedNode() {
-    this.selectedNode = null;
+    this.lastSelectedNode = null;
   }
 
   checkNodesToRender(root: TableOfContentItemVO[]) {
@@ -602,15 +632,15 @@ export class DocumentTocComponent
         if (this.prevSelectedNode) {
           selectedNode = document
             .querySelector(`[data-id="${this.prevSelectedNode.id}"]`);
-          this.selectedNode = this.prevSelectedNode;
+          this.lastSelectedNode = this.prevSelectedNode;
         } else if (this.nextSelectedNode) {
           selectedNode = document
             .querySelector(`[data-id="${this.nextSelectedNode.id}"]`);
-          this.selectedNode = this.nextSelectedNode;
+          this.lastSelectedNode = this.nextSelectedNode;
         } else if (this.parentSelectedNode) {
           selectedNode = document
             .querySelector(`[data-id="${this.parentSelectedNode.id}"]`);
-          this.selectedNode = this.parentSelectedNode;
+          this.lastSelectedNode = this.parentSelectedNode;
         }
       }
       selectedNode?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -765,30 +795,33 @@ export class DocumentTocComponent
   }
 
   private validateAndMove(
-    nodeDragged: TableOfContentItemVO,
+    nodesDragged: TableOfContentItemVO[],
     nodeTarget: TableOfContentItemVO,
     parentNode: any,
     position: string,
     isAdd: boolean = false,
   ) {
-    this.draggedItem = nodeDragged;
+    this.draggedItems = nodesDragged;
     this.targetNode = nodeTarget;
-    this.validateTocService.validateNodeDrop(
-      this.treeControl.dataNodes,
-      parentNode,
-      nodeTarget,
-      nodeDragged,
-      [nodeDragged.id],
-      nodeDragged.tocItem.aknTag,
-      nodeTarget.id,
-      nodeTarget.tocItem.aknTag,
-      parentNode.id,
-      parentNode.tocItem.aknTag,
-      position,
-      this.documentType,
-      this.documentRef,
-      isAdd,
-    );
+    for (var i=nodesDragged.length-1; i>=0; i--) {
+      let nodeDragged: TableOfContentItemVO = nodesDragged[i];
+      this.validateTocService.validateNodeDrop(
+        this.treeControl.dataNodes,
+        parentNode,
+        nodeTarget,
+        nodeDragged,
+        [nodeDragged.id],
+        nodeDragged.tocItem.aknTag,
+        nodeTarget.id,
+        nodeTarget.tocItem.aknTag,
+        parentNode.id,
+        parentNode.tocItem.aknTag,
+        position,
+        this.documentType,
+        this.documentRef,
+        isAdd,
+      );
+    }
   }
 
   private handleNodeValidationResult(result: NodeValidation) {
@@ -808,7 +841,7 @@ export class DocumentTocComponent
       result.action?.position,
     );
 
-    this.draggedItem = null;
+    this.draggedItems = [];
     this.targetNode = null;
   }
 
@@ -908,7 +941,7 @@ export class DocumentTocComponent
       }
       this.tocService.setTocIsDraft(true);
       setTimeout(() => {
-        this.handleNodeSelect(nodeDragged);
+        this.handleNodeSelect(nodeDragged, null);
       });
     } catch (e) {
       this.tocEditService.popTreeHistory();
@@ -972,7 +1005,6 @@ export class DocumentTocComponent
     if (dropped) {
       this.dragAction = null;
     }
-    this.selectedNode = null;
     this.document
       .querySelectorAll('.drop-before')
       .forEach((element) => element.classList.remove('drop-before'));
