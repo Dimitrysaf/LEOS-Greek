@@ -98,8 +98,8 @@ public class TableOfContentHelper {
             }
             itemDescription.append(tocItem.getNumber());
             if (tocItem.isSoleNumbered()) {
-                itemDescription.setLength(0);
-                itemDescription.append(tocItem.getNumber());
+                    itemDescription.setLength(0);
+                    itemDescription.append(tocItem.getNumber());
             }
             if (shoudlAddMovedLabel) {
                 itemDescription.append(SPAN_END_TAG).append(getMovedLabel(messageHelper));
