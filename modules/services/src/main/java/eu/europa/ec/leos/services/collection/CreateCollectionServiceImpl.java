@@ -195,6 +195,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         context.useTranslated(false);
         context.useConnectedEntity(connectedEntity);
         context.useClonedProposalMetadataVO(cloneProposalMetadataVO);
+        context.useTemplateKey(propDocument.getMetadata().getTemplate());
         addTemplateInContext(context, propDocument);
 
         Result<?> result = postProcessingDocumentService.saveOriginalProposalIdToClonedProposal(propDocument, legDocument.getName(), originRef);
