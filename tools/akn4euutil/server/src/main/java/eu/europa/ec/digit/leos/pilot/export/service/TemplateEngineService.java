@@ -15,7 +15,14 @@ package eu.europa.ec.digit.leos.pilot.export.service;
 
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.exception.TemplateEngineException;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportOptions;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportResource;
+
+import java.io.ByteArrayOutputStream;
 
 public interface TemplateEngineService {
+
     byte[] xmlToHtml(LeosConvertDocumentInput convertDocumentInput, String styleSheet, String coverpage) throws TemplateEngineException;
+
+    ByteArrayOutputStream createContentFile(ExportOptions exportOptions, ExportResource exportRootNode) throws Exception;
 }

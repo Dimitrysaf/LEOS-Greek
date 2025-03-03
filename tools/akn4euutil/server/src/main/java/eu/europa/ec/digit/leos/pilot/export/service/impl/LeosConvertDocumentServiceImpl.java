@@ -19,6 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class LeosConvertDocumentServiceImpl implements ConvertDocumentService {
     @Override
+    public byte[] convertDocument(byte[] input, String inputFilename) {
+        return this.convertDocument(input, inputFilename, null);
+    }
+
+    @Override
     public byte[] convertDocument(byte[] input, String inputFilename, String outputDescriptor) {
         return input;
     }

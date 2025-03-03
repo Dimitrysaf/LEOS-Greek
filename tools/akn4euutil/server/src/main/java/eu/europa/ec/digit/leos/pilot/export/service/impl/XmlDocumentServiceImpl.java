@@ -20,6 +20,8 @@ import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.service.TemplateEngineService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportOptions;
+import eu.europa.ec.digit.leos.pilot.export.util.ExportResource;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Node;
 
 import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -52,10 +55,16 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     public static final String DIR_FILE_PREFIX = "DIR";
     public static final String DEC_FILE_PREFIX = "DEC";
     public static final String MEMORANDUM_FILE_PREFIX = "EXPL_MEMORANDUM";
+    public static final String PROP_ACT_PREFIX = "PROP_ACT";
     public static final String STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX = "STAT_DIGIT_FINANC_LEGIS";
 
     public XmlDocumentServiceImpl(TemplateEngineService templateEngineService) {
         this.templateEngineService = templateEngineService;
+    }
+
+    @Override
+    public ByteArrayOutputStream createContentFile(ExportOptions exportOptions, ExportResource exportRootNode) throws Exception {
+        return templateEngineService.createContentFile(exportOptions, exportRootNode);
     }
 
     @Override

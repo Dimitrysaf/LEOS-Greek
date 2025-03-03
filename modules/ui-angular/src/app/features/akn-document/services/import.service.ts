@@ -57,7 +57,7 @@ export class ImportService {
   }
 
   public openImportOJDialog() {
-    const docContainer = this.document.querySelector('.docContainer');
+    const docContainer = this.document.getElementById('docContainer');
     const importManager = new ImportManager(this.leos, docContainer);
     let activeSearchData = { year: null, number: null, type: null };
 

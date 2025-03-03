@@ -25,6 +25,22 @@
     Akoma Ntoso wrappers for XML nodes
 ------------------------------------------------------------------------------>
 <#-- AKN article handler for edition, wrapped to activate/deactivate actions -->
+<#macro part>
+    <@@createWrapper/>
+</#macro>
+
+<#macro title>
+    <@@createWrapper/>
+</#macro>
+
+<#macro chapter>
+    <@@createWrapper/>
+</#macro>
+
+<#macro section>
+    <@@createWrapper/>
+</#macro>
+
 <#macro article>
     <@@createWrapper/>
 </#macro>

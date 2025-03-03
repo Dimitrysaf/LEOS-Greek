@@ -80,7 +80,7 @@ define(function aknInlineClauseProfileModule(require) {
         toolbarGroups : [ {
             name : "save"
         },{
-            name: 'trackChanges', groups: ['toggleDisplay']
+            name: 'trackChanges', groups: ['toggleDisplay', 'trackChangeActions']
         },{
             name : "alternatives"
         }],

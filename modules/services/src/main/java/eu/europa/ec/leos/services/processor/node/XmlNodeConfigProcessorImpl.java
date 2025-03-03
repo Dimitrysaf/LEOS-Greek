@@ -15,7 +15,6 @@ package eu.europa.ec.leos.services.processor.node;
 
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
-import eu.europa.ec.leos.services.support.XmlHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

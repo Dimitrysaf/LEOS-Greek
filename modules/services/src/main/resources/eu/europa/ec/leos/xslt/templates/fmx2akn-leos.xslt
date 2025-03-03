@@ -213,26 +213,31 @@
         <xsl:choose>
             <xsl:when test="starts-with(lower-case($title), 'part')">
                 <xsl:element name="part">
+                    <xsl:attribute name="xml:id" select="generate-id()"/>
                     <xsl:apply-templates/>
                 </xsl:element>
             </xsl:when>
             <xsl:when test="starts-with(lower-case($title), 'title')">
                 <xsl:element name="title">
+                    <xsl:attribute name="xml:id" select="generate-id()"/>
                     <xsl:apply-templates/>
                 </xsl:element>
             </xsl:when>
             <xsl:when test="starts-with(lower-case($title), 'chapter')">
                 <xsl:element name="chapter">
+                    <xsl:attribute name="xml:id" select="generate-id()"/>
                     <xsl:apply-templates/>
                 </xsl:element>
             </xsl:when>
             <xsl:when test="starts-with(lower-case($title), 'section')">
                 <xsl:element name="section">
+                    <xsl:attribute name="xml:id" select="generate-id()"/>
                     <xsl:apply-templates/>
                 </xsl:element>
             </xsl:when>
             <xsl:when test="starts-with(lower-case($title), 'sub-section') or starts-with(lower-case($title), 'subsection')">
                 <xsl:element name="subsection">
+                    <xsl:attribute name="xml:id" select="generate-id()"/>
                     <xsl:apply-templates/>
                 </xsl:element>
             </xsl:when>

@@ -117,7 +117,7 @@ define(function aknParagraphProfileModule(require) {
             { name: 'insert', items: [ 'Mathjax', 'SpecialChar' , "base64image", 'Table'] },
         	{ name: 'tools', items: [ 'LeosShowBlocks' ] },
         	{ name : "mode" , items: [ 'Sourcedialog', 'spellchecker' ] },
-            { name: 'trackChanges', items: ['toggleDisplay'] },
+            { name: 'trackChanges', items: ['toggleDisplay', 'trackChangeActions'] },
             { name : "colors" , items: [ 'BGColor' ] }
     	],
         //show toolbar on startup

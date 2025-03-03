@@ -13,29 +13,12 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class LeosConvertDocumentOutput {
-
-    private byte[] outputFile;
     private String outputFileName;
-
-    public LeosConvertDocumentOutput(String outputFileName, byte[] outputFile) {
-        this.outputFileName = outputFileName;
-        this.outputFile = outputFile;
-    }
-
-    public byte[] getOutputFile() {
-        return outputFile;
-    }
-
-    public void setOutputFile(byte[] outputFile) {
-        this.outputFile = outputFile;
-    }
-
-    public String getOutputFileName() {
-        return outputFileName;
-    }
-
-    public void setOutputFileName(String outputFileName) {
-        this.outputFileName = outputFileName;
-    }
+    private byte[] outputFile;
 }

@@ -80,6 +80,11 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cool.graph</groupId>
+            <artifactId>cuid-java</artifactId>
+            <version>${cuid.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
