@@ -642,6 +642,10 @@ define(function leosTrackChangesModule(require) {
             do {
                 selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextNode() :
                     editor.getSelection().getRanges()[0].getPreviousNode();
+                if(selectedNode && selectedNode.$.nodeType == CKEDITOR.NODE_ELEMENT &&
+                    typeof selectedNode.getName === 'function' && selectedNode.getName() == 'br'){
+                    selectedNode = deleteKey ? selectedNode.getNext() : selectedNode.getPrevious();
+                }
                 if (selectedNode && (selectedNode.$.textContent.replace(/\u200B/g,'') === '') && ((selectedNode.type !== CKEDITOR.NODE_ELEMENT) ||
                         ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
                     selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextEditableNode() :

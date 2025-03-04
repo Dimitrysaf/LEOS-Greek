@@ -916,8 +916,23 @@ define(function leosAnnexListPluginModule(require) {
                         range = sel.getRanges()[ 0 ],
                         path = range && range.startPath();
 
-                    if ( !range || !range.collapsed )
+                    if(!range){
                         return;
+                    }
+                    if (!range.collapsed) {
+                        if(editor.LEOS.isTrackChangesEnabled){
+                            return;
+                        }
+                        var startPath = range.startPath();
+                        if ( !leosPluginUtils.mergeBlocksNonCollapsedSelection( editor, range, startPath ) ){
+                            return;
+                        }
+                        // Scroll to the new position of the caret (https://dev.ckeditor.com/ticket/11960).
+                        editor.getSelection().scrollIntoView();
+                        editor.fire( 'saveSnapshot' );
+                        evt.cancel();
+                        return;
+                    }
 
                     var isBackspace = key == 8;
                     var editable = editor.editable();

@@ -464,7 +464,9 @@ define(function leosTrackChangesPluginModule(require) {
 
                             editor.getSelection().getRanges()[0].optimize();
                             var range = editor.getSelection().getRanges()[0];
-                            var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
+                            var initialRange = range.clone();
+                            var initialCommonAncestor = initialRange.getCommonAncestor();
+                            var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_DELETE);
 
                             if (!deleteKey) {
                                 var elementToDelete = range.getPreviousNode();
@@ -501,10 +503,15 @@ define(function leosTrackChangesPluginModule(require) {
                             if (!originalBackspace) {
 
                                 if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
-
+                                    editor.fire("saveSnapshot");
                                     style.apply(editor, deleteTcStyle);
 
                                     range = editor.getSelection().getRanges()[0];
+                                    if(!range.collapsed){
+                                        // insert here code to delete the empty elements
+                                        _removeEmptyElements(initialCommonAncestor);
+                                    }
+                                    editor.fire("saveSnapshot");
                                     range.collapse(!deleteKey);
                                     range.select();
 
@@ -905,6 +912,62 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 }
             });
+        }
+    }
+
+    function _removeEmptyElements(fragment){
+        // fragment is CKEDITOR.htmlParser.element
+        if(typeof fragment.getOuterHtml === 'function') {
+            var htmlElement = fragment.getOuterHtml();
+            var eventDataAsObj = _cleanElements(htmlElement);
+            var toHtml = eventDataAsObj.html();
+            fragment.setHtml(toHtml);
+        }
+    }
+
+    function _cleanElements(data) {
+        var eventDataAsObject = $(data);
+        var elementsToRemove = eventDataAsObject
+            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph']")
+            .find("*").addBack().filter(function () {
+                return UTILS.isEmptyElement(this);
+            });
+        if(elementsToRemove && Array.isArray(elementsToRemove) && elementsToRemove.length > 0){
+            elementsToRemove.reverse().each(_checkEmptyAndRemove);
+        }
+        /*
+           - empty node is the last point of a List removing it means removing also the List.
+           - the list contains an intro subparagraph remove it outside the list structure
+           */
+
+        var olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknOrderedList']");
+        if(!olOrderedList || olOrderedList.length == 0){
+            olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknAnnexOrderedList']");
+        }
+
+        if(!!olOrderedList && olOrderedList.length > 0){
+            olOrderedList.each(function( index, elem ){
+                if (this.childElementCount == 1 && this.childNodes[0].getAttribute("data-akn-element") !== "point"){
+                    for (var i = 0; i < this.firstChild.childNodes.length; i++){
+                        this.parentElement.appendChild(this.firstChild.childNodes[i]);
+                    }
+                    this.remove();
+                }
+            });
+        }
+
+        return eventDataAsObject;
+    }
+
+    function _checkEmptyAndRemove(index, elem){
+        var isPBeforeTable = $(elem).is('p') && $(elem).prev().is('table');
+        var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
+        isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList;
+        if (($(elem).parents('table').length === 0)  && !isPBeforeTable &&
+            UTILS.isEmptyElement(elem) && ($.trim($(elem).text()) === '')) {
+            var parent = $(elem).parent();
+            $(elem).remove();
+            _checkEmptyAndRemove(0, parent);
         }
     }
 
