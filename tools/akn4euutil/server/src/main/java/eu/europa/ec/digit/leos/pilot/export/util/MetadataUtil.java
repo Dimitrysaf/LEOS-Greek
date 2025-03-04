@@ -877,7 +877,7 @@ public class MetadataUtil {
         final Element frbrNumber = xmlFile.newElement("FRBRnumber");
         XmlUtil.setNodeAttributeValue(frbrNumber, VALUE, fieldInfo.getDisplayValue());
         if (isMainDocumentFile(xmlFile)) {
-            XmlUtil.setNodeAttributeValue(frbrNumber, XMLID, "~" + fieldInfo.getId());
+            MetadataUtil.addRefersToAttribute(frbrNumber, fieldInfo.getId());
         }
         frbrWorkNode.insertBefore(frbrNumber, prescriptiveNode);
     }

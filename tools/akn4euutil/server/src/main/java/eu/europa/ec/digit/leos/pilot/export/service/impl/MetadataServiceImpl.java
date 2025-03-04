@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 European Commission
+ * Copyright 2021-2025 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -41,9 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 
 @Service
 class MetadataServiceImpl implements MetadataService {
@@ -63,7 +61,7 @@ class MetadataServiceImpl implements MetadataService {
 
             validateDocumentXmlFiles(documentXmlFiles);
             ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles);
-            XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response);
+            XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response); // TODO: check: it's unused - required?
             return buildResponse(response, documentXmlFiles, documentFurtherContent);
         }
         catch(XmlValidationException ex) {
