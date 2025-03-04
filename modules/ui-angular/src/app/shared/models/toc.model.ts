@@ -49,6 +49,7 @@ export class TableOfContentItemVO {
   isAffected: boolean;
   expanded: boolean;
   label?: string;
+  soleNumbered: boolean;
   shouldRenderNode?: boolean;
   itemDescription?: string;
   tocStyling?: string;

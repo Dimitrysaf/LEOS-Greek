@@ -11,9 +11,8 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
-import eu.europa.ec.leos.vo.structure.TocItem;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueForElementId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
@@ -233,10 +231,15 @@ public abstract class NumberProcessorHandler {
                 final Node node = nodeList.get(i);
                 Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
 
-                if (skipAutoRenumbering(node)) {
-                    if(hasAttributeWithValue(node, "leos:action", "delete")) {
+                NumberConfig soleNumConf = checkForSoleNumbering(elementName, language, nodeList);
+                String numLabel = soleNumConf != null ? messageHelper.getMessage(soleNumConf.getSoleNumberLabel()) : null;
+
+                if(soleNumConf != null && StringUtils.isEmpty(numLabel) && nodeList.size() == 1 && numNode != null) {
+                    node.removeChild(numNode);
+                } else if (skipAutoRenumbering(node)) {
+                    if (hasAttributeWithValue(node, "leos:action", "delete")) {
                         // Remove track changes for num node as the parent node is already deleted.
-                        if(numNode != null && getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
+                        if (numNode != null && getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
                             numNode.setTextContent(getFirstChild(numNode, "del").getTextContent());
                         }
                     }
@@ -246,7 +249,6 @@ public abstract class NumberProcessorHandler {
                     }
                     LOG.trace("Skipping SoftChanged {} '{}', number '{}'", elementName, getId(node), getNodeNum(node));
                 } else if (!deletedNumber(numNode)) {
-                    NumberConfig soleNumConf = checkForSoleNumbering(elementName, language, nodeList);
                     final NumberConfig numConf = soleNumConf != null ? soleNumConf : numberConfig;
                     numberProcessors.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))

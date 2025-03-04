@@ -578,7 +578,7 @@ public class XmlHelper {
 
     public static String trimmedXml(String str) {
 //        final String WHITESPACE_REGEX = "(^( )*|( )*$)";
-        return str.replaceAll("\\s+", " ").trim();
+        return str != null ? str.replaceAll("\\s+", " ").trim() : "";
     }
 
     public static String addLeosNamespace(String str) {

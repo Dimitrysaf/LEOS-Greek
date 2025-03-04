@@ -25,6 +25,14 @@ $RECITAL_SPACING: 32px;
             float: left;
             padding-right: 10px;
         }
+
+        // If num tag does NOT exist, adjust margin-left for aknP or p
+        & > aknP:first-child,
+        & > p:first-child {
+            margin-left: 0px;
+        }
+
+
         & > aknP, & > p {
             @extend %paddedText;
             display: block;
@@ -56,6 +64,13 @@ $RECITAL_SPACING: 32px;
     p[data-akn-name="recital"] { 
         @extend %paddedText;
         padding-left: $RECITAL_SPACING;
+
+        // If the data-akn-num attribute is either missing or empty, set padding-left to 0px
+        &:not([data-akn-num]),         // If attribute is missing
+        &[data-akn-num=""] {           // If attribute is empty
+            padding-left: 0px;
+        }
+
 
         &:before {
             color: $GREY_COLOR;
