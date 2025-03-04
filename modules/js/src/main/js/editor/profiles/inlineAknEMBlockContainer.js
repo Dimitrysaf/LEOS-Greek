@@ -124,7 +124,7 @@ define(function aknInlineEMBlockContainerProfileModule(require) {
             name: 'trackChanges', groups: ['toggleDisplay', 'trackChangeActions']
         }, {
             name : "colors"
-        } ]
+        }]
     };
     // adding the specific configs coming from the plugins.
     profileConfig = $.extend( profileConfig,  specificConfig);

@@ -144,6 +144,9 @@ define(function aknArticlePluginModule(require) {
         }, {
             akn : "leos:title",
             html : "title"
+        }, {
+            akn : "class",
+            html : "data-akn-class"
         } ],
         sub : [ {
             akn : "num",

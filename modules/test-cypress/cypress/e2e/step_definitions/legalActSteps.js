@@ -262,11 +262,11 @@ And(`{string} tag of num tag of paragraph {int} of article {int} should not exis
 });
 
 And(`num tag of paragraph {int} of article {int} contains html {string}`, (paragraphNumber, articleNumber, content) => {
-    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('include.html', content);
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).invoke('html').should('match', new RegExp(content));
 });
 
 And(`num tag of paragraph {int} of article {int} does not contain html {string}`, (paragraphNumber, articleNumber, content) => {
-    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).not('include.html', content);
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).invoke('html').should('not.match', new RegExp(content));
 });
 
 And(`num tag of paragraph {int} of article {int} should not exist`, (paragraphNumber, articleNumber) => {
