@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -231,6 +231,7 @@ export class DocumentService {
   private currentDocumentRef: string;
   private currentConfig: DocumentConfig;
   private minSearchChar: number;
+  private pendingSavingElements: Map<string, string> = new Map<string, string>();
 
   constructor(
     private http: HttpClient,
@@ -898,11 +899,22 @@ export class DocumentService {
   }
 
   getElementContent(elementId: string, elementTagName: string) {
-    this.getElementContentBS.next({
-      elementId,
-      elementType: elementTagName,
-    });
-    return this.getElementContentResponse$;
+    if (this.isPendingSavingElement(elementId)) {
+      return new Observable<{
+        elementId: string;
+        elementType: string;
+        elementFragment: string;
+      }>((observer) => {
+        observer.next({elementId: elementId, elementType: elementTagName, elementFragment: this.getPendingSavingElement(elementId)});
+        observer.complete();
+      });
+    } else {
+      this.getElementContentBS.next({
+        elementId,
+        elementType: elementTagName,
+      });
+      return this.getElementContentResponse$;
+    }
   }
 
   requestElement(
@@ -1646,5 +1658,21 @@ export class DocumentService {
 
   isTrackChangesEnabled(){
     return this.currentConfig.trackChangesEnabled;
+  }
+
+  addToPendingSavingElements(elementId: string, fragment: string) {
+    this.pendingSavingElements.set(elementId, fragment);
+  }
+
+  removeFromPendingSavingElements(elementId: string) {
+    this.pendingSavingElements.delete(elementId);
+  }
+
+  getPendingSavingElement(elementId: string): string {
+    return this.pendingSavingElements.get(elementId);
+  }
+
+  isPendingSavingElement(elementId: string): boolean {
+    return this.pendingSavingElements.has(elementId);
   }
 }
