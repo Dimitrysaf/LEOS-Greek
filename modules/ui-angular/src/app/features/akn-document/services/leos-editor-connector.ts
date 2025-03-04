@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, filter, take } from 'rxjs';
+import {distinctUntilChanged, filter, Observable, of, take} from 'rxjs';
 
 import {
   EditElementResponse,
@@ -24,6 +24,7 @@ import { getInstanceType, isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
+import {Version} from "@/features/akn-document/models";
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
@@ -624,6 +625,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     documentType: string,
     presenterId: string,
   ) {
+    this.documentService.addToPendingSavingElements(elementId, elementFragment);
     const cleanedHtml = this.cleanElementFromCoEditInfo(elementFragment);
     return this.http.put<RefreshElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element?isSplit=${isSplit}&alternateElementId=${alternateElementId}`,

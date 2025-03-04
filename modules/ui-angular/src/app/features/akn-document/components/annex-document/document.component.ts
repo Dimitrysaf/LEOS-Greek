@@ -338,6 +338,7 @@ export class DocumentComponent
   }) {
     this.updateElementInXml(data);
     this.updateElementInDom(data);
+    this.documentService.removeFromPendingSavingElements(data.elementId);
   }
 
   private updateElementContent(data: {
