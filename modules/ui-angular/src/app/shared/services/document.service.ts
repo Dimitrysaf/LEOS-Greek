@@ -642,6 +642,7 @@ export class DocumentService {
   }
 
   reloadDocument() {
+    this.clearPendingSavingElements();
     this.setDidDocumentLoadAndRender(false);
     this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
@@ -1674,5 +1675,9 @@ export class DocumentService {
 
   isPendingSavingElement(elementId: string): boolean {
     return this.pendingSavingElements.has(elementId);
+  }
+
+  clearPendingSavingElements() {
+    this.pendingSavingElements.clear();
   }
 }
