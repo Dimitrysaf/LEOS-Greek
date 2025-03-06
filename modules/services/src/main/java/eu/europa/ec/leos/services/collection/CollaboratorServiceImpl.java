@@ -6,6 +6,9 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.notification.collaborators.AddCollaborator;
+import eu.europa.ec.leos.model.notification.collaborators.CollaboratorEmailNotification;
+import eu.europa.ec.leos.model.notification.collaborators.EditCollaborator;
+import eu.europa.ec.leos.model.notification.collaborators.RemoveCollaborator;
 import eu.europa.ec.leos.model.user.ClientSystem;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
@@ -88,7 +91,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
         documents.forEach(doc -> updateCollaborators(user, role, entity, systemClientId, doc, false));
 
-        sendNotification(user, entity, role, proposal.getId(), proposalUrl);
+        sendNotification(new AddCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
         LOG.info("Collaborator '{}', role '{}', entity '{}' inserted to proposal id {}", user.getLogin(), role.getName(), entity, proposal.getId());
         return entity;
     }
@@ -113,7 +116,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
         documents.forEach(doc -> updateCollaborators(user, role, entity, null, doc, true));
 
-        sendNotification(user, entity, role, proposal.getId(), proposalUrl);
+        sendNotification(new RemoveCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
         LOG.info("Collaborator '{}', role '{}', entity '{}' removed from proposal id {}", user.getLogin(), role.getName(), entity, proposal.getId());
         return entity;
     }
@@ -144,7 +147,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
         documents.forEach(doc -> updateCollaborators(user, newRole, entity, null, doc, false));
 
-        sendNotification(user, entity, newRole, proposal.getId(), proposalUrl);
+        sendNotification(new EditCollaborator(user, entity, newRole.getName(), proposal.getId(), proposalUrl));
         LOG.info("Collaborator '{}', oldRole '{}', entity '{}' updated new role to '{}' for proposal id {}", user.getLogin(), oldRole.getName(), entity, newRole.getName(), proposal.getId());
         return entity;
     }
@@ -265,13 +268,14 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         return isLastOwner;
     }
 
-    private void sendNotification(User user, String selectedEntity, Role role, String proposalId, String proposalUrl) {
+    private void sendNotification(CollaboratorEmailNotification collaboratorEmailNotification) {
         try {
-            LOG.trace("Sending email to new collaborator user {}", user.getLogin());
-            notificationService.sendNotification(new AddCollaborator(user, selectedEntity, role.getName(), proposalId, proposalUrl));
+            LOG.trace("Sending email to updated collaborator user {}", collaboratorEmailNotification.getRecipient().getLogin());
+            notificationService.sendNotification(collaboratorEmailNotification);
         } catch (Exception e) {
-            LOG.warn("Unexpected error occurred while sending notification to user {}", user.getLogin(), e);
-            throw new SendNotificationException("Unexpected error occurred while sending notification to user " + user.getLogin(), e);
+            LOG.warn("Unexpected error occurred while sending notification to user {}", collaboratorEmailNotification.getRecipient().getLogin(), e);
+            throw new SendNotificationException(
+                    "Unexpected error occurred while sending notification to user " + collaboratorEmailNotification.getRecipient().getLogin(), e);
         }
     }
 
