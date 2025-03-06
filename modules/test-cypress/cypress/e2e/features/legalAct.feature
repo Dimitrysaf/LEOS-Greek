@@ -834,7 +834,7 @@ Feature: Legal Act Page Regression Features
         And num tag of paragraph 1 of article 6 should not exist
         And num tag of paragraph 2 of article 6 should not exist
 
-  @versionPane @archiveFunctionality
+  @versionPane @archiveFunctionality @local
   Scenario: VersionPane Archive functionality
     Given navigate to edit drafting application with "User1"
     Then user is on home page

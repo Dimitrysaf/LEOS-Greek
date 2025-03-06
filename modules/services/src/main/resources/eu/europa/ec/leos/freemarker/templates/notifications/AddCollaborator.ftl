@@ -28,7 +28,7 @@ strip_text=true>
 
 <#macro body>
     <br>
-    <b>You have been added as a ${leosAuthority} on the following initiative:</b>
+    <b>You have been added as ${leosAuthority} on the following initiative:</b>
     <br>
     ${title}
     <br>
