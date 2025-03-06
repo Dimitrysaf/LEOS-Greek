@@ -65,7 +65,7 @@ class tableOfContent {
 
     clickEditBtn() {
         this.elements.editBtn().click();
-        cy.wait(2000);
+        cy.wait(4000);
     }
 
     clickSaveBtn() {
@@ -120,6 +120,7 @@ class tableOfContent {
 
     clickLinkInNavigationPane(link) {
         this.elements.nodeLabel().contains(link).click();
+        cy.wait(1000);
     }
 
     clickRightAngleIconOfPreambleLink() {

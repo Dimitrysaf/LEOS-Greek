@@ -114,7 +114,10 @@ define(function SoftActionsExtensionModule(require) {
                                     aknp.insertBefore(_createMoveLabel(id, label, parentElement, style), aknp.childNodes[0]);
                                 }
                             } else if (moveItem.getAttribute(SOFT_MOVE_FROM_ATTR) || moveItem.getAttribute(SOFT_MOVE_TO_ATTR)) {
-                                moveItem.insertBefore(_createMoveLabel(id, label, parentElement, style), moveItem.children[0]);
+                                var $moveItem = $(moveItem);
+                                if ($moveItem.children("." + SOFT_MOVE_LABEL_STYLE).length === 0) {
+                                    moveItem.insertBefore(_createMoveLabel(id, label, parentElement, style), moveItem.childNodes[0]);
+                                }
                             }
                         }
                     }

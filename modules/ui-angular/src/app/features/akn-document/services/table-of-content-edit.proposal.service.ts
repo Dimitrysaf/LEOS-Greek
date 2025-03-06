@@ -197,8 +197,10 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     if (
       previousSibling &&
       previousSibling.id.startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX) &&
-      previousSibling.elementNumberId.toString().substring(6) ===
-        droppedItem.elementNumberId.toString() &&
+      ((droppedItem.elementNumberId != null && previousSibling.elementNumberId.toString().substring(6) ===
+        droppedItem.elementNumberId.toString()) ||
+        (droppedItem.elementNumberId == null && previousSibling.id.toString().substring(6) ===
+        droppedItem.id.toString())) &&
       droppedItem.softMoveFrom
     ) {
       this.checkAndRestore(droppedItem, previousSibling, tocTree, position);
@@ -206,8 +208,9 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     if (
       nextSibling &&
       nextSibling.id.startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX) &&
-      nextSibling.elementNumberId.toString().substring(6) ===
-        droppedItem.elementNumberId.toString() &&
+      ((droppedItem.elementNumberId != null && nextSibling.elementNumberId.toString().substring(6) ===
+        droppedItem.elementNumberId.toString()) || (droppedItem.elementNumberId == null && nextSibling.id.toString().substring(6) ===
+        droppedItem.id.toString())) &&
       droppedItem.softMoveFrom
     ) {
       this.checkAndRestore(droppedItem, nextSibling, tocTree, position);

@@ -92,11 +92,13 @@ public class CoverPageController {
     @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                         @RequestParam("tocMode") TocMode tocMode
+                                         @RequestParam("tocMode") TocMode tocMode,
+                                         HttpServletRequest request
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.coverPageApiService.getToc(documentRef, tocMode);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+            List<TableOfContentItemVO> toc = this.coverPageApiService.getToc(documentRef, tocMode, clientContextToken);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting coverPage toc items - " + e.getMessage());
@@ -263,12 +265,14 @@ public class CoverPageController {
     @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveCoverPageVersion(@PathVariable("documentRef") String documentRef,
-                                                       @RequestBody SaveTocRequestEvent saveTocRequestEvent
+                                                       @RequestBody SaveTocRequestEvent saveTocRequestEvent,
+                                        HttpServletRequest request
     ) {
         try {
             documentRef = encodeParam(documentRef);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
             List<TableOfContentItemVO> toc = this.coverPageApiService.saveToC(documentRef,
-                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED);
+                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED, clientContextToken);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());

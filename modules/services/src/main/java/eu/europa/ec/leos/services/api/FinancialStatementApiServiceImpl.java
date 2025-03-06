@@ -154,7 +154,7 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode, String clientContextToken) {
         return null;
     }
 
@@ -174,7 +174,7 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken) {
         return null;
     }
 

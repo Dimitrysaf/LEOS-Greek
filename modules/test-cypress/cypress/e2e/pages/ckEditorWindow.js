@@ -96,7 +96,7 @@ class ckEditorWindow {
     }
 
     getCkEditableInlineElement() {
-        cy.wait(500);
+        cy.wait(1000);
         return this.elements.ckEditableInline();
     }
 

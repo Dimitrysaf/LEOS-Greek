@@ -33,6 +33,7 @@ export interface TocItem {
   numberEditable: boolean;
   contentDisplayed: boolean;
   deletable: boolean;
+  notAddable: boolean;
   numWithType: boolean;
   expandedByDefault: boolean;
   sameParentAsChild: boolean;

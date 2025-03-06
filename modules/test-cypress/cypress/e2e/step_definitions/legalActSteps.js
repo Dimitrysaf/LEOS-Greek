@@ -47,6 +47,7 @@ When('mouseover and click on recital {int}', recitalNumber => {
 })
 
 When('mouseover and click on article {int}', articleNumber => {
+    cy.wait(1000)
     legalActPage.mouseHoverAndClickOnArticle(articleNumber);
 })
 

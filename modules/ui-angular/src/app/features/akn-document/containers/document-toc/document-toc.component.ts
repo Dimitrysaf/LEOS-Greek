@@ -301,6 +301,10 @@ export class DocumentTocComponent
         ) === BULLET_NUM
       ) {
         return this.translateService.instant('toc.item.type.bullet');
+      } else if (node.node && node.node.toString().includes('name="signatory"')) {
+        return this.translateService.instant(
+          'toc.item.type.signatory',
+        );
       } else {
         return this.translateService.instant(
           'toc.item.type.' + node.tocItem.aknTag.toLowerCase(),
@@ -800,8 +804,8 @@ export class DocumentTocComponent
     this.handleAddNodeAfterValidation(
       result.targetItem,
       result.sourceItem,
-      result.action.isAdd,
-      result.action.position,
+      result.action?.isAdd,
+      result.action?.position,
     );
 
     this.draggedItem = null;
@@ -822,7 +826,7 @@ export class DocumentTocComponent
     isAdd: boolean,
     position: string,
   ) {
-    if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged)) {
+    if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged) || !nodeDragged.tocItem.draggable) {
       this.populateValidationMessage({
         success: false,
         warning: false,
@@ -1072,13 +1076,17 @@ export class DocumentTocComponent
         }
       }
     } else if (
-      targetElement.softMoveTo === null ||
-      !(targetElement.softMoveTo === eventItem.elementNumberId.toString())
+      targetElement.softMoveTo === null ||(
+        (eventItem.elementNumberId != null && targetElement.softMoveTo !== eventItem.elementNumberId.toString())
+        || (eventItem.elementNumberId == null && targetElement.softMoveTo !== eventItem.id.toString())
+      )
     ) {
       eventItem.trackChangeAction = LEOS_TC_MOVE_ACTION;
     } else if (
-      targetElement.softMoveTo !== null &&
-      targetElement.softMoveTo === eventItem.elementNumberId.toString()
+      targetElement.softMoveTo !== null && (
+        (eventItem.elementNumberId != null && targetElement.softMoveTo === eventItem.elementNumberId.toString())
+      || (eventItem.elementNumberId == null && targetElement.softMoveTo === eventItem.id.toString())
+      )
     ) {
       eventItem.trackChangeAction = LEOS_TC_MOVE_TO_ORIGIN_ACTION;
     }

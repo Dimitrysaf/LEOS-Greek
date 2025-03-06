@@ -67,7 +67,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
     DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId)
             throws Exception;
 
-    List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
+    List<TableOfContentItemVO> getToc(String documentRef, TocMode mode, String clientContextToken);
 
     List<TocItem> getTocItems(@NotNull String documentRef);
 
@@ -75,7 +75,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType);
 
-    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode);
+    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken);
 
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase,
                                              boolean completeWords, String tempUpdatedContentXML) throws Exception;

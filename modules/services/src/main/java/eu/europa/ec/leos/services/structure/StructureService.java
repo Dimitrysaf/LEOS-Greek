@@ -15,6 +15,8 @@ public interface StructureService {
     
     Map<TocItem, List<TocItem>> getTocRules(String docTemplate);
 
+    Map<TocItem, List<List<TocItem>>> getTocRulesOrders(String docTemplate);
+
     Map<String, DocumentRules.Rule> getDocumentRules(String docTemplate);
     
     List<NumberingConfig> getNumberingConfigs(String docTemplate);

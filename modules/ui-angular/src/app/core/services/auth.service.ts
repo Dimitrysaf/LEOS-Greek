@@ -258,6 +258,8 @@ export class AuthService implements OnDestroy {
     const clientContext = this.getClientContext();
     if (clientContext) {
       headers["Client-Context"] = clientContext;
+    } else {
+      delete headers['Client-Context'];
     }
 
     this.http

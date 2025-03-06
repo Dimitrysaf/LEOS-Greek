@@ -567,9 +567,12 @@ define(function actionManagerExtensionModule(require) {
             case 'alinea': {
                 let repeatable = $element.attr('leos:repeatable');
                 let action = $element.attr('leos:action');
+                let name = $element.attr('name');
 
                 if(repeatable && action !== 'delete') {
                     insertBeforeAndAfter = true;
+                } else if (!!name && name == 'signatory') {
+                    insertBeforeAndAfter = false;
                 }
                 break;
             }

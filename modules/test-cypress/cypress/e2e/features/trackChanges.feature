@@ -429,7 +429,7 @@ Feature: Track Changes Feature
     Then enable track changes toggle bar is on in ribbon toolbar
     When click on "Article 1 - Scope 1.Numbered paragraphs with 2 paragraphs." link in navigation pane
     Then article 1 is displayed
-    When mouseover and click on article 1
+    When click on edit icon of article 1
     Then ck editor window is displayed
     And  15 paragraphs are present in article in edition mode
     When click at offset 25 of li 3 with data-akn-element "paragraph" of article in edition mode

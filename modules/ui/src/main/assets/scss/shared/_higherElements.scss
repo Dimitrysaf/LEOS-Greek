@@ -78,7 +78,7 @@
     //    AKN signature styles
     signature {
         display: inline-block;
-        padding: 16pt 45pt;
+        width: 50%;
         & > * {
             display: block;
             text-align: center;
@@ -113,6 +113,7 @@
         padding-top: 6pt;
         padding-bottom: 6pt;
         display: block;
+        text-align: center;
     }
 
     //    AKN custom element styles

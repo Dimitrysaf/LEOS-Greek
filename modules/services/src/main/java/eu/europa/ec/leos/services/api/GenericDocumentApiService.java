@@ -224,6 +224,16 @@ public class GenericDocumentApiService {
         return this.getStructureContext().getTocItems();
     }
 
+    public Profile getProfile(@NotNull XmlDocument document, String clientContextToken) {
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
+            LeosMetadata documentMetadata = document.getMetadata().get();
+            return profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken),
+                    documentMetadata.getLanguage());
+        } else {
+            return null;
+        }
+    }
+
     public DocumentConfigResponse getDocumentConfig(@NotNull XmlDocument document, @NotNull StructureContext structure,
                                                     String clientContextToken) {
         structure.useDocumentTemplate(this.getDocTemplate(document));

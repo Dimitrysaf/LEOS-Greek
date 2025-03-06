@@ -897,7 +897,7 @@ export class DocumentEditorComponent
   ): Array<Partial<TableOfContentItemVO>> {
     const dragItems: Array<Partial<TableOfContentItemVO>> = [];
     for (const item of tocItems) {
-      if (!item.root && item.draggable) {
+      if (!item.root && item.draggable && !item.notAddable) {
         let number = null;
         let heading = null;
         let content = '';
@@ -1049,7 +1049,7 @@ export class DocumentEditorComponent
   }
 
   get showTocEditButton() {
-    return (!this.profile || this.profile.tocEdition) && this.hasUpdatePermission;
+    return (!this.profile || this.profile.tocEdition || this.profile.tocSignatureEdition) && this.hasUpdatePermission;
   }
 
   get showAnnotations() {

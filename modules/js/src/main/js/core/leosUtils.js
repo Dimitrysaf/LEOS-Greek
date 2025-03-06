@@ -107,7 +107,9 @@ define(function leosUtilsModule(require) {
         if (elementsToBeChecked.includes(el.tagName)) {
             if (!$.trim(el.innerText)) {
                 if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
-                    && (el.parentElement.tagName === TABLE_CELL_TAG || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {
+                    && ((el.parentElement.tagName === TABLE_CELL_TAG &&
+                        (!el.parentElement.hasAttribute('data-akn-name') || el.parentElement.getAttribute('data-akn-name') !== 'signature'))
+                        || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {
                     return false;
                 } else if (el.children.length > 0 && _containsOnlyChildrenOf(el, childElementsToBeChecked)
                     && (el.previousElementSibling && el.previousElementSibling.tagName === TABLE_TAG)) {

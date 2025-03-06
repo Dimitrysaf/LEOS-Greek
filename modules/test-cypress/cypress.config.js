@@ -20,14 +20,19 @@ module.exports = defineConfig({
     setupNodeEvents(on) {
       // implement node event listeners here
       on("before:browser:launch", (browser, launchOptions) => {
-        if (["chrome", "edge"].includes(browser.name)) {
-          /*if (browser.isHeadless) {
+        if (browser.name === 'chrome') {
+          launchOptions.args.push('--disable-dev-shm-usage');
+          launchOptions.args.push("--no-sandbox");
+          launchOptions.args.push("--disable-gpu");
+        }
+        /*if (["chrome", "edge"].includes(browser.name)) {
+          /!*if (browser.isHeadless) {
             launchOptions.args.push("--no-sandbox");
             launchOptions.args.push("--disable-gl-drawing-for-tests");
             launchOptions.args.push("--disable-gpu");
-          }*/
-          launchOptions.args.push('--disable-dev-shm-usage');
-        }
+          }*!/
+
+        }*/
         return launchOptions;
       });
       on('file:preprocessor', cucumber());

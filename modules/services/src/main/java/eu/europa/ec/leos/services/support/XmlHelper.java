@@ -124,6 +124,9 @@ public class XmlHelper {
     public static final String SUBPOINT_LABEL = "subparagraph";
     public static final String CLAUSE = "clause";
     public static final String CONCLUSIONS = "conclusions";
+    public static final String ORGANIZATION = "organization";
+    public static final String ROLE = "role";
+    public static final String PERSON = "person";
     public static final String MAIN_BODY = "mainBody";
     public static final String TBLOCK = "tblock";
     public static final String LEVEL = "level";
