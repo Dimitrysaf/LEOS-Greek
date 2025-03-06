@@ -42,6 +42,7 @@
             <xs:element name="numberEditable" type="xs:boolean" default="false"/>
             <xs:element name="contentDisplayed" type="xs:boolean" default="false"/>
             <xs:element name="deletable" type="xs:boolean" default="false"/>
+            <xs:element name="notAddable" type="xs:boolean" default="false" minOccurs="0"/>
             <xs:element name="numWithType" type="xs:boolean" default="false"/>
             <xs:element name="expandedByDefault" type="xs:boolean" default="false"/>
             <xs:element name="sameParentAsChild" type="xs:boolean" default="false"/>
@@ -337,6 +338,12 @@
             <xs:enumeration value="longTitle"/>
             <xs:enumeration value="docPurpose"/>
             <xs:enumeration value="inline"/>
+
+            <xs:enumeration value="signature"/>
+            <xs:enumeration value="block"/>
+            <xs:enumeration value="organization"/>
+            <xs:enumeration value="role"/>
+            <xs:enumeration value="person"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -347,6 +354,7 @@
                     <xs:sequence>
                         <xs:element name="tocItem" minOccurs="0" type="aknTag"/>
                         <xs:element name="list" minOccurs="0" type="tocIdList"/>
+                        <xs:element name="order" minOccurs="0" type="siblingsOrder"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -395,6 +403,12 @@
     <xs:complexType name="tocIdList">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="tocItem" type="aknTag"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="siblingsOrder">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="list" type="tocIdList"/>
         </xs:sequence>
     </xs:complexType>
 

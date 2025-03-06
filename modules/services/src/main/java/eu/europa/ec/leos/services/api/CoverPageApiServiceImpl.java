@@ -163,7 +163,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode, String clientContextToken) {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         this.setStructureContext(
                 proposal.getMetadata().getOrError(() -> "Cover Page metadata is required!").getDocTemplate());
@@ -252,7 +252,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken) {
         throw new RuntimeException("Save toc method not allowed for Memorandum type document");
     }
 

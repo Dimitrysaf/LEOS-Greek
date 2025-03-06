@@ -9,6 +9,7 @@ import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.ObjectFactory;
 import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.Structure;
+import eu.europa.ec.leos.vo.structure.TocIdList;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocRules;
 import org.slf4j.Logger;
@@ -50,6 +51,12 @@ public class StructureServiceImpl implements StructureService {
     public Map<TocItem, List<TocItem>> getTocRules(String docTemplate) {
         loadTocStructure(docTemplate);
         return tocStructureMap.get(docTemplate).getTocRules();
+    }
+    @Override
+    @Cacheable(value = "tocStructureTocRulesOrdersMap")
+    public Map<TocItem, List<List<TocItem>>> getTocRulesOrders(String docTemplate) {
+        loadTocStructure(docTemplate);
+        return tocStructureMap.get(docTemplate).getTocRulesOrders();
     }
 
     @Override
@@ -119,6 +126,7 @@ public class StructureServiceImpl implements StructureService {
         List<TocItem> tocItems = structure.getTocItems().getTocItems();
         tocStructure.setTocItems(tocItems);
         tocStructure.setTocRules(buildProposalTocRules(structure, tocItems));
+        tocStructure.setTocRulesOrders(buildProposalTocRulesOrders(structure, tocItems));
         tocStructure.setDocumentRules(buildProposalDocumentRules(structure, tocItems));
 
         tocStructureMap.put(docTemplate, tocStructure); //cache it for the next call
@@ -150,6 +158,31 @@ public class StructureServiceImpl implements StructureService {
 
         }
         return tocRules;
+    }
+
+    private Map<TocItem, List<List<TocItem>>> buildProposalTocRulesOrders(Structure structure, List<TocItem> tocItems) {
+        Map<TocItem, List<List<TocItem>>> tocRulesOrders = new HashMap<>();
+        if(structure.getTocRules() != null) {
+            for (TocRules.Entry entry : structure.getTocRules().getEntries()) {
+                AknTag itemName = entry.getTocItem();
+                List<TocItem> foundTocItems = getTocItemsByName(tocItems, itemName.value());
+                for (TocItem tocItem : foundTocItems) {
+                    List<List<TocItem>> order = new ArrayList<>();
+                    if (entry.getOrder() != null) {
+                        for (TocIdList listToc : entry.getOrder().getLists()) {
+                            List<TocItem> list = new ArrayList<>();
+                            for (AknTag listTocName : listToc.getTocItems()) {
+                                list.addAll(getTocItemsByName(tocItems, listTocName.value()));
+                            }
+                            order.add(list);
+                        }
+                    }
+                    tocRulesOrders.put(tocItem, order);
+                }
+            }
+
+        }
+        return tocRulesOrders;
     }
 
     private Map<String, DocumentRules.Rule> buildProposalDocumentRules(Structure structure, List<TocItem> tocItems) {

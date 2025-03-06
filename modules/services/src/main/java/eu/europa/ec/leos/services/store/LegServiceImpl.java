@@ -960,7 +960,7 @@ public class LegServiceImpl implements LegService {
         if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
-            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
+            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN, structureContextProvider.get().getTocItems()));
             final String coverPage = exportProposalResource.getComponentId(XmlNodeConfigProcessor.DOC_REF_COVER);
             addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposal.getMetadata().getOrNull().getRef());
         }
@@ -1884,7 +1884,8 @@ public class LegServiceImpl implements LegService {
         if (exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
-            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
+            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN,
+                    structureContextProvider.get().getTocItems()));
 
             addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposal.getMetadata().getOrNull().getRef());
         }

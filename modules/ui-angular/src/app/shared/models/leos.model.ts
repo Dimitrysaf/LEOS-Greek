@@ -27,6 +27,7 @@ export type Profile = {
   name: string;
   breadcrumb: boolean;
   tocEdition: boolean;
+  tocSignatureEdition: boolean;
   internalReference: boolean;
   authorialNote: boolean;
   showLoggedUser: boolean;

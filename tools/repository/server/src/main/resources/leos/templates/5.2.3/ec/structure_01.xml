@@ -791,6 +791,109 @@
             <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
         </tocItem>
+
+        <tocItem>
+            <aknTag>signature</aknTag>
+            <root>false</root>
+            <higherElement>false</higherElement>
+            <draggable>false</draggable>
+            <childrenAllowed>true</childrenAllowed>
+            <display>true</display>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
+            <itemDescription>true</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>false</contentDisplayed>
+            <deletable>false</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>false</sameParentAsChild>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>organization</aknTag>
+            <root>false</root>
+            <higherElement>false</higherElement>
+            <draggable>false</draggable>
+            <childrenAllowed>false</childrenAllowed>
+            <display>true</display>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
+            <itemDescription>true</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>true</contentDisplayed>
+            <deletable>false</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>false</sameParentAsChild>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>role</aknTag>
+            <root>false</root>
+            <higherElement>false</higherElement>
+            <draggable>true</draggable>
+            <childrenAllowed>false</childrenAllowed>
+            <display>true</display>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
+            <itemDescription>true</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>true</contentDisplayed>
+            <deletable>false</deletable>
+            <notAddable>true</notAddable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>false</sameParentAsChild>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>person</aknTag>
+            <root>false</root>
+            <higherElement>false</higherElement>
+            <draggable>true</draggable>
+            <childrenAllowed>false</childrenAllowed>
+            <display>true</display>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
+            <itemDescription>true</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>true</contentDisplayed>
+            <deletable>false</deletable>
+            <notAddable>true</notAddable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>false</sameParentAsChild>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>block</aknTag>
+            <root>false</root>
+            <higherElement>false</higherElement>
+            <draggable>false</draggable>
+            <childrenAllowed>true</childrenAllowed>
+            <display>false</display>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
+            <itemDescription>true</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>false</contentDisplayed>
+            <deletable>false</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>false</sameParentAsChild>
+            <profiles>
+                <profile>
+                    <elementSelector>block[name='signatory']</elementSelector>
+                    <profileName>inlineAknSignatory</profileName>
+                </profile>
+            </profiles>
+            <editable>true</editable>
+        </tocItem>
     </tocItems>
 
     <numberingConfigs>
@@ -1199,11 +1302,60 @@
         </entry>
         <entry>
             <tocItem>conclusions</tocItem>
-            <list/>
+            <list>
+                <tocItem>block</tocItem>
+            </list>
+        </entry>
+        <entry>
+            <tocItem>block</tocItem>
+            <list>
+                <tocItem>signature</tocItem>
+            </list>
+        </entry>
+        <entry>
+            <tocItem>signature</tocItem>
+            <list>
+                <tocItem>organization</tocItem>
+                <tocItem>role</tocItem>
+                <tocItem>person</tocItem>
+            </list>
+            <order>
+                <list>
+                    <tocItem>organization</tocItem>
+                    <tocItem>role</tocItem>
+                    <tocItem>person</tocItem>
+                </list>
+                <list>
+                    <tocItem>organization</tocItem>
+                    <tocItem>person</tocItem>
+                    <tocItem>role</tocItem>
+                </list>
+            </order>
+        </entry>
+        <entry>
+            <tocItem>role</tocItem>
+            <list>
+                <tocItem>role</tocItem>
+                <tocItem>person</tocItem>
+            </list>
+        </entry>
+        <entry>
+            <tocItem>person</tocItem>
+            <list>
+                <tocItem>role</tocItem>
+                <tocItem>person</tocItem>
+            </list>
         </entry>
     </tocRules>
 
     <documentRules>
+        <rule>
+            <description>Signature validation rule</description>
+            <type>onlyOneOccurenceElement</type>
+            <tocItem>signature</tocItem>
+            <scope>drop</scope>
+            <errorMessage>toc.only.one.occurence.element.validation.error.message</errorMessage>
+        </rule>
         <rule>
             <description>Structure validation rule</description>
             <type>structureValidation</type>

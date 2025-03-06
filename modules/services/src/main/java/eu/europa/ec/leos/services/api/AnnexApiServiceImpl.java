@@ -278,7 +278,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode, String clientContextToken) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         populateCloneProposalMetadata(annex);
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
@@ -301,7 +301,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(

@@ -55,7 +55,7 @@
       </mat-nested-tree-node>
       <mat-nested-tree-node
         cdkScrollable
-        [hidden]="!node.shouldRenderNode"
+        [hidden]="!node.shouldRenderNode && !hasChildren"
         *matTreeNodeDef="let node; when: hasChildren"
         cdkDrag
         cdkDropList
@@ -67,9 +67,9 @@
         [cdkDropListSortingDisabled]="true"
         [cdkDropListDisabled]="!isEditMode"
       >
-        <div class="drop-placeholder"></div>
+        <div *ngIf="node.shouldRenderNode" class="drop-placeholder"></div>
 
-        <li>
+        <li *ngIf="node.shouldRenderNode">
           <app-co-edition-info [nodeId]="node.id"></app-co-edition-info>
           <div
             (click)="handleNodeSelect(node)"
@@ -106,7 +106,12 @@
             </div>
           </ul>
         </li>
-        <div class="drop-placeholder"></div>
+        <div *ngIf="node.shouldRenderNode" class="drop-placeholder"></div>
+        <ul *ngIf="!node.shouldRenderNode" class="">
+          <div>
+            <ng-container matTreeNodeOutlet></ng-container>
+          </div>
+        </ul>
       </mat-nested-tree-node>
     </mat-tree>
 

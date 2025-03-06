@@ -102,6 +102,24 @@ define(function leosPluginUtilsModule(require) {
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~ART_DEF";
     var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-number'];
+
+    var commonAttributes = [
+        { akn: "xml:id", html: "id" },
+        { akn: "refersTo", html: "refersto" },
+        { akn: "leos:origin", html: "data-origin" },
+        { akn: "leos:editable", html: "data-akn-attr-editable" },
+        { akn: "leos:softuser", html: "data-akn-attr-softuser" },
+        { akn: "leos:softdate", html: "data-akn-attr-softdate" },
+        { akn: "leos:softmove_to", html: "data-akn-attr-softmove_to" },
+        { akn: "leos:softmove_from", html: "data-akn-attr-softmove_from" },
+        { akn: "leos:softmove_label", html: "data-akn-attr-softmove_label" },
+        { akn: "leos:softaction", html: "data-akn-attr-softaction" },
+        { akn: "leos:softactionroot", html: "data-akn-attr-softactionroot" },
+        { akn: "leos:action", html: "data-akn-action" },
+        { akn: "leos:uid", html: "data-akn-uid" },
+        { akn: "leos:title", html: "title" }
+    ];
+
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);
@@ -1524,6 +1542,7 @@ define(function leosPluginUtilsModule(require) {
         selectCorrectPathForList: _selectCorrectPathForList,
         getRefConfig: _getRefConfig,
         isEmpty: _isEmpty,
+        commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,

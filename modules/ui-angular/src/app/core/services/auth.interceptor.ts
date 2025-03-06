@@ -69,6 +69,8 @@ export class AuthInterceptor implements HttpInterceptor {
     headers['Authorization'] = `Bearer ${accessToken}`;
     if(clientContext) {
       headers['Client-Context'] = clientContext;
+    } else {
+      delete headers['Client-Context'];
     }
 
     return req.clone({

@@ -291,7 +291,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
                 thenReturn(coverPageContent);
         when(documentContentService.toEditableContent(isA(XmlDocument.class), any(), any(), any())).
                 thenReturn(displayableContent);
-        when(billService.getTableOfContent(document, TocMode.SIMPLIFIED)).thenReturn(tableOfContentItemVoList);
+        when(billService.getTableOfContent(document, TocMode.SIMPLIFIED, null)).thenReturn(tableOfContentItemVoList);
         
         when(packageService.findPackageByDocumentId(document.getId())).thenReturn(leosPackage);
         when(proposalService.findProposalByPackagePath(leosPackage.getPath())).thenReturn(leosProposal);
@@ -307,7 +307,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentContentService).isCoverPageExists(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
-        verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED);
+        verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED, null);
         verify(billService).getAllVersions(any(), any(), Mockito.eq(0), Mockito.eq(9999));
 
         verify(documentScreen).refreshContent(displayableContent, false);
@@ -387,7 +387,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
                 thenReturn(coverPageContent);
         when(documentContentService.toEditableContent(isA(XmlDocument.class), any(), any(), any())).
                 thenReturn(displayableContent);
-        when(billService.getTableOfContent(document, TocMode.SIMPLIFIED)).thenReturn(tableOfContentItemVoList);
+        when(billService.getTableOfContent(document, TocMode.SIMPLIFIED, null)).thenReturn(tableOfContentItemVoList);
 
         when(packageService.findPackageByDocumentId(document.getId())).thenReturn(leosPackage);
         when(proposalService.findProposalByPackagePath(leosPackage.getPath())).thenReturn(leosProposal);
@@ -403,7 +403,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentContentService).isCoverPageExists(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
-        verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED);
+        verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED, null);
         verify(billService).getAllVersions(any(), any(), Mockito.eq(0), Mockito.eq(9999));
 
         verify(documentScreen).refreshContent(displayableContent, false);
@@ -596,7 +596,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
                 thenReturn(coverPageContent);
         when(documentContentService.toEditableContent(isA(XmlDocument.class), any(), any(), any())).
                 thenReturn(displayableContent);
-        when(billService.getTableOfContent(document, TocMode.SIMPLIFIED)).thenReturn(tableOfContentItemVoList);
+        when(billService.getTableOfContent(document, TocMode.SIMPLIFIED, null)).thenReturn(tableOfContentItemVoList);
         when(cloneContext.isClonedProposal()).thenReturn(false);
         when(packageService.findPackageByDocumentId(document.getId())).thenReturn(leosPackage);
         when(proposalService.findProposalByPackagePath(leosPackage.getPath())).thenReturn(leosProposal);
@@ -605,7 +605,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         documentPresenter.refreshDocument(new RefreshDocumentEvent());
         verify(documentScreen).isCoverPageVisible();
         verify(billService, Mockito.times(2)).findBillByRef(docRef);
-        verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED);
+        verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED, null);
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
         verify(documentContentService).isCoverPageExists(any());
@@ -843,7 +843,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn("bill_test.xml");
         when(billService.findBillByRef("bill_test.xml")).thenReturn(originalDocument);
         List<TableOfContentItemVO> tocList = new ArrayList<TableOfContentItemVO>();
-        when(billService.getTableOfContent(originalDocument, TocMode.NOT_SIMPLIFIED)).thenReturn(tocList);
+        when(billService.getTableOfContent(originalDocument, TocMode.NOT_SIMPLIFIED, null)).thenReturn(tocList);
 
        // Map<TocItem, List<TocItem>> tocRules = Collections.emptyMap();
         when(structureServiceImpl.getTocRules(docTemplate)).thenReturn(any());
@@ -853,7 +853,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         documentPresenter.editInlineToc(new InlineTocEditRequestEvent());
 
         verify(billService).findBillByRef("bill_test.xml");
-        verify(billService).getTableOfContent(originalDocument, TocMode.NOT_SIMPLIFIED);
+        verify(billService).getTableOfContent(originalDocument, TocMode.NOT_SIMPLIFIED, null);
     }
 
     @Test
@@ -1172,7 +1172,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         final Bill savedDocument = getMockedBill(content, docId, "title", "", billMetadata, collaborators);
 
         List<TableOfContentItemVO> tocList = new ArrayList<TableOfContentItemVO>();
-        when(billService.getTableOfContent(any(), any())).thenReturn(tocList);
+        when(billService.getTableOfContent(any(), any(), any())).thenReturn(tocList);
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(importService.getAknDocument("reg", 2015, 25)).thenReturn(aknDocument);
@@ -1185,7 +1185,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(importService).getAknDocument("reg", 2015, 25);
         verify(importService).insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList, tocList);
         verify(billService).findBillByRef(docRef);
-        verify(billService).getTableOfContent(originalDocument, TocMode.NOT_SIMPLIFIED);
+        verify(billService).getTableOfContent(originalDocument, TocMode.NOT_SIMPLIFIED, null);
         verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"));
 
         verifyNoMoreInteractions(importService);

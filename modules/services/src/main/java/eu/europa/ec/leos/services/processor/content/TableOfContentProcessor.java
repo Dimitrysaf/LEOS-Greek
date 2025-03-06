@@ -16,6 +16,8 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
+import eu.europa.ec.leos.vo.light.Profile;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +51,8 @@ public interface TableOfContentProcessor {
     }
 
     List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode);
+
+    List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode, List<TocItem> tocItems);
 
     static void updateStyleClassOfTocItems(List<TableOfContentItemVO> list, String elementName) {
         List<TableOfContentItemVO> divisionTocItems = list.stream()

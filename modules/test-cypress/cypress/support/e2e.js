@@ -30,8 +30,16 @@ beforeEach(() => {
     cy.clearLocalStorage();
     cy.clearAllSessionStorage();
     cy.clearCookies();
+    cy.window().then((win) => {
+        win.sessionStorage.clear();
+    });
 })
 
+afterEach(() => {
+    cy.window().then(win => {
+        win.gc?.();
+    });
+});
 // afterEach(() => {
 //   const screenshotsFolder = Cypress.config("screenshotsFolder");
 //   if (window.cucumberJson?.generate) {

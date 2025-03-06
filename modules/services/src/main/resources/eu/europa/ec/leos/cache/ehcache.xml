@@ -41,6 +41,15 @@
         timeToLiveSeconds="3600"
         memoryStoreEvictionPolicy="LFU"/>
 
+    <!-- TOC structure rules orderscache policy -->
+    <cache name="tocStructureTocRulesOrdersMap"
+           eternal="false"
+           maxElementsInMemory="25"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
+
     <!-- TOC structure document rules cache policy -->
     <cache name="tocStructureDocumentRulesMap"
            eternal="false"

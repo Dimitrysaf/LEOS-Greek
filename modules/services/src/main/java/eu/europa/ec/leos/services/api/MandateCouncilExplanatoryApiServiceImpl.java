@@ -245,7 +245,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode, String clientContextToken) {
         Explanatory memorandum = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(
                 memorandum.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
@@ -275,7 +275,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(

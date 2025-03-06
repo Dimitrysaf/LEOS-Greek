@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITH_ONLY_TEXT;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.MergeUtils.removeChildren;
@@ -154,8 +155,9 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         Node numNode = buildNumNode(node, tocVo);
         Node headingNode = buildHeadingNode(node, tocVo, user, isTrackChangesEnabled);
         Node introNode = getFirstChild(node, INTRO);  //recitals intro
-        List<Node> childrenNode = XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
-
+        List<Node> childrenNode = ELEMENTS_WITH_ONLY_TEXT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) ?
+                XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node, tocVo) :
+                XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
         // 3. clean the node and build it again.
         node.setTextContent(EMPTY_STRING);
         updateDepthAttribute(tocVo, node);
