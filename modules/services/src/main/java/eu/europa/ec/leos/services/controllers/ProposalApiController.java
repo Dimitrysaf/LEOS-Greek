@@ -256,6 +256,21 @@ public class ProposalApiController {
         }
     }
 
+    @RequestMapping(value = "/{proposalRef}/export/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> exportProposalDownload(@PathVariable("proposalRef") String proposalRef, @RequestParam String exportOutput) {
+        try {
+            proposalRef = encodeParam(proposalRef);
+            exportOutput = encodeParam(exportOutput);
+            byte[] exportProposal = apiService.exportProposalDownload(proposalRef, exportOutput);
+            return new ResponseEntity<>(exportProposal, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while trying to download export proposal {}", proposalRef, e);
+            return new ResponseEntity<>("Error occurred while downloading export proposal " + proposalRef + ": " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> uploadProposal(@RequestParam("legFile") MultipartFile legFile) {

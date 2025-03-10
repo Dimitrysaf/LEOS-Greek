@@ -499,9 +499,7 @@ public abstract class ApiServiceImpl implements ApiService {
         return result;
     }
 
-    @Override
-    public String exportProposal(String proposalRef, String outputType) throws Exception {
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+    private ExportOptions getExportOptions(String outputType) {
         ExportOptions.Output output;
         switch (outputType) {
             case "PDF":
@@ -513,8 +511,19 @@ public abstract class ApiServiceImpl implements ApiService {
             default:
                 throw new RuntimeException("Invalid output type provided");
         }
-        ExportOptions exportOptions = new ExportLW(output);
-        return exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
+        return new ExportLW(output);
+    }
+
+    @Override
+    public String exportProposal(String proposalRef, String outputType) throws Exception {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        return exportService.exportToToolboxCoDe(proposal.getId(), getExportOptions(outputType));
+    }
+
+    @Override
+    public byte[] exportProposalDownload(String proposalRef, String outputType) throws Exception {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        return exportService.exportToToolboxCoDeDownload(proposal.getId(), getExportOptions(outputType));
     }
 
     @Override

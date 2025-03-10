@@ -22,6 +22,8 @@ public interface ExportService {
 
     String exportToToolboxCoDe(String documentId, ExportOptions exportOptions) throws Exception;
 
+    byte[] exportToToolboxCoDeDownload(String documentId, ExportOptions exportOptions) throws Exception;
+
     byte[] exportToToolboxCoDe(File legFile, ExportOptions exportOptions) throws Exception;
 
     String exportLegPackage(String proposalId, LegPackage legPackage) throws Exception;
