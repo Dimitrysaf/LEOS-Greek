@@ -75,13 +75,28 @@ define(function leosTrackChangesPluginModule(require) {
                     },
 
                     onClick: function (value) {
-                        editor.focus();
                         if(value === 'acceptAll') {
-                            actions.acceptAllChanges(editor, numberModule);
+                            editor.execCommand( 'acceptAllChanges' );
                         } else {
-                            actions.rejectAllChanges(editor, numberModule);
+                            editor.execCommand( 'rejectAllChanges' );
                         }
                     },
+                });
+                editor.addCommand("acceptAllChanges", {
+                    canUndo: true,
+                    editorFocus: false,
+                    exec: function(editor) {
+                        var editorContent = editor.document.find('.leos-placeholder').getItem(0);
+                        actions.acceptAllChanges(editor, editorContent, numberModule);
+                    }
+                });
+                editor.addCommand("rejectAllChanges", {
+                    canUndo: true,
+                    editorFocus: false,
+                    exec: function(editor) {
+                        var editorContent = editor.document.find('.leos-placeholder').getItem(0);
+                        actions.rejectAllChanges(editor, editorContent, numberModule);
+                    }
                 });
             }
 
