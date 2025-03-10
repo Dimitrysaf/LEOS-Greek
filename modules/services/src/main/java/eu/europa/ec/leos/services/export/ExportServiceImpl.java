@@ -86,6 +86,11 @@ abstract class ExportServiceImpl implements ExportService {
     }
 
     @Override
+    public byte[] exportToToolboxCoDeDownload(String documentId, ExportOptions exportOptions) throws Exception {
+        return null;
+    }
+
+    @Override
     public byte[] exportToToolboxCoDe(File legFile, ExportOptions exportOptions) throws Exception {
         return null;
     }

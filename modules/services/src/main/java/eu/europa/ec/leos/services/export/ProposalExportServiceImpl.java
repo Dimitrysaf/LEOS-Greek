@@ -118,6 +118,38 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
     }
 
     /**
+     * Asks to Toolbox the generation of PDF/LegisWrite for the given proposalId and return the jobId.
+     * The method first send the request to Toolbox then, with the jobId assigned, keep pulling the reply until
+     * it get the answer or until the maximum numbers of tries exceed.
+     *
+     * @param proposalId    Proposal for which we need to generate the PDF/LegisWrite
+     * @param exportOptions
+     * @return New zip/leg file returned from Toolbox containing the generated PDF/LegisWrite files
+     */
+    @Override
+    public byte[] exportToToolboxCoDeDownload(String proposalId, ExportOptions exportOptions) throws Exception {
+        Validate.notNull(toolBoxService, "Export Service is not available!!");
+        File legisWritePackage = null;
+        String jobId;
+        try {
+            legisWritePackage = createCollectionPackage("job.zip", proposalId, exportOptions);
+            Map<String, File> packages = new HashMap<>();
+            packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
+            jobId = toolBoxService.createJob(packages);
+            return checkForReply(jobId, exportOptions.getExportOutput(), legisWritePackage.getName());
+        } catch (Exception ex) {
+            LOG.error("Unexpected error occurred in method exportToToolboxCoDeDownload(): {}", ex.getMessage());
+            throw ex;
+        } finally {
+            if (legisWritePackage != null && legisWritePackage.exists()) {
+                if (!legisWritePackage.delete()) {
+                    LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
+                }
+            }
+        }
+    }
+
+    /**
      * Asks to Toolbox the generation of PDF/LegisWrite for the legFile passed as parameter.
      * The method first send the request to Toolbox then, with the jobId assigned, keep pulling the reply until
      * it get the answer or until the maximum numbers of tries exceed.

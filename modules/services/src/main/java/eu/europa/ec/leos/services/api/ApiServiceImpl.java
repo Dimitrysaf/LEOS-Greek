@@ -79,6 +79,7 @@ import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -499,9 +500,7 @@ public abstract class ApiServiceImpl implements ApiService {
         return result;
     }
 
-    @Override
-    public String exportProposal(String proposalRef, String outputType) throws Exception {
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+    private ExportOptions getExportOptions(String outputType) {
         ExportOptions.Output output;
         switch (outputType) {
             case "PDF":
@@ -513,8 +512,19 @@ public abstract class ApiServiceImpl implements ApiService {
             default:
                 throw new RuntimeException("Invalid output type provided");
         }
-        ExportOptions exportOptions = new ExportLW(output);
-        return exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
+        return new ExportLW(output);
+    }
+
+    @Override
+    public String exportProposal(String proposalRef, String outputType) throws Exception {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        return exportService.exportToToolboxCoDe(proposal.getId(), getExportOptions(outputType));
+    }
+
+    @Override
+    public byte[] exportProposalDownload(String proposalRef, String outputType) throws Exception {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        return exportService.exportToToolboxCoDeDownload(proposal.getId(), getExportOptions(outputType));
     }
 
     @Override
