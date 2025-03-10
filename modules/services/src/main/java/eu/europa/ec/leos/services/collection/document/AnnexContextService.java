@@ -24,6 +24,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.AnnexService;
+import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
 import eu.europa.ec.leos.services.store.TemplateService;
@@ -55,6 +56,7 @@ public class AnnexContextService {
     private final ProposalService proposalService;
     private final SecurityService securityService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
+    private final PostProcessingDocumentService postProcessingDocumentService;
 
     private LeosPackage leosPackage;
     private Annex annex = null;
@@ -75,15 +77,17 @@ public class AnnexContextService {
     private String originRef;
     private String language;
     private String packageRef = null;
+    private Map<String, String> mapOldAndNewRefs;
 
     public AnnexContextService(
             TemplateService templateService,
             AnnexService annexService,
-            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper, PostProcessingDocumentService postProcessingDocumentService) {
         this.templateService = templateService;
         this.annexService = annexService;
         this.proposalService = proposalService;
         this.securityService = securityService;
+        this.postProcessingDocumentService = postProcessingDocumentService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
@@ -95,6 +99,11 @@ public class AnnexContextService {
         Validate.notNull(annex, "Template not found! [name=%s]", template);
         this.template = template;
         LOG.trace("Using {} template... [id={}, name={}]", annex.getCategory(), annex.getId(), annex.getName());
+    }
+
+    public void useAnnex(Annex annex) {
+        Validate.notNull(annex, "Annex is required!");
+        this.annex = annex;
     }
 
     public void useActionMessageMap(Map<ContextActionService, String> messages) {
@@ -178,6 +187,19 @@ public class AnnexContextService {
 
     public void usePackageRef(String packageRef) {
         this.packageRef = packageRef;
+    }
+
+    public void useMapOldAndNewRefs(Map<String, String> mapOldAndNewRefs) {
+        LOG.trace("Using mapOldAndNewRefs... [mapOldAndNewRefs={}]", mapOldAndNewRefs);
+        this.mapOldAndNewRefs = mapOldAndNewRefs;
+    }
+
+    public void executeUpdateReferences() {
+        LOG.trace("Executing 'Update References On Annex' use case...");
+        Validate.notNull(annex, "Annex is required!");
+        Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
+        byte[] content = this.postProcessingDocumentService.updateReferences(annex.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
+        annexService.updateAnnex(annex.getId(), content);
     }
 
     public Annex executeCreateAnnex() {

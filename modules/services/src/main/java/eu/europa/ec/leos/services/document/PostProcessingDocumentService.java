@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Map;
+
 public abstract class PostProcessingDocumentService {
 
     private static final Logger LOG = LoggerFactory.getLogger(PostProcessingDocumentService.class);
@@ -116,6 +118,14 @@ public abstract class PostProcessingDocumentService {
         return xmlContentProcessor.replaceElement(xmlContent,
                 xPathCatalog.getXPathStatusByClonedProposalRefAttr(clonedDocumentId),true,
                 newStatusBuilder.toString());
+    }
+
+    public byte[] updateReferences(byte[] xmlContent, Map<String, String> refsMatching) {
+        try {
+            return xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public Result<?> updateOriginalProposalAfterRevisionDone(String cloneProposalRef, String cloneLegFileId,

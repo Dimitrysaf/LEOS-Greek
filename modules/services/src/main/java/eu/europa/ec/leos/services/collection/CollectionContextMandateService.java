@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.document.AnnexContextService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.collection.document.ExplanatoryContextService;
@@ -51,8 +52,12 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 public class CollectionContextMandateService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextMandateService.class);
 
-    CollectionContextMandateService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper) {
-        super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext, explanatoryContextProvider, financialStatementContextProvider, explanatoryService, messageHelper);
+    CollectionContextMandateService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
+                                    CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
+                                    Provider<BillContextService> billContextProvider, Provider<AnnexContextService> annexContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper) {
+        super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider,
+                securityContext,
+                explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper);
     }
 
     @Override
