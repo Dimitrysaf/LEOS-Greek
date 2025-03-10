@@ -23,9 +23,12 @@ define(function aknSignaturePluginModule(require) {
     var ENTER_KEY = 13;
     var UNDERLINE = CKEDITOR.CTRL + 85;
     var BOLD = CKEDITOR.CTRL + 66;
+    var BACKSPACE =  8;
+    var DELETE = 46;
 
     var pluginDefinition = {
         init: function init(editor) {
+            $(editor.element.$).on("keydown", null, [editor], _checkAndBlockCustom);
 
             leosKeyHandler.on({
                 editor : editor,
@@ -60,6 +63,22 @@ define(function aknSignaturePluginModule(require) {
 
     function _onCtrlBKey(context) {
         context.event.cancel();
+    }
+
+    function _checkAndBlockCustom(e) {
+        var editor = e.data[0];
+        if(e.keyCode === BACKSPACE  || e.keyCode === DELETE){
+            var selection = editor.getSelection();
+            var startElement = leosKeyHandler.getSelectedElement(selection);
+            if (startElement) {
+                var tagName = startElement.$.localName;
+                if (tagName === 'p' && startElement.getText().trim() == "") {
+                    //Cancel the event
+                    e.stopImmediatePropagation();
+                    return false;
+                }
+            }
+        }
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);

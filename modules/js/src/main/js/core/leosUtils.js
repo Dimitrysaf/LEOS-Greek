@@ -96,6 +96,24 @@ define(function leosUtilsModule(require) {
             }
             return true;
         }
+        function _containsOnlyDeletedElts(element) {
+            if (element.childNodes.length > 0) {
+                for (var j = 0; j < element.childNodes.length; j++) {
+                    if (element.childNodes[j].nodeType === Node.TEXT_NODE) {
+                        if (element.childNodes[0].textContent.trim() !== '') {
+                            return false;
+                        }
+                    } else if (element.childNodes[j].tagName !== 'SPAN'
+                        || !element.childNodes[j].hasAttribute('data-akn-action')
+                        || element.childNodes[j].getAttribute('data-akn-action') !== 'delete') {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
         var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG];
         var elementsToBeChecked = [PARAGRAPH_POINT_TAG, SUBPARAGRAPH_SUBPOINT_TAG];
         if (el.tagName === HEADING_TAG && CKEDITOR.currentInstance) {
@@ -119,6 +137,9 @@ define(function leosUtilsModule(require) {
                 } else {
                     return el.children.length === 0 || _containsOnlyChildrenOf(el, childElementsToBeChecked);
                 }
+            }
+            if (_containsOnlyDeletedElts(el)) {
+                return true;
             }
             if (el.childNodes[0].nodeName === LINE_BREAK_TAG) {
                 return true;
