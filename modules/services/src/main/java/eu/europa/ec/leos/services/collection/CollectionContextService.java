@@ -17,6 +17,7 @@ import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
@@ -31,6 +32,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.document.AnnexContextService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.collection.document.ExplanatoryContextService;
@@ -89,6 +91,7 @@ public abstract class CollectionContextService {
     protected final Provider<BillContextService> billContextProvider;
     protected final Provider<ExplanatoryContextService> explanatoryContextProvider;
     protected final Provider<FinancialStatementContextService> financialStatementContextProvider;
+    protected final Provider<AnnexContextService> annexContextProvider;
     private SecurityContext securityContext;
     protected final Map<LeosCategory, XmlDocument> categoryTemplateMap;
     protected final Map<ContextActionService, String> actionMsgMap;
@@ -116,7 +119,10 @@ public abstract class CollectionContextService {
     CollectionContextService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
                              CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
                              Provider<BillContextService> billContextProvider, SecurityContext securityContext,
-                             Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper) {
+                             Provider<ExplanatoryContextService> explanatoryContextProvider,
+                             Provider<FinancialStatementContextService> financialStatementContextProvider,
+                             Provider<AnnexContextService> annexContextProvider,
+                             ExplanatoryService explanatoryService, MessageHelper messageHelper) {
         this.templateService = templateService;
         this.explanatoryService = explanatoryService;
         this.packageService = packageService;
@@ -126,6 +132,7 @@ public abstract class CollectionContextService {
         this.billContextProvider = billContextProvider;
         this.explanatoryContextProvider = explanatoryContextProvider;
         this.financialStatementContextProvider = financialStatementContextProvider;
+        this.annexContextProvider = annexContextProvider;
         this.securityContext = securityContext;
         this.categoryTemplateMap = new EnumMap<>(LeosCategory.class);
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
@@ -315,8 +322,10 @@ public abstract class CollectionContextService {
             idsAndUrlsHolder.setPackageName(leosPckg.getName());
         }
 
+        HashMap<String, XmlDocument> refsMatching = new HashMap<>();
         // create child element
         for (DocumentVO docChild : propDocument.getChildDocuments()) {
+            String oldRef = docChild.getRef();
             switch (docChild.getCategory()) {
                 case COUNCIL_EXPLANATORY:
                     ExplanatoryContextService explanatoryContext = explanatoryContextProvider.get();
@@ -339,6 +348,7 @@ public abstract class CollectionContextService {
                     String explanatoryRef = explanatory.getMetadata().get().getRef();
                     idsAndUrlsHolder.setExplanatoryId(explanatoryRef);
                     idsAndUrlsHolder.setExplanatoryUrl(urlBuilder.buildExplanatoryViewUrl(explanatoryRef));
+                    refsMatching.put(oldRef, explanatory);
                     break;
                 case MEMORANDUM:
                     MemorandumContextService memorandumContext = memorandumContextProvider.get();
@@ -363,6 +373,7 @@ public abstract class CollectionContextService {
                     idsAndUrlsHolder.setMemorandumId(memorandumRef);
                     idsAndUrlsHolder.setMemorandumUrl(urlBuilder.buildMemorandumViewUrl(memorandumRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(memorandumRef, docChild.getRef());
+                    refsMatching.put(oldRef, memorandum);
                     break;
                 case BILL:
                     BillContextService billContext = billContextProvider.get();
@@ -379,12 +390,14 @@ public abstract class CollectionContextService {
                     billContext.useTranslated(translated);
                     billContext.useOriginRef(originRef);
                     billContext.usePackageRef(proposal.getMetadata().get().getRef());
+                    billContext.useRefsMatching(refsMatching);
                     Bill bill = billContext.executeImportBill();
                     proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
                     String billRef = bill.getMetadata().get().getRef();
                     idsAndUrlsHolder.setBillId(billRef);
                     idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(billRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(billRef, docChild.getRef());
+                    refsMatching.put(oldRef, bill);
                     break;
                 case STAT_DIGIT_FINANC_LEGIS:
                     FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
@@ -411,6 +424,44 @@ public abstract class CollectionContextService {
                     idsAndUrlsHolder.setFinancialStatementId(financialStatementRef);
                     idsAndUrlsHolder.setFinancialStatementUrl(urlBuilder.buildFinancialStatementViewUrl(financialStatementRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(financialStatementRef, docChild.getRef());
+                    refsMatching.put(oldRef, financialStatement);
+                    break;
+            }
+        }
+        for (DocumentVO docChild : propDocument.getChildDocuments()) {
+            XmlDocument doc = refsMatching.get(docChild.getRef());
+            switch (doc.getCategory()) {
+                case COUNCIL_EXPLANATORY:
+                    ExplanatoryContextService explanatoryContext = explanatoryContextProvider.get();
+                    explanatoryContext.useExplanatory((Explanatory) doc);
+                    explanatoryContext.useDocument(docChild);
+                    explanatoryContext.useMapOldAndNewRefs(idsAndUrlsHolder.getDocCloneAndOriginIdMap());
+                    explanatoryContext.executeUpdateReferences();
+                    break;
+                case MEMORANDUM:
+                    MemorandumContextService memorandumContext = memorandumContextProvider.get();
+                    memorandumContext.useTemplate((Memorandum) doc);
+                    memorandumContext.useMapOldAndNewRefs(idsAndUrlsHolder.getDocCloneAndOriginIdMap());
+                    memorandumContext.executeUpdateReferences();
+                    break;
+                case BILL:
+                    BillContextService billContext = billContextProvider.get();
+                    billContext.useTemplate((Bill) doc);
+                    billContext.useMapOldAndNewRefs(idsAndUrlsHolder.getDocCloneAndOriginIdMap());
+                    billContext.executeUpdateReferences();
+                    for (DocumentVO annexChild : docChild.getChildDocuments()) {
+                        Annex annexDoc = (Annex)refsMatching.get(annexChild.getRef());
+                        AnnexContextService annexContext = annexContextProvider.get();
+                        annexContext.useAnnex(annexDoc);
+                        annexContext.useMapOldAndNewRefs(idsAndUrlsHolder.getDocCloneAndOriginIdMap());
+                        annexContext.executeUpdateReferences();
+                    }
+                    break;
+                case STAT_DIGIT_FINANC_LEGIS:
+                    FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
+                    financialStatementContext.useFinancialStatement((FinancialStatement) doc);
+                    financialStatementContext.useMapOldAndNewRefs(idsAndUrlsHolder.getDocCloneAndOriginIdMap());
+                    financialStatementContext.executeUpdateReferences();
                     break;
             }
         }
