@@ -118,7 +118,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
     }
 
     /**
-     * Asks to Toolbox the generation of PDF/LegisWrite for the given proposalId and return the jobId.
+     * Asks to Toolbox the generation of PDF/LegisWrite for the given proposalId and return the byte[].
      * The method first send the request to Toolbox then, with the jobId assigned, keep pulling the reply until
      * it get the answer or until the maximum numbers of tries exceed.
      *
