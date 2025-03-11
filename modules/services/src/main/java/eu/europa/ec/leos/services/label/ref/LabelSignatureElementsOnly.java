@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.label.ref;
 
 import eu.europa.ec.leos.services.support.XercesUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 
@@ -36,45 +37,42 @@ public class LabelSignatureElementsOnly extends LabelHandler {
     @Override
     public void process(List<TreeNode> refs, List<TreeNode> mrefCommonNodes, TreeNode sourceNode, StringBuffer label, Locale locale, boolean withAnchor,
                         boolean capital) {
-        TreeNode ref = refs.get(0); //first from the selected nodes
-        String documentRef = ref.getDocumentRef();
-        Map<String, LabelKey> bufferLabels = new LinkedHashMap<>(); //util buffer to group by the numbers by element
-
-        int number = 1;
-        if (refs.size() > 1) {
-            number = 0;
+        List<String> listLabels = new ArrayList<>();
+        for (TreeNode ref : refs) {
+            listLabels.add(processRef(ref, mrefCommonNodes, sourceNode, locale, withAnchor, capital));
         }
+        label.append(String.join(" and ", listLabels));
+    }
+
+    private String processRef(TreeNode ref, List<TreeNode> mrefCommonNodes, TreeNode sourceNode, Locale locale, boolean withAnchor,
+                              boolean capital) {
+        StringBuffer label = new StringBuffer();
+        String documentRef = ref.getDocumentRef();
+        Map<String, LabelKey> bufferLabels = new LinkedHashMap<>();
+        Map<String, TreeNode> bufferRefs = new LinkedHashMap<>();
 
         // 1. add selected node in the buffer
-        StringBuilder sb = SIGNATURE.equals(ref.getType()) ? new StringBuilder(createAnchor(refs.get(0), mrefCommonNodes, locale, withAnchor)) :
+        StringBuilder sb = SIGNATURE.equals(ref.getType()) ? new StringBuilder(NumFormatter.formattedNum(ref, mrefCommonNodes, locale)) :
                 new StringBuilder();
         bufferLabels.put(ref.getType(), new LabelKey(ref.getType(), sb.toString(), isUnnumbered(ref), documentRef));
+        bufferRefs.put(ref.getType(), ref);
 
         //2. add rest of nodes, starting from the leaf, going up to parents until it reach Signature
         while (!SIGNATURE.equals(ref.getType()) && ref.getParent()!= null) {
             ref = ref.getParent();
-            processOtherNodesLabel(bufferLabels, ref, mrefCommonNodes, locale);
+            processLabel(bufferLabels, ref, mrefCommonNodes, locale);
+            bufferRefs.put(ref.getType(), ref);
         }
 
         // 3. build the label based on the bufferLabels
         List<String> listLabels = new ArrayList<>();
         List<String> orderedKeys = new ArrayList<>(bufferLabels.keySet());
-        /**
-         * The order of the words unnumbered or the word "this". Ex:
-         */
-        String lastElementKeyOfOrderedKeys = orderedKeys.get(orderedKeys.size()-1);
-        int numberForOrderedKeys = 1;
+        int index = 0;
         for (String key : orderedKeys) {
             LabelKey val = bufferLabels.get(key);
-            /* The number variable when has 0 is to do the plural
-             *  But the plural is done only in the last word
-             *  So, numberForOrderedKeys will be 0 only for the last word
-             */
-            if (number == 0 && key.equals(lastElementKeyOfOrderedKeys)) {
-                numberForOrderedKeys = 0;
-            }
-            // when we are here we are sure the node is not "this" nor with an empty number string.
-            addLabel(listLabels, val, numberForOrderedKeys, locale);
+            TreeNode reference = bufferRefs.get(key);
+            addLabel(listLabels, reference, val, index, 1, locale);
+            index++;
         }
 
         label.append(String.join(" of ", listLabels));
@@ -88,15 +86,37 @@ public class LabelSignatureElementsOnly extends LabelHandler {
         if(label.length() > 1 && label.substring(label.length()-2, label.length()).equals(", ")){
             label.delete(label.length()-2, label.length());
         }
+        return label.toString();
     }
     /**
      * We print first the number(in letters) then the label.
      */
-    private void addLabel(List<String> listLabels, LabelKey val, int number, Locale locale) {
-        listLabels.add(String.format("%s %s", val.getLabelNumber(), NumFormatter.formatPlural(val.getLabelName(), number, locale)));
+    private void addLabel(List<String> listLabels, TreeNode ref, LabelKey val, int index, int number, Locale locale) {
+        if (index == 0) {
+            StringBuilder builder = new StringBuilder("<ref");
+            builder.append(" href=\"").append(ref.getDocumentRef() + ".xml").append("/").append("~" + ref.getIdentifier()).append("\"");
+            if (ref.getOrigin() != null) {
+                builder.append(" leos:origin=\"").append(ref.getOrigin()).append("\"");
+            }
+            builder.append(" xml:id=\"").append(ref.getRefId()).append("\">");
+            if (StringUtils.isBlank(val.getLabelNumber())) {
+                builder.append(NumFormatter.formatPlural(val.getLabelName(), number, locale));
+            } else {
+                builder.append(val.getLabelNumber());
+            }
+            builder.append("</ref>");
+            if (!StringUtils.isBlank(val.getLabelNumber())) {
+                builder.append(String.format(" %s", NumFormatter.formatPlural(val.getLabelName(), number, locale)));
+            }
+            listLabels.add(builder.toString());
+        } else {
+            listLabels.add(StringUtils.isBlank(val.getLabelNumber()) ? NumFormatter.formatPlural(val.getLabelName(), number, locale) :
+                    String.format("%s %s", val.getLabelNumber(), NumFormatter.formatPlural(val.getLabelName(),
+                    number, locale)));
+        }
     }
 
-    private void processOtherNodesLabel(Map<String, LabelKey> buffers, TreeNode ref, List<TreeNode> mrefCommonNodes, Locale locale) {
+    private void processLabel(Map<String, LabelKey> buffers, TreeNode ref, List<TreeNode> mrefCommonNodes, Locale locale) {
         // keep the old value if is sameType as the child. Last iterated parent will add the element name.
         String oldnum = "";
         if (ref.getChildren().get(0).getType().equals(ref.getType())) {
