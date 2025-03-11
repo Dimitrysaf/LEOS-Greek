@@ -50,7 +50,9 @@ class NumFormatter {
     	if(PARAGRAPH.equals(node.getType()) && node.getParent() != null && mrefCommonNodes != null && mrefCommonNodes.contains(node.getParent())) {
     		return Strings.isNullOrEmpty(node.getNum()) ? "" : node.getNum();
     	}
-        return Strings.isNullOrEmpty(node.getNum()) ? "" : String.format("(%s)", node.getNum());
+    	return
+    	node.isSoleNumbered() && Strings.isNullOrEmpty(node.getNum()) ?  StringUtils.capitalize(node.getType()) :
+         Strings.isNullOrEmpty(node.getNum()) ? "" : String.format("(%s)", node.getNum());
     }
 
     static boolean isUnnumbered(TreeNode node) {
@@ -84,7 +86,7 @@ class NumFormatter {
     }
     
     static String formatPlural(TreeNode node, int number, Locale locale) {
-        return formatPlural(node.getType(), number, locale);
+        return !node.isSoleNumbered() ? formatPlural(node.getType(), number, locale) : "";
     }
 
     static String formatPlural(String nodeType, int number, Locale locale) {
