@@ -82,6 +82,8 @@ cypress-test-for-local:
   interruptible: true
 
 cypress-test-for-non-local:
+  variables:
+    TAGS_TO_RUN: "@nonlocal"
   stage: test
   resource_group: cypress
   rules:
