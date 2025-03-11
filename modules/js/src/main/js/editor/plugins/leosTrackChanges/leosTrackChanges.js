@@ -179,7 +179,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "NEW"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -670,35 +670,33 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
-        acceptAllChanges: function(editor, numberModule) {
-            var tcTextElements = editor.document.find(core.TRACKCHANGES_ELEMENT_SELECTOR);
-            for (var i = 0; i < tcTextElements.count(); i++) {
-                this.acceptChange(editor, tcTextElements.getItem(i), numberModule);
-            }
-
-            var tcNumberElements = editor.document.find(core.TRACKCHANGES_NUMBER_ELEMENT_SELECTOR);
-            for (var i = 0; i < tcNumberElements.count(); i++) {
-                actions.acceptChange(editor, tcNumberElements.getItem(i), numberModule);
-            }
-
-            if(tcTextElements.count() > 0 || tcNumberElements.count() > 0) {
-                editor.fire('change');
+        acceptAllChanges: function(editor, element, numberModule) {
+            for (var i = element.getChildCount()-1; i >= 0; i--) {
+                var item = element.getChild(i);
+                if(!item || item.type === CKEDITOR.NODE_TEXT) {
+                    continue;
+                }
+                if(item.type === CKEDITOR.NODE_ELEMENT && item.getChildCount() > 0) {
+                    this.acceptAllChanges(editor, item, numberModule);
+                }
+                if(item.hasAttribute(core.ACTION_ATTR) || item.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || item.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                    this.acceptChange(editor, item, numberModule);
+                }
             }
         },
 
-        rejectAllChanges: function(editor, numberModule) {
-            var tcTextElements = editor.document.find(core.TRACKCHANGES_ELEMENT_SELECTOR);
-            for (var i = 0; i < tcTextElements.count(); i++) {
-                this.rejectChange(editor, tcTextElements.getItem(i), numberModule);
-            }
-
-            var tcNumberElements = editor.document.find(core.TRACKCHANGES_NUMBER_ELEMENT_SELECTOR);
-            for (var i = 0; i < tcNumberElements.count(); i++) {
-                actions.rejectChange(editor, tcNumberElements.getItem(i), numberModule);
-            }
-
-            if(tcTextElements.count() > 0 || tcNumberElements.count() > 0) {
-                editor.fire('change');
+        rejectAllChanges: function(editor, element, numberModule) {
+            for (var i = element.getChildCount()-1; i >= 0; i--) {
+                var item = element.getChild(i);
+                if(!item || item.type === CKEDITOR.NODE_TEXT) {
+                    continue;
+                }
+                if(item.type === CKEDITOR.NODE_ELEMENT && item.getChildCount() > 0) {
+                    this.rejectAllChanges(editor, item, numberModule);
+                }
+                if(item.hasAttribute(core.ACTION_ATTR) || item.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || item.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                    this.rejectChange(editor, item, numberModule);
+                }
             }
         },
 
@@ -808,7 +806,9 @@ define(function leosTrackChangesModule(require) {
                     })
                 );
                 liParentElement.setAttribute(leosPluginUtils.DATA_AKN_EMPTY, 'true');
-                core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
+                if(liParentElement.getParent()) {
+                    core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
+                }
                 editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
             }
         },
@@ -826,7 +826,9 @@ define(function leosTrackChangesModule(require) {
                 })
             );
             element.setAttribute(leosPluginUtils.DATA_REJECT_INSERTED_ENTER, 'true');
-            core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
+            if(element.getParent()) {
+                core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
+            }
             editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
         },
 
