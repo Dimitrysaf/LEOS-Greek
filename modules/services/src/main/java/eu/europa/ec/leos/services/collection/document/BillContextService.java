@@ -312,8 +312,6 @@ public class BillContextService {
                 useAnnexDocument(docChild);
                 Annex annex = executeImportBillAnnex();
                 annexes.add(annex);
-                idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
-                refsMatching.put(docChild.getRef(), annex);
             }
         }
     
@@ -328,6 +326,8 @@ public class BillContextService {
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
             byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
             annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment);
+            idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
+            refsMatching.put(docChild.getRef(), annex);
         }
     
         final String createComment = actionMsgMap.get(ContextActionService.DOCUMENT_CREATED);
