@@ -21,6 +21,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,14 +33,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.AKOMANTOSO;
+import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
 import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
-import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREAMBLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
@@ -47,6 +49,8 @@ public class TreeHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TreeHelper.class);
 
     private static List<String> NOT_SIGNIFICANT_NODES = Arrays.asList(BILL, CONTENT, LIST, PREFACE, PREAMBLE, BODY, MAIN_BODY, RECITALS);
+
+    private static List<String> SOLE_NUMBERED_NODES = Arrays.asList(RECITAL, ARTICLE);
 
     public static TreeNode createTree(Node node, TreeNode root, List<Ref> refs) {
         Validate.isTrue(refs != null && !refs.isEmpty(), "refs can not be empty");
@@ -80,7 +84,7 @@ public class TreeHelper {
             int depth;
             while (!nodeStack.isEmpty()) {
                 depth = (parent == null) ? 0 : parent.getDepth() + 1;
-                TreeNode currentNode = createNode(nodeStack.pop(), parent, depth, ref.getDocumentref(), ref.getOrigin());
+                TreeNode currentNode = createNode(nodeStack.pop(), parent, depth, ref.getDocumentref(), ref.getOrigin(), node);
 
                 //if tree root is not assigned
                 if (root == null) {
@@ -138,7 +142,7 @@ public class TreeHelper {
         return leaves;
     }
 
-    private static TreeNode createNode(Node node, TreeNode parent, int depth, String documentRef, String origin) {
+    private static TreeNode createNode(Node node, TreeNode parent, int depth, String documentRef, String origin, Node documentNode) {
         String tagName = null;
         String tagId = null;
 
@@ -148,11 +152,24 @@ public class TreeHelper {
         } else if (node.getNodeType() == Node.TEXT_NODE) {
             tagName = "text";
         }
-
+        boolean isSoleNumbered = isSoleNumbered(node, documentNode);
         //find num
-        String numValue = findNum(node);
+        String numValue = findNum(node, isSoleNumbered);
         int childSeq = findSeq(node, tagName);
-        return new TreeNode(tagName, depth, childSeq, tagId, numValue, parent, documentRef, origin);
+        return new TreeNode(tagName, depth, childSeq, tagId, numValue, parent, documentRef, origin, isSoleNumbered);
+    }
+
+    private static boolean isSoleNumbered(Node node, Node documentNode) {
+        NodeList listOfNodes = XercesUtils.getElementsByName(documentNode, node.getNodeName());
+        int count = 0;
+        for(int i = 0; i < listOfNodes.getLength(); i++) {
+            Node leosAction  = listOfNodes.item(i).getAttributes().getNamedItem("leos:action");
+            String leosActionAttrValue = leosAction != null ? leosAction.getNodeValue() : null;
+            if(!(leosActionAttrValue != null && leosActionAttrValue.equalsIgnoreCase("delete"))) {
+                count = count+1;
+            }
+        }
+        return count == 1 && SOLE_NUMBERED_NODES.contains(node.getNodeName());
     }
 
     public static List<TreeNode> findCommonAncestor(Node sourceNode, String sourceRefId, String sourceDocumentRef, TreeNode targetTree) {
@@ -220,16 +237,22 @@ public class TreeHelper {
         return childSeq2Add;
     }
 
-    private static String findNum(Node node) {
+    private static String findNum(Node node, boolean isSoleNumbered) {
         String numNode = XercesUtils.getNodeNumExcludingContentRemoved(node);
-        return numNode != null ? parseNum(numNode) : null;
+        return numNode != null ? parseNum(numNode, isSoleNumbered) : null;
     }
 
-    private static String parseNum(String xmlNum) {
+    private static String parseNum(String xmlNum, boolean isSoleNumbered) {
+
+
         //remove type if part/section/
         String[] s = xmlNum.split(" ", 2);
-        String num = s.length > 1 ? s[1] : s[0];
-        //clean spaces, .,(), etc
-        return num.replaceAll("[\\s+|\\(|\\)]|\\.$", "");
+        if (isSoleNumbered) {
+            return xmlNum;
+        } else {
+            String num = s.length > 1 ? s[1] : s[0];
+            //clean spaces, .,(), etc
+            return num.replaceAll("[\\s+|\\(|\\)]|\\.$", "");
+        }
     }
 }
