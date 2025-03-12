@@ -76,6 +76,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -616,7 +617,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         List<Element> result = getMovedFromElements(updatedBill, newContent, elementId);
 
         documentViewService.updateProposalAsync(bill);
-        newContent = documentViewService.getEditableXml(bill, documentViewService.getProposalFromPackage(bill));
+        newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
     }
 
