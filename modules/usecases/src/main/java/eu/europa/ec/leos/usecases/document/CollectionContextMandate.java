@@ -93,7 +93,7 @@ public class CollectionContextMandate extends CollectionContext {
         explanatoryContext.useCollaborators(proposal.getCollaborators());
         explanatoryContext.usePackageRef(proposal.getMetadata().get().getRef());
         Explanatory explanatory = explanatoryContext.executeCreateExplanatory();
-        proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
+        proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY, "", "");
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
     }
 
@@ -158,7 +158,7 @@ public class CollectionContextMandate extends CollectionContext {
         Explanatory explanatory = getExplanatory(metadata, explanatoryContext, explanatoryTemplate, true);
 
         Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
-        proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
+        proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY, "", "");
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
     }
 

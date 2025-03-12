@@ -60,6 +60,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -207,7 +208,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory){
+    public Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory, String refersToOfDocument, String showAs){
         LOG.trace("Add component in Proposal ... [id={}, href={}, leosCategory={}]", proposal.getId(), href, leosCategory.name());
         Stopwatch stopwatch = Stopwatch.createStarted();
 
@@ -219,36 +220,13 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
         //Do the xml update
         byte[] xmlBytes = proposal.getContent().get().getSource().getBytes();
-        byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(xmlBytes,
-                                keyValueMap,
-                                xmlNodeConfigProcessor.getProposalComponentsConfig(leosCategory, "href"));
-        updatedBytes = xmlContentProcessor.doXMLPostProcessing(updatedBytes);
 
-        //save updated xml
-        proposal = proposalRepository.updateProposal(proposal.getId(), updatedBytes);
+        Document document = createXercesDocument(xmlBytes);
+        NodeList nodeList = XercesUtils.getElementsByXPath(document, ".//akn:longTitle//*[@refersTo]");
 
-        LOG.trace("Added component in Proposal ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
-        return proposal;
-    }
-
-    @Override
-    public Proposal addComponent(Proposal proposal, String docId, LeosCategory leosCategory){
-        LOG.trace("Add component in Proposal ... [id={}, href={}, leosCategory={}]", proposal.getId(), docId, leosCategory.name());
-        Stopwatch stopwatch = Stopwatch.createStarted();
-
-        //create config
-        Map<String, String> keyValueMap = new HashMap<>();
-        keyValueMap.put(leosCategory.name() + "_xml:id", docId);
-
-        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
-        this.documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
-
-        //Do the xml update
-        byte[] xmlBytes = proposal.getContent().get().getSource().getBytes();
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(xmlBytes,
                 keyValueMap,
-                xmlNodeConfigProcessor.getProposalComponentsConfig(leosCategory, "xml:id"));
+                xmlNodeConfigProcessor.getProposalComponentsConfig(leosCategory, "href", refersToOfDocument, showAs));
         updatedBytes = xmlContentProcessor.doXMLPostProcessing(updatedBytes);
 
         //save updated xml

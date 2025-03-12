@@ -38,6 +38,8 @@ import eu.europa.ec.leos.services.collection.document.FinancialStatementContextS
 import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
@@ -90,6 +92,7 @@ public abstract class CollectionContextService {
     protected final Provider<ExplanatoryContextService> explanatoryContextProvider;
     protected final Provider<FinancialStatementContextService> financialStatementContextProvider;
     private SecurityContext securityContext;
+    protected final XmlContentProcessor xmlContentProcessor;
     protected final Map<LeosCategory, XmlDocument> categoryTemplateMap;
     protected final Map<ContextActionService, String> actionMsgMap;
     protected Proposal proposal = null;
@@ -116,7 +119,8 @@ public abstract class CollectionContextService {
     CollectionContextService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
                              CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
                              Provider<BillContextService> billContextProvider, SecurityContext securityContext,
-                             Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper) {
+                             Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider,
+            ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
         this.templateService = templateService;
         this.explanatoryService = explanatoryService;
         this.packageService = packageService;
@@ -130,6 +134,7 @@ public abstract class CollectionContextService {
         this.categoryTemplateMap = new EnumMap<>(LeosCategory.class);
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.messageHelper = messageHelper;
+        this.xmlContentProcessor = xmlContentProcessor;
     }
 
     public void useTemplate(String name) {
@@ -316,6 +321,7 @@ public abstract class CollectionContextService {
         }
 
         // create child element
+        SpecificDocumentInformationDTO specificDocumentInformation;
         for (DocumentVO docChild : propDocument.getChildDocuments()) {
             switch (docChild.getCategory()) {
                 case COUNCIL_EXPLANATORY:
@@ -335,7 +341,8 @@ public abstract class CollectionContextService {
                     explanatoryContext.useCollaborators(proposal.getCollaborators());
                     explanatoryContext.usePackageRef(proposal.getMetadata().get().getRef());
                     Explanatory explanatory = explanatoryContext.executeImportExplanatory();
-                    proposal = proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
+                    specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(explanatory.getContent().get().getSource().getBytes());
+                    proposal = proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
                     String explanatoryRef = explanatory.getMetadata().get().getRef();
                     idsAndUrlsHolder.setExplanatoryId(explanatoryRef);
                     idsAndUrlsHolder.setExplanatoryUrl(urlBuilder.buildExplanatoryViewUrl(explanatoryRef));
@@ -358,7 +365,8 @@ public abstract class CollectionContextService {
                     memorandumContext.useOriginRef(originRef);
                     memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
                     Memorandum memorandum = memorandumContext.executeImportMemorandum();
-                    proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
+                    specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(memorandum.getContent().get().getSource().getBytes());
+                    proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
                     String memorandumRef = memorandum.getMetadata().get().getRef();
                     idsAndUrlsHolder.setMemorandumId(memorandumRef);
                     idsAndUrlsHolder.setMemorandumUrl(urlBuilder.buildMemorandumViewUrl(memorandumRef));
@@ -380,7 +388,8 @@ public abstract class CollectionContextService {
                     billContext.useOriginRef(originRef);
                     billContext.usePackageRef(proposal.getMetadata().get().getRef());
                     Bill bill = billContext.executeImportBill();
-                    proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
+                    specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(bill.getContent().get().getSource().getBytes());
+                    proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
                     String billRef = bill.getMetadata().get().getRef();
                     idsAndUrlsHolder.setBillId(billRef);
                     idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(billRef));
@@ -407,7 +416,8 @@ public abstract class CollectionContextService {
                     financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
                     FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
                     String financialStatementRef = financialStatement.getMetadata().get().getRef();
-                    proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS);
+                    specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(financialStatement.getContent().get().getSource().getBytes());
+                    proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
                     idsAndUrlsHolder.setFinancialStatementId(financialStatementRef);
                     idsAndUrlsHolder.setFinancialStatementUrl(urlBuilder.buildFinancialStatementViewUrl(financialStatementRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(financialStatementRef, docChild.getRef());
@@ -445,7 +455,8 @@ public abstract class CollectionContextService {
         financialStatementContext.useOriginRef(originRef);
         financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
         FinancialStatement financialStatement = financialStatementContext.executeCreateFinancialStatement();
-        proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS);
+        SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(financialStatement.getContent().get().getSource().getBytes());
+        proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -497,7 +508,8 @@ public abstract class CollectionContextService {
             memorandumContext.useType(metadata.getType());
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             Memorandum memorandum = memorandumContext.executeCreateMemorandum();
-            prpsl = proposalService.addComponentRef(prpsl, memorandum.getName(), LeosCategory.MEMORANDUM);
+            SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(memorandum.getContent().get().getSource().getBytes());
+            prpsl = proposalService.addComponentRef(prpsl, memorandum.getName(), LeosCategory.MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         }
 
         BillContextService billContext = billContextProvider.get();
@@ -506,7 +518,8 @@ public abstract class CollectionContextService {
         billContext.usePurpose(purpose);
         billContext.useActionMessageMap(actionMsgMap);
         Bill bill = billContext.executeCreateBill();
-        proposalService.addComponentRef(prpsl, bill.getName(), LeosCategory.BILL);
+        SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(bill.getContent().get().getSource().getBytes());
+        proposalService.addComponentRef(prpsl, bill.getName(), LeosCategory.BILL, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         return proposalService.createVersion(prpsl.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -661,7 +674,8 @@ public abstract class CollectionContextService {
         explanatoryContext.useCollaborators(proposal.getCollaborators());
         explanatoryContext.usePackageRef(proposal.getMetadata().get().getRef());
         Explanatory explanatory = explanatoryContext.executeCreateExplanatory();
-        proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
+        SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(explanatory.getContent().get().getSource().getBytes());
+        proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 

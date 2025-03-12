@@ -29,6 +29,8 @@ import eu.europa.ec.leos.services.collection.document.FinancialStatementContextS
 import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
@@ -53,8 +55,8 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 public class CollectionContextMandateService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextMandateService.class);
 
-    CollectionContextMandateService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper) {
-        super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext, explanatoryContextProvider, financialStatementContextProvider, explanatoryService, messageHelper);
+    CollectionContextMandateService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
+        super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext, explanatoryContextProvider, financialStatementContextProvider, explanatoryService, messageHelper, xmlContentProcessor);
     }
 
     @Override
@@ -82,7 +84,8 @@ public class CollectionContextMandateService extends CollectionContextService {
         Explanatory explanatory = getExplanatory(metadata, explanatoryContext, explanatoryTemplate, true);
 
         Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
-        proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
+        SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(proposal.getContent().get().getSource().getBytes());
+        proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
