@@ -12,6 +12,7 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 ; // jshint ignore:line
+
 define(function leosOrientationPluginModule(require) {
     "use strict";
 
@@ -25,7 +26,8 @@ define(function leosOrientationPluginModule(require) {
     var LANDSCAPE = CKEDITOR.TRISTATE_ON;
     var PORTRAIT = CKEDITOR.TRISTATE_OFF;
     var ORIENTATION_MODE = LANDSCAPE;
-
+    var LANDSCAPE_CLASS = "landscape";
+    var PORTRAIT_CLASS = "portrait";
     var pluginDefinition = {
         requires: 'richcombo',
         icons: pluginName.toLowerCase(),
@@ -54,10 +56,7 @@ define(function leosOrientationPluginModule(require) {
         ORIENTATION_MODE = cmd.state === LANDSCAPE ? PORTRAIT : LANDSCAPE;
         cmd.setState(ORIENTATION_MODE);
 
-        var rootElement = editor.element.getFirst();
-        if(!rootElement.getAttribute('data-akn-name')){
-            rootElement = rootElement.getNext();
-        }
+        var rootElement = editor.element.find('[data-akn-name]').getItem(0);
 
         var dataAknAttribute = rootElement.getAttribute("class");
         var isClassAtrr = true;
@@ -65,14 +64,15 @@ define(function leosOrientationPluginModule(require) {
             isClassAtrr = false;
             dataAknAttribute = rootElement.getAttribute("data-akn-class");
         }
-        var isLandscape = !!dataAknAttribute && dataAknAttribute.includes("landscape");
-        var oldClass = isLandscape ? "landscape" : "portrait";
-        var newClass = isLandscape ? "portrait" : "landscape";
+        var isLandscape = !!dataAknAttribute && dataAknAttribute.includes(LANDSCAPE_CLASS);
+        var oldClass = isLandscape ? LANDSCAPE_CLASS : PORTRAIT_CLASS;
+        var newClass = isLandscape ? PORTRAIT_CLASS : LANDSCAPE_CLASS;
+
         if(!!dataAknAttribute){
             if(dataAknAttribute.includes(oldClass)){
-                dataAknAttribute = dataAknAttribute.replace(oldClass, newClass);
+                dataAknAttribute = dataAknAttribute.trim().replace(oldClass, newClass);
             }else{
-                dataAknAttribute = dataAknAttribute.concat( ' ' + newClass);
+                dataAknAttribute = dataAknAttribute.trim().concat( ' ' + newClass);
             }
         }else{
             dataAknAttribute = newClass;
@@ -86,14 +86,11 @@ define(function leosOrientationPluginModule(require) {
     //This method sets the current orientation mode (Portrait/Landscape) to the command state.
     function _setCurrentOrientationMode(event) {
         var cmd = event.listenerData;
-        var rootElement = event.editor.element.getFirst();
-        if(!rootElement.getAttribute('data-akn-name')){
-            rootElement = rootElement.getNext();
-        }
+        var rootElement = event.editor.element.find('[data-akn-name]').getItem(0);
         var dataAknAttribute = rootElement.getAttribute("data-akn-class");
-        var isLandscape = !!dataAknAttribute && dataAknAttribute.includes("landscape");
-        ORIENTATION_MODE = isLandscape ? LANDSCAPE :PORTRAIT
+        var isLandscape = !!dataAknAttribute && dataAknAttribute.includes(LANDSCAPE_CLASS);
 
+        ORIENTATION_MODE = (isLandscape ? LANDSCAPE : PORTRAIT);
         cmd.setState(ORIENTATION_MODE);
     }
 

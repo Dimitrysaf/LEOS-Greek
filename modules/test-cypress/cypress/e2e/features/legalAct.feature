@@ -754,7 +754,7 @@ Feature: Legal Act Page Regression Features
     Then ck editor window is displayed
     When click at offset 0 of li 2 with data-akn-element "paragraph" of article in edition mode
     Then decrease indent icon is disabled in ck editor panel
-    When click on paragraph mode icon two times present in ck editor panel
+    When click on paragraph mode icon present in ck editor panel
     Then "data-akn-num" attribute is not present in li 1 with data-akn-element "paragraph" of article in edition mode
     And  "data-akn-num" attribute is not present in li 2 with data-akn-element "paragraph" of article in edition mode
     When mouseover and click on article 3
@@ -809,15 +809,13 @@ Feature: Legal Act Page Regression Features
         Then click on paragraph mode icon two times present in ck editor panel
         When click save and close button of ck editor
         Then ck editor window is not displayed
-        And num tag of paragraph 1 of article 1 contains html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
-        And num tag of paragraph 1 of article 1 contains html '1.</del>'
-        And num tag of paragraph 2 of article 1 contains html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
-        And num tag of paragraph 2 of article 1 contains html '2.</del>'
+        And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 1 of article 1 contains value "1."
+        And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 1 contains value "2."
         When mouseover and click on article 1
         Then ck editor window is displayed
-        And move the cursor position to offset 0 in paragraph 1 of article in edition mode
+        And  move the cursor position to offset 0 in paragraph 1 of article in edition mode
         When click on paragraph mode icon present in ck editor panel
-        And click save and close button of ck editor
+        And  click save and close button of ck editor
         Then ck editor window is not displayed
         And num tag of paragraph 1 of article 1 does not contain html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
         And num tag of paragraph 1 of article 1 does not contain html '</del>'

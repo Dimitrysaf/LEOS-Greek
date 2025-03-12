@@ -91,9 +91,10 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
 
 %xmlOrientation {
     // portrait div characteristics
-    .orientation:has( *:not(.landscape)),
+    .orientation:not( *:has(.landscape)),
     .orientation:has(.portrait),
-    .orientation:has([data-akn-class="portrait"]){
+    .orientation:not( *:has([data-akn-class*="landscape"])),
+    .orientation:has([data-akn-class*="portrait"]){
         margin-left: -2.5cm;
         width: 20.95cm;
         position: relative;
@@ -101,13 +102,15 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
         min-height: auto;
         white-space: normal;
         background-color: white;
-        padding: 0.5cm 1cm 0.5cm 2.5cm;
+        padding: 0cm 1cm 0cm 2.5cm;
     }
 
     .orientation:has(.landscape),
-    .orientation:has([data-akn-class="landscape"]),
+    .orientation:has([data-akn-class*="landscape"]),
     .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
-                        > chapter > heading.landscape, > section > heading.landscape) .orientation{
+                        > chapter > heading.landscape, > section > heading.landscape) .orientation,
+    .higherdivision:has(> part > div > [data-akn-class*="landscape"] , > akntitle > div > [data-akn-class*="landscape"],
+                    > chapter > div > [data-akn-class*="landscape"], > section > div > [data-akn-class*="landscape"]) .orientation{
         width: $LANDSCAPE_WIDTH;
         margin-left: -2.5cm;
         position: relative;
@@ -115,12 +118,12 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
         min-height: auto;
         white-space: normal;
         background-color: white;
-        padding: 0.5cm 1cm 0.5cm 2.5cm;
+        padding: 0cm 1cm 0cm 2.5cm;
     }
 
     //grouping multiple landscape together as after box-shadow
     .orientation:has(.landscape):after,
-    .orientation:has([data-akn-class="landscape"]):after {
+    .orientation:has([data-akn-class*="landscape"]):after {
         content: " ";
         height: 100%;
         position: absolute;
@@ -167,7 +170,7 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
 %xmlHigherdivision {
     div.higherdivision:has(> part > heading.portrait, > akntitle > heading.portrait,
                         > chapter > heading.portrait, > section > heading.portrait) + .orientation:has(.landscape),
-    div.higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"])) + .orientation:has(.landscape),
+    div.higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class*="portrait"])) + .orientation:has(.landscape),
     div.higherdivision:has(> part > heading.portrait, > akntitle > heading.portrait,
                         > chapter > heading.portrait, > section > heading.portrait) .orientation:has(.landscape){
         border-top: 0.5px solid grey;
@@ -175,7 +178,9 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
 
     div.higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
                         > chapter > heading.landscape, > section > heading.landscape),
-    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"])){
+    .higherdivision:has(> part > div > [data-akn-class*="landscape"] , > akntitle > div > [data-akn-class*="landscape"],
+                        > chapter > div > [data-akn-class*="landscape"], > section > div > [data-akn-class*="landscape"]),
+    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class*="portrait"])){
         width: $LANDSCAPE_WIDTH;
         margin-left: -2.5cm;
         position: relative;
@@ -183,7 +188,7 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
         min-height: auto;
         white-space: normal;
         background-color: white;
-        padding: 0.5cm 1cm 0.5cm 2.5cm;
+        padding: 0cm 1cm 0cm 2.5cm;
         border-top: 0.3px solid grey;
         border-bottom: 0.3px solid grey;
         & > * > :first-child.orientation{
@@ -196,9 +201,9 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
 
     .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
                         > chapter > heading.landscape, > section > heading.landscape):after,
-    .higherdivision:has(> part > div > [data-akn-class="landscape"] , > akntitle > div > [data-akn-class="landscape"],
-                        > chapter > div > [data-akn-class="landscape"], > section > div > [data-akn-class="landscape"]):after,
-    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"])):after
+    .higherdivision:has(> part > div > [data-akn-class*="landscape"] , > akntitle > div > [data-akn-class*="landscape"],
+                        > chapter > div > [data-akn-class*="landscape"], > section > div > [data-akn-class*="landscape"]):after,
+    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class*="portrait"])):after
     {
         content: " ";
         height: 100%;
@@ -253,11 +258,11 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
     // define the separation border between landscape and portrait
     .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
                         > chapter > heading.landscape, > section > heading.landscape) .higherdivision,
-    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"]))
+    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class*="portrait"]))
     .higherdivision,
     .higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
                         > chapter > heading.landscape, > section > heading.landscape) .orientation,
-    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"]))
+    .higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class*="portrait"]))
     .orientation
     {
         border-top: 0px solid grey !important;
@@ -266,7 +271,7 @@ $PAGE-MARGIN-HORIZONTAL: 2.5cm;
 
     & :first-child.higherdivision:has(> part > heading.landscape, > akntitle > heading.landscape,
                         > chapter > heading.landscape, > section > heading.landscape),
-      :first-child.higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class="portrait"]))
+      :first-child.higherdivision:has(.orientation > .landscape):not(*:has(.orientation > .portrait)):not(*:has(.orientation > [data-akn-class*="portrait"]))
     {
         border-top: 0.3px solid grey;
     }
