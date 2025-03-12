@@ -58,7 +58,6 @@ import java.util.concurrent.TimeUnit;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONCLUSIONS;
 import static eu.europa.ec.leos.services.support.XmlHelper.PERSON;
 import static eu.europa.ec.leos.services.support.XmlHelper.ROLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
