@@ -509,7 +509,7 @@ public class LegServiceImpl implements LegService {
             final int docNumber = Integer.parseInt(annexVO.getMetadata().getIndex());
             final String resourceId = attachmentIds.entrySet()
                     .stream()
-                    .filter(e -> e.getKey().equals(annexVO.getRef()))
+                    .filter(e -> e.getKey().equals(annexVO.getRef()) || e.getKey().equals(annexVO.getRef() + ".xml"))
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .get();
@@ -523,7 +523,7 @@ public class LegServiceImpl implements LegService {
             final int docNumber = Integer.parseInt(explanatoryVO.getMetadata().getIndex());
             final String resourceId = attachmentIds.entrySet()
                     .stream()
-                    .filter(e -> e.getKey().equals(explanatoryVO.getRef()))
+                    .filter(e -> e.getKey().equals(explanatoryVO.getRef()) || e.getKey().equals(explanatoryVO.getRef() + ".xml"))
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .get();
