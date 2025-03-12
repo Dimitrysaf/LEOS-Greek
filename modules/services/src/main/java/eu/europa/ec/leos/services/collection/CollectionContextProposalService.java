@@ -33,8 +33,11 @@ import eu.europa.ec.leos.services.collection.document.FinancialStatementContextS
 import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
@@ -43,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 
@@ -55,6 +60,7 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 
 @Service
 @Scope("prototype")
@@ -62,9 +68,9 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC
 public class CollectionContextProposalService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextProposalService.class);
 
-    CollectionContextProposalService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, Provider<AnnexContextService> annexContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper) {
+    CollectionContextProposalService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, Provider<AnnexContextService> annexContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
         super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext,
-                explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper);
+                explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper, xmlContentProcessor);
     }
 
     @Override
@@ -122,7 +128,10 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
             Memorandum memorandumCreated = memorandumContext.executeCreateMemorandum();
-            proposal = proposalService.addComponentRef(proposal, memorandumCreated.getName(), LeosCategory.MEMORANDUM);
+
+            SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(memorandumCreated.getContent().get().getSource().getBytes());
+
+            proposal = proposalService.addComponentRef(proposal, memorandumCreated.getName(), LeosCategory.MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         }
 
         Bill bill = cast(categoryTemplateMap.get(BILL));
@@ -135,7 +144,10 @@ public class CollectionContextProposalService extends CollectionContextService {
             billContext.useActionMessageMap(actionMsgMap);
             billContext.usePackageRef(proposal.getMetadata().get().getRef());
             Bill billCreated = billContext.executeCreateBill();
-            proposal = proposalService.addComponentRef(proposal, billCreated.getName(), LeosCategory.BILL);
+
+            SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(billCreated.getContent().get().getSource().getBytes());
+
+            proposal = proposalService.addComponentRef(proposal, billCreated.getName(), LeosCategory.BILL, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         }
 
         FinancialStatement financialStatement = cast(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS));
@@ -152,7 +164,10 @@ public class CollectionContextProposalService extends CollectionContextService {
             financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
             financialStatementContext.useCollaborators(proposal.getCollaborators());
             FinancialStatement financialStatementCreated = financialStatementContext.executeCreateFinancialStatement();
-            proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_DIGIT_FINANC_LEGIS);
+
+            SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(financialStatementCreated.getContent().get().getSource().getBytes());
+
+            proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_DIGIT_FINANC_LEGIS, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         }
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }

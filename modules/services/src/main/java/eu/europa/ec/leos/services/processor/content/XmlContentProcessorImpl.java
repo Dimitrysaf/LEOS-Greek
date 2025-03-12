@@ -25,6 +25,7 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
+import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
@@ -3177,6 +3178,15 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 addAttribute(numNode, LEOS_TITLE, title);
             }
         }
+    }
+
+    public SpecificDocumentInformationDTO getSpecificDocumentInformation(byte xmlContent[]) {
+        Document document = createXercesDocument(xmlContent);
+        // We really should have this information on xml, if not, there is something wrong in template
+        NodeList nodeListForResfersTo = XercesUtils.getElementsByXPath(document, ".//akn:longTitle//*[@refersTo]");
+        String refersToOfDocument = nodeListForResfersTo.item(0).getAttributes().getNamedItem("refersTo").getTextContent();
+        String showAs = nodeListForResfersTo.item(0).getTextContent();
+        return new SpecificDocumentInformationDTO(refersToOfDocument, showAs);
     }
 
 }

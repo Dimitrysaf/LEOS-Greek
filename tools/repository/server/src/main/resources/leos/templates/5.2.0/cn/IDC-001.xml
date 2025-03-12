@@ -55,7 +55,7 @@
                     <inline name="language" refersTo="~_FRBRlanguage">EN</inline>
                 </p>
             </container>
-            <longTitle refersTo="#_council_explanatory">
+            <longTitle>
                 <p>
                     <docStage>Council/GSC</docStage>
                     <docType refersTo="~_DEC">draft</docType>
