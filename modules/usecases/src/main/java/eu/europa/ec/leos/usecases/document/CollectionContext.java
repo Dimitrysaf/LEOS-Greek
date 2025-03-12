@@ -208,7 +208,7 @@ public abstract class CollectionContext {
                 memorandumContext.useEeaRelevance(eeaRelevance);
                 memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
                 Memorandum memorandum = memorandumContext.executeImportMemorandum();
-                proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
+                proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM, "", "");
             } else if (docChild.getCategory() == BILL) {
                 BillContext billContext = billContextProvider.get();
                 billContext.usePackage(leosPackage);
@@ -220,7 +220,7 @@ public abstract class CollectionContext {
                 billContext.useEeaRelevance(eeaRelevance);
                 billContext.usePackageRef(proposal.getMetadata().get().getRef());
                 Bill bill = billContext.executeImportBill();
-                proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
+                proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL, "", "");
             }
         }
         proposal = proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));

@@ -497,14 +497,6 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="EM-LP01" enabled="false" mandatory="false" default="false">
-                            <names>
-                                <name lang="EN">EM-LP01 - ....</name>
-                            </names>
-                            <descriptions>
-                                <description lang="EN">...</description>
-                            </descriptions>
-                        </item>
                         <item type="DOCUMENT" id="BL-004" enabled="true" mandatory="true" default="true">
                             <names>
                                 <name lang="EN">BL-004 - ....</name>
@@ -520,14 +512,6 @@
                                     <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
                                 </descriptions>
                             </item>
-                        </item>
-                        <item type="DOCUMENT" id="FS-001" enabled="false" mandatory="false" default="false">
-                            <names>
-                                <name lang="EN">FS-001 - ....</name>
-                            </names>
-                            <descriptions>
-                                <description lang="EN">...</description>
-                            </descriptions>
                         </item>
                     </item>
                 </item>
@@ -557,14 +541,6 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="EM-LP01" enabled="false" mandatory="false" default="false">
-                            <names>
-                                <name lang="EN">EM-LP01 - ....</name>
-                            </names>
-                            <descriptions>
-                                <description lang="EN">...</description>
-                            </descriptions>
-                        </item>
                         <item type="DOCUMENT" id="BL-008" enabled="true" mandatory="true" default="true">
                             <names>
                                 <name lang="EN">BL-008 - ....</name>
@@ -580,14 +556,6 @@
                                     <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
                                 </descriptions>
                             </item>
-                        </item>
-                        <item type="DOCUMENT" id="FS-001" enabled="false" mandatory="false" default="false">
-                            <names>
-                                <name lang="EN">FS-001 - ....</name>
-                            </names>
-                            <descriptions>
-                                <description lang="EN">...</description>
-                            </descriptions>
                         </item>
                     </item>
                 </item>
@@ -626,14 +594,6 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="EM-LP01" enabled="false" mandatory="false" default="false">
-                                <names>
-                                    <name lang="EN">EM-LP01 - ....</name>
-                                </names>
-                                <descriptions>
-                                    <description lang="EN">...</description>
-                                </descriptions>
-                            </item>
                             <item type="DOCUMENT" id="BL-009" enabled="true" mandatory="true" default="true">
                                 <names>
                                     <name lang="EN">BL-009 - ....</name>
@@ -649,14 +609,6 @@
                                         <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
                                     </descriptions>
                                 </item>
-                            </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="false" mandatory="false" default="false">
-                                <names>
-                                    <name lang="EN">FS-001 - ....</name>
-                                </names>
-                                <descriptions>
-                                    <description lang="EN">...</description>
-                                </descriptions>
                             </item>
                         </item>
                     </item>

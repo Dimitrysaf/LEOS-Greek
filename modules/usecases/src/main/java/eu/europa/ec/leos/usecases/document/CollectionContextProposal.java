@@ -110,7 +110,7 @@ public class CollectionContextProposal extends CollectionContext {
             memorandumContext.useEeaRelevance(eeaRelevance);
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
             Memorandum memorandum = memorandumContext.executeCreateMemorandum();
-            proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
+            proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM, "", "");
         }
 
         BillContext billContext = billContextProvider.get();
@@ -121,7 +121,7 @@ public class CollectionContextProposal extends CollectionContext {
         billContext.useEeaRelevance(eeaRelevance);
         billContext.usePackageRef(proposal.getMetadata().get().getRef());
         Bill bill = billContext.executeCreateBill();
-        proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
+        proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL, "", "");
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
     }
 }

@@ -75,7 +75,7 @@
                     <docketNumber class="template" />
                 </p>
             </container> 
-            <longTitle refersTo="~DEC">
+            <longTitle>
                 <p>
                     <docStage>Proposal for a</docStage>
                     <docType refersTo="~DEC">DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>

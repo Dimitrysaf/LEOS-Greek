@@ -48,6 +48,7 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -705,7 +706,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 financialStatementContext.useLanguage(metadata.getLanguage());
                 financialStatementContext.useTranslated(false);
                 FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
-                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS);
+                SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(proposal.getContent().get().getSource().getBytes());
+                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
             } else {
                 List<FinancialStatement> financialStatementList = financialStatementService.findFinancialStatementByPackagePath(leosPackage.getPath());
                 if (!financialStatementList.isEmpty()) {

@@ -47,6 +47,7 @@ import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportResource;
@@ -104,6 +105,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.api.ApiServiceImpl.DOC_VERSION_SEPARATOR;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
@@ -489,16 +491,21 @@ public class LegServiceImpl implements LegService {
         DocumentVO proposalVO = proposalConverterService.createProposalFromLegFile(legFile, false);
 
         final byte[] proposalXmlContent = proposalVO.getSource();
-        ExportResource proposalExportResource = new ExportResource(LeosCategory.PROPOSAL);
-        final Map<String, String> proposalRefsMap = buildProposalExportResource(proposalExportResource, proposalVO.getName(), proposalXmlContent);
-        proposalExportResource.setExportOptions(exportOptions);
+
         final DocumentVO memorandumVO = proposalVO.getChildDocument(LeosCategory.MEMORANDUM);
         final byte[] memorandumXmlContent = memorandumVO.getSource();
+        SpecificDocumentInformationDTO specificDocumentInformationForMemorandum = xmlContentProcessor.getSpecificDocumentInformation(memorandumXmlContent);
+        final DocumentVO billVO = proposalVO.getChildDocument(LeosCategory.BILL);
+        final byte[] billXmlContent = billVO.getSource();
+        SpecificDocumentInformationDTO specificDocumentInformationForBill = xmlContentProcessor.getSpecificDocumentInformation(billXmlContent);
+
+        ExportResource proposalExportResource = new ExportResource(LeosCategory.PROPOSAL);
+        final Map<String, String> proposalRefsMap = buildProposalExportResource(proposalExportResource, proposalVO.getName(), proposalXmlContent, specificDocumentInformationForMemorandum, specificDocumentInformationForBill, null);
+        proposalExportResource.setExportOptions(exportOptions);
+
         final ExportResource memorandumExportResource = buildExportResourceMemorandum(proposalRefsMap, memorandumXmlContent);
         proposalExportResource.addChildResource(memorandumExportResource);
 
-        final DocumentVO billVO = proposalVO.getChildDocument(LeosCategory.BILL);
-        final byte[] billXmlContent = billVO.getSource();
         final ExportResource billExportResource = buildExportResourceBill(proposalRefsMap, proposalVO.getName(), billXmlContent);
 
         // add annexes to billExportResource
@@ -556,7 +563,26 @@ public class LegServiceImpl implements LegService {
         // 1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
-        final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal);
+
+        List<XmlDocument> xmlDocuments = packageRepository.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, true);
+
+        SpecificDocumentInformationDTO specificDocumentInformationForMemorandum = null;
+        SpecificDocumentInformationDTO specificDocumentInformationForBill = null;
+        SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement = null;
+
+        for (XmlDocument xmlDocument : xmlDocuments) {
+            if (xmlDocument.getCategory().equals(LeosCategory.MEMORANDUM)) {
+                specificDocumentInformationForMemorandum = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
+            }
+            if (xmlDocument.getCategory().equals(LeosCategory.BILL)) {
+                specificDocumentInformationForBill = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
+            }
+            if (xmlDocument.getCategory().equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
+                specificDocumentInformationForFinancialStatement = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
+            }
+        }
+
+        final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal, specificDocumentInformationForMemorandum, specificDocumentInformationForBill, specificDocumentInformationForFinancialStatement);
         legPackage.addContainedFile(proposal.getVersionedReference());
         String language = proposal.getMetadata().get().getLanguage();
         documentLanguageContext.setDocumentLanguage(language);
@@ -843,7 +869,9 @@ public class LegServiceImpl implements LegService {
         }
     }
 
-    private Map<String, String> enrichZipWithProposal(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Proposal proposal) {
+    private Map<String, String> enrichZipWithProposal(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Proposal proposal,
+            SpecificDocumentInformationDTO specificDocumentInformationForMemorandum, SpecificDocumentInformationDTO specificDocumentInformationForBill,
+            SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement) {
         byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToProposal(proposal, xmlContent);
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
@@ -854,10 +882,13 @@ public class LegServiceImpl implements LegService {
         if (exportOptions.getFileType().equals(Proposal.class)) {
             addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions);
         }
-        return buildProposalExportResource(exportProposalResource, proposal.getName(), xmlContent);
+        return buildProposalExportResource(exportProposalResource, proposal.getName(), xmlContent, specificDocumentInformationForMemorandum, specificDocumentInformationForBill,
+                specificDocumentInformationForFinancialStatement);
     }
 
-    private Map<String, String> enrichZipWithProposalForClone(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Proposal proposal) {
+    private Map<String, String> enrichZipWithProposalForClone(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Proposal proposal,
+            SpecificDocumentInformationDTO specificDocumentInformationForMemorandum, SpecificDocumentInformationDTO specificDocumentInformationForBill,
+            SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
         byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
         if(exportOptions.isComparisonMode()) {
@@ -890,7 +921,8 @@ public class LegServiceImpl implements LegService {
             addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions);
         }
 
-        return buildProposalExportResource(exportProposalResource, proposal.getName(), xmlContent);
+        return buildProposalExportResource(exportProposalResource, proposal.getName(), xmlContent,  specificDocumentInformationForMemorandum,  specificDocumentInformationForBill,
+                specificDocumentInformationForFinancialStatement);
     }
 
     private void enrichZipWithToc(final Map<String, Object> contentToZip) {
@@ -1136,30 +1168,35 @@ public class LegServiceImpl implements LegService {
         return json;
     }
 
-    private Map<String, String> buildProposalExportResource(ExportResource exportResource, String docName, byte[] xmlContent) {
+    private Map<String, String> buildProposalExportResource(ExportResource exportResource, String docName, byte[] xmlContent,
+            SpecificDocumentInformationDTO specificDocumentInformationForMemorandum, SpecificDocumentInformationDTO specificDocumentInformationForBill,
+            SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement) {
+
         Map<String, XmlNodeConfig> config = new HashMap<>();
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.MEMORANDUM, "xml:id"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.MEMORANDUM, "href"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.BILL, "xml:id"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.BILL, "href"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.COUNCIL_EXPLANATORY, "xml:id"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.COUNCIL_EXPLANATORY, "href"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_DIGIT_FINANC_LEGIS, "xml:id"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_DIGIT_FINANC_LEGIS, "href"));
+        if (specificDocumentInformationForMemorandum != null) {
+            config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.MEMORANDUM, "xml:id", specificDocumentInformationForMemorandum.getRefersToOfDocument(), specificDocumentInformationForMemorandum.getShowAs()));
+            config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.MEMORANDUM, "href", specificDocumentInformationForMemorandum.getRefersToOfDocument(), specificDocumentInformationForMemorandum.getShowAs()));
+        }
+        if (specificDocumentInformationForBill != null) {
+            config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.BILL, "xml:id", specificDocumentInformationForBill.getRefersToOfDocument(), specificDocumentInformationForBill.getShowAs()));
+            config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.BILL, "href", specificDocumentInformationForBill.getRefersToOfDocument(), specificDocumentInformationForBill.getShowAs()));
+        }
+        if (specificDocumentInformationForFinancialStatement != null) {
+            config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_DIGIT_FINANC_LEGIS, "xml:id", specificDocumentInformationForFinancialStatement.getRefersToOfDocument(), specificDocumentInformationForFinancialStatement.getShowAs()));
+            config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_DIGIT_FINANC_LEGIS, "href", specificDocumentInformationForFinancialStatement.getRefersToOfDocument(), specificDocumentInformationForFinancialStatement.getShowAs()));
+        }
+        String stringToGetValues[] = new String[] {XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION, XmlNodeConfigProcessor.DOC_REF_COVER,
+                LeosCategory.MEMORANDUM.name() + "_xml:id",
+                LeosCategory.MEMORANDUM.name() + "_href",
+                LeosCategory.BILL.name() + "_xml:id",
+                LeosCategory.BILL.name() + "_href",
+                LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_xml:id",
+                LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_href"
+        };
+
         config.putAll(xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
 
-        Map<String, String> proposalRefsMap = xmlNodeProcessor.getValuesFromXml(xmlContent,
-                new String[]{XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION, XmlNodeConfigProcessor.DOC_REF_COVER,
-                        LeosCategory.COUNCIL_EXPLANATORY.name() + "_xml:id",
-                        LeosCategory.COUNCIL_EXPLANATORY.name() + "_href",
-                        LeosCategory.MEMORANDUM.name() + "_xml:id",
-                        LeosCategory.MEMORANDUM.name() + "_href",
-                        LeosCategory.BILL.name() + "_xml:id",
-                        LeosCategory.BILL.name() + "_href",
-                        LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_xml:id",
-                        LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_href"
-                },
-                config);
+        Map<String, String> proposalRefsMap = xmlNodeProcessor.getValuesFromXml(xmlContent, stringToGetValues, config);
 
         exportResource.setResourceId(proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
         exportResource.setComponentsIdsMap(Collections.singletonMap(XmlNodeConfigProcessor.DOC_REF_COVER, proposalRefsMap.get(XmlNodeConfigProcessor.DOC_REF_COVER)));
@@ -1783,7 +1820,27 @@ public class LegServiceImpl implements LegService {
         //1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
-        final Map<String, String> proposalRefsMap = enrichZipWithProposalForClone(contentToZip, exportProposalResource, proposal);
+
+        List<XmlDocument> xmlDocuments = packageRepository.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, true);
+
+        SpecificDocumentInformationDTO specificDocumentInformationForMemorandum = null;
+        SpecificDocumentInformationDTO specificDocumentInformationForBill = null;
+        SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement = null;
+
+        for (XmlDocument xmlDocument : xmlDocuments) {
+            if (xmlDocument.getCategory().equals(LeosCategory.MEMORANDUM)) {
+                specificDocumentInformationForMemorandum = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
+            }
+            if (xmlDocument.getCategory().equals(LeosCategory.BILL)) {
+                specificDocumentInformationForBill = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
+            }
+            if (xmlDocument.getCategory().equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
+                specificDocumentInformationForFinancialStatement = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
+            }
+        }
+
+        final Map<String, String> proposalRefsMap = enrichZipWithProposalForClone(contentToZip, exportProposalResource, proposal, specificDocumentInformationForMemorandum, specificDocumentInformationForBill,
+                specificDocumentInformationForFinancialStatement);
         legPackage.addContainedFile(proposal.getVersionedReference());
         String language = proposal.getMetadata().get().getLanguage();
         documentLanguageContext.setDocumentLanguage(language);
