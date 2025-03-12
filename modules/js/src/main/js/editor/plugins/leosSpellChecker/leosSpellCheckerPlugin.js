@@ -33,7 +33,7 @@ define(function leosSpellCheckerPluginModule(require) {
                     API_RESOURCE_PATH_LANGUAGES: "/languages", 
                     DISABLE_USER_CHOICE_LANGUAGE: false,// Disabled for cypress tests
                     DISABLE_USER_CHOICE_PROOFREADING_CHECKS: false,
-                    isLeos: true
+                    APP_NAME: "LEOS"
                 };
             }`;
             doc.body.appendChild(script);
