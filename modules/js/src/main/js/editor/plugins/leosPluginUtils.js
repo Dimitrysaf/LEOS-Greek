@@ -1467,6 +1467,10 @@ define(function leosPluginUtilsModule(require) {
         return element && $(element).children() && $(element).children().length > 0 && $(element).children().get(0).nodeName.ignoreCase === BOGUS.ignoreCase;
     }
 
+    function _isInsideTable(element) {
+        return element && element.hasAscendant('table');
+    }
+
     // Check if the entire table/list contents is selected.
     function _mergeBlocksNonCollapsedSelection( editor, range, startPath ) {
         var startBlock = startPath.block,
@@ -1622,6 +1626,7 @@ define(function leosPluginUtilsModule(require) {
         selectCorrectPathForList: _selectCorrectPathForList,
         getRefConfig: _getRefConfig,
         isEmpty: _isEmpty,
+        isInsideTable: _isInsideTable,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,

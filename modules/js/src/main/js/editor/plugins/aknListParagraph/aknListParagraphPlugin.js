@@ -53,7 +53,7 @@ define(function aknListParagraphPluginModule(require) {
                 if (tableCommand) {
                     let selection = event.editor.getSelection();
                     let element = leosKeyHandler.getSelectedElement(selection);
-                    tableCommand.setState(_isSubparagraphElement(element) ? TRISTATE_DISABLED : TRISTATE_OFF);
+                    tableCommand.setState(_isSubparagraphElement(element) || leosPluginUtils.isInsideTable(element) ? TRISTATE_DISABLED : TRISTATE_OFF);
                 }
             }, null, null, 100);
         }

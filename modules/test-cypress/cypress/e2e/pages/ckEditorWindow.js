@@ -353,6 +353,14 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find("ol[data-akn-element="+dataAknElement3+"]").find("li[data-akn-element='"+dataAknElement2+"']").find("p[data-akn-element='"+dataAknElement1+"']").eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offSet, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
     }
 
+    clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement) {
+        this.elements.ckEditableInline().find("ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offSet, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
+    }
+
+    clickAtCellInRowInTableOfParagraph(cell, row, table, paragraphLi, dataAknElement) {
+        this.elements.ckEditableInline().find("ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(paragraphLi - 1).find("table tbody").eq(table - 1).find('tr').eq(row - 1).find('td').eq(cell - 1).click();
+    }
+
     getHeadingOfLevel() {
         return this.elements.ckEditableInline().find("ol[data-akn-element='level']").find("li[data-akn-element='level']").find('h2 strong');
     }

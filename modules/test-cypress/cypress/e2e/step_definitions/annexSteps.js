@@ -49,6 +49,10 @@ Then(`click on edit icon of level {int}`, (levelNumber) => {
     annexPage.clickEditIconOfLevel(levelNumber);
 });
 
+Then(`click on edit icon of paragraph {int}`, (paragraphNumber) => {
+    annexPage.clickEditIconOfParagraph(paragraphNumber);
+});
+
 When(`click on delete icon of level {int}`, (levelNumber) => {
     annexPage.clickDeleteIconOfLevel(levelNumber);
 });
@@ -60,6 +64,11 @@ Then(`level {int} doesn't contain {string}`, (levelNumber, text) => {
 Then('content of subparagraph {int} of level {int} contains a table with {int} row and {int} column', function (subparagraphNumber, levelNumber, rowNumber, columnNumber) {
     annexPage.getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', rowNumber);
     annexPage.getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', columnNumber);
+});
+
+Then('content of paragraph {int} contains a table with {int} row and {int} column', function (paragraphNumber, rowNumber, columnNumber) {
+    annexPage.getRowFromTableOfParagraph(paragraphNumber).should('have.length', rowNumber);
+    annexPage.getColumnFromTableOfParagraph(paragraphNumber).should('have.length', columnNumber);
 });
 
 Then('level {int} contains authorial note with marker {string} and text {string}', function (levelNumber, markerNumber, text) {

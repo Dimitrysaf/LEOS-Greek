@@ -184,7 +184,7 @@ Feature: CK Editor Regression Features
         When click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then ck editor window is not displayed
-        And  content of subparagraph 1 of  of paragraph 3 of article 1 contains a table with 3 row and 2 column
+        And  content of subparagraph 1 of paragraph 3 of article 1 contains a table with 3 row and 2 column
         When mouseover and click on article 1
         Then ck editor window is displayed
         When select content from offset 0 till offset 7 in numbered paragraph 2 of article in edition mode
@@ -265,3 +265,89 @@ Feature: CK Editor Regression Features
         And click dialog ok button
         When click save and close button of ck editor
         Then level 2 contains image
+
+    @ckEditorTablePlugin @local
+    Scenario: Basic test to create a table inside another table
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        And  collapse all button is displayed in create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "ck editor scenario for table creation" in create document page
+        And  click on create button
+        Then user is on act viewer page
+
+        ########## open legal act ###################
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        When click on edit icon of article 1
+        Then ck editor window is displayed
+        When click on table icon present in ck editor panel
+        Then cke dialog window is displayed with title "Table Properties"
+        When click on ok button in cke dialog window
+        Then table icon is disabled in ck editor
+        When click at offset 0 of li 1 with data-akn-element "paragraph" of article in edition mode
+        Then table icon is enabled in ck editor
+        When click at cell 1 of row 1 of table 1 of li 2 with data-akn-element "paragraph" in edition mode
+        Then table icon is disabled in ck editor
+        When click save and close button of ck editor
+        Then content of subparagraph 2 of paragraph 2 of article 1 contains a table with 3 row and 2 column
+        When click on edit icon of article 1
+        And  click at cell 1 of row 1 of table 1 of li 2 with data-akn-element "paragraph" in edition mode
+        Then table icon is disabled in ck editor
+        When click at offset 0 of li 1 with data-akn-element "paragraph" of article in edition mode
+        Then table icon is enabled in ck editor
+
+        ######  subparagraphMandate ######
+        When click on act view link in breadcrumb item
+        Then user is on act viewer page
+        When click on financial statement link present in act viewer page
+        Then user is on financial statement page
+        And  doctype is "LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT"
+        And  annotation side bar is present
+        And  content of subparagraph 3 of level 26 contains a table with 5 row and 4 column
+        When click on edit icon of subparagraph 3 of level 2 in financial statement page
+        Then ck editor window is displayed
+        And  table icon is disabled in ck editor
+
+        ######  Annex inlineParagraph ######
+        When click on act view link in breadcrumb item
+        Then user is on act viewer page
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 1
+        When click on annex 1 link
+        Then user is on annex page
+        And  ribbon toolbar is maximized
+        And  annotation side bar is present
+        When click on toc edit button
+        Then cancel button is displayed and enabled in navigation pane
+        When drag element "Paragraph" from element tree list and drop before node label "1. Text..." in navigation pane
+        Then success message "Paragraph has been added successfully!" is displayed in navigation pane
+        When click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled
+        When mouseover and click on paragraph 1
+        Then ck editor window is displayed
+        And  table icon is enabled in ck editor
+        When click on table icon present in ck editor panel
+        Then cke dialog window is displayed with title "Table Properties"
+        When click on ok button in cke dialog window
+        Then table icon is disabled in ck editor
+        When click at offset 0 of li 1 with data-akn-element "paragraph" in edition mode
+        Then table icon is enabled in ck editor
+        When click at cell 1 of row 1 of table 1 of li 1 with data-akn-element "paragraph" in edition mode
+        Then table icon is disabled in ck editor
+        When click save and close button of ck editor
+        Then content of paragraph 2 contains a table with 3 row and 2 column
+        #### Workaround to get attr 'id' of new paragraph for table #####
+        When refresh the browser
+        Then user is on annex page
+        ####
+        When click on edit icon of level 1
+        When click on edit icon of paragraph 2
+        Then ck editor window is displayed
+        And  table icon is disabled in ck editor
+        When mouseover and click on paragraph 1
+        Then ck editor window is displayed
+        And table icon is enabled in ck editor
