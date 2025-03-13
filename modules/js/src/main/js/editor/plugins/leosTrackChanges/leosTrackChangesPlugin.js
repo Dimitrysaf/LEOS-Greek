@@ -932,8 +932,8 @@ define(function leosTrackChangesPluginModule(require) {
             .find("*").addBack().filter(function () {
                 return UTILS.isEmptyElement(this);
             });
-        if(elementsToRemove && Array.isArray(elementsToRemove) && elementsToRemove.length > 0){
-            elementsToRemove.reverse().each(_checkEmptyAndRemove);
+        if(elementsToRemove && elementsToRemove.length > 0){
+            elementsToRemove.each(_checkEmptyAndRemove);
         }
         /*
            - empty node is the last point of a List removing it means removing also the List.
