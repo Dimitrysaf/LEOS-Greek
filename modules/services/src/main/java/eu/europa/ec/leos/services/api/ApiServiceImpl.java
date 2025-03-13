@@ -837,7 +837,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useOriginRef(cloneOriginRef);
                 billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex();
-                documentViewService.contextExecuteUpdateProposalAsync(proposal);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;
@@ -987,7 +986,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 LOG.error("Error while using archive service {}", e.getMessage());
             }
             billContext.executeRemoveBillAnnex();
-            documentViewService.contextExecuteUpdateProposalAsync(proposal);
         }
     }
 
@@ -1004,7 +1002,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
                 billContext.executeMoveAnnex();
             }
-            documentViewService.contextExecuteUpdateProposalAsync(proposal);
         }
     }
 

@@ -220,7 +220,6 @@ public abstract class BillApiServiceImpl implements BillApiService {
         populateCloneProposalMetadata(bill);
         Bill updatedBill = this.billService.saveTableOfContent(bill, toc,
                 messageHelper.getMessage("operation.toc.updated"), user);
-        documentViewService.updateProposalAsync(bill);
         Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
         List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile);
         return billService.getTableOfContent(updatedBill, tocMode, tocItems);
@@ -616,7 +615,6 @@ public abstract class BillApiServiceImpl implements BillApiService {
 
         List<Element> result = getMovedFromElements(updatedBill, newContent, elementId);
 
-        documentViewService.updateProposalAsync(bill);
         newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
     }
