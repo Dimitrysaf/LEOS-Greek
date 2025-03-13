@@ -445,7 +445,7 @@ export class DocumentTocComponent
       this.dragAction.targetId,
     );
 
-    const nodesDragged = event.item.data;
+    const nodesDragged = event.item.data instanceof Array ? event.item.data : [event.item.data];
     //TODO : Fix this => this is a hack for allowing the root to go for validation otherwise it will fail to find the nodeParent and will not send it for validaiton
     if (nodeTarget.tocItem.root) {
       nodeTarget.parentItem = nodeTarget.id;
