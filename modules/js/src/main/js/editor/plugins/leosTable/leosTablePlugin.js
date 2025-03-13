@@ -44,6 +44,10 @@ define(function leosTablePluginModule(require) {
         crossHeading: {
             elementName: 'p',
             selector: '[data-akn-name=crossHeading]'
+        },
+        table: {
+            elementName: 'table',
+            selector: null
         }
     };
 

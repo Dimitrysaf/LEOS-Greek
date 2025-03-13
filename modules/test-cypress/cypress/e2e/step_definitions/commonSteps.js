@@ -47,6 +47,10 @@ Then(`xml files having separator {string} present in download folder contain bel
     });
 });
 
+When(/^click on act view link in breadcrumb item$/, function () {
+    headerPage.clickActView();
+});
+
 When(/^click on workspace button in breadcrumb item$/, function () {
     headerPage.clickWorkspace();
 });

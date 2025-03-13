@@ -490,7 +490,7 @@ When('click on authorial note with marker {string} in paragraph {int} of article
     legalActPage.clickAuthorialNoteWithMarkerNumberFromParagraphOfArticle(markerNumber, paragraphNumber, articleNumber);
 });
 
-Then('content of subparagraph {int} of  of paragraph {int} of article {int} contains a table with {int} row and {int} column', function (subparagraphNumber, paragraphNumber, articleNumber, rowNumber, columnNumber) {
+Then('content of subparagraph {int} of paragraph {int} of article {int} contains a table with {int} row and {int} column', function (subparagraphNumber, paragraphNumber, articleNumber, rowNumber, columnNumber) {
     legalActPage.getRowFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', rowNumber);
     legalActPage.getColumnFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', columnNumber);
 });

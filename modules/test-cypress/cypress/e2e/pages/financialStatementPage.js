@@ -40,6 +40,10 @@ class financialStatementPage {
         this.getLevel(levelNumber).realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(2000).find("span[data-widget-type='edit']").click({force:true}));
     }
 
+    clickEditIconOfSubparagraphOfLevel(subparagraphNumber, levelNumber) {
+        this.getSubparagraphOfLevel(subparagraphNumber, levelNumber).realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(2000).find("span[data-widget-type='edit']").click({force: true}));
+    }
+
     duplicateRepeatableSubparagraph() {
         this.elements.repeatableSubparagraph().first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }).wait(500));
     }

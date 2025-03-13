@@ -32,6 +32,10 @@ When('click on edit icon of level {int} in financial statement page', function (
     financialStatementPage.clickEditIconOfLevel(levelNumber);
 });
 
+When('click on edit icon of subparagraph {int} of level {int} in financial statement page', function (subparagraphNumber, levelNumber) {
+    financialStatementPage.clickEditIconOfSubparagraphOfLevel(subparagraphNumber, levelNumber);
+});
+
 Then('content of level {int} has below content', (levelNumber, datatable) => {
     financialStatementPage.getContentOfLevel(levelNumber).then((element) => {
         checkContentResult(element, datatable);

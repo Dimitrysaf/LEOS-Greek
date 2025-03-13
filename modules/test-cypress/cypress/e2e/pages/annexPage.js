@@ -36,6 +36,10 @@ class annexPage {
         cy.xpath("//paragraph[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
     }
 
+    clickEditIconOfParagraph(paragraphNumber) {
+        cy.xpath("//paragraph[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
+    }
+
     getContentOfAnnex(levelNumber) {
         return cy.xpath("//div[@class='orientation'][" + levelNumber + "]//level//content//aknp");
     }
@@ -46,6 +50,14 @@ class annexPage {
 
     getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
         return this.getSubparagraphFromLevel(subparagraphNumber,  levelNumber).find('table tbody tr').eq(0).find('td');
+    }
+
+    getRowFromTableOfParagraph(paragraphNumber) {
+        return this.getParagraph(paragraphNumber).find('table tbody tr');
+    }
+
+    getColumnFromTableOfParagraph(paragraphNumber) {
+        return this.getParagraph(paragraphNumber).find('table tbody tr').eq(0).find('td');
     }
 
     getSubparagraphFromLevel(subparagraphNumber, levelNumber) {
