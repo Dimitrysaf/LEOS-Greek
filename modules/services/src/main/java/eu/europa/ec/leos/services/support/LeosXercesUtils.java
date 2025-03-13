@@ -20,6 +20,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -314,35 +315,42 @@ public class LeosXercesUtils {
             orientationDiv.appendChild(parentNode);
         }
 
-        for(String nodeName : orientableNodes){
+        boolean isOrientableFound = false;
+
+        List<String> newOrientable = new ArrayList<>(orientableNodes);
+        newOrientable.add(PARAGRAPH);
+        for(String nodeName : newOrientable){
             bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(nodeName));
-            if(bodyNodes.getLength() > 0){
-                break;
+            if(bodyNodes != null && bodyNodes.getLength() > 0){
+                isOrientableFound = true;
+
+                for (int i = 0; i < bodyNodes.getLength(); i++) {
+                    Node node = bodyNodes.item(i);
+                    if(nodeName.equalsIgnoreCase(PARAGRAPH) && node.getParentNode().getNodeName().equalsIgnoreCase(ARTICLE)){
+                        continue;
+                    }
+                    String isEditable = XercesUtils.getAttributeValue(node, "leos:editable");
+                    if (isEditable != null && isEditable.equals("false")) {
+                        continue;
+                    }
+                    Node classAttr = node.getAttributes().getNamedItem(CLASS_ATTR);
+                    if(classAttr == null
+                            || (!classAttr.getTextContent().contains(ORIENTATION_LANDSCAPE)
+                            && !classAttr.getTextContent().contains(ORIENTATION_PORTRAIT))){
+                        XercesUtils.addAttribute(node, CLASS_ATTR, (classAttr == null ? "" : classAttr.getTextContent()) + " " + ORIENTATION_PORTRAIT );
+                    }
+                    Element orientationDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR,  ORIENTATION, "");
+                    node.getParentNode().replaceChild(orientationDiv, node);
+
+
+                    orientationDiv.appendChild(node);
+                }
             }
         }
 
-        if (bodyNodes == null || bodyNodes.getLength() == 0) {
-            return XercesUtils.nodeToByteArray(document);
+        if (isOrientableFound) {
+            addPortraitAttributeToHeading(document);
         }
-        for (int i = 0; i < bodyNodes.getLength(); i++) {
-            Node node = bodyNodes.item(i);
-            String isEditable = XercesUtils.getAttributeValue(node, "leos:editable");
-            if (isEditable != null && isEditable.equals("false")) {
-                continue;
-            }
-            Node classAttr = node.getAttributes().getNamedItem(CLASS_ATTR);
-            if(classAttr == null
-                    || (!classAttr.getTextContent().contains(ORIENTATION_LANDSCAPE)
-                    && !classAttr.getTextContent().contains(ORIENTATION_PORTRAIT))){
-                XercesUtils.addAttribute(node, CLASS_ATTR, (classAttr == null ? "" : classAttr.getTextContent()) + " " + ORIENTATION_PORTRAIT );
-            }
-            Element orientationDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR,  ORIENTATION, "");
-            node.getParentNode().replaceChild(orientationDiv, node);
-
-
-            orientationDiv.appendChild(node);
-        }
-        addPortraitAttributeToHeading(document);
         return XercesUtils.nodeToByteArray(document);
     }
 

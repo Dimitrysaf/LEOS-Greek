@@ -119,6 +119,9 @@ define(function aknListParagraphPluginModule(require) {
             }, {
                 akn : "leos:title",
                 html : "title"
+            }, {
+                akn : "class",
+                html : "data-akn-class"
             }]
         },
         rootElementsForFrom: ["paragraph"],
