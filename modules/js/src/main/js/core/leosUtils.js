@@ -260,15 +260,23 @@ define(function leosUtilsModule(require) {
         for (var i = 0; usersUid.length > i; i++) {
             var userColors = _generateColors(usersUid[i].repeat(5) + proposalRef);
             if (isDocTcStyle) {
-                tcShowStyle += "paragraph:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before {" +
+                tcShowStyle += "paragraph:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before " +
+                    "{" +
                     "content: '↵'; margin-left: 40px; min-width: 15px; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt; padding-top: 6pt;" +
+                    "}\n";
+                tcShowStyle += "level:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before " +
+                    "{" +
+                    "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt; padding-top: 6pt;" +
                     "}\n";
                 tcShowStyle += "paragraph:not(:has(> num > ins)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:tc-original-number='UNNUMBERED']:not(:has(> num > ins)):before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before, " +
-                    "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before {" +
+                    "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before, " +
+                    "level:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before " +
+                    "{" +
                     "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt; padding-top: 6pt;" +
                     "}\n";
