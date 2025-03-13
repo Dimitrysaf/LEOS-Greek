@@ -562,10 +562,10 @@ export class DocumentEditorComponent
       if (this.documentTocComponent.isNodeSelected()) {
         const newSelectedNode = findNodeById(
           oldToc,
-          this.documentTocComponent.selectedNode.id,
+          this.documentTocComponent.lastSelectedNode.id,
         );
         if (newSelectedNode)
-          this.documentTocComponent.handleNodeSelect(newSelectedNode);
+          this.documentTocComponent.handleNodeSelect(newSelectedNode, null);
       }
       this.tocService.refreshToc(oldToc, this.documentRef, this.documentType);
     }
