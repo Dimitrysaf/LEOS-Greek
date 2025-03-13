@@ -97,10 +97,10 @@ define(function leosWidgetPluginModule(require) {
     }
 
     var widgetDeletionKeyCodes = [
-        8,                  // DELETE
-        46,                 // BACKSPACE
-        CKEDITOR.CTRL + 8,  // CTRL+DELETE
-        CKEDITOR.CTRL + 46, // CTRL+BACKSPACE
+        8,                  // BACKSPACE
+        46,                 // DELETE
+        CKEDITOR.CTRL + 8,  // CTRL+BACKSPACE
+        CKEDITOR.CTRL + 46, // CTRL+DELETE
         CKEDITOR.CTRL + 86, // CTRL+V (paste)
         CKEDITOR.CTRL + 88  // CTRL+X (cut)
     ];

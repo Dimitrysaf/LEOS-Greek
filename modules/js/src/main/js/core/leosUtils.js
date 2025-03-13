@@ -44,9 +44,9 @@ define(function leosUtilsModule(require) {
     var DOCPURPOSE = "docPurpose";
     var ID = "id";
     var KEYS = {
-        "KEY_DELETE": 8,
+        "KEY_DELETE": 46,
         "KEY_ENTER": 13,
-        "KEY_BACKSPACE": 46,
+        "KEY_BACKSPACE": 8,
         "KEY_V": 86,
         "KEY_X": 88
     }
@@ -76,7 +76,11 @@ define(function leosUtilsModule(require) {
         return null;
     }
 
-    function _isEmptyElement(el) {
+    function _isEmptyElement(elmnt) {
+        var el = elmnt;
+        if(elmnt.tagName == undefined && elmnt.length > 0 && !!elmnt[0].tagName ){
+            el = elmnt[0];
+        }
         function _getParentTocItem(el, tocItemsList) {
             var currentElem = el;
             var parentTocItem;
@@ -125,6 +129,7 @@ define(function leosUtilsModule(require) {
         if (elementsToBeChecked.includes(el.tagName)) {
             if (!$.trim(el.innerText)) {
                 if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
+                    && el.parentElement 
                     && ((el.parentElement.tagName === TABLE_CELL_TAG &&
                         (!el.parentElement.hasAttribute('data-akn-name') || el.parentElement.getAttribute('data-akn-name') !== 'signature'))
                         || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {

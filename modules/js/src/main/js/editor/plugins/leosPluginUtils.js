@@ -1467,6 +1467,85 @@ define(function leosPluginUtilsModule(require) {
         return element && $(element).children() && $(element).children().length > 0 && $(element).children().get(0).nodeName.ignoreCase === BOGUS.ignoreCase;
     }
 
+    // Check if the entire table/list contents is selected.
+    function _mergeBlocksNonCollapsedSelection( editor, range, startPath ) {
+        var startBlock = startPath.block,
+            endPath = range.endPath(),
+            endBlock = endPath.block;
+
+        // Selection must be anchored in two different blocks.
+        if ( !startBlock || !endBlock || startBlock.equals( endBlock ) )
+            return false;
+
+        editor.fire( 'saveSnapshot' );
+
+        // Remove bogus to avoid duplicated boguses.
+        var bogus;
+        if ( ( bogus = startBlock.getBogus() ) )
+            bogus.remove();
+
+        // Changing end container to element from text node (https://dev.ckeditor.com/ticket/12503).
+        range.enlarge( CKEDITOR.ENLARGE_INLINE );
+
+        // Delete range contents. Do NOT merge. Merging is weird.
+        range.deleteContents();
+
+        // If something has left of the block to be merged, clean it up.
+        // It may happen when merging with list items.
+        if ( endBlock.getParent() ) {
+            // Move children to the first block.
+            endBlock.moveChildren( startBlock, false );
+
+            // ...and merge them if that's possible.
+            startPath.lastElement.mergeSiblings();
+
+            // If expanded selection, things are always merged like with BACKSPACE.
+            pruneEmptyDisjointAncestors( startBlock, endBlock, true );
+        }
+
+        // Make sure the result selection is collapsed.
+        range = editor.getSelection().getRanges()[ 0 ];
+        range.collapse( 1 );
+
+        // Optimizing range containers from text nodes to elements (https://dev.ckeditor.com/ticket/12503).
+        range.optimize();
+        if ( range.startContainer.getHtml() === '' ) {
+            range.startContainer.appendBogus();
+        }
+
+        range.select();
+
+        return true;
+    }
+
+    // Finds the innermost child of common parent, which,
+    // if removed, removes nothing but the contents of the element.
+    //
+    //	before: <div><p><strong>first</strong></p><p>second</p></div>
+    //	after:  <div><p>second</p></div>
+    //
+    //	before: <div><p>x<strong>first</strong></p><p>second</p></div>
+    //	after:  <div><p>x</p><p>second</p></div>
+    //
+    //	isPruneToEnd=true
+    //	before: <div><p><strong>first</strong></p><p>second</p></div>
+    //	after:  <div><p><strong>first</strong></p></div>
+    //
+    // @param {CKEDITOR.dom.element} first
+    // @param {CKEDITOR.dom.element} second
+    // @param {Boolean} isPruneToEnd
+    function pruneEmptyDisjointAncestors( first, second, isPruneToEnd ) {
+        var commonParent = first.getCommonAncestor( second ),
+            node = isPruneToEnd ? second : first,
+            removableParent = node;
+
+        while ( ( node = node.getParent() ) && !commonParent.equals( node ) && node.getChildCount() == 1 )
+            removableParent = node;
+
+        removableParent.remove();
+    }
+
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1523,6 +1602,7 @@ define(function leosPluginUtilsModule(require) {
         manageListIntro: _manageListIntro,
         manageSpanInSubparagraphs: _manageSpanInSubparagraphs,
         manageNestedHtmlP:_manageNestedHtmlP,
+        mergeBlocksNonCollapsedSelection: _mergeBlocksNonCollapsedSelection,
         isFirstLevelListSubparagraph: _isFirstLevelListSubparagraph,
         manageCrossheadings: _manageCrossheadings,
         keepCursorPosition: _keepCursorPosition,
