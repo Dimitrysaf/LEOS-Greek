@@ -78,7 +78,8 @@ public class Collaborator {
         if (o == null || getClass() != o.getClass()) return false;
         Collaborator that = (Collaborator) o;
         return Objects.equals(login, that.login) &&
-                Objects.equals(entity, that.entity);
+                Objects.equals(entity, that.entity) &&
+                Objects.equals(leosClientId, that.leosClientId);
     }
 
     @Override

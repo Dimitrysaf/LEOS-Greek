@@ -1525,7 +1525,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         final String proposalUrl = event.getProposalURL();
         try {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
-            collaboratorService.removeCollaborator(proposal, userVO.getLogin(), role.getName(), selectedEntity, proposalUrl);
+            collaboratorService.removeCollaborator(proposal, userVO.getLogin(), role.getName(), selectedEntity, proposalUrl, null);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "collaborator.message.user.removed", userVO.getName(),
                     messageHelper.getMessage(role.getMessageKey())));
         } catch (CollaboratorException e) {
