@@ -80,7 +80,6 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
         String documentId = financialStatementService.findFinancialStatementByRef(documentRef).getId();
         FinancialStatement financialStatement = financialStatementService.updateFinancialStatement(documentRef,
                 documentId, properties, false);
-        documentViewService.updateProposalAsync(financialStatement);
         return true;
     }
 

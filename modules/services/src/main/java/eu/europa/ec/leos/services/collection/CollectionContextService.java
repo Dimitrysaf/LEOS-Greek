@@ -602,38 +602,14 @@ public abstract class CollectionContextService {
         Validate.notNull(purpose, "Proposal purpose is required!");
 
         LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
-        List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(),
-                XmlDocument.class, false);
 
-        for (XmlDocument document : documents) {
-            switch (document.getCategory()) {
-                case COUNCIL_EXPLANATORY: {
-                    executeUpdateExplanatory(leosPackage, purpose, actionMsgMap);
-                    break;
-                }
-                case MEMORANDUM: {
-                    MemorandumContextService memorandumContext = memorandumContextProvider.get();
-                    memorandumContext.usePackage(leosPackage);
-                    memorandumContext.usePurpose(purpose);
-                    memorandumContext.useEeaRelevance(eeaRelevance);
-                    memorandumContext.useActionMessageMap(actionMsgMap);
-                    memorandumContext.executeUpdateMemorandum();
-                    break;
-                }
-                case BILL: {
-                    BillContextService billContext = billContextProvider.get();
-                    billContext.usePackage(leosPackage);
-                    billContext.usePurpose(purpose);
-                    billContext.useEeaRelevance(eeaRelevance);
-                    billContext.useActionMessageMap(actionMsgMap);
-                    billContext.executeUpdateBill();
-                    break;
-                }
-                default:
-                    LOG.debug("Do nothing for rest of the categories like MEDIA, CONFIG & LEG");
-                    break;
-            }
-        }
+        BillContextService billContext = billContextProvider.get();
+        billContext.usePackage(leosPackage);
+        billContext.usePurpose(purpose);
+        billContext.useEeaRelevance(eeaRelevance);
+        billContext.useActionMessageMap(actionMsgMap);
+        billContext.setAnnexToBeUpdated(false);
+        billContext.executeUpdateBill();
     }
 
     public void executeDeleteProposal() {

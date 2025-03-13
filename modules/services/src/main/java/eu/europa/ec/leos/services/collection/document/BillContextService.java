@@ -109,6 +109,7 @@ public class BillContextService {
     private String language;
     private boolean translated;
     private String packageRef = null;
+    private boolean isAnnexToBeUpdated;
 
     @Autowired
     BillContextService(BillService billService,
@@ -421,16 +422,18 @@ public class BillContextService {
                     .withEeaRelevance(eeaRelevance)
                     .build();
             billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
-            // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
-            List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
-            annexes.forEach(annex -> {
-                AnnexContextService annexContext = annexContextProvider.get();
-                annexContext.usePurpose(purpose);
-                annexContext.useAnnexId(annex.getId());
-                annexContext.useActionMessageMap(actionMsgMap);
-                annexContext.useEeaRelevance(eeaRelevance);
-                annexContext.executeUpdateAnnexMetadata();
-            });
+            if(isAnnexToBeUpdated) {
+                // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
+                List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+                annexes.forEach(annex -> {
+                    AnnexContextService annexContext = annexContextProvider.get();
+                    annexContext.usePurpose(purpose);
+                    annexContext.useAnnexId(annex.getId());
+                    annexContext.useActionMessageMap(actionMsgMap);
+                    annexContext.useEeaRelevance(eeaRelevance);
+                    annexContext.executeUpdateAnnexMetadata();
+                });
+            }
         }
     }
 
@@ -728,5 +731,9 @@ public class BillContextService {
 
     public void useTranslated(boolean translated) {
         this.translated = translated;
+    }
+
+    public void setAnnexToBeUpdated(boolean annexToBeUpdated) {
+        isAnnexToBeUpdated = annexToBeUpdated;
     }
 }

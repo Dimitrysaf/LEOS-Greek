@@ -223,7 +223,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         if (splittedContent == null) {
             splittedContentIsEmpty = true;
         }
-        documentViewService.updateProposalAsync(annex);
 
         newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
@@ -296,7 +295,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         populateCloneProposalMetadata(annex);
         this.annexService.createVersion(annex.getId(), versionType, checkInComment);
-        documentViewService.updateProposalAsync(annex);
         return this.genericDocumentApiService.getMajorVersionsData(documentRef, 0, 1);
     }
 
@@ -310,7 +308,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         AnnexStructureType structureType = getStructureType(structureContext1);
         Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType,
                 messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
-        documentViewService.updateProposalAsync(updatedAnnex);
         return this.annexService.getTableOfContent(updatedAnnex, tocMode);
     }
 
@@ -604,7 +601,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 isTrackChangeEnabled);
         String documentId = annexService.findAnnexByRef(documentRef).getId();
         Annex annex = annexService.updateAnnex(documentRef, documentId, properties, false);
-        documentViewService.updateProposalAsync(annex);
         return true;
     }
 
