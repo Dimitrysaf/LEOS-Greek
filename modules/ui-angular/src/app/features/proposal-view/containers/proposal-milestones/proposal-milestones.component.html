@@ -69,14 +69,14 @@
           'page.collection.milestones.table.date' | translate
         "
       >
-        {{ row.updatedDate | date : 'dd/MM/yyyy HH:mm' }}
+        {{ row.updatedDate }}
       </td>
       <td
         [attr.data-col-label]="
           'page.collection.milestones.table.status' | translate
         "
       >
-        {{ getStatus(row.status) }}
+        {{ getStatus(row.legFileStatus) }}
       </td>
       <td
         [attr.data-col-label]="
@@ -109,7 +109,7 @@
               <button
                 euiDropdownItem
                 (click)="openAnnotationWarningModal(row)"
-                [disabled]="row.status !== milestoneStatus.Ready"
+                [disabled]="row.legFileStatus !== milestoneStatus.Ready"
                 *ngIf="proposal.cloneProposalMetadataVO?.clonedProposal && permissions.includes('CAN_UPDATE')"
               >
                 {{
@@ -158,11 +158,11 @@
             'page.collection.milestones.table.status' | translate
           "
         >
-          {{ getStatus(clonedMilestone.status) }}
+          {{ getStatus(clonedMilestone.legFileStatus) }}
         </td>
         <td>
           <eui-dropdown
-            *ngIf="isReadyToMerge(clonedMilestone.status) && viewContribution"
+            *ngIf="isReadyToMerge(clonedMilestone.legFileStatus) && viewContribution"
           >
             <button euiButton euiBasicButton="true">
               <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>

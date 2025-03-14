@@ -607,13 +607,18 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/proposals/{proposalRef}/milestones", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getProposalMilestones(@PathVariable("proposalRef") String proposalRef) {
+    public ResponseEntity<Object> getProposalMilestones(@PathVariable("proposalRef") String proposalRef,
+                                                        @RequestParam(value="language", required = false) String language) {
         try {
             proposalRef = encodeParam(proposalRef);
-            return new ResponseEntity<>(apiService.getProposalMilestones(proposalRef), HttpStatus.OK);
+            if (language == null) {
+                return new ResponseEntity<>(apiService.getProposalMilestones(proposalRef), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(apiService.getProposalMilestones(proposalRef, language), HttpStatus.OK);
+            }
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while generating milestones - " + e.getMessage());
-            return new ResponseEntity<>("An error occurred while generating milestones", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("An error occurred while generating milestones: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

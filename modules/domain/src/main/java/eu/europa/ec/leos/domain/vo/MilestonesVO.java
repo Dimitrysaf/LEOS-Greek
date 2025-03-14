@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.domain.vo;
 
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -15,8 +16,8 @@ public class MilestonesVO {
     private final String proposalRef;
     private final String createdDate;
     private String createdBy;
-    private Date updatedDate;
-    private String status;
+    private String updatedDate;
+    private String legFileStatus;
     private List<MilestonesVO> clonedMilestones;
     private Boolean isClone;
     private boolean isContributionChanged;
@@ -24,9 +25,9 @@ public class MilestonesVO {
     public MilestonesVO(List<String> titles, Date createdDate, Date updatedDate, String status, String legDocumentName,
             String proposalRef, String documentTitle, String legFileId) {
         this.title = String.join(",", titles);
-        this.updatedDate = updatedDate;
+        this.updatedDate = dateFormat.format(updatedDate.toInstant());
         this.createdDate = dateFormat.format(createdDate.toInstant());
-        this.status = status;
+        this.legFileStatus = status;
         this.legDocumentName = legDocumentName;
         this.proposalRef = proposalRef;
         this.documentTitle = documentTitle;
@@ -57,19 +58,27 @@ public class MilestonesVO {
         return createdDate;
     }
 
-    public String getStatus() {
-        return status;
+    public String getLegFileStatus() {
+        return legFileStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setLegFileStatus(String legFileStatus) {
+        this.legFileStatus = legFileStatus;
     }
 
-    public Date getUpdatedDate() {
+    public String getUpdatedDate() {
         return updatedDate;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
+    public Date getUpdatedDateAsDate() {
+        try {
+            return Date.from(LocalDateTime.parse(updatedDate, dateFormat).atZone(ZoneId.systemDefault()).toInstant());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void setUpdatedDate(String updatedDate) {
         this.updatedDate = updatedDate;
     }
 
@@ -125,7 +134,7 @@ public class MilestonesVO {
             return false;
         MilestonesVO that = (MilestonesVO) o;
         return Objects.equals(title, that.title) &&
-                Objects.equals(status, that.status) &&
+                Objects.equals(legFileStatus, that.legFileStatus) &&
                 Objects.equals(createdDate, that.createdDate) &&
                 Objects.equals(updatedDate, that.updatedDate) &&
                 Objects.equals(legDocumentName, that.legDocumentName);
@@ -133,14 +142,14 @@ public class MilestonesVO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, status, createdDate, updatedDate, legDocumentName);
+        return Objects.hash(title, legFileStatus, createdDate, updatedDate, legDocumentName);
     }
 
     @Override
     public String toString() {
         return "MilestonesVO{" +
                 "title='" + title + '\'' +
-                ", status='" + status + '\'' +
+                ", status='" + legFileStatus + '\'' +
                 ", createdDate='" + createdDate + '\'' +
                 ", updatedDate=" + updatedDate +
                 ", legDocumentName='" + legDocumentName + '\'' +
