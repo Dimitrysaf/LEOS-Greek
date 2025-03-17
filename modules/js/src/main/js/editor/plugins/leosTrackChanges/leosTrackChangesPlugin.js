@@ -503,11 +503,12 @@ define(function leosTrackChangesPluginModule(require) {
                             if (!originalBackspace) {
 
                                 if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
+                                    var rangeWasCollapsed = range.collapsed;
                                     editor.fire("saveSnapshot");
                                     style.apply(editor, deleteTcStyle);
 
                                     range = editor.getSelection().getRanges()[0];
-                                    if(!range.collapsed){
+                                    if(!rangeWasCollapsed){
                                         // insert here code to delete the empty elements
                                         _removeEmptyElements(initialCommonAncestor);
                                     }
@@ -944,19 +945,31 @@ define(function leosTrackChangesPluginModule(require) {
         if(!olOrderedList || olOrderedList.length == 0){
             olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknAnnexOrderedList']");
         }
-
         if(!!olOrderedList && olOrderedList.length > 0){
-            olOrderedList.each(function( index, elem ){
-                if (this.childElementCount == 1 && this.childNodes[0].getAttribute("data-akn-element") !== "point"){
-                    for (var i = 0; i < this.firstChild.childNodes.length; i++){
-                        this.parentElement.appendChild(this.firstChild.childNodes[i]);
-                    }
-                    this.remove();
-                }
-            });
+            for (let i = 0; i < olOrderedList.length; i++) {
+                _checkEmptyOLAndRemove(olOrderedList[i], eventDataAsObject.attr('id'));
+            }
         }
-
         return eventDataAsObject;
+    }
+
+    function  _checkEmptyOLAndRemove(elem, idToExit ){
+        var $elmnt = $(elem);
+        if ($elmnt.children().length == 0 ||
+            ($elmnt.children().length == 1 && $elmnt.children()[0].getAttribute("data-akn-element") !== "point")) {
+
+            if($elmnt.children().length > 0) {
+                for (var i = 0; i < $elmnt.children()[0].children.length; i++) {
+                    $elmnt.parent().appendChild($elmnt.children()[0].children([i]));
+                }
+            }
+            var parent = $elmnt.parent();
+            $elmnt.remove();
+            if(parent.attr('id') == idToExit){
+                return;
+            }
+            _checkEmptyOLAndRemove(parent, idToExit );
+        }
     }
 
     function _checkEmptyAndRemove(index, elem){

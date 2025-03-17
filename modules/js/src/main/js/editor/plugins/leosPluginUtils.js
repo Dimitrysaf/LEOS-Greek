@@ -1471,6 +1471,52 @@ define(function leosPluginUtilsModule(require) {
         return element && element.hasAscendant('table');
     }
 
+    function _changedContent(event){
+        var editor = event.editor;
+        var olList = editor.editable().getElementsByTag('ol');
+        for (var i = 0, count =  olList.count(); i < count; i++ ) {
+            var sublist = olList.getItem(i);
+            if(!!sublist
+                && !!sublist.getFirst()
+                && sublist.getFirst().type == CKEDITOR.NODE_ELEMENT
+                && !!sublist.getFirst().getAttribute
+                && sublist.getFirst().getAttribute(DATA_AKN_ELEMENT) == POINT
+                && !!sublist.getParent()
+                && !!sublist.getParent().getChildCount
+                && sublist.getParent().getChildCount() == 1){
+                // decrement the element position, it is removed.
+                i--;
+                var nextLi = sublist.getParent();
+
+                _mergeChildren( sublist, nextLi.getParent(), nextLi);
+                sublist.remove();
+                nextLi.remove();
+                _manageEmptyLists(editor);
+                _managePoints(editor);
+                _manageEmptySubparagraphs(editor);
+                _manageCrossheadings(editor);
+                _manageSiblingLists(editor);
+            }
+        }
+
+        _manageSiblingLists(editor);
+    }
+
+    var nodeElementType = CKEDITOR.dom.walker.nodeType( CKEDITOR.NODE_ELEMENT );
+
+    // Merge child nodes with direction preserved. (http://dev.ckeditor.com/ticket/7448)
+    function _mergeChildren( from, into, refNode, forward ) {
+        var child, itemDir;
+        while ( ( child = from[ forward ? 'getLast' : 'getFirst' ]( nodeElementType ) ) ) {
+            if ( ( itemDir = child.getDirection( 1 ) ) !== into.getDirection( 1 ) )
+                child.setAttribute( 'dir', itemDir );
+
+            child.remove();
+
+            refNode ? child[ forward ? 'insertBefore' : 'insertAfter' ]( refNode ) : into.append( child, forward );
+            refNode = child;
+        }
+    }
     // Check if the entire table/list contents is selected.
     function _mergeBlocksNonCollapsedSelection( editor, range, startPath ) {
         var startBlock = startPath.block,
@@ -1555,6 +1601,7 @@ define(function leosPluginUtilsModule(require) {
         getElementName: _getElementName,
         setFocus: _setFocus,
         calculateListLevel: _calculateListLevel,
+        changedContent:_changedContent,
         getAnnexList: _getAnnexList,
         isSelectionInFirstLevelList: _isSelectionInFirstLevelList,
         isAnnexList: _isAnnexList,
@@ -1607,6 +1654,7 @@ define(function leosPluginUtilsModule(require) {
         manageSpanInSubparagraphs: _manageSpanInSubparagraphs,
         manageNestedHtmlP:_manageNestedHtmlP,
         mergeBlocksNonCollapsedSelection: _mergeBlocksNonCollapsedSelection,
+        mergeChildren: _mergeChildren,
         isFirstLevelListSubparagraph: _isFirstLevelListSubparagraph,
         manageCrossheadings: _manageCrossheadings,
         keepCursorPosition: _keepCursorPosition,
