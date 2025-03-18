@@ -583,6 +583,7 @@
   "toc.edit.window.item.regular.article.type": "Regular",
   "toc.edit.window.item.definition.article.type": "Definition",
   "toc.edit.window.item.paragraph-numbering": "Paragraph numbering",
+  "toc.edit.select.same.type": "Only elements of the same type can be selected together.",
   "arabic.num.config.validation.error.message": "Only Arabic Numbers (1, 2, 3...) are allowed",
   "roman.num.config.validation.error.message": "Only Capitalised Roman Numbers (I, II, III...) are allowed",
   "subdivision.num.config.validation.error.message": "Only capitalized Roman or Arabic numbers with or without following alphabets are allowed (3a, IIIa, 3 , III)",

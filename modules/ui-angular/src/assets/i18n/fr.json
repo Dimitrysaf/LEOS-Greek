@@ -582,6 +582,7 @@
   "toc.edit.window.item.regular.article.type": "Normal",
   "toc.edit.window.item.definition.article.type": "Définition",
   "toc.edit.window.item.paragraph-numbering":"Numérotation des Paragraphes",
+  "toc.edit.select.same.type": "Seulement des éléments de même type peuvent être selectionnés ensemble.",
   "arabic.num.config.validation.error.message": "Seulement le nombres arabes (1, 2, 3...) sont autorisés",
   "roman.num.config.validation.error.message": "Seulement les nombres romains en capital (I, II, III...) sont autorisés",
   "subdivision.num.config.validation.error.message": "Seulement le nombres arabes ou les nombres romains en capital avec ou sans les lettres alphabétiques suivantes (3a, IIIa, 3 , III) sont autorités",
