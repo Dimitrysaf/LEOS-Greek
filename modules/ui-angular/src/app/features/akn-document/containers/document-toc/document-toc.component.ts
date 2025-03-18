@@ -101,16 +101,18 @@ export class DocumentTocComponent
 
   @Input() isEditMode = false;
   lastSelectedNode: TableOfContentItemVO = null;
-  selectedNodes: TableOfContentItemVO[] = [];
+  selectedNodes: Set<TableOfContentItemVO> = new Set([]);
   parentSelectedNode: TableOfContentItemVO = null;
   prevSelectedNode: TableOfContentItemVO = null;
   nextSelectedNode: TableOfContentItemVO = null;
   selectedNodeToMove: TableOfContentItemVO = null;
   isToCDraft: boolean;
   messageFromValidation: string;
+  warningMessagesFromSelection: string;
   warningMessagesFromValidation: string[];
   isDropValid: boolean;
   isTreeValidationWarning: boolean;
+  isSelectionWarning: boolean;
   showWarningIcon: boolean;
   dragAction: DragAction;
   expandedNodeIds = new Set<string>();
@@ -324,7 +326,7 @@ export class DocumentTocComponent
   }
 
   isNodeSelected() {
-    return this.selectedNodes.length > 0;
+    return this.selectedNodes.size > 0;
   }
 
   expandAll() {
@@ -379,12 +381,11 @@ export class DocumentTocComponent
   }
 
   getDraggedNodes(node: TableOfContentItemVO): TableOfContentItemVO[] {
-    return this.isSelected(node) ? this.selectedNodes : [node];
+    return this.isSelected(node) ? Array.from(this.selectedNodes.values()) : [node];
   }
 
   isSelected(node: TableOfContentItemVO) {
-    for (var i = 0; i < this.selectedNodes.length; i++) {
-      let selectedNode: TableOfContentItemVO = this.selectedNodes[i];
+    for (var selectedNode of this.selectedNodes.values()) {
       if (selectedNode.id == node.id) {
         return true;
       }
@@ -393,17 +394,27 @@ export class DocumentTocComponent
   }
 
   handleNodeSelect(node: TableOfContentItemVO, $event, scrollTo = true) {
+    $event.stopImmediatePropagation();
     const lastSelectedType = this.lastSelectedNode ? this.lastSelectedNode.tocItem.aknTag : null;
 
-    if ($event && $event.shiftKey) {
-      this.document.getSelection().removeAllRanges();
+    if ($event && $event.ctrlKey) {
       if (lastSelectedType == null || lastSelectedType == node.tocItem.aknTag) {
-        this.selectedNodes.push(node);
+        if (this.isSelected(node)) {
+          this.selectedNodes.delete(node);
+        } else {
+          this.selectedNodes.add(node);
+        }
         this.lastSelectedNode = node;
+      } else if (lastSelectedType != null) {
+        this.isSelectionWarning = true;
+        this.warningMessagesFromSelection = this.translateService.instant("toc.edit.select.same.type");
+        setTimeout(() => {
+          this.isSelectionWarning = false;
+        }, 5000);
       }
     } else if ($event) {
-      this.selectedNodes = [];
-      this.selectedNodes.push(node);
+      this.selectedNodes = new Set([]);
+      this.selectedNodes.add(node);
       this.lastSelectedNode = node;
     } else {
       this.lastSelectedNode = node;
@@ -480,7 +491,7 @@ export class DocumentTocComponent
       );
       const node = this.getToMatNodeFromChild(el);
       if (node) {
-        draggedNodes = this.selectedNodes;
+        draggedNodes = Array.from(this.selectedNodes.values());
         const targetId = node.getAttribute('data-id');
         const level = parseInt(node.getAttribute('aria-level'), 10);
 
@@ -582,6 +593,7 @@ export class DocumentTocComponent
 
   clearSelectedNode() {
     this.lastSelectedNode = null;
+    this.selectedNodes = new Set([]);
   }
 
   checkNodesToRender(root: TableOfContentItemVO[]) {
@@ -803,7 +815,7 @@ export class DocumentTocComponent
   ) {
     this.draggedItems = nodesDragged;
     this.targetNode = nodeTarget;
-    for (var i=nodesDragged.length-1; i>=0; i--) {
+    for (var i=0; i<nodesDragged.length; i++) {
       let nodeDragged: TableOfContentItemVO = nodesDragged[i];
       this.validateTocService.validateNodeDrop(
         this.treeControl.dataNodes,

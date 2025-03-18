@@ -50,9 +50,9 @@
             </style>
           </head>
           <body>
-          <div *ngFor="let node of this.selectedNodes"
-               [class]="'dragged-selected-node' + ' ' + 'dragged-label' + ' ' + getNodeStyling(node)"
-               [innerHTML]="getNodeLabel(node.label)"
+          <div *ngFor="let selectedNode of this.selectedNodes.values()"
+               [class]="'dragged-selected-node' + ' ' + 'dragged-label'"
+               [innerHTML]="getNodeLabel(selectedNode.label)"
           ></div>
           </body>
           </html>
@@ -100,6 +100,7 @@
         [cdkDropListDisabled]="!isEditMode"
       >
         <div *cdkDragPreview>
+
           <html>
           <head>
             <style>
@@ -124,9 +125,9 @@
             </style>
           </head>
           <body>
-          <div *ngFor="let node of this.selectedNodes"
-               [class]="'dragged-selected-node' + ' ' + 'dragged-label' + ' ' + getNodeStyling(node)"
-               [innerHTML]="getNodeLabel(node.label)"
+          <div *ngFor="let selectedNode of this.selectedNodes.values()"
+               [class]="'dragged-selected-node' + ' ' + 'dragged-label'"
+               [innerHTML]="getNodeLabel(selectedNode.label)"
           ></div>
           </body>
           </html>
@@ -202,6 +203,16 @@
       </span>
       </div>
     </li>
+  </ul>
+  <ul *ngIf="isSelectionWarning">
+      <div class="eui-u-display-flex eui-u-flex-column eui-u-p-xs eui-u-font-xs eui-u-border-bottom-separator eui-u-border-state-warning">
+      <span euiLabel
+            [euiWarning]="isTreeValidationWarning"
+            euiSizeS
+            class="text-wrap"
+            [innerHTML]="warningMessagesFromSelection">
+      </span>
+      </div>
   </ul>
   <app-confirm-delete-dialog
     #deleteTocConfirmation
