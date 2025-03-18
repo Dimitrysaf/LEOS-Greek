@@ -393,7 +393,7 @@ define(function leosTrackChangesModule(require) {
         isInsideTrackedHigherElement: function(editor, user) {
             var selection = editor.getSelection();
             if (selection) {
-                var el = selection.getRanges()[0].getCommonAncestor().getAscendant(this.OUTSIDE_EDITOR_ELTS_SELECTOR);
+                var el = selection.getRanges()[0]?.getCommonAncestor().getAscendant(this.OUTSIDE_EDITOR_ELTS_SELECTOR);
                 if (!!el) {
                     if ((el.hasAttribute(this.ACTION_ATTR))
                         && (!el.hasAttribute(this.SOFT_ACTION_ATTR) || el.getAttribute(this.SOFT_ACTION_ATTR) != this.LEOS_SOFT_ACTION_MOVE_FROM_VALUE)
