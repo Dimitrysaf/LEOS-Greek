@@ -66,6 +66,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -132,7 +133,10 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        builderFactory.setExpandEntityReferences(false);
         builderFactory.setNamespaceAware(true);
+        builderFactory.setXIncludeAware(false);
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
 
         Document xmlDoc = builder.parse(new ByteArrayInputStream(doc.getSource()));
