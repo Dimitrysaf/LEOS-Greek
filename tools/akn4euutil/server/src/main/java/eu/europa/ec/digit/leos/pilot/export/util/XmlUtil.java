@@ -54,7 +54,6 @@ public class XmlUtil {
     public static final String NAMESPACE_AKN4EU_URI = "http://imfc.europa.eu/akn4eu";
     public static final String TAG_AKN4EU_NAME = "akn4eu:akn4euVersion";
 
-
     public static class XmlFile {
         private Document xmlDocument;
         private String name;
@@ -66,6 +65,20 @@ public class XmlUtil {
         public XmlFile(String name) {
             this.name = name;
             this.xmlDocument = null;
+        }
+
+        private static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            builderFactory.setExpandEntityReferences(false);
+            builderFactory.setNamespaceAware(true);
+            builderFactory.setXIncludeAware(false);
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            return builder;
         }
 
         public static String parseNode(Node node) throws XmlUtilException {
@@ -94,14 +107,7 @@ public class XmlUtil {
 
         public void createNewXmlDocument() throws XmlUtilException {
             try {
-                DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-                builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-                builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-                builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-                builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-                builderFactory.setNamespaceAware(true);
-
-                this.xmlDocument = builderFactory.newDocumentBuilder().newDocument();
+                this.xmlDocument = getDocumentBuilder().newDocument();
             } catch (ParserConfigurationException e) {
                 throw new XmlUtilException("Error creating new xml document", e);
             }
@@ -109,14 +115,7 @@ public class XmlUtil {
 
         public void parse(InputStream inputStream, String name) throws XmlUtilException {
             try {
-                DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-                builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-                builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-                builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-                builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-                builderFactory.setNamespaceAware(true);
-
-                this.xmlDocument = builderFactory.newDocumentBuilder().parse(inputStream);
+                this.xmlDocument = getDocumentBuilder().parse(inputStream);
                 this.name = name;
             } catch (ParserConfigurationException | SAXException | IOException e) {
                 throw new XmlUtilException("Error parsing xml stream", e);
@@ -186,14 +185,7 @@ public class XmlUtil {
         }
 
         private static Node createSecureDocumentFromNode(Node node) throws Exception {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            dbf.setNamespaceAware(true);
-
-            DocumentBuilder builder = dbf.newDocumentBuilder();
+            DocumentBuilder builder = getDocumentBuilder();
             Document secureDocument = builder.newDocument();
             if (node instanceof Document) {
                 NodeList childNodes = node.getChildNodes();
