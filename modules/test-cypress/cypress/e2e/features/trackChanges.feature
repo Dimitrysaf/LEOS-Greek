@@ -4,7 +4,7 @@
 @TrackChangesScenarios
 Feature: Track Changes Feature
 
-  @trackChanges_on_num_text @local @focus
+  @trackChanges_on_num_text @local
   Scenario: Basic test to check num's track changes on newly added element
     # Login
     Given navigate to edit drafting application with "User1"
