@@ -858,11 +858,11 @@ export class DocumentTocComponent
   }
 
   private isMovedToNode(node: TableOfContentItemVO) {
-    return node.softActionRoot && node.softActionAttr === MOVE_TO;
+    return node?.softActionRoot && node?.softActionAttr === MOVE_TO;
   }
 
   private isDeletedNode(node: TableOfContentItemVO) {
-    return node.softActionRoot && node.softActionAttr === DELETE;
+    return node?.softActionRoot && node?.softActionAttr === DELETE;
   }
 
   private handleAddNodeAfterValidation(
