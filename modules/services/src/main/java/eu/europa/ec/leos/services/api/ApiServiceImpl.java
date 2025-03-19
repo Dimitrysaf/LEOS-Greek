@@ -1100,9 +1100,9 @@ public abstract class ApiServiceImpl implements ApiService {
             if (hasNotChanged(proposal)) {
                 throw new CreateMilestoneException();
             }
-            milestoneService.createMilestone(proposalId, milestoneComment);
             final String versionComment = messageHelper.getMessage("milestone.versionComment");
             createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
+            milestoneService.createMilestone(proposalId, milestoneComment);
         }
         return null;
     }
