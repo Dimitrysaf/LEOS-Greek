@@ -186,3 +186,18 @@ And(/^ins tag with attribute "([^"]*)" and value "([^"]*)" of num tag of point (
 And(/^del tag with attribute "([^"]*)" and value "([^"]*)" of num tag of subparagraph (\d+) of list of level (\d+) contains "([^"]*)"$/, function (attributeName, attributeValue, subParagraphNumber, levelNumber, value) {
     annexPage.getLevel(levelNumber).children('list').children('subparagraph').eq(subParagraphNumber-1).find("del" + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
 });
+
+Then('subparagraph {int} of level {int} contains an attribute with name {string} and value {string}', function (subParagraphNumber, levelNumber, attributeName, attributeValue) {
+    annexPage.getSubparagraphOfLevel(levelNumber, subParagraphNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then(/^content of computed style before of subparagraph (\d+) of level (\d+) contains "([^"]*)"$/, function (subParagraphNumber, levelNumber, content) {
+    annexPage.getSubparagraphOfLevel(levelNumber, subParagraphNumber).then(($el) => {
+        const before = window.getComputedStyle($el[0], '::before');
+        expect(before.content).to.contain(content);
+    });
+});
+
+Then(/^ins tag of content of subparagraph (\d+) of level (\d+) is "([^"]*)"$/, function (subParagraphNumber, levelNumber, content) {
+    annexPage.getSubparagraphOfLevel(levelNumber, subParagraphNumber).find('content aknp').find('ins').should('have.text', content);
+});
