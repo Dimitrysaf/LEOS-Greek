@@ -51,7 +51,7 @@
   span {
     white-space: break-spaces;
   }
-  
+
   ins, [leos\:action="insert"] {
     text-decoration: underline;
     white-space: break-spaces;
@@ -67,6 +67,15 @@
         background-color: hsl(120, 100%, 35%);
       }
     }
+     article:not([leos\:action="insert"]),
+     article:not([leos\:action="insert"]) [leos\:action="insert"]{
+      text-decoration: none !important;
+      white-space: break-spaces;
+      color: black !important;
+      display: inline-block;
+      width: 100%;
+    }
+
   }
 
   del, [leos\:action="delete"], [leos\:action="delete"] num {
