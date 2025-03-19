@@ -70,13 +70,35 @@ define(function aknSignaturePluginModule(require) {
         if(e.keyCode === BACKSPACE  || e.keyCode === DELETE){
             var selection = editor.getSelection();
             var startElement = leosKeyHandler.getSelectedElement(selection);
-            if (startElement) {
+            var nextNode = selection.getStartElement().getNext();
+            var prevNode = selection.getStartElement().getPrevious();
+            if (startElement && selection.isCollapsed()) {
                 var tagName = startElement.$.localName;
-                if (tagName === 'p' && startElement.getText().trim() == "") {
-                    //Cancel the event
-                    e.stopImmediatePropagation();
-                    return false;
+                if (tagName === 'p') {
+                    if (startElement.getText().trim() == "") {
+                        //Cancel the event
+                        e.stopImmediatePropagation();
+                        return false;
+                    } else if (e.keyCode === BACKSPACE && selection.getRanges()[0].startOffset == 0) {
+                        if (prevNode == null || prevNode.getText().length === 0 || prevNode.$.localName === 'p') {
+                            e.stopImmediatePropagation();
+                            return false;
+                        }
+                    } else if (e.keyCode === DELETE && selection.getRanges()[0].startOffset == selection.getRanges()[0].endContainer.getText().length) {
+                        if (nextNode == null || nextNode.getText().length === 0 || nextNode.$.localName === 'p') {
+                            e.stopImmediatePropagation();
+                            return false;
+                        }
+                    }
                 }
+            } else if (startElement && (selection.getCommonAncestor().getId() === selection.getStartElement().getId()
+                || selection.getCommonAncestor().type === Node.TEXT_NODE)
+                && selection.getSelectedText() === startElement.getText()) {
+                e.stopImmediatePropagation();
+                return false;
+            } else if (!selection.isCollapsed() && selection.getCommonAncestor().getId() !== selection.getStartElement().getId()) {
+                e.stopImmediatePropagation();
+                return false;
             }
         }
     }
