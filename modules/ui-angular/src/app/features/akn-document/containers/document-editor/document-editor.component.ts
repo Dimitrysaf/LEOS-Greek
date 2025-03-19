@@ -143,7 +143,6 @@ export class DocumentEditorComponent
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
-  @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
   @ViewChild('confirmAnnexStructureChangeDialog')
   annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
@@ -523,6 +522,10 @@ export class DocumentEditorComponent
     }
   }
 
+  handleEditOpenEditor() {
+    this.documentActions.handleOpenEditor(() => this.handleEdit());
+  }
+
   handleEdit() {
     const coEdition = this.coEditionWSService.checkForCoEdition('EDIT_TOC');
     if (coEdition) {
@@ -666,28 +669,14 @@ export class DocumentEditorComponent
     this.versionCompareService.toggleCompareMode();
   }
 
+  public canDeactivate(): Observable<boolean> {
+    return this.documentActions.canPerformAction();
+  }
+
   handleClose() {
-    if (this.document.querySelectorAll('.cke').length > 0) {
-      this.openEditorDialog.openDialog();
-    } else {
-      this.cdkEditor.closeElementEditor();
-      const proposalRef = this.documentConfig.proposalMetadata?.ref;
-      if (proposalRef) {
-        this.router.navigate([`/collection/${proposalRef}`]);
-      }
-    }
-  }
-
-  onCancelClose() {
-    this.openEditorDialog.closeDialog();
-  }
-
-  onConfirmClose() {
-    this.openEditorDialog.closeDialog();
-    this.cdkEditor.closeElementEditor();
-    //wait for the API where we get all the metadata for each document
-    if (this.proposalRef) {
-      this.router.navigate([`/collection/${this.proposalRef}`]);
+    const proposalRef = this.documentConfig.proposalMetadata?.ref;
+    if (proposalRef) {
+      this.router.navigate([`/collection/${proposalRef}`]);
     }
   }
 

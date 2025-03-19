@@ -302,6 +302,8 @@ Feature: CK Editor Regression Features
 
         ######  subparagraphMandate ######
         When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
         Then user is on act viewer page
         When click on financial statement link present in act viewer page
         Then user is on financial statement page
@@ -314,6 +316,8 @@ Feature: CK Editor Regression Features
 
         ######  Annex inlineParagraph ######
         When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
         Then user is on act viewer page
         When click on add button in annexes section
         Then total number of annexes present in act viewer page is 1
@@ -351,3 +355,197 @@ Feature: CK Editor Regression Features
         When mouseover and click on paragraph 1
         Then ck editor window is displayed
         And table icon is enabled in ck editor
+
+    @ckEditorOpen @local
+    Scenario: preventing actions when ckEditor is open
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation Article Testing" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+
+        ##### Save button #####
+        When click on save button in ribbon toolbar
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on save button in ribbon toolbar
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then "Save this version" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        ##### Import from OJ button #####
+        When click on import from oj button in ribbon toolbar
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on import from oj button in ribbon toolbar
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then "Import from the Official Journal of the European Union" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        ##### Edit TOC #####
+        When click on toc edit button
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And elements list is not displayed in navigation pane
+        And ck editor window is displayed
+
+        When click on toc edit button
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then cancel button is displayed and enabled in navigation pane
+        When click on cancel button in navigation pane
+        Then no dialog box window present
+        And elements list is not displayed in navigation pane
+        And ck editor window is displayed
+
+        ##### Revert to previous version #####
+        When click on versions pane accordion
+        Then search button is displayed in versions pane section
+        When click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
+        And click on revert to this version
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
+        And click on revert to this version
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then "Restore Version" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        ##### Close button #####
+        When click on close button present in legal act page
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on close button present in legal act page
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then user is on act viewer page
+
+        ##### Breadcrum navigation #####
+        ## from legal act##
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+
+        When click on home link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on workspace button in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then user is on act viewer page
+
+        ## from financial statement ##
+        When click on financial statement link present in act viewer page
+        Then user is on financial statement page
+        When mouseover and click on level 2 in financial statement page
+        Then ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then user is on act viewer page
+
+        ## from explanatory memorandum ##
+        When click on explanatory memorandum link present in act viewer page
+        Then user is on explanatory memorandum page
+        When mouseover and click on block container 1 in explanatory memorandum page
+        Then ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then user is on act viewer page
+
+        ## from cover page ##
+        When click on cover page link present in act viewer page
+        Then user is on cover page
+        When click on long title of doc purpose
+        Then ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then user is on act viewer page
+
+        ## from annex ##
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 1
+        When click on annex 1 link
+        Then user is on annex page
+        When mouseover and click on level 1
+        Then ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then user is on act viewer page

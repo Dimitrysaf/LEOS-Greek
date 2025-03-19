@@ -1,7 +1,7 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
+  EventEmitter, Inject,
   Input,
   OnDestroy,
   OnInit,
@@ -13,7 +13,6 @@ import { consumeEvent } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Version } from '@/features/akn-document/models/versions';
-import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { AppConfigService } from '@/core/services/app-config.service';
 import { VersionsPaneGroupComponent } from '@/features/akn-document/components/versions-pane-group/versions-pane-group.component';
@@ -21,6 +20,8 @@ import { VersionsPaneGroupComponent } from '@/features/akn-document/components/v
 import { ViewVersionService } from '../../services/view-version.service';
 import Observable from "rxjs";
 import {EuiMessageBoxComponent} from "@eui/components/eui-message-box";
+import {DOCUMENT_ACTIONS_SERVICE} from "@/features/akn-document/akn-document.module";
+import {DocumentActionsService} from "@/features/akn-document/services/document-actions.service";
 
 @Component({
   selector: 'app-version-actions-dropdown',
@@ -50,7 +51,8 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     private config: AppConfigService,
     private elementRef: ElementRef<HTMLElement>,
     private translate: TranslateService,
-    private tableOfContentService: TableOfContentService,
+    @Inject(DOCUMENT_ACTIONS_SERVICE)
+    private documentActions: DocumentActionsService,
     public viewVersionService: ViewVersionService,
     public versionsPaneGroupComponent: VersionsPaneGroupComponent
   ) {}
@@ -78,6 +80,10 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  handleVersionRevertOpenEditor(version: string, versionNumber: { major: number; intermediate: number; minor: number }) {
+    this.documentActions.handleOpenEditor(() => this.onVersionRevert(version, versionNumber));
   }
 
   onVersionRevert(
