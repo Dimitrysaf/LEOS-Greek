@@ -280,6 +280,10 @@ define(function leosUtilsModule(require) {
                     "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt; padding-top: 6pt;" +
                     "}\n";
+                tcShowStyle += "aknp[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before {" +
+                    "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt; padding-top: 1pt;" +
+                    "}\n";
                 tcShowStyle += "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:not(:has(> num)):before {" +
                     "content: '↰'; min-width: 15px; color: " + userColors[0] + "; " +
@@ -288,6 +292,7 @@ define(function leosUtilsModule(require) {
             } else {
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
+                    "p[data-akn-name='aknParagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] +"'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
                     "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
                     "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +

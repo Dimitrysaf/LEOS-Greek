@@ -382,13 +382,15 @@ define(function listItemNumberModule(require) {
         var articleType = leosPluginUtils.getArticleType(editor.element, editor.LEOS.articleTypesConfig);
         listNumberConfig = editor.LEOS.listNumberConfig[articleType];
         numberingConfigs = editor.LEOS.numberingConfigs;
-        for (var i = 0; i < listNumberConfig.length; i++) {
-            if (sequences[i].inDefault) {
-                var numberType = numberingConfigs.find(function(e){return e.type === listNumberConfig[i].numberingType});
-                var defaultListItem = sequences.find(function(e){return e.type ===  numberType.type});
-                defaultListItem.prefix = numberType.prefix;
-                defaultListItem.suffix = numberType.suffix;
-                defaultList[listNumberConfig[i].depth-1] = defaultListItem;
+        if (listNumberConfig) {
+            for (var i = 0; i < listNumberConfig.length; i++) {
+                if (sequences[i].inDefault) {
+                    var numberType = numberingConfigs.find(function(e){return e.type === listNumberConfig[i].numberingType});
+                    var defaultListItem = sequences.find(function(e){return e.type ===  numberType.type});
+                    defaultListItem.prefix = numberType.prefix;
+                    defaultListItem.suffix = numberType.suffix;
+                    defaultList[listNumberConfig[i].depth-1] = defaultListItem;
+                }
             }
         }
     }
