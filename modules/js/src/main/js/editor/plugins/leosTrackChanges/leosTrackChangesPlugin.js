@@ -659,6 +659,9 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("afterCommandExec", function(event) {
                 if (event.data.name === "enter") {
                     var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
+                    if (!elementToRemoveAttribute) {
+                        elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("p");
+                    }
                     if (elementToRemoveAttribute) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
