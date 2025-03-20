@@ -355,6 +355,7 @@ Feature: CK Editor Regression Features
         When mouseover and click on paragraph 1
         Then ck editor window is displayed
         And table icon is enabled in ck editor
+        When click close button of ck editor
 
     @ckEditorOpen @local
     Scenario: preventing actions when ckEditor is open
