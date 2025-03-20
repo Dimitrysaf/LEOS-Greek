@@ -217,7 +217,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory){
+    public Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory, String refersToOfDocument, String showAs) {
         LOG.trace("Add component in Proposal ... [id={}, href={}, leosCategory={}]", proposal.getId(), href, leosCategory.name());
         Stopwatch stopwatch = Stopwatch.createStarted();
 
@@ -231,7 +231,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         byte[] xmlBytes = proposal.getContent().get().getSource().getBytes();
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(xmlBytes,
                 keyValueMap,
-                xmlNodeConfigProcessor.getProposalComponentsConfig(leosCategory, "href"));
+                xmlNodeConfigProcessor.getProposalComponentsConfig(leosCategory, "href", refersToOfDocument, showAs));
         updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
 
         //save updated xml
@@ -240,6 +240,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         LOG.trace("Added component in Proposal ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
+
     }
 
     @Override
