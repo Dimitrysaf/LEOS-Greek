@@ -368,12 +368,30 @@ Feature: CK Editor Regression Features
         And  provide document title "Automation Article Testing" in create document page
         And  click on create button
         Then user is on act viewer page
+
+        ## breadcrum navigation from explanatory memorandum ##
+        When click on explanatory memorandum link present in act viewer page
+        Then user is on explanatory memorandum page
+        When mouseover and click on block container 1 in explanatory memorandum page
+        Then ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on cancel button in dialog box window
+        Then no dialog box window present
+        And ck editor window is displayed
+
+        When click on act view link in breadcrumb item
+        Then "Open Editor Detected" dialog box window is displayed
+        When click on confirm button in dialog box window
+        Then user is on act viewer page
+
+        ##### Save button #####
         When click on legal act link present in act viewer page
         Then user is on legal act page
         When mouseover and click on article 1
         Then ck editor window is displayed
 
-        ##### Save button #####
         When click on save button in ribbon toolbar
         Then "Open Editor Detected" dialog box window is displayed
         When click on cancel button in dialog box window
@@ -485,23 +503,6 @@ Feature: CK Editor Regression Features
         When click on financial statement link present in act viewer page
         Then user is on financial statement page
         When mouseover and click on level 2 in financial statement page
-        Then ck editor window is displayed
-
-        When click on act view link in breadcrumb item
-        Then "Open Editor Detected" dialog box window is displayed
-        When click on cancel button in dialog box window
-        Then no dialog box window present
-        And ck editor window is displayed
-
-        When click on act view link in breadcrumb item
-        Then "Open Editor Detected" dialog box window is displayed
-        When click on confirm button in dialog box window
-        Then user is on act viewer page
-
-        ## from explanatory memorandum ##
-        When click on explanatory memorandum link present in act viewer page
-        Then user is on explanatory memorandum page
-        When mouseover and click on block container 1 in explanatory memorandum page
         Then ck editor window is displayed
 
         When click on act view link in breadcrumb item
