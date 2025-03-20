@@ -394,7 +394,7 @@ export class DocumentTocComponent
   }
 
   handleNodeSelect(node: TableOfContentItemVO, $event, scrollTo = true) {
-    $event.stopImmediatePropagation();
+    $event?.stopImmediatePropagation();
     const lastSelectedType = this.lastSelectedNode ? this.lastSelectedNode.tocItem.aknTag : null;
 
     if ($event && $event.ctrlKey) {
@@ -871,6 +871,9 @@ export class DocumentTocComponent
     isAdd: boolean,
     position: string,
   ) {
+    if (!nodeDragged) {
+      return;
+    }
     if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged) || !nodeDragged.tocItem.draggable) {
       this.populateValidationMessage({
         success: false,
