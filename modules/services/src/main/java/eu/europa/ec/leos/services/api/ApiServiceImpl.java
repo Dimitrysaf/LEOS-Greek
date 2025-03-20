@@ -529,7 +529,7 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public Optional<DocumentVO> getProposalDetails(String proposalRef, String userId) {
         LOG.trace(proposalRef);
-        Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDate).reversed());
+        Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDateAsDate).reversed());
         Proposal proposal = null;
         byte[] proposalXmlContent = new byte[0];
         boolean isClonedProposal = false;
@@ -567,6 +567,7 @@ public abstract class ApiServiceImpl implements ApiService {
                             List<XmlDocument> translatedDocuments = packageService.findDocumentsByPackagePath(importedPackage.getPath(),
                                     XmlDocument.class, false);
                             DocumentVO translatedProposalVO = createViewObject(translatedDocuments, null, false);
+                            translatedProposalVO.setCreationOptions(translatedDocuments.stream().filter(doc -> doc.getCategory().name().equals("PROPOSAL")).findFirst().get().getMetadata().get().getCreationOptions());
                             translatedDocList.add(translatedProposalVO);
                         }
                     });
@@ -910,18 +911,71 @@ public abstract class ApiServiceImpl implements ApiService {
             populateCloneProposalMetadataVO(proposalXmlContent);
         }
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
         List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, true);
         legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
         try {
             String finalProposalId = proposalId;
+            final String milestoneImported = messageHelper.getMessage("leoslight.document.milestone.imported");
             legDocuments.forEach(document -> {
-                milestonesVOS.add(getMilestonesVO(document, finalProposalId, proposalRef));
+                if (!document.getStatus().equals(LeosLegStatus.IMPORTED) || !document.getVersionComment().equals(milestoneImported)) {
+                    milestonesVOS.add(getMilestonesVO(document, finalProposalId, proposalRef));
+                }
             });
         } catch (Exception e) {
             LOG.error("Error while getting milestones for proposal " + e);
             throw e;
         }
+        return milestonesVOS;
+    }
+
+    @Override
+    public List<MilestonesVO> getProposalMilestones(String proposalRef, String language) throws Exception {
+        List<MilestonesVO> milestonesVOS = new ArrayList<>();
+        String proposalId = null;
+        byte[] proposalXmlContent = new byte[0];
+        boolean isClonedProposal = false;
+        if (proposalRef != null) {
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            if (proposal != null) {
+                proposalId = proposal.getId();
+                proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
+                        proposal.getContent().get().getSource().getBytes() :
+                        new byte[0];
+                isClonedProposal = proposal.isClonedProposal();
+            }
+        }
+        if (isClonedProposal) {
+            populateCloneProposalMetadataVO(proposalXmlContent);
+        }
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        List<LinkedPackage> linkedPackageList = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
+        if (linkedPackageList != null && linkedPackageList.size() > 0) {
+            Optional<LinkedPackage> languagePackage = linkedPackageList.stream().filter(linkedPackage -> {
+                LeosPackage importedPackage = packageService.findPackageByPackageId(linkedPackage.getLinkedPackageId());
+                return (importedPackage.getLanguage().equalsIgnoreCase(language));
+            }).findAny();
+            if (languagePackage.isPresent()) {
+                List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(languagePackage.get().getLinkedPackageId(), LegDocument.class, false, true);
+                legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
+                final String milestoneImported = messageHelper.getMessage("leoslight.document.milestone.imported");
+                try {
+                    String finalProposalId = proposalId;
+                    legDocuments.forEach(document -> {
+                        if (!document.getStatus().equals(LeosLegStatus.FILE_ERROR)
+                                && (!document.getStatus().equals(LeosLegStatus.IMPORTED) || !document.getVersionComment().equals(milestoneImported))) {
+                            milestonesVOS.add(getMilestonesVO(document, finalProposalId, proposalRef));
+                        }
+                    });
+                } catch (Exception e) {
+                    LOG.error("Error while getting milestones for proposal " + e);
+                    throw e;
+                }
+            } else {
+                LOG.error("The linguistic version for the required language does not exists");
+                throw new Exception("The linguistic version for the required language does not exists");
+            }
+        }
+
         return milestonesVOS;
     }
 
@@ -1043,14 +1097,26 @@ public abstract class ApiServiceImpl implements ApiService {
             if (isClonedProposal) {
                 populateCloneProposalMetadataVO(proposalXmlContent);
             }
-            final String versionComment = messageHelper.getMessage("milestone.versionComment");
-            if (proposal.getVersionType().equals(VersionType.MAJOR) && proposal.getVersionComment().equals(versionComment)) {
+            if (hasNotChanged(proposal)) {
                 throw new CreateMilestoneException();
             }
+            final String versionComment = messageHelper.getMessage("milestone.versionComment");
             createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
             milestoneService.createMilestone(proposalId, milestoneComment);
         }
         return null;
+    }
+
+    private boolean hasNotChanged(Proposal proposal) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        List<XmlDocument> proposalDocs = packageService.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, false);
+        final String versionComment = messageHelper.getMessage("milestone.versionComment");
+        for (XmlDocument doc: proposalDocs) {
+            if (!doc.getVersionType().equals(VersionType.MAJOR) || !doc.getVersionComment().equals(versionComment)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

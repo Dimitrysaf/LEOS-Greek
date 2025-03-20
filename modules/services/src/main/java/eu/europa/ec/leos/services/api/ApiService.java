@@ -87,6 +87,8 @@ public interface ApiService {
 
     List<MilestonesVO> getProposalMilestones(String proposalRef) throws Exception;
 
+    List<MilestonesVO> getProposalMilestones(String proposalRef, String language) throws Exception;
+
     void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection, Integer timesToMove);
 
     void updateAnnexTitle(String proposalRef, String annexId, String annexTitle);
