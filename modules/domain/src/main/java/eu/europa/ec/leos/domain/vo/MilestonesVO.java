@@ -25,7 +25,7 @@ public class MilestonesVO {
     public MilestonesVO(List<String> titles, Date createdDate, Date updatedDate, String status, String legDocumentName,
             String proposalRef, String documentTitle, String legFileId) {
         this.title = String.join(",", titles);
-        this.updatedDate = dateFormat.format(updatedDate.toInstant());
+        this.updatedDate = updatedDate == null ? null : dateFormat.format(updatedDate.toInstant());
         this.createdDate = dateFormat.format(createdDate.toInstant());
         this.legFileStatus = status;
         this.legDocumentName = legDocumentName;
