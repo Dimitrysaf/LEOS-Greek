@@ -564,6 +564,24 @@ define(function leosTrackChangesModule(require) {
             var left = positionEditor[0], right = left + parseInt(window.getComputedStyle(element, ":" + pseudoElt).width);
             var mouseX = mousePosition[0], mouseY = mousePosition[1];
             return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
+        },
+
+        getLastTCElement: function(element) {
+            for (var i = element.getChildCount()-1; i >= 0; i--) {
+                var childElement = element.getChild(i);
+                if(!childElement || childElement.type === CKEDITOR.NODE_TEXT) {
+                    continue;
+                }
+                if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
+                    var lastTCElement = this.getLastTCElement(childElement);
+                    if(lastTCElement) {
+                        return lastTCElement;
+                    }
+                }
+                if(childElement.hasAttribute(core.ACTION_ATTR) || childElement.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || childElement.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                    return childElement;
+                }
+            }
         }
     };
 
@@ -674,33 +692,19 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
-        acceptAllChanges: function(editor, element, numberModule) {
-            for (var i = element.getChildCount()-1; i >= 0; i--) {
-                var item = element.getChild(i);
-                if(!item || item.type === CKEDITOR.NODE_TEXT) {
-                    continue;
-                }
-                if(item.type === CKEDITOR.NODE_ELEMENT && item.getChildCount() > 0) {
-                    this.acceptAllChanges(editor, item, numberModule);
-                }
-                if(item.hasAttribute(core.ACTION_ATTR) || item.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || item.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
-                    this.acceptChange(editor, item, numberModule);
-                }
+        acceptAllChanges: function(editor) {
+            var lastTCElement = core.getLastTCElement(editor.document.find('.leos-placeholder').getItem(0));
+            if(lastTCElement) {
+                editor.execCommand('acceptElement', lastTCElement);
+                this.acceptAllChanges(editor);
             }
         },
 
-        rejectAllChanges: function(editor, element, numberModule) {
-            for (var i = element.getChildCount()-1; i >= 0; i--) {
-                var item = element.getChild(i);
-                if(!item || item.type === CKEDITOR.NODE_TEXT) {
-                    continue;
-                }
-                if(item.type === CKEDITOR.NODE_ELEMENT && item.getChildCount() > 0) {
-                    this.rejectAllChanges(editor, item, numberModule);
-                }
-                if(item.hasAttribute(core.ACTION_ATTR) || item.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || item.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
-                    this.rejectChange(editor, item, numberModule);
-                }
+        rejectAllChanges: function(editor) {
+            var lastTCElement = core.getLastTCElement(editor.document.find('.leos-placeholder').getItem(0));
+            if(lastTCElement) {
+                editor.execCommand('rejectElement', lastTCElement);
+                this.rejectAllChanges(editor);
             }
         },
 
@@ -743,7 +747,9 @@ define(function leosTrackChangesModule(require) {
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                     var liParentElement = element.getParent();
                     element.remove();
+                    if (this.checkIfEmptyListElement(liParentElement)) {
                     this.removeEmptyElement(liParentElement, numberModule, editor);
+                    }
                 } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
                     element.$.outerHTML = element.$.innerHTML;
                 }
@@ -781,19 +787,30 @@ define(function leosTrackChangesModule(require) {
             return toBeProcessedInBackend;
         },
 
-        removeEmptyElement: function (liParentElement, numberModule, editor) {
-            var liParentElementToCheckText = liParentElement;
+        checkIfEmptyListElement(element) {
+            var liParentElementToCheckText = element;
             while (liParentElementToCheckText && liParentElementToCheckText.getName() !== 'li') {
                 liParentElementToCheckText = liParentElementToCheckText.getParent();
             }
+            var liParentElementToCheckNumber = element;
+            while (liParentElementToCheckNumber
+            && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
+                liParentElementToCheckNumber = liParentElementToCheckNumber.getParent();
+            }
+            if (liParentElementToCheckText && liParentElementToCheckText.getText().trim() === ''
+                && liParentElementToCheckNumber && liParentElementToCheckNumber.getParent()
+                && liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                return true;
+            }
+            return false;
+        },
+
+        removeEmptyElement: function (liParentElement, numberModule, editor) {
             var liParentElementToCheckNumber = liParentElement;
             while (liParentElementToCheckNumber
             && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
                 liParentElementToCheckNumber = liParentElementToCheckNumber.getParent();
             }
-            if (liParentElementToCheckText && liParentElementToCheckText.getText() === ''
-                && liParentElementToCheckNumber && liParentElementToCheckNumber.getParent()
-                && liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                 var isFirstOfAll = numberModule.isFistElement(liParentElementToCheckNumber.getParent().$, liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM));
                 var keyCodeToUse = 8;
                 if (isFirstOfAll) {
@@ -814,7 +831,6 @@ define(function leosTrackChangesModule(require) {
                     core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
                 }
                 editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
-            }
         },
 
         removeEnterAndJoinLines: function (element, editor) {
@@ -850,7 +866,11 @@ define(function leosTrackChangesModule(require) {
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION
                 || (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW
                     && element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION)) {
+                if(this.checkIfEmptyListElement(element)) {
+                    this.removeEmptyElement(element, numberModule, editor);
+                } else {
                 this.removeEnterAndJoinLines(element, editor);
+                }
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributesForEnter(element);
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
@@ -859,7 +879,18 @@ define(function leosTrackChangesModule(require) {
                 if(parentElem && parentElem.getAttribute('data-akn-name') === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
                 } else {
+                    var liParentElement = element.getAscendant("li");
+                    var parent = element.getParent();
                     element.remove();
+                    if(leosPluginUtils.isSubparagraph(parent) && parent.getText().trim() === '') {
+                        parent.remove();
+                    }
+                    if(liParentElement) {
+                        editor.getSelection().fake(liParentElement);
+                        if (this.checkIfEmptyListElement(liParentElement)) {
+                            this.removeEmptyElement(liParentElement, numberModule, editor);
+                        }
+                    }
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 if(parentElem) {
