@@ -507,12 +507,12 @@ define(function leosTrackChangesPluginModule(require) {
                                     editor.fire("saveSnapshot");
                                     style.apply(editor, deleteTcStyle);
 
-                                    range = editor.getSelection().getRanges()[0];
                                     if(!rangeWasCollapsed){
                                         // insert here code to delete the empty elements
                                         _removeEmptyElements(initialCommonAncestor);
                                     }
                                     editor.fire("saveSnapshot");
+                                    range = editor.getSelection().getRanges()[0];
                                     range.collapse(!deleteKey);
                                     range.select();
 
@@ -957,18 +957,17 @@ define(function leosTrackChangesPluginModule(require) {
     }
 
     function  _checkEmptyOLAndRemove(elem, idToExit ){
-        var $elmnt = $(elem);
-        if ($elmnt.children().length == 0 ||
-            ($elmnt.children().length == 1 && $elmnt.children()[0].getAttribute("data-akn-element") !== "point")) {
+        if (elem.childNodes.length === 0 ||
+            (elem.childNodes.length === 1 && elem.childNodes[0].getAttribute("data-akn-element") !== "point")) {
 
-            if($elmnt.children().length > 0) {
-                for (var i = 0; i < $elmnt.children()[0].children.length; i++) {
-                    $elmnt.parent().appendChild($elmnt.children()[0].children([i]));
+            if(elem.childNodes.length > 0) {
+                for (var i = 0; i < elem.childNodes[0].childNodes.length; i++) {
+                    elem.parentNode.appendChild(elem.childNodes[0].childNodes[i]);
                 }
             }
-            var parent = $elmnt.parent();
-            $elmnt.remove();
-            if(parent.attr('id') == idToExit){
+            var parent = elem.parentNode;
+            elem.remove();
+            if(parent.getAttribute('id') === idToExit){
                 return;
             }
             _checkEmptyOLAndRemove(parent, idToExit );
