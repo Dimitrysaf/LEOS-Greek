@@ -39,6 +39,7 @@ import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
+import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
@@ -616,6 +617,9 @@ public class LeosApiController {
             } else {
                 return new ResponseEntity<>(apiService.getProposalMilestones(proposalRef, language), HttpStatus.OK);
             }
+        } catch (NotFoundException e) {
+            LOG.debug(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while generating milestones - " + e.getMessage());
             return new ResponseEntity<>("An error occurred while generating milestones: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
