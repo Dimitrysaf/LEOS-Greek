@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.services.label.ref;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayDeque;
@@ -61,14 +60,6 @@ public class LabelLevelElementsOnly extends LabelHandler {
         boolean canProcess = refs.stream()
                 .allMatch(ref -> NODES_TO_CONSIDER.contains(ref.getType()));
         return canProcess;
-    }
-
-    @Override
-    public void addPreffix(StringBuffer label, String docType, List<TreeNode> refs) {
-        if (!StringUtils.isEmpty(docType)) {
-            label.append(docType);
-            label.append(", ");
-        }
     }
 
     @Override
