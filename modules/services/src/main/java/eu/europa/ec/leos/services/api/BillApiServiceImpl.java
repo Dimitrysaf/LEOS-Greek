@@ -421,7 +421,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         String language = documentLanguageContext.getDocumentLanguage();
         newXmlContent = this.numberService.renumberHigherSubDivisions(newXmlContent, language, elementTagName, tocItemsList);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
-        //newXmlContent = billProcessor.handleTrackChangeforSoleElements(newXmlContent, elementTagName);
+        newXmlContent = billProcessor.handleTrackChangeForSoleNumberedElements(newXmlContent, elementTagName);
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage(msg, updatedLabel);
@@ -446,6 +446,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         String language = documentLanguageContext.getDocumentLanguage();
         newXmlContent = this.numberService.renumberHigherSubDivisions(newXmlContent, language, elementTagName, tocItemsList);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
+        newXmlContent = billProcessor.handleTrackChangeForSoleNumberedElements(newXmlContent, elementTagName);
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage(msg, updatedLabel);

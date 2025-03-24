@@ -876,13 +876,15 @@ public class XercesUtils {
 
     public static Node getFirstChild(Node node, String elementName) {
         Node firstChild = null;
-        NodeList nodeList = node.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            node = nodeList.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                if (elementName.equals(node.getNodeName())) {
-                    firstChild = node;
-                    break;
+        if(node != null) {
+            NodeList nodeList = node.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    if (elementName.equals(node.getNodeName())) {
+                        firstChild = node;
+                        break;
+                    }
                 }
             }
         }

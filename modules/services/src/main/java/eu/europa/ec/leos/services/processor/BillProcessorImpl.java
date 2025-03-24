@@ -45,11 +45,9 @@ import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
@@ -238,6 +236,24 @@ public class BillProcessorImpl implements BillProcessor {
         }
         updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         return updatedContent;
+    }
+
+    @Override
+    public byte[] handleTrackChangeForSoleNumberedElements(byte[] newXmlContent, String elementTagName) {
+        Document document = createXercesDocument(newXmlContent, false);
+        NodeList nodeList = document.getElementsByTagName(elementTagName);
+        TocItem tocItem = structureContextProvider.get().getTocItems().stream().filter((item) -> item.getAknTag().name().equalsIgnoreCase(elementTagName)).findFirst().get();
+        if(nodeList != null && nodeList.getLength() == 1 && tocItem.getSoleNumbering() != null) {
+            Node elementNode = nodeList.item(0);
+            Node numNode = getFirstChild(elementNode, NUM);
+            Node insNode = getFirstChild(numNode, "ins");
+            if(numNode != null && insNode != null) {
+                String numContent = "";
+                numContent  = insNode.getTextContent();
+                numNode.setTextContent(numContent);
+            }
+        }
+        return XercesUtils.nodeToByteArray(document);
     }
 
     public byte[] deleteElement(Bill document, String elementId, String tagName, User user) throws Exception {

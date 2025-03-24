@@ -104,7 +104,7 @@ public class LeosXercesUtils {
             } else if ((insNode != null) && node.getNodeName().equalsIgnoreCase(POINT) && !insNode.getTextContent().equals(numLabel)) {
                 insNode.setTextContent(numLabel);
             }
-        } else if(isTrackChangesEnabled && StringUtils.isNotEmpty(numLabel)) {
+        } else if(numNode == null && isTrackChangesEnabled && StringUtils.isNotEmpty(numLabel)) {
             numNode = createElementAsFirstChildOfNode(node, getNumTag(node.getNodeName()), "");
 
             //in del tag num is set as blank because this condition is where num node is not present before
