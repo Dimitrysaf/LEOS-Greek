@@ -390,7 +390,21 @@ define(function leosPluginUtilsModule(require) {
         for (var i = 0; i < lists.count(); i++) {
             var list = lists.getItem(i);
             if ((_isOrderedAnnexList(list) || _isOrderedList(list)) && _isListContainsOnlySubparagraphsCrossheadingsOrEmpty(list)) {
+                var parent = list.getParent();
                 _moveChildrenToParent(list);
+                var range = editor.createRange();
+                range.moveToPosition(parent, CKEDITOR.POSITION_BEFORE_END);
+                range.select();
+            }
+        }
+        var paragraphs = editor.element.find('li');
+        for (var i = 0; i < paragraphs.count(); i++) {
+            var paragraph = paragraphs.getItem(i);
+            if (_isParagraph(paragraph) && paragraph.getChildren().count() == 1 && _isSubparagraph(paragraph.getFirst())) {
+                _moveChildrenToParent(paragraph.getFirst());
+                var range = editor.createRange();
+                range.moveToPosition(paragraph, CKEDITOR.POSITION_BEFORE_END);
+                range.select();
             }
         }
     }

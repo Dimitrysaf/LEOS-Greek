@@ -76,26 +76,24 @@ define(function leosTrackChangesPluginModule(require) {
 
                     onClick: function (value) {
                         if(value === 'acceptAll') {
-                            editor.execCommand( 'acceptAllChanges' );
+                            actions.acceptAllChanges(editor);
                         } else {
-                            editor.execCommand( 'rejectAllChanges' );
+                            actions.rejectAllChanges(editor);
                         }
                     },
                 });
-                editor.addCommand("acceptAllChanges", {
+                editor.addCommand("acceptElement", {
                     canUndo: true,
                     editorFocus: false,
-                    exec: function(editor) {
-                        var editorContent = editor.document.find('.leos-placeholder').getItem(0);
-                        actions.acceptAllChanges(editor, editorContent, numberModule);
+                    exec: function(editor, element) {
+                        actions.acceptChange(editor, element, numberModule);
                     }
                 });
-                editor.addCommand("rejectAllChanges", {
+                editor.addCommand("rejectElement", {
                     canUndo: true,
                     editorFocus: false,
-                    exec: function(editor) {
-                        var editorContent = editor.document.find('.leos-placeholder').getItem(0);
-                        actions.rejectAllChanges(editor, editorContent, numberModule);
+                    exec: function(editor, element) {
+                        actions.rejectChange(editor, element, numberModule);
                     }
                 });
             }
