@@ -77,10 +77,6 @@ article subparagraph {
     border-style: solid;
 }
 
-.crContent [id^=referenceElement] {
-    padding: 10px 0 5px 0;
-}
-
 .crContent [id^=refAs] {
     padding: 10px 0;
 }
@@ -112,12 +108,6 @@ article subparagraph {
 
 .selectable-element-selected {
     background-color: cornsilk;
-}
-
-.selected-content {
-    width: 600px;
-    word-wrap: break-word;
-    overflow: auto;
 }
 
 .error-label {
