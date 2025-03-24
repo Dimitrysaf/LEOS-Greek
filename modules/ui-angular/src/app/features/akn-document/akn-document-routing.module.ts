@@ -7,31 +7,37 @@ const routes: Routes = [
   {
     path: 'annex/:id',
     component: DocumentEditorComponent,
+    canDeactivate: [(component: DocumentEditorComponent) => component.canDeactivate()],
     data: { category: 'annex' },
   },
   {
     path: 'financial-statement/:id',
     component: DocumentEditorComponent,
+    canDeactivate: [(component: DocumentEditorComponent) => component.canDeactivate()],
     data: { category: 'stat_digit_financ_legis' },
   },
   {
     path: 'memorandum/:id',
     component: DocumentEditorComponent,
+    canDeactivate: [(component: DocumentEditorComponent) => component.canDeactivate()],
     data: { category: 'memorandum' },
   },
   {
     path: 'document/:id',
     component: DocumentEditorComponent,
+    canDeactivate: [(component: DocumentEditorComponent) => component.canDeactivate()],
     data: { category: 'bill' },
   },
   {
     path: 'coverpage/:id',
     component: DocumentEditorComponent,
+    canDeactivate: [(component: DocumentEditorComponent) => component.canDeactivate()],
     data: { category: 'coverPage' },
   },
   {
     path: 'explanatory/:id',
     component: DocumentEditorComponent,
+    canDeactivate: [(component: DocumentEditorComponent) => component.canDeactivate()],
     data: { category: 'council_explanatory' },
   },
 ];

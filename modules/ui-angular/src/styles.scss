@@ -180,6 +180,10 @@ eui-icon-svg > svg > use {
   background-color: #feca1d;
 }
 
+.cdk-overlay-container {
+  z-index: 10000 !important;
+}
+
 .cdk-overlay-panel-upload {
   width: 42% !important;
 }
