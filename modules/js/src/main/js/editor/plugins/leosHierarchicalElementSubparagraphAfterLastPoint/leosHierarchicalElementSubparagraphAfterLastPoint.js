@@ -109,17 +109,34 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
         
         switch (editor.LEOS.elementType) {
             case LEVEL_ELEMENT_TYPE:
-                // go up until reach the subparagraph level, and insert the empty element as last child of the level
-                while (startElement.getParent() && startElement.getParent().getAttribute(DATA_AKN_NAME) != AKN_ANNEX_LIST) {
+                if( startElement && startElement.getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST){
+                    startElement.append(emptyElement);
+                }if( startElement.getParent() && startElement.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST){
                     emptyElement.insertAfter(startElement);
-                    startElement = startElement.getParent();
+                }else {
+                // go up until reach the subparagraph level, and insert the empty element as last child of the level
+                    while (startElement.getParent()
+                            && startElement.getParent().getAttribute(DATA_AKN_NAME) != AKN_ANNEX_LIST
+                            && startElement.getName() !== LEVEL_ELEMENT_TYPE) {
+
+                        emptyElement.insertAfter(startElement);
+                        startElement = startElement.getParent();
+                    }
                 }
                 break;
             default:
-                // go up until reach the subparagraph level, and insert the empty element as last child of the paragraph
-                while (startElement.getParent() && startElement.getParent().getAttribute(DATA_AKN_NAME) != AKN_NUMBERED_PARAGRAPH) {
-                    startElement = startElement.getParent();
+                if( startElement && startElement.getAttribute(DATA_AKN_NAME) === AKN_NUMBERED_PARAGRAPH){
+                    startElement.append(emptyElement);
+                }else if ( startElement.getParent() && startElement.getParent().getAttribute(DATA_AKN_NAME) === AKN_NUMBERED_PARAGRAPH){
                     emptyElement.insertAfter(startElement);
+                }else {
+                    // go up until reach the subparagraph level, and insert the empty element as last child of the paragraph
+                    while (startElement.getParent()
+                            && startElement.getParent().getAttribute(DATA_AKN_NAME) != AKN_NUMBERED_PARAGRAPH
+                            && startElement.getName() !== ARTICLE_ELEMENT_TYPE) {
+                        startElement = startElement.getParent();
+                        emptyElement.insertAfter(startElement);
+                    }
                 }
         }
         
