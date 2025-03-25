@@ -243,7 +243,7 @@ public class BillProcessorImpl implements BillProcessor {
         Document document = createXercesDocument(newXmlContent, false);
         NodeList nodeList = document.getElementsByTagName(elementTagName);
         TocItem tocItem = structureContextProvider.get().getTocItems().stream().filter((item) -> item.getAknTag().name().equalsIgnoreCase(elementTagName)).findFirst().get();
-        if(nodeList != null && nodeList.getLength() == 1 && tocItem.getSoleNumbering() != null) {
+        if(nodeList != null && nodeList.getLength() > 0 && tocItem.getSoleNumbering() != null) {
             Node elementNode = nodeList.item(0);
             Node numNode = getFirstChild(elementNode, NUM);
             Node insNode = getFirstChild(numNode, "ins");
