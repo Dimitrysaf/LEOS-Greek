@@ -74,6 +74,7 @@ import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
+import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -948,35 +949,57 @@ public abstract class ApiServiceImpl implements ApiService {
             populateCloneProposalMetadataVO(proposalXmlContent);
         }
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        List<LinkedPackage> linkedPackageList = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
-        if (linkedPackageList != null && linkedPackageList.size() > 0) {
-            Optional<LinkedPackage> languagePackage = linkedPackageList.stream().filter(linkedPackage -> {
-                LeosPackage importedPackage = packageService.findPackageByPackageId(linkedPackage.getLinkedPackageId());
-                return (importedPackage.getLanguage().equalsIgnoreCase(language));
-            }).findAny();
-            if (languagePackage.isPresent()) {
-                List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(languagePackage.get().getLinkedPackageId(), LegDocument.class, false, true);
-                legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
-                final String milestoneImported = messageHelper.getMessage("leoslight.document.milestone.imported");
-                try {
-                    String finalProposalId = proposalId;
-                    legDocuments.forEach(document -> {
-                        if (!document.getStatus().equals(LeosLegStatus.FILE_ERROR)
-                                && (!document.getStatus().equals(LeosLegStatus.IMPORTED) || !document.getVersionComment().equals(milestoneImported))) {
-                            milestonesVOS.add(getMilestonesVO(document, finalProposalId, proposalRef));
-                        }
-                    });
-                } catch (Exception e) {
-                    LOG.error("Error while getting milestones for proposal " + e);
-                    throw e;
+        if (leosPackage.getTranslated()) {
+            LinkedPackage linkedPackage = packageService.findLinkedPackageByLinkedPkgId(leosPackage.getId());
+            leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
+        }
+        List<LegDocument> legDocuments = new ArrayList<>();
+        if (leosPackage.getLanguage().equalsIgnoreCase(language)) {
+            legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, true);
+        } else {
+            List<LinkedPackage> linkedPackageList = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
+            if (linkedPackageList != null && linkedPackageList.size() > 0) {
+                Optional<LinkedPackage> languagePackage = linkedPackageList.stream().filter(linkedPackage -> {
+                    LeosPackage importedPackage = packageService.findPackageByPackageId(linkedPackage.getLinkedPackageId());
+                    return (importedPackage.getLanguage().equalsIgnoreCase(language));
+                }).findAny();
+                if (languagePackage.isPresent()) {
+                    legDocuments = packageService.findDocumentsByPackageId(languagePackage.get().getLinkedPackageId(), LegDocument.class, false, true);
+                } else {
+                    LOG.debug("The linguistic version for the required language does not exists");
+                    throw new NotFoundException("The linguistic version for the required language does not exists");
                 }
-            } else {
-                LOG.error("The linguistic version for the required language does not exists");
-                throw new Exception("The linguistic version for the required language does not exists");
             }
         }
 
+        legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
+        final String milestoneImported = messageHelper.getMessage("leoslight.document.milestone.imported");
+        try {
+            String finalProposalId = proposalId;
+            legDocuments.forEach(document -> {
+                if (!document.getStatus().equals(LeosLegStatus.FILE_ERROR)
+                        && (!document.getStatus().equals(LeosLegStatus.IMPORTED) || !document.getVersionComment().equals(milestoneImported))) {
+                    milestonesVOS.add(getMilestonesVO(document, finalProposalId, proposalRef));
+                }
+            });
+        } catch (Exception e) {
+            LOG.error("Error while getting milestones for proposal " + e);
+            throw e;
+        }
+
         return milestonesVOS;
+    }
+
+    private String extractVersionLabelFromLegDocument(LegDocument legDocument) {
+        String versionLabel = null;
+        Optional<String> mainRef = legDocument.getContainedDocuments().stream().filter((ref) -> ref.contains(MAIN_DOCUMENT_FILE_NAME)).findAny();
+        if (mainRef.isPresent()) {
+            int indexOfSeparator = mainRef.get().lastIndexOf(DOC_VERSION_SEPARATOR);
+            if (indexOfSeparator > -1) {
+                versionLabel = mainRef.get().substring(indexOfSeparator+1);
+            }
+        }
+        return versionLabel;
     }
 
     private MilestonesVO getMilestonesVO(LegDocument legDocument, String proposalId, String proposalRef) {
@@ -990,6 +1013,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 legDocument.getStatus().name(),
                 legDocument.getName(), proposalRef, proposal.getTitle(), legDocument.getId());
         milestonesVO.setCreatedBy(userHelper.convertToPresentation(legDocument.getInitialCreatedBy()));
+        milestonesVO.setVersionLabel(extractVersionLabelFromLegDocument(legDocument));
         if (cloneProposalMetadataVOs != null && !cloneProposalMetadataVOs.isEmpty()) {
             List<MilestonesVO> clonedMilestonesVOS = new ArrayList<>();
             cloneProposalMetadataVOs.forEach(cpmVo -> {
