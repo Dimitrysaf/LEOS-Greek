@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.exception.SendNotificationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.services.utils.CollaboratorUtils;
 import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -244,17 +245,8 @@ public class CollaboratorServiceImpl implements CollaboratorService {
                 .anyMatch(collaborator -> collaborator.getLogin().equals(user.getLogin())
                         && collaborator.getRole().equals(role.getName())
                         && (collaborator.getEntity().equals(selectedEntity) || selectedEntity == null)
-                        && (matchLeosClientId(collaborator,leosClientId))
+                        && (CollaboratorUtils.matchLeosClientId(collaborator,leosClientId))
                 );
-    }
-
-    public static final boolean matchLeosClientId(Collaborator collaborator, String leosClientId) {
-        if (leosClientId==null && collaborator.getLeosClientId()==null) {
-            return true;
-        } else if (leosClientId!=null && collaborator.getLeosClientId()!=null) {
-            return leosClientId.equals(collaborator.getLeosClientId());
-        }
-        return false;
     }
 
     private boolean hasCollaboratorDifferentRole(List<XmlDocument> documents, User user, Role role) {
@@ -310,15 +302,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         List<Collaborator> collaborators = doc.getCollaborators();
 
         if (collaborators != null) {
-            collaborators.removeIf(c -> c == null
-                    || c.getLogin() == null
-                    || (c.getLogin().equals(user.getLogin()) &&
-                        (c.getEntity() == null
-                        || selectedEntity == null
-                        || c.getEntity().equals(selectedEntity) && matchLeosClientId(c, systemClientId)
-                        )
-                    )
-            );
+            collaborators.removeIf(c->CollaboratorUtils.matchUserAndEntityAndLeosClientId(c,user,selectedEntity,systemClientId));
             if (!isRemoveAction) {
                 //pick selectedEntity or first found entity if no selectedEntity defined
                 String newEntity = selectedEntity;
