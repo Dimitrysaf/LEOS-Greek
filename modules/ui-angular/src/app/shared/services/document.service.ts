@@ -47,6 +47,8 @@ import {
 } from '../models/document-view-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
+import {SearchAndReplaceAllResponse} from "@/features/akn-document/models/search-replace-response.model";
+
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -102,6 +104,7 @@ export class DocumentService {
   versionFilter$: Observable<string>;
   versionLatest$: Observable<Version>;
   searchResultsCounter$: Observable<number>;
+  searchLimitReachedSymbol$: Observable<string>;
   totalNumVersion$: Observable<number>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
@@ -199,6 +202,7 @@ export class DocumentService {
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
+  private searchLimitReachedSymbolBS = new BehaviorSubject<string>("");
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
   private isEditorOpenBS = new BehaviorSubject<boolean>(false);
   private getElementContentBS = new BehaviorSubject<{
@@ -231,7 +235,9 @@ export class DocumentService {
   private currentDocumentRef: string;
   private currentConfig: DocumentConfig;
   private minSearchChar: number;
+  private maxSearchLimit: number;
   private pendingSavingElements: Map<string, string> = new Map<string, string>();
+  private currentCount: number;
 
   constructor(
     private http: HttpClient,
@@ -246,6 +252,9 @@ export class DocumentService {
   ) {
     appConfig.config.subscribe((conf) => {
       this.minSearchChar = conf.searchOnMinimumCharacter;
+    });
+    appConfig.config.subscribe((conf) => {
+      this.maxSearchLimit = conf.maxSearchLimit;
     });
     this.trackChangesStatus$ = this.trackChangesStatusBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
@@ -374,6 +383,7 @@ export class DocumentService {
       shareReplay(1),
     );
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
+    this.searchLimitReachedSymbol$ = this.searchLimitReachedSymbolBS.asObservable();
     this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
     this.getElementContent$ = this.getElementContentBS.asObservable();
     this.updateElementContent$ = this.updateElementContentBS.asObservable();
@@ -768,11 +778,19 @@ export class DocumentService {
         this.setSearchResultsCounter(0);
       }
     }
+
+    this.searchResultsCounter$
+      .subscribe((count) => {
+        this.currentCount = count;  // Store the latest params
+      });
+
+    this.searchLimitReachedSymbolBS.next(this.currentCount >= this.maxSearchLimit ? '+' : '' );
+
   }
 
   searchReplaceAll() {
     this.http
-      .put<any>(
+      .put<SearchAndReplaceAllResponse>(
         `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/replace-all`,
         {
           documentRef: this.documentRef,
@@ -784,18 +802,44 @@ export class DocumentService {
         },
         { responseType: 'text' as 'json' },
       )
-      .subscribe((res) => {
-        this.updatedContentToSaveAfterReplace = res;
-        this.replacedTextPresent = true;
+      .subscribe({
+        next: (res) => {
+          const response = JSON.parse(res as unknown as string);
+          this.updatedContentToSaveAfterReplace = response.updatedContentToSaveAfterReplace;
+          this.replacedTextPresent = true;
+          this.searchResultIndexArray.forEach((el, i) => {
+            this.document.getElementById(el.id).innerText =
+              this.searchAndReplaceTextBS.value;
+            if (i < this.searchResultIndexArray.length - 1) {
+              this.scrollToElement(this.searchResultIndexArray[i + 1]);
+            }
+          });
+          this.growlService.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: response.count + ' ' +this.translate.instant(
+              'page.text.search.replacement.count',
+            ),
+            life: 5000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.setSearchResultsCounter(0);
+        }, error: (res) => {
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.text.search.replacement.failed',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
       });
-    this.searchResultIndexArray.forEach((el, i) => {
-      this.document.getElementById(el.id).innerText =
-        this.searchAndReplaceTextBS.value;
-      if (i < this.searchResultIndexArray.length - 1) {
-        this.scrollToElement(this.searchResultIndexArray[i + 1]);
-      }
-    });
-    this.setSearchResultsCounter(0);
   }
 
   searchSave() {
@@ -1333,6 +1377,10 @@ export class DocumentService {
     this.searchResultsCounterBS.next(count);
   }
 
+  private setSearchLimitReached(results: SearchMatchVO[]) {
+    this.searchLimitReachedSymbolBS.next(results[results.length -1].searchHaltedPastThis && results.length == this.maxSearchLimit ? '+' : '' );
+  }
+
   private getDocumentConfig(documentRef: string, documentType: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http
@@ -1363,6 +1411,7 @@ export class DocumentService {
         .subscribe((results) => {
           this.currentSearchResults = results;
           this.setSearchResultsCounter(results.length);
+          this.setSearchLimitReached(results);
           this.highlightSearchResults(results);
           this.scrollToElement(this.searchResultIndexArray[0]);
           this.currentIndex = 0;

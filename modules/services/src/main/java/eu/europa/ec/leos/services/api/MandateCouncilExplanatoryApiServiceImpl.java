@@ -394,17 +394,17 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+    public Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Explanatory explanatory = explanatoryService.findExplanatoryByRef(event.getDocumentRef());
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), explanatory);
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
                 event.isCaseSensitive(), event.isCompleteWords());
-        return searchService.replaceText(
+        return new Pair<>(searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS,
-                explanatory.isTrackChangesEnabled());
+                explanatory.isTrackChangesEnabled()), searchMatchVOS.size());
     }
 
     @Override

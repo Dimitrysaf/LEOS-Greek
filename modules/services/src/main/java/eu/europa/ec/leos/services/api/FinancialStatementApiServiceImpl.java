@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -225,8 +226,8 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
-        return new byte[0];
+    public Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+        return new Pair<>(new byte[0], 0);
     }
 
     @Override

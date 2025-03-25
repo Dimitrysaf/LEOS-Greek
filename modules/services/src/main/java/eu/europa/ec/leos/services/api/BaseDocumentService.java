@@ -37,6 +37,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemType;
 
+import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringUtils;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
@@ -96,7 +97,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     byte[] downloadXmlVersionFiles(String documentRef, String versionId);
 
-    byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception;
+    Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception;
 
     byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception;
 
