@@ -297,6 +297,7 @@
   "page.editor.actions-dropdown.label": "Actions",
   "page.editor.actions-dropdown.save-version": "Sauver cette version",
   "page.editor.actions-dropdown.save-version.modal": "Sauver cette version",
+  "page.editor.actions-dropdown.save-version.modal.info.label": "Notez que les modifications sont automatiquement enregistrées dans une version du document. Vous pouvez utiliser la fonction 'Sauver' pour enregistrer une version du document avec un titre.",
   "page.editor.actions-dropdown.save-version.modal.title.label": "Titre",
   "page.editor.actions-dropdown.save-version.modal.title.placeholder": "par exemple : c'est mon titre",
   "page.editor.actions-dropdown.save-version.modal.description.label": "Description",
