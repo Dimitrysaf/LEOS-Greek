@@ -8,5 +8,9 @@ import java.util.List;
 public interface SearchEngine {
     
     byte[] replace(final byte[] docContent, final List<SearchMatchVO> searchMatchVOs, String searchText, String replaceText, boolean removeEmptyTags, User user, boolean isTrackChangesEnabled);
-    List<SearchMatchVO> searchText(String searchText, boolean isMatchCase, boolean isWholeWords);
+
+    List<SearchMatchVO> searchTextToReplace(String searchText, boolean isMatchCase, boolean isWholeWords);
+
+    List<SearchMatchVO> searchTextAndHighlight(String searchText, boolean isMatchCase, boolean isWholeWords, Integer maxSearchLimit);
+
 }

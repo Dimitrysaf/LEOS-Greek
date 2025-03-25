@@ -33,8 +33,10 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.response.SearchAndReplaceAllResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -505,8 +507,9 @@ public class AnnexController {
     public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceAllMatchRequest request) {
         try {
-            byte[] response = this.annexApiService.replaceAllTextInDocument(request);
-            return ResponseEntity.ok().body(response);
+            Pair<byte[], Integer> response = this.annexApiService.replaceAllTextInDocument(request);
+            SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left()), response.right());
+            return ResponseEntity.ok().body(searchAndReplaceAllResponse);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION + e.getMessage());
             return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);

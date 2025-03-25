@@ -64,6 +64,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import io.atlassian.fugue.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -338,7 +339,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+    public Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
 
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), memorandum);
@@ -346,12 +347,12 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
                 event.isCaseSensitive(), event.isCompleteWords());
-        return searchService.replaceText(
+        return new Pair<>(searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS,
-                memorandum.isTrackChangesEnabled());
+                memorandum.isTrackChangesEnabled()), searchMatchVOS.size());
     }
 
     @Override

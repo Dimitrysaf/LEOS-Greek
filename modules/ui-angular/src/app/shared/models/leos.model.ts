@@ -65,6 +65,7 @@ export type LeosConfig = {
   contextRole: string;
   leosSwitchLevelArticle: boolean;
   searchOnMinimumCharacter: number;
+  maxSearchLimit: number;
 };
 
 export type LeosAppConfig = LeosConfig & {

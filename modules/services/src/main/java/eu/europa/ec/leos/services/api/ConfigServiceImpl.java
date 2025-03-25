@@ -22,7 +22,6 @@ import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.profile.ProfileService;
 import eu.europa.ec.leos.vo.light.Profile;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -90,6 +89,7 @@ public class ConfigServiceImpl implements ConfigService {
         }*/
         boolean leosSwitchLevelArticle = Boolean.parseBoolean(applicationProperties.getProperty("leos.switch.level.article"));
         int minSearchChar = Integer.parseInt(applicationProperties.getProperty("leos.search.on.minimum.characters"));
+        int maxSearchLimit = Integer.parseInt(applicationProperties.getProperty("leos.maximum.search.limit"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -115,6 +115,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setProfile(profile);
         appConfigResponse.setLeosSwitchLevelArticle(leosSwitchLevelArticle);
         appConfigResponse.setSearchOnMinimumCharacter(minSearchChar);
+        appConfigResponse.setMaxSearchLimit(maxSearchLimit);
 
         return appConfigResponse;
     }

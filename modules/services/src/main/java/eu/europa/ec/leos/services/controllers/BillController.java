@@ -34,9 +34,11 @@ import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.request.SearchForImportCriteriaRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.response.SearchAndReplaceAllResponse;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -508,17 +510,15 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.TEXT_XML_VALUE)
+    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceAllMatchRequest request) {
         try {
-//            request.setReplaceText(encodeParam(request.getReplaceText()));
-//            request.setSearchText(encodeParam(request.getSearchText()));
             request.setDocumentRef(encodeParam(request.getDocumentRef()));
-//            request.setTempUpdatedContentXML(encodeParam(request.getTempUpdatedContentXML()));
-            byte[] response = this.billApiService.replaceAllTextInDocument(request);
-            return ResponseEntity.ok().body(response);
+            Pair<byte[], Integer> response = this.billApiService.replaceAllTextInDocument(request);
+            SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left()), response.right());
+            return ResponseEntity.ok().body(searchAndReplaceAllResponse);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION, e.getMessage());
             return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);
