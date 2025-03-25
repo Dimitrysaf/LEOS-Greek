@@ -150,8 +150,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         pkgCollaborator.setAuditLastMBy(userId);
         pkgCollaborator.setAuditLastMDate(creationDate);
         if (previousC != null) {
-            Optional<Collaborators> prevCollaborators = collaboratorsRepository.findCollaboratorByNameRoleAndOrganizationAndLeosClient(previousC.getLogin(),
-                    previousC.getRole(), previousC.getEntity(), previousC.getLeosClientId());
+            Optional<Collaborators> prevCollaborators = findCollaborator(previousC);
             if (prevCollaborators.isPresent()) {
                 Optional<PackageCollaborators> pkgCollaborators =
                         packageCollaboratorsRepository.findPackageCollaboratorsByPkgAndCollaborator(pkg, prevCollaborators.get());
