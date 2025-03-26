@@ -114,4 +114,16 @@ public class UserHelper {
         return version;
     }
 
+
+    public String fetchMilestoneVersion(LegDocument legDocument) {
+        Optional<Integer> versionInt = legDocument.getContainedDocuments().stream().map((d) -> {
+            try {
+                return (d.lastIndexOf("_") != -1) ? Integer.parseInt(d.substring(d.lastIndexOf("_") + 1).replace(".", "")) : 0;
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }).max(Integer::compare);
+        return StringUtils.join(String.valueOf(versionInt.orElse(0).intValue()).split(""), ".");
+    }
+
 }
