@@ -880,6 +880,7 @@ define(function leosTrackChangesModule(require) {
                     element.getAscendant("li").remove();
                 } else {
                     var liParentElement = element.getAscendant("li");
+                    var pParentElement = element.getAscendant("p");
                     var parent = element.getParent();
                     element.remove();
                     if(leosPluginUtils.isSubparagraph(parent) && parent.getText().trim() === '') {
@@ -890,6 +891,9 @@ define(function leosTrackChangesModule(require) {
                         if (this.checkIfEmptyListElement(liParentElement)) {
                             this.removeEmptyElement(liParentElement, numberModule, editor);
                         }
+                    }
+                    if (pParentElement && !pParentElement.getText()) {
+                        pParentElement.remove();
                     }
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
