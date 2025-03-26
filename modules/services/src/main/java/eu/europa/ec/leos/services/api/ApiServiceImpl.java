@@ -996,7 +996,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private MilestonesVO getMilestonesVO(LegDocument legDocument, String proposalId, String proposalRef) {
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        String docVersion = userHelper.getPropVersion(legDocument);
+        String docVersion = userHelper.fetchMilestoneVersion(legDocument);
         List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName(), docVersion);
         MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
                 Date.from(legDocument.getCreationInstant()),
