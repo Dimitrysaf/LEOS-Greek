@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -72,6 +74,7 @@ public class MilestonesVO {
         return updatedDate;
     }
 
+    @JsonIgnore
     public Date getUpdatedDateAsDate() {
         try {
             return Date.from(LocalDateTime.parse(updatedDate, dateFormat).atZone(ZoneId.systemDefault()).toInstant());
