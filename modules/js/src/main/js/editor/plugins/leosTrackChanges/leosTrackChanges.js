@@ -579,6 +579,11 @@ define(function leosTrackChangesModule(require) {
                     }
                 }
                 if(childElement.hasAttribute(core.ACTION_ATTR) || childElement.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || childElement.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                    if(childElement.hasAttribute(core.DATA_AKN_ACTION_NUMBER)
+                        && childElement.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION
+                        && childElement.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW) {
+                        continue;
+                    }
                     return childElement;
                 }
             }
