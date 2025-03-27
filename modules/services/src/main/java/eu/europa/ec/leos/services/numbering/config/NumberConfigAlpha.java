@@ -49,13 +49,8 @@ public class NumberConfigAlpha extends NumberConfigAbstract implements NumberCon
         return this.prefix + getAlphaNumber(index) + this.suffix;
     }
 
-    public int charToInteger(String numAsString) {
-        int numAsInt = 0;
-        for (int a = 0; a < numAsString.length(); a++) {
-            int pow = numAsString.length() - 1 - a;
-            numAsInt = numAsInt + ((numAsString.charAt(a) - 96) * (int) (Math.pow(26, pow)));
-        }
-        return numAsInt;
+    public int charToInteger(String label) {
+        return super.charToInteger(label, LATIN_BASE_UNICODE, LATIN_LETTERS_COUNT);
     }
 
     @Override
