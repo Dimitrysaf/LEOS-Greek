@@ -20,6 +20,7 @@ import {LoadingService} from '@/shared/services/loading.service';
 
 import {TocItem} from '../models/ckeditor';
 import {NodeValidation, NodeValidationResponse} from "@/shared/models/drop-response.model";
+import {cloneDeep} from "lodash-es";
 
 @Injectable({providedIn: 'root'})
 export class TableOfContentService {
@@ -283,13 +284,14 @@ export class TableOfContentService {
   private getTocValidation(documentRef: string, documentType: string, toc: TableOfContentItemVO[]) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    this.prepareTocForSave(toc);
+    const tocToSave = cloneDeep(toc);
+    this.prepareTocForSave(tocToSave);
     return this.http.post<NodeValidationResponse>(
       `${apiBaseUrl}/secured/toc/validate-toc`,
       {
         documentType: category.toUpperCase(),
         documentRef,
-        tableOfContentItemVOs: toc
+        tableOfContentItemVOs: tocToSave
       },
       { headers }
     );
