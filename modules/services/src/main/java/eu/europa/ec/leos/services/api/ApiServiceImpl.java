@@ -1005,6 +1005,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 legDocument.getName(), proposalRef, proposal.getTitle(), legDocument.getId());
         milestonesVO.setCreatedBy(userHelper.convertToPresentation(legDocument.getInitialCreatedBy()));
         milestonesVO.setVersionLabel(docVersion);
+        milestonesVO.setLanguage(leosPackage.getLanguage());
         if (cloneProposalMetadataVOs != null && !cloneProposalMetadataVOs.isEmpty()) {
             List<MilestonesVO> clonedMilestonesVOS = new ArrayList<>();
             cloneProposalMetadataVOs.forEach(cpmVo -> {
@@ -1016,6 +1017,7 @@ public abstract class ApiServiceImpl implements ApiService {
                         cpmVo.getLegFileName(), cpmVo.getCloneProposalRef(), proposal.getTitle(), legDocument.getId());
                 milestoneVO.setClone(true);
                 milestoneVO.setCreatedBy(cpmVo.getTargetUser());
+                milestoneVO.setLanguage(leosPackage.getLanguage());
                 if (cpmVo.getRevisionStatus().equalsIgnoreCase(
                         messageHelper.getMessage("clone.proposal.status.contribution.done")) &&
                         identifyContributionChanges(cpmVo.getCloneProposalRef(), leosPackage, legDocument, cpmVo.getLegFileName())) {

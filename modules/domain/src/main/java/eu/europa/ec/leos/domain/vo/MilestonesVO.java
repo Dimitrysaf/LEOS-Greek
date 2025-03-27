@@ -25,6 +25,7 @@ public class MilestonesVO {
     private boolean isContributionChanged;
     private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withZone(ZoneId.systemDefault());
     private String versionLabel;
+    private String language;
 
     public MilestonesVO(List<String> titles, Date createdDate, Date updatedDate, String status, String legDocumentName,
             String proposalRef, String documentTitle, String legFileId) {
@@ -137,6 +138,14 @@ public class MilestonesVO {
 
     public void setVersionLabel(String versionLabel) {
         this.versionLabel = versionLabel;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     @Override

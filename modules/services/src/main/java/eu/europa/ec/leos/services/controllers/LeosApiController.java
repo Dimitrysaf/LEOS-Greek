@@ -621,8 +621,8 @@ public class LeosApiController {
             LOG.debug(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Unexpected error occurred while generating milestones - " + e.getMessage());
-            return new ResponseEntity<>("An error occurred while generating milestones: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Unexpected error occurred while getting milestones - " + e.getMessage());
+            return new ResponseEntity<>("An error occurred while getting milestones: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
