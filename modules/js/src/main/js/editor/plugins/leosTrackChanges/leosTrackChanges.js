@@ -897,7 +897,7 @@ define(function leosTrackChangesModule(require) {
                             this.removeEmptyElement(liParentElement, numberModule, editor);
                         }
                     }
-                    if (pParentElement && !pParentElement.getText()) {
+                    if (pParentElement && !pParentElement.getText().trim()) {
                         pParentElement.remove();
                     }
                 }
