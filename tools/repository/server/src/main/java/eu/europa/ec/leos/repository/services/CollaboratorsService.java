@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.entities.Package;
+import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 
@@ -34,4 +35,6 @@ public interface CollaboratorsService {
     void removeCollaborator(final String id) throws RepositoryException;
 
     void removeCollaborators(Package pkg) throws RepositoryException;
+
+    void savePackageCollaborator(PackageCollaborators pkgCollaborator);
 }
