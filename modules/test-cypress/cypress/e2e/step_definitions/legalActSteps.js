@@ -286,6 +286,22 @@ Then(`{int} articles are added in legal act by import oj`, (articleNumber) => {
     legalActPage.elements.articleFromImportOj().should('have.length', articleNumber);
 });
 
+Then(/^(\d+) parts are added in legal act by import oj$/, function (partNumber) {
+    legalActPage.elements.partFromImportOj().should('have.length', partNumber);
+});
+
+Then(/^(\d+) titles are added in legal act by import oj$/, function (titleNumber) {
+    legalActPage.elements.titleFromImportOj().should('have.length', titleNumber);
+});
+
+Then(/^(\d+) chapters are added in legal act by import oj$/, function (chapterNumber) {
+    legalActPage.elements.chapterFromImportOj().should('have.length', chapterNumber);
+});
+
+Then(/^(\d+) sections are added in legal act by import oj$/, function (sectionNumber) {
+    legalActPage.elements.sectionFromImportOj().should('have.length', sectionNumber);
+});
+
 When(`click on edit icon of citation {int}`, (citationNumber) => {
     legalActPage.clickEditIconOfCitation(citationNumber);
 });
