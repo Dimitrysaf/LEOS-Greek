@@ -163,7 +163,16 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         }
         pkgCollaborator.setPackage(pkg);
         pkgCollaborator.setCollaborator(updatedCollaborators);
-        packageCollaboratorsRepository.save(pkgCollaborator);
+        savePackageCollaborator(pkgCollaborator);
+    }
+
+    public void savePackageCollaborator(PackageCollaborators pkgCollaborator) {
+        Optional<PackageCollaborators> pkgC =
+                packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(pkgCollaborator.getPackage().getId(),
+                        pkgCollaborator.getCollaborator().getId());
+        if (!pkgC.isPresent() || pkgCollaborator.getId() != null) {
+            packageCollaboratorsRepository.save(pkgCollaborator);
+        }
     }
 
     public void removeCollaborator(final String id) throws RepositoryException {
