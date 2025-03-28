@@ -49,6 +49,7 @@ export class TableOfContentItemVO {
   isAffected: boolean;
   expanded: boolean;
   label?: string;
+  soleNumbered: boolean;
   shouldRenderNode?: boolean;
   itemDescription?: string;
   tocStyling?: string;
@@ -95,6 +96,9 @@ export type AknTag =
   | 'COVER_PAGE'
   | 'LONG_TITLE'
   | 'DOC_PURPOSE'
+  | 'SIGNATURE'
+  | 'ROLE'
+  | 'PERSON'
   | 'INLINE';
 
 export class TocItem {
@@ -111,6 +115,7 @@ export class TocItem {
   numberEditable: boolean;
   contentDisplayed: boolean;
   deletable: boolean;
+  notAddable: boolean;
   numWithType: boolean;
   expandedByDefault: boolean;
   sameParentAsChild: boolean;

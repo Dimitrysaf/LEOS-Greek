@@ -102,6 +102,9 @@ define(function aknChapterPluginModule(require) {
             }, {
                 akn : "leos:editable",
                 html : "data-akn-attr-editable"
+            },{
+                akn : "class",
+                html : "data-akn-class"
             } ],
             sub : {
                 akn : "text",

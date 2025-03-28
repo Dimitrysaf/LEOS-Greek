@@ -75,6 +75,7 @@ import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Option;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -203,7 +204,6 @@ public class GenericDocumentApiService {
         byte[] content = this.getDocumentContent(document);
         document = this.leosRepository.updateDocument(document.getId(), metadata, content, versionType, versionComment,
                 XmlDocument.class);
-        documentViewService.updateProposalAsync(document);
         return this.getMajorVersionsData(documentRef, 0, 1);
     }
 
@@ -213,7 +213,6 @@ public class GenericDocumentApiService {
         LeosMetadata metadata = this.getDocMetadata(document);
         document = this.leosRepository.updateDocument(document.getId(), metadata, updatedDocContent, versionType, versionComment,
                 XmlDocument.class);
-        documentViewService.updateProposalAsync(document);
         return true;
     }
 
@@ -222,6 +221,16 @@ public class GenericDocumentApiService {
         String docTemplate = this.getDocTemplate(document);
         this.getStructureContext().useDocumentTemplate(docTemplate);
         return this.getStructureContext().getTocItems();
+    }
+
+    public Profile getProfile(@NotNull XmlDocument document, String clientContextToken) {
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
+            LeosMetadata documentMetadata = document.getMetadata().get();
+            return profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken),
+                    documentMetadata.getLanguage());
+        } else {
+            return null;
+        }
     }
 
     public DocumentConfigResponse getDocumentConfig(@NotNull XmlDocument document, @NotNull StructureContext structure,
@@ -466,7 +475,6 @@ public class GenericDocumentApiService {
                 messageHelper.getMessage("operation.financial.statement.block.updated"),
                 XmlDocument.class
         );
-        documentViewService.updateProposalAsync(document);
         String newContent = this.elementProcessor.getElement(document, elementName, elementId);
         return new SaveElementResponse(elementId, elementName, newContent);
     }
@@ -529,7 +537,7 @@ public class GenericDocumentApiService {
                 document.isTrackChangesEnabled());
     }
 
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+    public Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         XmlDocument document = findDocumentByRef(event.getDocumentRef());
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), document);
 
@@ -537,12 +545,12 @@ public class GenericDocumentApiService {
 
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
                 event.isCaseSensitive(), event.isCompleteWords());
-        return searchService.replaceText(
+        return new Pair<>(searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS,
-                document.isTrackChangesEnabled());
+                document.isTrackChangesEnabled()), searchMatchVOS.size());
 
     }
 

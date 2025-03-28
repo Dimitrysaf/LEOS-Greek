@@ -9,9 +9,9 @@ export interface Milestone {
   versionedReference: string;
   legFileId: string;
   proposalRef: string;
-  status: MilestoneStatus | string;
+  legFileStatus: MilestoneStatus | string;
   title: string;
-  updatedDate: number;
+  updatedDate: string;
   opened?: boolean;
 }
 

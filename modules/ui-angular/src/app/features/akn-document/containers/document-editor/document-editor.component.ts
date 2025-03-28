@@ -143,7 +143,6 @@ export class DocumentEditorComponent
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
-  @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
   @ViewChild('confirmAnnexStructureChangeDialog')
   annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
@@ -523,6 +522,10 @@ export class DocumentEditorComponent
     }
   }
 
+  handleEditOpenEditor() {
+    this.documentActions.handleOpenEditor(() => this.handleEdit());
+  }
+
   handleEdit() {
     const coEdition = this.coEditionWSService.checkForCoEdition('EDIT_TOC');
     if (coEdition) {
@@ -562,10 +565,10 @@ export class DocumentEditorComponent
       if (this.documentTocComponent.isNodeSelected()) {
         const newSelectedNode = findNodeById(
           oldToc,
-          this.documentTocComponent.selectedNode.id,
+          this.documentTocComponent.lastSelectedNode.id,
         );
         if (newSelectedNode)
-          this.documentTocComponent.handleNodeSelect(newSelectedNode);
+          this.documentTocComponent.handleNodeSelect(newSelectedNode, null);
       }
       this.tocService.refreshToc(oldToc, this.documentRef, this.documentType);
     }
@@ -666,28 +669,14 @@ export class DocumentEditorComponent
     this.versionCompareService.toggleCompareMode();
   }
 
+  public canDeactivate(): Observable<boolean> {
+    return this.documentActions.canPerformAction();
+  }
+
   handleClose() {
-    if (this.document.querySelectorAll('.cke').length > 0) {
-      this.openEditorDialog.openDialog();
-    } else {
-      this.cdkEditor.closeElementEditor();
-      const proposalRef = this.documentConfig.proposalMetadata?.ref;
-      if (proposalRef) {
-        this.router.navigate([`/collection/${proposalRef}`]);
-      }
-    }
-  }
-
-  onCancelClose() {
-    this.openEditorDialog.closeDialog();
-  }
-
-  onConfirmClose() {
-    this.openEditorDialog.closeDialog();
-    this.cdkEditor.closeElementEditor();
-    //wait for the API where we get all the metadata for each document
-    if (this.proposalRef) {
-      this.router.navigate([`/collection/${this.proposalRef}`]);
+    const proposalRef = this.documentConfig.proposalMetadata?.ref;
+    if (proposalRef) {
+      this.router.navigate([`/collection/${proposalRef}`]);
     }
   }
 
@@ -870,6 +859,7 @@ export class DocumentEditorComponent
     this.tocService.displayOriginalToc();
     this.documentTocComponent.isDropValid = null;
     this.documentTocComponent.isTreeValidationWarning = null;
+    this.documentTocComponent.isSelectionWarning = false;
     this.documentTocComponent.showWarningIcon = false;
     this.tocService.setIsEditMode(false);
     this.documentTocComponent.resetTreeState();
@@ -897,7 +887,7 @@ export class DocumentEditorComponent
   ): Array<Partial<TableOfContentItemVO>> {
     const dragItems: Array<Partial<TableOfContentItemVO>> = [];
     for (const item of tocItems) {
-      if (!item.root && item.draggable) {
+      if (!item.root && item.draggable && !item.notAddable) {
         let number = null;
         let heading = null;
         let content = '';
@@ -1049,7 +1039,7 @@ export class DocumentEditorComponent
   }
 
   get showTocEditButton() {
-    return (!this.profile || this.profile.tocEdition) && this.hasUpdatePermission;
+    return (!this.profile || this.profile.tocEdition || this.profile.tocSignatureEdition) && this.hasUpdatePermission;
   }
 
   get showAnnotations() {

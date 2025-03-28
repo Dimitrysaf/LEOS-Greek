@@ -23,7 +23,9 @@ import {
   MOVE_TO,
   PARAGRAPH,
   PART,
+  PERSON,
   POINT,
+  ROLE,
   SECTION,
   SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
   SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
@@ -453,6 +455,24 @@ export const checkPositionAfterValidation = (
     case LEVEL: {
       if (
         [SECTION, CHAPTER, TITLE, PART, LEVEL, PARAGRAPH].includes(
+          nodeDragged.tocItem.aknTag,
+        )
+      )
+        return 'AFTER';
+      return position;
+    }
+    case ROLE: {
+      if (
+        [ROLE, PERSON].includes(
+          nodeDragged.tocItem.aknTag,
+        )
+      )
+        return 'AFTER';
+      return position;
+    }
+    case PERSON: {
+      if (
+        [ROLE, PERSON].includes(
           nodeDragged.tocItem.aknTag,
         )
       )

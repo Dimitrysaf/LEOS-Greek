@@ -1,5 +1,7 @@
 package eu.europa.ec.leos.services.label.ref;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -9,6 +11,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 
 abstract public class LabelHandler {
     protected final String THIS_REF = "this";
+    protected final String ANNEX_FILE_PREFIX = "annex";
     
     abstract public boolean canProcess(List<TreeNode> refs);
     
@@ -65,6 +68,18 @@ abstract public class LabelHandler {
     }
 
     public void addPreffix(StringBuffer label, String docType, List<TreeNode> refs) {
+    }
+
+    public void addSuffix(StringBuffer label, String docType, List<TreeNode> refs) {
+        TreeNode firstReference = refs.stream()
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Selected Internal References cannot be empty"));
+        if (firstReference.getDocumentRef() != null
+                && firstReference.getDocumentRef().toLowerCase().startsWith(ANNEX_FILE_PREFIX)
+                && !StringUtils.isEmpty(docType)) {
+            label.append(" of ");
+            label.append(docType);
+        }
     }
 
 }

@@ -9,6 +9,10 @@ class legalActPage {
         longTitle: () => this.elements.preface().find('longtitle'),
         docPurpose: () => this.elements.longTitle().find('docpurpose'),
         recitalFromImportOj: () => cy.get("recital[id^='impXrec']"),
+        partFromImportOj: () => cy.get("part[id^='impX']"),
+        titleFromImportOj: () => cy.get("aknTitle[id^='impX']"),
+        chapterFromImportOj: () => cy.get("chapter[id^='impX']"),
+        sectionFromImportOj: () => cy.get("section[id^='impX']"),
         articleFromImportOj: () => cy.get("article[id^='impXart']"),
         aknBody: () => cy.get('aknbody'),
         leosSoftMoveLabel: () => this.elements.aknBody().find('span.leos-soft-move-label')

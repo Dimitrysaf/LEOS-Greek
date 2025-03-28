@@ -8,5 +8,9 @@ class expMemoPage {
     clickCloseBtn(){
         this.elements.closeBtn().click();
     }
+
+    mouseHoverAndClickOnBlockContainer(blockContainerNumber){
+        cy.xpath("//mainbody//blockcontainer[" + blockContainerNumber + "]").invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+    }
 }
 export default new expMemoPage();

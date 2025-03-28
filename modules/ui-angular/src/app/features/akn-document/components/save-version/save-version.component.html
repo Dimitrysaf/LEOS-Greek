@@ -1,4 +1,11 @@
 <form [formGroup]="form">
+  <div class="info">
+    <eui-icon-svg
+      euiInfo
+      icon="eui-ecl-information">
+    </eui-icon-svg>
+    {{ 'page.editor.actions-dropdown.save-version.modal.info.label' | translate }}
+  </div>
   <div euiInputGroup>
     <label euiLabel euiRequired for="title">{{
       'page.editor.actions-dropdown.save-version.modal.title.label' | translate

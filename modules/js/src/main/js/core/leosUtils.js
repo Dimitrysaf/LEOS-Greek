@@ -44,9 +44,9 @@ define(function leosUtilsModule(require) {
     var DOCPURPOSE = "docPurpose";
     var ID = "id";
     var KEYS = {
-        "KEY_DELETE": 8,
+        "KEY_DELETE": 46,
         "KEY_ENTER": 13,
-        "KEY_BACKSPACE": 46,
+        "KEY_BACKSPACE": 8,
         "KEY_V": 86,
         "KEY_X": 88
     }
@@ -76,7 +76,11 @@ define(function leosUtilsModule(require) {
         return null;
     }
 
-    function _isEmptyElement(el) {
+    function _isEmptyElement(elmnt) {
+        var el = elmnt;
+        if(elmnt.tagName == undefined && elmnt.length > 0 && !!elmnt[0].tagName ){
+            el = elmnt[0];
+        }
         function _getParentTocItem(el, tocItemsList) {
             var currentElem = el;
             var parentTocItem;
@@ -96,6 +100,24 @@ define(function leosUtilsModule(require) {
             }
             return true;
         }
+        function _containsOnlyDeletedElts(element) {
+            if (element.childNodes.length > 0) {
+                for (var j = 0; j < element.childNodes.length; j++) {
+                    if (element.childNodes[j].nodeType === Node.TEXT_NODE) {
+                        if (element.childNodes[0].textContent.trim() !== '') {
+                            return false;
+                        }
+                    } else if (element.childNodes[j].tagName !== 'SPAN'
+                        || !element.childNodes[j].hasAttribute('data-akn-action')
+                        || element.childNodes[j].getAttribute('data-akn-action') !== 'delete') {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
         var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG];
         var elementsToBeChecked = [PARAGRAPH_POINT_TAG, SUBPARAGRAPH_SUBPOINT_TAG];
         if (el.tagName === HEADING_TAG && CKEDITOR.currentInstance) {
@@ -107,7 +129,10 @@ define(function leosUtilsModule(require) {
         if (elementsToBeChecked.includes(el.tagName)) {
             if (!$.trim(el.innerText)) {
                 if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
-                    && (el.parentElement.tagName === TABLE_CELL_TAG || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {
+                    && el.parentElement 
+                    && ((el.parentElement.tagName === TABLE_CELL_TAG &&
+                        (!el.parentElement.hasAttribute('data-akn-name') || el.parentElement.getAttribute('data-akn-name') !== 'signature'))
+                        || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {
                     return false;
                 } else if (el.children.length > 0 && _containsOnlyChildrenOf(el, childElementsToBeChecked)
                     && (el.previousElementSibling && el.previousElementSibling.tagName === TABLE_TAG)) {
@@ -117,6 +142,9 @@ define(function leosUtilsModule(require) {
                 } else {
                     return el.children.length === 0 || _containsOnlyChildrenOf(el, childElementsToBeChecked);
                 }
+            }
+            if (_containsOnlyDeletedElts(el)) {
+                return true;
             }
             if (el.childNodes[0].nodeName === LINE_BREAK_TAG) {
                 return true;
@@ -232,17 +260,29 @@ define(function leosUtilsModule(require) {
         for (var i = 0; usersUid.length > i; i++) {
             var userColors = _generateColors(usersUid[i].repeat(5) + proposalRef);
             if (isDocTcStyle) {
-                tcShowStyle += "paragraph:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before {" +
+                tcShowStyle += "paragraph:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before " +
+                    "{" +
                     "content: '↵'; margin-left: 40px; min-width: 15px; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt; padding-top: 6pt;" +
+                    "}\n";
+                tcShowStyle += "level:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before " +
+                    "{" +
+                    "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt; padding-top: 6pt;" +
                     "}\n";
                 tcShowStyle += "paragraph:not(:has(> num > ins)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:tc-original-number='UNNUMBERED']:not(:has(> num > ins)):before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before, " +
-                    "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before {" +
+                    "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before, " +
+                    "level:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before " +
+                    "{" +
                     "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt; padding-top: 6pt;" +
+                    "}\n";
+                tcShowStyle += "aknp[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before {" +
+                    "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt; padding-top: 1pt;" +
                     "}\n";
                 tcShowStyle += "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:not(:has(> num)):before {" +
@@ -252,6 +292,7 @@ define(function leosUtilsModule(require) {
             } else {
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
+                    "p[data-akn-name='aknParagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] +"'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
                     "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
                     "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +

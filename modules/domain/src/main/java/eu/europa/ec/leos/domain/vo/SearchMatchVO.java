@@ -7,6 +7,8 @@ public class SearchMatchVO {
 
     private List<ElementMatchVO> matchedElements;
     private boolean replaceable;
+    private boolean searchHaltedPastThis;
+    private int maxSearchLimit;
 
     public SearchMatchVO() {
     }
@@ -30,6 +32,22 @@ public class SearchMatchVO {
 
     public void setReplaceable(boolean replaceable) {
         throw new UnsupportedOperationException();// method needed for vaadin reflection to create JSON
+    }
+
+    public boolean isSearchHaltedPastThis() {
+        return this.searchHaltedPastThis;
+    }
+
+    public void setSearchHaltedPastThis(boolean searchHaltedPastThis) {
+        this.searchHaltedPastThis = searchHaltedPastThis;
+    }
+
+    public int getMaxSearchLimit() {
+        return maxSearchLimit;
+    }
+
+    public void setMaxSearchLimit(int maxSearchLimit) {
+        this.maxSearchLimit = maxSearchLimit;
     }
 
     @Override

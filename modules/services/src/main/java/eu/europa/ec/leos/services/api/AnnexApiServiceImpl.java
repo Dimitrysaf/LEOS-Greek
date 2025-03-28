@@ -74,6 +74,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -222,7 +223,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         if (splittedContent == null) {
             splittedContentIsEmpty = true;
         }
-        documentViewService.updateProposalAsync(annex);
+
+        newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 
@@ -275,7 +277,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode, String clientContextToken) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         populateCloneProposalMetadata(annex);
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
@@ -293,12 +295,11 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         populateCloneProposalMetadata(annex);
         this.annexService.createVersion(annex.getId(), versionType, checkInComment);
-        documentViewService.updateProposalAsync(annex);
         return this.genericDocumentApiService.getMajorVersionsData(documentRef, 0, 1);
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(
@@ -307,7 +308,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         AnnexStructureType structureType = getStructureType(structureContext1);
         Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType,
                 messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
-        documentViewService.updateProposalAsync(updatedAnnex);
         return this.annexService.getTableOfContent(updatedAnnex, tocMode);
     }
 
@@ -455,19 +455,19 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+    public Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), annex);
         populateCloneProposalMetadata(annex);
 
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
                 event.isCaseSensitive(), event.isCompleteWords());
-        return searchService.replaceText(
+        return new Pair<>(searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS,
-                annex.isTrackChangesEnabled());
+                annex.isTrackChangesEnabled()), searchMatchVOS.size());
     }
 
     @Override
@@ -601,7 +601,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 isTrackChangeEnabled);
         String documentId = annexService.findAnnexByRef(documentRef).getId();
         Annex annex = annexService.updateAnnex(documentRef, documentId, properties, false);
-        documentViewService.updateProposalAsync(annex);
         return true;
     }
 

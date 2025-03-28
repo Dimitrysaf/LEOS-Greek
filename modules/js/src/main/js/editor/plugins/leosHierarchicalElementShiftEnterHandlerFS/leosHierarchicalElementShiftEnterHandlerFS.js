@@ -114,7 +114,7 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
         if (selection.getStartElement().getName() === 'ol') {
             selection = leosPluginUtils.selectLastEditableElement(selection);
         }
-        if (_isElementInsideTable(selection.getStartElement())) {
+        if (leosPluginUtils.isInsideTable(selection.getStartElement())) {
             context.event.cancel();
         } else if (elementType && (elementType === 'level' || elementType === 'paragraph') && (_isStartElementOrderedListOrContent(selection))) {
             _executeShiftEnter(context.editor);
@@ -124,10 +124,6 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
             leosPluginUtils.manageCrossheadings(context.editor);
             leosPluginUtils.manageSiblingLists(context.editor);
         }
-    }
-
-    function _isElementInsideTable(element) {
-        return element && element.getAscendant('table');
     }
 
     function _isStartElementOrderedListOrContent(selection) {
@@ -254,7 +250,7 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
 
                 inlineWrapper = pElement;
             } else if (inlineWrapperName === 'p' && _isElementEmpty(inlineWrapper)
-                    && _isElementInsideTable(inlineWrapper)) {
+                    && leosPluginUtils.isInsideTable(inlineWrapper)) {
                 inlineWrapper.appendBogus();
             }
         }
@@ -275,7 +271,7 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
         } else {
             if (startElementName === 'p' && startElement.hasAttribute(DATA_AKN_NAME)) {
                 pElement.setAttribute(DATA_AKN_NAME, startElement.getAttribute(DATA_AKN_NAME));
-            } else if (_isElementInsideTable(startElementParent)) {
+            } else if (leosPluginUtils.isInsideTable(startElementParent)) {
                 pElement.setAttribute(DATA_AKN_NAME, 'aknParagraph');
             }
 			if(leosPluginUtils.isAnnexUnnumberedCNParagraph(startElement)) {            
@@ -408,7 +404,7 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
             var elements = Object.values(allowedElementsForShiftEnter);
             for (var i = 0; i < elements.length; i++) {
                 if (elements[i].elementName === 'table') {
-                    if (_isElementInsideTable(selection.getStartElement())) {
+                    if (leosPluginUtils.isInsideTable(selection.getStartElement())) {
                         return true;
                     }
                 }
@@ -416,7 +412,7 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
 
         }
         // If element is inside table soft-enter has to be enabled
-        if (_isElementInsideTable(selection.getStartElement())) {
+        if (leosPluginUtils.isInsideTable(selection.getStartElement())) {
             return true;
         }
 

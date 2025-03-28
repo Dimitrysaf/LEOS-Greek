@@ -102,6 +102,24 @@ define(function leosPluginUtilsModule(require) {
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~ART_DEF";
     var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-number'];
+
+    var commonAttributes = [
+        { akn: "xml:id", html: "id" },
+        { akn: "refersTo", html: "refersto" },
+        { akn: "leos:origin", html: "data-origin" },
+        { akn: "leos:editable", html: "data-akn-attr-editable" },
+        { akn: "leos:softuser", html: "data-akn-attr-softuser" },
+        { akn: "leos:softdate", html: "data-akn-attr-softdate" },
+        { akn: "leos:softmove_to", html: "data-akn-attr-softmove_to" },
+        { akn: "leos:softmove_from", html: "data-akn-attr-softmove_from" },
+        { akn: "leos:softmove_label", html: "data-akn-attr-softmove_label" },
+        { akn: "leos:softaction", html: "data-akn-attr-softaction" },
+        { akn: "leos:softactionroot", html: "data-akn-attr-softactionroot" },
+        { akn: "leos:action", html: "data-akn-action" },
+        { akn: "leos:uid", html: "data-akn-uid" },
+        { akn: "leos:title", html: "title" }
+    ];
+
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);
@@ -372,7 +390,21 @@ define(function leosPluginUtilsModule(require) {
         for (var i = 0; i < lists.count(); i++) {
             var list = lists.getItem(i);
             if ((_isOrderedAnnexList(list) || _isOrderedList(list)) && _isListContainsOnlySubparagraphsCrossheadingsOrEmpty(list)) {
+                var parent = list.getParent();
                 _moveChildrenToParent(list);
+                var range = editor.createRange();
+                range.moveToPosition(parent, CKEDITOR.POSITION_BEFORE_END);
+                range.select();
+            }
+        }
+        var paragraphs = editor.element.find('li');
+        for (var i = 0; i < paragraphs.count(); i++) {
+            var paragraph = paragraphs.getItem(i);
+            if (_isParagraph(paragraph) && paragraph.getChildren().count() == 1 && _isSubparagraph(paragraph.getFirst())) {
+                _moveChildrenToParent(paragraph.getFirst());
+                var range = editor.createRange();
+                range.moveToPosition(paragraph, CKEDITOR.POSITION_BEFORE_END);
+                range.select();
             }
         }
     }
@@ -1449,11 +1481,141 @@ define(function leosPluginUtilsModule(require) {
         return element && $(element).children() && $(element).children().length > 0 && $(element).children().get(0).nodeName.ignoreCase === BOGUS.ignoreCase;
     }
 
+    function _isInsideTable(element) {
+        return element && element.hasAscendant('table');
+    }
+
+    function _changedContent(event){
+        var editor = event.editor;
+        var olList = editor.editable().getElementsByTag('ol');
+        for (var i = 0, count =  olList.count(); i < count; i++ ) {
+            var sublist = olList.getItem(i);
+            if(!!sublist
+                && !!sublist.getFirst()
+                && sublist.getFirst().type == CKEDITOR.NODE_ELEMENT
+                && !!sublist.getFirst().getAttribute
+                && sublist.getFirst().getAttribute(DATA_AKN_ELEMENT) == POINT
+                && !!sublist.getParent()
+                && !!sublist.getParent().getChildCount
+                && sublist.getParent().getChildCount() == 1){
+                // decrement the element position, it is removed.
+                i--;
+                var nextLi = sublist.getParent();
+
+                _mergeChildren( sublist, nextLi.getParent(), nextLi);
+                sublist.remove();
+                nextLi.remove();
+                _manageEmptyLists(editor);
+                _managePoints(editor);
+                _manageEmptySubparagraphs(editor);
+                _manageCrossheadings(editor);
+                _manageSiblingLists(editor);
+            }
+        }
+
+        _manageSiblingLists(editor);
+    }
+
+    var nodeElementType = CKEDITOR.dom.walker.nodeType( CKEDITOR.NODE_ELEMENT );
+
+    // Merge child nodes with direction preserved. (http://dev.ckeditor.com/ticket/7448)
+    function _mergeChildren( from, into, refNode, forward ) {
+        var child, itemDir;
+        while ( ( child = from[ forward ? 'getLast' : 'getFirst' ]( nodeElementType ) ) ) {
+            if ( ( itemDir = child.getDirection( 1 ) ) !== into.getDirection( 1 ) )
+                child.setAttribute( 'dir', itemDir );
+
+            child.remove();
+
+            refNode ? child[ forward ? 'insertBefore' : 'insertAfter' ]( refNode ) : into.append( child, forward );
+            refNode = child;
+        }
+    }
+    // Check if the entire table/list contents is selected.
+    function _mergeBlocksNonCollapsedSelection( editor, range, startPath ) {
+        var startBlock = startPath.block,
+            endPath = range.endPath(),
+            endBlock = endPath.block;
+
+        // Selection must be anchored in two different blocks.
+        if ( !startBlock || !endBlock || startBlock.equals( endBlock ) )
+            return false;
+
+        editor.fire( 'saveSnapshot' );
+
+        // Remove bogus to avoid duplicated boguses.
+        var bogus;
+        if ( ( bogus = startBlock.getBogus() ) )
+            bogus.remove();
+
+        // Changing end container to element from text node (https://dev.ckeditor.com/ticket/12503).
+        range.enlarge( CKEDITOR.ENLARGE_INLINE );
+
+        // Delete range contents. Do NOT merge. Merging is weird.
+        range.deleteContents();
+
+        // If something has left of the block to be merged, clean it up.
+        // It may happen when merging with list items.
+        if ( endBlock.getParent() ) {
+            // Move children to the first block.
+            endBlock.moveChildren( startBlock, false );
+
+            // ...and merge them if that's possible.
+            startPath.lastElement.mergeSiblings();
+
+            // If expanded selection, things are always merged like with BACKSPACE.
+            pruneEmptyDisjointAncestors( startBlock, endBlock, true );
+        }
+
+        // Make sure the result selection is collapsed.
+        range = editor.getSelection().getRanges()[ 0 ];
+        range.collapse( 1 );
+
+        // Optimizing range containers from text nodes to elements (https://dev.ckeditor.com/ticket/12503).
+        range.optimize();
+        if ( range.startContainer.getHtml() === '' ) {
+            range.startContainer.appendBogus();
+        }
+
+        range.select();
+
+        return true;
+    }
+
+    // Finds the innermost child of common parent, which,
+    // if removed, removes nothing but the contents of the element.
+    //
+    //	before: <div><p><strong>first</strong></p><p>second</p></div>
+    //	after:  <div><p>second</p></div>
+    //
+    //	before: <div><p>x<strong>first</strong></p><p>second</p></div>
+    //	after:  <div><p>x</p><p>second</p></div>
+    //
+    //	isPruneToEnd=true
+    //	before: <div><p><strong>first</strong></p><p>second</p></div>
+    //	after:  <div><p><strong>first</strong></p></div>
+    //
+    // @param {CKEDITOR.dom.element} first
+    // @param {CKEDITOR.dom.element} second
+    // @param {Boolean} isPruneToEnd
+    function pruneEmptyDisjointAncestors( first, second, isPruneToEnd ) {
+        var commonParent = first.getCommonAncestor( second ),
+            node = isPruneToEnd ? second : first,
+            removableParent = node;
+
+        while ( ( node = node.getParent() ) && !commonParent.equals( node ) && node.getChildCount() == 1 )
+            removableParent = node;
+
+        removableParent.remove();
+    }
+
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
         setFocus: _setFocus,
         calculateListLevel: _calculateListLevel,
+        changedContent:_changedContent,
         getAnnexList: _getAnnexList,
         isSelectionInFirstLevelList: _isSelectionInFirstLevelList,
         isAnnexList: _isAnnexList,
@@ -1505,6 +1667,8 @@ define(function leosPluginUtilsModule(require) {
         manageListIntro: _manageListIntro,
         manageSpanInSubparagraphs: _manageSpanInSubparagraphs,
         manageNestedHtmlP:_manageNestedHtmlP,
+        mergeBlocksNonCollapsedSelection: _mergeBlocksNonCollapsedSelection,
+        mergeChildren: _mergeChildren,
         isFirstLevelListSubparagraph: _isFirstLevelListSubparagraph,
         manageCrossheadings: _manageCrossheadings,
         keepCursorPosition: _keepCursorPosition,
@@ -1524,6 +1688,8 @@ define(function leosPluginUtilsModule(require) {
         selectCorrectPathForList: _selectCorrectPathForList,
         getRefConfig: _getRefConfig,
         isEmpty: _isEmpty,
+        isInsideTable: _isInsideTable,
+        commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,

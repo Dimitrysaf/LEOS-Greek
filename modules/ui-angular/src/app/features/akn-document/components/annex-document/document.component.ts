@@ -291,6 +291,7 @@ export class DocumentComponent
   }
 
   private loadDocument(xml: string) {
+    this.documentService.clearPendingSavingElements();
     this.xml = this.cleanupAndSerializeXML(xml);
     this.containerElRef.nativeElement.innerHTML = this.xml;
     if (!this.isCNInstance) {
@@ -338,6 +339,7 @@ export class DocumentComponent
   }) {
     this.updateElementInXml(data);
     this.updateElementInDom(data);
+    this.documentService.removeFromPendingSavingElements(data.elementId);
   }
 
   private updateElementContent(data: {

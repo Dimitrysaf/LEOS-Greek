@@ -64,6 +64,7 @@ define(function aknParagraphProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
 
     var pluginNames=[];
     var specificConfig={
@@ -118,7 +119,8 @@ define(function aknParagraphProfileModule(require) {
         	{ name: 'tools', items: [ 'LeosShowBlocks' ] },
         	{ name : "mode" , items: [ 'Sourcedialog', 'spellchecker' ] },
             { name: 'trackChanges', items: ['toggleDisplay', 'trackChangeActions'] },
-            { name : "colors" , items: [ 'BGColor' ] }
+            { name : "colors" , items: [ 'BGColor' ] },
+            { name: 'orientation', items: ['leosOrientation']}
     	],
         //show toolbar on startup
         startupFocus: 'end',

@@ -102,6 +102,14 @@ Then(`redo button is disabled in ck editor`, () => {
     ckEditorWindow.elements.redoBtn().invoke('attr', 'class').should('contain', 'disabled');
 });
 
+Then('table icon is disabled in ck editor', () => {
+    ckEditorWindow.elements.tableIcon().should('have.class', 'cke_button_disabled');
+});
+
+Then(`table icon is enabled in ck editor`, () => {
+    ckEditorWindow.elements.tableIcon().should('not.have.class', 'cke_button_disabled');
+});
+
 Then(/^internal reference icon is disabled in ck editor panel$/, function () {
     ckEditorWindow.elements.internalReferenceIcon().should('have.class', 'cke_button_disabled');
 });
@@ -332,6 +340,14 @@ When('append {string} to p tag {int} with data akn element subparagraph of level
 
 When('click at offset {int} in pTag {int} with data-akn-element {string} of li with data-akn-element {string} of ol with data-akn-element {string} in edition mode',  (offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3) => {
     ckEditorWindow.clickAtSpecificOffsetInSubparagraphOfLevel(offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3);
+});
+
+When('click at offset {int} of li {int} with data-akn-element {string} in edition mode',  (offSet, paragraphLi, dataAknElement) => {
+    ckEditorWindow.clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement);
+});
+
+When(`click at cell {int} of row {int} of table {int} of li {int} with data-akn-element {string} in edition mode`, (cell, row, table, paragraphLi, dataAknElement) => {
+    ckEditorWindow.clickAtCellInRowInTableOfParagraph(cell, row, table, paragraphLi, dataAknElement);
 });
 
 Then('header of level in financial statement is not editable in ck editor text box', () => {

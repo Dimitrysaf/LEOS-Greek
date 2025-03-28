@@ -32,8 +32,10 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.response.SearchAndReplaceAllResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -79,11 +82,13 @@ public class MemorandumController {
     @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                         @RequestParam("tocMode") TocMode tocMode
+                                         @RequestParam("tocMode") TocMode tocMode,
+                                         HttpServletRequest request
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.memorandumApiService.getToc(documentRef, tocMode);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+            List<TableOfContentItemVO> toc = this.memorandumApiService.getToc(documentRef, tocMode, clientContextToken);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting Memorandum toc items - " + e.getMessage());
@@ -250,12 +255,14 @@ public class MemorandumController {
     @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveMemorandumVersion(@PathVariable("documentRef") String documentRef,
-                                                        @RequestBody SaveTocRequestEvent saveTocRequestEvent
+                                                        @RequestBody SaveTocRequestEvent saveTocRequestEvent,
+                                        HttpServletRequest request
     ) {
         try {
             documentRef = encodeParam(documentRef);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
             List<TableOfContentItemVO> toc = this.memorandumApiService.saveToC(documentRef,
-                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED);
+                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED, clientContextToken);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());
@@ -484,13 +491,14 @@ public class MemorandumController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.TEXT_XML_VALUE)
+    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceAllMatchRequest request) {
         try {
-            byte[] response = this.memorandumApiService.replaceAllTextInDocument(request);
-            return ResponseEntity.ok().body(response);
+            Pair<byte[], Integer> response = this.memorandumApiService.replaceAllTextInDocument(request);
+            SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left(), StandardCharsets.UTF_8), response.right());
+            return ResponseEntity.ok().body(searchAndReplaceAllResponse);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while  downloading xml version",

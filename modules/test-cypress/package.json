@@ -14,10 +14,10 @@
   "devDependencies": {
     "@cypress/xpath": "^2.0.3",
     "cucumber-html-reporter": "^7.1.1",
-    "cypress": "^13.13.1",
+    "cypress": "^14.1.0",
     "cypress-cucumber-attach-screenshots-to-failed-steps": "^1.0.0",
     "cypress-cucumber-preprocessor": "^4.3.1",
-    "cypress-real-events": "^1.13.0",
+    "cypress-real-events": "^1.14.0",
     "cypress-xpath": "^2.0.1",
     "multiple-cucumber-html-reporter": "^3.6.2"
   },
@@ -33,7 +33,6 @@
     }
   },
   "dependencies": {
-    "cypress-real-events": "^1.12.0",
     "decompress": "^4.2.1",
     "fs": "^0.0.1-security"
   }

@@ -179,7 +179,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "NEW"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -393,7 +393,7 @@ define(function leosTrackChangesModule(require) {
         isInsideTrackedHigherElement: function(editor, user) {
             var selection = editor.getSelection();
             if (selection) {
-                var el = selection.getRanges()[0].getCommonAncestor().getAscendant(this.OUTSIDE_EDITOR_ELTS_SELECTOR);
+                var el = selection.getRanges()[0]?.getCommonAncestor().getAscendant(this.OUTSIDE_EDITOR_ELTS_SELECTOR);
                 if (!!el) {
                     if ((el.hasAttribute(this.ACTION_ATTR))
                         && (!el.hasAttribute(this.SOFT_ACTION_ATTR) || el.getAttribute(this.SOFT_ACTION_ATTR) != this.LEOS_SOFT_ACTION_MOVE_FROM_VALUE)
@@ -564,6 +564,29 @@ define(function leosTrackChangesModule(require) {
             var left = positionEditor[0], right = left + parseInt(window.getComputedStyle(element, ":" + pseudoElt).width);
             var mouseX = mousePosition[0], mouseY = mousePosition[1];
             return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
+        },
+
+        getLastTCElement: function(element) {
+            for (var i = element.getChildCount()-1; i >= 0; i--) {
+                var childElement = element.getChild(i);
+                if(!childElement || childElement.type === CKEDITOR.NODE_TEXT) {
+                    continue;
+                }
+                if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
+                    var lastTCElement = this.getLastTCElement(childElement);
+                    if(lastTCElement) {
+                        return lastTCElement;
+                    }
+                }
+                if(childElement.hasAttribute(core.ACTION_ATTR) || childElement.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || childElement.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                    if(childElement.hasAttribute(core.DATA_AKN_ACTION_NUMBER)
+                        && childElement.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION
+                        && childElement.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW) {
+                        continue;
+                    }
+                    return childElement;
+                }
+            }
         }
     };
 
@@ -642,6 +665,10 @@ define(function leosTrackChangesModule(require) {
             do {
                 selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextNode() :
                     editor.getSelection().getRanges()[0].getPreviousNode();
+                if(selectedNode && selectedNode.$.nodeType == CKEDITOR.NODE_ELEMENT &&
+                    typeof selectedNode.getName === 'function' && selectedNode.getName() == 'br'){
+                    selectedNode = deleteKey ? selectedNode.getNext() : selectedNode.getPrevious();
+                }
                 if (selectedNode && (selectedNode.$.textContent.replace(/\u200B/g,'') === '') && ((selectedNode.type !== CKEDITOR.NODE_ELEMENT) ||
                         ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
                     selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextEditableNode() :
@@ -670,35 +697,19 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
-        acceptAllChanges: function(editor, numberModule) {
-            var tcTextElements = editor.document.find(core.TRACKCHANGES_ELEMENT_SELECTOR);
-            for (var i = 0; i < tcTextElements.count(); i++) {
-                this.acceptChange(editor, tcTextElements.getItem(i), numberModule);
-            }
-
-            var tcNumberElements = editor.document.find(core.TRACKCHANGES_NUMBER_ELEMENT_SELECTOR);
-            for (var i = 0; i < tcNumberElements.count(); i++) {
-                actions.acceptChange(editor, tcNumberElements.getItem(i), numberModule);
-            }
-
-            if(tcTextElements.count() > 0 || tcNumberElements.count() > 0) {
-                editor.fire('change');
+        acceptAllChanges: function(editor) {
+            var lastTCElement = core.getLastTCElement(editor.document.find('.leos-placeholder').getItem(0));
+            if(lastTCElement) {
+                editor.execCommand('acceptElement', lastTCElement);
+                this.acceptAllChanges(editor);
             }
         },
 
-        rejectAllChanges: function(editor, numberModule) {
-            var tcTextElements = editor.document.find(core.TRACKCHANGES_ELEMENT_SELECTOR);
-            for (var i = 0; i < tcTextElements.count(); i++) {
-                this.rejectChange(editor, tcTextElements.getItem(i), numberModule);
-            }
-
-            var tcNumberElements = editor.document.find(core.TRACKCHANGES_NUMBER_ELEMENT_SELECTOR);
-            for (var i = 0; i < tcNumberElements.count(); i++) {
-                actions.rejectChange(editor, tcNumberElements.getItem(i), numberModule);
-            }
-
-            if(tcTextElements.count() > 0 || tcNumberElements.count() > 0) {
-                editor.fire('change');
+        rejectAllChanges: function(editor) {
+            var lastTCElement = core.getLastTCElement(editor.document.find('.leos-placeholder').getItem(0));
+            if(lastTCElement) {
+                editor.execCommand('rejectElement', lastTCElement);
+                this.rejectAllChanges(editor);
             }
         },
 
@@ -741,7 +752,9 @@ define(function leosTrackChangesModule(require) {
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                     var liParentElement = element.getParent();
                     element.remove();
+                    if (this.checkIfEmptyListElement(liParentElement)) {
                     this.removeEmptyElement(liParentElement, numberModule, editor);
+                    }
                 } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
                     element.$.outerHTML = element.$.innerHTML;
                 }
@@ -779,19 +792,30 @@ define(function leosTrackChangesModule(require) {
             return toBeProcessedInBackend;
         },
 
-        removeEmptyElement: function (liParentElement, numberModule, editor) {
-            var liParentElementToCheckText = liParentElement;
+        checkIfEmptyListElement(element) {
+            var liParentElementToCheckText = element;
             while (liParentElementToCheckText && liParentElementToCheckText.getName() !== 'li') {
                 liParentElementToCheckText = liParentElementToCheckText.getParent();
             }
+            var liParentElementToCheckNumber = element;
+            while (liParentElementToCheckNumber
+            && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
+                liParentElementToCheckNumber = liParentElementToCheckNumber.getParent();
+            }
+            if (liParentElementToCheckText && liParentElementToCheckText.getText().trim() === ''
+                && liParentElementToCheckNumber && liParentElementToCheckNumber.getParent()
+                && liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                return true;
+            }
+            return false;
+        },
+
+        removeEmptyElement: function (liParentElement, numberModule, editor) {
             var liParentElementToCheckNumber = liParentElement;
             while (liParentElementToCheckNumber
             && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
                 liParentElementToCheckNumber = liParentElementToCheckNumber.getParent();
             }
-            if (liParentElementToCheckText && liParentElementToCheckText.getText() === ''
-                && liParentElementToCheckNumber && liParentElementToCheckNumber.getParent()
-                && liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                 var isFirstOfAll = numberModule.isFistElement(liParentElementToCheckNumber.getParent().$, liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM));
                 var keyCodeToUse = 8;
                 if (isFirstOfAll) {
@@ -808,9 +832,10 @@ define(function leosTrackChangesModule(require) {
                     })
                 );
                 liParentElement.setAttribute(leosPluginUtils.DATA_AKN_EMPTY, 'true');
-                core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
+                if(liParentElement.getParent()) {
+                    core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
+                }
                 editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
-            }
         },
 
         removeEnterAndJoinLines: function (element, editor) {
@@ -826,7 +851,9 @@ define(function leosTrackChangesModule(require) {
                 })
             );
             element.setAttribute(leosPluginUtils.DATA_REJECT_INSERTED_ENTER, 'true');
-            core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
+            if(element.getParent()) {
+                core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
+            }
             editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
         },
 
@@ -844,7 +871,11 @@ define(function leosTrackChangesModule(require) {
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION
                 || (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW
                     && element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION)) {
+                if(this.checkIfEmptyListElement(element)) {
+                    this.removeEmptyElement(element, numberModule, editor);
+                } else {
                 this.removeEnterAndJoinLines(element, editor);
+                }
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributesForEnter(element);
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
@@ -853,7 +884,22 @@ define(function leosTrackChangesModule(require) {
                 if(parentElem && parentElem.getAttribute('data-akn-name') === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
                 } else {
+                    var liParentElement = element.getAscendant("li");
+                    var pParentElement = element.getAscendant("p");
+                    var parent = element.getParent();
                     element.remove();
+                    if(leosPluginUtils.isSubparagraph(parent) && parent.getText().trim() === '') {
+                        parent.remove();
+                    }
+                    if(liParentElement) {
+                        editor.getSelection().fake(liParentElement);
+                        if (this.checkIfEmptyListElement(liParentElement)) {
+                            this.removeEmptyElement(liParentElement, numberModule, editor);
+                        }
+                    }
+                    if (pParentElement && !pParentElement.getText().trim()) {
+                        pParentElement.remove();
+                    }
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 if(parentElem) {

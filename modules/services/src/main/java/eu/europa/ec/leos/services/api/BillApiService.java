@@ -14,11 +14,15 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.services.document.models.DocType;
 import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.vo.structure.TocItem;
+
+import java.util.List;
 
 public interface BillApiService extends BaseDocumentService<Bill> {
     DocumentViewResponse renumberBill(String documentRef);
@@ -31,4 +35,5 @@ public interface BillApiService extends BaseDocumentService<Bill> {
 
     boolean isClonedProposal();
 
+    List<TocItem> getTocItems(@NotNull String documentRef, String clientContextToken);
 }

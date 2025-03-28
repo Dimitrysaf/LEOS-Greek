@@ -181,13 +181,13 @@
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_HyWtaT">
-                            <num leos:origin="ec" xml:id="_art_1_RNvzZ7">(ab)</num>
+                            <num leos:origin="ec" xml:id="_art_1_RNvzZ7">(bb)</num>
                             <content leos:origin="ec" xml:id="_art_1_rnkluv">
                                 <p leos:origin="ec" xml:id="_art_1_QnEgN0">Test one more</p>
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_jRGGjE">
-                            <num leos:origin="ec" xml:id="_art_1_zK1HW2">(ac)</num>
+                            <num leos:origin="ec" xml:id="_art_1_zK1HW2">(cc)</num>
                             <list leos:origin="ec">
                                 <point leos:origin="cn">
                                     <num leos:origin="cn">#</num>
@@ -357,7 +357,7 @@
                             </list>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_szX3D7">
-                            <num leos:origin="ec" xml:id="_art_1_9CSJ0k">(ad)</num>
+                            <num leos:origin="ec" xml:id="_art_1_9CSJ0k">(dd)</num>
                             <content leos:origin="ec" xml:id="_art_1_vxNqFi">
                                 <p leos:origin="ec" xml:id="_art_1_JSbKai">Test one more</p>
                             </content>
@@ -528,25 +528,25 @@
                             <num leos:origin="cn">#</num>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_Wy8GqM">
-                            <num leos:origin="ec" xml:id="_art_1_0Z3SZd">(ae)</num>
+                            <num leos:origin="ec" xml:id="_art_1_0Z3SZd">(ee)</num>
                             <content leos:origin="ec" xml:id="_art_1_Hrahmk">
                                 <p leos:origin="ec" xml:id="_art_1_jzTjZ0">Test one more</p>
                             </content>
                         </point>
                         <point leos:origin="ec" leos:softtrans_from="_akn_alinea_e2bnhS" xml:id="_art_1_cUGije">
-                            <num leos:origin="ec" xml:id="_art_1_K8LK4M">(af)</num>
+                            <num leos:origin="ec" xml:id="_art_1_K8LK4M">(ff)</num>
                             <content leos:origin="ec" xml:id="_art_1_Cy5HfF">
                                 <p leos:origin="ec" xml:id="_art_1_AfjMRj">Test one more</p>
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_6KXnHJ">
-                            <num leos:origin="ec" xml:id="_art_1_lZr1vr">(ag)</num>
+                            <num leos:origin="ec" xml:id="_art_1_lZr1vr">(gg)</num>
                             <content leos:origin="ec" xml:id="_art_1_Hm6OWE">
                                 <p leos:origin="ec" xml:id="_art_1_0WdxyO">Test one more</p>
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_y9zT2M">
-                            <num leos:origin="ec" xml:id="_art_1_yDqTd7">(ah)</num>
+                            <num leos:origin="ec" xml:id="_art_1_yDqTd7">(hh)</num>
                             <content leos:origin="ec" xml:id="_art_1_vuUIrj">
                                 <p leos:origin="ec" xml:id="_art_1_lHg1AS">Test one more</p>
                             </content>

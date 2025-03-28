@@ -13,31 +13,35 @@ class annexPage {
     }
 
     mouseHoverAndClickOnLevel(levelNumber) {
-        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
     }
 
     clickEditIconOfLevel(levelNumber) {
-        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
     }
 
     clickInsertBeforeIconOfLevel(levelNumber) {
-        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.before']").click({force:true}));
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.before']").click({force:true}));
     }
 
     clickInsertAfterIconOfLevel(levelNumber) {
-        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.after']").click({force:true}));
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.after']").click({force:true}));
     }
 
     clickDeleteIconOfLevel(levelNumber) {
-        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='delete']").click({force:true}));
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='delete']").click({force:true}));
     }
 
     mouseHoverAndClickOnParagraph(paragraphNumber) {
-        cy.xpath("//paragraph[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+        cy.xpath("(//div[@class='orientation']//paragraph)[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+    }
+
+    clickEditIconOfParagraph(paragraphNumber) {
+        cy.xpath("(//div[@class='orientation']//paragraph)[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
     }
 
     getContentOfAnnex(levelNumber) {
-        return cy.xpath("//level[" + levelNumber + "]//content//aknp");
+        return cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]//content//aknp");
     }
 
     getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
@@ -46,6 +50,14 @@ class annexPage {
 
     getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
         return this.getSubparagraphFromLevel(subparagraphNumber,  levelNumber).find('table tbody tr').eq(0).find('td');
+    }
+
+    getRowFromTableOfParagraph(paragraphNumber) {
+        return this.getParagraph(paragraphNumber).find('table tbody tr');
+    }
+
+    getColumnFromTableOfParagraph(paragraphNumber) {
+        return this.getParagraph(paragraphNumber).find('table tbody tr').eq(0).find('td');
     }
 
     getSubparagraphFromLevel(subparagraphNumber, levelNumber) {

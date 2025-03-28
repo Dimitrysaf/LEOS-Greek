@@ -56,17 +56,8 @@ public class NumberConfigGreekAlpha extends NumberConfigAbstract implements Numb
         return this.prefix + getGreekAlphaNumber(index) + this.suffix;
     }
 
-    public int charToInteger(String numAsString) {
-        int numAsInt = 0;
-        for (int index = 0; index < numAsString.length(); index++) {
-            int pow = numAsString.length() - 1 - index;
-            int decimalCodePoint = (int) numAsString.charAt(index);
-            if(decimalCodePoint >= 962) {
-                decimalCodePoint = decimalCodePoint - 1;
-            }
-            numAsInt = numAsInt + ((decimalCodePoint - 944) * (int) (Math.pow(24, pow)));
-        }
-        return numAsInt;
+    public int charToInteger(String label) {
+        return super.charToInteger(label, GREEK_BASE_UNICODE, GREEK_LETTERS_COUNT);
     }
 
     @Override

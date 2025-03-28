@@ -64,6 +64,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import io.atlassian.fugue.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +149,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode, String clientContextToken) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(
@@ -185,9 +186,9 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
                 false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR,
                 messageHelper.getMessage("operation." + elementName + ".updated"));
-        documentViewService.updateProposalAsync(memorandum);
-        return new SaveElementResponse(elementId, elementName,
-                elementProcessor.getElement(memorandum, elementName, elementId));
+
+        String elementContent = elementProcessor.getElement(memorandum, elementName, elementId);
+        return new SaveElementResponse(elementId, elementName, elementContent);
     }
 
     @Override
@@ -220,12 +221,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         this.memorandumService.createVersion(memorandum.getId(), versionType, checkInComment);
-        documentViewService.updateProposalAsync(memorandum);
         return this.memorandumService.getAllVersions(memorandum.getId(), documentRef, 0, 10);
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken) {
         throw new RuntimeException("Save toc method not allowed for Memorandum type document");
     }
 
@@ -339,7 +339,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+    public Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
 
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), memorandum);
@@ -347,12 +347,12 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
                 event.isCaseSensitive(), event.isCompleteWords());
-        return searchService.replaceText(
+        return new Pair<>(searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS,
-                memorandum.isTrackChangesEnabled());
+                memorandum.isTrackChangesEnabled()), searchMatchVOS.size());
     }
 
     @Override
@@ -411,7 +411,6 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         String documentId = memorandumService.findMemorandumByRef(documentRef).getId();
         Memorandum memorandum = memorandumService.updateMemorandum(documentRef, documentId, properties, false);
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
-        documentViewService.updateProposalAsync(memorandum);
         return true;
     }
 

@@ -56,4 +56,6 @@ public interface BillProcessor {
     byte[] renumberingAndPostProcessing(byte[] docContent);
 
     byte[] renumberingAndPostProcessing(byte[] docContent, boolean renumberChildElements);
+
+    byte[] handleTrackChangeForSoleNumberedElements(byte[] newXmlContent, String elementTagName);
 }

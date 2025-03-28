@@ -25,6 +25,7 @@ import io.atlassian.fugue.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,6 +99,8 @@ public interface XmlContentProcessor {
     byte[] cleanSoftActionsForNode(byte[] xmlContent, List<TocItem> tocItemList);
 
     byte[] cleanMiscAttributes(byte[] xmlContent);
+
+    byte[] updateReferencesOnImport(byte[] xmlContent, Map<String, String> refsMatching) throws Exception;
 
     byte[] updateReferences(byte[] xmlContent) throws Exception;
 

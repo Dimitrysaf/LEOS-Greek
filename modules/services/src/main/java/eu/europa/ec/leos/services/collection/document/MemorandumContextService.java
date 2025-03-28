@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.MemorandumService;
+import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
@@ -54,6 +55,7 @@ public class MemorandumContextService {
     private final XmlNodeProcessor xmlNodeProcessor;
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
+    private final PostProcessingDocumentService postProcessingDocumentService;
 
     private LeosPackage leosPackage = null;
     private Memorandum memorandum = null;
@@ -72,11 +74,13 @@ public class MemorandumContextService {
     private String language;
     private boolean translated;
     private String packageRef = null;
+    private Map<String, String> mapOldAndNewRefs;
 
     @Autowired
     MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
-            XmlNodeConfigProcessor xmlNodeConfigProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+                             XmlNodeConfigProcessor xmlNodeConfigProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper, PostProcessingDocumentService postProcessingDocumentService) {
         this.memorandumService = memorandumService;
+        this.postProcessingDocumentService = postProcessingDocumentService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
@@ -145,6 +149,19 @@ public class MemorandumContextService {
 
     public void usePackageRef(String packageRef) {
         this.packageRef = packageRef;
+    }
+
+    public void useMapOldAndNewRefs(Map<String, String> mapOldAndNewRefs) {
+        LOG.trace("Using mapOldAndNewRefs... [mapOldAndNewRefs={}]", mapOldAndNewRefs);
+        this.mapOldAndNewRefs = mapOldAndNewRefs;
+    }
+
+    public void executeUpdateReferences() {
+        LOG.trace("Executing 'Update References On Memorandum' use case...");
+        Validate.notNull(memorandum, "Memorandum is required!");
+        Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
+        byte[] content = this.postProcessingDocumentService.updateReferences(memorandum.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
+        memorandumService.updateMemorandum(memorandum.getId(), content);
     }
 
     public Memorandum executeCreateMemorandum() {

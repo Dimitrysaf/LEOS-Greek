@@ -350,7 +350,7 @@ Feature: Track Changes Feature
       | text     | "agraph."    |
     Then paragraph 7 of article 1 has below content
       | text     | "Seventh"     |
-      | html     | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> qu<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ery<\/del>ing<\/ins>   |
+      | html     | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> qu<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ery<\/del>ing<\/ins> |
       | text     | " numbered "  |
       | html     | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">reg<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ist</del>ered </ins> |
       | text     | "paragraph."  |
@@ -429,7 +429,7 @@ Feature: Track Changes Feature
     Then enable track changes toggle bar is on in ribbon toolbar
     When click on "Article 1 - Scope 1.Numbered paragraphs with 2 paragraphs." link in navigation pane
     Then article 1 is displayed
-    When mouseover and click on article 1
+    When click on edit icon of article 1
     Then ck editor window is displayed
     And  15 paragraphs are present in article in edition mode
     When click at offset 25 of li 3 with data-akn-element "paragraph" of article in edition mode
@@ -1613,6 +1613,36 @@ Feature: Track Changes Feature
     And  num of level 5 contains attribute "leos:action" with value "insert"
     And  num value of level 5 contains "1.3."
     And  "MOVED from point 1.1" is showing as soft move label in num of level 5
+
+  @softEnterInLevelAnnexTrackChanges @local
+  Scenario: move of point inside annex using 3 dots and drag and drop
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing Soft Enter in Level with Track Changes" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 1
+    When click on annex 1 link
+    Then user is on annex page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And  toc editing button is displayed and enabled
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When mouseover and click on level 1
+    Then ck editor window is displayed
+    When click enter from keyboard in edition mode
+    And  append "text" at p tag 2 of level in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  subparagraph 2 of level 1 contains an attribute with name "leos:action-enter" and value "insert"
+    And  content of computed style before of subparagraph 2 of level 1 contains "↵"
+    And  ins tag of content of subparagraph 2 of level 1 is "text"
 
   @importOJTrackChanges @local
   Scenario: import from office journal

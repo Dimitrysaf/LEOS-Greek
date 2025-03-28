@@ -1,9 +1,10 @@
-import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostBinding, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import {Observable, Subject, take, takeUntil} from 'rxjs';
 
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { DocumentService } from '@/shared/services/document.service';
+import {EuiDialogComponent} from "@eui/components/eui-dialog";
 
 @Component({
   selector: 'app-document-search',
@@ -12,6 +13,7 @@ import { DocumentService } from '@/shared/services/document.service';
 })
 export class DocumentSearchComponent implements OnInit, OnDestroy {
   @HostBinding('class.isReplace') isReplace = false;
+  @ViewChild('searchReplaceAllConfirmation') searchReplaceAllConfirmation: EuiDialogComponent;
 
   form = new FormGroup({
     searchText: new FormControl(''),
@@ -70,5 +72,18 @@ export class DocumentSearchComponent implements OnInit, OnDestroy {
       matchCase,
       completeWords,
     };
+  }
+
+  onCancelSearchAndReplace() {
+    this.searchReplaceAllConfirmation.closeDialog();
+  }
+
+  searchReplaceAllOpenConfirmation() {
+    this.searchReplaceAllConfirmation.openDialog();
+  }
+
+  searchReplaceAll() {
+    this.searchReplaceAllConfirmation.closeDialog()
+    this.doc.searchReplaceAll();
   }
 }

@@ -75,13 +75,26 @@ define(function leosTrackChangesPluginModule(require) {
                     },
 
                     onClick: function (value) {
-                        editor.focus();
                         if(value === 'acceptAll') {
-                            actions.acceptAllChanges(editor, numberModule);
+                            actions.acceptAllChanges(editor);
                         } else {
-                            actions.rejectAllChanges(editor, numberModule);
+                            actions.rejectAllChanges(editor);
                         }
                     },
+                });
+                editor.addCommand("acceptElement", {
+                    canUndo: true,
+                    editorFocus: false,
+                    exec: function(editor, element) {
+                        actions.acceptChange(editor, element, numberModule);
+                    }
+                });
+                editor.addCommand("rejectElement", {
+                    canUndo: true,
+                    editorFocus: false,
+                    exec: function(editor, element) {
+                        actions.rejectChange(editor, element, numberModule);
+                    }
                 });
             }
 
@@ -449,7 +462,9 @@ define(function leosTrackChangesPluginModule(require) {
 
                             editor.getSelection().getRanges()[0].optimize();
                             var range = editor.getSelection().getRanges()[0];
-                            var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
+                            var initialRange = range.clone();
+                            var initialCommonAncestor = initialRange.getCommonAncestor();
+                            var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_DELETE);
 
                             if (!deleteKey) {
                                 var elementToDelete = range.getPreviousNode();
@@ -486,9 +501,15 @@ define(function leosTrackChangesPluginModule(require) {
                             if (!originalBackspace) {
 
                                 if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
-
+                                    var rangeWasCollapsed = range.collapsed;
+                                    editor.fire("saveSnapshot");
                                     style.apply(editor, deleteTcStyle);
 
+                                    if(!rangeWasCollapsed){
+                                        // insert here code to delete the empty elements
+                                        _removeEmptyElements(initialCommonAncestor);
+                                    }
+                                    editor.fire("saveSnapshot");
                                     range = editor.getSelection().getRanges()[0];
                                     range.collapse(!deleteKey);
                                     range.select();
@@ -637,6 +658,9 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("afterCommandExec", function(event) {
                 if (event.data.name === "enter") {
                     var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
+                    if (!elementToRemoveAttribute) {
+                        elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("p");
+                    }
                     if (elementToRemoveAttribute) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
@@ -890,6 +914,73 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 }
             });
+        }
+    }
+
+    function _removeEmptyElements(fragment){
+        // fragment is CKEDITOR.htmlParser.element
+        if(typeof fragment.getOuterHtml === 'function') {
+            var htmlElement = fragment.getOuterHtml();
+            var eventDataAsObj = _cleanElements(htmlElement);
+            var toHtml = eventDataAsObj.html();
+            fragment.setHtml(toHtml);
+        }
+    }
+
+    function _cleanElements(data) {
+        var eventDataAsObject = $(data);
+        var elementsToRemove = eventDataAsObject
+            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph']")
+            .find("*").addBack().filter(function () {
+                return UTILS.isEmptyElement(this);
+            });
+        if(elementsToRemove && elementsToRemove.length > 0){
+            elementsToRemove.each(_checkEmptyAndRemove);
+        }
+        /*
+           - empty node is the last point of a List removing it means removing also the List.
+           - the list contains an intro subparagraph remove it outside the list structure
+           */
+
+        var olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknOrderedList']");
+        if(!olOrderedList || olOrderedList.length == 0){
+            olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknAnnexOrderedList']");
+        }
+        if(!!olOrderedList && olOrderedList.length > 0){
+            for (let i = 0; i < olOrderedList.length; i++) {
+                _checkEmptyOLAndRemove(olOrderedList[i], eventDataAsObject.attr('id'));
+            }
+        }
+        return eventDataAsObject;
+    }
+
+    function  _checkEmptyOLAndRemove(elem, idToExit ){
+        if (elem.childNodes.length === 0 ||
+            (elem.childNodes.length === 1 && elem.childNodes[0].getAttribute("data-akn-element") !== "point")) {
+
+            if(elem.childNodes.length > 0) {
+                for (var i = 0; i < elem.childNodes[0].childNodes.length; i++) {
+                    elem.parentNode.appendChild(elem.childNodes[0].childNodes[i]);
+                }
+            }
+            var parent = elem.parentNode;
+            elem.remove();
+            if(parent.getAttribute('id') === idToExit){
+                return;
+            }
+            _checkEmptyOLAndRemove(parent, idToExit );
+        }
+    }
+
+    function _checkEmptyAndRemove(index, elem){
+        var isPBeforeTable = $(elem).is('p') && $(elem).prev().is('table');
+        var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
+        isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList;
+        if (($(elem).parents('table').length === 0)  && !isPBeforeTable &&
+            UTILS.isEmptyElement(elem) && ($.trim($(elem).text()) === '')) {
+            var parent = $(elem).parent();
+            $(elem).remove();
+            _checkEmptyAndRemove(0, parent);
         }
     }
 

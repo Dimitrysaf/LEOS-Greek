@@ -48,9 +48,12 @@ import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
+import static eu.europa.ec.leos.services.support.XmlHelper.ORGANIZATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.PART;
+import static eu.europa.ec.leos.services.support.XmlHelper.PERSON;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.ROLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
@@ -64,6 +67,7 @@ public class TableOfContentHelper {
     public static final int DEFAULT_CAPTION_MAX_SIZE = 50;
 
     public static final List<String> ELEMENTS_WITHOUT_CONTENT = Collections.unmodifiableList(Arrays.asList(ARTICLE, SECTION, CHAPTER, TITLE, PART));
+    public static final List<String> ELEMENTS_WITH_ONLY_TEXT = Collections.unmodifiableList(Arrays.asList(ROLE, PERSON, ORGANIZATION));
     private static final String MOVE_LABEL_SPAN_START_TAG = "<span class=\"leos-soft-move-label\">";
     private static final String MOVED_TITLE_SPAN_START_TAG = "<span class=\"leos-soft-move-title\">";
     private static final String SPAN_END_TAG = "</span>";
@@ -97,6 +101,10 @@ public class TableOfContentHelper {
                 tocItem.setNumber(StructureConfigUtils.HASH_NUM_VALUE);
             }
             itemDescription.append(tocItem.getNumber());
+            if (tocItem.isSoleNumbered()) {
+                    itemDescription.setLength(0);
+                    itemDescription.append(tocItem.getNumber());
+            }
             if (shoudlAddMovedLabel) {
                 itemDescription.append(SPAN_END_TAG).append(getMovedLabel(messageHelper));
             }

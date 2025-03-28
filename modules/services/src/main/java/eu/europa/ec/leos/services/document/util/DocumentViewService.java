@@ -75,9 +75,6 @@ public class DocumentViewService<T extends XmlDocument> {
 
     public DocumentViewResponse updateDocumentView(T document) {
         Proposal proposal = getProposalFromPackage(document);
-        if(proposal != null) {
-            contextExecuteUpdateProposalAsync(proposal);
-        }
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
         String proposalRef = proposal != null ? proposal.getMetadata().getOrNull().getRef() : null;
@@ -122,7 +119,7 @@ public class DocumentViewService<T extends XmlDocument> {
                 document.getVersionType(), versionLabel, versionComment);
     }
 
-    private String getEditableXml(T document, Proposal proposal) {
+    public String getEditableXml(T document, Proposal proposal) {
         byte[] coverPageContent = new byte[0];
         //handle cover page type
 

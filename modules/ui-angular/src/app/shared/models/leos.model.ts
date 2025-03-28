@@ -27,6 +27,7 @@ export type Profile = {
   name: string;
   breadcrumb: boolean;
   tocEdition: boolean;
+  tocSignatureEdition: boolean;
   internalReference: boolean;
   authorialNote: boolean;
   showLoggedUser: boolean;
@@ -64,6 +65,7 @@ export type LeosConfig = {
   contextRole: string;
   leosSwitchLevelArticle: boolean;
   searchOnMinimumCharacter: number;
+  maxSearchLimit: number;
 };
 
 export type LeosAppConfig = LeosConfig & {

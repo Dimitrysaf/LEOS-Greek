@@ -82,8 +82,9 @@ public class WorkflowCollaboratorController {
         final String userId = !Strings.isNullOrEmpty(collaboratorDTO.getLogin())?collaboratorDTO.getLogin():collaboratorDTO.getEntity().getName();
         final String roleName = collaboratorDTO.getRole();
         final String connectedDG = collaboratorDTO.getEntity().getOrganizationName();
+        final String leosClientId = collaboratorDTO.getClientSystem()!=null?collaboratorDTO.getClientSystem().getClientId():null;
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl);
+        collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, leosClientId);
     }
 
     private void addWorkflowCollaborator(Proposal proposal, String proposalRef, String systemClientId, AccessDTO accessDTO) {

@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -33,11 +34,14 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
+import eu.europa.ec.leos.vo.light.Profile;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -53,6 +57,9 @@ import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
+import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
+import static eu.europa.ec.leos.services.support.XmlHelper.PERSON;
+import static eu.europa.ec.leos.services.support.XmlHelper.ROLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 
 public abstract class BillServiceImpl implements BillService {
@@ -82,7 +89,8 @@ public abstract class BillServiceImpl implements BillService {
                     XmlNodeConfigProcessor xmlNodeConfigProcessor, AttachmentProcessor attachmentProcessor,
                     ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                     MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
-                    XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
+                    XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext,
+                    DocumentLanguageContext documentLanguageContext) {
         this.billRepository = billRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -335,15 +343,43 @@ public abstract class BillServiceImpl implements BillService {
     }
     
     @Override
-    public List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode) {
+    public List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems) {
         final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
         final byte[] xmlContent = content.getSource().getBytes();
         Stopwatch stopwatch = Stopwatch.createStarted();
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, mode);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, mode, tocItems);
         LOG.info("getTableOfContent in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         return tocList;
     }
-    
+
+    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile) {
+        List<TocItem> tocItems = structureContext.getTocItems();
+        if (profile != null) {
+            if (!profile.isTocEdition()) {
+                for (TocItem tocItem : tocItems) {
+                    if (!profile.isTocSignatureEdition() ||
+                            (!tocItem.getAknTag().value().equalsIgnoreCase(ROLE)
+                                    && !tocItem.getAknTag().value().equalsIgnoreCase(PERSON))) {
+                        tocItem.setDraggable(false);
+                    }
+                }
+            }
+            if (!profile.isSignatureEdition()) {
+                for (TocItem tocItem : tocItems) {
+                    List<eu.europa.ec.leos.vo.structure.Profile> profiles = tocItem.getProfiles() != null ? tocItem.getProfiles().getProfiles() : null;
+                    if (tocItem.getAknTag().value().equals(BLOCK)
+                            && profiles != null && profiles.size() > 0
+                            && profiles.get(0).getElementSelector() != null
+                            && profiles.get(0).getElementSelector().contains("signatory")
+                            && profiles.get(0).getElementSelector().contains(BLOCK)) {
+                        tocItem.setEditable(false);
+                    }
+                }
+            }
+        }
+        return tocItems;
+    }
+
     @Override
     public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
         // TODO temporary call. paginated loading will be implemented in the future Story

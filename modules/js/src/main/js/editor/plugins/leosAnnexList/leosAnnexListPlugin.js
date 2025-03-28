@@ -548,21 +548,6 @@ define(function leosAnnexListPluginModule(require) {
         this.requiredContent = type;
     }
 
-    var elementType = CKEDITOR.dom.walker.nodeType( CKEDITOR.NODE_ELEMENT );
-
-    // Merge child nodes with direction preserved. (https://dev.ckeditor.com/ticket/7448)
-    function mergeChildren( from, into, refNode, forward ) {
-        var child, itemDir;
-        while ( ( child = from[ forward ? 'getLast' : 'getFirst' ]( elementType ) ) ) {
-            if ( ( itemDir = child.getDirection( 1 ) ) !== into.getDirection( 1 ) )
-                child.setAttribute( 'dir', itemDir );
-
-            child.remove();
-
-            refNode ? child[ forward ? 'insertBefore' : 'insertAfter' ]( refNode ) : into.append( child, forward );
-            refNode = child;
-        }
-    }
 
     listCommand.prototype = {
         exec: function( editor ) {
@@ -746,7 +731,7 @@ define(function leosAnnexListPluginModule(require) {
             var sibling = listNode[ rtl ? 'getPrevious' : 'getNext' ]( nonEmpty );
             if ( sibling && sibling.type == CKEDITOR.NODE_ELEMENT && sibling.is( listNode.getName() ) ) {
                 // Move children order by merge direction.(https://dev.ckeditor.com/ticket/3820)
-                mergeChildren( listNode, sibling, null, !rtl );
+                leosPluginUtils.mergeChildren( listNode, sibling, null, !rtl );
 
                 listNode.remove();
                 listNode = sibling;
@@ -837,7 +822,7 @@ define(function leosAnnexListPluginModule(require) {
             if ( sublist ) {
                 // If next line is in the sub list of the current list item.
                 if ( currentBlock.contains( nextLi ) ) {
-                    mergeChildren( sublist, nextLi.getParent(), nextLi );
+                    leosPluginUtils.mergeChildren( sublist, nextLi.getParent(), nextLi );
                     sublist.remove();
                 }
                 // Migrate the sub list to current list item.
@@ -916,8 +901,23 @@ define(function leosAnnexListPluginModule(require) {
                         range = sel.getRanges()[ 0 ],
                         path = range && range.startPath();
 
-                    if ( !range || !range.collapsed )
+                    if(!range){
                         return;
+                    }
+                    if (!range.collapsed) {
+                        if(editor.LEOS.isTrackChangesEnabled){
+                            return;
+                        }
+                        var startPath = range.startPath();
+                        if ( !leosPluginUtils.mergeBlocksNonCollapsedSelection( editor, range, startPath ) ){
+                            return;
+                        }
+                        // Scroll to the new position of the caret (https://dev.ckeditor.com/ticket/11960).
+                        editor.getSelection().scrollIntoView();
+                        editor.fire( 'saveSnapshot' );
+                        evt.cancel();
+                        return;
+                    }
 
                     var isBackspace = key == 8;
                     var editable = editor.editable();
@@ -1272,6 +1272,7 @@ define(function leosAnnexListPluginModule(require) {
                     } );
                 }
             }, null, null, 8 );
+            editor.on('change', leosPluginUtils.changedContent);
         }
     };
 

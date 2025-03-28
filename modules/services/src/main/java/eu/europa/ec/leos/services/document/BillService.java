@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
@@ -20,6 +21,9 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.vo.light.Profile;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.HashMap;
@@ -65,9 +69,11 @@ public interface BillService {
     
     List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize);
 
-    List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode);
+    List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems);
 
     Bill saveTableOfContent(Bill bill, List<TableOfContentItemVO> tocList, String actionMsg, User user);
+
+    List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile);
 
     List<String> getAncestorsIdsForElementId(Bill bill, List<String> elementIds);
 

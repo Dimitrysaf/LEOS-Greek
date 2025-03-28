@@ -13,14 +13,26 @@ class importOfficeJournalWindow {
         aknBody: () => this.elements.bill().find('aknbody'),
         recitals: () => this.elements.preamble().find('recitals'),
         recital: () => this.elements.recitals().find(' .leos-import-wrapper'),
-        article: () => this.elements.aknBody().find('.leos-import-wrapper'),
+        leosImportWrapper: () => this.elements.aknBody().find('.leos-import-wrapper'),
         importBtn: () => cy.get('.eui-dialog__footer-content button').contains('Import'),
         selectAllRecitalsBtn: () => cy.get(".app-u-gap-s button").eq(0),
-        selectAllArticlesBtn: () => cy.get(".app-u-gap-s button").eq(1),
+        selectAllEnactingItemsBtn: () => cy.get(".app-u-gap-s button").eq(1),
         checkBoxInputRecital: () => this.elements.recital().find('input'),
-        checkBoxInputArticle: () => this.elements.article().find('input'),
+        checkBoxInputPart: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='part']"),
+        checkBoxInputTitle: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='title']"),
+        checkBoxInputChapter: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='chapter']"),
+        checkBoxInputSection: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='section']"),
+        checkBoxInputArticle: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='article']"),
         checkedRecitals: () => this.elements.recital().find('input:checked'),
-        checkedArticles: () => this.elements.article().find('input:checked')
+        checkedParts: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='part']:checked"),
+        checkedTitles: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='title']:checked"),
+        checkedChapters: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='chapter']:checked"),
+        checkedSections: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='section']:checked"),
+        checkedArticles: () => this.elements.leosImportWrapper().find("input[data-wrapped-type='article']:checked")
+    }
+
+    clickPartCheckBox(partNumber){
+        this.elements.checkBoxInputPart().eq(partNumber -1).click()
     }
 
     clickTypeField(){
@@ -48,7 +60,7 @@ class importOfficeJournalWindow {
     }
 
     clickArticleCheckBox(articleNumber){
-        this.elements.article().eq(articleNumber-1).find('input').click();
+        this.elements.checkBoxInputArticle().eq(articleNumber-1).click();
     }
 
     clickImportBtn(){
@@ -60,8 +72,8 @@ class importOfficeJournalWindow {
         this.elements.selectAllRecitalsBtn().realHover().click();
     }
 
-    clickSelectAllArticlesBtn(){
-        this.elements.selectAllArticlesBtn().realHover().click();
+    clickSelectAllEnactingItemsBtn(){
+        this.elements.selectAllEnactingItemsBtn().realHover().click();
     }
 }
 export default new importOfficeJournalWindow();

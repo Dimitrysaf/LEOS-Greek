@@ -51,7 +51,6 @@ import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
-import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.exception.ImportElementException;
 import eu.europa.ec.leos.services.export.ExportDW;
@@ -77,6 +76,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -84,10 +84,10 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
+import eu.europa.ec.leos.vo.light.Profile;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,15 +213,16 @@ public abstract class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken) {
         Bill bill = this.billService.findBillByRef(documentRef);
         User user = securityContext.getUser();
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         populateCloneProposalMetadata(bill);
         Bill updatedBill = this.billService.saveTableOfContent(bill, toc,
                 messageHelper.getMessage("operation.toc.updated"), user);
-        documentViewService.updateProposalAsync(bill);
-        return billService.getTableOfContent(updatedBill, tocMode);
+        Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
+        List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile);
+        return billService.getTableOfContent(updatedBill, tocMode, tocItems);
     }
 
     @Override
@@ -350,19 +351,19 @@ public abstract class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+    public Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Bill bill = this.billService.findBillByRef(event.getDocumentRef());
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), bill);
 
         populateCloneProposalMetadata(bill);
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
                 event.isCaseSensitive(), event.isCompleteWords());
-        return searchService.replaceText(
+        return new Pair<>(searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS,
-                bill.isTrackChangesEnabled());
+                bill.isTrackChangesEnabled()), searchMatchVOS.size());
 
     }
 
@@ -420,6 +421,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         String language = documentLanguageContext.getDocumentLanguage();
         newXmlContent = this.numberService.renumberHigherSubDivisions(newXmlContent, language, elementTagName, tocItemsList);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
+        newXmlContent = billProcessor.handleTrackChangeForSoleNumberedElements(newXmlContent, elementTagName);
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage(msg, updatedLabel);
@@ -444,6 +446,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         String language = documentLanguageContext.getDocumentLanguage();
         newXmlContent = this.numberService.renumberHigherSubDivisions(newXmlContent, language, elementTagName, tocItemsList);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
+        newXmlContent = billProcessor.handleTrackChangeForSoleNumberedElements(newXmlContent, elementTagName);
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage(msg, updatedLabel);
@@ -489,7 +492,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
             Bill bill = billService.findBillByRef(documentRef);
             this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
             BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required");
-            byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds, this.getToc(documentRef, TocMode.NOT_SIMPLIFIED));
+            byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds, this.getToc(documentRef, TocMode.NOT_SIMPLIFIED, null));
             String notificationMsg =
                     "document.import.element.inserted" + (elementIds.stream().anyMatch(s -> s.startsWith("rec_"))
                             ? ".recitals" : "") +
@@ -503,10 +506,12 @@ public abstract class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode, String clientContextToken) {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-        return this.billService.getTableOfContent(bill, tocMode);
+        Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
+        List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile);
+        return this.billService.getTableOfContent(bill, tocMode, tocItems);
     }
 
     @Override
@@ -610,7 +615,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
 
         List<Element> result = getMovedFromElements(updatedBill, newContent, elementId);
 
-        documentViewService.updateProposalAsync(bill);
+        newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
     }
 
@@ -702,10 +707,16 @@ public abstract class BillApiServiceImpl implements BillApiService {
     @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
-        StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(
-                bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-        return structureContext1.getTocItems();
+        this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
+        return billService.fetchTocItems(bill, this.structureContext.get(), null);
+    }
+
+    @Override
+    public List<TocItem> getTocItems(@NotNull String documentRef, String clientContextToken) {
+        Bill bill = this.billService.findBillByRef(documentRef);
+        Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
+        return billService.fetchTocItems(bill, this.structureContext.get(), profile);
     }
 
     private String getImportXml(String content) {
