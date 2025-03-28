@@ -77,8 +77,8 @@ When(`click on select all recitals button in import office journal window`, () =
     importOfficeJournalWindow.clickSelectAllRecitalsBtn();
 });
 
-When(`click on select all articles button in import office journal window`, () => {
-    importOfficeJournalWindow.clickSelectAllArticlesBtn();
+When(`click on select all enacting items button in import office journal window`, () => {
+    importOfficeJournalWindow.clickSelectAllEnactingItemsBtn();
 });
 
 Then(`checkboxes of all the recitals are selected`, () => {
@@ -97,17 +97,53 @@ Then(`number of articles selected is {int}`, (articleNumber) => {
     importOfficeJournalWindow.elements.checkedArticles().should('have.length', articleNumber);
 });
 
+Then(/^checkboxes of all the parts are selected$/, function () {
+    importOfficeJournalWindow.elements.checkBoxInputPart().should('be.checked');
+});
+
+Then(/^number of parts selected is (\d+)$/, function (partNumber) {
+    importOfficeJournalWindow.elements.checkedParts().should('have.length', partNumber);
+});
+
+Then(/^checkboxes of all the titles are selected$/, function () {
+    importOfficeJournalWindow.elements.checkBoxInputTitle().should('be.checked');
+});
+
+Then(/^number of titles selected is (\d+)$/, function (titleNumber) {
+    importOfficeJournalWindow.elements.checkedTitles().should('have.length', titleNumber);
+});
+
+Then(/^checkboxes of all the chapters are selected$/, function () {
+    importOfficeJournalWindow.elements.checkBoxInputChapter().should('be.checked');
+});
+
+Then(/^number of chapters selected is (\d+)$/, function (chapterNumber) {
+    importOfficeJournalWindow.elements.checkedChapters().should('have.length', chapterNumber);
+});
+
+Then(/^checkboxes of all the sections are selected$/, function () {
+    importOfficeJournalWindow.elements.checkBoxInputSection().should('be.checked');
+});
+
+Then(/^number of sections selected is (\d+)$/, function (sectionNumber) {
+    importOfficeJournalWindow.elements.checkedSections().should('have.length', sectionNumber);
+});
+
 Then(/^select all recitals button is disabled$/, function () {
     importOfficeJournalWindow.elements.selectAllRecitalsBtn().should('be.disabled');
 });
 
-Then(/^select all articles button is disabled$/, function () {
-    importOfficeJournalWindow.elements.selectAllArticlesBtn().should('be.disabled');
+Then(/^select all enacting items button is disabled$/, function () {
+    importOfficeJournalWindow.elements.selectAllEnactingItemsBtn().should('be.disabled');
 });
 
 Then(/^select all recitals button is enabled$/, function () {
     importOfficeJournalWindow.elements.selectAllRecitalsBtn().should('not.be.disabled');
 });
-Then(/^select all articles button is enabled$/, function () {
-    importOfficeJournalWindow.elements.selectAllArticlesBtn().should('not.be.disabled');
+Then(/^select all enacting items button is enabled$/, function () {
+    importOfficeJournalWindow.elements.selectAllEnactingItemsBtn().should('not.be.disabled');
 });
+
+When('click on checkbox of higher division part {int}',function(partNumber){
+    importOfficeJournalWindow.clickPartCheckBox(partNumber);
+})
