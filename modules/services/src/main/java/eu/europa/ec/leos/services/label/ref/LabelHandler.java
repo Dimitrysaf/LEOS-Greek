@@ -77,7 +77,7 @@ abstract public class LabelHandler {
         if (firstReference.getDocumentRef() != null
                 && firstReference.getDocumentRef().toLowerCase().startsWith(ANNEX_FILE_PREFIX)
                 && !StringUtils.isEmpty(docType)) {
-            label.append(" of ");
+            label.append(", of ");
             label.append(docType);
         }
     }
