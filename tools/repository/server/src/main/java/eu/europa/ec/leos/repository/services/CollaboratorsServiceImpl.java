@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -71,6 +72,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
 
     public void updateCollaborators(Package pkg, List<Collaborator> collaboratorList, String userId) {
         List<Collaborator> currentCollaboratorList = getCollaborators(pkg);
+        collaboratorList = collaboratorList.stream().distinct().collect(Collectors.toList());
         for (Collaborator c : collaboratorList) {
             if (currentCollaboratorList.contains(c)) {
                 Collaborator foundC = currentCollaboratorList.get(currentCollaboratorList.indexOf(c));
