@@ -177,6 +177,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         if (!pkgC.isPresent() || pkgCollaborator.getId() != null) {
             LOG.info(pkgCollaborator.getId() != null ? "Updating" : "Creating" + " package collaborator {} for package {}",
                     pkgCollaborator.getCollaborator().getCollaboratorName(), pkgCollaborator.getPackage().getName());
+            packageCollaboratorsRepository.save(pkgCollaborator);
         }
     }
 
