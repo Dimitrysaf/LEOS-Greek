@@ -86,7 +86,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
                 Optional<Collaborators> collaborator = findCollaborator(c);
                 if (collaborator.isPresent()) {
                     Optional<PackageCollaborators> pkgCollaborators =
-                            packageCollaboratorsRepository.findPackageCollaboratorsByPkgAndCollaborator(pkg, collaborator.get());
+                            packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(pkg.getId(), collaborator.get().getId());
                     if (pkgCollaborators.isPresent()) {
                         packageCollaboratorsRepository.delete(pkgCollaborators.get());
                     }
