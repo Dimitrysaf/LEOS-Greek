@@ -24,6 +24,8 @@ import eu.europa.ec.leos.repository.repositories.LeosClientsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -40,6 +42,8 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
     private final PackageCollaboratorsRepository packageCollaboratorsRepository;
     private final PackageRepository packageRepository;
     private final LeosClientsRepository leosClientsRepository;
+
+    private static final Logger LOG = LoggerFactory.getLogger(CollaboratorsServiceImpl.class);
 
     public List<Collaborator> getCollaborators(Package pkg) {
         List<Collaborator> collaboratorList = new ArrayList<>();
@@ -82,7 +86,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
                 Optional<Collaborators> collaborator = findCollaborator(c);
                 if (collaborator.isPresent()) {
                     Optional<PackageCollaborators> pkgCollaborators =
-                            packageCollaboratorsRepository.findPackageCollaboratorsByPkgAndCollaborator(pkg, collaborator.get());
+                            packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(pkg.getId(), collaborator.get().getId());
                     if (pkgCollaborators.isPresent()) {
                         packageCollaboratorsRepository.delete(pkgCollaborators.get());
                     }
@@ -171,6 +175,8 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
                 packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(pkgCollaborator.getPackage().getId(),
                         pkgCollaborator.getCollaborator().getId());
         if (!pkgC.isPresent() || pkgCollaborator.getId() != null) {
+            LOG.info(pkgCollaborator.getId() != null ? "Updating" : "Creating" + " package collaborator {} for package {}",
+                    pkgCollaborator.getCollaborator().getCollaboratorName(), pkgCollaborator.getPackage().getName());
             packageCollaboratorsRepository.save(pkgCollaborator);
         }
     }
