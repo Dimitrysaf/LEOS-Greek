@@ -48,6 +48,23 @@ define(function trackChangesExtensionModule(require) {
         var docTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed, "leos:uid", "leos:action");
         $("head #docTcStyle").remove();
         $("head").prepend("<style id='docTcStyle'>" + docTcStyle + "</style>");
+        var $aknps = $("aknp");
+        var $reversedAknps = $($aknps.get().reverse());
+        $reversedAknps.each(function () {
+            var $nextAknp = $aknps.eq($aknps.index(this) + 1);
+            if (!$nextAknp.contents().is("img") &&
+                    ($nextAknp.attr("leos\:action-enter") === "delete" ||
+                    $nextAknp.parent().parent().attr("leos\:action-enter") === "delete" ||
+                    $nextAknp.parent().prev().children().attr("leos\:action-enter") === "delete" ||
+                    $nextAknp.parent().parent("subparagraph").parent().prev().children().attr("leos\:action-enter") === "delete")) {
+                $(this).attr("next-aknp", " " + $nextAknp.contents().filter(function () {
+                        return this.nodeName !== "DEL";
+                    }).text() +
+                    ($nextAknp.attr("next-aknp") ? $nextAknp.attr("next-aknp") : ""));
+            } else {
+                $(this).removeAttr("next-aknp");
+            }
+        });
     }
 
     return {
