@@ -29,7 +29,7 @@ strip_text=true>
 
 <#macro body>
     <br>
-    <b>You have been removed from the list of ${leosAuthority} on the following initiative:</b>
+    <b>You have been removed from the list of ${leosAuthority}s on the following initiative:</b>
     <br>
     ${title}
     <br>

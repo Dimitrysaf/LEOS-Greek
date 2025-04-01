@@ -60,24 +60,10 @@ import static eu.europa.ec.leos.services.label.ref.NumFormatter.isUnnumbered;
 public class LabelArticleElementsOnly extends LabelHandler {
     
     private final List<String> excludeUnnumbered = new ArrayList<>(Arrays.asList(INDENT, SUBPARAGRAPH, SUBPOINT_LABEL));
-    private static final String ANNEX_FILE_PREFIX = "annex";
 
     @Override
     public boolean canProcess(List<TreeNode> refs) {
         return true;
-    }
-
-    @Override
-    public void addPreffix(StringBuffer label, String docType, List<TreeNode> refs) {
-        TreeNode firstReference = refs.stream()
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Selected Internal References cannot be empty"));
-        if (firstReference.getDocumentRef() != null
-                && firstReference.getDocumentRef().toLowerCase().startsWith(ANNEX_FILE_PREFIX)
-                && !StringUtils.isEmpty(docType)) {
-            label.append(docType);
-            label.append(", ");
-        }
     }
 
     /**
@@ -280,6 +266,6 @@ public class LabelArticleElementsOnly extends LabelHandler {
 
     @Override
     public int getOrder() {
-        return 6;
+        return 7;
     }
 }

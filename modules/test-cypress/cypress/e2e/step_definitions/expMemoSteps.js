@@ -33,3 +33,7 @@ Then('user guidance is not present in the explanatory document container', funct
 When('click on close button on explanatory memorandum page', function () {
     expMemoPage.clickCloseBtn();
 });
+
+When('mouseover and click on block container {int} in explanatory memorandum page', (blockContainerNumber) => {
+    expMemoPage.mouseHoverAndClickOnBlockContainer(blockContainerNumber);
+});

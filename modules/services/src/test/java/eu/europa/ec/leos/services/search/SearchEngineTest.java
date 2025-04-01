@@ -38,7 +38,7 @@ public class SearchEngineTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         final String searchTextGlobal = "Having regard";
         final String replaceTextGlobal = "";
-        List<SearchMatchVO> matches = se.searchText(searchTextGlobal, false, false);
+        List<SearchMatchVO> matches = se.searchTextToReplace(searchTextGlobal, false, false);
         docContent = se.replace(docContent, matches, searchTextGlobal, replaceTextGlobal, true, user, false);
         byte[] docContentExpected = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-bill_500ArticlesComplexStructure-replace-expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
@@ -51,7 +51,7 @@ public class SearchEngineTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         final String searchTextGlobal = "search";
         final String replaceTextGlobal = "";
-        List<SearchMatchVO> matches = se.searchText(searchTextGlobal, false, false);
+        List<SearchMatchVO> matches = se.searchTextToReplace(searchTextGlobal, false, false);
         docContent = se.replace(docContent, matches, searchTextGlobal, replaceTextGlobal, true, user, false);
         byte[] docContentExpected = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-simple-same-text-element_expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
@@ -64,7 +64,7 @@ public class SearchEngineTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         final String searchTextGlobal = "Having regard";
         final String replaceTextGlobal = "";
-        List<SearchMatchVO> matches = se.searchText(searchTextGlobal, false, false);
+        List<SearchMatchVO> matches = se.searchTextToReplace(searchTextGlobal, false, false);
         docContent = se.replace(docContent, matches, searchTextGlobal, replaceTextGlobal, true, user, false);
         byte[] docContentExpected = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-meta-replace-inline-expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
@@ -77,7 +77,7 @@ public class SearchEngineTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         final String searchTextGlobal = "that";
         final String replaceTextGlobal = "REPLACEALL";
-        List<SearchMatchVO> matches = se.searchText(searchTextGlobal, false, false);
+        List<SearchMatchVO> matches = se.searchTextToReplace(searchTextGlobal, false, false);
         docContent = se.replace(docContent, matches, searchTextGlobal, replaceTextGlobal, true, user, false);
         byte[] docContentExpected = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/testReplace_InlineTags_AuthorialNote_noSpaces_expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
@@ -91,7 +91,7 @@ public class SearchEngineTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         final String searchTextGlobal = "Having regard";
         final String replaceTextGlobal = "REPLACE CONTENT";
-        List<SearchMatchVO> matches = se.searchText(searchTextGlobal, false, false);
+        List<SearchMatchVO> matches = se.searchTextToReplace(searchTextGlobal, false, false);
         docContent = se.replace(docContent, matches, searchTextGlobal, replaceTextGlobal, true, user, false);
         byte[] docContentExpected = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/testReplace_InlineTags_whenMixedAuthorialNote_shouldRemoveThem_expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
@@ -104,7 +104,7 @@ public class SearchEngineTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         final String searchTextGlobal = "that";
         final String replaceTextGlobal = "REPLACEALL";
-        List<SearchMatchVO> matches = se.searchText(searchTextGlobal, false, false);
+        List<SearchMatchVO> matches = se.searchTextToReplace(searchTextGlobal, false, false);
         docContent = se.replace(docContent, matches, searchTextGlobal, replaceTextGlobal, true, user, false);
         byte[] docContentExpected = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/testReplace_InlineTags_AuthorialNote_expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
@@ -117,7 +117,7 @@ public class SearchEngineTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         final String searchTextGlobal = "Having regard";
         final String replaceTextGlobal = "";
-        List<SearchMatchVO> matches = se.searchText(searchTextGlobal, false, false);
+        List<SearchMatchVO> matches = se.searchTextToReplace(searchTextGlobal, false, false);
         docContent = se.replace(docContent, matches, searchTextGlobal, replaceTextGlobal, true, user, false);
         byte[] docContentExpected = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-meta-replace-inline-with-space-expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
@@ -127,7 +127,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_withMetaContent() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-meta.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("Having regard", false, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("Having regard", false, false);
 
         results.forEach(System.out::println);
         assertThat(results.size(), is(4));
@@ -153,7 +153,7 @@ public class SearchEngineTest extends LeosTest {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-authorial.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         {
-            List<SearchMatchVO> results = se.searchText("NoteContent", false, false);
+            List<SearchMatchVO> results = se.searchTextToReplace("NoteContent", false, false);
             assertThat(results.size(), is(1));
             List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
             assertThat(matchedElements.size(), is(1));
@@ -163,7 +163,7 @@ public class SearchEngineTest extends LeosTest {
         }
 
         {
-            List<SearchMatchVO> results = se.searchText("my searchEnd", false, false);
+            List<SearchMatchVO> results = se.searchTextToReplace("my searchEnd", false, false);
             assertThat(results.size(), is(1));
             List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
             assertThat(matchedElements.size(), is(1));
@@ -176,7 +176,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_withSimpleContent() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-simple.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("my search content", false, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("my search content", false, false);
 
         assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
@@ -188,7 +188,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_uppercase_withSimpleContent() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-simple.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("MY SEARCH CONTENT", true, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("MY SEARCH CONTENT", true, false);
 
         assertThat(results.size(), is(0));
     }
@@ -197,7 +197,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_lowercase_withSimpleContent() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-simple.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("my search content", true, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("my search content", true, false);
 
         assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
@@ -209,7 +209,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_withCrossElementMatch() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-crossElements.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("regulation on", false, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("regulation on", false, false);
 
         assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
@@ -222,7 +222,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_withCrossElementMatch_replace() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-crossElements-replace.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("regulation on", false, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("regulation on", false, false);
 
         assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
@@ -235,10 +235,10 @@ public class SearchEngineTest extends LeosTest {
         byte[] resultDoc = se.replace(docContent, results, "regulation on", "bazzinga", true, user, false);
         se = SearchEngineImpl.forContent(resultDoc);
 
-        results = se.searchText("regulation on", false, false);
+        results = se.searchTextToReplace("regulation on", false, false);
         assertThat(results.size(), is(0));
 
-        results = se.searchText("bazzinga", false, false);
+        results = se.searchTextToReplace("bazzinga", false, false);
         assertThat(results.size(), is(1));
     }
 
@@ -247,7 +247,7 @@ public class SearchEngineTest extends LeosTest {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-bill-with-articles.xml");
         byte[] expectedDocContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-bill-with-articles_expected.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("Regulation", true, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("Regulation", true, false);
 
         assertThat(results.size(), is(2));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
@@ -257,10 +257,10 @@ public class SearchEngineTest extends LeosTest {
         byte[] resultDoc = se.replace(docContent, results, "Regulation", "Directive", true, user, false);
         se = SearchEngineImpl.forContent(resultDoc);
 
-        results = se.searchText("Regulation", true, false);
+        results = se.searchTextToReplace("Regulation", true, false);
         assertThat(results.size(), is(0));
 
-        results = se.searchText("Directive", true, false);
+        results = se.searchTextToReplace("Directive", true, false);
         assertThat(results.size(), is(2));
         assertEquals(squeezeXmlAndRemoveAllNS(new String(resultDoc, UTF_8)), squeezeXmlAndRemoveAllNS(new String(expectedDocContent, UTF_8)));
     }
@@ -270,7 +270,7 @@ public class SearchEngineTest extends LeosTest {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-bill-with-readonly-articles.xml");
         byte[] expectedDocContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-bill-with-readonly-articles_expected.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("Regulation", true, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("Regulation", true, false);
 
         assertThat(results.size(), is(2));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
@@ -280,14 +280,14 @@ public class SearchEngineTest extends LeosTest {
         byte[] resultDoc = se.replace(docContent, results, "Regulation", "Directive", true, user, false);
         se = SearchEngineImpl.forContent(resultDoc);
 
-        results = se.searchText("Regulation", true, false);
+        results = se.searchTextToReplace("Regulation", true, false);
         assertThat(results.size(), is(2));
 
         matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(1));
         assertThat(matchedElements.get(0).isEditable(), is(false));
 
-        results = se.searchText("Directive", true, false);
+        results = se.searchTextToReplace("Directive", true, false);
         assertThat(results.size(), is(0));
         assertEquals(squeezeXmlAndRemoveAllNS(new String(resultDoc, UTF_8)), squeezeXmlAndRemoveAllNS(new String(expectedDocContent, UTF_8)));
     }
@@ -296,7 +296,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_withAllContentFormatted() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-allContentFormatted.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("simple content", false, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("simple content", false, false);
 
         assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
@@ -309,7 +309,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_withInnerTagMatch() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-innerTags.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("is my search content", false, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("is my search content", false, false);
 
         assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
@@ -319,13 +319,13 @@ public class SearchEngineTest extends LeosTest {
         assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer__p", 17, 25)));
 
 
-        List<SearchMatchVO> resultsb = se.searchText("only Bold", false, false);
+        List<SearchMatchVO> resultsb = se.searchTextToReplace("only Bold", false, false);
 
         matchedElements = resultsb.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(1));
         assertThat(matchedElements, hasItem(new ElementMatchVO("akn_E3FfJO1", 0, 9)));
 
-        results = se.searchText("Regulation", false, false);
+        results = se.searchTextToReplace("Regulation", false, false);
         matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(5));
         assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer_5", 0, 2)));
@@ -335,7 +335,7 @@ public class SearchEngineTest extends LeosTest {
         assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer_5", 9, 10)));
 
 
-        results = se.searchText("exploraratory", false, false);
+        results = se.searchTextToReplace("exploraratory", false, false);
         matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(5));
         assertThat(matchedElements, hasItem(new ElementMatchVO("bol_id_1", 0, 2)));
@@ -345,7 +345,7 @@ public class SearchEngineTest extends LeosTest {
         assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer_6", 20, 23)));
 
 
-        results = se.searchText("Following", false, false);
+        results = se.searchTextToReplace("Following", false, false);
         matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(3));
         assertThat(matchedElements, hasItem(new ElementMatchVO("art_2__para_1__content__p", 56, 58)));
@@ -358,7 +358,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_withMultiLevelTagMatch() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-multiLevelTags.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("is my search content with", false, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("is my search content with", false, false);
         ;
 
         assertThat(results.size(), is(1));
@@ -378,7 +378,7 @@ public class SearchEngineTest extends LeosTest {
     public void testForContent_withMultipleHits() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-multipleHits.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchText("is my search content", false, false);
+        List<SearchMatchVO> results = se.searchTextToReplace("is my search content", false, false);
         ;
 
         assertThat(results.size(), is(2));

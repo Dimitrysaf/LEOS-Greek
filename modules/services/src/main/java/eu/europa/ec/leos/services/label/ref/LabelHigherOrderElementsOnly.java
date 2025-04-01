@@ -32,7 +32,12 @@ public class LabelHigherOrderElementsOnly extends LabelHandler {
     }
 
     public void addPreffix(StringBuffer label, String docType, List<TreeNode> refs) {
-        if (!StringUtils.isEmpty(docType)) {
+        TreeNode firstReference = refs.stream()
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Selected Internal References cannot be empty"));
+        if (firstReference.getDocumentRef() != null
+                && !firstReference.getDocumentRef().toLowerCase().startsWith(ANNEX_FILE_PREFIX)
+                && !StringUtils.isEmpty(docType)) {
             label.append(docType);
             label.append(", ");
         }

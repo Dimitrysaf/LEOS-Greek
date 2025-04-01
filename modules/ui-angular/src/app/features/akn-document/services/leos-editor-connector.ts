@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, filter, take } from 'rxjs';
+import {distinctUntilChanged, filter, take} from 'rxjs';
 
 import {
   EditElementResponse,
@@ -624,6 +624,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     documentType: string,
     presenterId: string,
   ) {
+    this.documentService.addToPendingSavingElements(elementId, elementFragment);
     const cleanedHtml = this.cleanElementFromCoEditInfo(elementFragment);
     return this.http.put<RefreshElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element?isSplit=${isSplit}&alternateElementId=${alternateElementId}`,

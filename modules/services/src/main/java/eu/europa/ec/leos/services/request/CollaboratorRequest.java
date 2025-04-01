@@ -1,50 +1,27 @@
 package eu.europa.ec.leos.services.request;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
 public class CollaboratorRequest {
 
     private String userId;
     private String roleName;
     private String connectedDG;
+    private String leosClientId;
 
     public CollaboratorRequest() {
     }
 
-    public CollaboratorRequest(String userId, String roleName, String connectedDG) {
+    public CollaboratorRequest(String userId, String roleName, String connectedDG, String leosClientId) {
         this.userId = userId;
         this.roleName = roleName;
         this.connectedDG = connectedDG;
+        this.leosClientId = leosClientId;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public String getConnectedDG() {
-        return connectedDG;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public void setConnectedDG(String connectedDG) {
-        this.connectedDG = connectedDG;
-    }
-
-    @Override
-    public String toString() {
-        return "CollaboratorRequest{" +
-                "userId='" + userId + '\'' +
-                ", roleName='" + roleName + '\'' +
-                ", connectedDG='" + connectedDG + '\'' +
-                '}';
-    }
 }

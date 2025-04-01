@@ -25,10 +25,14 @@
         "
       />
       <div class="eui-input-group-addon-item">
-        <span euiLabel *ngIf="(doc.searchResultsCounter$ | async) !== 0"
+        <span euiLabel
+              *ngIf="(doc.searchResultsCounter$ | async) !== 0"
+              [ngClass]="{ 'limit-reached': (doc.searchLimitReachedSymbol$ | async) === '+' }"
+              matTooltip="Search was halted as limit is reached"
+              [matTooltipDisabled]="(doc.searchLimitReachedSymbol$ | async) !== '+'"
           >{{ doc.currentIndex + 1 }}
           {{ 'page.editor.search.results.separator' | translate }}
-          {{ doc.searchResultsCounter$ | async }}</span
+          {{ doc.searchResultsCounter$ | async }}{{doc.searchLimitReachedSymbol$ | async }}</span
         >
         <eui-icon-svg
           icon="eui-search"
@@ -154,7 +158,7 @@
         euiButton
         euiOutline
         euiPrimary
-        (click)="doc.searchReplaceAll()"
+        (click)="searchReplaceAllOpenConfirmation()"
       >
         <span
           euiLabel
@@ -189,3 +193,20 @@
     </div>
   </ng-container>
 </ng-container>
+
+<eui-dialog
+  #searchReplaceAllConfirmation
+  [title]="'page.text.search.replace.all.title' | translate"
+  [acceptLabel]="'page.text.search.replace.all.button' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancelSearchAndReplace()"
+  (close)="onCancelSearchAndReplace()"
+  (accept)="searchReplaceAll()"
+  (dismiss)="onCancelSearchAndReplace()"
+>
+  <p>{{ 'page.editor.search.replace.all.confirmation.dialog' | translate }}</p>
+</eui-dialog>

@@ -124,6 +124,9 @@ public class XmlHelper {
     public static final String SUBPOINT_LABEL = "subparagraph";
     public static final String CLAUSE = "clause";
     public static final String CONCLUSIONS = "conclusions";
+    public static final String ORGANIZATION = "organization";
+    public static final String ROLE = "role";
+    public static final String PERSON = "person";
     public static final String MAIN_BODY = "mainBody";
     public static final String TBLOCK = "tblock";
     public static final String LEVEL = "level";
@@ -238,6 +241,8 @@ public class XmlHelper {
     public static final String DIV = "div";
     public static final String ORIENTATION_LANDSCAPE = "landscape";
     public static final String ORIENTATION_PORTRAIT = "portrait";
+    public static final String ORIENTATION  = "orientation";
+    public static final String HIGHER_DIVISION  = "higherdivision";
 
     public static final String ID_PLACEHOLDER = "${id}";
     public static final String ID_PLACEHOLDER_ESCAPED = "\\Q${id}\\E";
@@ -469,7 +474,11 @@ public class XmlHelper {
     public static boolean isParentEditableNode(String tagName) {
         return parentEditableNodes.contains(tagName) ? true : false;
     }
+    public static final ArrayList<String> orientableNodes = new ArrayList<String>(Arrays.asList(ARTICLE, LEVEL, BLOCKCONTAINER));
 
+    public static boolean isOrientableNode(String tagName) {
+        return orientableNodes.contains(tagName);
+    }
     private static final ArrayList<String> exclusionList = new ArrayList<String>(Arrays.asList(AUTHORIAL_NOTE, NUM, CLAUSE));
 
     public static boolean isExcludedNode(String tagName) {
@@ -578,7 +587,7 @@ public class XmlHelper {
 
     public static String trimmedXml(String str) {
 //        final String WHITESPACE_REGEX = "(^( )*|( )*$)";
-        return str.replaceAll("\\s+", " ").trim();
+        return str != null ? str.replaceAll("\\s+", " ").trim() : "";
     }
 
     public static String addLeosNamespace(String str) {

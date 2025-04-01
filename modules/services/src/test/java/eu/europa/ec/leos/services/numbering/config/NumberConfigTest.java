@@ -35,18 +35,18 @@ public class NumberConfigTest {
     @Test
     public void test_parseCyrillic() {
         NumberConfig numberConfig = new NumberConfigCyrillicAlpha();
-        numberConfig.parseValue("б");
-        assertEquals(2, numberConfig.getValue());
-        numberConfig.parseValue("д");
-        assertEquals(5, numberConfig.getValue());
+        numberConfig.parseValue("а");
+        assertEquals(1, numberConfig.getValue());
         numberConfig.parseValue("я");
         assertEquals(32, numberConfig.getValue());
         numberConfig.parseValue("аа");
         assertEquals(33, numberConfig.getValue());
-        numberConfig.parseValue("ая");
+        numberConfig.parseValue("яя");
         assertEquals(64, numberConfig.getValue());
         numberConfig.parseValue("ааа");
-        assertEquals(1057, numberConfig.getValue());
+        assertEquals(65, numberConfig.getValue());
+        numberConfig.parseValue("яяя");
+        assertEquals(96, numberConfig.getValue());
     }
 
     @Test
@@ -55,58 +55,49 @@ public class NumberConfigTest {
         numberConfig.parseValue("α");
         assertEquals(1, numberConfig.getValue());
         numberConfig.parseValue("ω");
-        assertEquals(24, numberConfig.getValue());
-        numberConfig.parseValue("αα");
         assertEquals(25, numberConfig.getValue());
-        numberConfig.parseValue("αω");
-        assertEquals(48, numberConfig.getValue());
+        numberConfig.parseValue("αα");
+        assertEquals(26, numberConfig.getValue());
+        numberConfig.parseValue("ωω");
+        assertEquals(50, numberConfig.getValue());
         numberConfig.parseValue("ααα");
-        assertEquals(601, numberConfig.getValue());
-        numberConfig.parseValue("αααα");
-        assertEquals(14425, numberConfig.getValue());
+        assertEquals(51, numberConfig.getValue());
+        numberConfig.parseValue("ωωω");
+        assertEquals(75, numberConfig.getValue());
     }
 
     @Test
     public void test_parseAlpha() {
         NumberConfig numberConfig = new NumberConfigAlpha();
-        numberConfig.parseValue("b");
-        assertEquals(2, numberConfig.getValue());
-        assertEquals("b", numberConfig.getActualNumberToShow());
+        numberConfig.parseValue("a");
+        assertEquals(1, numberConfig.getValue());
+        assertEquals("a", numberConfig.getActualNumberToShow());
         numberConfig.parseValue("z");
         assertEquals(26, numberConfig.getValue());
         assertEquals("z", numberConfig.getActualNumberToShow());
         numberConfig.parseValue("aa");
         assertEquals(27, numberConfig.getValue());
         assertEquals("aa", numberConfig.getActualNumberToShow());
-        numberConfig.parseValue("az");
-        assertEquals(52, numberConfig.getValue());
-        assertEquals("az", numberConfig.getActualNumberToShow());
-        numberConfig.parseValue("ba");
-        assertEquals(53, numberConfig.getValue());
-        assertEquals("ba", numberConfig.getActualNumberToShow());
-        numberConfig.parseValue("bz");
-        assertEquals(78, numberConfig.getValue());
-        assertEquals("bz", numberConfig.getActualNumberToShow());
-        numberConfig.parseValue("ca");
-        assertEquals(79, numberConfig.getValue());
-        assertEquals("ca", numberConfig.getActualNumberToShow());
-        numberConfig.parseValue("cz");
-        assertEquals(104, numberConfig.getValue());
-        assertEquals("cz", numberConfig.getActualNumberToShow());
         numberConfig.parseValue("zz");
-        assertEquals(702, numberConfig.getValue());
+        assertEquals(52, numberConfig.getValue());
         assertEquals("zz", numberConfig.getActualNumberToShow());
         numberConfig.parseValue("aaa");
-        assertEquals(703, numberConfig.getValue());
+        assertEquals(53, numberConfig.getValue());
         assertEquals("aaa", numberConfig.getActualNumberToShow());
         numberConfig.parseValue("zzz");
-        assertEquals(18278, numberConfig.getValue());
+        assertEquals(78, numberConfig.getValue());
         assertEquals("zzz", numberConfig.getActualNumberToShow());
         numberConfig.parseValue("aaaa");
-        assertEquals(18279, numberConfig.getValue());
+        assertEquals(79, numberConfig.getValue());
         assertEquals("aaaa", numberConfig.getActualNumberToShow());
+        numberConfig.parseValue("zzzz");
+        assertEquals(104, numberConfig.getValue());
+        assertEquals("zzzz", numberConfig.getActualNumberToShow());
+        numberConfig.parseValue("aaaaa");
+        assertEquals(105, numberConfig.getValue());
+        assertEquals("aaaaa", numberConfig.getActualNumberToShow());
         numberConfig.parseValue("zzzzz");
-        assertEquals(12356630, numberConfig.getValue());
+        assertEquals(130, numberConfig.getValue());
         assertEquals("zzzzz", numberConfig.getActualNumberToShow());
     }
 
@@ -129,45 +120,45 @@ public class NumberConfigTest {
         numberConfig.incrementComplexValue();
         assertEquals("aa", numberConfig.getComplexValueToShow());
         numberConfig.incrementComplexValue();
-        assertEquals("ab", numberConfig.getComplexValueToShow());
+        assertEquals("bb", numberConfig.getComplexValueToShow());
         for (int i = 0; i < 22; i++) {
             numberConfig.incrementComplexValue();
         }
         numberConfig.incrementComplexValue();
-        assertEquals("ay", numberConfig.getComplexValueToShow()); // 51
+        assertEquals("yy", numberConfig.getComplexValueToShow()); // 51
         numberConfig.incrementComplexValue();
-        assertEquals("az", numberConfig.getComplexValueToShow()); // 52
+        assertEquals("zz", numberConfig.getComplexValueToShow()); // 52
 
         // 3. Test third cycle "ba" to "bz"
         numberConfig.incrementComplexValue();
-        assertEquals("ba", numberConfig.getComplexValueToShow()); // 53
+        assertEquals("aaa", numberConfig.getComplexValueToShow()); // 53
         numberConfig.incrementComplexValue();
-        assertEquals("bb", numberConfig.getComplexValueToShow()); // 54
+        assertEquals("bbb", numberConfig.getComplexValueToShow()); // 54
         for (int i = 0; i < 22; i++) {
             numberConfig.incrementComplexValue();
         }
         numberConfig.incrementComplexValue();
-        assertEquals("by", numberConfig.getComplexValueToShow()); // 77
+        assertEquals("yyy", numberConfig.getComplexValueToShow()); // 77
         numberConfig.incrementComplexValue();
-        assertEquals("bz", numberConfig.getComplexValueToShow()); // 78
+        assertEquals("zzz", numberConfig.getComplexValueToShow()); // 78
 
         // 4. Test third cycle "ca" to the "cz"
         numberConfig.incrementComplexValue();
-        assertEquals("ca", numberConfig.getComplexValueToShow()); // 79
+        assertEquals("aaaa", numberConfig.getComplexValueToShow()); // 79
         for (int i = 0; i < 23; i++) {
             numberConfig.incrementComplexValue();
         }
         numberConfig.incrementComplexValue();
-        assertEquals("cy", numberConfig.getComplexValueToShow()); // 103
+        assertEquals("yyyy", numberConfig.getComplexValueToShow()); // 103
         numberConfig.incrementComplexValue();
-        assertEquals("cz", numberConfig.getComplexValueToShow()); // 104
+        assertEquals("zzzz", numberConfig.getComplexValueToShow()); // 104
 
         // 5. make sure adding more 1000 articles we have the right "complex" number
         for (int i = 1; i < 1000; i++) {
             numberConfig.incrementComplexValue();
         }
-        assertEquals("For config: " + numberConfig.toString(), "apk", numberConfig.getComplexValueToShow());
-        assertEquals("1apk", numberConfig.getActualNumberToShow());
+        assertEquals("For config: " + numberConfig.toString(), "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk", numberConfig.getComplexValueToShow());
+        assertEquals("1kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk", numberConfig.getActualNumberToShow());
 
     }
 

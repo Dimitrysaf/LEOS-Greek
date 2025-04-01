@@ -89,7 +89,7 @@
                   'page.editor.toc.toc-pane.actions.edit' | translate
                 }}"
                 [position]="'right'"
-                (click)="handleEdit()"
+                (click)="handleEditOpenEditor()"
                 *ngIf="showTocEditButton &&
                   !isEditMode &&
                   !['coverPage', 'memorandum', 'stat_digit_financ_legis'].includes(
@@ -669,21 +669,6 @@
   (closed)="onMilestoneViewDialogClosed()"
   *ngIf="milestoneViewData"
 ></app-proposal-milestone-view>
-<eui-dialog
-  #openEditorDialog
-  [title]="'page.editor.open.editor.dialog.title' | translate"
-  [acceptLabel]="'global.actions.confirm' | translate"
-  [width]="'25vw'"
-  [isHandleCloseOnAccept]="true"
-  [isHandleCloseOnDismiss]="true"
-  [hasCloseButton]="false"
-  (clickOutside)="onCancelClose()"
-  (close)="onCancelClose()"
-  (accept)="onConfirmClose()"
-  (dismiss)="onCancelClose()"
->
-  <p>{{ 'page.editor.open.editor.dialog.body' | translate }}</p>
-</eui-dialog>
 
 <!-- unsaved data dialog -->
 <eui-dialog

@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +56,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITH_ONLY_TEXT;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
+import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.MergeUtils.removeChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
@@ -72,6 +75,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONCLUSIONS;
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_TO_BE_NUMBERED;
@@ -111,10 +115,13 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.LS;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
+import static eu.europa.ec.leos.services.support.XmlHelper.P;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.PERSON;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.ROLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_TEMP_PLACEHOLDER_ID_PREFIX;
@@ -154,8 +161,17 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         Node numNode = buildNumNode(node, tocVo);
         Node headingNode = buildHeadingNode(node, tocVo, user, isTrackChangesEnabled);
         Node introNode = getFirstChild(node, INTRO);  //recitals intro
-        List<Node> childrenNode = XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
-
+        Node signatureLocationNode = null;
+        List<Node> childrenNode = new ArrayList<>();
+        if (getTagValueFromTocItemVo(tocVo).equalsIgnoreCase(CONCLUSIONS) && tocItems.stream().filter(t ->
+                (t.getAknTag().value().equalsIgnoreCase(PERSON)
+                || t.getAknTag().value().equalsIgnoreCase(ROLE))).findAny().isPresent()) {
+            signatureLocationNode = getFirstChild(node, P);  //Conclusions location paragraph
+        } else {
+            childrenNode = ELEMENTS_WITH_ONLY_TEXT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) ?
+                    XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node, tocVo) :
+                    XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
+        }
         // 3. clean the node and build it again.
         node.setTextContent(EMPTY_STRING);
         updateDepthAttribute(tocVo, node);
@@ -167,6 +183,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 tocVo.getId().startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX))) {
             appendChildIfNotNull(headingNode, node);
             appendChildIfNotNull(introNode, node);
+            appendChildIfNotNull(signatureLocationNode, node);
 
             // 4. Propagate to children
             for (TableOfContentItemVO child : tocVo.getChildItemsView()) {

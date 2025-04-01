@@ -47,6 +47,7 @@ When('mouseover and click on recital {int}', recitalNumber => {
 })
 
 When('mouseover and click on article {int}', articleNumber => {
+    cy.wait(1000)
     legalActPage.mouseHoverAndClickOnArticle(articleNumber);
 })
 
@@ -262,11 +263,11 @@ And(`{string} tag of num tag of paragraph {int} of article {int} should not exis
 });
 
 And(`num tag of paragraph {int} of article {int} contains html {string}`, (paragraphNumber, articleNumber, content) => {
-    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('include.html', content);
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).invoke('html').should('match', new RegExp(content));
 });
 
 And(`num tag of paragraph {int} of article {int} does not contain html {string}`, (paragraphNumber, articleNumber, content) => {
-    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).not('include.html', content);
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).invoke('html').should('not.match', new RegExp(content));
 });
 
 And(`num tag of paragraph {int} of article {int} should not exist`, (paragraphNumber, articleNumber) => {
@@ -283,6 +284,22 @@ Then(`{int} recitals are added in legal act by import oj`, (recitalNumber) => {
 
 Then(`{int} articles are added in legal act by import oj`, (articleNumber) => {
     legalActPage.elements.articleFromImportOj().should('have.length', articleNumber);
+});
+
+Then(/^(\d+) parts are added in legal act by import oj$/, function (partNumber) {
+    legalActPage.elements.partFromImportOj().should('have.length', partNumber);
+});
+
+Then(/^(\d+) titles are added in legal act by import oj$/, function (titleNumber) {
+    legalActPage.elements.titleFromImportOj().should('have.length', titleNumber);
+});
+
+Then(/^(\d+) chapters are added in legal act by import oj$/, function (chapterNumber) {
+    legalActPage.elements.chapterFromImportOj().should('have.length', chapterNumber);
+});
+
+Then(/^(\d+) sections are added in legal act by import oj$/, function (sectionNumber) {
+    legalActPage.elements.sectionFromImportOj().should('have.length', sectionNumber);
 });
 
 When(`click on edit icon of citation {int}`, (citationNumber) => {
@@ -489,7 +506,7 @@ When('click on authorial note with marker {string} in paragraph {int} of article
     legalActPage.clickAuthorialNoteWithMarkerNumberFromParagraphOfArticle(markerNumber, paragraphNumber, articleNumber);
 });
 
-Then('content of subparagraph {int} of  of paragraph {int} of article {int} contains a table with {int} row and {int} column', function (subparagraphNumber, paragraphNumber, articleNumber, rowNumber, columnNumber) {
+Then('content of subparagraph {int} of paragraph {int} of article {int} contains a table with {int} row and {int} column', function (subparagraphNumber, paragraphNumber, articleNumber, rowNumber, columnNumber) {
     legalActPage.getRowFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', rowNumber);
     legalActPage.getColumnFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', columnNumber);
 });

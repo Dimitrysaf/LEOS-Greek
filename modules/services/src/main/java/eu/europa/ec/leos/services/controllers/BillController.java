@@ -34,9 +34,11 @@ import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.request.SearchForImportCriteriaRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.response.SearchAndReplaceAllResponse;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -208,11 +211,12 @@ public class BillController {
     @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveToc(@PathVariable("documentRef") String documentRef,
-                                          @RequestBody SaveTocRequestEvent saveTocRequestEvent
+                                          @RequestBody SaveTocRequestEvent saveTocRequestEvent,
+                                          @RequestHeader(value = CLIENT_CONTEXT_PARAMETER, required = false) String clientContextToken
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED);
+            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED, clientContextToken);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while saving toc - " + e.getMessage());
@@ -299,11 +303,12 @@ public class BillController {
     @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                         @RequestParam("tocMode") TocMode tocMode
+                                         @RequestParam("tocMode") TocMode tocMode,
+                                         @RequestHeader(value = CLIENT_CONTEXT_PARAMETER, required = false) String clientContextToken
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.billApiService.getToc(documentRef, tocMode);
+            List<TableOfContentItemVO> toc = this.billApiService.getToc(documentRef, tocMode, clientContextToken);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill toc items", e);
@@ -313,10 +318,10 @@ public class BillController {
 
     @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
+    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef, @RequestHeader(value = CLIENT_CONTEXT_PARAMETER, required = false) String clientContextToken) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TocItem> tocItems = this.billApiService.getTocItems(documentRef);
+            List<TocItem> tocItems = this.billApiService.getTocItems(documentRef, clientContextToken);
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill toc items", e);
@@ -506,17 +511,15 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.TEXT_XML_VALUE)
+    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceAllMatchRequest request) {
         try {
-//            request.setReplaceText(encodeParam(request.getReplaceText()));
-//            request.setSearchText(encodeParam(request.getSearchText()));
             request.setDocumentRef(encodeParam(request.getDocumentRef()));
-//            request.setTempUpdatedContentXML(encodeParam(request.getTempUpdatedContentXML()));
-            byte[] response = this.billApiService.replaceAllTextInDocument(request);
-            return ResponseEntity.ok().body(response);
+            Pair<byte[], Integer> response = this.billApiService.replaceAllTextInDocument(request);
+            SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left(), StandardCharsets.UTF_8), response.right());
+            return ResponseEntity.ok().body(searchAndReplaceAllResponse);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION, e.getMessage());
             return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);

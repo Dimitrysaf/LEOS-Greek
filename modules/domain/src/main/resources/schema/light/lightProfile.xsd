@@ -26,6 +26,8 @@
             <xs:element name="name" type="systemName"/>
             <xs:element name="breadcrumb" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="tocEdition" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="tocSignatureEdition" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="signatureEdition" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="internalReference" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="authorialNote" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="showLoggedUser" type="xs:boolean" default="false" minOccurs="0"/>

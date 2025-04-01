@@ -35,7 +35,6 @@ import javax.inject.Provider;
 import java.util.Collections;
 import java.util.List;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 
 @Service
@@ -196,7 +195,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
 
         return xmlContentProcessor.getElementAttributeValueByNameAndId(xmlContent, attributeName, tagName, idAttributeValue);
     }
-    
+
     private byte[] getContent(T document) {
         final Content content = document.getContent().getOrError(() -> "Annex content is required!");
         return content.getSource().getBytes();

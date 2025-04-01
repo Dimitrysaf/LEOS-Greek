@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
@@ -28,6 +29,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
+import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -79,6 +81,7 @@ public class BillContextService {
     private final MessageHelper messageHelper;
     private final CollectionUrlBuilder urlBuilder;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
+    private final PostProcessingDocumentService postProcessingDocumentService;
     private XPathCatalog xPathCatalog;
 
     private final Provider<AnnexContextService> annexContextProvider;
@@ -94,6 +97,8 @@ public class BillContextService {
     private boolean cloneProposal;
     private boolean eeaRelevance;
     private String originRef;
+    private Map<String, String> mapOldAndNewRefs;
+    private HashMap<String, XmlDocument> refsMatching;
 
     private DocumentVO billDocument;
     private DocumentVO annexDocument;
@@ -104,6 +109,7 @@ public class BillContextService {
     private String language;
     private boolean translated;
     private String packageRef = null;
+    private boolean isAnnexToBeUpdated;
 
     @Autowired
     BillContextService(BillService billService,
@@ -115,7 +121,7 @@ public class BillContextService {
                        XmlNodeProcessor xmlNodeProcessor,
                        XmlNodeConfigProcessor xmlNodeConfigProcessor,
                        MessageHelper messageHelper, CollectionUrlBuilder urlBuilder,
-                       Provider<AnnexContextService> annexContextProvider,
+                       PostProcessingDocumentService postProcessingDocumentService, Provider<AnnexContextService> annexContextProvider,
                        XPathCatalog xPathCatalog,
                        RepositoryPropertiesMapper repositoryPropertiesMapper,
                        DocumentLanguageContext documentLanguageContext) {
@@ -129,6 +135,7 @@ public class BillContextService {
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
         this.messageHelper = messageHelper;
         this.urlBuilder = urlBuilder;
+        this.postProcessingDocumentService = postProcessingDocumentService;
         this.annexContextProvider = annexContextProvider;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xPathCatalog = xPathCatalog;
@@ -229,6 +236,24 @@ public class BillContextService {
         this.packageRef = packageRef;
     }
 
+    public void useMapOldAndNewRefs(Map<String, String> mapOldAndNewRefs) {
+        LOG.trace("Using mapOldAndNewRefs... [mapOldAndNewRefs={}]", mapOldAndNewRefs);
+        this.mapOldAndNewRefs = mapOldAndNewRefs;
+    }
+
+    public void useRefsMatching(HashMap<String, XmlDocument> refsMatching) {
+        LOG.trace("Using refsMatching... [refsMatching={}]", refsMatching);
+        this.refsMatching = refsMatching;
+    }
+
+    public void executeUpdateReferences() {
+        LOG.trace("Executing 'Update References On Bill' use case...");
+        Validate.notNull(bill, "Bill is required!");
+        Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
+        byte[] content = this.postProcessingDocumentService.updateReferences(bill.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
+        billService.updateBill(bill.getId(), content);
+    }
+
     public Bill executeCreateBill() {
         LOG.trace("Executing 'Create Bill' use case...");
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
@@ -302,6 +327,8 @@ public class BillContextService {
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
             byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
             annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment);
+            idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
+            refsMatching.put(docChild.getRef(), annex);
         }
     
         final String createComment = actionMsgMap.get(ContextActionService.DOCUMENT_CREATED);
@@ -395,16 +422,18 @@ public class BillContextService {
                     .withEeaRelevance(eeaRelevance)
                     .build();
             billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
-            // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
-            List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
-            annexes.forEach(annex -> {
-                AnnexContextService annexContext = annexContextProvider.get();
-                annexContext.usePurpose(purpose);
-                annexContext.useAnnexId(annex.getId());
-                annexContext.useActionMessageMap(actionMsgMap);
-                annexContext.useEeaRelevance(eeaRelevance);
-                annexContext.executeUpdateAnnexMetadata();
-            });
+            if(isAnnexToBeUpdated) {
+                // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
+                List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+                annexes.forEach(annex -> {
+                    AnnexContextService annexContext = annexContextProvider.get();
+                    annexContext.usePurpose(purpose);
+                    annexContext.useAnnexId(annex.getId());
+                    annexContext.useActionMessageMap(actionMsgMap);
+                    annexContext.useEeaRelevance(eeaRelevance);
+                    annexContext.executeUpdateAnnexMetadata();
+                });
+            }
         }
     }
 
@@ -702,5 +731,9 @@ public class BillContextService {
 
     public void useTranslated(boolean translated) {
         this.translated = translated;
+    }
+
+    public void setAnnexToBeUpdated(boolean annexToBeUpdated) {
+        isAnnexToBeUpdated = annexToBeUpdated;
     }
 }

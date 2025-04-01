@@ -45,11 +45,12 @@ public class CollaboratorServiceTests {
         existingCollaborator.setRole("OWNER");
         existingCollaborator.setEntity("TEST");
         existingCollaborator.setLogin("test");
+        existingCollaborator.setLeosClientId("iscClientId");
         List<Collaborator> existingCollaborators = collaboratorsService.getCollaborators(new BigDecimal(1));
         existingCollaborators.add(existingCollaborator);
         collaboratorsService.updateCollaborators("1", existingCollaborators, "demo");
-        Optional<Collaborators> linkedCollaboratorsOpt = collaboratorsRepository.findCollaboratorByNameRoleAndOrganization(existingCollaborator.getLogin(),
-                existingCollaborator.getRole(), existingCollaborator.getEntity());
+        Optional<Collaborators> linkedCollaboratorsOpt = collaboratorsRepository.findCollaboratorByNameRoleAndOrganizationAndLeosClient(existingCollaborator.getLogin(),
+                existingCollaborator.getRole(), existingCollaborator.getEntity(), existingCollaborator.getLeosClientId());
         if (linkedCollaboratorsOpt.isPresent()) {
             linkedCollaborators = linkedCollaboratorsOpt.get();
         }
@@ -58,21 +59,15 @@ public class CollaboratorServiceTests {
     }
 
     @Test
-    public void test_removeCollaboratorsWithLinkToPackage() {
-        assertThrows(RepositoryException.class,
-                ()-> collaboratorsService.removeCollaborator(existingCollaborator.getLogin(), existingCollaborator.getEntity(), existingCollaborator.getRole()));
-    }
-
-    @Test
     public void test_removeCollaborators() {
-        Optional<PackageCollaborators> pkgCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(linkedPackage.getId(),
-                linkedCollaborators.getId());
-        assertTrue(pkgCollaborators.isPresent());
-        packageCollaboratorsRepository.delete(pkgCollaborators.get());
         try {
-            collaboratorsService.removeCollaborator(existingCollaborator.getLogin(), existingCollaborator.getEntity(), existingCollaborator.getRole());
+            Optional<PackageCollaborators> pkgCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(linkedPackage.getId(),
+                    linkedCollaborators.getId());
+            assertTrue(pkgCollaborators.isPresent());
+            packageCollaboratorsRepository.delete(pkgCollaborators.get());
         } catch (Exception e) {
             fail("Should not throw exception");
         }
     }
+
 }

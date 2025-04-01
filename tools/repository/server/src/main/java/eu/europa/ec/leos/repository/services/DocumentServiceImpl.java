@@ -195,8 +195,10 @@ public class DocumentServiceImpl implements DocumentService {
                         documentPropertyValuesRepository);
             }
         } catch (RepositoryException e) {
+            LOG.error("Error while creating document", e);
             throw e;
         } catch (Exception e) {
+            LOG.error("Error while creating document", e);
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
         }
     }

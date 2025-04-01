@@ -77,6 +77,8 @@ public interface ApiService {
 
     String exportProposal(String proposalRef, String outputType) throws Exception;
 
+    byte[] exportProposalDownload(String proposalRef, String outputType) throws Exception;
+
     Optional<DocumentVO> getProposalDetails(String proposalRef, String userId);
 
     byte[] downloadProposal(String proposalRef) throws Exception;
@@ -84,6 +86,8 @@ public interface ApiService {
     void createProposalAnnex(String proposalRef) throws Exception;
 
     List<MilestonesVO> getProposalMilestones(String proposalRef) throws Exception;
+
+    List<MilestonesVO> getProposalMilestones(String proposalRef, String language) throws Exception;
 
     void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection, Integer timesToMove);
 

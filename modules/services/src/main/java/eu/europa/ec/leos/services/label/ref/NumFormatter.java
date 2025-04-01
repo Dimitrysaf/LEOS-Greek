@@ -15,17 +15,22 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.ORGANIZATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.PART;
+import static eu.europa.ec.leos.services.support.XmlHelper.PERSON;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.ROLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT_LABEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static sun.security.x509.X509CertImpl.SIGNATURE;
 
 class NumFormatter {
-    static private final List<String> unNumberedItems = Arrays.asList(CITATION, PARAGRAPH, SUBPARAGRAPH, SUBPOINT_LABEL, POINT, INDENT);
+    static private final List<String> unNumberedItems = Arrays.asList(CITATION, PARAGRAPH, SUBPARAGRAPH, SUBPOINT_LABEL, POINT, INDENT, SIGNATURE, ROLE,
+            PERSON, ORGANIZATION);
 
     static String formattedNum(TreeNode node, List<TreeNode> mrefCommonNodes, Locale locale) {
         switch (node.getType()) {
@@ -45,7 +50,9 @@ class NumFormatter {
     	if(PARAGRAPH.equals(node.getType()) && node.getParent() != null && mrefCommonNodes != null && mrefCommonNodes.contains(node.getParent())) {
     		return Strings.isNullOrEmpty(node.getNum()) ? "" : node.getNum();
     	}
-        return Strings.isNullOrEmpty(node.getNum()) ? "" : String.format("(%s)", node.getNum());
+    	return
+    	node.isSoleNumbered() && Strings.isNullOrEmpty(node.getNum()) ?  StringUtils.capitalize(node.getType()) :
+         Strings.isNullOrEmpty(node.getNum()) ? "" : String.format("(%s)", node.getNum());
     }
 
     static boolean isUnnumbered(TreeNode node) {
@@ -79,7 +86,7 @@ class NumFormatter {
     }
     
     static String formatPlural(TreeNode node, int number, Locale locale) {
-        return formatPlural(node.getType(), number, locale);
+        return !node.isSoleNumbered() ? formatPlural(node.getType(), number, locale) : "";
     }
 
     static String formatPlural(String nodeType, int number, Locale locale) {

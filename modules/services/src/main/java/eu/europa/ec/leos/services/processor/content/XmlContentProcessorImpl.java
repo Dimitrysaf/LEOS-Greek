@@ -1292,6 +1292,33 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
+    public byte[] updateReferencesOnImport(byte[] xmlContent, Map<String, String> refsMatching) {
+        Document document = createXercesDocument(xmlContent);
+        updateReferencesOnImport(document, refsMatching);
+        return nodeToByteArray(document);
+    }
+
+    private void updateReferencesOnImport(Document document, Map<String, String> refsMatching) {
+        NodeList mrefList = XercesUtils.getElementsByName(document, MREF);
+        for (int i = 0; i < mrefList.getLength(); i++) {
+            Node mref = mrefList.item(i);
+            List<Node> refs = XercesUtils.getChildren(mref);
+            for (Node ref: refs) {
+                String href = XercesUtils.getAttributeValue(ref, HREF);
+                if (href != null) {
+                    for (Map.Entry<String,String> refMatch : refsMatching.entrySet()) {
+                        String newRef = refMatch.getKey();
+                        String oldRef = refMatch.getValue();
+                        href = href.replace(oldRef, newRef);
+                    }
+                    XercesUtils.insertOrUpdateAttributeValue(ref, HREF, href);
+                }
+            }
+        }
+        updateReferences(document);
+    }
+
+    @Override
     public byte[] updateReferences(byte[] xmlContent) {
         Document document = createXercesDocument(xmlContent);
         if (updateReferences(document)) {

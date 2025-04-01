@@ -45,6 +45,12 @@ public class StructureContext {
         return structureService.getTocRules(docTemplate);
     }
 
+    public Map<TocItem, List<List<TocItem>>> getTocRulesOrders() {
+        Validate.notNull(docTemplate, "Document template is required!");
+        LOG.trace("Retrieving toc rules configuration...");
+        return structureService.getTocRulesOrders(docTemplate);
+    }
+
     public Map<String, DocumentRules.Rule> getDocumentRules() {
         Validate.notNull(docTemplate, "Document template is required!");
         LOG.trace("Retrieving document rules configuration...");

@@ -173,9 +173,10 @@ public class CollaboratorController {
         final String userId = collaboratorRequest.getUserId();
         final String roleName = collaboratorRequest.getRoleName();
         final String connectedDG = collaboratorRequest.getConnectedDG();
+        final String leosClientId = collaboratorRequest.getLeosClientId();
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        return collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl);
+        return collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, leosClientId);
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)

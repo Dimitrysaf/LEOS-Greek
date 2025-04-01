@@ -56,13 +56,8 @@ public class NumberConfigCyrillicAlpha extends NumberConfigAbstract implements N
         return this.prefix + getCyrillicAlphaNumber(index) + this.suffix;
     }
 
-    public int charToInteger(String numAsString) {
-        int numAsInt = 0;
-        for (int index = 0; index < numAsString.length(); index++) {
-            int pow = numAsString.length() - 1 - index;
-            numAsInt = numAsInt + ((numAsString.charAt(index) - 1071) * (int) (Math.pow(32, pow)));
-        }
-        return numAsInt;
+    public int charToInteger(String label) {
+        return super.charToInteger(label, CYRILLIC_BASE_UNICODE, CYRILLIC_LETTERS_COUNT);
     }
 
     @Override

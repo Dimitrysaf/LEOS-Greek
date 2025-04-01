@@ -9,6 +9,7 @@ import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
+import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -47,6 +48,7 @@ public class ExplanatoryContextService {
     private final SecurityService securityService;
     private final XmlNodeProcessor xmlNodeProcessor;
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
+    private final PostProcessingDocumentService postProcessingDocumentService;
 
     private LeosPackage leosPackage;
     private Explanatory explanatory;
@@ -65,19 +67,21 @@ public class ExplanatoryContextService {
     private String language;
     private boolean translated;
     private String packageRef = null;
+    private Map<String, String> mapOldAndNewRefs;
 
     @Autowired
     public ExplanatoryContextService(
             TemplateService templateService,
             ExplanatoryService explanatoryService,
             ProposalService proposalService, SecurityService securityService, XmlNodeProcessor xmlNodeProcessor,
-            XmlNodeConfigProcessor xmlNodeConfigProcessor) {
+            XmlNodeConfigProcessor xmlNodeConfigProcessor, PostProcessingDocumentService postProcessingDocumentService) {
         this.templateService = templateService;
         this.explanatoryService = explanatoryService;
         this.proposalService = proposalService;
         this.securityService = securityService;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
+        this.postProcessingDocumentService = postProcessingDocumentService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
     }
 
@@ -172,8 +176,22 @@ public class ExplanatoryContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void useMapOldAndNewRefs(Map<String, String> mapOldAndNewRefs) {
+        LOG.trace("Using mapOldAndNewRefs... [mapOldAndNewRefs={}]", mapOldAndNewRefs);
+        this.mapOldAndNewRefs = mapOldAndNewRefs;
+    }
+
     public void usePackageRef(String packageRef) {
         this.packageRef = packageRef;
+    }
+
+    public void executeUpdateReferences() {
+        LOG.trace("Executing 'Update References On Explanatory' use case...");
+        Validate.notNull(explanatory, "Explanatory is required!");
+        Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
+        byte[] content = this.postProcessingDocumentService.updateReferences(explanatory.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
+        explanatoryService.updateExplanatory(explanatory, content, VersionType.MAJOR,
+                actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
     public Explanatory executeCreateExplanatory() {

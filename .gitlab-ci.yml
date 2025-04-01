@@ -63,12 +63,12 @@ cypress-test-for-local:
     - cd $CI_PROJECT_DIR/tools/akn4euutil/web
     - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
     - cd $CI_PROJECT_DIR/modules/web
-    - mvn jetty:run-war &
+    - mvn -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -Djetty.jvmArgs="-Xms512m -Xmx2g" jetty:run-war &
     - sleep 40
   script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
-    - npx cypress run --browser chrome --headed -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN"
+    - npx cypress run -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
   after_script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - node ./cucumberReport.js
@@ -82,6 +82,8 @@ cypress-test-for-local:
   interruptible: true
 
 cypress-test-for-non-local:
+  variables:
+    TAGS_TO_RUN: "@nonlocal"
   stage: test
   resource_group: cypress
   rules:

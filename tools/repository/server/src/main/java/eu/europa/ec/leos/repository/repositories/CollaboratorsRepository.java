@@ -25,8 +25,11 @@ public interface CollaboratorsRepository extends JpaRepository<Collaborators, Bi
     @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1 AND c.ROLE_ID = ?2", nativeQuery = true)
     Optional<Collaborators> findCollaboratorByNameAndRole(String collaboratorName, String role);
 
-    @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1 AND c.ROLE_ID = ?2 AND c.ORGANIZATION = ?3", nativeQuery = true)
+    @Query(value = "SELECT * FROM COLLABORATORS c LEFT JOIN LEOS_CLIENTS lc ON c.LEOS_CLIENTS_ID = lc.ID WHERE c.COLLABORATOR_NAME = ?1 AND c.ROLE_ID = ?2 AND c.ORGANIZATION = ?3 AND lc.NAME is null", nativeQuery = true)
     Optional<Collaborators> findCollaboratorByNameRoleAndOrganization(String collaboratorName, String role, String organization);
+
+    @Query(value = "SELECT * FROM COLLABORATORS c JOIN LEOS_CLIENTS lc ON c.LEOS_CLIENTS_ID = lc.ID WHERE c.COLLABORATOR_NAME = ?1 AND c.ROLE_ID = ?2 AND c.ORGANIZATION = ?3 AND  lc.NAME = ?4", nativeQuery = true)
+    Optional<Collaborators> findCollaboratorByNameRoleAndOrganizationAndLeosClient(String collaboratorName, String role, String organization, String leosClientId);
 
     @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1", nativeQuery = true)
     List<Collaborators> findCollaboratorByName(String collaboratorName);

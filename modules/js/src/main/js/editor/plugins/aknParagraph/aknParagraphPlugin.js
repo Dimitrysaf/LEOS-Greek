@@ -60,11 +60,32 @@ define(function aknParagraphPluginModule(require) {
                 akn: "style",
                 html: "style"
             }, {
+                akn: "leos:action-number",
+                html: "data-akn-action-number"
+            }, {
+                akn: "leos:uid-number",
+                html: "data-akn-uid-number"
+            }, {
+                akn: "leos:title-number",
+                html: "title-number"
+            }, {
+                akn: "leos:tc-original-number",
+                html: "data-akn-tc-original-number"
+            }, {
                 akn : "leos:action",
                 html : "data-akn-action"
             }, {
                 akn : "leos:uid",
                 html : "data-akn-uid"
+            }, {
+                akn: "leos:action-enter",
+                html: "data-akn-action-enter"
+            }, {
+                akn: "leos:uid-enter",
+                html: "data-akn-uid-enter"
+            }, {
+                akn: "leos:title-enter",
+                html: "title-enter"
             }],
             sub: {
                 akn: "text",

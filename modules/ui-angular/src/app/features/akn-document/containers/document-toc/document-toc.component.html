@@ -20,19 +20,51 @@
         cdkDrag
         cdkDropList
         matTreeNodePadding
-        [cdkDragData]="node"
+        [cdkDragData]="getDraggedNodes(node)"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
         [cdkDropListDisabled]="!isEditMode || !node.tocItem.draggable"
       >
+        <div *cdkDragPreview>
+          <html>
+          <head>
+            <style>
+              .dragged-selected-node {
+                background-color: #7bd2f6 !important;
+                border-radius: 2rem;
+              }
+
+              .dragged-label {
+                display: block;
+                flex-grow: 1;
+                max-width: 300px;
+                padding: 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: var(--mat-tree-node-text-color);
+                font-family: var(--mat-tree-node-text-font);
+                font-size: var(--mat-tree-node-text-size);
+                font-weight: var(--mat-tree-node-text-weight);
+              }
+            </style>
+          </head>
+          <body>
+          <div *ngFor="let selectedNode of this.selectedNodes.values()"
+               [class]="'dragged-selected-node' + ' ' + 'dragged-label'"
+               [innerHTML]="getNodeLabel(selectedNode.label)"
+          ></div>
+          </body>
+          </html>
+        </div>
         <div class="drop-placeholder"></div>
 
         <li class="node-li" *ngIf="shouldBeVisible(node)">
           <app-co-edition-info *ngIf="shouldBeVisible(node)" [nodeId]="node.id"></app-co-edition-info>
           <div
             class="mat-tree-node"
-            [class]="{ 'selected-node': selectedNode?.id === node.id }"
-            (click)="handleNodeSelect(node)"
+            [class]="{ 'selected-node': isSelected(node) }"
+            (click)="handleNodeSelect(node, $event)"
           >
             <eui-icon-svg
               size="s"
@@ -55,26 +87,59 @@
       </mat-nested-tree-node>
       <mat-nested-tree-node
         cdkScrollable
-        [hidden]="!node.shouldRenderNode"
+        [hidden]="!node.shouldRenderNode && !hasChildren"
         *matTreeNodeDef="let node; when: hasChildren"
         cdkDrag
         cdkDropList
         matTreeNodePadding
         [attr.data-id]="node.id"
-        [cdkDragData]="node"
+        [cdkDragData]="getDraggedNodes(node)"
         (cdkDragMoved)="dragMoved($event)"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
         [cdkDropListDisabled]="!isEditMode"
       >
-        <div class="drop-placeholder"></div>
+        <div *cdkDragPreview>
 
-        <li>
+          <html>
+          <head>
+            <style>
+              .dragged-selected-node {
+                background-color: #7bd2f6 !important;
+                border-radius: 2rem;
+              }
+
+              .dragged-label {
+                display: block;
+                flex-grow: 1;
+                max-width: 300px;
+                padding: 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: var(--mat-tree-node-text-color);
+                font-family: var(--mat-tree-node-text-font);
+                font-size: var(--mat-tree-node-text-size);
+                font-weight: var(--mat-tree-node-text-weight);
+              }
+            </style>
+          </head>
+          <body>
+          <div *ngFor="let selectedNode of this.selectedNodes.values()"
+               [class]="'dragged-selected-node' + ' ' + 'dragged-label'"
+               [innerHTML]="getNodeLabel(selectedNode.label)"
+          ></div>
+          </body>
+          </html>
+        </div>
+        <div *ngIf="node.shouldRenderNode" class="drop-placeholder"></div>
+
+        <li *ngIf="node.shouldRenderNode">
           <app-co-edition-info [nodeId]="node.id"></app-co-edition-info>
           <div
-            (click)="handleNodeSelect(node)"
+            (click)="handleNodeSelect(node, $event)"
             class="mat-tree-node"
-            [class]="{ 'selected-node': selectedNode?.id === node.id }"
+            [class]="{ 'selected-node': isSelected(node) }"
           >
             <eui-icon-svg
               size="s"
@@ -91,7 +156,7 @@
             <div
               [id]="'node-label-' + node.id"
               [class]="'label-extended' + ' ' + getNodeStyling(node)"
-              (click)="handleNodeSelect(node)"
+              (click)="handleNodeSelect(node, $event)"
               [innerHTML]="getNodeLabel(node.label)"
               [euiTooltip]="getNodeTooltip(node)"
               [position]="
@@ -106,7 +171,12 @@
             </div>
           </ul>
         </li>
-        <div class="drop-placeholder"></div>
+        <div *ngIf="node.shouldRenderNode" class="drop-placeholder"></div>
+        <ul *ngIf="!node.shouldRenderNode" class="">
+          <div>
+            <ng-container matTreeNodeOutlet></ng-container>
+          </div>
+        </ul>
       </mat-nested-tree-node>
     </mat-tree>
 
@@ -133,6 +203,16 @@
       </span>
       </div>
     </li>
+  </ul>
+  <ul *ngIf="isSelectionWarning">
+      <div class="eui-u-display-flex eui-u-flex-column eui-u-p-xs eui-u-font-xs eui-u-border-bottom-separator eui-u-border-state-warning">
+      <span euiLabel
+            [euiWarning]="isTreeValidationWarning"
+            euiSizeS
+            class="text-wrap"
+            [innerHTML]="warningMessagesFromSelection">
+      </span>
+      </div>
   </ul>
   <app-confirm-delete-dialog
     #deleteTocConfirmation

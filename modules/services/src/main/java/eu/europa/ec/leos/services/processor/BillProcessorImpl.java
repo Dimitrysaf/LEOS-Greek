@@ -23,9 +23,9 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.IdGenerator;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
@@ -37,12 +37,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
@@ -231,6 +236,24 @@ public class BillProcessorImpl implements BillProcessor {
         }
         updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         return updatedContent;
+    }
+
+    @Override
+    public byte[] handleTrackChangeForSoleNumberedElements(byte[] newXmlContent, String elementTagName) {
+        Document document = createXercesDocument(newXmlContent, false);
+        NodeList nodeList = document.getElementsByTagName(elementTagName);
+        TocItem tocItem = structureContextProvider.get().getTocItems().stream().filter((item) -> item.getAknTag().name().equalsIgnoreCase(elementTagName)).findFirst().get();
+        if(nodeList != null && nodeList.getLength() > 0 && tocItem.getSoleNumbering() != null) {
+            Node elementNode = nodeList.item(0);
+            Node numNode = getFirstChild(elementNode, NUM);
+            Node insNode = getFirstChild(numNode, "ins");
+            if(numNode != null && insNode != null) {
+                String numContent = "";
+                numContent  = insNode.getTextContent();
+                numNode.setTextContent(numContent);
+            }
+        }
+        return XercesUtils.nodeToByteArray(document);
     }
 
     public byte[] deleteElement(Bill document, String elementId, String tagName, User user) throws Exception {

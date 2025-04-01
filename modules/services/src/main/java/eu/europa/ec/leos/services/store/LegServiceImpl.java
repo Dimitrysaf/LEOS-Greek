@@ -516,7 +516,7 @@ public class LegServiceImpl implements LegService {
             final int docNumber = Integer.parseInt(annexVO.getMetadata().getIndex());
             final String resourceId = attachmentIds.entrySet()
                     .stream()
-                    .filter(e -> e.getKey().equals(annexVO.getRef()))
+                    .filter(e -> e.getKey().equals(annexVO.getRef()) || e.getKey().equals(annexVO.getRef() + ".xml"))
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .get();
@@ -530,7 +530,7 @@ public class LegServiceImpl implements LegService {
             final int docNumber = Integer.parseInt(explanatoryVO.getMetadata().getIndex());
             final String resourceId = attachmentIds.entrySet()
                     .stream()
-                    .filter(e -> e.getKey().equals(explanatoryVO.getRef()))
+                    .filter(e -> e.getKey().equals(explanatoryVO.getRef()) || e.getKey().equals(explanatoryVO.getRef() + ".xml"))
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .get();
@@ -992,7 +992,7 @@ public class LegServiceImpl implements LegService {
         if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
-            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
+            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN, structureContextProvider.get().getTocItems()));
             final String coverPage = exportProposalResource.getComponentId(XmlNodeConfigProcessor.DOC_REF_COVER);
             addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposal.getMetadata().getOrNull().getRef());
         }
@@ -1941,7 +1941,8 @@ public class LegServiceImpl implements LegService {
         if (exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
-            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
+            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN,
+                    structureContextProvider.get().getTocItems()));
 
             addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposal.getMetadata().getOrNull().getRef());
         }

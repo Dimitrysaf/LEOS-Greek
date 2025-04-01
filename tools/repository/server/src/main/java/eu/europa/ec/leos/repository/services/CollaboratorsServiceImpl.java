@@ -24,7 +24,6 @@ import eu.europa.ec.leos.repository.repositories.LeosClientsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -51,7 +50,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
                             pkgCollaborator.getCollaborator().getCollaboratorName(),
                             pkgCollaborator.getCollaborator().getRole(),
                             pkgCollaborator.getCollaborator().getOrganization(),
-                            pkgCollaborator.getCollaborator().getLeosClients()!=null?pkgCollaborator.getCollaborator().getLeosClients().getName():""
+                            pkgCollaborator.getCollaborator().getLeosClients()!=null?pkgCollaborator.getCollaborator().getLeosClients().getName():null
                     )
             );
         }
@@ -80,8 +79,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         }
         for (Collaborator c : currentCollaboratorList) {
             if (!collaboratorList.contains(c)) {
-                Optional<Collaborators> collaborator = collaboratorsRepository.findCollaboratorByNameRoleAndOrganization(c.getLogin(), c.getRole(),
-                        c.getEntity());
+                Optional<Collaborators> collaborator = findCollaborator(c);
                 if (collaborator.isPresent()) {
                     Optional<PackageCollaborators> pkgCollaborators =
                             packageCollaboratorsRepository.findPackageCollaboratorsByPkgAndCollaborator(pkg, collaborator.get());
@@ -92,6 +90,21 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
             }
         }
     }
+
+    private Optional<Collaborators> findCollaborator(Collaborator c) {
+        return  (c.getLeosClientId() != null) ?
+                collaboratorsRepository.findCollaboratorByNameRoleAndOrganizationAndLeosClient(
+                c.getLogin(),
+                c.getRole(),
+                c.getEntity(),
+                c.getLeosClientId()):
+                collaboratorsRepository.findCollaboratorByNameRoleAndOrganization(
+                        c.getLogin(),
+                        c.getRole(),
+                        c.getEntity())
+        ;
+    }
+
 
     public List<BigDecimal> findDocumentsByCollaboratorName(final String userId, final String role) {
         List<BigDecimal> packageIdsList = new ArrayList<>();
@@ -111,10 +124,9 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
 
     private void updateCollaborator(Package pkg, Collaborator c, Collaborator previousC, String userId) {
         LocalDateTime creationDate = LocalDateTime.now();
-        Optional<Collaborators> collaborator = collaboratorsRepository.findCollaboratorByNameRoleAndOrganization(c.getLogin(), c.getRole(),
-                c.getEntity());
+        //Extend the search to wor
         final Optional<LeosClients> leosClient = (c.getLeosClientId()!=null)?leosClientsRepository.findByName(c.getLeosClientId()):Optional.empty();
-
+        Optional<Collaborators> collaborator = findCollaborator(c);
         Collaborators updatedCollaborators;
         if (!collaborator.isPresent()) {
             Collaborators collaborators = new Collaborators();
@@ -138,8 +150,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         pkgCollaborator.setAuditLastMBy(userId);
         pkgCollaborator.setAuditLastMDate(creationDate);
         if (previousC != null) {
-            Optional<Collaborators> prevCollaborators = collaboratorsRepository.findCollaboratorByNameRoleAndOrganization(previousC.getLogin(),
-                    previousC.getRole(), previousC.getEntity());
+            Optional<Collaborators> prevCollaborators = findCollaborator(previousC);
             if (prevCollaborators.isPresent()) {
                 Optional<PackageCollaborators> pkgCollaborators =
                         packageCollaboratorsRepository.findPackageCollaboratorsByPkgAndCollaborator(pkg, prevCollaborators.get());
@@ -152,20 +163,15 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         }
         pkgCollaborator.setPackage(pkg);
         pkgCollaborator.setCollaborator(updatedCollaborators);
-        packageCollaboratorsRepository.save(pkgCollaborator);
+        savePackageCollaborator(pkgCollaborator);
     }
 
-    public void removeCollaborator(final String userId, final String entity, final String role) throws RepositoryException {
-        Optional<Collaborators> collaborators = collaboratorsRepository.findCollaboratorByNameRoleAndOrganization(userId, role, entity);
-        if (collaborators.isPresent()) {
-            List<PackageCollaborators> pkgCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByCollaborator(collaborators.get());
-            if (pkgCollaborators.isEmpty()) {
-                collaboratorsRepository.delete(collaborators.get());
-            } else {
-                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_DELETING, "Still linked packages to this collaborator");
-            }
-        } else {
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_DELETING, "Such Collaborator doesn't exist");
+    public void savePackageCollaborator(PackageCollaborators pkgCollaborator) {
+        Optional<PackageCollaborators> pkgC =
+                packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(pkgCollaborator.getPackage().getId(),
+                        pkgCollaborator.getCollaborator().getId());
+        if (!pkgC.isPresent() || pkgCollaborator.getId() != null) {
+            packageCollaboratorsRepository.save(pkgCollaborator);
         }
     }
 

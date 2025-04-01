@@ -48,6 +48,7 @@ public class AppConfigResponse {
     private boolean showRevisionEnabled;
     private boolean leosSwitchLevelArticle;
     private int searchOnMinimumCharacter;
+    private int maxSearchLimit;
 
     public AppConfigResponse() {
     }
@@ -249,5 +250,13 @@ public class AppConfigResponse {
 
     public void setSearchOnMinimumCharacter(int searchOnMinimumCharacter) {
         this.searchOnMinimumCharacter = searchOnMinimumCharacter;
+    }
+
+    public int getMaxSearchLimit() {
+        return maxSearchLimit;
+    }
+
+    public void setMaxSearchLimit(int maxSearchLimit) {
+        this.maxSearchLimit = maxSearchLimit;
     }
 }

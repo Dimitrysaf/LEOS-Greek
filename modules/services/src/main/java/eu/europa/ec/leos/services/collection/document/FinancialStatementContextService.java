@@ -11,6 +11,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
+import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -49,6 +50,7 @@ public class FinancialStatementContextService {
     private final ProposalService proposalService;
     private final SecurityService securityService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
+    private final PostProcessingDocumentService postProcessingDocumentService;
 
     private LeosPackage leosPackage;
     private FinancialStatement financialStatement;
@@ -70,14 +72,16 @@ public class FinancialStatementContextService {
     private String language;
     private boolean translated;
     private String packageRef = null;
+    private Map<String, String> mapOldAndNewRefs;
 
     public FinancialStatementContextService(TemplateService templateService, FinancialStatementService financialStatementService,
-            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
-            XmlNodeProcessor xmlNodeProcessor, XmlNodeConfigProcessor xmlNodeConfigProcessor) {
+                                            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
+                                            XmlNodeProcessor xmlNodeProcessor, XmlNodeConfigProcessor xmlNodeConfigProcessor, PostProcessingDocumentService postProcessingDocumentService) {
         this.templateService = templateService;
         this.financialStatementService = financialStatementService;
         this.proposalService = proposalService;
         this.securityService = securityService;
+        this.postProcessingDocumentService = postProcessingDocumentService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -181,6 +185,19 @@ public class FinancialStatementContextService {
 
     public void usePackageRef(String packageRef) {
         this.packageRef = packageRef;
+    }
+
+    public void useMapOldAndNewRefs(Map<String, String> mapOldAndNewRefs) {
+        LOG.trace("Using mapOldAndNewRefs... [mapOldAndNewRefs={}]", mapOldAndNewRefs);
+        this.mapOldAndNewRefs = mapOldAndNewRefs;
+    }
+
+    public void executeUpdateReferences() {
+        LOG.trace("Executing 'Update References On FinancialStatement' use case...");
+        Validate.notNull(financialStatement, "FinancialStatement is required!");
+        Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
+        byte[] content = this.postProcessingDocumentService.updateReferences(financialStatement.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
+        financialStatementService.updateFinancialStatement(financialStatement.getId(), content);
     }
 
     public FinancialStatement executeCreateFinancialStatement() {

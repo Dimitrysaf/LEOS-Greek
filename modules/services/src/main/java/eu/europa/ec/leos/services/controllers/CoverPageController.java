@@ -31,8 +31,10 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.response.SearchAndReplaceAllResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -92,11 +95,13 @@ public class CoverPageController {
     @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                         @RequestParam("tocMode") TocMode tocMode
+                                         @RequestParam("tocMode") TocMode tocMode,
+                                         HttpServletRequest request
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.coverPageApiService.getToc(documentRef, tocMode);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+            List<TableOfContentItemVO> toc = this.coverPageApiService.getToc(documentRef, tocMode, clientContextToken);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting coverPage toc items - " + e.getMessage());
@@ -263,12 +268,14 @@ public class CoverPageController {
     @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveCoverPageVersion(@PathVariable("documentRef") String documentRef,
-                                                       @RequestBody SaveTocRequestEvent saveTocRequestEvent
+                                                       @RequestBody SaveTocRequestEvent saveTocRequestEvent,
+                                        HttpServletRequest request
     ) {
         try {
             documentRef = encodeParam(documentRef);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
             List<TableOfContentItemVO> toc = this.coverPageApiService.saveToC(documentRef,
-                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED);
+                    saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED, clientContextToken);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());
@@ -493,13 +500,14 @@ public class CoverPageController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.TEXT_XML_VALUE)
+    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceAllMatchRequest request) {
         try {
-            byte[] response = this.coverPageApiService.replaceAllTextInDocument(request);
-            return ResponseEntity.ok().body(response);
+            Pair<byte[], Integer> response = this.coverPageApiService.replaceAllTextInDocument(request);
+            SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left(), StandardCharsets.UTF_8), response.right());
+            return ResponseEntity.ok().body(searchAndReplaceAllResponse);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION + e.getMessage());
             return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);

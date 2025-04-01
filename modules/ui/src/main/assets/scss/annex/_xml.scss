@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
 */
-
+$border: 1px solid black;
 @mixin xml {
     @include printUI;
     @include exportPdf;
@@ -24,6 +24,8 @@
         doc[name="ANNEX" i] {
             @extend %xmlCoverPage;
             @extend %xmlSecondPage;
+            @extend %xmlOrientation;
+            @extend %xmlHigherdivision;
 
             .cke_editable {
                 font-weight: normal;

@@ -100,16 +100,19 @@ export class DocumentTocComponent
   documentConfig: DocumentConfig;
 
   @Input() isEditMode = false;
-  selectedNode: TableOfContentItemVO = null;
+  lastSelectedNode: TableOfContentItemVO = null;
+  selectedNodes: Set<TableOfContentItemVO> = new Set([]);
   parentSelectedNode: TableOfContentItemVO = null;
   prevSelectedNode: TableOfContentItemVO = null;
   nextSelectedNode: TableOfContentItemVO = null;
   selectedNodeToMove: TableOfContentItemVO = null;
   isToCDraft: boolean;
   messageFromValidation: string;
+  warningMessagesFromSelection: string;
   warningMessagesFromValidation: string[];
   isDropValid: boolean;
   isTreeValidationWarning: boolean;
+  isSelectionWarning: boolean;
   showWarningIcon: boolean;
   dragAction: DragAction;
   expandedNodeIds = new Set<string>();
@@ -126,7 +129,7 @@ export class DocumentTocComponent
   treeControl: NestedTreeControl<TableOfContentItemVO>;
   dataSource: MatTreeNestedDataSource<TableOfContentItemVO>;
 
-  draggedItem: TableOfContentItemVO = null;
+  draggedItems: TableOfContentItemVO[] = [];
   targetNode: TableOfContentItemVO = null;
   isVisible = true;
   @ViewChild('deleteTocConfirmation')
@@ -140,7 +143,6 @@ export class DocumentTocComponent
 
   private seeTrackChanges = false;
   private trackChangesEnabled = false;
-  private alreadyDidAsyncWork = false;
 
   constructor(
     private documentService: DocumentService,
@@ -172,7 +174,7 @@ export class DocumentTocComponent
     this.tocService.selectedNode$
       .pipe(takeUntil(this.destroy$))
       .subscribe((selectedNode) => {
-        this.selectedNode = selectedNode;
+        this.lastSelectedNode = selectedNode;
       });
     this.tocService.isTocDraft$
       .pipe(takeUntil(this.destroy$))
@@ -301,6 +303,10 @@ export class DocumentTocComponent
         ) === BULLET_NUM
       ) {
         return this.translateService.instant('toc.item.type.bullet');
+      } else if (node.node && node.node.toString().includes('name="signatory"')) {
+        return this.translateService.instant(
+          'toc.item.type.signatory',
+        );
       } else {
         return this.translateService.instant(
           'toc.item.type.' + node.tocItem.aknTag.toLowerCase(),
@@ -320,7 +326,7 @@ export class DocumentTocComponent
   }
 
   isNodeSelected() {
-    return this.selectedNode !== null;
+    return this.selectedNodes.size > 0;
   }
 
   expandAll() {
@@ -374,11 +380,49 @@ export class DocumentTocComponent
       .forEach((el) => el.classList.remove('invalid-node'));
   }
 
-  handleNodeSelect(node: TableOfContentItemVO, scrollTo = true) {
-    this.selectedNode = node;
-    this.parentSelectedNode = findNodeById(this.treeControl.dataNodes, node.parentItem);
-    this.prevSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, node, true);
-    this.nextSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, node, false);
+  getDraggedNodes(node: TableOfContentItemVO): TableOfContentItemVO[] {
+    return this.isSelected(node) ? Array.from(this.selectedNodes.values()) : [node];
+  }
+
+  isSelected(node: TableOfContentItemVO) {
+    for (var selectedNode of this.selectedNodes.values()) {
+      if (selectedNode.id == node.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  handleNodeSelect(node: TableOfContentItemVO, $event, scrollTo = true) {
+    $event?.stopImmediatePropagation();
+    const lastSelectedType = this.lastSelectedNode ? this.lastSelectedNode.tocItem.aknTag : null;
+
+    if ($event && $event.ctrlKey) {
+      if (lastSelectedType == null || lastSelectedType == node.tocItem.aknTag) {
+        if (this.isSelected(node)) {
+          this.selectedNodes.delete(node);
+        } else {
+          this.selectedNodes.add(node);
+        }
+        this.lastSelectedNode = node;
+      } else if (lastSelectedType != null) {
+        this.isSelectionWarning = true;
+        this.warningMessagesFromSelection = this.translateService.instant("toc.edit.select.same.type");
+        setTimeout(() => {
+          this.isSelectionWarning = false;
+        }, 5000);
+      }
+    } else if ($event) {
+      this.selectedNodes = new Set([]);
+      this.selectedNodes.add(node);
+      this.lastSelectedNode = node;
+    } else {
+      this.lastSelectedNode = node;
+    }
+
+    this.parentSelectedNode = findNodeById(this.treeControl.dataNodes, this.lastSelectedNode.parentItem);
+    this.prevSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, this.lastSelectedNode, true);
+    this.nextSelectedNode = findNodeSiblingById(this.treeControl.dataNodes, this.lastSelectedNode, false);
 
     if (!scrollTo) return;
 
@@ -401,7 +445,7 @@ export class DocumentTocComponent
   //a node can be dropped from two sources
   //1) the ToC itself
   //2) the drag elements found on the left
-  onDrop(event: CdkDragDrop<TableOfContentItemVO>) {
+  onDrop(event: CdkDragDrop<TableOfContentItemVO[]>) {
     if (this.dragAction.targetId === null) {
       this.cancelDrop();
       return;
@@ -412,7 +456,7 @@ export class DocumentTocComponent
       this.dragAction.targetId,
     );
 
-    const nodeDragged = event.item.data as TableOfContentItemVO;
+    const nodesDragged = event.item.data instanceof Array ? event.item.data : [event.item.data];
     //TODO : Fix this => this is a hack for allowing the root to go for validation otherwise it will fail to find the nodeParent and will not send it for validaiton
     if (nodeTarget.tocItem.root) {
       nodeTarget.parentItem = nodeTarget.id;
@@ -425,7 +469,7 @@ export class DocumentTocComponent
 
     // validate Drop
     this.validateAndMove(
-      nodeDragged,
+      nodesDragged,
       nodeTarget,
       parentNode,
       this.dragAction.action,
@@ -433,20 +477,21 @@ export class DocumentTocComponent
     );
   }
 
-  dragMoved(event: CdkDragMove<TableOfContentItemVO>, isAdd: boolean = false) {
+  dragMoved(event: CdkDragMove<TableOfContentItemVO[]>, isAdd: boolean = false) {
     //introduce a small debounce , when the toc gets to large we have performance issues
     //drag moved runs on every drag and drop move , this means a lot ...
+    let draggedNodes : TableOfContentItemVO[];
     clearTimeout(this.dragTimer);
     this.dragTimer = setTimeout(() => {
       this.clearDragInfo();
-      this.selectedNode = null;
+
       let el = this.document.elementFromPoint(
         event.pointerPosition.x,
         event.pointerPosition.y,
       );
-
       const node = this.getToMatNodeFromChild(el);
       if (node) {
+        draggedNodes = Array.from(this.selectedNodes.values());
         const targetId = node.getAttribute('data-id');
         const level = parseInt(node.getAttribute('aria-level'), 10);
 
@@ -520,9 +565,9 @@ export class DocumentTocComponent
     setTimeout(() => this.rerender());
 
     setTimeout(() => {
-      if (this.selectedNode) {
-        this.scrollNodeIntoView(this.selectedNode);
-        this.handleNodeSelect(this.selectedNode, false);
+      if (this.lastSelectedNode) {
+        this.scrollNodeIntoView(this.lastSelectedNode);
+        this.handleNodeSelect(this.lastSelectedNode, null,false);
       }
       this.highlightInvalidNodes();
     });
@@ -547,7 +592,8 @@ export class DocumentTocComponent
   }
 
   clearSelectedNode() {
-    this.selectedNode = null;
+    this.lastSelectedNode = null;
+    this.selectedNodes = new Set([]);
   }
 
   checkNodesToRender(root: TableOfContentItemVO[]) {
@@ -598,15 +644,15 @@ export class DocumentTocComponent
         if (this.prevSelectedNode) {
           selectedNode = document
             .querySelector(`[data-id="${this.prevSelectedNode.id}"]`);
-          this.selectedNode = this.prevSelectedNode;
+          this.lastSelectedNode = this.prevSelectedNode;
         } else if (this.nextSelectedNode) {
           selectedNode = document
             .querySelector(`[data-id="${this.nextSelectedNode.id}"]`);
-          this.selectedNode = this.nextSelectedNode;
+          this.lastSelectedNode = this.nextSelectedNode;
         } else if (this.parentSelectedNode) {
           selectedNode = document
             .querySelector(`[data-id="${this.parentSelectedNode.id}"]`);
-          this.selectedNode = this.parentSelectedNode;
+          this.lastSelectedNode = this.parentSelectedNode;
         }
       }
       selectedNode?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -655,79 +701,94 @@ export class DocumentTocComponent
   private prepareTreeForDisplay(root: TableOfContentItemVO[]) {
     for (const n of root || []) {
       if (n) {
-        n.tocStyling = getItemSoftStyle(n);
-        let label: string = n.tocItem.itemDescription
-          ? this.getLabel(n) + SPACE
-          : '';
+        if (n.soleNumbered) {
+          n.tocStyling = getItemSoftStyle(n);
+          let soloNumElementLabel = '';
+          if (n.number && n.heading) {
+            soloNumElementLabel = n.number + NUM_HEADING_SEPARATOR + n.heading;
+          } else if (n.number) {
+            soloNumElementLabel = n.number + SPACE;
+          }
+          if (n.tocItem.contentDisplayed) {
+            soloNumElementLabel +=  soloNumElementLabel && soloNumElementLabel.length > 0 ? CONTENT_SEPARATOR : '';
+            soloNumElementLabel += removeTag(n.content);
+          }
+          n.label = soloNumElementLabel;
+        } else {
+          n.tocStyling = getItemSoftStyle(n);
+          let label: string = n.tocItem.itemDescription
+            ? this.getLabel(n) + SPACE
+            : '';
 
-        const shoudlAddMovedLabel = this.shouldAddMoveLabel(n);
-        if (shoudlAddMovedLabel) {
-          label = MOVED_TITLE_SPAN_START_TAG.concat(' ', label);
-          label += SPACE;
-        }
-        if (n.number && n.heading) {
-          if (
-            n.tocItem.aknTag.toLowerCase() === n.number.toLowerCase().trim()
-          ) {
-            n.number = HASH_NUM_VALUE;
-          }
-          n.label && !(n.trackChangeAction === 'move' || n.trackChangeAction === 'delete') ? label = n.label : label += n.number;
+          const shoudlAddMovedLabel = this.shouldAddMoveLabel(n);
           if (shoudlAddMovedLabel) {
-            label += SPAN_END_TAG;
-            label += this.getMovedLabel();
+            label = MOVED_TITLE_SPAN_START_TAG.concat(' ', label);
+            label += SPACE;
           }
-          if (n.tocItem.aknTag === TBLOCK || n.content === '') {
-            label += CONTENT_SEPARATOR;
-            label += n.heading;
-          } else if (n.content !== '') {
-            label += NUM_HEADING_SEPARATOR;
-            label += n.heading;
-          }
-        } else if (n.number) {
-          const softAction = n.numSoftActionAttr;
-          if (softAction) {
+          if (n.number && n.heading) {
             if (
-              PARAGRAPH === n.tocItem.aknTag &&
-              DELETE === softAction &&
-              MOVE_TO !== n.softActionAttr
+              n.tocItem.aknTag.toLowerCase() === n.number.toLowerCase().trim()
             ) {
-              label +=
-                '<span class="leos-soft-num-removed">' + n.number + '</span>';
-            } else if (
-              PARAGRAPH === n.tocItem.aknTag &&
-              ADD === softAction &&
-              MOVE_TO !== n.softActionAttr
-            ) {
-              label +=
-                '<span class="leos-soft-num-new">' + n.number + '</span>';
+              n.number = HASH_NUM_VALUE;
             }
-          } else {
-            if (this.isIndented(n) && n.number !== n.indentOriginNumValue) {
-              label +=
-                '<span class="leos-soft-num-new">' + n.number + '</span>';
-            } else {
-              n.label && !(n.trackChangeAction === 'move' || n.trackChangeAction === 'delete') ? label = n.label : label += n.number;
-            }
+            label += n.number;
             if (shoudlAddMovedLabel) {
               label += SPAN_END_TAG;
               label += this.getMovedLabel();
             }
-          }
-        } else if (n.heading) {
-          label += n.heading;
-          if (shoudlAddMovedLabel) {
+            if (n.tocItem.aknTag === TBLOCK || n.content === '') {
+              label += CONTENT_SEPARATOR;
+              label += n.heading;
+            } else if (n.content !== '') {
+              label += NUM_HEADING_SEPARATOR;
+              label += n.heading;
+            }
+          } else if (n.number) {
+            const softAction = n.numSoftActionAttr;
+            if (softAction) {
+              if (
+                PARAGRAPH === n.tocItem.aknTag &&
+                DELETE === softAction &&
+                MOVE_TO !== n.softActionAttr
+              ) {
+                label +=
+                  '<span class="leos-soft-num-removed">' + n.number + '</span>';
+              } else if (
+                PARAGRAPH === n.tocItem.aknTag &&
+                ADD === softAction &&
+                MOVE_TO !== n.softActionAttr
+              ) {
+                label +=
+                  '<span class="leos-soft-num-new">' + n.number + '</span>';
+              }
+            } else {
+              if (this.isIndented(n) && n.number !== n.indentOriginNumValue) {
+                label +=
+                  '<span class="leos-soft-num-new">' + n.number + '</span>';
+              } else {
+                label += n.number;
+              }
+              if (shoudlAddMovedLabel) {
+                label += SPAN_END_TAG;
+                label += this.getMovedLabel();
+              }
+            }
+          } else if (n.heading) {
+            label += n.heading;
+            if (shoudlAddMovedLabel) {
+              label += SPAN_END_TAG;
+              label += this.getMovedLabel();
+            }
+          } else if (shoudlAddMovedLabel) {
             label += SPAN_END_TAG;
             label += this.getMovedLabel();
           }
-        } else if (shoudlAddMovedLabel) {
-          label += SPAN_END_TAG;
-          label += this.getMovedLabel();
+          if (n.tocItem.contentDisplayed) {
+            label += label.length > 0 ? CONTENT_SEPARATOR : '';
+            label += removeTag(n.content);
+          }
+          n.label = label;
         }
-        if (n.tocItem.contentDisplayed) {
-          label += label.length > 0 ? CONTENT_SEPARATOR : '';
-          label += removeTag(n.content);
-        }
-        n.label = label;
       }
       if (n.childItems) this.prepareTreeForDisplay(n.childItems);
     }
@@ -746,30 +807,33 @@ export class DocumentTocComponent
   }
 
   private validateAndMove(
-    nodeDragged: TableOfContentItemVO,
+    nodesDragged: TableOfContentItemVO[],
     nodeTarget: TableOfContentItemVO,
     parentNode: any,
     position: string,
     isAdd: boolean = false,
   ) {
-    this.draggedItem = nodeDragged;
+    this.draggedItems = nodesDragged;
     this.targetNode = nodeTarget;
-    this.validateTocService.validateNodeDrop(
-      this.treeControl.dataNodes,
-      parentNode,
-      nodeTarget,
-      nodeDragged,
-      [nodeDragged.id],
-      nodeDragged.tocItem.aknTag,
-      nodeTarget.id,
-      nodeTarget.tocItem.aknTag,
-      parentNode.id,
-      parentNode.tocItem.aknTag,
-      position,
-      this.documentType,
-      this.documentRef,
-      isAdd,
-    );
+    for (var i=0; i<nodesDragged.length; i++) {
+      let nodeDragged: TableOfContentItemVO = nodesDragged[i];
+      this.validateTocService.validateNodeDrop(
+        this.treeControl.dataNodes,
+        parentNode,
+        nodeTarget,
+        nodeDragged,
+        [nodeDragged.id],
+        nodeDragged.tocItem.aknTag,
+        nodeTarget.id,
+        nodeTarget.tocItem.aknTag,
+        parentNode.id,
+        parentNode.tocItem.aknTag,
+        position,
+        this.documentType,
+        this.documentRef,
+        isAdd,
+      );
+    }
   }
 
   private handleNodeValidationResult(result: NodeValidation) {
@@ -785,20 +849,20 @@ export class DocumentTocComponent
     this.handleAddNodeAfterValidation(
       result.targetItem,
       result.sourceItem,
-      result.action.isAdd,
-      result.action.position,
+      result.action?.isAdd,
+      result.action?.position,
     );
 
-    this.draggedItem = null;
+    this.draggedItems = [];
     this.targetNode = null;
   }
 
   private isMovedToNode(node: TableOfContentItemVO) {
-    return node.softActionRoot && node.softActionAttr === MOVE_TO;
+    return node?.softActionRoot && node?.softActionAttr === MOVE_TO;
   }
 
   private isDeletedNode(node: TableOfContentItemVO) {
-    return node.softActionRoot && node.softActionAttr === DELETE;
+    return node?.softActionRoot && node?.softActionAttr === DELETE;
   }
 
   private handleAddNodeAfterValidation(
@@ -807,7 +871,10 @@ export class DocumentTocComponent
     isAdd: boolean,
     position: string,
   ) {
-    if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged)) {
+    if (!nodeDragged) {
+      return;
+    }
+    if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged) || !nodeDragged.tocItem.draggable) {
       this.populateValidationMessage({
         success: false,
         warning: false,
@@ -889,7 +956,7 @@ export class DocumentTocComponent
       }
       this.tocService.setTocIsDraft(true);
       setTimeout(() => {
-        this.handleNodeSelect(nodeDragged);
+        this.handleNodeSelect(nodeDragged, null);
       });
     } catch (e) {
       this.tocEditService.popTreeHistory();
@@ -953,7 +1020,6 @@ export class DocumentTocComponent
     if (dropped) {
       this.dragAction = null;
     }
-    this.selectedNode = null;
     this.document
       .querySelectorAll('.drop-before')
       .forEach((element) => element.classList.remove('drop-before'));
@@ -1057,13 +1123,17 @@ export class DocumentTocComponent
         }
       }
     } else if (
-      targetElement.softMoveTo === null ||
-      !(targetElement.softMoveTo === eventItem.elementNumberId.toString())
+      targetElement.softMoveTo === null ||(
+        (eventItem.elementNumberId != null && targetElement.softMoveTo !== eventItem.elementNumberId.toString())
+        || (eventItem.elementNumberId == null && targetElement.softMoveTo !== eventItem.id.toString())
+      )
     ) {
       eventItem.trackChangeAction = LEOS_TC_MOVE_ACTION;
     } else if (
-      targetElement.softMoveTo !== null &&
-      targetElement.softMoveTo === eventItem.elementNumberId.toString()
+      targetElement.softMoveTo !== null && (
+        (eventItem.elementNumberId != null && targetElement.softMoveTo === eventItem.elementNumberId.toString())
+      || (eventItem.elementNumberId == null && targetElement.softMoveTo === eventItem.id.toString())
+      )
     ) {
       eventItem.trackChangeAction = LEOS_TC_MOVE_TO_ORIGIN_ACTION;
     }

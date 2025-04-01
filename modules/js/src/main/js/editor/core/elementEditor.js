@@ -576,6 +576,21 @@ define(function elementEditorModule(require) {
         return false;
     }
 
+    function _hasSiblingWithContent(element) {
+        let isSiblingWithContent = false;
+        var childNodes = $(element).parent()[0].childNodes;
+        for(var child of childNodes){
+            if(element == child){
+                continue;
+            }
+            if(!UTILS.isEmptyElement(child) ){
+                isSiblingWithContent = true;
+                break;
+            }
+        }
+        return isSiblingWithContent;
+    }
+
     function _isEmptyContentInElement(elementId) {
         var isEmptyElementFound = false;
 
@@ -604,6 +619,17 @@ define(function elementEditorModule(require) {
             })
         }
 
+        var hasOnlyEmptyLines = false;
+        for(var ele of emptyElements){
+            if(!_hasSiblingWithContent(ele)) {
+                var parent = $(ele).parent()[0];
+                if(($(ele).is("p") && $(ele).attr("data-akn-element") == "subparagraph" && $(parent).attr("data-akn-element") == "level")
+                    || ($(ele).is("li") && $(ele).attr("data-akn-element") == "paragraph" && $(parent).parent()[0].localName == 'article')) {
+                    hasOnlyEmptyLines = true;
+                    break;
+                }
+            }
+        }
 
         var isEmptyList = false;
         $("#" + elementId).find("li br").each(function(){
@@ -642,7 +668,7 @@ define(function elementEditorModule(require) {
         });
 
 
-        return isEmptyElementFound || isEmptyList || isEmptyRefersToElement;
+        return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement;
     }
 
     function isEmpty(element) {

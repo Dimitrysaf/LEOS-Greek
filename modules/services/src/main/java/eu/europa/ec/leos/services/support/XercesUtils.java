@@ -17,6 +17,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -97,16 +98,23 @@ public class XercesUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(XercesUtils.class);
 
+    private static DocumentBuilder getDocumentBuilder(boolean namespaceEnabled) throws ParserConfigurationException {
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        builderFactory.setExpandEntityReferences(false);
+        builderFactory.setNamespaceAware(namespaceEnabled);
+        builderFactory.setXIncludeAware(false);
+        DocumentBuilder builder = builderFactory.newDocumentBuilder();
+        return builder;
+    }
+
     public static Document createXercesDocument(byte[] xmlContent, boolean namespaceEnabled) {
         try {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            builderFactory.setNamespaceAware(namespaceEnabled);
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-
+            DocumentBuilder builder = getDocumentBuilder(namespaceEnabled);
             Document doc = builder.parse(new ByteArrayInputStream(xmlContent));
             doc.getDocumentElement().normalize();
             return doc;
@@ -217,11 +225,7 @@ public class XercesUtils {
     }
 
     private static DOMSource createNamespaceAwareDOMSource(Node node) throws Exception {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true); // Enable namespace awareness
-        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-
-        Document document = dbf.newDocumentBuilder().newDocument();
+        Document document = getDocumentBuilder(true).newDocument();
         document.appendChild(document.importNode(node, true));
         return new DOMSource(document);
     }
@@ -872,13 +876,15 @@ public class XercesUtils {
 
     public static Node getFirstChild(Node node, String elementName) {
         Node firstChild = null;
-        NodeList nodeList = node.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            node = nodeList.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                if (elementName.equals(node.getNodeName())) {
-                    firstChild = node;
-                    break;
+        if(node != null) {
+            NodeList nodeList = node.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    if (elementName.equals(node.getNodeName())) {
+                        firstChild = node;
+                        break;
+                    }
                 }
             }
         }

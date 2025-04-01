@@ -1,5 +1,7 @@
 package eu.europa.ec.leos.services.label.ref;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,15 +22,17 @@ public class TreeNode {
     private TreeNode parent;    //parent in TreeNode
     private String documentRef;
     private String origin;
+    private boolean isSoleNumbered;
     private List<TreeNode> children = new ArrayList<>();
 
     //Children of this node in tree(only refs)
-    public TreeNode(String type, int depth, int siblingNumber, String identifier, String num, TreeNode parent, String documentRef, String origin) {
+    public TreeNode(String type, int depth, int siblingNumber, String identifier, String num, TreeNode parent, String documentRef, String origin, boolean isSoleNumbered) {
         this.depth = depth;
         this.siblingNumber = siblingNumber;
         this.identifier = identifier;
         this.num = num;
-        this.type = getDecoratedType(type, num);
+        this.isSoleNumbered = isSoleNumbered;
+        this.type = getDecoratedType(type, num, isSoleNumbered);
         this.parent = parent;
         this.documentRef = documentRef;
         this.origin = origin;
@@ -86,6 +90,8 @@ public class TreeNode {
         return origin;
     }
 
+    public boolean isSoleNumbered() { return isSoleNumbered; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,10 +108,12 @@ public class TreeNode {
         return Objects.hash(type, identifier, num, documentRef);
     }
 
-    private String getDecoratedType(String type, String num) {
-        if("-".equals(num)) {
+    private String getDecoratedType(String type, String num, boolean isSoleNumbered) {
+        if (isSoleNumbered && StringUtils.isNotEmpty(num)) {
+            type = "";
+        } else if ("-" .equals(num)) {
             type = INDENT;
-        } else if(type.equals(SUBPOINT) || type.equals(SUBPARAGRAPH)) {
+        } else if (type.equals(SUBPOINT) || type.equals(SUBPARAGRAPH)) {
             type = SUBPOINT_LABEL;
         }
         return type;

@@ -19,6 +19,7 @@ define(function aknSubParagraphMandatePluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var leosHierarchicalElementTransformerStamp = require("plugins/leosHierarchicalElementTransformer/hierarchicalElementTransformer");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
 
     var pluginName = "aknSubParagraphMandate";
     var ENTER_KEY = 13;
@@ -49,9 +50,11 @@ define(function aknSubParagraphMandatePluginModule(require) {
             editor.on("toDataFormat", _transformSubParagraph, null, null, 15);
             editor.on("toHtml", _removeContentEditableAttribute, null, null, 15);
             editor.on('selectionChange', function(event) {
-                var tableCommand = event.editor.getCommand('table');
+                let tableCommand = event.editor.getCommand('table');
+                let selection = event.editor.getSelection();
+                let element = leosKeyHandler.getSelectedElement(selection);
                 if (tableCommand) {
-                    tableCommand.setState(_isElementInsideUnNumberedPar(editor) ? TRISTATE_DISABLED : TRISTATE_OFF);
+                    tableCommand.setState(_isElementInsideUnNumberedPar(element) || leosPluginUtils.isInsideTable(element) ? TRISTATE_DISABLED : TRISTATE_OFF);
                 }
             }, null, null, 100);
         }
@@ -80,13 +83,7 @@ define(function aknSubParagraphMandatePluginModule(require) {
         event.data.dataValue = event.data.dataValue.replace("contenteditable=\"true\"", "");
     }
 
-    function _isElementInsideUnNumberedPar(editor) {
-        var selection = editor.getSelection();
-        if (!selection) {
-            return false;
-        }
-
-        var currentElement = leosKeyHandler.getSelectedElement(selection);
+    function _isElementInsideUnNumberedPar(currentElement) {
         if (!currentElement) {
             return false;
         }

@@ -99,9 +99,13 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
     protected MessageHelper messageHelper;
 
     public List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode) {
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
+        return buildTableOfContent(startingNode, xmlContent, mode, tocItems);
+    }
+
+    public List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode, List<TocItem> tocItems) {
         LOG.trace("Start building TOC from tag {} and mode {}", startingNode, mode);
         long startTime = System.currentTimeMillis();
-        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         Map<TocItem, List<TocItem>> tocRules = structureContextProvider.get().getTocRules();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
 

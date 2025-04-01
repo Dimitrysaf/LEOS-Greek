@@ -68,6 +68,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,7 +164,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode, String clientContextToken) {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         this.setStructureContext(
                 proposal.getMetadata().getOrError(() -> "Cover Page metadata is required!").getDocTemplate());
@@ -252,7 +253,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode) {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken) {
         throw new RuntimeException("Save toc method not allowed for Memorandum type document");
     }
 
@@ -356,16 +357,16 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+    public Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(proposal), event.getSearchText(),
                 event.isCaseSensitive(), event.isCompleteWords());
-        return searchService.replaceText(
+        return new Pair<>(searchService.replaceText(
                 getContent(proposal),
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS,
-                false);
+                false), searchMatchVOS.size());
     }
 
     @Override

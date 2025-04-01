@@ -17,6 +17,7 @@ define(function aknArticlePluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
+    var pluginUtils = require("plugins/leosPluginUtils");
     var aknArticleNumberWidget = require("plugins/aknArticleWidget/aknArticleNumberWidget");
     var aknArticleHeadingWidget = require("plugins/aknArticleWidget/aknArticleHeadingWidget");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
@@ -94,57 +95,15 @@ define(function aknArticlePluginModule(require) {
     var transformationConfig = {
         akn : 'article',
         html : 'article',
-        attr : [ {
-            akn : "xml:id",
-            html : "id"
-        }, {
-            akn : "refersTo",
-            html : "refersto"
-        }, {
-            akn : "leos:origin",
-            html : "data-origin"
-        }, {
-            akn : "leos:editable",
-            html : "data-akn-attr-editable"
-        }, {
-            akn : "leos:deletable",
-            html : "data-akn-attr-deletable"
-        },{
+        attr : [...pluginUtils.commonAttributes,{
             akn : "leos:autonumbering",
             html : "data-akn-attr-autonumbering"
         }, {
-            akn : "leos:softaction",
-            html : "data-akn-attr-softaction"
+            html: "data-akn-name=article"
         }, {
-            akn : "leos:softactionroot",
-            html : "data-akn-attr-softactionroot"
-        }, {
-            akn : "leos:softuser",
-            html : "data-akn-attr-softuser"
-        }, {
-            akn : "leos:softdate",
-            html : "data-akn-attr-softdate"
-        }, {
-            akn : "leos:softmove_to",
-            html : "data-akn-attr-softmove_to"
-        }, {
-            akn : "leos:softmove_from",
-            html : "data-akn-attr-softmove_from"
-        }, {
-            akn : "leos:softmove_label",
-            html : "data-akn-attr-softmove_label"
-        }, {
-            html : "data-akn-name=article"
-        }, {
-            akn : "leos:action",
-            html : "data-akn-action"
-        }, {
-            akn : "leos:uid",
-            html : "data-akn-uid"
-        }, {
-            akn : "leos:title",
-            html : "title"
-        } ],
+            akn : "class",
+            html : "data-akn-class"
+        }],
         sub : [ {
             akn : "num",
             html : "article/h1",

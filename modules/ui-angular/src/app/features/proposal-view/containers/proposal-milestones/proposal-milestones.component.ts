@@ -184,7 +184,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   onDownloadMilestone(milestone: Milestone) {
-    if (milestone?.status === MilestoneStatus.InPreparation) {
+    if (milestone?.legFileStatus === MilestoneStatus.InPreparation) {
       return this.dialogService.openDialog({
         typeClass: 'warning',
         title: this.translateService.instant('global.notifications.title.warning'),
@@ -231,7 +231,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   updateReadyToMergeStatus(milestone: Milestone, parentLegDocumentId: string): void {
     this.parentLegDocumentId = parentLegDocumentId;
-    this.proposalMilestonesService.updateReadyToMergeStatus(milestone.status);
+    this.proposalMilestonesService.updateReadyToMergeStatus(milestone.legFileStatus);
     this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
   }
 
@@ -244,7 +244,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     showGrowl: boolean,
   ): Milestone[] {
     const countByStatus = (s: MilestoneStatus) =>
-      milestones.filter((m) => m.status === s).length;
+      milestones.filter((m) => m.legFileStatus === s).length;
 
     const milestonesStatus = {
       inPreparation: countByStatus(MilestoneStatus.InPreparation),
@@ -297,12 +297,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   private formatClonedMilestoneUpdatedDate(
     clonedMilestone: Milestone,
   ): Milestone {
-    clonedMilestone.updatedDate = new Date(
-      clonedMilestone.createdDate.replace(
-        /(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/,
-        '$3-$2-$1T$4:$5:$6',
-      ),
-    ).getTime();
+    clonedMilestone.updatedDate = clonedMilestone.createdDate;
 
     return clonedMilestone;
   }

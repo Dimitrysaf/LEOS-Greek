@@ -631,85 +631,115 @@ Feature: Legal Act Page Regression Features
     When click on internal reference link 1 of paragraph 1 of article 8
     Then paragraph 2 of article 11 is displayed
 
-    @importOfficeJournal @local
-    Scenario: import from office journal
-        Given navigate to edit drafting application with "User1"
-        Then user is on home page
-        When click on Create act button
-        Then user is on create new legislative document window
-        When click on template "SJ-023" in create new legislative document window
-        When click on next button in create document page
-        And  provide document title "Automation import OJ Testing" in create document page
-        And  click on create button
-        Then user is on act viewer page
-        When click on legal act link present in act viewer page
-        Then user is on legal act page
-        And  annotation side bar is present
-        And  ribbon toolbar is maximized
-        When click on import from oj button in ribbon toolbar
-        Then "Import from the Official Journal of the European Union" dialog box window is displayed
-        And  close button in import office journal window is displayed and enabled
-        And  select all recitals button is disabled
-        And  select all articles button is disabled
-        And  "REGULATION" option is selected by default for type field
-        And  current year is selected by default for year field
-        And  blank input box is present for Nr. field
-        When click on type field
-        And  below options are displayed in type dropdown
-            | TypeOptions |
-            | REGULATION |
-            | DIRECTIVE  |
-            | DECISION   |
-        When click on search button in import office journal window
-        Then exclamation mark is appeared with "rgb(48, 48, 48)" color
-        When select option "DIRECTIVE" for type field
-        And  select option "2016" for year field
-        And  provide value "2102" in Nr. field
-        And  click on search button in import office journal window
-        Then bill content is appeared in import office journal window
-        And  select all recitals button is enabled
-        And  select all articles button is enabled
-        When click on checkbox of recital 1
-        When click on checkbox of recital 2
-        When click on checkbox of recital 3
-        When click on checkbox of article 1
-        When click on checkbox of article 2
-        When click on checkbox of article 3
-        When click on import button
-        Then 3 recitals are added in legal act by import oj
-        Then 3 articles are added in legal act by import oj
-        When click on import from oj button in ribbon toolbar
-        Then "Import from the Official Journal of the European Union" dialog box window is displayed
-        When select option "REGULATION" for type field
-        And  select option "2014" for year field
-        And  provide value "9999" in Nr. field
-        And  click on search button in import office journal window
-        Then warning message contains "Search returned with no result! Please modify the search parameters"
-        When select option "REGULATION" for type field
-        And  select option "2016" for year field
-        And  provide value "679" in Nr. field
-        And  click on search button in import office journal window
-        Then bill content is appeared in import office journal window
-        When click on select all recitals button in import office journal window
-        Then checkboxes of all the recitals are selected
-        And  number of recitals selected is 173
-        When click on import button
-        Then 176 recitals are added in legal act by import oj
-        When click on import from oj button in ribbon toolbar
-        Then "Import from the Official Journal of the European Union" dialog box window is displayed
-        When select option "REGULATION" for type field
-        And  select option "2016" for year field
-        And  provide value "679" in Nr. field
-        And  click on search button in import office journal window
-        Then bill content is appeared in import office journal window
-        When click on select all articles button in import office journal window
-        Then checkboxes of all the articles are selected
-        And  number of articles selected is 125
-        When click on import button
-        Then 102 articles are added in legal act by import oj
-        When click on versions pane accordion
-        When click on show more button in "Recent changes" eui-card
-        Then title of last 3 minor versions from recent changes eui-card contains "Import element(s) inserted"
+  @importOfficeJournal @local
+  Scenario: import from office journal
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation import OJ Testing" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    When click on import from oj button in ribbon toolbar
+    Then "Import from the Official Journal of the European Union" dialog box window is displayed
+    And  close button in import office journal window is displayed and enabled
+    And  select all recitals button is disabled
+    And  select all enacting items button is disabled
+    And  "REGULATION" option is selected by default for type field
+    And  current year is selected by default for year field
+    And  blank input box is present for Nr. field
+    When click on type field
+    And  below options are displayed in type dropdown
+      | TypeOptions |
+      | REGULATION  |
+      | DIRECTIVE   |
+      | DECISION    |
+    When click on search button in import office journal window
+    Then exclamation mark is appeared with "rgb(48, 48, 48)" color
+    When select option "DIRECTIVE" for type field
+    And  select option "2016" for year field
+    And  provide value "2102" in Nr. field
+    And  click on search button in import office journal window
+    Then bill content is appeared in import office journal window
+    And  select all recitals button is enabled
+    And  select all enacting items button is enabled
+    When click on checkbox of recital 1
+    When click on checkbox of recital 2
+    When click on checkbox of recital 3
+    When click on checkbox of article 1
+    When click on checkbox of article 2
+    When click on checkbox of article 3
+    When click on import button
+    Then 3 recitals are added in legal act by import oj
+    Then 3 articles are added in legal act by import oj
+    When click on import from oj button in ribbon toolbar
+    Then "Import from the Official Journal of the European Union" dialog box window is displayed
+    When select option "REGULATION" for type field
+    And  select option "2014" for year field
+    And  provide value "9999" in Nr. field
+    And  click on search button in import office journal window
+    Then warning message contains "Search returned with no result! Please modify the search parameters"
+    When select option "REGULATION" for type field
+    And  select option "2013" for year field
+    And  provide value "1303" in Nr. field
+    And  click on search button in import office journal window
+    Then bill content is appeared in import office journal window
+    When click on select all recitals button in import office journal window
+    Then checkboxes of all the recitals are selected
+    And  number of recitals selected is 130
+    When click on import button
+    Then 133 recitals are added in legal act by import oj
+    When click on import from oj button in ribbon toolbar
+    Then "Import from the Official Journal of the European Union" dialog box window is displayed
+    When select option "REGULATION" for type field
+    And  select option "2013" for year field
+    And  provide value "1303" in Nr. field
+    And  click on search button in import office journal window
+    Then bill content is appeared in import office journal window
+    When click on select all enacting items button in import office journal window
+    Then checkboxes of all the articles are selected
+    And  number of articles selected is 154
+    And  checkboxes of all the parts are selected
+    And  number of parts selected is 5
+    And  checkboxes of all the titles are selected
+    And  number of titles selected is 17
+    And  checkboxes of all the chapters are selected
+    And  number of chapters selected is 33
+    And  checkboxes of all the sections are selected
+    And  number of sections selected is 7
+    When click on import button
+    Then 5 parts are added in legal act by import oj
+    And  17 titles are added in legal act by import oj
+    And  33 chapters are added in legal act by import oj
+    And  7 sections are added in legal act by import oj
+    And  157 articles are added in legal act by import oj
+    When click on import from oj button in ribbon toolbar
+    Then "Import from the Official Journal of the European Union" dialog box window is displayed
+    When select option "REGULATION" for type field
+    And  select option "2013" for year field
+    And  provide value "1303" in Nr. field
+    And  click on search button in import office journal window
+    When click on checkbox of higher division part 2
+    Then number of articles selected is 85
+    And  number of parts selected is 1
+    And  number of titles selected is 9
+    And  number of chapters selected is 18
+    And  number of sections selected is 2
+    When click on import button
+    Then 6 parts are added in legal act by import oj
+    And  26 titles are added in legal act by import oj
+    And  51 chapters are added in legal act by import oj
+    And  9 sections are added in legal act by import oj
+    And  242 articles are added in legal act by import oj
+    When click on versions pane accordion
+    When click on show more button in "Recent changes" eui-card
+    Then title of last 4 minor versions from recent changes eui-card contains "Import element(s) inserted"
 
   @numberedToUnnumbered @local
   Scenario: changing article from numbered to unnumbered with List creates an empty paragraph
@@ -809,20 +839,18 @@ Feature: Legal Act Page Regression Features
     Then click on paragraph mode icon two times present in ck editor panel
     When click save and close button of ck editor
     Then ck editor window is not displayed
-    And num tag of paragraph 1 of article 1 contains html '<del leos:action-number="delete" leos:title="DOE Jane'
-    And num tag of paragraph 1 of article 1 contains html '1.</del>'
-    And num tag of paragraph 2 of article 1 contains html '<del leos:action-number="delete" leos:title="DOE Jane'
-    And num tag of paragraph 2 of article 1 contains html '2.</del>'
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 1 of article 1 contains value "1."
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 1 contains value "2."
     When mouseover and click on article 1
     Then ck editor window is displayed
-    And move the cursor position to offset 0 in paragraph 1 of article in edition mode
+    And  move the cursor position to offset 0 in paragraph 1 of article in edition mode
     When click on paragraph mode icon present in ck editor panel
-    And click save and close button of ck editor
+    And  click save and close button of ck editor
     Then ck editor window is not displayed
-    And num tag of paragraph 1 of article 1 does not contain html '<del leos:action-number="delete" leos:title="DOE Jane'
+    And num tag of paragraph 1 of article 1 does not contain html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
     And num tag of paragraph 1 of article 1 does not contain html '</del>'
     And num tag of paragraph 1 of article 1 contains html '1.'
-    And num tag of paragraph 2 of article 1 does not contain html '<del leos:action-number="delete" leos:title="DOE Jane'
+    And num tag of paragraph 2 of article 1 does not contain html '<del id=".*" leos:action-number="delete" leos:title="DOE Jane'
     And num tag of paragraph 2 of article 1 does not contain html '</del>'
     And num tag of paragraph 2 of article 1 contains html '2.'
     When mouseover and click on article 6
@@ -834,7 +862,7 @@ Feature: Legal Act Page Regression Features
     And num tag of paragraph 1 of article 6 should not exist
     And num tag of paragraph 2 of article 6 should not exist
 
-  @versionPane @archiveFunctionality
+  @versionPane @archiveFunctionality @local
   Scenario: VersionPane Archive functionality
     Given navigate to edit drafting application with "User1"
     Then user is on home page

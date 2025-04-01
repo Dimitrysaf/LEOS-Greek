@@ -2,6 +2,13 @@ package eu.europa.ec.leos.services.numbering.config;
 
 public abstract class NumberConfigAbstract implements NumberConfig {
 
+    protected static final int LATIN_BASE_UNICODE = 97;
+    protected static final int LATIN_LETTERS_COUNT = 26;
+    protected static final int GREEK_BASE_UNICODE = 945;
+    protected static final int GREEK_LETTERS_COUNT = 25;
+    protected static final int CYRILLIC_BASE_UNICODE = 1072;
+    protected static final int CYRILLIC_LETTERS_COUNT = 32;
+
     protected int initialValue;
     protected int value;
     protected int complexValue;
@@ -31,49 +38,16 @@ public abstract class NumberConfigAbstract implements NumberConfig {
         return numberToShow;
     }
 
-    protected String getAlphaNumber(int intValue) {
-        if (intValue == 0) {
-            return "";
-        }
-        intValue = Math.abs(intValue);
-        String alphaNumber = "";
-        while (intValue != 0) {
-            int charPosition = (intValue-1) % 26;
-            alphaNumber = ((char) (charPosition + 97)) + alphaNumber;
-            intValue = (intValue-1) / 26;
-        }
-        return alphaNumber;
+    protected String getAlphaNumber(int index) {
+        return integerToChar(index, LATIN_BASE_UNICODE, LATIN_LETTERS_COUNT);
     }
 
-    protected String getCyrillicAlphaNumber(int intValue) {
-        if (intValue == 0) {
-            return "";
-        }
-        intValue = Math.abs(intValue);
-        String cyrillicAlphaNumber = "";
-        while (intValue != 0) {
-            int charPosition = (intValue-1) % 32;
-            cyrillicAlphaNumber = ((char) (charPosition + 1072)) + cyrillicAlphaNumber;
-            intValue = (intValue-1) / 32;
-        }
-        return cyrillicAlphaNumber;
+    protected String getCyrillicAlphaNumber(int index) {
+        return integerToChar(index, CYRILLIC_BASE_UNICODE, CYRILLIC_LETTERS_COUNT);
     }
 
-    protected String getGreekAlphaNumber(int intValue) {
-        if (intValue == 0) {
-            return "";
-        }
-        intValue = Math.abs(intValue);
-        String greekAlphaNumber = "";
-        while (intValue != 0) {
-            int charPosition = ((intValue-1) % 24) + 945;
-            if(charPosition >= 962) {
-                charPosition = charPosition + 1;
-            }
-            greekAlphaNumber = ((char) charPosition) + greekAlphaNumber;
-            intValue = (intValue-1) / 24;
-        }
-        return greekAlphaNumber;
+    protected String getGreekAlphaNumber(int index) {
+        return integerToChar(index, GREEK_BASE_UNICODE, GREEK_LETTERS_COUNT);
     }
 
     @Override
@@ -159,4 +133,44 @@ public abstract class NumberConfigAbstract implements NumberConfig {
     }
 
     protected abstract String getImplName();
+
+    private String integerToChar(int index, int baseUniCode, int lettersCount) {
+        if (index == 0) {
+            return "";
+        }
+        index = Math.abs(index) - 1;
+
+        int length = 1;
+        int startIndex = 0;
+
+        while (index >= startIndex + lettersCount) {
+            startIndex += lettersCount;
+            length++;
+        }
+
+        char ch = (char) (baseUniCode + (index - startIndex));
+
+        return repeatCharacters(ch, length);
+    }
+
+    protected int charToInteger(String label, int baseUniCode, int lettersCount) {
+        int length = label.length();
+        int startIndex = 0;
+
+        for (int i = 1; i < length; i++) {
+            startIndex += lettersCount;
+        }
+
+        char firstChar = label.charAt(0);
+
+        return startIndex + (firstChar - baseUniCode) + 1;
+    }
+
+    private String repeatCharacters(char ch, int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
 }

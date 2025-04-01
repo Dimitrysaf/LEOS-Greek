@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.services.numbering.config.NumberConfigRoman;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.label.ref.LabelHandler;
@@ -248,7 +249,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
                     .filter(p -> p.getMetadata().get().getRef().equals(targetDocument.getMetadata().get().getRef()))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found by the ref " + targetDocument.getMetadata().get().getRef()));
-                docType += " " + annex.getMetadata().get().getIndex();
+                docType += " " + new NumberConfigRoman().getNumberFromIndex(annex.getMetadata().get().getIndex()).toUpperCase();
             }
         }
         return docType;
@@ -270,6 +271,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
             if(rule.canProcess(refs)) {
                 rule.addPreffix(accumulator, docType, refs);
                 rule.process(refs, mrefCommonNodes, sourceNode, accumulator, languageHelper.getCurrentLocale(), withAnchor, capital);
+                rule.addSuffix(accumulator, docType, refs);
                 break;
             }
         }

@@ -17,6 +17,7 @@ public class TocStructure {
     
     private List<TocItem> tocItems;
     private Map<TocItem, List<TocItem>> tocRules = new HashMap<>();
+    private Map<TocItem, List<List<TocItem>>> tocRulesOrders = new HashMap<>();
     private Map<String, DocumentRules.Rule> documentRules = new HashMap<>();
     private List<NumberingConfig> numberingConfigs;
     private List<AlternateConfig> alternateConfigs;
@@ -37,6 +38,10 @@ public class TocStructure {
         return tocRules;
     }
 
+    public Map<TocItem, List<List<TocItem>>> getTocRulesOrders() {
+        return tocRulesOrders;
+    }
+
     public Map<String, DocumentRules.Rule> getDocumentRules() {
         return documentRules;
     }
@@ -48,7 +53,11 @@ public class TocStructure {
     public void setTocRules(Map<TocItem, List<TocItem>> tocRules) {
         this.tocRules = tocRules;
     }
-    
+
+    public void setTocRulesOrders(Map<TocItem, List<List<TocItem>>> tocRulesOrders) {
+        this.tocRulesOrders = tocRulesOrders;
+    }
+
     public List<NumberingConfig> getNumberingConfigs() {
         return numberingConfigs;
     }

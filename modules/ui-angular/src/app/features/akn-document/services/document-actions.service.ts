@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {BehaviorSubject, combineLatest, map, mergeMap, Observable, take} from 'rxjs';
+import {BehaviorSubject, combineLatest, map, mergeMap, Observable, of, Subject, take} from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
@@ -305,7 +305,7 @@ export abstract class DocumentActionsService {
       children: [
         {
           id: SAVE_DOCUMENT_ACTION_ID,
-          actionFn: () => this.openSaveDocumentVersionDialog(),
+          actionFn: () => this.handleOpenEditor(() => { this.openSaveDocumentVersionDialog() }),
           euiStyle: 'secondary',
           euiSize: 's',
           label: 'Save',
@@ -336,7 +336,7 @@ export abstract class DocumentActionsService {
           euiSize: 's',
           euiStyle: 'secondary',
           icon: 'book',
-          actionFn: () => this.importService.openImportOJDialog(),
+          actionFn: () => this.handleOpenEditor(() => { this.importService.openImportOJDialog() }),
         },
       ],
     };
@@ -975,6 +975,31 @@ export abstract class DocumentActionsService {
       isTrackChangesEnabled: this.isTrackChangesEnabled,
       isTrackChangesShowed: this.seeTrackChanges,
     });
+  }
+
+  public canPerformAction(): Observable<boolean> {
+    if (this.isEditorOpen) {
+      const performAction = new Subject<boolean>();
+      this.dialogService.openDialog({
+        title: this.translateService.instant('page.editor.open.editor.dialog.title'),
+        content: this.translateService.instant('page.editor.open.editor.dialog.body'),
+        acceptLabel: this.translateService.instant('global.actions.confirm'),
+        accept: () => { performAction.next(true); },
+        dismiss: () => { performAction.next(false); },
+        close: () => { performAction.next(false); }
+      });
+      return performAction;
+    } else {
+      return of(true);
+    }
+  }
+
+  public handleOpenEditor(action: Function) {
+    this.canPerformAction().pipe(take(1)).subscribe((performAction) => {
+      if (performAction) {
+        action();
+      }
+    })
   }
 
   private openSaveDocumentVersionDialog() {

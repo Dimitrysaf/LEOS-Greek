@@ -190,19 +190,43 @@ public class SearchEngineImpl implements SearchEngine {
         searchableString = sb.toString();
     }
 
-    /**
-     * Searches the text in the content xml.
-     * It first finds the matching text and the positional indicies. Then using the indicies,
-     * it looks up in the index map build during indexing step
-     *
-     * @param searchText   search term
-     * @param isMatchCase  if search is case sensitive
-     * @param isWholeWords if search is for whole word(s)
-     * @return List of matching objects
-     */
     @Override
-    public List<SearchMatchVO> searchText(String searchText, boolean isMatchCase, boolean isWholeWords) {
+    public List<SearchMatchVO> searchTextToReplace(String searchText, boolean isMatchCase, boolean isWholeWords) {
+        Matcher matcher = getMatcher(searchText, isMatchCase, isWholeWords);
         List<SearchMatchVO> searchMatchedElements = new ArrayList<>();
+        while (matcher.find()) {
+            List<ElementMatchVO> matchedElements = getElementMatchVOS(matcher);
+            // calculate the isReplaceable based on the attributes of the matched elements and if the matched elements are cross-tags
+            if (!matchedElements.isEmpty()) {
+                searchMatchedElements.add(new SearchMatchVO(matchedElements, calculateReplaceble(matchedElements)));
+            }
+        }
+        return searchMatchedElements;
+    }
+
+    @Override
+    public List<SearchMatchVO> searchTextAndHighlight(String searchText, boolean isMatchCase, boolean isWholeWords, Integer maxSearchLimit) {
+        Matcher matcher = getMatcher(searchText, isMatchCase, isWholeWords);
+        List<SearchMatchVO> searchMatchedElements = new ArrayList<>();
+        int matchCount = 0;
+        while (matcher.find()) {
+            List<ElementMatchVO> matchedElements = getElementMatchVOS(matcher);
+            // calculate the isReplaceable based on the attributes of the matched elements and if the matched elements are cross-tags
+            if (!matchedElements.isEmpty()) {
+                matchCount++;
+                if (maxSearchLimit != null && maxSearchLimit > 0 && matchCount > maxSearchLimit) {
+                    searchMatchedElements.get(maxSearchLimit-1).setSearchHaltedPastThis(true);
+                    searchMatchedElements.get(maxSearchLimit-1).setMaxSearchLimit(maxSearchLimit);
+                    return searchMatchedElements;
+                } else {
+                    searchMatchedElements.add(new SearchMatchVO(matchedElements, calculateReplaceble(matchedElements)));
+                }
+            }
+        }
+        return searchMatchedElements;
+    }
+
+    private Matcher getMatcher(String searchText, boolean isMatchCase, boolean isWholeWords) {
         StringBuilder patternText = new StringBuilder();
         String quotedText = Pattern.quote(searchText);
         if (!isMatchCase) {
@@ -214,52 +238,48 @@ public class SearchEngineImpl implements SearchEngine {
             patternText.append(quotedText);
         }
 
-        Matcher matcher = Pattern.compile(patternText.toString()).matcher(searchableString);
-        while (matcher.find()) {
-            List<ElementMatchVO> matchedElements = new ArrayList<>();
-            for (int i = matcher.start(); i < matcher.end(); i++) {
-                Index idx = isHighlight ? indexesForStringHighlight.get(i) : indexesForString.get(i);
-                Element element = null;
-                boolean doContinue = false;
-                if (StringUtils.isEmpty(idx.elementId)) {
-                    // do not include manually added spaces in the result
-                    doContinue = true;
-                }else {
-                    element = isHighlight ? elementsByIdHighlight.get(idx.elementId) : elementsById.get(idx.elementId);
-                    if (element.content.trim().length() == 0// do not include blanks in the result
-                            || (isHighlight && tagsTrackChanges.contains(element.tag.trim())) // isHighlight. Ignore the del and ins tags
-                    ) {
-                        doContinue = true;
-                    }
-                }
-                if(doContinue){
-                    continue;
-                }
-                ElementMatchVO elementMatchVO;
-                if (!matchedElements.isEmpty()) {
-                    ElementMatchVO lastElement = matchedElements.get(matchedElements.size() - 1);
-                    if (lastElement.getElementId().equals(element.elementId)) {
-                        elementMatchVO = lastElement;
-                    } else {
-                        elementMatchVO = new ElementMatchVO(element.elementId, idx.indexInTag, element.isEditable);
+        return Pattern.compile(patternText.toString()).matcher(searchableString);
+    }
 
-                        matchedElements.add(elementMatchVO);
-                    }
+    private List<ElementMatchVO> getElementMatchVOS(Matcher matcher) {
+        List<ElementMatchVO> matchedElements = new ArrayList<>();
+        for (int i = matcher.start(); i < matcher.end(); i++) {
+            Index idx = isHighlight ? indexesForStringHighlight.get(i) : indexesForString.get(i);
+            Element element = null;
+            boolean doContinue = false;
+            if (StringUtils.isEmpty(idx.elementId)) {
+                // do not include manually added spaces in the result
+                doContinue = true;
+            } else {
+                element = isHighlight ? elementsByIdHighlight.get(idx.elementId) : elementsById.get(idx.elementId);
+                if (element.content.trim().length() == 0// do not include blanks in the result
+                        || (isHighlight && tagsTrackChanges.contains(element.tag.trim())) // isHighlight. Ignore the del and ins tags
+                ) {
+                    doContinue = true;
+                }
+            }
+            if (doContinue) {
+                continue;
+            }
+            ElementMatchVO elementMatchVO;
+            if (!matchedElements.isEmpty()) {
+                ElementMatchVO lastElement = matchedElements.get(matchedElements.size() - 1);
+                if (lastElement.getElementId().equals(element.elementId)) {
+                    elementMatchVO = lastElement;
                 } else {
                     elementMatchVO = new ElementMatchVO(element.elementId, idx.indexInTag, element.isEditable);
                     matchedElements.add(elementMatchVO);
                 }
-
-                elementMatchVO.setMatchEndIndex(idx.indexInTag + 1);
+            } else {
+                elementMatchVO = new ElementMatchVO(element.elementId, idx.indexInTag, element.isEditable);
+                matchedElements.add(elementMatchVO);
             }
 
-            // calculate the isReplaceable based on the attributes of the matched elements and if the matched elements are cross-tags
-            if (!matchedElements.isEmpty()) {
-                searchMatchedElements.add(new SearchMatchVO(matchedElements, calculateReplaceble(matchedElements)));
-            }
+            elementMatchVO.setMatchEndIndex(idx.indexInTag + 1);
         }
-        return searchMatchedElements;
+        return matchedElements;
     }
+
     private boolean calculateReplaceble(List<ElementMatchVO> matchedElements) {
         boolean replaceable = true;
         for (ElementMatchVO elementMatchVO : matchedElements) {

@@ -37,6 +37,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemType;
 
+import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringUtils;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
@@ -67,7 +68,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
     DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId)
             throws Exception;
 
-    List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
+    List<TableOfContentItemVO> getToc(String documentRef, TocMode mode, String clientContextToken);
 
     List<TocItem> getTocItems(@NotNull String documentRef);
 
@@ -75,7 +76,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType);
 
-    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode);
+    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc, TocMode tocMode, String clientContextToken);
 
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase,
                                              boolean completeWords, String tempUpdatedContentXML) throws Exception;
@@ -96,7 +97,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     byte[] downloadXmlVersionFiles(String documentRef, String versionId);
 
-    byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception;
+    Pair<byte[], Integer> replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception;
 
     byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception;
 

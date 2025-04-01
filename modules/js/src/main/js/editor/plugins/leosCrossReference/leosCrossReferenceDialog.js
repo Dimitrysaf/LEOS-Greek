@@ -72,10 +72,7 @@ define(function leosCrossReferenceDialog(require) {
                                 && documentMetadata.category !== "STAT_DIGIT_FINANC_LEGIS") {
                         tabHandlers.addHandler(documentMetadata.ref);
                         var htmlTocTemplate = '<div id="treeContainer' + documentMetadata.ref + '" class="crTableOfContent"></div>';
-                        var htmlContentTemplate = '<div><div id="contentContainer' + documentMetadata.ref + '"  class="selected-content'
-                            + docType
-                            + '"></div>'
-                            + '<div id="referenceElement" class="selected-content"><label id="lblRefElement"><strong>Selected element(s): </strong></lable><label id="pathLabel' + documentMetadata.ref + '"> </label></div>'
+                        var htmlContentTemplate = '<div><div id="contentContainer' + documentMetadata.ref + '""></div>'
                             + '<div id="refAs"><label id="lblRefAs"><strong>Reference shown as: </strong></label><input id="refrenceTextLabel' + documentMetadata.ref + '" type="text" readonly="true"><div id="brokenRefLabel' + documentMetadata.ref + '"></div><div id="errorLabel' + documentMetadata.ref + '"></div></div></div>';
                         var elements = [
                             {
@@ -226,11 +223,9 @@ define(function leosCrossReferenceDialog(require) {
             this.PATH_SEPARATOR = "/";
             // this is right-upper div container, which holds the data for selected node
             this.$contentContainer = $('#contentContainer' + documentRef);
-            this.$pathLabel = $("#pathLabel" + documentRef);
             this.$refrenceTextLabel = $("#refrenceTextLabel" + documentRef);
             this.$errorLabel = $("#errorLabel" + documentRef);
             this.$brokenRefLabel = $("#brokenRefLabel" + documentRef);
-            this.fullPath = "";
             this.treePath = "";
             this.treeNodeIds = new Set();
             this.elementIds = new Set();
@@ -291,7 +286,6 @@ define(function leosCrossReferenceDialog(require) {
             $element.addClass("selectable-element-selected");
             this.addSelectedElementId($element.attr("id"));
 
-            this.setFullPathToPathLabel($element);
             $element.get(0).scrollIntoView(true);
         },
         deSelectElementInContent: function deSelectElementInContent($element) {
@@ -299,16 +293,9 @@ define(function leosCrossReferenceDialog(require) {
             $element.removeClass("selectable-element-selected");
             this.removeSelectedElementId($element.attr("id"));
 
-            this.fullPath = this.treePath;
             var $remainingSelectedElements = this.$contentContainer.find(".selectable-element-selected");
-            if ($remainingSelectedElements.length > 0) {
-                var that = this;
-                $remainingSelectedElements.each(function(index) {
-                    that.setFullPathToPathLabel($(this));
-                });
-            } else { // None is selected clear the node id list
+            if ($remainingSelectedElements.length === 0) { // None is selected clear the node id list
                 this.getSelectedElementIds().clear();
-                this.setPathLabel(this.fullPath);
             }
         },
         handleSingleSelection: function handleSingleSelection($element) {
@@ -319,7 +306,6 @@ define(function leosCrossReferenceDialog(require) {
                 // deselect already selected element if any
                 this.$contentContainer.find(this.SELECTABLE_ELEMENTS).removeClass("selectable-element-selected");
                 this.getSelectedElementIds().clear();
-                this.fullPath = this.treePath;
                 this.selectElementInContent($element);
             }
         },
@@ -332,33 +318,6 @@ define(function leosCrossReferenceDialog(require) {
                 result ? this.selectElementInContent($element) : 
                                              this.showWarnings("selectionNotAllowed");
             }
-        },
-        // Display the path label for the selected node(s)
-        setFullPathToPathLabel: function setFullPathToPathLabel($element) {
-            this.fullPath = (this.fullPath === this.treePath) ? "" : this.fullPath;
-            this.fullPath += this.calculatePathForElement($element);
-            this.fullPath.lastIndexOf(" - ") != -1 ? this.setPathLabel(this.fullPath.substring(0, this.fullPath.lastIndexOf(" - "))) : this
-                    .setPathLabel(this.fullPath);
-        },
-        calculatePathForElement: function calculatePathForElement($element) {
-            var that = this;
-            // calculate path: selected node in tree plus element in content
-            var $num = $element.children("num");
-            var parents = $element.parentsUntil("#" + Array.from(this.getTreeNodeIds())[0]);
-            var parentPath = "";
-
-            for (var index = parents.length - 1; index >= 0; index--) {
-                var $parentNum = $(parents[index]).children("num");
-                if ($parentNum != null && $parentNum.length > 0) {
-                    parentPath += parents[index].localName + " " + $parentNum.text().replace(".", "") + that.PATH_SEPARATOR;
-                }
-            }
-            return this.treePath + this.PATH_SEPARATOR + parentPath + $element.prop("localName") + " "
-                    + (($num.length > 0) ? $num.text().replace(".", "") : ($element.index() + 1)) + " - ";
-        },
-        /* Display the path for the selected node. */
-        setPathLabel: function setPathLabel(path) {
-            this.$pathLabel.html(path);
         },
         /* Display content for the selected node in the table of content. */
         setContent: function setContent(htmlText, editor) {
@@ -376,8 +335,7 @@ define(function leosCrossReferenceDialog(require) {
         },
         /* Set the path for currently selected node in the table of content. */
         setTreePath: function setTreePath(path) {
-            this.fullPath = this.treePath = path;
-            this.setPathLabel(this.treePath);
+            this.treePath = path;
         },
         getSelectedElementIds: function getSelectedElementIds() {
             return this.elementIds;
@@ -411,11 +369,9 @@ define(function leosCrossReferenceDialog(require) {
         },
         reset: function reset(editor) {
             this.refrenceText = "";
-            this.fullPath = "";
             this.getSelectedElementIds().clear();
             this.getTreeNodeIds().clear();
             this.setTreePath("");
-            this.setPathLabel("");
             this.setContent("", editor);
             this.setRefrenceTextLabel("");
             this.clearErrorLabel();
