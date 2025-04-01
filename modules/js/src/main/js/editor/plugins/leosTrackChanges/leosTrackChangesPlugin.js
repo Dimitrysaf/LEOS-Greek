@@ -957,16 +957,22 @@ define(function leosTrackChangesPluginModule(require) {
     function  _checkEmptyOLAndRemove(elem, idToExit ){
         if (elem.childNodes.length === 0 ||
             (elem.childNodes.length === 1 && elem.childNodes[0].getAttribute("data-akn-element") !== "point")) {
-
-            if(elem.childNodes.length > 0) {
-                for (var i = 0; i < elem.childNodes[0].childNodes.length; i++) {
-                    elem.parentNode.appendChild(elem.childNodes[0].childNodes[i]);
-                }
-            }
             var parent = elem.parentNode;
-            elem.remove();
             if(parent.getAttribute('id') === idToExit){
                 return;
+            }
+            var doRemove = true;
+            if(elem.childNodes.length > 0 ) {
+                if(parent.tagName !== 'OL' && elem.tagName !== 'LI') {
+                    for (var i = 0; i < elem.childNodes[0].childNodes.length; i++) {
+                        parent.appendChild(elem.childNodes[0].childNodes[i]);
+                    }
+                }else{
+                    doRemove = false;
+                }
+            }
+            if(doRemove) {
+                elem.remove();
             }
             _checkEmptyOLAndRemove(parent, idToExit );
         }
