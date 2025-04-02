@@ -126,6 +126,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARAT
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidNumber;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
@@ -1552,7 +1553,7 @@ public class LegServiceImpl implements LegService {
 
     @Override
     public String removePermissionsStoredAnnotationsFromId(String storedFeedbackAnnotations, String documentRef, String legFileId) {
-        if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("")) {
+        if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("") || !isValidNumber(documentRef)) {
             return storedFeedbackAnnotations;
         }
         try {

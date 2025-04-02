@@ -55,8 +55,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileName;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
-import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @RestController
 @RequestMapping(value = "/secured/proposal")
@@ -318,6 +318,9 @@ public class ProposalApiController {
         validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
         String tempConvalLegPath = System.getProperty("java.io.tmpdir") + File.separator + "convalLeg";
         new File(tempConvalLegPath).mkdirs();
+        if (!isValidFileName(legFile.getOriginalFilename())) {
+            new ResponseEntity<>("Invalid file name", HttpStatus.BAD_REQUEST);
+        }
         Path path = Paths.get(tempConvalLegPath, legFile.getOriginalFilename());
         File file = path.toFile();
         legFile.transferTo(file);
