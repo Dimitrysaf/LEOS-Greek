@@ -843,7 +843,7 @@ public class XmlHelper {
 
     public static boolean isValidDocumentRef(String documentRef) {
         Pattern pattern = Pattern.compile("^[A-Za-z0-9\\-]+$");
-        if (fileName.length() > 400) {
+        if (documentRef.length() > 400) {
             return false;
         }
         return pattern.matcher(fileName).matches();
