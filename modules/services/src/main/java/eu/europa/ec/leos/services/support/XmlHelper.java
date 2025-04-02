@@ -835,15 +835,18 @@ public class XmlHelper {
 
     public static boolean isValidFileName(String fileName) {
         Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_]+\\.leg$");
-        if (fileName.length() > 200) {
+        if (fileName.length() > 400) {
             return false;
         }
         return pattern.matcher(fileName).matches();
     }
 
-    public static boolean isValidNumber(String id) {
-        Pattern pattern = Pattern.compile("^[0-9]+$");
-        return pattern.matcher(id).matches();
+    public static boolean isValidDocumentRef(String documentRef) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\-]+$");
+        if (fileName.length() > 400) {
+            return false;
+        }
+        return pattern.matcher(fileName).matches();
     }
 
     public static <T> T loadFromFile(byte[] fileBytes, Class<T> clazz, Class objectFactory, String schemaType) {
