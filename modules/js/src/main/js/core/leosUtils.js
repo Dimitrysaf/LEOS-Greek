@@ -339,6 +339,11 @@ define(function leosUtilsModule(require) {
         tcHiddenStyle += (isDocTcStyle ? "ins mref, ins authorialnote, ins span.MathJax_CHTML " :
                 "[" + actionAttr + "='insert'] mref, [" + actionAttr + "='insert'] span.authorialnote, [" + actionAttr + "='insert'] span.cke_widget_mathjax ") +
             "{ box-shadow: none !important; }\n";
+        tcHiddenStyle += isDocTcStyle ?
+            "aknp:after {content: attr(next-aknp)}\n" +
+            ":is([leos\\:action-enter='delete']:not(:has(> list)), [leos\\:action-enter='delete'] > list > subparagraph, " +
+                    ":is(point,indent):has(> num > del):not(:has(> list)), point:has(> num > del) > list > subparagraph" +
+                "):not(:has(aknp > img, > img)) {display:none !important}\n" : "";
         if (isTrackChangesShowed) {
             return tcShowStyle;
         } else {
