@@ -846,7 +846,7 @@ public class XmlHelper {
         if (documentRef.length() > 400) {
             return false;
         }
-        return pattern.matcher(fileName).matches();
+        return pattern.matcher(documentRef).matches();
     }
 
     public static <T> T loadFromFile(byte[] fileBytes, Class<T> clazz, Class objectFactory, String schemaType) {
