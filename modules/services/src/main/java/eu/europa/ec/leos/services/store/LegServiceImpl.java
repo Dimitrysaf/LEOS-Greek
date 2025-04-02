@@ -90,7 +90,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,6 +125,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARAT
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidDocumentRef;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
@@ -1552,7 +1552,7 @@ public class LegServiceImpl implements LegService {
 
     @Override
     public String removePermissionsStoredAnnotationsFromId(String storedFeedbackAnnotations, String documentRef, String legFileId) {
-        if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("")) {
+        if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("") || !isValidDocumentRef(documentRef)) {
             return storedFeedbackAnnotations;
         }
         try {

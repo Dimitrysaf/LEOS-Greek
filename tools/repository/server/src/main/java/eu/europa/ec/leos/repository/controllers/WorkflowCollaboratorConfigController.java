@@ -88,7 +88,7 @@ public class WorkflowCollaboratorConfigController {
         if (workflowCollaboratorConfig.isPresent()) {
             return ResponseEntity.ok(convert(workflowCollaboratorConfig.get()));
         }
-        return new ResponseEntity<>("Resource not found for packageName "+packageName+", clientName "+clientName, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(String.format("Resource not found for packageName %s, clientName %s", packageName, clientName), HttpStatus.NOT_FOUND);
     }
 
     private Optional<WorkflowCollaboratorConfig> getWorkflowCollaboratorConfiguration
