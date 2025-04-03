@@ -342,7 +342,8 @@ define(function leosUtilsModule(require) {
         tcHiddenStyle += isDocTcStyle ?
             "aknp:after {content: attr(next-aknp)}\n" +
             ":is([leos\\:action-enter='delete']:not(:has(> list)), [leos\\:action-enter='delete'] > list > subparagraph, " +
-                    ":is(point,indent):has(> num > del):not(:has(> list)), point:has(> num > del) > list > subparagraph" +
+                    ":is(point,indent):has(> num > [leos\\:action-enter='delete']):not(:has(> list)), " +
+                    "point:has(> num > [leos\\:action-enter='delete']) > list > subparagraph" +
                 "):not(:has(aknp > img, > img)) {display:none !important}\n" : "";
         if (isTrackChangesShowed) {
             return tcShowStyle;
