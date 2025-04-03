@@ -58,12 +58,12 @@ class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public void addCollaborators(BigDecimal packageId, String userId, List<Collaborator> collaborators) {
+    public void addCollaborators(String packageId, String userId, List<Collaborator> collaborators) {
         workspaceRepository.addCollaborators(packageId, userId, collaborators);
     }
 
     @Override
-    public void deleteCollaborators(BigDecimal packageId, List<Collaborator> collaborators) {
+    public void deleteCollaborators(String packageId, List<Collaborator> collaborators) {
         workspaceRepository.deleteCollaborators(packageId, collaborators);
     }
 }

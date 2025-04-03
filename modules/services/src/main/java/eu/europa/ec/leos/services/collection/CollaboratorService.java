@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.collection;
 
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -12,7 +13,13 @@ public interface CollaboratorService {
     String addCollaborator(Proposal proposal, String userId, String collaboratorName, String proposalRef, String roleName, String proposalUrl, String systemClientId);
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
+    void addCollaborators(Proposal proposal, String userId, List<Collaborator> collaborators, String proposalUrl);
+
+    @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
     String removeCollaborator(Proposal proposal, String userId, String proposalRef, String roleName, String proposalUrl, String systemClientId);
+
+    @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
+    void removeCollaborators(Proposal proposal, List<Collaborator> collaborators, String proposalUrl);
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
     String editCollaborator(Proposal proposal, String userId, String proposalRef, String roleName, String proposalUrl);

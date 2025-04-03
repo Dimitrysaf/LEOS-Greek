@@ -82,12 +82,12 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public void addCollaborators(BigDecimal packageId, String userId, List<Collaborator> collaborators) {
-        leosRepository.addPackageCollaborators(packageId, collaborators, userId);
+    public void addCollaborators(String packageId, String userId, List<Collaborator> collaborators) {
+        leosRepository.addPackageCollaborators(new BigDecimal(packageId), collaborators, userId);
     }
 
     @Override
-    public void deleteCollaborators(BigDecimal packageId, List<Collaborator> collaborators) {
-        leosRepository.deletePackageCollaborators(packageId, collaborators);
+    public void deleteCollaborators(String packageId, List<Collaborator> collaborators) {
+        leosRepository.deletePackageCollaborators(new BigDecimal(packageId), collaborators);
     }
 }

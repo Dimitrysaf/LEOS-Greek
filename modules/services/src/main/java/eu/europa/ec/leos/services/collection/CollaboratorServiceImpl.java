@@ -102,6 +102,20 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     @Override
+    public void addCollaborators(Proposal proposal, String userId, List<Collaborator> collaborators, String proposalUrl) {
+        final User user = getUser(userId);
+
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        securityService.addCollaborators(leosPackage.getId(), user.getLogin(), collaborators);
+
+        for (Collaborator c: collaborators) {
+            User collaborator = getUser(c.getLogin());
+            sendNotification(new AddCollaborator(collaborator, c.getEntity(), c.getRole(), proposal.getId(), proposalUrl));
+            LOG.info("Collaborator '{}', role '{}', entity '{}' inserted to proposal id {}", c.getLogin(), c.getEntity(), c.getRole(), proposal.getId());
+        }
+    }
+
+    @Override
     public String removeCollaborator(Proposal proposal, String userId, String roleName, String selectedEntity, String proposalUrl,
                                      String systemClientId) {
         LOG.trace("Removing collaborator...{}, with authority {}", userId, roleName);
@@ -128,6 +142,18 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         sendNotification(new RemoveCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
         LOG.info("Collaborator '{}', role '{}', entity '{}' removed from proposal id {}", user.getLogin(), role.getName(), entity, proposal.getId());
         return entity;
+    }
+
+    @Override
+    public void removeCollaborators(Proposal proposal, List<Collaborator> collaborators, String proposalUrl) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        securityService.deleteCollaborators(leosPackage.getId(), collaborators);
+
+        for (Collaborator c: collaborators) {
+            User collaborator = getUser(c.getLogin());
+            sendNotification(new RemoveCollaborator(collaborator, c.getEntity(), c.getRole(), proposal.getId(), proposalUrl));
+            LOG.info("Collaborator '{}', role '{}', entity '{}' deleted from proposal id {}", c.getLogin(), c.getEntity(), c.getRole(), proposal.getId());
+        }
     }
 
     @Override
@@ -330,17 +356,17 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         List<Collaborator> collaborators = new ArrayList<>();
 
         collaborators.add(new Collaborator(collatorName, role.getName(), entity, systemClientId));
-        securityService.addCollaborators(new BigDecimal(leosPackage.getId()), user.getLogin(), collaborators);
+        securityService.addCollaborators(leosPackage.getId(), user.getLogin(), collaborators);
     }
 
-    // Add collaborator on package
+    // Delete collaborator on package
     private void deleteCollaborator(User user, Role role, String entity, String systemClientId, LeosPackage leosPackage) {
         Validate.notNull(leosPackage, "The package must not be null!");
         Validate.notNull(user, "The user must not be null!");
         List<Collaborator> collaborators = new ArrayList<>();
 
         collaborators.add(new Collaborator(user.getLogin(), role.getName(), entity, systemClientId));
-        securityService.deleteCollaborators(new BigDecimal(leosPackage.getId()), collaborators);
+        securityService.deleteCollaborators(leosPackage.getId(), collaborators);
     }
 
     private void updateCollaborators(XmlDocument doc, List<Collaborator> collaborators) {
