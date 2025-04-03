@@ -658,7 +658,11 @@ define(function elementEditorModule(require) {
 
 
         var isEmptyRefersToElement = false;
-        $("#" + elementId).find("ol[data-akn-name='aknOrderedList']").each(function() {
+        var aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknOrderedList']");
+        if(aknOrderedList.length == 0){
+            aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknAnnexOrderedList']");
+        }
+        aknOrderedList.each(function() {
             var refersToElement = this.firstChild, newRefersToElement = this.previousSibling;
             var containsRefersToElement = refersToElement && refersToElement.hasAttribute("refersto");
             var containsNewRefersToElement = !containsRefersToElement && newRefersToElement && newRefersToElement.nodeType === Node.ELEMENT_NODE && newRefersToElement.tagName.toLowerCase() == "p";
@@ -666,7 +670,6 @@ define(function elementEditorModule(require) {
                 isEmptyRefersToElement = true;
             }
         });
-
 
         return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement;
     }
