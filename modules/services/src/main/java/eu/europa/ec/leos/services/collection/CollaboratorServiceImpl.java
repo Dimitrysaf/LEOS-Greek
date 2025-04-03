@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -87,32 +86,20 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         final User collaborator = getUser(collaboratorName);
         final Role role = getRole(roleName);
         final String entity = getEntity(selectedEntity, collaborator);
+        final String leosClientId = getLeosClient(systemClientId) != null ? getLeosClient(systemClientId).getClientId() : null;
 
-        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
-        if (isCollaboratorPresent(documents, user, role, entity, systemClientId)) {
+        List<LeosPackage> packages = getLinkedPackagesForProposal(proposal);
+        if (isCollaboratorPresent(proposal, user, role, entity, leosClientId)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.present", collaborator.getLogin(), role.getName(), entity));
         }
 
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        addCollaborator(user, collaboratorName, role, entity, systemClientId, leosPackage);
+        packages.forEach( p -> {
+            addCollaborator(user, collaboratorName, role, entity, leosClientId, p);
+        });
 
         sendNotification(new AddCollaborator(collaborator, entity, role.getName(), proposal.getId(), proposalUrl));
         LOG.info("Collaborator '{}', role '{}', entity '{}' inserted to proposal id {}", collaboratorName, role.getName(), entity, proposal.getId());
         return entity;
-    }
-
-    @Override
-    public void addCollaborators(Proposal proposal, String userId, List<Collaborator> collaborators, String proposalUrl) {
-        final User user = getUser(userId);
-
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        securityService.addCollaborators(leosPackage.getId(), user.getLogin(), collaborators);
-
-        for (Collaborator c: collaborators) {
-            User collaborator = getUser(c.getLogin());
-            sendNotification(new AddCollaborator(collaborator, c.getEntity(), c.getRole(), proposal.getId(), proposalUrl));
-            LOG.info("Collaborator '{}', role '{}', entity '{}' inserted to proposal id {}", c.getLogin(), c.getEntity(), c.getRole(), proposal.getId());
-        }
     }
 
     @Override
@@ -122,38 +109,26 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         final User user = getUser(userId);
         final Role role = getRole(roleName);
         final String entity = selectedEntity != null ? getEntity(selectedEntity, user) : null;
+        final String leosClientId = getLeosClient(systemClientId) != null ? getLeosClient(systemClientId).getClientId() : null;
 
-        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
-        if (!isCollaboratorPresent(documents, user, role, entity, systemClientId)) {
+        List<LeosPackage> packages = getLinkedPackagesForProposal(proposal);
+        if (!isCollaboratorPresent(proposal, user, role, entity, leosClientId)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.notPresent", user.getLogin(), role.getName(), entity));
         }
-        if (!hasCollaboratorDifferentRole(documents, user, role)) {
+        if (!hasCollaboratorDifferentRole(proposal, user, role)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.role.different", user.getLogin(), role.getName()));
         }
-        if (isCollaboratorLastOwner(documents, user, entity)) {
+        if (isCollaboratorLastOwner(proposal, user, entity)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.last.owner.removed", role.getName()));
         }
 
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        deleteCollaborator(user, role, entity, systemClientId, leosPackage);
-
-        documents.forEach(doc -> updateCollaborators(user, role, entity, systemClientId, doc, true));
+        packages.forEach(p -> {
+            deleteCollaborator(user, role, entity, leosClientId, p);
+        });
 
         sendNotification(new RemoveCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
         LOG.info("Collaborator '{}', role '{}', entity '{}' removed from proposal id {}", user.getLogin(), role.getName(), entity, proposal.getId());
         return entity;
-    }
-
-    @Override
-    public void removeCollaborators(Proposal proposal, List<Collaborator> collaborators, String proposalUrl) {
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        securityService.deleteCollaborators(leosPackage.getId(), collaborators);
-
-        for (Collaborator c: collaborators) {
-            User collaborator = getUser(c.getLogin());
-            sendNotification(new RemoveCollaborator(collaborator, c.getEntity(), c.getRole(), proposal.getId(), proposalUrl));
-            LOG.info("Collaborator '{}', role '{}', entity '{}' deleted from proposal id {}", c.getLogin(), c.getEntity(), c.getRole(), proposal.getId());
-        }
     }
 
     @Override
@@ -162,7 +137,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         final Role newRole = getRole(newRoleName);
         final String entity = getEntity(selectedEntity, user);
 
-        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
+        List<Proposal> documents = getLinkedProposalsForProposal(proposal);
         String collaboratorRole = documents.get(0).getCollaborators().stream()
                 .filter(c -> user.getLogin().equals(c.getLogin()) && c.getEntity().equals(entity))
                 .map(Collaborator::getRole)
@@ -175,7 +150,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         Role oldRole = authorityMapHelper.getRoleFromListOfRoles(collaboratorRole);
         LOG.trace("Updating collaborator {}, role {} with new role {}", userId, oldRole.getName(), newRoleName);
 
-        if (isCollaboratorLastOwner(documents, user, entity)) {
+        if (isCollaboratorLastOwner(documents.get(0), user, entity)) {
             LOG.warn("Should be at least one user with role {}", oldRole);
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.last.owner.edited", messageHelper.getMessage(oldRole.getMessageKey())));
         }
@@ -192,7 +167,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         LOG.trace("Synch collaborators...");
 
         List<Collaborator> collaborators = proposal.getCollaborators();
-        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
+        List<Proposal> documents = getLinkedProposalsForProposal(proposal);
 
         documents.forEach(doc -> {
             updateCollaborators(doc, collaborators);
@@ -273,8 +248,8 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         return role;
     }
 
-    private boolean isCollaboratorPresent(List<XmlDocument> documents, User user, Role role, String selectedEntity, String leosClientId) {
-        List<Collaborator> collaborators = documents.get(0).getCollaborators();
+    private boolean isCollaboratorPresent(XmlDocument document, User user, Role role, String selectedEntity, String leosClientId) {
+        List<Collaborator> collaborators = document.getCollaborators();
         return collaborators.stream()
                 .anyMatch(collaborator -> collaborator.getLogin().equals(user.getLogin())
                         && collaborator.getRole().equals(role.getName())
@@ -283,16 +258,16 @@ public class CollaboratorServiceImpl implements CollaboratorService {
                 );
     }
 
-    private boolean hasCollaboratorDifferentRole(List<XmlDocument> documents, User user, Role role) {
-        List<Collaborator> collaborators = documents.get(0).getCollaborators();
+    private boolean hasCollaboratorDifferentRole(XmlDocument document, User user, Role role) {
+        List<Collaborator> collaborators = document.getCollaborators();
         return collaborators.stream()
                 .filter(collaborator -> collaborator.getLogin().equals(user.getLogin()))
                 .anyMatch(collaborator -> role.getName().equals(collaborator.getRole()));
     }
 
-    private boolean isCollaboratorLastOwner(List<XmlDocument> documents, User user, String entity) {
+    private boolean isCollaboratorLastOwner(XmlDocument document, User user, String entity) {
         boolean isLastOwner = false;
-        List<Collaborator> collaborators = documents.get(0).getCollaborators();
+        List<Collaborator> collaborators = document.getCollaborators();
         collaborators = collaborators.stream()
                 .filter(c -> c.getRole().equals("OWNER"))
                 .collect(Collectors.toList());
@@ -315,15 +290,29 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         }
     }
 
-    private List<XmlDocument> getXmlDocumentsForProposal(String proposalRef) {
-        List<XmlDocument> docsList = new ArrayList<>();
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        docsList.addAll(packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false));
+    private List<Proposal> getLinkedProposalsForProposal(Proposal proposal) {
+        List<Proposal> docsList = new ArrayList<>();
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        docsList.add(proposal);
         List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
         for (LinkedPackage pkg : linkedPackages) {
             LeosPackage linkedPackage = packageService.findPackageByPackageId(pkg.getLinkedPackageId());
             if (linkedPackage.getTranslated()) {
-                docsList.addAll(packageService.findDocumentsByPackagePath(linkedPackage.getPath(), XmlDocument.class, false));
+                docsList.addAll(packageService.findDocumentsByPackagePath(linkedPackage.getPath(), Proposal.class, false));
+            }
+        }
+        return docsList;
+    }
+
+    private List<LeosPackage> getLinkedPackagesForProposal(Proposal proposal) {
+        List<LeosPackage> docsList = new ArrayList<>();
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        docsList.add(leosPackage);
+        List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
+        for (LinkedPackage pkg : linkedPackages) {
+            LeosPackage linkedPackage = packageService.findPackageByPackageId(pkg.getLinkedPackageId());
+            if (linkedPackage.getTranslated()) {
+                docsList.add(linkedPackage);
             }
         }
         return docsList;

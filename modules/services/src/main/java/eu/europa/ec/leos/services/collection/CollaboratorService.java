@@ -13,13 +13,7 @@ public interface CollaboratorService {
     String addCollaborator(Proposal proposal, String userId, String collaboratorName, String proposalRef, String roleName, String proposalUrl, String systemClientId);
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
-    void addCollaborators(Proposal proposal, String userId, List<Collaborator> collaborators, String proposalUrl);
-
-    @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
     String removeCollaborator(Proposal proposal, String userId, String proposalRef, String roleName, String proposalUrl, String systemClientId);
-
-    @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
-    void removeCollaborators(Proposal proposal, List<Collaborator> collaborators, String proposalUrl);
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
     String editCollaborator(Proposal proposal, String userId, String proposalRef, String roleName, String proposalUrl);

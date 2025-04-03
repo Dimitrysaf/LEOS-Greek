@@ -15,7 +15,6 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.repository.document.Proposal;
-import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -38,8 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -95,20 +92,6 @@ public class CollaboratorController {
         return collaboratorService.addCollaborator(proposal, userId, collaboratorName, roleName, connectedDG, proposalUrl, null);
     }
 
-    private void addCollaborators(String proposalRef, CollaboratorsRequest collaboratorsRequest) {
-        proposalRef = encodeParam(proposalRef);
-        final String userId = securityContext.getUser().getLogin();
-        List<Collaborator> collaborators = new ArrayList<>();
-        for (CollaboratorRequest collaborator : collaboratorsRequest.getCollaborators()) {
-            Collaborator c = new Collaborator(collaborator.getUserId(), collaborator.getRoleName(), collaborator.getConnectedDG(),
-                    collaborator.getLeosClientId());
-            collaborators.add(c);
-        }
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        collaboratorService.addCollaborators(proposal, userId, collaborators, proposalUrl);
-    }
-
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.POST)
     public ResponseEntity<Object> addCollaboratorToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
@@ -130,7 +113,9 @@ public class CollaboratorController {
     public ResponseEntity<Object> addBulkCollaboratorsToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
-            addCollaborators(proposalRef, collaboratorsRequest);
+            for (CollaboratorRequest collaborator : collaboratorsRequest.getCollaborators()) {
+                addCollaborator(proposalRef, collaborator);
+            }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
             String msg = "Error occurred while adding BULK Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
@@ -199,18 +184,6 @@ public class CollaboratorController {
         return collaboratorService.removeCollaborator(proposal, collaboratorName, roleName, connectedDG, proposalUrl, leosClientId);
     }
 
-    private void removeCollaborators(String proposalRef, CollaboratorsRequest collaboratorsRequest) {
-        List<Collaborator> collaborators = new ArrayList<>();
-        for (CollaboratorRequest collaborator : collaboratorsRequest.getCollaborators()) {
-            Collaborator c = new Collaborator(collaborator.getUserId(), collaborator.getRoleName(), collaborator.getConnectedDG(),
-                    collaborator.getLeosClientId());
-            collaborators.add(c);
-        }
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        collaboratorService.removeCollaborators(proposal, collaborators, proposalUrl);
-    }
-
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> removeCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
@@ -234,7 +207,9 @@ public class CollaboratorController {
     public ResponseEntity<Object> removeBulkCollaboratorsFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
-            removeCollaborators(proposalRef, collaboratorsRequest);
+            for (CollaboratorRequest collaborator : collaboratorsRequest.getCollaborators()) {
+                removeCollaborator(proposalRef, collaborator);
+            }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
             String msg = "Error occurred while removing BULK Collaborators '" + collaboratorsRequest + FROM_PROPOSAL + proposalRef + "'";
