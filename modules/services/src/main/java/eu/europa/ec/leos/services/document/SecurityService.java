@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.document;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.user.Collaborator;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -25,6 +26,10 @@ public interface SecurityService {
     <T extends XmlDocument> T addOrUpdateCollaborator(String id, String userLogin, String userEntity, String authority, String systemClientId, Class<T> type);
 
     <T extends XmlDocument> T updateCollaborators(String ref, String id, List<Collaborator> collaborators, Class<T> type);
+
+    void addCollaborators(BigDecimal packageId, String UserId, List<Collaborator> collaborators);
+
+    void deleteCollaborators(BigDecimal packageId, List<Collaborator> collaborators);
 
     <T extends XmlDocument> T removeCollaborator(String id, String userLogin, Class<T> type);
 }

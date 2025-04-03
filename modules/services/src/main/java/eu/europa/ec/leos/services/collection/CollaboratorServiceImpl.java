@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -80,25 +81,29 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     @Override
-    public String addCollaborator(Proposal proposal, String userId, String roleName, String selectedEntity, String proposalUrl, String systemClientId) {
+    public String addCollaborator(Proposal proposal, String userId, String collaboratorName, String roleName, String selectedEntity, String proposalUrl,
+                                  String systemClientId) {
         final User user = getUser(userId);
+        final User collaborator = getUser(collaboratorName);
         final Role role = getRole(roleName);
-        final String entity = getEntity(selectedEntity, user);
+        final String entity = getEntity(selectedEntity, collaborator);
 
         List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
         if (isCollaboratorPresent(documents, user, role, entity, systemClientId)) {
-            throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.present", user.getLogin(), role.getName(), entity));
+            throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.present", collaborator.getLogin(), role.getName(), entity));
         }
 
-        documents.forEach(doc -> updateCollaborators(user, role, entity, systemClientId, doc, false));
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        addCollaborator(user, collaboratorName, role, entity, systemClientId, leosPackage);
 
-        sendNotification(new AddCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
-        LOG.info("Collaborator '{}', role '{}', entity '{}' inserted to proposal id {}", user.getLogin(), role.getName(), entity, proposal.getId());
+        sendNotification(new AddCollaborator(collaborator, entity, role.getName(), proposal.getId(), proposalUrl));
+        LOG.info("Collaborator '{}', role '{}', entity '{}' inserted to proposal id {}", collaboratorName, role.getName(), entity, proposal.getId());
         return entity;
     }
 
     @Override
-    public String removeCollaborator(Proposal proposal, String userId, String roleName, String selectedEntity, String proposalUrl, String systemClientId) {
+    public String removeCollaborator(Proposal proposal, String userId, String roleName, String selectedEntity, String proposalUrl,
+                                     String systemClientId) {
         LOG.trace("Removing collaborator...{}, with authority {}", userId, roleName);
         final User user = getUser(userId);
         final Role role = getRole(roleName);
@@ -114,6 +119,9 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         if (isCollaboratorLastOwner(documents, user, entity)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.last.owner.removed", role.getName()));
         }
+
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        deleteCollaborator(user, role, entity, systemClientId, leosPackage);
 
         documents.forEach(doc -> updateCollaborators(user, role, entity, systemClientId, doc, true));
 
@@ -313,6 +321,26 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             }
             securityService.updateCollaborators(doc.getMetadata().get().getRef(), doc.getId(), collaborators, doc.getClass());
         }
+    }
+
+    // Add collaborator on package
+    private void addCollaborator(User user, String collatorName, Role role, String entity, String systemClientId, LeosPackage leosPackage) {
+        Validate.notNull(leosPackage, "The package must not be null!");
+        Validate.notNull(user, "The user must not be null!");
+        List<Collaborator> collaborators = new ArrayList<>();
+
+        collaborators.add(new Collaborator(collatorName, role.getName(), entity, systemClientId));
+        securityService.addCollaborators(new BigDecimal(leosPackage.getId()), user.getLogin(), collaborators);
+    }
+
+    // Add collaborator on package
+    private void deleteCollaborator(User user, Role role, String entity, String systemClientId, LeosPackage leosPackage) {
+        Validate.notNull(leosPackage, "The package must not be null!");
+        Validate.notNull(user, "The user must not be null!");
+        List<Collaborator> collaborators = new ArrayList<>();
+
+        collaborators.add(new Collaborator(user.getLogin(), role.getName(), entity, systemClientId));
+        securityService.deleteCollaborators(new BigDecimal(leosPackage.getId()), collaborators);
     }
 
     private void updateCollaborators(XmlDocument doc, List<Collaborator> collaborators) {

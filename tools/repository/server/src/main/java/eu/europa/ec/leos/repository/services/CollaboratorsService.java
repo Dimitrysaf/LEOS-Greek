@@ -26,6 +26,10 @@ public interface CollaboratorsService {
 
     List<Collaborator> getCollaborators(BigDecimal pkgId);
 
+    void addCollaborators(BigDecimal pkgId, List<Collaborator> collaboratorList, String userId);
+
+    void deleteCollaborators(BigDecimal pkgId, List<Collaborator> collaboratorList);
+
     void updateCollaborators(Package pkg, List<Collaborator> collaboratorList, String userId);
 
     void updateCollaborators(String pkgId, List<Collaborator> collaboratorList, String userId);
@@ -35,6 +39,4 @@ public interface CollaboratorsService {
     void removeCollaborator(final String id) throws RepositoryException;
 
     void removeCollaborators(Package pkg) throws RepositoryException;
-
-    void savePackageCollaborator(PackageCollaborators pkgCollaborator);
 }

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -78,5 +79,15 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     public <D extends LeosDocument> int findDocumentCountByParentPath(String path, Class<? extends D> type, QueryFilter workspaceFilter) {
         logger.debug("Finding document by parent path... [path=$path, type=${type.simpleName}]");
         return leosRepository.findDocumentCountByParentPath(path, type, true, workspaceFilter);
+    }
+
+    @Override
+    public void addCollaborators(BigDecimal packageId, String userId, List<Collaborator> collaborators) {
+        leosRepository.addPackageCollaborators(packageId, collaborators, userId);
+    }
+
+    @Override
+    public void deleteCollaborators(BigDecimal packageId, List<Collaborator> collaborators) {
+        leosRepository.deletePackageCollaborators(packageId, collaborators);
     }
 }

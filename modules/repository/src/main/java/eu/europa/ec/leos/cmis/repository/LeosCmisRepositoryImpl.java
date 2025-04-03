@@ -41,6 +41,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.cmis.CmisRepositoryContext;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.rest.aop.annotation.PerformanceLogger;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
@@ -926,6 +927,12 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     @Override
     public FavouritePackageResponse toggleFavouritePackage(String ref, String userId) {
         return null;
+    }
+    @Override
+    public void addPackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators, String userId) {
+    }
+    @Override
+    public void deletePackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators) {
     }
 
     public Object configNotificationsUpload(String content) { return ResponseEntity.ok().build();}

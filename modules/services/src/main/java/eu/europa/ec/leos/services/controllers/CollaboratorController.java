@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.ServletContext;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -51,12 +53,15 @@ public class CollaboratorController {
     private final CollaboratorService collaboratorService;
     private final ProposalService proposalService;
     private final CollectionUrlBuilder urlBuilder;
+    private final SecurityContext securityContext;
 
     @Autowired
-    public CollaboratorController(CollaboratorService collaboratorService, ProposalService proposalService, CollectionUrlBuilder urlBuilder) {
+    public CollaboratorController(CollaboratorService collaboratorService, ProposalService proposalService, CollectionUrlBuilder urlBuilder,
+                                  SecurityContext securityContext) {
         this.collaboratorService = collaboratorService;
         this.proposalService = proposalService;
         this.urlBuilder = urlBuilder;
+        this.securityContext = securityContext;
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,12 +84,13 @@ public class CollaboratorController {
 
     private String addCollaborator(String proposalRef, CollaboratorRequest collaboratorRequest) {
         proposalRef = encodeParam(proposalRef);
-        final String userId = collaboratorRequest.getUserId();
+        final String userId = securityContext.getUser().getLogin();
+        final String collaboratorName = collaboratorRequest.getUserId();
         final String roleName = collaboratorRequest.getRoleName();
         final String connectedDG = collaboratorRequest.getConnectedDG();
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        return collaboratorService.addCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, null);
+        return collaboratorService.addCollaborator(proposal, userId, collaboratorName, roleName, connectedDG, proposalUrl, null);
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.POST)
@@ -170,13 +176,13 @@ public class CollaboratorController {
     }
 
     private String removeCollaborator(String proposalRef, CollaboratorRequest collaboratorRequest) {
-        final String userId = collaboratorRequest.getUserId();
+        final String collaboratorName = collaboratorRequest.getUserId();
         final String roleName = collaboratorRequest.getRoleName();
         final String connectedDG = collaboratorRequest.getConnectedDG();
         final String leosClientId = collaboratorRequest.getLeosClientId();
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        return collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, leosClientId);
+        return collaboratorService.removeCollaborator(proposal, collaboratorName, roleName, connectedDG, proposalUrl, leosClientId);
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)

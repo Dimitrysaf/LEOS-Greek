@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -52,6 +53,25 @@ public interface WorkspaceRepository {
      * @return the updated document.
      */
     <T extends XmlDocument> T updateDocumentCollaborators(String ref, String id, List<Collaborator> collaborators, Class<? extends T> type);
+
+    /**
+     * Adding the collaborators of the specified package.
+     *
+     *
+     * @param packageId      the ID of the package on which to add the collaborator.
+     * @param userId         the ID of the logged user.
+     * @param collaborators  the list of collaborators to be added.
+     */
+    void addCollaborators(BigDecimal packageId, String userId, List<Collaborator> collaborators);
+
+    /**
+     * Deleting the collaborators of the specified package.
+     *
+     *
+     * @param packageId      the ID of the package on which to delete the collaborator.
+     * @param collaborators the list of collaborators to be deleted.
+     */
+    void deleteCollaborators(BigDecimal packageId, List<Collaborator> collaborators);
 
     /**
      * Finds documents with the specified pagination .
