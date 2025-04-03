@@ -158,6 +158,10 @@ public class RestRepository extends AbstractRestClient {
 
     @Value("${leos.rest.repository.package.collaborators}")
     private String leosRestpackageCollaborators;
+    @Value("${leos.rest.repository.package.collaborators.add}")
+    private String leosRestpackageAddCollaborators;
+    @Value("${leos.rest.repository.package.collaborators.delete}")
+    private String leosRestpackageDeleteCollaborators;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -612,6 +616,18 @@ public class RestRepository extends AbstractRestClient {
             collaboratorVOList.add(collaborator);
         }
         return collaboratorVOList;
+    }
+
+    public void addPackageCollaborators(BigDecimal packageId, List<eu.europa.ec.leos.model.user.Collaborator> collaborators, String userId) {
+        LOGGER.trace("addPackageCollaborators ... packageId = {}", packageId);
+        String url = getUrl(leosRestpackageAddCollaborators);
+        postEntity(url, collaborators, Object.class, packageId, userId);
+    }
+
+    public void deletePackageCollaborators(BigDecimal packageId, List<eu.europa.ec.leos.model.user.Collaborator> collaborators) {
+        LOGGER.trace("deletePackageCollaborators ... packageId = {}", packageId);
+        String url = getUrl(leosRestpackageDeleteCollaborators);
+        postEntity(url, collaborators, Object.class, packageId);
     }
 
     public LeosDocument archiveDocumentVersion(String docRef, String version) {

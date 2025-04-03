@@ -290,4 +290,27 @@ public class PackageController {
         return new ResponseEntity<>(collaboratorsService.getCollaborators(packageId), HttpStatus.OK);
     }
 
+    @PostMapping(path = "/package/package-collaborators/{packageId}/{userName}")
+    @Operation(summary = "Add package collaborators")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Collaborators added", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> addPackageCollaborators(@PathVariable("packageId") BigDecimal packageId,
+                                                          @PathVariable("userName") String userName,
+                                                          @Valid @RequestBody List<Collaborator> collaborators) throws RepositoryException{
+        collaboratorsService.addCollaborators(packageId, collaborators, userName);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/package/package-collaborators/{packageId}")
+    @Operation(summary = "Remove package collaborators")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Collaborators deleted", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> deletePackageCollaborators(@PathVariable("packageId") BigDecimal packageId,
+                                                             @Valid @RequestBody List<Collaborator> collaborators) throws RepositoryException{
+        collaboratorsService.deleteCollaborators(packageId, collaborators);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

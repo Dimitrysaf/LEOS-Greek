@@ -323,7 +323,7 @@ public class PackageServiceImpl implements PackageService {
                             pkg.get().getPackageId(), collaborator.getId());
                     if (packageCollaborators.isPresent()) {
                         packageCollaborators.get().setFavorite(new BigDecimal((packageCollaborators.get().getFavorite().intValue() + 1) % 2));
-                        collaboratorsService.savePackageCollaborator(packageCollaborators.get());
+                        packageCollaboratorsRepository.save(packageCollaborators.get());
                     }
                 }
             }

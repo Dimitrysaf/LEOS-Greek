@@ -54,6 +54,25 @@ public interface WorkspaceRepository {
     <T extends XmlDocument> T updateDocumentCollaborators(String ref, String id, List<Collaborator> collaborators, Class<? extends T> type);
 
     /**
+     * Adding the collaborators of the specified package.
+     *
+     *
+     * @param packageId      the ID of the package on which to add the collaborator.
+     * @param userId         the ID of the logged user.
+     * @param collaborators  the list of collaborators to be added.
+     */
+    void addCollaborators(String packageId, String userId, List<Collaborator> collaborators);
+
+    /**
+     * Deleting the collaborators of the specified package.
+     *
+     *
+     * @param packageId      the ID of the package on which to delete the collaborator.
+     * @param collaborators the list of collaborators to be deleted.
+     */
+    void deleteCollaborators(String packageId, List<Collaborator> collaborators);
+
+    /**
      * Finds documents with the specified pagination .
      *
      * @param D          the document type

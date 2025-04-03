@@ -423,5 +423,11 @@ public interface LeosRepository {
 
     List<CollaboratorVO> getPackageCollaborators(BigDecimal packageId);
 
+    void addPackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators, String userId);
+
+    void deletePackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators);
+
     void  archiveDocumentVersion(String documentRef, String version);
+
+
 }
