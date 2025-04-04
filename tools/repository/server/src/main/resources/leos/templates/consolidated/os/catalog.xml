@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<catalog lang="EN">
+    <item type="CATEGORY" id="c1" enabled="true" key="LAW_INITIATIVE">
+        <names>
+            <name lang="EN">Interinstitutional procedures - Law Initiative (COM/JOIN)</name>
+            <name lang="FR">Procédure interinstitutionnelles - Droit d'initiative (COM/JOIN)</name>
+        </names>
+        <descriptions>
+            <description lang="EN">Interinstitutional procedures - Law Initiative (COM/JOIN)</description>
+            <description lang="FR">Procédure interinstitutionnelles - Droit d'initiative (COM/JOIN)</description>
+        </descriptions>
+        <item type="CATEGORY" id="c1.1" enabled="true" key="LEGISLATIVE_ACTS">
+            <names>
+                <name lang="EN">For a new interinstitutional procedure</name>
+                <name lang="FR">En vue d'une nouvelle procédure interinstitutionelle</name>
+            </names>
+            <descriptions>
+                <description lang="EN">The Manual of Operating Procedures of the Commission - Decision-making: interinstitutional stage (http://www.cc.cec/home/dgserv/sg/manupro/index.cfm?lang=en&amp;menu=on&amp;src=chapter&amp;chp=2)</description>
+                <description lang="FR">Manuel des procédures opérationnelles de la Commission - Processus décisionnel: phase interinstitutionnelle (http://www.cc.cec/home/dgserv/sg/manupro/index.cfm?lang=fr&amp;menu=on&amp;src=chapter&amp;chp=2)</description>
+            </descriptions>
+            <item type="CATEGORY" id="c1.1.1" enabled="true" key="ORDINARY_LEGISLATIVE_PROC">
+                <names>
+                    <name lang="EN">Proposal for a</name>
+                    <name lang="FR">Proposition de</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Proposal for a</description>
+                    <description lang="FR">Proposition de</description>
+                </descriptions>
+                <item type="CATEGORY" id="c1.1.1.1" enabled="true" key="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
+                    <names>
+                        <name lang="EN">Proposal for a regulation</name>
+                        <name lang="FR">Proposition de règlement</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">Regulation to be adopted by the European Parliament and the Council</description>
+                        <description lang="FR">Règlement à adopter conjointement par le Parlement Européen et le Conseil</description>
+                    </descriptions>
+                    <item type="TEMPLATE" enabled="true" key="SJ-023">
+                        <names>
+                            <name lang="EN">SJ-023 - Proposal for a Regulation of the European Parliament and of the Council</name>
+                            <name lang="FR">SJ-023 - Proposition de règlement du Parlement européen et du Conseil</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">Template 23 of the LS: Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</description>
+                            <description lang="FR">Template 23 du SJ: Proposition de RÈGLEMENT DU PARLEMENT EUROPÉEN ET DU CONSEIL</description>
+                        </descriptions>
+                        <languages>
+                            <language lang="EN">English</language>
+                            <!--<language lang="FR">Français</language>-->
+                        </languages>
+                        <item type="TEMPLATE" id="PR-023" enabled="true" mandatory="true">
+                            <names>
+                                <name lang="EN">PR-023 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-023" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-023 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+                <item type="CATEGORY" id="c1.1.1.2" enabled="true" key="DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
+                    <names>
+                        <name lang="EN">Proposal for a directive</name>
+                        <name lang="FR">Proposition de directive</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">Directive to be adopted by the European Parliament and the Council</description>
+                        <description lang="FR">Directive à adopter conjointement par le Parlement Européen et le Conseil</description>
+                    </descriptions>
+                    <item type="TEMPLATE" enabled="true" key="SJ-024">
+                        <names>
+                            <name lang="EN">SJ-024 - Proposal for a Directive of the European Parliament and of the Council</name>
+                            <name lang="FR">SJ-024 - Proposition de directive du Parlement européen et du Conseil</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">Template 24 of the LS: Proposal for a DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</description>
+                            <description lang="FR">Template 24 du SJ: Proposition de DIRECTIVE DU PARLEMENT EUROPÉEN ET DU CONSEIL</description>
+                        </descriptions>
+                        <languages>
+                            <language lang="EN">English</language>
+                            <!--<language lang="FR">Français</language>-->
+                        </languages>
+                        <item type="TEMPLATE" id="PR-024" enabled="true" mandatory="true">
+                            <names>
+                                <name lang="EN">PR-024 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-024" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-024 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+                <item type="CATEGORY" id="c1.1.1.3" enabled="true" key="DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
+                    <names>
+                        <name lang="EN">Proposal for a decision</name>
+                        <name lang="FR">Proposition de décision</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">Decision to be adopted by the European Parliament and the Council</description>
+                        <description lang="FR">Décision à adopter conjointement par le Parlement Européen et le Conseil</description>
+                    </descriptions>
+                    <languages>
+                        <language lang="EN">English</language>
+                        <language lang="FR">Français</language>
+                    </languages>
+                    <item type="TEMPLATE" enabled="true" key="SJ-025">
+                        <names>
+                            <name lang="EN">SJ-025 - Proposal for a Decision of the European Parliament and of the Council</name>
+                            <name lang="FR">SJ-025 - Proposition de décision du Parlement européen et du Conseil</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">Template 25 of the LS: Proposal for a DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</description>
+                            <description lang="FR">Template 25 du SJ: Proposition de DÉCISION DU PARLEMENT EUROPÉEN ET DU CONSEIL</description>
+                        </descriptions>
+                        <languages>
+                            <language lang="EN">English</language>
+                            <!--<language lang="FR">Français</language>-->
+                        </languages>
+                        <item type="TEMPLATE" id="PR-025" enabled="true" mandatory="true">
+                            <names>
+                                <name lang="EN">PR-025 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-025" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-025 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                    <item type="TEMPLATE" enabled="true" key="SJ-019">
+                        <names>
+                            <name lang="EN">SJ-019 - Proposal for a Council Decision</name>
+                            <name lang="FR">SJ-019 - Proposition de décision du Conseil</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">Template 19 of the LS: Proposal for a COUNCIL DECISION</description>
+                            <description lang="FR">Template 19 du SJ: Proposition de DÉCISION DU CONSEIL</description>
+                        </descriptions>
+                        <languages>
+                            <language lang="EN">English</language>
+                            <!--<language lang="FR">Français</language>-->
+                        </languages>
+                        <item type="TEMPLATE" id="PR-019" enabled="true" mandatory="true">
+                            <names>
+                                <name lang="EN">PR-019 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-019" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-019 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                    <item type="TEMPLATE" enabled="true" key="SJ-026">
+                        <names>
+                            <name lang="EN">SJ-026 - Proposal for a Decision of the European Parliament and of the Council (without addressees)</name>
+                            <name lang="FR">SJ-026 - Proposition de décision du Parlement européen et du Conseil (sans destinataires)</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">Template 26 of the LS: Proposal for a DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL without addressees</description>
+                            <description lang="FR">Template 26 du SJ: Proposition de DÉCISION DU PARLEMENT EUROPÉEN ET DU CONSEIL sans destinataires</description>
+                        </descriptions>
+                        <languages>
+                            <language lang="EN">English</language>
+                            <!--<language lang="FR">Français</language>-->
+                        </languages>
+                        <item type="TEMPLATE" id="PR-026" enabled="true" mandatory="true">
+                            <names>
+                                <name lang="EN">PR-026 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-026" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-026 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+                <item type="CATEGORY" id="c1.1.1.4" enabled="true" key="RECOMMENDATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
+                    <names>
+                        <name lang="EN">Proposal for a recommendation</name>
+                        <name lang="FR">Proposition de recommandation</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">Recommendation to be adopted by the Council</description>
+                        <description lang="FR">Recommandation à adopter par le Conseil</description>
+                    </descriptions>
+                    <languages>
+                        <language lang="EN">English</language>
+                        <language lang="FR">Français</language>
+                    </languages>
+                </item>
+                <item type="CATEGORY" id="c1.1.1.5" enabled="true" key="OPINION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
+                    <names>
+                        <name lang="EN">Proposal for an opinion</name>
+                        <name lang="FR">Proposition d'avis</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">Recommendation to be adopted by the Council</description>
+                        <description lang="FR">Recommandation à adopter par le Conseil</description>
+                    </descriptions>
+                    <languages>
+                        <language lang="EN">English</language>
+                        <language lang="FR">Français</language>
+                    </languages>
+                </item>
+            </item>
+            <item type="CATEGORY" id="c1.1.2" enabled="true" key="DRAFT_PROPOSAL">
+                <names>
+                    <name lang="EN">Draft proposal for a / Proposal for a (Euratom Treaty)</name>
+                    <name lang="FR">Projet de proposition de / Proposition de (Traité Euratom)</name>
+                </names>
+                <item type="CATEGORY" id="c1.1.3.1" enabled="true" key="DRAFT_PROPOSAL_FOR_REGULATION">
+                    <names>
+                        <name lang="EN">Draft proposal / Proposal for a Regulation</name>
+                        <name lang="FR">Projet de proposition de / Proposition de règlement</name>
+                    </names>
+                </item>
+                <item type="CATEGORY" id="c1.1.3.2" enabled="true" key="DRAFT_PROPOSAL_FOR_DIRECTIVE">
+                    <names>
+                        <name lang="EN">Draft proposal / Proposal for a directive</name>
+                        <name lang="FR">Projet de proposition de / Proposition de directive</name>
+                    </names>
+                </item>
+            </item>
+            <item type="CATEGORY" id="c1.1.3" enabled="true" key="JOINT_PROPOSAL">
+                <names>
+                    <name lang="EN">Joint Proposal for a</name>
+                    <name lang="FR">Proposition conjointe de</name>
+                </names>
+            </item>
+            <item type="CATEGORY" id="c1.1.4" enabled="true" key="RECOMMENDATION_FOR">
+                <names>
+                    <name lang="EN">Recommendation for a</name>
+                    <name lang="FR">Recommandation de</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Recommendation for a</description>
+                    <description lang="FR">Recommandation de</description>
+                </descriptions>
+            </item>
+        </item>
+        <item type="CATEGORY" id="c1.2" enabled="true" key="ONGOING_PROCEDURE">
+            <names>
+                <name lang="EN">During an ongoing interinstitutional procedure</name>
+                <name lang="FR">Dans le cadre d'une procédure interinstitutionelle en cours</name>
+            </names>
+            <descriptions>
+                <description lang="EN">The Manual of  Operating Procedures of the Commission - Decision-making: interinstitutional stage (<a href="http://www.cc.cec/home/dgserv/sg/manupro/index.cfm?lang=en&amp;menu=on&amp;src=chapter&amp;chp=2">http://www.cc.cec/home/dgserv/sg/manupro/index.cfm?lang=en&amp;menu=on&amp;src=chapter&amp;chp=2</a>)</description>
+                <description lang="FR">Manuel des procédures opérationnelles de la Commissionn  - Processus décisionnel : phase interinstitutionnelle (<a href="http://www.cc.cec/home/dgserv/sg/manupro/index.cfm?lang=fr&amp;menu=on&amp;src=chapter&amp;chp=2">http://www.cc.cec/home/dgserv/sg/manupro/index.cfm?lang=fr&amp;menu=on&amp;src=chapter&amp;chp=2</a>)</description>
+            </descriptions>
+            <item type="CATEGORY" id="c1.2.1" enabled="true" key="AMEND_PROPOSAL">
+                <names>
+                    <name lang="EN">Amended proposal</name>
+                    <name lang="FR">Proposition modifiée</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Amended proposal</description>
+                    <description lang="FR">Proposition modifiée</description>
+                </descriptions>
+                <item type="CATEGORY" id="c1.2.1.1" enabled="true" key="AMEND_PROPOSAL_FOR_REGULATION">
+                    <names>
+                        <name lang="EN">Amended proposal for a regulation</name>
+                        <name lang="FR">Proposition modifiée de règlement</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">For adoption (generally through an empowerment procedure) of a modified proposal for a regulation, following the position of the European Parliament (at first reading in the ordinary legislative procedure or in a special legislative procedure)</description>
+                        <description lang="FR">Pour adoption (généralement par habilitation) d'une proposition modifiée de règlement suite à la position du Parlement Européen (en première lecture de la procédure législative ordinaire ou en procédure législative spéciale)</description>
+                    </descriptions>
+                </item>
+                <item type="CATEGORY" id="c1.2.1.2" enabled="true" key="AMEND_PROPOSAL_FOR_DIRECTIVE">
+                    <names>
+                        <name lang="EN">Amended proposal for a directive</name>
+                        <name lang="FR">Proposition modifiée de directive</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">For adoption (generally through an empowerment procedure) of a modified proposal for a directive, following the position of the European Parliament (at first reading in the ordinary legislative procedure or in a special legislative procedure)</description>
+                        <description lang="FR">Pour adoption (généralement par habilitation) d'une proposition modifiée de directive suite à la position du Parlement Européen en première lecture (procédure législative ordinaire ou spéciale)</description>
+                    </descriptions>
+                </item>
+                <item type="CATEGORY" id="c1.2.1.3" enabled="true" key="AMEND_PROPOSAL_FOR_DECISION">
+                    <names>
+                        <name lang="EN">Amended proposal for a decision</name>
+                        <name lang="FR">Proposition modifiée de décision</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">For adoption (generally through an empowerment procedure) of a modified proposal for a decision, following the position of the European Parliament (at first reading in the ordinary legislative procedure or in a special legislative procedure)</description>
+                        <description lang="FR">Pour adoption (généralement par habilitation) d'une proposition modifiée de décision suite à la position du Parlement Européen en première lecture (procédure législative ordinaire  ou spéciale)</description>
+                    </descriptions>
+                </item>
+            </item>
+        </item>
+    </item>
+    <item type="CATEGORY" id="c2" enabled="true" key="AUTONOMOUS_ACTS">
+        <names>
+            <name lang="EN">Autonomous acts (article 288, article 290, article 291 TFEU and internal decisions)</name>
+            <name lang="FR">Actes autonomes (article 288, article 290, article 291 TFUE et décisions internes)</name>
+        </names>
+        <item type="CATEGORY" id="c2.1" enabled="true" key="DELEGATED_AUTONOMOUS_ACTS">
+            <names>
+                <name lang="EN">Delegated Acts (article 290 TFEU)</name>
+                <name lang="FR">Actes délégués (article 290 TFUE)</name>
+            </names>
+            <item type="CATEGORY" id="c2.1.1" enabled="true" key="COMMISSION_DELEGATED_DECISION">
+                <names>
+                    <name lang="EN">Commission delegated Decision</name>
+                    <name lang="FR">Décision déléguée de la Commission</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Delegated Commission decisions are adopted following a delegation given by the legislator in the basic act (art. 290 TFUE). They take effect upon their publication in the Official Journal of the European Union or upon notification to their destinataries. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
+                    <description lang="FR">Les décisions déléguées de la Commission sont adoptées suite à une délégation donnée par le législateur dans l'acte de base (art. 290 TFUE). Elles entrent en vigueur soit par leur publication au Journal officiel de l'Union européenne soit par leur notification aux destinataires. N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
+                </descriptions>
+            </item>
+        </item>
+        <item type="CATEGORY" id="c2.2" enabled="true" key="IMPLEMENTING_ACTS">
+            <names>
+                <name lang="EN">Implementing Acts (article 291 TFEU) and Acts still under the former PRAC</name>
+                <name lang="FR">Actes d'exécution (article 291 TFUE) et Actes encore sous ancienne PRAC</name>
+            </names>
+            <item type="CATEGORY" id="c2.2.1" enabled="true" key="REGULATION_IMPLEMENTING_ACTS">
+                <names>
+                    <name lang="EN">Regulation</name>
+                    <name lang="FR">Règlement</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Regulation</description>
+                    <description lang="FR">Règlement</description>
+                </descriptions>
+            </item>
+            <item type="CATEGORY" id="c2.2.2" enabled="true" key="DIRECTIVE_IMPLEMENTING_ACTS">
+                <names>
+                    <name lang="EN">Directive</name>
+                    <name lang="FR">Directive</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Directive</description>
+                    <description lang="FR">Directive</description>
+                </descriptions>
+            </item>
+            <item type="CATEGORY" id="c2.2.3" enabled="true" key="DECISION_IMPLEMENTING_ACTS">
+                <names>
+                    <name lang="EN">Decision</name>
+                    <name lang="FR">Décision</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Decision</description>
+                    <description lang="FR">Décision</description>
+                </descriptions>
+                <item type="CATEGORY" id="c2.2.3.1" enabled="true" key="COMMISSION_IMPLEMENTING_DECISION">
+                    <names>
+                        <name lang="EN">Commission implementing Decision</name>
+                        <name lang="FR">Décision d'exécution de la Commission</name>
+                    </names>
+                </item>
+                <item type="CATEGORY" id="c2.2.3.2" enabled="true" key="COMMICCION_DECISION_FORMER_PRAC">
+                    <names>
+                        <name lang="EN">Commission Decision (former PRAC)</name>
+                        <name lang="FR">Décision de la Commission (ancienne PRAC)</name>
+                    </names>
+                </item>
+            </item>
+        </item>
+        <item type="CATEGORY" id="c2.3" enabled="true" key="OTHER_AUTONOMOUS_ACTS">
+            <names>
+                <name lang="EN">Other Autonomous Acts</name>
+                <name lang="FR">Autres Actes Autonomes</name>
+            </names>
+            <item type="CATEGORY" id="c2.3.1" enabled="true" key="OTHER_COMMISSION_DECISION">
+                <names>
+                    <name lang="EN">Commission Decision</name>
+                    <name lang="FR">Décision de la Commission</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Decisions take effect either upon their publication in the Official Journal of the European Union or upon notification to their destinataries (the last article in the text of the decision clearly specifies which of the two applies). Internal decisions are neither to be notified nor to be published (except for information purposes in some cases), they take effect upon their adoption. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
+                    <description lang="FR">Les décisions entrent en vigueur soit par leur publication au Journal officiel de l'Union européenne  soit par leur notification aux destinataires (Le dernier article du texte de la décision vous indique clairement le choix à prendre).  Les décisions internes ne sont ni à notifier ni à publier (sauf pour information en certains cas), et entrent en vigueur par leur adoption  N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
+                </descriptions>
+            </item>
+            <item type="CATEGORY" id="c2.3.2" enabled="true" key="CORRIGENDA">
+                <names>
+                    <name lang="EN">Corrigenda</name>
+                    <name lang="FR">Rectificatifs</name>
+                </names>
+            </item>
+        </item>
+    </item>
+    <item type="CATEGORY" id="c3" hidden="true" enabled="true" key="SUPPORTING_DOCUMENTS">
+        <names>
+            <name lang="EN">Other supporting documents</name>
+        </names>
+        <descriptions>
+            <description lang="EN">Other supporting documents</description>
+        </descriptions>
+        <item type="TEMPLATE" id="FS-001" enabled="true" key="FS-001">
+            <names>
+                <name lang="EN">Financial statement</name>
+            </names>
+            <descriptions>
+                <description lang="EN">Financial statement</description>
+            </descriptions>
+        </item>
+    </item>
+</catalog>
