@@ -32,6 +32,7 @@ define(function leosTrackChangesModule(require) {
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
         DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
         ACCEPT: "accept", REJECT: "reject", TRACKCHANGES_NUMBER_ELEMENT_SELECTOR: "li[data-akn-action-number]",
+        DATA_INDENT_ORIGIN_NUM: "data-indent-origin-num",
 
         DATA_AKN_SOFTACTION: "data-akn-attr-softaction", DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
         SOFTACTION_MOVE_FROM: "move_from", SOFTACTION_MOVE_TO: "move_to",
@@ -857,6 +858,32 @@ define(function leosTrackChangesModule(require) {
             editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
         },
 
+        removeEnterInsert: function(element, editor, numberModule) {
+            if(this.checkIfEmptyListElement(element)) {
+                this.removeEmptyElement(element, numberModule, editor);
+            } else {
+                this.removeEnterAndJoinLines(element, editor);
+            }
+        },
+
+        outdentList: function(element, editor) {
+            var keyCodeToUse = CKEDITOR.SHIFT + 9;
+            var ckEditorEvent = new CKEDITOR.dom.event(
+                new KeyboardEvent('key', {
+                    keyCode: 9,
+                    ctrlKey: false,
+                    shiftKey: true,
+                    getKey: function () {
+                        return keyCode;
+                    }
+                })
+            );
+            if(element.getParent()) {
+                core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
+            }
+            editor.fire('key', {keyCode: keyCodeToUse, domEvent: ckEditorEvent});
+        },
+
         rejectChange: function(editor, element, numberModule) {
             editor.getSelection().fake(element.getParent());
             var parentElem = element.getAscendant(el => {
@@ -868,16 +895,17 @@ define(function leosTrackChangesModule(require) {
                     element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                 }
                 element.remove();
-            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION
-                || (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW
-                    && element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION)) {
-                if(this.checkIfEmptyListElement(element)) {
-                    this.removeEmptyElement(element, numberModule, editor);
-                } else {
-                this.removeEnterAndJoinLines(element, editor);
-                }
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION) {
+               this.removeEnterInsert(element, editor, numberModule);
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributesForEnter(element);
+            } else if(element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
+                if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
+                    this.removeEnterInsert(element, editor, numberModule);
+                } else if(element.hasAttribute(core.DATA_INDENT_ORIGIN_NUM)) {
+                    //TODO: This need to be improved to identify whether indent/outdent to be done.
+                    this.outdentList(element, editor);
+                }
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
                 element.remove();
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
