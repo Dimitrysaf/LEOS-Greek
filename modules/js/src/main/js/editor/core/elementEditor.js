@@ -665,7 +665,10 @@ define(function elementEditorModule(require) {
         aknOrderedList.each(function() {
             var refersToElement = this.firstChild, newRefersToElement = this.previousSibling;
             var containsRefersToElement = refersToElement && refersToElement.hasAttribute("refersto");
-            var containsNewRefersToElement = !containsRefersToElement && newRefersToElement && newRefersToElement.nodeType === Node.ELEMENT_NODE && newRefersToElement.tagName.toLowerCase() == "p";
+            var containsNewRefersToElement = !containsRefersToElement
+                && newRefersToElement
+                && newRefersToElement.nodeType === Node.ELEMENT_NODE
+                && (newRefersToElement.tagName.toLowerCase() == "p" || newRefersToElement.tagName.toLowerCase() == "br") ;
             if ((containsRefersToElement && isEmpty(refersToElement)) || (containsNewRefersToElement && isEmpty(newRefersToElement))) {
                 isEmptyRefersToElement = true;
             }
