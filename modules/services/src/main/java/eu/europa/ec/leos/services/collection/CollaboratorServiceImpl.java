@@ -206,6 +206,10 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
     private String getEntity(String connectedDG, User user) {
         String entity;
+        if ( user.getEntities() == null ||  user.getEntities().isEmpty()) {
+            LOG.error("User '{}' has no Entity associated", user.getLogin());
+            throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.noEntity", user.getLogin()));
+        }
         if (connectedDG == null) {
             Entity firstEntity = user.getEntities().get(0);
             if (firstEntity == null) {
