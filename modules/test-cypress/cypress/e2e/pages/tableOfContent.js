@@ -40,6 +40,7 @@ class tableOfContent {
         enactingTermsList: () => this.elements.enactingTermsLink().closest('li').find('ul mat-nested-tree-node'),
         // enactingTermsLabelList: () => this.elements.enactingTermsList().find('li.node-li div.label'),
         rightAngleIconOfPreambleLink: () => this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']"),
+        minimizePreambleLink: () => this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-down']"),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
         labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
         revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version'),
@@ -51,6 +52,7 @@ class tableOfContent {
         euiLabelDanger: () => cy.get('span.eui-label--danger'),
         moveOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Move']"),
         placeBeforeOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place before']"),
+        deleteOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Delete']"),
         euiCardHeaderTitle: () => cy.get('eui-card-header-title.eui-card-header__title-container-title')
     }
 
@@ -127,6 +129,10 @@ class tableOfContent {
         this.elements.rightAngleIconOfPreambleLink().click();
     }
 
+    minimizePreambleLink() {
+        this.elements.minimizePreambleLink().click();
+    }
+
     getLabelExtended() {
         return this.elements.labelExtended();
     }
@@ -191,6 +197,14 @@ class tableOfContent {
     clickMinorVersionInEuiCard(minorVersion, EuiCard) {
         this.elements.euiCardHeaderTitle().contains(EuiCard).closest('eui-card.version-panes').find('eui-card-content.eui-u-pb-none').scrollTo('bottom', { duration: 500 });
         this.elements.euiCardHeaderTitle().contains(EuiCard).closest('eui-card.version-panes').find('eui-card-content div.subversions .subversion').contains(minorVersion).find('div input').click();
+    }
+
+    clickDeleteOptionFromDropDownContent() {
+        this.elements.deleteOptionInDropDownContent().click();
+    }
+
+    getNgContent(ngContent){
+        return this.elements.matTree().contains(ngContent);
     }
 }
 export default new tableOfContent();

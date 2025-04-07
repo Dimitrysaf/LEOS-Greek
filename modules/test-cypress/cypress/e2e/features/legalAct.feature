@@ -903,3 +903,38 @@ Feature: Legal Act Page Regression Features
     Then "Archive Version" dialog box window is displayed
     And  click on archive button
     Then subversion of recent changes version card doesn't contain "Article 1 updated"
+
+  # Ticket LEOS#2446 : Error with functionality 'Add Subparagraph' in article edition
+  @addSubParagraph @local
+  Scenario: test add subparagraph functionality for first subparagraph inside article
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation test add subparagraph plugin for article" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click on add subparagraph icon present in ck editor panel
+    And  add "subparagraph 1" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph 1 of paragraph 1 of article 1 contains "Text..."
+    And  content of subparagraph 2 of paragraph 1 of article 1 contains "subparagraph 1"
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of pTag 1 with data-akn-element "subparagraph" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click on add subparagraph icon present in ck editor panel
+    And  add "subparagraph 2" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph 1 of paragraph 1 of article 1 contains "Text..."
+    And  content of subparagraph 2 of paragraph 1 of article 1 contains "subparagraph 2"
+    And  content of subparagraph 3 of paragraph 1 of article 1 contains "subparagraph 1"
+

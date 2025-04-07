@@ -593,3 +593,7 @@ Then('check content inside ckeditor is greater than {int}', function (size) {
         expect(focusedElement[0].innerHTML.length).to.greaterThan(size);
     });
 });
+
+When('click at offset {int} of pTag {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode', function (offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement) {
+    ckEditorWindow.clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement);
+});
