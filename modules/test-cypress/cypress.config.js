@@ -76,6 +76,22 @@ module.exports = defineConfig({
         }
       });
       on('task', {
+        getLatestFileName(folderPath) {
+          const files = fs.readdirSync(folderPath);
+          const sortedFiles = files
+              .map(name => {
+                const filePath = path.join(folderPath, name);
+                return {
+                  name,
+                  time: fs.statSync(filePath).mtime.getTime(),
+                };
+              })
+              .sort((a, b) => b.time - a.time);
+
+          return sortedFiles.length ? sortedFiles[0].name : null;
+        }
+      });
+      on('task', {
         log(message) {
           console.log(message)
           return null
