@@ -4,6 +4,11 @@ import headerPage from "../pages/headerPage";
 
 And(`extract recent {string} file present in download folder`, (extension) => {
     let path = Cypress.config('downloadsFolder');
+    if(extension === "zip"){
+        cy.task('getLatestFileName', path).then((latestFileName) => {
+            expect(latestFileName.startsWith('main-')).to.be.true;
+        });
+    }
     cy.task('getFiles', { downloadsPath: path, extension: extension }).then(before => {
         cy.task('getFiles', { downloadsPath: path, extension: extension }).then(after => {
             const files = after.filter(file => before.includes(file));
