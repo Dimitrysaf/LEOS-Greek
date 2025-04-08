@@ -342,3 +342,18 @@ When('tick on checkbox of minor version {string} in {string} eui-card', function
     tableOfContent.clickMinorVersionInEuiCard(minorVersion, EuiCard);
 });
 
+When(/^click on delete option from eui dropdown content$/, function () {
+    tableOfContent.clickDeleteOptionFromDropDownContent();
+});
+
+Then(/^ngContent "([^"]*)" is showing as strikethrough in toc$/, function (ngContent) {
+    tableOfContent.getNgContent(ngContent).should('have.attr', "class", "label leos-soft-removed");
+});
+
+Then('ngContent {string} is showing as bold in toc', function (ngContent) {
+    tableOfContent.getNgContent(ngContent).should('have.attr', "class", "label leos-soft-new");
+});
+
+When(/^minimize preamble link$/, function () {
+    tableOfContent.minimizePreambleLink();
+});

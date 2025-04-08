@@ -38,7 +38,7 @@ class ckEditorWindow {
         ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2'),
     }
 
-    uploadImageFile(location, iframeClass){
+    uploadImageFile(location, iframeClass) {
         const iframe = cy.get("." + iframeClass).eq(1).its('0.contentDocument.body').then(cy.wrap);
         iframe.find("input[type='file']").invoke('show').selectFile(location).wait(200);
     }
@@ -47,6 +47,7 @@ class ckEditorWindow {
         this.elements.docPurpose().type('{selectall}{del}');
         this.elements.docPurpose().type(content);
     }
+
     getCkEditorDialogHtml() {
         return this.elements.ckEditorDialogHtml();
     }
@@ -121,55 +122,55 @@ class ckEditorWindow {
         this.elements.increaseIndentIcon().click();
     }
 
-    clickSubScriptIcon(){
+    clickSubScriptIcon() {
         this.elements.subScriptBtn().click();
     }
 
-    clickSuperScriptIcon(){
+    clickSuperScriptIcon() {
         this.elements.superScriptBtn().click();
     }
 
-    clickUndoIcon(){
+    clickUndoIcon() {
         this.elements.undoBtn().click();
     }
 
-    clickRedoIcon(){
+    clickRedoIcon() {
         this.elements.redoBtn().click();
     }
 
-    clickInsertFootNoteIcon(){
+    clickInsertFootNoteIcon() {
         this.elements.insertFootNoteIcon().click();
     }
 
-    clickTableIcon(){
+    clickTableIcon() {
         this.elements.tableIcon().click();
     }
 
-    clickMathIcon(){
+    clickMathIcon() {
         this.elements.mathIcon().click();
     }
 
-    clickBoldIcon(){
+    clickBoldIcon() {
         this.elements.boldIcon().click();
     }
 
-    clickSourceIcon(){
+    clickSourceIcon() {
         this.elements.sourceBtn().click();
     }
 
-    clickItalicIcon(){
+    clickItalicIcon() {
         this.elements.italicIcon().click();
     }
 
-    clickChangeTextCaseIcon(){
+    clickChangeTextCaseIcon() {
         this.elements.changeTextCaseIcon().click();
     }
 
-    clickInsertSpecialCharacterIcon(){
+    clickInsertSpecialCharacterIcon() {
         this.elements.insertSpecialCharacterIcon().click();
     }
 
-    clickInsertImageIcon(){
+    clickInsertImageIcon() {
         this.elements.insertImageIcon().click();
     }
 
@@ -197,9 +198,9 @@ class ckEditorWindow {
         this.elements.cutBtn().click();
     }
 
-/*    clickBackgroundColorIcon() {
-        this.elements.backgroundColorBtn().click();
-    }*/
+    /*    clickBackgroundColorIcon() {
+            this.elements.backgroundColorBtn().click();
+        }*/
 
     appendInCkEditorLevel(text, pTagNumber) {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).type(text);
@@ -253,6 +254,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id, child));
     }
 
+    clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("p[data-akn-element='" + pTagDataAknElement + "'").eq(pTagNumber - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
+    }
+
     moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
         this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
     }
@@ -278,11 +283,11 @@ class ckEditorWindow {
     }
 
     getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
-        return  this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li1 - 1);
+        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li1 - 1);
     }
 
     getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) {
-       return  this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement4 + "']").eq(li4 - 1).find("ol li[data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1);
+        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement4 + "']").eq(li4 - 1).find("ol li[data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1);
     }
 
     addContentInThirdLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) {
@@ -350,7 +355,7 @@ class ckEditorWindow {
     }
 
     clickAtSpecificOffsetInSubparagraphOfLevel(offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3) {
-        this.elements.ckEditableInline().find("ol[data-akn-element="+dataAknElement3+"]").find("li[data-akn-element='"+dataAknElement2+"']").find("p[data-akn-element='"+dataAknElement1+"']").eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offSet, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
+        this.elements.ckEditableInline().find("ol[data-akn-element=" + dataAknElement3 + "]").find("li[data-akn-element='" + dataAknElement2 + "']").find("p[data-akn-element='" + dataAknElement1 + "']").eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offSet, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
     }
 
     clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement) {
@@ -366,7 +371,7 @@ class ckEditorWindow {
     }
 
     getAuthorialNoteWithMarkerNumber(markerNumber) {
-        return this.elements.pTag().find("span.authorialnote[marker='"+markerNumber+"']");
+        return this.elements.pTag().find("span.authorialnote[marker='" + markerNumber + "']");
     }
 
     getTagElementFromParagraphOfArticle(paragraphNumber, tagName) {
@@ -374,7 +379,7 @@ class ckEditorWindow {
     }
 
     getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, markerNumber) {
-        return this.getParagraphElementOfArticle(paragraphNumber, 'paragraph').find("span.authorialnote[marker='"+markerNumber+"']");
+        return this.getParagraphElementOfArticle(paragraphNumber, 'paragraph').find("span.authorialnote[marker='" + markerNumber + "']");
     }
 
     selectContent(offsetStart, offsetEnd, element) {
@@ -407,7 +412,7 @@ class ckEditorWindow {
                 range.setEnd(elementToPutCursor, offset);
                 range.collapse(true);
                 range.select();
-                this.elements.ckEditableInline().type('{insert}' + newContent, { delay: 0 });
+                this.elements.ckEditableInline().type('{insert}' + newContent, {delay: 0});
                 editor.fire("change");
             })
         });
@@ -435,7 +440,7 @@ class ckEditorWindow {
                 range.collapse(true);
                 range.select();
                 for (var count = 1; count <= times; count++) {
-                    this.elements.ckEditableInline().type('{' + key + '}', { delay: 0 });
+                    this.elements.ckEditableInline().type('{' + key + '}', {delay: 0});
                 }
                 editor.fire("change");
             })
@@ -461,4 +466,5 @@ class ckEditorWindow {
         });
     }
 }
+
 export default new ckEditorWindow();

@@ -1685,3 +1685,67 @@ Feature: Track Changes Feature
     And  article 6 contains attribute "leos:action" with value "insert"
     When click on versions pane accordion
     Then last subversion of recent changes version card contains "0.1.1Import element(s) inserted"
+
+  # Ticket LEOS#2455 : Track changes- If deleted from TOC, Articles and other elements are getting hard deleted.
+  # Ticket LEOS#2191 : Track changes- Moving an existing Article inside the Chapter is putting all the text inside article in Track changes
+  @deleteElementThoughTOC @moveOldArticleToNewChapter @local
+  Scenario: deletion of element through TOC with track changes and move an existing article to a new chapter with track changes
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "deletion element through track changes" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When click on toc edit button
+    And  click on right angle icon of preamble link
+    And  click on three vertical dots for the element contains text "Having regard to the proposal from the European Commission," in toc
+    And  click on delete option from eui dropdown content
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then ngContent "Having regard to the proposal from the European Commission," is showing as strikethrough in toc
+    When click on three vertical dots for the element contains text "(2) Recital..." in toc
+    And  click on delete option from eui dropdown content
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then ngContent "(2) Recital..." is showing as strikethrough in toc
+    When minimize preamble link
+    And  click on three vertical dots for the element contains text "Article 2 - Definitions Text..." in toc
+    And  click on delete option from eui dropdown content
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then ngContent "Article 2 - Definitions Text..." is showing as strikethrough in toc
+    When click on save and close button in navigation pane
+    And  click on right angle icon of preamble link
+    Then citation 2 contains attribute "leos:action" with value "delete"
+    And  citation 2 contains attribute "leos:softaction" with value "del"
+    And  ngContent "Having regard to the proposal from the European Commission," is showing as strikethrough in toc
+    And  recital 2 contains attribute "leos:action" with value "delete"
+    And  recital 2 contains attribute "leos:softaction" with value "del"
+    And  ngContent "(2) Recital..." is showing as strikethrough in toc
+    And  article 2 contains attribute "leos:action" with value "delete"
+    And  article 2 contains attribute "leos:softaction" with value "del"
+    And  ngContent "Article 2 - Definitions Text..." is showing as strikethrough in toc
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When minimize preamble link
+    And  drag element "Chapter" from element tree list and drop before node label "Article 1 - Scope 1. Text..." in navigation pane
+    Then ngContent "Chapter # Chapter heading..." is showing as bold in toc
+    When click on save and close button in navigation pane
+    Then ngContent "Chapter 1 Chapter heading..." is showing as bold in toc
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When drag node label "Article 1 - Scope 1. Text..." and drop to node label "Chapter 1 Chapter heading..." in navigation pane
+    And  click on save and close button in navigation pane
+    Then chapter 1 contains attribute "leos:action" with value "insert"
+    And  chapter 1 contains attribute "leos:softaction" with value "add"
+    And  article 1 doesn't contain attribute "leos:action"
+    And  article 1 contains attribute "leos:softmove_label" with value "MOVED from Article 1"
