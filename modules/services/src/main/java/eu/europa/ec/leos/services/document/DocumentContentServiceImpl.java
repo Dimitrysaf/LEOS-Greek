@@ -54,7 +54,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
@@ -482,7 +481,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 annexService.updateAnnex((Annex) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
                 break;
             case BILL:
-                billService.updateBill((Bill) xmlDocument, xmlContent, versionComment);
+                billService.updateBill((Bill) xmlDocument, xmlContent, versionComment, true);
                 break;
             case STAT_DIGIT_FINANC_LEGIS:
                 financialStatementService.updateFinancialStatement((FinancialStatement) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
@@ -602,7 +601,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     public XmlDocument updateDocument(XmlDocument document, byte[] xmlContent, String message) {
         switch (document.getCategory()) {
             case BILL:
-                document = billService.updateBill((Bill) document, xmlContent, message);
+                document = billService.updateBill((Bill) document, xmlContent, message, true);
                 break;
             case MEMORANDUM:
                 document = memorandumService.updateMemorandum((Memorandum) document, xmlContent, message);

@@ -258,7 +258,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Bill sourceVersion = billService.findBillByRef(documentRef);
         byte[] resultXmlContent = getContent(targetVersion);
         Bill updatedBill = billService.updateBill(sourceVersion, resultXmlContent,
-                messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
+                messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()), true);
         return this.documentViewService.updateDocumentView(updatedBill);
     }
 
@@ -388,7 +388,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(event.getDocumentRef());
         String comment = messageHelper.getMessage("operation.search.replace.updated");
         Bill updateBill = billService.updateBill(bill, event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
-                comment);
+                comment, true);
         return this.documentViewService.updateDocumentView(updateBill);
     }
 
@@ -425,7 +425,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage(msg, updatedLabel);
-        bill = billService.updateBill(bill, newXmlContent, comment);
+        bill = billService.updateBill(bill, newXmlContent, comment, true);
 
         trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, true);
         return documentViewService.updateDocumentView(bill);
@@ -450,7 +450,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage(msg, updatedLabel);
-        bill = billService.updateBill(bill, newXmlContent, comment);
+        bill = billService.updateBill(bill, newXmlContent, comment, true);
 
         trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, false);
         return documentViewService.updateDocumentView(bill);
@@ -499,7 +499,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
                             ? ".recitals" : "") +
                             (elementIds.stream().anyMatch(s -> s.startsWith("art_")) ? ".articles" : "");
             String operationMessage = messageHelper.getMessage("operation.import.element.inserted");
-            bill = billService.updateBill(bill, newXmlContent, operationMessage);
+            bill = billService.updateBill(bill, newXmlContent, operationMessage, true);
             return this.documentViewService.updateDocumentView(bill);
         } else {
             throw new ImportElementException("Search returned with no result! Please modify the search parameters");
@@ -532,7 +532,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage("operation.element.deleted", updatedLabel);
-        bill = billService.updateBill(bill, newXmlContent, comment);
+        bill = billService.updateBill(bill, newXmlContent, comment, true);
 
         return documentViewService.updateDocumentView(bill);
     }
@@ -553,7 +553,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
                 new CheckinElement(ActionType.DOCUMENT_RENUMBERED));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
 
-        Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
+        Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson, true);
 
         LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS),
                 stopwatch.elapsed(TimeUnit.SECONDS));
@@ -606,7 +606,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
                 }
             }
         }
-        Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
+        Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson, true);
         if(alternateElementId != null && !"null".equals(alternateElementId)) {
             elementId = alternateElementId;
         }
@@ -678,7 +678,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
                 new CheckinElement(ActionType.INSERTED, elementId, elementName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-        bill = billService.updateBill(bill, updatedXmlContent, checkinCommentJson);
+        bill = billService.updateBill(bill, updatedXmlContent, checkinCommentJson, true);
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
         return this.documentViewService.updateDocumentView(bill);
     }
@@ -694,7 +694,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         if (mergeOnElement != null) {
             updatedXmlContent = billProcessor.mergeElement(bill, elementContent, elementTag, elementId);
             bill = billService.updateBill(bill, updatedXmlContent, messageHelper.getMessage("operation.element.updated",
-                    org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
+                    org.apache.commons.lang3.StringUtils.capitalize(elementTag)), true);
             if (bill != null) {
                 LOG.info("Element '{}' merged into '{}' in Bill {} id {})", elementId, mergeOnElement.getElementId(),
                         bill.getName(), bill.getId());

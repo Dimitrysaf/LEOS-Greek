@@ -179,7 +179,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                             updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getBillId(),
                                     cloneProposalMetadataVO);
                             child.setSource(updatedContent);
-                            billService.updateBill(child.getId(), updatedContent);
+                            billService.updateBill(child.getId(), updatedContent, true);
                             break;
                         case MEMORANDUM:
                             updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getMemorandumId(),
@@ -203,7 +203,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                             updatedContent = preserveClonedDocumentProperties(xmlContent, clonedAnnexId,
                                     cloneProposalMetadataVO);
                             child.setSource(updatedContent);
-                            annexService.updateAnnex(child.getId(), updatedContent);
+                            annexService.updateAnnex(child.getId(), updatedContent, true);
                             break;
                         default:
                             LOG.debug("Do nothing for rest of the categories like FS, MEDIA, CONFIG & LEG");

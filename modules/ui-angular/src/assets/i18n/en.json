@@ -668,7 +668,7 @@
   "task.saving.ongoing": "Saving document...",
   "task.refresh.ongoing": "Refreshing document...",
   "task.post-processing.ongoing": "Update of internal references is ongoing.",
-  "task.post-processing.done": "Update of internal references is done. To be able to see the updated references please refresh the document",
+  "task.post-processing.done": "Process of updating documents' internal references is done.",
   "dialog.leos.light.mark.as.done.title": "Mark as Done",
   "dialog.leos.light.mark.as.done.content": "There is no callback address to export. Press Ok to download the document."
 }
