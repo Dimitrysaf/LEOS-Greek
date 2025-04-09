@@ -11,16 +11,19 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFi
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.util.IdGenerator;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.ResourcesUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -75,6 +78,8 @@ public class MetadataServiceImpl implements MetadataService {
                     return MetadataUtil.parseLinkedDocuments(fieldValue);
                 case FINAL_COTE:
                     return MetadataUtil.parseCote(fieldValue, MetadataFieldType.FINAL_COTE);
+                case STAMP:
+                    return MetadataUtil.parseStamp(fieldValue);
                 default:
                     throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
             }
@@ -524,6 +529,45 @@ public class MetadataServiceImpl implements MetadataService {
             final Element referenceElement = createLinkedDocumentElement(reference, xmlFile);
             xmlNodeAssociatedReferences.appendChild(referenceElement);
         }
+    }
+
+    @Override
+    public void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (!MetadataUtil.ONE.equals(fieldInfo.getDisplayValue())) return;
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) return;
+
+        final Node conclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
+        if (conclusions == null) return;
+
+        final Node blockNode = xmlFile.newElement("block");
+        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.NAME, "stamp");
+
+        final String language = readLanguageValue(xmlFile);
+        final String b64Stamp = getLanguageStampAsBase64(language);
+
+        final Node imgNode = xmlFile.newElement("img");
+        XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
+        blockNode.appendChild(imgNode);
+        conclusions.appendChild(blockNode);
+    }
+
+    private String readLanguageValue(XmlUtil.XmlFile xmlFile) {
+        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.FRBRLANGUAGE);
+        if (frbrLanguage == null) {
+            return MetadataUtil.LANGUAGE_EN;
+        }
+
+        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.LANGUAGE);
+        if (!StringUtils.hasLength(value)) {
+            return MetadataUtil.LANGUAGE_EN;
+        }
+        return value.toUpperCase();
+    }
+
+    private String getLanguageStampAsBase64(final String languageShortValue) {
+        final String stampPath = String.format("stamp/%s.gif", languageShortValue);
+        final byte[] stampBytes = ResourcesUtil.readResourceFile(stampPath);
+        return Base64.getEncoder().encodeToString(stampBytes);
     }
 
     private Element createLinkedDocumentElement(final ReferenceFieldInfo reference, XmlUtil.XmlFile xmlFile) {

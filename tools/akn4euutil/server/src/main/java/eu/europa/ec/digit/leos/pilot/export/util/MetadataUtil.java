@@ -74,6 +74,7 @@ public class MetadataUtil {
     public static final String FRBRLANGUAGE="FRBRlanguage";
     public static final String TLCREFERENCE = "TLCReference";
     public static final String PRESERVATION="preservation";
+    public static final String REFERENCES="references";
     public static final String LANGUAGE="language";
     public static final String LANGUAGE_EN="EN";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
@@ -113,6 +114,26 @@ public class MetadataUtil {
             return true;
         }
         return hasDocumentElement(rootNode, "bill");
+    }
+
+    public static boolean isAutonomousAct(final List<XmlFile> xmlFiles) {
+        if (xmlFiles.isEmpty()) {
+            return false;
+        }
+
+        final Optional<XmlFile> optMainXml = xmlFiles.stream().filter(MetadataUtil::isMainDocumentFile).findFirst();
+        if (!optMainXml.isPresent()) {
+            return false;
+        }
+
+        final XmlFile mainXml = optMainXml.get();
+        final Node documentCollection = mainXml.getElementByName("documentCollection");
+        if (documentCollection == null) {
+            return false;
+        }
+
+        final String documentCollectionName = XmlUtil.getNodeAttributeValue(documentCollection, "name");
+        return AUTONOMOUS_ACT_VALUE.equals(documentCollectionName);
     }
 
     public static boolean hasDocumentElement(final Node rootNode, final String docElementName) {
@@ -303,6 +324,10 @@ public class MetadataUtil {
         return new ReferenceFieldInfo("", href, displayValue, "", MetadataFieldType.LINKED_DOCUMENTS);
     }
 
+    public static MetadataFieldInfo parseStamp(String fieldValue) {
+        return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.STAMP);
+    }
+
     public static Node getXmlNodeMetaReference(XmlFile xmlFile, String referenceNodeName) {
         Node xmlNodeMetaReference = null;
 
@@ -343,12 +368,12 @@ public class MetadataUtil {
                 ? hrefAttributeValue.substring(hrefAttributeValue.length() - 3) : null;
     }
 
-    public static Node getLanguageReferenceNode(XmlFile xmlFile) {
-        Node xmlNodeReferences = xmlFile.getElementByName("references");
+    public static Node getLanguageReferenceNode(XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeReferences = xmlFile.getElementByName(REFERENCES);
         if (xmlNodeReferences == null) {
             return null;
         }
-        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, "language");
+        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.LANGUAGE);
     }
 
     public static Node getXmlNodeDocketNumber(Node xmlNode) {
@@ -388,7 +413,7 @@ public class MetadataUtil {
 
     public static boolean isMetaReferenceXmlNode(Node xmlNode) {
         return xmlNode != null
-                && XmlUtil.parentNodeNameEquals(xmlNode, "references")
+                && XmlUtil.parentNodeNameEquals(xmlNode, REFERENCES)
                 && XmlUtil.parentNodeNameEquals(xmlNode.getParentNode(), "meta");
     }
 

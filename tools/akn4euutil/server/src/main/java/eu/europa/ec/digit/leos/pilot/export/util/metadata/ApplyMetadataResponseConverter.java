@@ -53,7 +53,7 @@ public class ApplyMetadataResponseConverter {
         }
     }
 
-    public Element createApplyMetadataResponseXmlRootElement(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse response) {
+    private Element createApplyMetadataResponseXmlRootElement(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse response) {
         Element rootElement = xmlFile.createRoot("legisWriteResponse");
         rootElement.setAttribute("responseId", response.getResponseId());
         rootElement.setAttribute(MetadataUtil.VERSION, response.getVersion());
@@ -61,7 +61,7 @@ public class ApplyMetadataResponseConverter {
         return rootElement;
     }
 
-    public Element createApplyMetadataResponseXmlStatusNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.StatusNode status) {
+    private Element createApplyMetadataResponseXmlStatusNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.StatusNode status) {
         Element statusNode = xmlFile.newElement("status");
         if (status != null){
             statusNode.setAttribute("code", status.getCode());
@@ -71,7 +71,7 @@ public class ApplyMetadataResponseConverter {
         return statusNode;
     }
 
-    public Element createApplyMetadataResponseXmlDocumentNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.DocumentNode document) {
+    private Element createApplyMetadataResponseXmlDocumentNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.DocumentNode document) {
         Element documentNode = xmlFile.newElement(MetadataUtil.DOCUMENT);
         if (document != null){
             documentNode.setAttribute(MetadataUtil.DOCUMENTID, document.getDocumentId());
@@ -83,7 +83,7 @@ public class ApplyMetadataResponseConverter {
         return documentNode;
     }
 
-    public Element createApplyMetadataResponseXmlTaskNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.TaskNode task) {
+    private Element createApplyMetadataResponseXmlTaskNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.TaskNode task) {
         Element taskNode = xmlFile.newElement(MetadataUtil.TASK);
         taskNode.setAttribute(MetadataUtil.TASKID, task.getTaskId());
         taskNode.setAttribute(MetadataUtil.STATUS_CODE, task.getStatusCode());
@@ -99,7 +99,7 @@ public class ApplyMetadataResponseConverter {
         return taskNode;
     }
 
-    public Element createApplyMetadataResponseXmlValidationResultNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.ValidationResultNode validationResult) {
+    private Element createApplyMetadataResponseXmlValidationResultNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.ValidationResultNode validationResult) {
         Element validationResultNode = xmlFile.newElement("validationResult");
         validationResultNode.setAttribute(MetadataUtil.KEY, validationResult.getKey());
         validationResultNode.setAttribute(MetadataUtil.STATUS_CODE, validationResult.getStatusCode());
@@ -107,7 +107,7 @@ public class ApplyMetadataResponseConverter {
         return validationResultNode;
     }
 
-    public Element createApplyMetadataResponseXmlActionNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.ActionNode action) {
+    private Element createApplyMetadataResponseXmlActionNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.ActionNode action) {
         Element actionNode = xmlFile.newElement(MetadataUtil.ACTION);
         actionNode.setAttribute(MetadataUtil.NAME, action.getName());
 
@@ -121,7 +121,7 @@ public class ApplyMetadataResponseConverter {
     }
 
 
-    public Element createApplyMetadataResponseXmlFieldNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.FieldNode field) {
+    private Element createApplyMetadataResponseXmlFieldNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.FieldNode field) {
         Element fieldNode = xmlFile.newElement(MetadataUtil.FIELD);
         fieldNode.setAttribute(MetadataUtil.KEY, field.getKey());
         fieldNode.setAttribute(MetadataUtil.STATUS_CODE, field.getStatusCode());

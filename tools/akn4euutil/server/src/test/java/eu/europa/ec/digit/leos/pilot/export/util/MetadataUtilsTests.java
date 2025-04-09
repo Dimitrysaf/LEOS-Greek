@@ -31,7 +31,6 @@ import java.util.Collections;
  * tests on parsing the linked documents
  */
 public class MetadataUtilsTests {
-
     @Test
     public void testLinkedDocumentsSwdWithDraft() throws MetadataUtilsException {
 

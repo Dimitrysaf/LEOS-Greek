@@ -242,6 +242,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles){
         LOG.debug("Process field info  '{}'", fieldInfo);
 
+        final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
         for (XmlFile xmlFile : documentXmlFiles){
             LOG.debug("Process xml file '{}'", xmlFile.getName());
             switch(fieldInfo.getFieldType()){
@@ -262,6 +263,11 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                     break;
                 case FINAL_COTE:
                     metadataService.processFinalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case STAMP:
+                    if(isAutonomousAct) {
+                        metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    }
                     break;
             }
         }

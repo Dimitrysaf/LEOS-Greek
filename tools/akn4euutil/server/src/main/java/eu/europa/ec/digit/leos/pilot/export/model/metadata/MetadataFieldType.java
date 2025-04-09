@@ -45,6 +45,9 @@ public enum MetadataFieldType {
         if(MetadataFieldType.FINAL_COTE.getTypeName().equals(typeName)){
             return MetadataFieldType.FINAL_COTE;
         }
+        if(MetadataFieldType.STAMP.getTypeName().equals(typeName)){
+            return MetadataFieldType.STAMP;
+        }
         throw new IllegalArgumentException("Invalid metadata type name");
     }
 }
