@@ -81,5 +81,3 @@ When(/^drag row (\d+) and drop on row (\d+) in dialog box window$/, function (dr
 And(/^click on archive button$/, function () {
     euiDialogBoxPage.clickArchiveBtn();
 });
-
-

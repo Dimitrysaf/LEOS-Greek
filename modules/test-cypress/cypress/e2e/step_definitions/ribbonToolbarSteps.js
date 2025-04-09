@@ -107,42 +107,7 @@ When(/^click on zoom out button in ribbon toolbar$/, function () {
 
 When(/^click search button in ribbon toolbar$/, function () {
     ribbonToolbar.clickSearchBtn();
-});
-
-Then(/^document search bar is displayed$/, function () {
-    ribbonToolbar.elements.documentSearchBar().should('be.visible');
-});
-
-When(/^put keyword "([^"]*)" in document search input box$/, function (keyword) {
-    ribbonToolbar.searchInput(keyword);
-});
-
-Then(/^search result is showing "([^"]*)"$/, function (result) {
-    ribbonToolbar.elements.searchResults().should('have.text', result);
-});
-
-Then(/^number of focus search result is (\d+)$/, function (count) {
-    ribbonToolbar.elements.focusSearchResult().should('have.length', count);
-});
-
-Then(/^number of other search results are (\d+)$/, function (count) {
-    ribbonToolbar.elements.otherSearchResult().should('have.length', count);
-});
-
-When(/^click next button in document search bar$/, function () {
-    ribbonToolbar.clickNextBtnInSearchControl();
-});
-
-When(/^click previous button in document search bar$/, function () {
-    ribbonToolbar.clickPreviousBtnInSearchControl();
-});
-
-When(/^click on cancel button in document search bar$/, function () {
-    ribbonToolbar.clickCancelBtnInSearchControl();
-});
-
-Then(/^document search bar is not present$/, function () {
-    ribbonToolbar.elements.documentSearchBar().should('not.exist');
+    cy.wait(1000)
 });
 
 Then(/^mark as done button is displayed in the ribbon toolbar$/, function () {
@@ -164,3 +129,6 @@ Then(/^compare section is not displayed in ribbon toolbar$/, function () {
 Then('eui-label {string} is displayed in compared section of ribbon toolbar', function (euiLabel) {
     ribbonToolbar.elements.comparisonEUILabel().should('have.text', euiLabel);
 });
+
+
+

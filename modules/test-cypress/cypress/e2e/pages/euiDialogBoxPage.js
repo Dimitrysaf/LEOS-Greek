@@ -12,7 +12,7 @@ class euiDialogBoxPage {
         confirmBtn: () => cy.get('eui-dialog-footer button').contains('Confirm '),
         input: () => cy.get('input.eui-input-text'),
         exampleBox: () => cy.get('div.example-box'),
-        exampleBoxNgContent: () => this.elements.exampleBox().find('div')
+        exampleBoxNgContent: () => this.elements.exampleBox().find('div'),
     }
     
     clickDangerButton(){
