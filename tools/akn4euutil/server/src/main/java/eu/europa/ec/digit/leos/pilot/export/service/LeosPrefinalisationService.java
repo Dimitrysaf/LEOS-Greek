@@ -11,10 +11,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.digit.leos.pilot.export.exception;
+package eu.europa.ec.digit.leos.pilot.export.service;
 
-public class MetadataUtilsException extends Exception {
-    public MetadataUtilsException(String errorMessage) {
-        super(errorMessage);
-    }
+import org.springframework.web.multipart.MultipartFile;
+
+public interface LeosPrefinalisationService {
+    byte[] applyMetadata(MultipartFile inputFile);
+    void applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
 }

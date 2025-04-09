@@ -13,8 +13,15 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.exception;
 
-public class MetadataUtilsException extends Exception {
-    public MetadataUtilsException(String errorMessage) {
+public class LeosPrefinalisationException extends Exception {
+
+    private static final long serialVersionUID = 3979802808087284045L;
+
+    public LeosPrefinalisationException(String errorMessage) {
         super(errorMessage);
+    }
+
+    public LeosPrefinalisationException(String errorMessage, Throwable cause) {
+        super(errorMessage, cause);
     }
 }
