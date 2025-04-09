@@ -86,14 +86,22 @@ define(function leosTrackChangesPluginModule(require) {
                     canUndo: true,
                     editorFocus: false,
                     exec: function(editor, element) {
+                        if(element.getName() === 'tr') {
+                            actions.acceptRowChange(editor, element);
+                        } else {
                         actions.acceptChange(editor, element, numberModule);
+                    }
                     }
                 });
                 editor.addCommand("rejectElement", {
                     canUndo: true,
                     editorFocus: false,
                     exec: function(editor, element) {
+                        if(element.getName() === 'tr') {
+                            actions.rejectRowChange(editor, element);
+                        } else {
                         actions.rejectChange(editor, element, numberModule);
+                    }
                     }
                 });
             }

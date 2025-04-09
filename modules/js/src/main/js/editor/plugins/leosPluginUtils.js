@@ -596,6 +596,9 @@ define(function leosPluginUtilsModule(require) {
             }
             element = !!tmpElement ? tmpElement : element;
         }
+        if(!element.getParent()) {
+            return false;
+        }
         return (_isSubparagraph(element) && element.getParent().getName().toLowerCase() != 'ol' && !element.$.previousSibling);
     }
 

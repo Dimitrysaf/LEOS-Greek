@@ -583,6 +583,9 @@ define(function elementEditorModule(require) {
             if(element == child){
                 continue;
             }
+            if(child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '') {
+                continue;
+            }
             if(!UTILS.isEmptyElement(child) ){
                 isSiblingWithContent = true;
                 break;

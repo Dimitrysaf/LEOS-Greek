@@ -914,11 +914,7 @@ define(function leosTrackChangesModule(require) {
                 } else {
                     var liParentElement = element.getAscendant("li");
                     var pParentElement = element.getAscendant("p");
-                    var parent = element.getParent();
                     element.remove();
-                    if(leosPluginUtils.isSubparagraph(parent) && parent.getText().trim() === '') {
-                        parent.remove();
-                    }
                     if(liParentElement) {
                         editor.getSelection().fake(liParentElement);
                         if (this.checkIfEmptyListElement(liParentElement)) {

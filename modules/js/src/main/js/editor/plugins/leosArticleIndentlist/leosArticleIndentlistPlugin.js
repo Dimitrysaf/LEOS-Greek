@@ -128,13 +128,16 @@ define(function leosArticleIndentListPluginModule(require) {
                                 return TRISTATE_OFF;
                             }
                         } : function(editor, path) {
+                            var isSubParagraph = leosPluginUtils.isSubparagraphInPath(path);
+                            if (isSubParagraph) {
+                                return TRISTATE_DISABLED;
+                            }
                             var range = getSelectedRange(editor);
                             path = leosPluginUtils.selectCorrectPathForList(range, path, false);
                             path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext(path);
-                            var isSubParagraph = leosPluginUtils.isSubparagraphInPath(path);
                             // custom code to disable the outdent toolbar button for first level list items.
-                            if (isSubParagraph || leosPluginUtils.calculateListLevel(path.lastElement)<=1) {
+                            if (leosPluginUtils.calculateListLevel(path.lastElement)<=1) {
                                 return TRISTATE_DISABLED;
                             } else if (!list || isFirstLevelList(editor, list)) {
                                 return TRISTATE_DISABLED;
