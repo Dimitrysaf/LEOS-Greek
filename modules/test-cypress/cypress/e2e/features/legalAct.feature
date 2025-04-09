@@ -162,21 +162,6 @@ Feature: Legal Act Page Regression Features
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is maximized
-    And  toc editing button is displayed and enabled
-    When click search button in ribbon toolbar
-    Then document search bar is displayed
-    When put keyword "regard" in document search input box
-    Then search result is showing "1 of 7"
-    And  number of focus search result is 1
-    And  number of other search results are 6
-    When click next button in document search bar
-    Then search result is showing "2 of 7"
-    When click next button in document search bar
-    Then search result is showing "3 of 7"
-    When click previous button in document search bar
-    Then search result is showing "2 of 7"
-    When click on cancel button in document search bar
-    Then document search bar is not present
     When click on toc edit button
     Then cancel button is displayed and enabled in navigation pane
     Then below element lists are displayed in Elements menu
@@ -938,3 +923,48 @@ Feature: Legal Act Page Regression Features
     And  content of subparagraph 2 of paragraph 1 of article 1 contains "subparagraph 2"
     And  content of subparagraph 3 of paragraph 1 of article 1 contains "subparagraph 1"
 
+  @searchAndReplaceLimitNumbers @local
+  Scenario: search and limit numbers and replace search word
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation search and replace testing" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And  search button is displayed in ribbon toolbar
+    When click search button in ribbon toolbar
+    Then document search bar is displayed
+    When put keyword "the" in document search input box
+    Then search result is showing "1 of 26"
+    Then total occurrences of keyword "the" is "26"
+    When click on the replace button from search bar
+    Then document replace bar is displayed
+    When put keyword "that" in replace document search input box
+    When click on replace all button from document replace bar
+    Then "Replace all text" dialog box window is displayed
+    When click on ok button in dialog box window
+    And  click on save and close button from search bar
+    And  click search button in ribbon toolbar
+    Then document search bar is displayed
+    When put keyword "the" in document search input box
+    Then total occurrences of keyword "the" is "0"
+    And  search result is showing "Not Found"
+    When put keyword "regard" in document search input box
+    Then search result is showing "1 of 4"
+    And  number of focus search result is 1
+    And  number of other search results are 3
+    When click next button in document search bar
+    Then search result is showing "2 of 4"
+    When click next button in document search bar
+    Then search result is showing "3 of 4"
+    When click previous button in document search bar
+    Then search result is showing "2 of 4"
+    When click on cancel button in document search bar
+    Then document search bar is not present
