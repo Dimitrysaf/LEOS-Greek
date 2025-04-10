@@ -110,7 +110,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
 
         Memorandum memorandum = cast(categoryTemplateMap.get(MEMORANDUM));
-        if (memorandum != null) {
+        if (memorandum != null && isToCreateDocument(categoryTemplateMap.get(MEMORANDUM).getName(), templatePropertiesMap)) {
             MemorandumContextService memorandumContext = memorandumContextProvider.get();
             memorandumContext.usePackage(leosPackage);
             memorandumContext.useTemplate(memorandum);
@@ -124,7 +124,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         }
 
         Bill bill = cast(categoryTemplateMap.get(BILL));
-        if(bill != null) {
+        if(bill != null && isToCreateDocument(categoryTemplateMap.get(BILL).getName(), templatePropertiesMap)) {
             BillContextService billContext = billContextProvider.get();
             billContext.usePackage(leosPackage);
             billContext.useTemplate(bill);
@@ -136,7 +136,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         }
 
         FinancialStatement financialStatement = cast(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS));
-        if (financialStatement != null) {
+        if (financialStatement != null && isToCreateDocument(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName(), templatePropertiesMap)) {
             FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
             financialStatementContext.usePackage(leosPackage);
             String financialStatementTemplate = categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName();
@@ -152,6 +152,16 @@ public class CollectionContextProposalService extends CollectionContextService {
             proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_DIGIT_FINANC_LEGIS);
         }
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    private boolean isToCreateDocument(String templateName, Map<String, String> templatePropertiesMap) {
+        if (templatePropertiesMap.get(DOCUMENT_MANDATORY_TEMPLATES).contains(templateName)) {
+            return true;
+        }
+        if (templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES).contains(templateName)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

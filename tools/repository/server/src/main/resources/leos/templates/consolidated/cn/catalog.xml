@@ -80,7 +80,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="true">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -144,7 +144,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="true">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -212,7 +212,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="false">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -266,7 +266,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="false">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -320,7 +320,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="false">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
