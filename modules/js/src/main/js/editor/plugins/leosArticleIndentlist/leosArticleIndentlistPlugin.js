@@ -31,6 +31,7 @@ define(function leosArticleIndentListPluginModule(require) {
     var LOG = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var leosPluginUtils = require("plugins/leosPluginUtils");
+    var LODASH = require("lodash");
 
     var pluginName = "leosArticleIndentlist";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
@@ -110,34 +111,33 @@ define(function leosArticleIndentListPluginModule(require) {
                 this.jobs[this.isIndent ? 10 : 30] = {
                     refresh: this.isIndent ?
                         function(editor, path) {
+                            var clonedPath = LODASH.cloneDeep(path);
                             var range = getSelectedRange(editor);
-                            path = leosPluginUtils.selectCorrectPathForList(range, path, true);
-                            path = leosPluginUtils.manageSubparagraphs(range, path);
-                            var list = this.getContext( path );
-                            var isListEnding = leosPluginUtils.isListEnding(path.lastElement);
+                            clonedPath = leosPluginUtils.selectCorrectPathForList(range, clonedPath, true);
+                            clonedPath = leosPluginUtils.manageSubparagraphs(range, clonedPath);
+                            var list = this.getContext( clonedPath );
+                            var isListEnding = leosPluginUtils.isListEnding(clonedPath.lastElement);
                             if (isListEnding) {
                                 return TRISTATE_OFF;
-                            } else if (leosPluginUtils.isSubparagraph(path.lastElement)
-                                        && leosPluginUtils.calculateListLevel(path.lastElement)<LOCAL_MAX_LEVEL_LIST) {
+                            } else if (leosPluginUtils.isSubparagraph(clonedPath.lastElement)
+                                        && leosPluginUtils.calculateListLevel(clonedPath.lastElement)<LOCAL_MAX_LEVEL_LIST) {
                                 return TRISTATE_OFF;
                             } else if (!list
-                                || firstItemInPath( this.context, path, list )
+                                || firstItemInPath( this.context, clonedPath, list )
                                 || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST)) {
                                 return TRISTATE_DISABLED;
                             } else {
                                 return TRISTATE_OFF;
                             }
                         } : function(editor, path) {
-                            var isSubParagraph = leosPluginUtils.isSubparagraphInPath(path);
-                            if (isSubParagraph) {
-                                return TRISTATE_DISABLED;
-                            }
+                            var clonedPath = LODASH.cloneDeep(path);
                             var range = getSelectedRange(editor);
-                            path = leosPluginUtils.selectCorrectPathForList(range, path, false);
-                            path = leosPluginUtils.manageSubparagraphs(range, path);
-                            var list = this.getContext(path);
+                            clonedPath = leosPluginUtils.selectCorrectPathForList(range, clonedPath, false);
+                            clonedPath = leosPluginUtils.manageSubparagraphs(range, clonedPath);
+                            var list = this.getContext(clonedPath);
+                            var isSubParagraph = leosPluginUtils.isSubparagraphInPath(clonedPath);
                             // custom code to disable the outdent toolbar button for first level list items.
-                            if (leosPluginUtils.calculateListLevel(path.lastElement)<=1) {
+                            if (isSubParagraph || leosPluginUtils.calculateListLevel(clonedPath.lastElement)<=1) {
                                 return TRISTATE_DISABLED;
                             } else if (!list || isFirstLevelList(editor, list)) {
                                 return TRISTATE_DISABLED;
