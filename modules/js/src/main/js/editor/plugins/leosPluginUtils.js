@@ -596,6 +596,9 @@ define(function leosPluginUtilsModule(require) {
             }
             element = !!tmpElement ? tmpElement : element;
         }
+        if(!element.getParent()) {
+            return false;
+        }
         return (_isSubparagraph(element) && element.getParent().getName().toLowerCase() != 'ol' && !element.$.previousSibling);
     }
 
@@ -1720,6 +1723,7 @@ define(function leosPluginUtilsModule(require) {
         CN: CN,
         DATA_AKN_NUM: DATA_AKN_NUM,
         DATA_AKN_NUM_ID: DATA_AKN_NUM_ID,
+        DATA_INDENT_ORIGIN_NUMBER: DATA_INDENT_ORIGIN_NUMBER,
         DATA_INDENT_ORIGIN_NUM_ID: DATA_INDENT_ORIGIN_NUM_ID,
         DATA_AKN_WRAPPED_CONTENT_ID: DATA_AKN_WRAPPED_CONTENT_ID,
         DATA_AKN_MP_ID: DATA_AKN_MP_ID,

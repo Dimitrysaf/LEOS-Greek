@@ -580,7 +580,7 @@ define(function elementEditorModule(require) {
         let isSiblingWithContent = false;
         var childNodes = $(element).parent()[0].childNodes;
         for(var child of childNodes){
-            if(element == child){
+            if(element == child || (child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '')){
                 continue;
             }
             if(!UTILS.isEmptyElement(child) ){
