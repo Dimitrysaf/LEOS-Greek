@@ -13,10 +13,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 abstract class DataUploadService {
     public static final Logger LOG = LoggerFactory.getLogger(DataUploadService.class);
+    private static final String FILE_NOT_TO_LOAD = "README.txt";
 
     @Value("${spring.profiles.active}")
     private String dbProfile;
@@ -36,6 +38,7 @@ abstract class DataUploadService {
             Resource[] resources = resourcePatternResolver.getResources("classpath*:" + configFolderPath + "/*/" + subdirectory + "/*");
 
             // Extracting unique version folders
+            Pattern versionPattern = Pattern.compile("^[0-9]+(\\.[0-9]+)*$");
             List<String> versionFolders = Arrays.stream(resources)
                     .map(resource -> {
                         try {
@@ -46,7 +49,7 @@ abstract class DataUploadService {
                             return null;
                         }
                     })
-                    .filter(versionFolder -> versionFolder != null)
+                    .filter(versionFolder -> versionFolder != null && versionPattern.matcher(versionFolder).matches())
                     .distinct()
                     .sorted()
                     .collect(Collectors.toList());
@@ -70,6 +73,7 @@ abstract class DataUploadService {
         try {
             LOG.info("Loading custom resources from: classpath:{}/*", customConfigFolderPath);
             Resource[] customResources = resourcePatternResolver.getResources("classpath*:" + customConfigFolderPath + "/*");
+            customResources = Arrays.stream(customResources).filter(resource -> !FILE_NOT_TO_LOAD.equals(resource.getFilename())).toArray(Resource[]::new);
             loadConfigDataFromFilesInVersionFolder(customConfigVersion, customResources);
         } catch (IOException e) {
             LOG.error("Unable to read files from the custom folder", e);
