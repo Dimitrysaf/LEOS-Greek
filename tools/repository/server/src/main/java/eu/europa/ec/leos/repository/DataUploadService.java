@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 abstract class DataUploadService {
     public static final Logger LOG = LoggerFactory.getLogger(DataUploadService.class);
+    private static final FILE_NOT_TO_LOAD = "README.txt";
 
     @Value("${spring.profiles.active}")
     private String dbProfile;
@@ -72,6 +73,7 @@ abstract class DataUploadService {
         try {
             LOG.info("Loading custom resources from: classpath:{}/*", customConfigFolderPath);
             Resource[] customResources = resourcePatternResolver.getResources("classpath*:" + customConfigFolderPath + "/*");
+            customResources = Arrays.stream(customResources).filter(resource -> !FILE_NOT_TO_LOAD.equals(resource.getFilename())).toArray();
             loadConfigDataFromFilesInVersionFolder(customConfigVersion, customResources);
         } catch (IOException e) {
             LOG.error("Unable to read files from the custom folder", e);
