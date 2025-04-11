@@ -221,7 +221,9 @@ export class ProposalDraftsComponent
       ),
       content: this.translate.instant(
         'page.collection.drafts.financial-statement.delete.confirm-dialog.body',
-      ),
+      ) + (this.createOptions['FS-001'] === 'DEFAULT_TRUE' ? '<br/>' + this.translate.instant(
+        'page.collection.drafts.financial-statement.delete.confirm-dialog.justification',
+      ): ""),
       acceptLabel: this.translate.instant('global.actions.delete'),
       accept: () => {
         this.proposalDetailsService.deleteFinancialStatement(
