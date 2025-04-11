@@ -1292,7 +1292,11 @@ define(function leosAnnexIndentListPluginModule(require) {
      */
     function _isDownsideDepthMoreThanThreshold(element, stopLevel) {
         var level = 0;
-        var childList = element.getChildren();
+        if(!(element instanceof CKEDITOR.dom.element)){
+            return false;
+        }
+        var childList =  element.getChildren();
+
         for (var child_idx = 0; child_idx < childList.count(); child_idx++) {
             var child = childList.getItem(child_idx);
             var child_name = leosPluginUtils.getElementName(child);
