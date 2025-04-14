@@ -168,7 +168,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -180,7 +179,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
@@ -955,7 +953,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, proposal, xmlClonedContent);
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, proposal, tocItemList, intRefMap);
         proposal = updateEEARelevance(proposal, event);
-        xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
+        xmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
         updateProposalContent(proposal, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"), mergeActionKey);
         if(event.isAllContributions()) {
             markRevisionAsProcessed(event.getMergeActionVOS().get(0).getContributionVO().getDocumentId(), "contribution.accept.all.notification.message");

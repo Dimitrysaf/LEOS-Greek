@@ -376,7 +376,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 xmlContent = this.numberService.renumberParagraph(xmlContent);
                 xmlContent = this.numberService.renumberDivisions(xmlContent);
             }
-            xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
+            xmlContent = this.xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
             if (document.getCategory().equals(LeosCategory.PROPOSAL)) {
                 document = proposalService.updateProposal(
                         (Proposal) document,

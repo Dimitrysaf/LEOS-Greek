@@ -117,7 +117,7 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
 
     @InjectMocks
     private ElementProcessor<Explanatory> elementProcessor = new ElementProcessorImpl<>(xmlContentProcessor,
-            structureContextProvider, cloneContext, xPathCatalog, documentContentService, compareService);
+            structureContextProvider, cloneContext, xPathCatalog);
 
     protected ParentChildConverter parentChildConverter = new ParentChildConverter();
     @InjectMocks

@@ -667,6 +667,8 @@
   "editor-switch-annex-structure-to-level-content": "You are about to change the Annex structure into one based on Level. <br> <span style=\"color: red;\"> This action will delete all content that may already exists in Annex </span> <br> Are you sure you want to switch current structure to the Level type?",
   "task.saving.ongoing": "Saving document...",
   "task.refresh.ongoing": "Refreshing document...",
+  "task.post-processing.ongoing": "Update of internal references is ongoing.",
+  "task.post-processing.done": "Update of internal references is done. To be able to see the updated references please refresh the document",
   "dialog.leos.light.mark.as.done.title": "Mark as Done",
   "dialog.leos.light.mark.as.done.content": "There is no callback address to export. Press Ok to download the document."
 }

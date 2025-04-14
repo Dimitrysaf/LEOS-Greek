@@ -141,7 +141,6 @@ public class BillProcessorImplTest extends LeosTest {
                 updatedByteContent);
         when(numberService.renumberArticles(updatedByteContent)).thenReturn(renumberdContent);
         when(xmlContentProcessor.doXMLPostProcessing(argThat(is(renumberdContent)))).thenReturn(renumberdContent);
-        when(xmlContentProcessor.doXMLPostProcessing(argThat(is(renumberdContent)))).thenReturn(renumberdContent);
         when(messageHelper.getMessage("toc.item.template.article.content.text")).thenReturn("Text...");
 
         // DO THE ACTUAL CALL

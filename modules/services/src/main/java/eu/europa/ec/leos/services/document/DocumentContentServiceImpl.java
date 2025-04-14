@@ -624,7 +624,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 throw new UnsupportedOperationException("Invalid Document Type category : " + document.getCategory());
         }
         try {
-            document = updateInternalReferencesAsync(document, LeosCategoryClass.caseInsensitiveValueOf(document.getCategory().name()));
+            updateInternalReferencesAsync(document, LeosCategoryClass.caseInsensitiveValueOf(document.getCategory().name()));
             if(!document.getCategory().equals(LeosCategoryClass.PROPOSAL)) {
                 updateProposalAsync(document, message);
             }
@@ -635,7 +635,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return document;
     }
 
-    private XmlDocument updateInternalReferencesAsync(XmlDocument document, LeosCategoryClass category) {
+    private void updateInternalReferencesAsync(XmlDocument document, LeosCategoryClass category) {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(document.getId(),
                     document.getMetadata().get().getRef()));
@@ -643,8 +643,6 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
-        //fetch updated version
-        return getDocumentById(document.getId(), category);
     }
 
     private void updateDocPurposeInChildDocuments(Proposal proposal, String message) {

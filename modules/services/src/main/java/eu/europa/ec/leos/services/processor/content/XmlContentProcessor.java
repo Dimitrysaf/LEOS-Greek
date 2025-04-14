@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
@@ -24,7 +25,6 @@ import io.atlassian.fugue.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,9 +87,11 @@ public interface XmlContentProcessor {
 
     byte[] doXMLPreProcessing(byte[] xmlContent);
 
-    byte[] doXMLPostProcessing(byte[] xmlContent);
+    byte[] doXMLPostProcessingWithInternalRefs(byte[] xmlContent);
 
-    Document doXMLPostProcessingOnDocument(byte[] xmlContent);
+    Document doXMLPostProcessingOnDocumentWithInternalRefs(byte[] xmlContent);
+
+    byte[] doXMLPostProcessing(byte[] xmlContent);
 
     byte[] cleanSoftActionsAndRemoveMiscAttributes(byte[] xmlContent);
 
@@ -100,6 +102,8 @@ public interface XmlContentProcessor {
     byte[] cleanMiscAttributes(byte[] xmlContent);
 
     byte[] updateReferencesOnImport(byte[] xmlContent, Map<String, String> refsMatching) throws Exception;
+
+    String updateReferences(String content, XmlDocument xmlDocument) throws Exception;
 
     byte[] updateReferences(byte[] xmlContent) throws Exception;
 

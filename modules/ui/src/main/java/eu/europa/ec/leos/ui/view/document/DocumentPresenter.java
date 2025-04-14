@@ -216,7 +216,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
@@ -836,7 +835,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             }
         }
         // we are combining two operations (get toc + get selected element ancestors)
-        documentScreen.setTocAndAncestors(packageService.getTableOfContent(bill.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN), elementAncestorsIds);
+        documentScreen.setTocAndAncestors(packageService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN), elementAncestorsIds);
     }
 
     @Subscribe
@@ -1366,7 +1365,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         xmlContent = numberService.renumberArticles(xmlContent, true);
         xmlContent = numberService.renumberRecitals(xmlContent);
-        xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
+        xmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
         bill = billService.updateBill(bill, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"));
         if (bill != null) {
             eventBus.post(new RefreshDocumentEvent());

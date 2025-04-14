@@ -461,14 +461,14 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(document);
         when(packageService.findPackageByDocumentId(document.getId())).thenReturn(leosPackage);
-        when(packageService.getTableOfContent(docRef, TocMode.SIMPLIFIED_CLEAN)).thenReturn(tableOfContentItemVoMap);
+        when(packageService.getTableOfContent(document, TocMode.SIMPLIFIED_CLEAN)).thenReturn(tableOfContentItemVoMap);
         when(billService.getAncestorsIdsForElementId(document, selectedNodeId)).thenReturn(ancestorsIds);
 
         // DO THE ACTUAL CALL
         documentPresenter.fetchTocAndAncestors(new FetchCrossRefTocRequestEvent(selectedNodeId));
 
         verify(billService).findBillByRef(docRef);
-        verify(packageService).getTableOfContent(docRef, TocMode.SIMPLIFIED_CLEAN);
+        verify(packageService).getTableOfContent(document, TocMode.SIMPLIFIED_CLEAN);
         verify(billService).getAncestorsIdsForElementId(document, selectedNodeId);
         verify(documentScreen).setTocAndAncestors(argThat(sameInstance(tableOfContentItemVoMap)), argThat(sameInstance(ancestorsIds)));
         verifyNoMoreInteractions(billService, documentScreen);

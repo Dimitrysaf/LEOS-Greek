@@ -580,6 +580,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         this.populateCloneProposalMetadata(bill);
         String language = bill.getMetadata().get().getLanguage();
         documentLanguageContext.setDocumentLanguage(language);
+        elementFragment = elementProcessor.updateReferences(elementFragment, bill);
         byte[] newXmlContent = billProcessor.updateElement(bill, elementName, elementId, elementFragment);
         if (newXmlContent == null) {
             throw new UnexpectedException("Error updating bill");
