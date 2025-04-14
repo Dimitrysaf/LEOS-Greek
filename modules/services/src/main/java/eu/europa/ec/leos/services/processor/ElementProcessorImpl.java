@@ -18,8 +18,6 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.clone.CloneContext;
-import eu.europa.ec.leos.services.compare.ContentComparatorService;
-import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -44,19 +42,14 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
     private Provider<StructureContext> structureContextProvider;
     private CloneContext cloneContext;
     private XPathCatalog xPathCatalog;
-    private DocumentContentService documentContentService;
-    private ContentComparatorService compareService;
 
     @Autowired
     public ElementProcessorImpl(XmlContentProcessor xmlContentProcessor, Provider<StructureContext> structureContextProvider,
-                                CloneContext cloneContext, XPathCatalog xPathCatalog, DocumentContentService documentContentService,
-                                ContentComparatorService compareService) {
+                                CloneContext cloneContext, XPathCatalog xPathCatalog) {
         this.xmlContentProcessor = xmlContentProcessor;
         this.structureContextProvider = structureContextProvider;
         this.cloneContext = cloneContext;
         this.xPathCatalog = xPathCatalog;
-        this.documentContentService = documentContentService;
-        this.compareService = compareService;
     }
 
     @Override
@@ -203,5 +196,16 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
 
     private boolean isClonedProposal() {
         return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
+    @Override
+    public String updateReferences(String content, XmlDocument xmlDocument) {
+        Validate.notNull(content, "Content is required.");
+
+        try {
+            return xmlContentProcessor.updateReferences(content, xmlDocument);
+        } catch (Exception e) {
+            return content;
+        }
     }
 }

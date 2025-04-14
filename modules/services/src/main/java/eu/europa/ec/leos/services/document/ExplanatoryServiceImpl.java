@@ -144,7 +144,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         return explanatory;
     }
 
-    private Explanatory updateInternalReferencesAsync(Explanatory explanatory) {
+    private void updateInternalReferencesAsync(Explanatory explanatory) {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(explanatory.getId(),
                     explanatory.getMetadata().get().getRef()));
@@ -152,8 +152,6 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
-        //fetch updated version
-        return findExplanatory(explanatory.getId());
     }
 
     @Override
@@ -161,7 +159,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Updating Explanatory Xml Content... [id={}]", explanatory.getId());
         documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedExplanatoryContent, versionType, comment);
-        explanatory = updateInternalReferencesAsync(explanatory);
+        updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(explanatory, updatedExplanatoryContent));
 
@@ -175,7 +173,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         byte[] updatedBytes = updateDataInXml(getContent(explanatory), updatedMetadata);
         documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedMetadata, updatedBytes, versionType, comment);
-        explanatory = updateInternalReferencesAsync(explanatory);
+        updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(explanatory, updatedBytes));
 
@@ -190,7 +188,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         updatedExplanatoryContent = updateDataInXml(updatedExplanatoryContent, metadata);
         documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedExplanatoryContent, versionType, comment);
-        explanatory = updateInternalReferencesAsync(explanatory);
+        updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(explanatory, updatedExplanatoryContent));
 
@@ -204,7 +202,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedExplanatoryContent, VersionType.MINOR, comment);
-        explanatory = updateInternalReferencesAsync(explanatory);
+        updateInternalReferencesAsync(explanatory);
         LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return explanatory;
     }
@@ -215,7 +213,8 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         final byte[] updatedBytes = getContent(explanatory);
         documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateMilestoneComments(explanatory.getId(), milestoneComments, updatedBytes, versionType, comment);
-        return updateInternalReferencesAsync(explanatory);
+        updateInternalReferencesAsync(explanatory);
+        return explanatory;
     }
 
     @Override
@@ -223,7 +222,8 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Updating Explanatory... [id={}, milestoneComments={}]", explanatoryId, milestoneComments);
         Explanatory explanatory = explanatoryRepository.updateMilestoneComments(ref, explanatoryId, milestoneComments);
         documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
-        return updateInternalReferencesAsync(explanatory);
+        updateInternalReferencesAsync(explanatory);
+        return explanatory;
     }
 
     @Override
@@ -268,7 +268,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         }
         newXmlContent = numberService.renumberParagraph(newXmlContent);
         newXmlContent = numberService.renumberDivisions(newXmlContent);
-        newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
+        newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
 
         return updateExplanatory(explanatory, newXmlContent, VersionType.MINOR, actionMsg);
     }
@@ -281,7 +281,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     private byte[] updateDataInXml(final byte[] content, ExplanatoryMetadata dataObject) {
         documentLanguageContext.setDocumentLanguage(dataObject.getLanguage());
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
-        return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
     }
 
     @Override

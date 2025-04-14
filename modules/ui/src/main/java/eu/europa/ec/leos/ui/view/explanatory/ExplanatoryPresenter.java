@@ -1362,7 +1362,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             }
         }
         // we are combining two operations (get toc + get selected element ancestors)
-        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(explanatory.getMetadata().get().getRef(),
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(explanatory,
                 TocMode.SIMPLIFIED_CLEAN);
         eventBus.post(new FetchCrossRefTocResponseEvent(
                 new TocAndAncestorsVO(tocItemList, elementAncestorsIds, messageHelper, structureContextProvider.get().getNumberingConfigs())));

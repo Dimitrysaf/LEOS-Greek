@@ -468,7 +468,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 .thenReturn(new Result<>("", ErrorCode.DOCUMENT_REFERENCE_NOT_VALID));
 
         // When
-        byte[] resultBytes = xercesXmlContentProcessor.doXMLPostProcessing(xml);
+        byte[] resultBytes = xercesXmlContentProcessor.updateReferences(xml);
 
         // Then
         String result = new String(resultBytes, UTF_8);
@@ -699,15 +699,15 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing() {
+    public void test_doXMLPostProcessingWithInternalRefs() {
         byte[] documentXml = TestUtils.getFileContent(FILE_PREFIX + "/docContent_noIds.xml");
-        byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessing(documentXml);
+        byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessingWithInternalRefs(documentXml);
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/docContent_noIds_postProcessed.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(new String(returnedElement)));
     }
 
     @Test
-    public void test_doXMLPostProcessing_clonedProposal_ECOrigin_shouldOnlyChangeLabel() {
+    public void test_doXMLPostProcessing_WithInternalRefs_clonedProposal_ECOrigin_shouldOnlyChangeLabel() {
         //Given
         byte[] documentXml = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_ECOrigin.xml");
         when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
@@ -731,7 +731,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                         null));
 
         // When
-        byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessing(documentXml);
+        byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessingWithInternalRefs(documentXml);
         String result = squeezeXmlRemovingAttributeAndRemoveAllNS(new String(returnedElement, UTF_8), "leos:title");
         result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:action");
         result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:uid");
@@ -742,7 +742,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_clonedProposal_noOriginAttribute_shouldAddSoftAttributes() {
+    public void test_doXMLPostProcessing_WithInternalRefs_clonedProposal_noOriginAttribute_shouldAddSoftAttributes() {
         //Given
         byte[] documentXml = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_noOriginAttribute.xml");
         when(cloneContext.isClonedProposal()).thenReturn(true);
@@ -767,7 +767,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                         null));
 
         // When
-        byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessing(documentXml);
+        byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessingWithInternalRefs(documentXml);
         String result = squeezeXmlRemovingAttributeAndRemoveAllNS(new String(returnedElement, UTF_8), "leos:title");
         result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:action");
         result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:uid");

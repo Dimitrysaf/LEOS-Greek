@@ -271,14 +271,14 @@ public class BillContext {
         }
 
         final String updateRefsComment = messageHelper.getMessage("internal.ref.updatedOnImport");
-        final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessing(bill.getContent().get().getSource().getBytes()); //updateRefs
+        final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(bill.getContent().get().getSource().getBytes()); //updateRefs
         billService.updateBill(bill, updatedBytes, updateRefsComment);
         for (Annex annex : annexes) {
             DocumentVO docChild = billDocument.getChildDocuments().stream()
                     .filter(p -> Integer.parseInt(p.getMetadata().getIndex()) == annex.getMetadata().get().getIndex())
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
-            byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
+            byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(docChild.getSource());  //updateRefs
             annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment);
         }
 

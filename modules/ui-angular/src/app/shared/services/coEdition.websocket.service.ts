@@ -47,6 +47,9 @@ export class CoEditionServiceWS {
   //group per element id for the document being edited by the user
   private coEditionForDocument: BehaviorSubject<Record<string, CoEditionVO[]>> =
     new BehaviorSubject(null);
+  //group per element id for the document being edited by the user
+  private coEditionForPostProcessing: BehaviorSubject<string> =
+    new BehaviorSubject(null);
   //presenter id of the active editor page
   private presenterIDBS: BehaviorSubject<string> = new BehaviorSubject('');
   //handle update on the documents
@@ -278,6 +281,10 @@ export class CoEditionServiceWS {
     return this.coEditionForDocument.getValue();
   }
 
+  getPostProcessingCoEditionInfo() {
+    return this.coEditionForPostProcessing.asObservable();
+  }
+
   get allCoEditionInfo(): Observable<Record<string, CoEditionVO[]>> {
     return this.groupedCoEditionsById.asObservable();
   }
@@ -352,6 +359,12 @@ export class CoEditionServiceWS {
     );
   }
 
+  private handleCoEditForPostProcessing(coEdit: CoEditionUpdate) {
+    if (this.user.login === coEdit.user.login) {
+      this.coEditionForPostProcessing.next(coEdit.documentId);
+    }
+  }
+
   private handleDocumentChannel(message: Stomp.Message) {
     const coEdits = JSON.parse(message.body) as CoEditionVO[];
     const groupedCoEdits = groupBy<CoEditionVO>(coEdits, 'documentId');
@@ -364,7 +377,11 @@ export class CoEditionServiceWS {
     this.forceReloadBS.next(false);
     if ('user' in coEdits) {
       const coEditUpdate = coEdits as CoEditionUpdate;
-      this.shouldUpdateBS.next(coEditUpdate);
+      if (coEditUpdate.infoType === 'DOCUMENT_POST_PROCESSING') {
+        this.handleCoEditForPostProcessing(coEditUpdate);
+      } else {
+        this.shouldUpdateBS.next(coEditUpdate);
+      }
     }
     //handle operation logic
     if ('operation' in coEdits) {

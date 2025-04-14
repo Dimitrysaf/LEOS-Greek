@@ -87,7 +87,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad", false);
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
-        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        xercesXmlContentProcessor.doXMLPostProcessingWithInternalRefs(doc);
         String result = XercesUtils.nodeToString(doc);
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
@@ -100,7 +100,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad", false);
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
-        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        xercesXmlContentProcessor.doXMLPostProcessingWithInternalRefs(doc);
         String result = XercesUtils.nodeToString(doc);
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
@@ -113,7 +113,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad2", false);
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
-        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        xercesXmlContentProcessor.doXMLPostProcessingWithInternalRefs(doc);
         String result = XercesUtils.nodeToString(doc);
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
@@ -126,7 +126,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad", false);
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
-        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        xercesXmlContentProcessor.doXMLPostProcessingWithInternalRefs(doc);
         String result = XercesUtils.nodeToString(doc);
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
@@ -145,7 +145,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @Ignore
     @Test
-    public void test_doXMLPostProcessing_split_ec_paragraph() {
+    public void test_doXMLPostProcessing_WithInternalRefs_split_ec_paragraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_paragraph.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_paragraph_expected.xml");
 
@@ -157,7 +157,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_ec_paragraph_add_cn_subparagraph() {
+    public void test_doXMLPostProcessing_WithInternalRefs_ec_paragraph_add_cn_subparagraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_ec_paragraph_add_cn_subparagraph.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_ec_paragraph_add_cn_subparagraph_expected.xml");
 
@@ -170,7 +170,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @Ignore
     @Test
-    public void test_doXMLPostProcessing_split_cn_paragraph() {
+    public void test_doXMLPostProcessing_WithInternalRefs_split_cn_paragraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_paragraph.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_paragraph_expected.xml");
 
@@ -182,7 +182,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_add_cn_paragraph() {
+    public void test_doXMLPostProcessing_WithInternalRefs_add_cn_paragraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_expected.xml");
 
@@ -194,7 +194,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_ec() {
+    public void test_doXMLPostProcessing_WithInternalRefs_add_cn_paragraph_for_annex_origin_document_ec() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_ec.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_ec_expected.xml");
 
@@ -206,7 +206,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_cn() {
+    public void test_doXMLPostProcessing_WithInternalRefs_add_cn_paragraph_for_annex_origin_document_cn() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_cn.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_cn_expected.xml");
 
@@ -219,7 +219,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @Ignore
     @Test
-    public void test_doXMLPostProcessing_split_ec_subparagraph() {
+    public void test_doXMLPostProcessing_WithInternalRefs_split_ec_subparagraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_subparagraph.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_subparagraph_expected.xml");
 
@@ -232,7 +232,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @Ignore
     @Test
-    public void test_doXMLPostProcessing_ec_subparagraph_add_cn_subparagraph() {
+    public void test_doXMLPostProcessing_WithInternalRefs_ec_subparagraph_add_cn_subparagraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_ec_subparagraph_add_cn_subparagraph.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_ec_subparagraph_add_cn_subparagraph_expected.xml");
 
@@ -245,7 +245,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @Ignore
     @Test
-    public void test_doXMLPostProcessing_split_cn_subparagraph() {
+    public void test_doXMLPostProcessing_WithInternalRefs_split_cn_subparagraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_subparagraph.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_subparagraph_expected.xml");
 
@@ -257,7 +257,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_add_cn_subparagraph() {
+    public void test_doXMLPostProcessing_WithInternalRefs_add_cn_subparagraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_subparagraph.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_subparagraph_expected.xml");
 
@@ -269,7 +269,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_add_cn_paragraph_on_cn_article() {
+    public void test_doXMLPostProcessing_WithInternalRefs_add_cn_paragraph_on_cn_article() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_on_cn_article.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_on_cn_article_expected.xml");
 
@@ -282,7 +282,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @Ignore
     @Test
-    public void test_doXMLPostProcessing_split_cn_paragraph2() {
+    public void test_doXMLPostProcessing_WithInternalRefs_split_cn_paragraph2() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_paragraph2.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_paragraph2_expected.xml");
 
@@ -294,7 +294,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_add_cn_paragraph2() {
+    public void test_doXMLPostProcessing_WithInternalRefs_add_cn_paragraph2() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph2.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph2_expected.xml");
 
@@ -307,7 +307,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @Ignore
     @Test
-    public void test_doXMLPostProcessing_split_ec_paragraph_empty() {
+    public void test_doXMLPostProcessing_WithInternalRefs_split_ec_paragraph_empty() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_paragraph_empty.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_paragraph_empty_expected.xml");
 
@@ -320,7 +320,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @Ignore
     @Test
-    public void test_doXMLPostProcessing_split_cn_subparagraph_empty() {
+    public void test_doXMLPostProcessing_WithInternalRefs_split_cn_subparagraph_empty() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_subparagraph_empty.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_subparagraph_empty_expected.xml");
 
@@ -332,7 +332,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void test_doXMLPostProcessing_add_cn_paragraphSingle_on_cn_article() {
+    public void test_doXMLPostProcessing_WithInternalRefs_add_cn_paragraphSingle_on_cn_article() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraphSingle_on_cn_article.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraphSingle_on_cn_article_expected.xml");
 

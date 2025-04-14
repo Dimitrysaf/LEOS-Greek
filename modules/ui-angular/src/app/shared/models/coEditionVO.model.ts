@@ -4,7 +4,8 @@ export type INFO_TYPE =
   | 'TOC_INFO'
   | 'DOCUMENT_INFO'
   | 'DOCUMENT_UPDATED'
-  | 'ELEMENT_INFO';
+  | 'ELEMENT_INFO'
+  | 'DOCUMENT_POST_PROCESSING';
 export interface CoEditionVO {
   sessionId: string;
   presenterId: string;

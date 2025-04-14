@@ -83,7 +83,7 @@ public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends Xml
         List<TableOfContentItemVO> tocList = (List<TableOfContentItemVO>) TestUtils.getDeserializeObject(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_TocObject.obj");
 
         byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser(), false);
-        xmlResult = xercesXmlContentProcessor.doXMLPostProcessing(xmlResult);
+        xmlResult = xercesXmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlResult);
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_expected.xml");
 
         String result = new String(xmlResult);

@@ -203,7 +203,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
     protected byte[] updateDataInXml(final byte[] content, ProposalMetadata dataObject) {
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
-        return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
     }
 
     @Override
@@ -222,7 +222,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(xmlBytes,
                                 keyValueMap,
                                 xmlNodeConfigProcessor.getProposalComponentsConfig(leosCategory, "href"));
-        updatedBytes = xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
 
         //save updated xml
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedBytes);
@@ -249,7 +249,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(xmlBytes,
                 keyValueMap,
                 xmlNodeConfigProcessor.getProposalComponentsConfig(leosCategory, "xml:id"));
-        updatedBytes = xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
 
         //save updated xml
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedBytes);

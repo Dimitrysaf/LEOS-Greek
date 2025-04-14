@@ -115,4 +115,5 @@ public interface ElementProcessor<T extends XmlDocument> {
 
     String getElementAttributeValue(byte[] xmlContent, String attributeName, String tagName, String idAttributeValue);
 
+    String updateReferences(String content, XmlDocument xmlDocument);
 }

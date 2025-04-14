@@ -617,7 +617,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             FinancialStatement financialStatement = getDocument();
             documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
             byte[] updatedXmlContent = elementProcessor.updateElement(financialStatement, elementContent, elementTagName, elementId, true);
-            updatedXmlContent = xmlContentProcessor.doXMLPostProcessing(updatedXmlContent);
+            updatedXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedXmlContent);
             if (updatedXmlContent == null) {
                 financialStatementScreen.showAlertDialog("operation.element.not.performed");
                 return;

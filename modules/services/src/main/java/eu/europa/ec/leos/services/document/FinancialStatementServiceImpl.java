@@ -383,7 +383,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         }
         newXmlContent = numberService.renumberParagraph(newXmlContent);
         newXmlContent = numberService.renumberDivisions(newXmlContent);
-        newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
+        newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
 
         return updateFinancialStatement(financialStatement, newXmlContent, VersionType.MINOR, actionMsg);
     }
@@ -396,7 +396,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     private byte[] updateDataInXml(final byte[] content, FinancialStatementMetadata dataObject) {
         documentLanguageContext.setDocumentLanguage(dataObject.getLanguage());
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
-        return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
     }
 
     @Override

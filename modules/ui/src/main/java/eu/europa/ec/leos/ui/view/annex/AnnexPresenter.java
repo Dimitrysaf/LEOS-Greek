@@ -222,7 +222,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
@@ -1371,7 +1370,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 xmlContent = numberService.renumberParagraph(xmlContent);
                 break;
         }
-        xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
+        xmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
         updateAnnexContent(annex, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"), mergeActionKey);
         if (event.isAllContributions()) {
             markRevisionAsProcessed(event.getMergeActionVOS().get(0).getContributionVO().getDocumentId(), "contribution.accept.all.notification.message");
@@ -1714,7 +1713,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             }
         }
         // we are combining two operations (get toc + get selected element ancestors)
-        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(annex.getMetadata().get().getRef(),
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(annex,
         TocMode.SIMPLIFIED_CLEAN);
         eventBus.post(new FetchCrossRefTocResponseEvent(new TocAndAncestorsVO(tocItemList, elementAncestorsIds, messageHelper, structureContextProvider.get().getNumberingConfigs())));
     }

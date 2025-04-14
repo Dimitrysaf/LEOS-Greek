@@ -118,7 +118,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         return annex;
     }
 
-    private Annex updateInternalReferencesAsync(Annex annex) {
+    private void updateInternalReferencesAsync(Annex annex) {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(annex.getId(),
                     annex.getMetadata().get().getRef()));
@@ -126,8 +126,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
-        //fetch updated version
-        return findAnnex(annex.getId(), true);
     }
 
     @Override
@@ -135,7 +133,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex Xml Content... [id={}]", annex.getId());
 
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, versionType, comment);
-        annex = updateInternalReferencesAsync(annex);
+        updateInternalReferencesAsync(annex);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedAnnexContent));
 
@@ -160,7 +158,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
     private Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, byte[] updatedBytes, VersionType versionType, String comment, Stopwatch stopwatch) {
         annex = annexRepository.updateAnnex(annex.getId(), updatedMetadata, updatedBytes, versionType, comment);
-        annex = updateInternalReferencesAsync(annex);
+        updateInternalReferencesAsync(annex);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedBytes));
 
@@ -173,7 +171,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={} , comment={}]", annex.getId(), updatedAnnexContent, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, VersionType.MINOR, comment);
-        annex = updateInternalReferencesAsync(annex);
+        updateInternalReferencesAsync(annex);
         LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return annex;
     }
@@ -182,14 +180,16 @@ public abstract class AnnexServiceImpl implements AnnexService {
     public Annex updateAnnex(String id, byte[] updatedAnnexContent) {
         LOG.trace("Updating Annex content ... [id={}]", id);
         Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, VersionType.MINOR, "Content updated.");
-        return updateInternalReferencesAsync(annex);
+        updateInternalReferencesAsync(annex);
+        return annex;
     }
 
     @Override
     public Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Annex metadata properties... [id={}]", id);
         Annex annex = annexRepository.updateAnnex(ref, id, properties, latest);
-        return updateInternalReferencesAsync(annex);
+        updateInternalReferencesAsync(annex);
+        return annex;
     }
 
     @Override
@@ -256,7 +256,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
                 break;
         }
         newXmlContent = numberService.renumberHigherSubDivisions(newXmlContent, tocList);
-        newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
+        newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
 
         return updateAnnex(annex, newXmlContent, VersionType.MINOR, actionMsg);
     }
@@ -270,7 +270,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         documentLanguageContext.setDocumentLanguage(dataObject.getLanguage());
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()),
                 xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
-        return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
     }
 
     @Override

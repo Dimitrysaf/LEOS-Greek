@@ -182,6 +182,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         if(proposal != null) {
             populateCloneProposalMetadata(proposal);
         }
+        elementFragment = elementProcessor.updateReferences(elementFragment, memorandum);
         byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementFragment, elementName, elementId,
                 false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR,

@@ -29,6 +29,8 @@ import { SecurityContext } from '@angular/core';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import {ContributionVO} from "@/shared/models/contribution-vo.model";
 import {MOVE_PREFIX, REVISION_PREFIX} from "@/shared/constants/fork-merge.constants";
+import {EuiGrowlService} from "@eui/core";
+import {LoadingService} from "@/shared/services/loading.service";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -74,7 +76,8 @@ export class DocumentComponent
     private zoombarService: ZoombarService,
     private changeDetectorRef: ChangeDetectorRef,
     private milestoneService: ProposalMilestonesService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private loadingService: LoadingService,
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
 
@@ -244,6 +247,14 @@ export class DocumentComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe((coEdits) => {
           this.coEditionWSService.showElementsBeingEdited(coEdits);
+        });
+      this.coEditionWSService
+        .getPostProcessingCoEditionInfo()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((documentRef) => {
+          if (documentRef === this.documentService.documentRef) {
+            this.loadingService.setTaskOver('post-processing', documentRef);
+          }
         });
       this.initTrackChangesActions();
     }

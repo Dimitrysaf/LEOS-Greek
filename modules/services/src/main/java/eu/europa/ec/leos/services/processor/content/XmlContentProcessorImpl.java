@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.processor.content;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
@@ -1023,14 +1024,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return nodeToByteArray(document);
     }
 
-    public void doXMLPostProcessing(Document document) {
-        doXmlPostProcessingCommon(document);
+    public void doXMLPostProcessingWithInternalRefs(Document document) {
+        doXmlPostProcessingCommonWithInternalRefs(document);
         specificInstanceXMLPostProcessing(document);
         updatePointStructure(document);
         updateParagraphStructure(document);
     }
 
-    private void doXmlPostProcessingCommon(Document document) {
+    private void doXmlPostProcessingCommonWithInternalRefs(Document document) {
         injectTagIdsInNode(document.getDocumentElement());
         modifyAuthorialNoteMarkers(document, 1);
         updateReferences(document);
@@ -1040,9 +1041,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public Document doXMLPostProcessingOnDocument(byte[] xmlContent) {
+    public Document doXMLPostProcessingOnDocumentWithInternalRefs(byte[] xmlContent) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Document document = doXmlPostProcessingCommon(xmlContent);
+        Document document = doXmlPostProcessingCommonWithInternalRefs(xmlContent);
 
         specificInstanceXMLPostProcessing(document);
         updatePointStructure(document);
@@ -1054,10 +1055,22 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return document;
     }
 
-    @Override
-    public byte[] doXMLPostProcessing(byte[] xmlContent) {
+    private Document doXMLPostProcessingOnDocument(byte[] xmlContent) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Document document = doXmlPostProcessingCommon(xmlContent);
+
+        specificInstanceXMLPostProcessing(document);
+        long postProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms",
+                postProcessingTime, (System.currentTimeMillis() - postProcessingTime));
+        return document;
+    }
+
+    @Override
+    public byte[] doXMLPostProcessingWithInternalRefs(byte[] xmlContent) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Document document = doXmlPostProcessingCommonWithInternalRefs(xmlContent);
 
         specificInstanceXMLPostProcessing(document);
         updatePointStructure(document);
@@ -1068,7 +1081,29 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return nodeToByteArray(document);
     }
 
-    private Document doXmlPostProcessingCommon(byte[] xmlContent) {
+    private void doXMLPostProcessing(Document document) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
+        doXmlPostProcessingCommon(document);
+        specificInstanceXMLPostProcessing(document);
+        long postProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", (System.currentTimeMillis() - postProcessingTime));
+    }
+
+    @Override
+    public byte[] doXMLPostProcessing(byte[] xmlContent) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Document document = doXmlPostProcessingCommon(xmlContent);
+
+        specificInstanceXMLPostProcessing(document);
+        long postProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", (System.currentTimeMillis() - postProcessingTime));
+        return nodeToByteArray(document);
+    }
+
+    private Document doXmlPostProcessingCommonWithInternalRefs(byte[] xmlContent) {
         long startTime = System.currentTimeMillis();
         Document document = createXercesDocument(xmlContent);
 
@@ -1094,10 +1129,58 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         updateMetaReferences(document.getFirstChild());
         long moveSubparagraphsInListTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
-        LOG.trace("Finished doXMLPostProcessing: Ids Injected at {}ms, authNote Renumbering at {}ms, mref udpated at {}ms, convert alineas to subparagraphs " +
+        LOG.info("Finished doXMLPostProcessing: Ids Injected at {}ms, authNote Renumbering at {}ms, refs at {}ms, convert alineas to subparagraphs " +
                         "at {}ms, move subparagraphs as intro and conclusion at {}ms, Total time " +
                         "elapsed {}ms",
                 injectIdTime, authNoteTime, mrefUpdateTime, convertAlineasToSubparagraphsTime, moveSubparagraphsInListTime,
+                (System.currentTimeMillis() - startTime));
+        return document;
+    }
+
+    private void doXmlPostProcessingCommon(Document document) {
+        long startTime = System.currentTimeMillis();
+
+        // Inject Ids
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        injectTagIdsInNode(document.getDocumentElement());
+        long injectIdTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // modify Authnote markers
+        modifyAuthorialNoteMarkers(document, 1);
+        long authNoteTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // Move subparagraphs as intro and conclusion
+        moveSubparagraphsInList(document);
+        updateMetaReferences(document.getFirstChild());
+        long moveSubparagraphsInListTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.info("Finished doXMLPostProcessing: Ids Injected at {}ms, authNote Renumbering at {}ms, move subparagraphs as intro and conclusion at {}ms, Total time " +
+                        "elapsed {}ms",
+                injectIdTime, authNoteTime, moveSubparagraphsInListTime,
+                (System.currentTimeMillis() - startTime));
+    }
+
+    private Document doXmlPostProcessingCommon(byte[] xmlContent) {
+        long startTime = System.currentTimeMillis();
+        Document document = createXercesDocument(xmlContent);
+
+        // Inject Ids
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        injectTagIdsInNode(document.getDocumentElement());
+        long injectIdTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // modify Authnote markers
+        modifyAuthorialNoteMarkers(document, 1);
+        long authNoteTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // Move subparagraphs as intro and conclusion
+        moveSubparagraphsInList(document);
+        updateMetaReferences(document.getFirstChild());
+        long moveSubparagraphsInListTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.info("Finished doXMLPostProcessing: Ids Injected at {}ms, authNote Renumbering at {}ms, move subparagraphs as intro and conclusion at {}ms, Total time " +
+                        "elapsed {}ms",
+                injectIdTime, authNoteTime, moveSubparagraphsInListTime,
                 (System.currentTimeMillis() - startTime));
         return document;
     }
@@ -1327,6 +1410,19 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
+    @Override
+    public String updateReferences(String content, XmlDocument xmlDocument) {
+        String wrappedContentXml = LeosDomainUtil.wrapXmlFragment(content);
+        byte[] xmlContent = wrappedContentXml.getBytes(StandardCharsets.UTF_8);
+        Document document = createXercesDocument(xmlContent);
+        Document sourceDoc = createXercesDocument(xmlDocument.getContent().get().getSource().getBytes());
+        if (updateReferences(document, sourceDoc)) {
+            return nodeToString(document.getDocumentElement().getChildNodes().item(0));
+        } else {
+            return content;
+        }
+    }
+
     private boolean updateReferences(Document document) {
         boolean updated = false;
         String sourceRef = getContentByTagName(document, LEOS_REF);
@@ -1367,6 +1463,64 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
                 if (isRefConfigEnabled) {
                     Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
+                    if (labelResult.isOk()) {
+                        String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
+                        String updatedMrefContent = labelResult.get();
+                        if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
+                            mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
+                            updated = true;
+                        }
+                        XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
+                    } else {
+                        XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
+                        updated = true;
+                    }
+                }
+            }
+        }
+        return updated;
+    }
+
+    private boolean updateReferences(Document eltDoc, Document wholeDoc) {
+        boolean updated = false;
+        String sourceRef = getContentByTagName(wholeDoc, LEOS_REF);
+        NodeList mrefList = XercesUtils.getElementsByName(eltDoc, MREF);
+        boolean isRefConfigEnabled = isRefConfigEnabled(wholeDoc, mrefList);
+
+        HashMap<String, String> parentStatementsOfReferences = new HashMap<>();
+        for (int i = 0; i < mrefList.getLength(); i++) {
+            Node mref = mrefList.item(i);
+            List<Ref> refs = findReferences(mref, sourceRef);
+            if (!refs.isEmpty()) {
+                boolean capital = false;
+                String id = XercesUtils.getAttributeValue(mref.getParentNode(), XMLID);
+                String completeStatement = "";
+                if (parentStatementsOfReferences.get(id) == null) {
+                    completeStatement = mref.getParentNode().getTextContent();
+                    parentStatementsOfReferences.put(id, completeStatement);
+                } else {
+                    completeStatement = parentStatementsOfReferences.get(id);
+                }
+                String pieceForCrossReference = mref.getTextContent();
+                int positionOfCrossReference = completeStatement.indexOf(pieceForCrossReference);
+                if (positionOfCrossReference <= 0) {
+                    capital = true;
+                } else {
+                    int indexPositionBefore = positionOfCrossReference-1;
+                    int charPositionBefore = completeStatement.charAt(indexPositionBefore);
+                    while((charPositionBefore == 32 || charPositionBefore == 160) && indexPositionBefore > 0) {
+                        indexPositionBefore--;
+                        charPositionBefore = completeStatement.charAt(indexPositionBefore);
+                    }
+                    if (charPositionBefore == 32 || charPositionBefore == 160 || charPositionBefore == '.') {
+                        capital = true;
+                    }
+                }
+                completeStatement = StringUtils.replaceOnce(completeStatement, pieceForCrossReference, StringUtils.repeat("-", pieceForCrossReference.length()));
+                parentStatementsOfReferences.put(id, completeStatement);
+
+                if (isRefConfigEnabled) {
+                    Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), wholeDoc, capital);
                     if (labelResult.isOk()) {
                         String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
                         String updatedMrefContent = labelResult.get();

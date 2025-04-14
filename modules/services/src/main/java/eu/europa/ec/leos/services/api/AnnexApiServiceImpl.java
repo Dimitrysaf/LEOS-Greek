@@ -204,6 +204,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(annex);
+        elementContent = elementProcessor.updateReferences(elementContent, annex);
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
         boolean splittedContentIsEmpty = false;
         Element elementToEditAfterClose = null;
