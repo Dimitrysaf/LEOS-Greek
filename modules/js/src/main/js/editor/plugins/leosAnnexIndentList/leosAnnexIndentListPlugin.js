@@ -26,7 +26,6 @@ define(function leosAnnexIndentListPluginModule(require) {
     var DATA_AKN_NAME_ATTR = "data-akn-name";
     var DATA_AKN_NAME_ELEMENT = "data-akn-element";
     var NUM = "num";
-    var LEVEL = "level";
     var LEOS_ORIGINAL_DEPTH_ATTR = "leos:originaldepth";
     var DATA_AKN_ORIGIN_DEPTH_ATTR = "data-akn-origin-depth";
     var DATA_AKN_ORIGIN_NUM_ATTR = "data-akn-origin-num";
@@ -49,6 +48,7 @@ define(function leosAnnexIndentListPluginModule(require) {
     var pluginName = "leosAnnexIndentListPlugin";
     var LOCAL_MAX_LEVEL_LIST;
     var LOCAL_MAX_LEVEL_LIST_DEPTH;
+    const ORIENTATION = '.orientation';
     var indentationStatus = {
         original: {
             num: undefined,
@@ -471,7 +471,10 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _getNextLevels(listNode) {
         if(listNode.$.parentNode) {
-            return $(listNode.$.parentNode).nextAll(LEVEL);
+            return $(listNode.$.parentNode)
+                .closest(ORIENTATION)
+                .nextAll(ORIENTATION)
+                .find(LEVEL);
         }
     }
 
@@ -482,13 +485,16 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _getPrevLevels(listNode) {
         if(listNode.$.parentNode) {
-            return $(listNode.$.parentNode).prevAll(LEVEL);
+            return $(listNode.$.parentNode)
+                .closest(ORIENTATION)
+                .prevAll(ORIENTATION)
+                .find(LEVEL);
         }
     }
 
     function _getPrevLevelNum(listNode) {
         const $prevLevels = _getPrevLevels(listNode);
-        return _getLevelNum($prevLevels, true);
+        return _getLevelNum($prevLevels, false);
     }
 
     function _getLevelNum($levels, asc) {
@@ -601,7 +607,10 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _getNextLevelsOnNumberIndentOutdent(numNode) {
         if(numNode.getAscendant(LEVEL)) {
-            return $(numNode.getAscendant(LEVEL).$).nextAll(LEVEL);
+            return $(numNode.getAscendant(LEVEL).$)
+                .closest(ORIENTATION)
+                .nextAll(ORIENTATION)
+                .find(LEVEL);
         }
     }
 
@@ -612,7 +621,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _getPrevLevelsOnNumberIndentOutdent(numNode) {
         if(numNode.getAscendant(leosPluginUtils.MAINBODY) && numNode.getAscendant(LEVEL)) {
-            let levels = Array.from(numNode.getAscendant(leosPluginUtils.MAINBODY).find(LEVEL).$);
+            let levels = Array.from(numNode.getAscendant(leosPluginUtils.MAINBODY).find(ORIENTATION).find(LEVEL).$);
             let indexOfLevel = levels.indexOf(numNode.getAscendant(LEVEL).$);
             if (indexOfLevel > -1) {
                 return $(levels.splice(0, indexOfLevel));
