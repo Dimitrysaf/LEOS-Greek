@@ -295,6 +295,7 @@
             <xs:documentation>All toc tags</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
+            <xs:enumeration value="doc"/>
             <xs:enumeration value="preface"/>
             <xs:enumeration value="docstage"/>
             <xs:enumeration value="doctype"/>

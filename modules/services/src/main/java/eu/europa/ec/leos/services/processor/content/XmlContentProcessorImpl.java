@@ -1462,7 +1462,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 parentStatementsOfReferences.put(id, completeStatement);
 
                 if (isRefConfigEnabled) {
-                    Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
+                    Result<String> labelResult;
+                    //obtain label for document node
+                    if (refs.size() == 1 && refs.get(0).isDocNodeRef()) {
+                        labelResult = referenceLabelService.generateRefLabelForDocNode(refs.get(0));
+                    } else {
+                        labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
+                    }
                     if (labelResult.isOk()) {
                         String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
                         String updatedMrefContent = labelResult.get();
@@ -1610,6 +1616,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         String id = getAttributeValue(node, XMLID);
         String href = getAttributeValue(node, HREF);
         String origin = getAttributeValue(node, LEOS_ORIGIN_ATTR);
+        boolean isDocNodeRef = false;
         if (href != null) {
             String[] hrefMixedArr = href.split("/");
             if (hrefMixedArr.length > 1) {
@@ -1620,11 +1627,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 href = hrefMixedArr[1];
             } else {
                 href = hrefMixedArr[0];
+                isDocNodeRef = href.startsWith("docNodeRef");
             }
             href = href.charAt(0) == '~' ? href.substring(1) : href;
         }
         String refVal = node.getTextContent();
-        return new Ref(id, href, documentRef, origin, refVal);
+        return new Ref(id, href, documentRef, origin, refVal, isDocNodeRef);
     }
 
     @Override
