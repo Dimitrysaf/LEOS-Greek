@@ -126,22 +126,14 @@ define(function aknLevelPluginModule(require) {
     }
 
     function _renumberOnIndent(evt) {
-        let nextNum;
-        if(evt.data.prevLvlDepth === evt.data.currLvlDepth || !evt.data.prevLvlNum){
-            nextNum =  _getNextIndentNum(evt.data.currLvlNum);
-        }else{
-            nextNum =  _getNextNum(evt.data.currLvlDepth + 1, evt.data.prevLvlNum);
-        }
+        let nextNum = (evt.data.prevLvlDepth === evt.data.currLvlDepth)
+                ? _getNextIndentNum(evt.data.currLvlNum) : _getNextNum(evt.data.currLvlDepth + 1, evt.data.prevLvlNum);
         evt.data.nextNum = nextNum;
         return evt.data;
     }
 
     function _renumberOnOutdent(evt) {
-        if(!!evt.data.prevLvlNum){
-            evt.data.nextNum = _getNextNum(evt.data.currLvlDepth - 1, evt.data.prevLvlNum);
-        }else{
-            evt.data.nextNum = _getNextOutdentNum(evt.data.currLvlNum);
-        }
+        evt.data.nextNum = _getNextNum(evt.data.currLvlDepth - 1, evt.data.prevLvlNum);
         return evt.data;
     }
 
