@@ -66,11 +66,13 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.getParentTagName;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
+import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
+import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_TO_HIDE_CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_WITH_TEXT;
@@ -153,6 +155,17 @@ public class XmlContentProcessorHelper {
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
                     addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper);
                 }
+            }
+            Node nameNode = node.getAttributes().getNamedItem("name");
+            String nodeName = nameNode != null ? nameNode.getNodeValue() : null;
+            if (node.getNodeName().equals(DOC) && ANNEX_FILE_PREFIX.equalsIgnoreCase(nodeName)) {
+                String annexNumNode  = XercesUtils.getFirstElementByXPath(node, "//leos:annexNumber", true).getTextContent();
+                TableOfContentItemVO newItem = new TableOfContentItemVO();
+                newItem.setNumber(annexNumNode);
+                TocItem tocItem = tocItems.stream().filter(item -> item.getAknTag().value().equalsIgnoreCase(DOC)).findFirst().get();
+                newItem.setTocItem(tocItem);
+                newItem.setNode(node);
+                itemVOList.add(0,newItem);
             }
         }
         return itemVOList;

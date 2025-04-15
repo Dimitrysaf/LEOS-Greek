@@ -34,4 +34,9 @@ public class ReferenceLabelServiceImplMandate extends ReferenceLabelServiceImpl 
                                                 String sourceDocumentRef) {
         return super.generateSoftMoveLabel(ref, sourceRefId, sourceNode, attr, sourceDocumentRef);
     }
+
+    @Override
+    public  Result<String> generateRefLabelForDocNode(Ref ref) {
+        return null;
+    }
 }
