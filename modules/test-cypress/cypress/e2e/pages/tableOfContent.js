@@ -50,6 +50,8 @@ class tableOfContent {
         contributionCard: () => cy.get('eui-card.revisions-pane').eq(0),
         euiLabelSuccess: () => cy.get('span.eui-label--success'),
         euiLabelDanger: () => cy.get('span.eui-label--danger'),
+        euiLabelWarningList: () => cy.get('span.eui-label--warning'),
+        warningSymbol: () => cy.get("eui-icon-svg[icon='eui-ecl-warning']"),
         moveOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Move']"),
         placeBeforeOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place before']"),
         deleteOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Delete']"),
@@ -67,7 +69,7 @@ class tableOfContent {
 
     clickEditBtn() {
         this.elements.editBtn().click();
-        cy.wait(4000);
+        cy.wait(2000);
     }
 
     clickSaveBtn() {
