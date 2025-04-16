@@ -13,7 +13,6 @@ import eu.europa.ec.digit.leos.pilot.export.util.ExportOptions;
 import eu.europa.ec.digit.leos.pilot.export.util.ExportResource;
 import eu.europa.ec.digit.leos.pilot.export.util.XPathCatalog;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -94,15 +92,20 @@ public class LegServiceImpl implements LegService {
         final Map<String, String> proposalRefsMap = buildProposalExportResource(proposalExportResource, proposalVO.getName(), proposalXmlContent);
         proposalExportResource.setExportOptions(exportOptions);
 
+        final DocumentVO memorandumVO = proposalVO.getChildDocument(LeosCategory.MEMORANDUM);
+        validateRef(memorandumVO);
         final ExportResource memorandumExportResource = buildExportResourceMemorandum(proposalRefsMap);
         proposalExportResource.addChildResource(memorandumExportResource);
 
+        final DocumentVO fsVO = proposalVO.getChildDocument(LeosCategory.STAT_DIGIT_FINANC_LEGIS);
+        validateRef(fsVO);
         final ExportResource fsExportResource = buildExportResourceFinancialStatement(proposalRefsMap, proposalVO.getName());
         proposalExportResource.addChildResource(fsExportResource);
 
         final DocumentVO billVO = proposalVO.getChildDocument(LeosCategory.BILL);
         final byte[] billXmlContent = billVO.getSource();
-        final ExportResource billExportResource = buildExportResourceBill(proposalRefsMap, proposalVO.getName());
+        final ExportResource billExportResource = buildExportResourceBill(proposalRefsMap, billVO.getName());
+        validateRef(billVO);
 
         // add annexes to billExportResource
         final Map<String, String> attachmentIds = attachmentProcessor.getAttachmentsIdFromBill(billXmlContent);
@@ -114,7 +117,8 @@ public class LegServiceImpl implements LegService {
                     .filter(e -> e.getKey().equals(annexVO.getRef()))
                     .map(Map.Entry::getValue)
                     .findFirst()
-                    .get();
+                    .orElseThrow(() -> new RuntimeException(String.format("The %s document ref does not match with its filename: %s",
+                            annexVO.getRef(), annexVO.getName())));
             final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, annexVO.getName(), resourceId);
             billExportResource.addChildResource(annexExportResource);
         });
@@ -124,6 +128,13 @@ public class LegServiceImpl implements LegService {
         legPackage.setFile(ZipUtil.zipFiles(legPackageName, contentToZip));
         legPackage.setExportResource(proposalExportResource);
         return legPackage;
+    }
+
+    private void validateRef(DocumentVO documentVO) {
+        if(!documentVO.getRef().equalsIgnoreCase(documentVO.getName().replaceFirst("\\.xml$", ""))) {
+            throw new RuntimeException(String.format("The %s document ref does not match with its filename: %s",
+                    documentVO.getRef(), documentVO.getName()));
+        }
     }
 
     private Map<String, String> buildProposalExportResource(ExportResource exportResource, String docName, byte[] xmlContent) throws Exception {
