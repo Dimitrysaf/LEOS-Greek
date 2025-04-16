@@ -148,4 +148,10 @@
     text-decoration: underline;
   }
 
+  [data-akn-action-number="delete"]:before {
+    text-decoration: line-through;
+    content: attr(data-indent-origin-num);
+    float: left;
+    padding-right: 5px;
+  }
 }
