@@ -144,6 +144,7 @@ Then(/^navigation pane is minimized$/, function () {
 });
 
 When('drag node label {string} and drop to node label {string} in navigation pane', function (dragLabel, dropLabel) {
+    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;');
     tableOfContent.getNodeLabelText(dragLabel)
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
@@ -356,4 +357,36 @@ Then('ngContent {string} is showing as bold in toc', function (ngContent) {
 
 When(/^minimize preamble link$/, function () {
     tableOfContent.minimizePreambleLink();
+});
+
+Then(/^below warning message is displayed in navigation pane$/, function (datatable) {
+    const givenWarningList = [];
+    datatable.hashes().forEach((warning) => {
+        givenWarningList.push(warning.warning);
+    });
+    tableOfContent.elements.euiLabelWarningList()
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    .map((el) => el.innerText.trim())
+            )
+        })
+        .should('deep.equal', givenWarningList)
+
+});
+
+Then(/^warning symbol is displayed in navigation pane$/, function () {
+    tableOfContent.elements.warningSymbol().should('be.visible');
+});
+
+When(/^click on ngContent "([^"]*)" from navigation pane along with control button from keyboard$/, function (ngContent) {
+    tableOfContent.getNgContent(ngContent).click({ ctrlKey: true });
+});
+
+When(/^click on ngContent "([^"]*)" from navigation pane$/, function (ngContent) {
+    tableOfContent.getNgContent(ngContent).click();
+});
+
+Then('node label {string} contains node label {string}', function (parentNodeLabel, childNodeLabel) {
+    tableOfContent.getCloseLiOfNodeLabel(parentNodeLabel).contains(childNodeLabel);
 });

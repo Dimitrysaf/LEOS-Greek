@@ -968,3 +968,68 @@ Feature: Legal Act Page Regression Features
     Then search result is showing "2 of 4"
     When click on cancel button in document search bar
     Then document search bar is not present
+
+  @multiDragAndDrop @higherDivisionValidation @local
+  Scenario: user is able to drag and drop multiple element with same type
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation multi drag and drop testing" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When drag element "Chapter" from element tree list and drop before node label "Article 1 - Scope 1. Text..." in navigation pane
+    Then success message "Chapter has been added successfully!" is displayed in navigation pane
+    And  success message disappears from table of content
+    And  ngContent "Chapter # Chapter heading..." is showing as bold in toc
+    When drag element "Section" from element tree list and drop before node label "Article 1 - Scope 1. Text..." in navigation pane
+    Then ngContent "Section # Section heading..." is showing as bold in toc
+    And  warning symbol is displayed in navigation pane
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  warning symbol is displayed in navigation pane
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
+    When click on toc edit button
+    And  click on ngContent "Section 1 Section heading..." from navigation pane along with control button from keyboard
+    And  click on ngContent "Article 1 - Scope 1. Text..." from navigation pane along with control button from keyboard
+    Then below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
+      | Only elements of the same type can be selected together.                                               |
+    When click on ngContent "Article 1 - Scope 1. Text..." from navigation pane
+    And  click on ngContent "Article 2 - Definitions Text..." from navigation pane along with control button from keyboard
+    And  drag node label "Article 1 - Scope 1. Text..." and drop to node label "Section 1 Section heading..." in navigation pane
+    And  wait for 5000 milliseconds
+    Then below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+    And  node label "Section 1 Section heading..." contains node label "Article 1 -"
+    And  node label "Section 1 Section heading..." contains node label "Article 2 -"
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
+    And  node label "Section 1 - Section heading..." contains node label "Article 1 -"
+    And  node label "Section 1 - Section heading..." contains node label "Article 2 -"
