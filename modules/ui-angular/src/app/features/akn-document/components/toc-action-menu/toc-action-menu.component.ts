@@ -20,6 +20,7 @@ import { DropdownModel } from '@/shared/dropdown.model';
 })
 export class TocActionMenuComponent implements OnInit, OnDestroy {
   @Input() node: TableOfContentItemVO;
+  @Input() blockMoveOrDelete: boolean;
 
   menuItems: DropdownModel[] = [];
   isEditMode: boolean;

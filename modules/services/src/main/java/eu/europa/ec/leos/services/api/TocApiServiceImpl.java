@@ -73,6 +73,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.PREAMBLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
@@ -177,6 +179,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     DocumentRules.Rule rule = tableOfContentDocumentRules.get(documentRulesKey);
                     for (TableOfContentItemVO tableOfContentItemVO : request.getTableOfContentItemVOs()) {
                         if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(BODY)
+                                || tableOfContentItemVO.getTocItem().getAknTag().value().equals(PREAMBLE)
                                 || tableOfContentItemVO.getTocItem().getAknTag().value().equals(BLOCK)) {
                             validateTocStructure(rule, tableOfContentItemVO, checkDocumentRulesVO);
                         }
@@ -314,8 +317,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
-            case NOT_EMPTY:
+            case NOT_EMPTY_HIGHER_DIVISION:
                 if (checkHigherDivisionIsEmpty(tableOfContentItemVO)) {
+                    setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
+                }
+                break;
+            case NOT_EMPTY_ELEMENT:
+                if (checkElementIsEmpty(tableOfContentItemVO, rule)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
@@ -403,7 +411,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     }
                 }
                 break;
-            case NOT_EMPTY:
+            case NOT_EMPTY_HIGHER_DIVISION:
                 if (checkHigherDivisionIsEmpty(tableOfContentItemVO)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
@@ -557,6 +565,29 @@ public abstract class TocApiServiceImpl implements TocApiService {
         }
         for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
             if (checkHigherDivisionIsEmpty(childTableOfContentItemVO)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkElementIsEmpty(TableOfContentItemVO tableOfContentItemVO, DocumentRules.Rule rule) {
+        String elementName = rule.getTocItem().value();
+        if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(elementName)) {
+            if (tableOfContentItemVO.getChildItems() != null
+                    && (tableOfContentItemVO.getChildItems().isEmpty()
+                        || tableOfContentItemVO.getChildItems().stream().filter(elem ->
+                                rule.getLowerElements().getTypes().stream()
+                                        .map(elemType -> elemType.value())
+                                        .collect(Collectors.toList())
+                                        .contains(elem.getTocItem().getAknTag().value())
+                           ).filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)
+                    && tableOfContentItemVO.getSoftActionAttr() == null) {
+                return true;
+            }
+        }
+        for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
+            if (checkElementIsEmpty(childTableOfContentItemVO, rule)) {
                 return true;
             }
         }
@@ -825,7 +856,9 @@ public abstract class TocApiServiceImpl implements TocApiService {
                                                              final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
         if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.stream().anyMatch(tocItem -> tocItem.getAknTag().equals(sourceItem.getTocItem().getAknTag()))
-                || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value()))) {
+                || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value())
+                    && !sourceItem.getTocItem().getAknTag().value().equals(RECITALS)
+                    )) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");
             result.setSourceItem(sourceItem);
