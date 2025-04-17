@@ -134,7 +134,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 import static eu.europa.ec.leos.util.LeosDomainUtil.unWrapXmlFragment;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
 
-
 @Service
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})
 public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
@@ -167,10 +166,23 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 (t.getAknTag().value().equalsIgnoreCase(PERSON)
                 || t.getAknTag().value().equalsIgnoreCase(ROLE))).findAny().isPresent()) {
             signatureLocationNode = getFirstChild(node, P);  //Conclusions location paragraph
-        } else {
+        } else if (tocVo.getTocItem().isAllowDeleteAllChildren() != null
+                && !tocVo.getTocItem().isAllowDeleteAllChildren()
+                && tocVo.getChildItemsView().stream().filter(elem -> elem.getTocItem().getAknTag().value().equals(tocVo.getTocItem().getCountableChildren())).count() == 0) {
+            List<Node> possibleChildrenNode = XmlContentProcessorHelper.extractChildrenNotNumHeadingIntro(node);
+            boolean hasId = false;
+            for (Node childNode : possibleChildrenNode) {
+                if (childNode.getAttributes().getNamedItem(XMLID) != null) {
+                    hasId = true;
+                }
+            }
+            if (!hasId) {
+                childrenNode = possibleChildrenNode;
+            }
+        } else if (getChildren(node).size() > 0) {
             childrenNode = ELEMENTS_WITH_ONLY_TEXT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) ?
-                    XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node, tocVo) :
-                    XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
+                    XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node) :
+                    XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node);
         }
         // 3. clean the node and build it again.
         node.setTextContent(EMPTY_STRING);

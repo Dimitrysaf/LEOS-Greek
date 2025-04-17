@@ -341,6 +341,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offset, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
     }
 
+    moveCursorToSpecificOffsetInFSLevel(offset, pTagNumber) {
+        this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "[id='" + id + "']"));
+    }
+
     getElementPTagOfLevel(pTagNumber) {
         return this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1);
     }

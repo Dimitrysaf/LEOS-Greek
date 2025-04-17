@@ -93,6 +93,8 @@ public class TableOfContentItemVO implements Serializable {
     private NumberingType numberingType;
     private boolean isSoleNumbered;
 
+    private Boolean deletable;
+
     public TableOfContentItemVO() {
         super();
     }
@@ -727,4 +729,13 @@ public class TableOfContentItemVO implements Serializable {
     public boolean isSoleNumbered() { return isSoleNumbered; }
 
     public void setSoleNumbered(boolean soleNumbered) { isSoleNumbered = soleNumbered; }
+
+    public Boolean getDeletable() {
+        return deletable;
+    }
+
+    public void setDeletable(Boolean deletable) {
+        this.deletable = deletable;
+    }
+
 }

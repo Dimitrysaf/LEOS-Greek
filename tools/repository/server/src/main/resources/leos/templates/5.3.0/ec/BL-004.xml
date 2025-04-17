@@ -100,6 +100,7 @@
         <body>
             <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
                 <num leos:editable="false">Article 1</num>
+                <heading>Article heading...</heading>
                 <paragraph>
                     <num>1.</num>
                     <content>
@@ -115,6 +116,7 @@
             </article>
             <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
                 <num leos:editable="false">Article 2</num>
+                <heading>Article heading...</heading>
                 <paragraph>
                     <content>
                         <p>This Regulation shall enter into force on the [...] day following that of its publication in the <i>Official Journal of the European Union</i>.</p>

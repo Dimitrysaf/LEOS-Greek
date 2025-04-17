@@ -620,9 +620,13 @@ export class DocumentEditorComponent
     if (item.aknTag === 'CROSS_HEADING') {
       return this.translateService.instant('toc.item.type.crossheading');
     } else {
-      return this.translateService.instant(
-        'toc.item.type.' + item.aknTag.toLowerCase(),
-      );
+      const key = 'toc.item.type.' + item.aknTag.toLowerCase();
+      const keyForMenu = 'toc.item.type.' + item.aknTag.toLowerCase() + '.edit.menu';
+      let valueToMenuItem = this.translateService.instant(key);
+      if (this.translateService.instant(keyForMenu) !== keyForMenu) {
+        valueToMenuItem = this.translateService.instant(keyForMenu);
+      }
+      return valueToMenuItem;
     }
   }
 

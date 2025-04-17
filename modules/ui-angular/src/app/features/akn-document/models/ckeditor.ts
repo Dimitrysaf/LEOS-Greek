@@ -46,6 +46,9 @@ export interface TocItem {
   maxDepth: string | null;
   actionsPosition: ActionPositions | null;
   dapInfos: DapInfos | null;
+  rootItemDeletable: boolean;
+  allowDeleteAllChildren: boolean;
+  countableChildren: AknTag;
 }
 
 export type DapInfos = {
