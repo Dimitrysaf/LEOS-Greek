@@ -98,7 +98,7 @@ define(function leosTrackChangesPluginModule(require) {
                     editorFocus: false,
                     exec: function(editor, element) {
                         if(element.getName() === 'tr') {
-                            actions.rejectRowChange(editor, element);
+                            actions.rejectRowChange(editor, element, numberModule);
                         } else {
                         actions.rejectChange(editor, element, numberModule);
                     }
@@ -186,7 +186,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.addCommand("rejectRowChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.rejectRowChange(editor, selectedElement);
+                        actions.rejectRowChange(editor, selectedElement, numberModule);
                     }
                 });
                 editor.contextMenu.addListener(function(element) {
@@ -293,6 +293,55 @@ define(function leosTrackChangesPluginModule(require) {
                         core.removeTrackChangesAttributesForAlternative(currentElement);
                     }
                     changeOption(newOption, callback);
+                }
+            });
+
+            editor.on("handleTcEnter", function(event) {
+                if(isTrackChangesEnabled) {
+                    var element = event.data.data;
+                    if (element.$.attributes && element.$.attributes[leosPluginUtils.DATA_REJECT_INSERTED_ENTER] && !element.$.attributes[leosPluginUtils.DATA_AKN_NUM]) {
+                        element.getChildren().toArray().forEach(function(child) {
+                            if (!child.getText().trim()) {
+                                child.remove();
+                            }
+                        });
+
+                        if(element.getChildCount() > 0) {
+                            var previousSibling = element.getPrevious();
+
+                            if (!previousSibling) {
+                                var parent = element.getParent();
+                                var prevParent = parent.getPrevious();
+
+                                if (prevParent) {
+                                    // Get the last child of the previous parent
+                                    previousSibling = prevParent.getLast();
+                                }
+                            }
+                            if(previousSibling) {
+                                element.moveChildren(previousSibling, false);
+                                var commonParent = element.getCommonAncestor( previousSibling ),
+                                    node = element,
+                                    removableParent = node;
+
+                                while ( ( node = node.getParent() ) && !commonParent.equals( node ) && node.getChildCount() == 1 )
+                                    removableParent = node;
+
+                                removableParent.remove();
+                            }
+                        }
+
+                        if (element && !element.getText().trim()) {
+                            element.remove();
+                        }
+
+                        leosPluginUtils.manageParagraphs(editor);
+                        leosPluginUtils.manageEmptyLists(editor);
+                        leosPluginUtils.managePoints(editor);
+                        leosPluginUtils.manageEmptySubparagraphs(editor);
+                        leosPluginUtils.manageCrossheadings(editor);
+                        leosPluginUtils.manageSiblingLists(editor);
+                    }
                 }
             });
 
