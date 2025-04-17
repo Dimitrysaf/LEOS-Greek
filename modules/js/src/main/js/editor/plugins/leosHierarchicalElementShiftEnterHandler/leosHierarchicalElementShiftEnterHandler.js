@@ -195,6 +195,14 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             _renameIntroToP(editor, startElement);
         }
         var startElementName = startElement.getName && startElement.getName();
+
+        // remove empty text nodes before split
+        startElement.getChildren().toArray().forEach(function(child) {
+            if (child.type === CKEDITOR.NODE_TEXT && child.getText() === '') {
+                child.remove();
+            }
+        });
+
         // grab the content from selection to the end of the current inline content
         var contentAfterShiftEnter = getContentAfterShiftEnter(editor, selection);
         // if the current inline content is not wrap in p, wrap it if it is not heading
@@ -271,7 +279,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
                 }
 
 				if(inlineWrapper.getAttribute(DATA_AKN_ELEMENT) != null) {
+                    if(inlineWrapper.getAttribute(DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH && inlineWrapper.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                        pElement.setAttribute(DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
+                    } else {
 					pElement.setAttribute(DATA_AKN_ELEMENT, inlineWrapper.getAttribute(DATA_AKN_ELEMENT));
+				}
 				}
 
                 if (leosKeyHandler.isContentEmptyTextNode(content)) {

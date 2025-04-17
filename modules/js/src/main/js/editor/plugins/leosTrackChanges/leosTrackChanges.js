@@ -566,6 +566,10 @@ define(function leosTrackChangesModule(require) {
             return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
         },
 
+        hasTrackChanges: function(element) {
+            return element.hasAttribute(core.ACTION_ATTR) || element.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || element.hasAttribute(core.DATA_AKN_ACTION_ENTER);
+        },
+
         getLastTCElement: function(element, processedElements) {
             for (var i = element.getChildCount()-1; i >= 0; i--) {
                 var childElement = element.getChild(i);
@@ -573,14 +577,17 @@ define(function leosTrackChangesModule(require) {
                     continue;
                 }
                 if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
-                    var lastTCElement = this.getLastTCElement(childElement);
+                    var lastTCElement = this.getLastTCElement(childElement, processedElements);
                     if(lastTCElement) {
                         return lastTCElement;
                     }
                 }
-                if(childElement.hasAttribute(core.ACTION_ATTR) || childElement.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || childElement.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                if(this.hasTrackChanges(childElement)) {
                     return childElement;
                 }
+            }
+            if(this.hasTrackChanges(element)) {
+                return element;
             }
         }
     };
@@ -692,48 +699,124 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
+        isElementPresentInEditor(editor, element) {
+            return !!editor.document.find('.leos-placeholder').getItem(0).find(`#${element.getAttribute('id')}`).getItem(0);
+        },
+
         acceptAllChanges: function(editor) {
-            var lastTCElement = core.getLastTCElement(editor.document.find('.leos-placeholder').getItem(0));
-            if(lastTCElement) {
-                this.processTCElement(editor, lastTCElement, 'acceptElement');
-                this.acceptAllChanges(editor);
-            }
+            this.processAllChanges(editor, 'acceptElement');
         },
 
         rejectAllChanges: function(editor) {
-            var lastTCElement = core.getLastTCElement(editor.document.find('.leos-placeholder').getItem(0));
-            if(lastTCElement) {
-                this.processTCElement(editor, lastTCElement, 'rejectElement');
-                this.rejectAllChanges(editor);
-            }
+            this.processAllChanges(editor, 'rejectElement');
         },
 
-        processTCElement: function(editor, element, actionName) {
-            if(element.hasAttribute(core.DATA_AKN_ACTION_NUMBER)) {
+        processAllChanges: function (editor, actionName) {
+            var isElementDeleted = false;
+            var element = editor.document.find('.leos-placeholder').getItem(0);
+            var maxDepth = this.findMaximusDepth(element);
+            for (var i = maxDepth; i > 0; i--) {
+                var olElements = this.findOlElementsByDepth(element, i);
+                for (var j = olElements.length - 1; j >= 0; j--) {
+                    var olElementToProcess = olElements[j];
                 var processedElements = [];
-                var parentElement = element.getAscendant('ol');
-                if(parentElement) {
-                    var parentElementId = parentElement.getAttribute("id");
-                    // Passing parentElementId instead of parentElement to always get the latest object from editor in the below function.
-                    this.processTCListElement(editor, parentElementId, actionName, processedElements);
-                } else {
-                    editor.execCommand(actionName, element);
+                    isElementDeleted = this.processOlElement(editor, olElementToProcess, processedElements, actionName);
+                    if (isElementDeleted) {
+                        break;
+                    }
                 }
-            } else {
-                editor.execCommand(actionName, element);
+                if (isElementDeleted) {
+                    break;
+                }
+                }
+            if (isElementDeleted) {
+                this.processAllChanges(editor, actionName);
             }
         },
 
-        processTCListElement: function(editor, elementId, actionName, processedElements) {
-            var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
-            if(element) {
+        processOlElement: function (editor, olElementToProcess, processedElements, actionName) {
+            // Process table rows
+            var rowElements = olElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
+            for (var i = rowElements.count() - 1; i >= 0; i--) {
+                var rowElementToProcess = rowElements.getItem(i);
+                this.processElement(editor, rowElementToProcess, processedElements, actionName);
+            }
+
+            // Process Soft Enter Inserts
+            var softEnterElements = olElementToProcess.find(`p[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_ENTER}]`);
+            for (var j = softEnterElements.count() - 1; j >= 0; j--) {
+                var softEnterElementToProcess = softEnterElements.getItem(j);
+                if (!softEnterElementToProcess.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                    this.processElement(editor, softEnterElementToProcess, processedElements, actionName);
+                }
+            }
+
+            this.processElement(editor, olElementToProcess, processedElements, actionName);
+
+            return !this.isElementPresentInEditor(editor, olElementToProcess);
+        },
+
+        processElement: function (editor, element, processedElements, actionName) {
+            if (this.isElementPresentInEditor(editor, element)) {
                 var lastTCElement = core.getLastTCElement(element, processedElements);
                 if(lastTCElement) {
                     editor.execCommand(actionName, lastTCElement);
+                    if (lastTCElement.hasAttribute("id")) {
                     processedElements.push(lastTCElement.getAttribute('id'));
-                    this.processTCListElement(editor, elementId, actionName, processedElements);
+                    }
+                    if (this.isElementPresentInEditor(editor, element)) {
+                        this.processElement(editor, element, processedElements, actionName);
+                    }
                 }
             }
+        },
+
+        findOlElementsByDepth: function (root, targetDepth) {
+            const result = [];
+
+            function traverse(node, currentDepth) {
+                if (node.getName && node.getName().toLowerCase() === 'ol') {
+                    currentDepth++; // Entering a deeper ol
+                    if (currentDepth === targetDepth) {
+                        result.push(node);
+                    }
+                }
+
+                if (node.getChildCount) {
+                    for (var i = node.getChildCount() - 1; i >= 0; i--) {
+                        var child = node.getChild(i);
+                        traverse(child, currentDepth);
+                    }
+                }
+            }
+
+            traverse(root, 0);
+
+            return result;
+        },
+
+        findMaximusDepth: function (root) {
+            let maxDepth = 0;
+
+            function traverse(node, depth) {
+                if (node.getName && node.getName().toLowerCase() === 'ol') {
+                    depth++; // Increase depth when encountering an <ol>
+                    if (depth > maxDepth) {
+                        maxDepth = depth;
+                    }
+                }
+
+                if (node.getChildCount) {
+                    for (var i = node.getChildCount() - 1; i >= 0; i--) {
+                        var child = node.getChild(i);
+                        traverse(child, depth);
+                    }
+            }
+            }
+
+            traverse(root, 0);
+
+            return maxDepth;
         },
 
         acceptChange: function(editor, element, numberModule) {
@@ -834,6 +917,12 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeEmptyElement: function (liParentElement, numberModule, editor) {
+            liParentElement.getChildren().toArray().forEach(function(child) {
+                if (!child.getText().trim()) {
+                    child.remove();
+                }
+            });
+
             var liParentElementToCheckNumber = liParentElement;
             while (liParentElementToCheckNumber
             && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
@@ -874,10 +963,15 @@ define(function leosTrackChangesModule(require) {
                 })
             );
             element.setAttribute(leosPluginUtils.DATA_REJECT_INSERTED_ENTER, 'true');
+
+            if(element.hasAttribute(core.DATA_AKN_ACTION_ENTER) && !element.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                editor.fire('handleTcEnter', {data: element});
+            } else {
             if(element.getParent()) {
                 core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
             }
             editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
+            }
         },
 
         removeEnterInsert: function(element, editor, numberModule) {
@@ -937,14 +1031,14 @@ define(function leosTrackChangesModule(require) {
                     var liParentElement = element.getAscendant("li");
                     var pParentElement = element.getAscendant("p");
                     element.remove();
+                    if (pParentElement && !pParentElement.getText().trim()) {
+                        pParentElement.remove();
+                    }
                     if(liParentElement) {
                         editor.getSelection().fake(liParentElement);
                         if (this.checkIfEmptyListElement(liParentElement)) {
                             this.removeEmptyElement(liParentElement, numberModule, editor);
                         }
-                    }
-                    if (pParentElement && !pParentElement.getText().trim()) {
-                        pParentElement.remove();
                     }
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
@@ -1011,13 +1105,24 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        rejectRowChange: function(editor, element) {
+        rejectRowChange: function(editor, element, numberModule) {
             if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                var liParentElement = element.getAscendant("li");
+                var pParentElement = element.getAscendant("p");
                 var table = element.getAscendant("table");
                 if (table.$.rows.length == 1) {
                     table.remove();
                 } else {
                     element.remove();
+                }
+                if (pParentElement && !pParentElement.getText().trim()) {
+                    pParentElement.remove();
+                }
+                if(liParentElement) {
+                    editor.getSelection().fake(liParentElement);
+                    if (this.checkIfEmptyListElement(liParentElement)) {
+                        this.removeEmptyElement(liParentElement, numberModule, editor);
+                    }
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributes(element);

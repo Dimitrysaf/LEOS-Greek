@@ -507,6 +507,20 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
+    function _manageParagraphs(editor) {
+        var paragraphs = editor.element.find('li');
+        for (var i = 0; i < paragraphs.count(); i++) {
+            var paragraph = paragraphs.getItem(i);
+            if(_isParagraph(paragraph)) {
+                paragraph.getChildren().toArray().forEach(function(child) {
+                    if (child.type === CKEDITOR.NODE_TEXT && child.getText() === '') {
+                        child.remove();
+                    }
+                });
+            }
+        }
+    }
+
     // Check subparagraphs, if there is a subparagraph without text, it should be removed
     function _manageEmptySubparagraphs(editor) {
         var subparagraphs = editor.element.find('li');
@@ -1662,6 +1676,7 @@ define(function leosPluginUtilsModule(require) {
         handleIndentAttributes : _handleIndentAttributes,
         moveChildren: _moveChildren,
         moveElementChildren: _moveElementChildren,
+        manageParagraphs: _manageParagraphs,
         managePoints: _managePoints,
         manageEmptyLists: _manageEmptyLists,
         manageEmptySubparagraphs: _manageEmptySubparagraphs,
