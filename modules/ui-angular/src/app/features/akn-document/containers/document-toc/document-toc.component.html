@@ -80,7 +80,7 @@
                 isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'
               "
             ></div>
-            <app-toc-action-menu [node]="node"> </app-toc-action-menu>
+            <app-toc-action-menu [node]="node" [blockMoveOrDelete]="blockMoveOrDelete(node)"> </app-toc-action-menu>
           </div>
         </li>
         <div class="drop-placeholder"></div>

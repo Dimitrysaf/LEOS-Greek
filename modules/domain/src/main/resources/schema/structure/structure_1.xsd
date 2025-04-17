@@ -42,6 +42,9 @@
             <xs:element name="numberEditable" type="xs:boolean" default="false"/>
             <xs:element name="contentDisplayed" type="xs:boolean" default="false"/>
             <xs:element name="deletable" type="xs:boolean" default="false"/>
+            <xs:element name="rootItemDeletable" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="allowDeleteAllChildren" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="countableChildren" type="aknTag" minOccurs="0"/>
             <xs:element name="notAddable" type="xs:boolean" default="false" minOccurs="0"/>
             <xs:element name="numWithType" type="xs:boolean" default="false"/>
             <xs:element name="expandedByDefault" type="xs:boolean" default="false"/>
@@ -268,12 +271,25 @@
             <xs:enumeration value="title"/>
             <xs:enumeration value="chapter"/>
             <xs:enumeration value="section"/>
+            <xs:enumeration value="recitals"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="lowerElementType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="recital"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="lowerDivisions">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="type" type="lowerDivisionType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="lowerElements">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="type" type="lowerElementType"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -288,6 +304,7 @@
             <xs:enumeration value="indent"/>
             <xs:enumeration value="subpoint"/>
             <xs:enumeration value="alinea"/>
+            <xs:enumeration value="recital"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -373,6 +390,7 @@
                         <xs:element name="tocItem" type="aknTag" minOccurs="0"/>
                         <xs:element name="higherDivisions" type="higherDivisions" minOccurs="0"/>
                         <xs:element name="lowerDivisions" type="lowerDivisions" minOccurs="0"/>
+                        <xs:element name="lowerElements" type="lowerElements" minOccurs="0"/>
                         <xs:element name="scope" type="xs:string"/>
                         <xs:element name="exception" minOccurs="0" type="tocIdList"/>
                         <xs:element name="errorMessage" type="xs:string"/>

@@ -75,6 +75,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.PREAMBLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
@@ -181,6 +183,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     DocumentRules.Rule rule = tableOfContentDocumentRules.get(documentRulesKey);
                     for (TableOfContentItemVO tableOfContentItemVO : request.getTableOfContentItemVOs()) {
                     if (tableOfContentItemVO.getTagName().equals(AknTag.BODY)
+                                || tableOfContentItemVO.getTagName().equals(AknTag.PREAMBLE)
                                 || tableOfContentItemVO.getTagName().equals(AknTag.BLOCK)) {
                             validateTocStructure(rule, tableOfContentItemVO, checkDocumentRulesVO);
                         }
@@ -318,8 +321,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
-            case NOT_EMPTY:
+            case NOT_EMPTY_HIGHER_DIVISION:
                 if (checkHigherDivisionIsEmpty(tableOfContentItemVO)) {
+                    setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
+                }
+                break;
+            case NOT_EMPTY_ELEMENT:
+                if (checkElementIsEmpty(tableOfContentItemVO, rule)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
@@ -410,7 +418,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     }
                 }
                 break;
-            case NOT_EMPTY:
+            case NOT_EMPTY_HIGHER_DIVISION:
                 if (checkHigherDivisionIsEmpty(tableOfContentItemVO)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
@@ -572,6 +580,25 @@ public abstract class TocApiServiceImpl implements TocApiService {
         }
         for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
             if (checkHigherDivisionIsEmpty(childTableOfContentItemVO)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkElementIsEmpty(TableOfContentItemVO tableOfContentItemVO, DocumentRules.Rule rule) {
+        String elementName = rule.getTocItem().value();
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, tableOfContentItemVO.getTagName());
+        if (tocItem.getAknTag().value().equals(elementName)) {
+            if (tableOfContentItemVO.getChildItems() != null
+                    && (tableOfContentItemVO.getChildItems().isEmpty()
+                    || tableOfContentItemVO.getChildItems().stream()
+                    .filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)) {
+                return true;
+            }
+        }
+        for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
+            if (checkElementIsEmpty(childTableOfContentItemVO, rule)) {
                 return true;
             }
         }
@@ -848,7 +875,9 @@ public abstract class TocApiServiceImpl implements TocApiService {
         TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
                 sourceItem.getTagName());
         if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.stream().anyMatch(tocItem -> tocItem.getAknTag().equals(sourceItem.getTagName()))
-                || (!sourceTocItem.isSameParentAsChild() && parentTocItem.getAknTag().equals(sourceItem.getTagName()))) {
+                || (!sourceTocItem.isSameParentAsChild() && parentTocItem.getAknTag().equals(sourceItem.getTagName())
+                    && !sourceItem.getTagName().value().equals(RECITALS)
+                    )) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");
             result.setSourceItem(sourceItem);

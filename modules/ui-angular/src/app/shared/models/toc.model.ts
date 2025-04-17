@@ -56,6 +56,7 @@ export class TableOfContentItemVO {
   tocStyling?: string;
   trackChangeAction: string;
   numberingType: NumberingType;
+  deletable?: boolean;
 }
 
 export type AknTag =
@@ -126,6 +127,8 @@ export class TocItem {
   addSoftAttr: boolean;
   maxDepth: string;
   actionsPosition: any;
+  allowDeleteAllChildren: boolean;
+  countableChildren: AknTag;
 }
 
 export class Node {}
