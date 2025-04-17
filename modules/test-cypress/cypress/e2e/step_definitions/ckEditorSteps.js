@@ -330,6 +330,10 @@ When('move the cursor position to offset {int} in pTag {int} of level in edition
     ckEditorWindow.moveCursorToSpecificOffsetInLevel(offset, pTagNumber);
 });
 
+When('move the cursor position to offset {int} in pTag {int} of fs level in edition mode', (offset, pTagNumber) => {
+    ckEditorWindow.moveCursorToSpecificOffsetInFSLevel(offset, pTagNumber);
+});
+
 Then('pTag {int} of level contains {string} in edition mode', (pTagNumber, text) =>{
     ckEditorWindow.getElementPTagOfLevel(pTagNumber).should('include.text', text);
 });
