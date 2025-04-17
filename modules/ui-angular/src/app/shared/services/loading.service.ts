@@ -54,7 +54,7 @@ export class LoadingService {
             ' '),
       );
     if (this.tasksOngoing.length > 0) {
-      if (taskName === ' ' + this.translate.instant('task.post-processing.ongoing') + ' ') {
+      if (target === ' ' + this.translate.instant('task.post-processing.ongoing') + ' ') {
         this.appShellService.growl({
           severity: 'info',
           summary: 'Tasks ongoing',
