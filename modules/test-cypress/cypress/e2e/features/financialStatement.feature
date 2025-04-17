@@ -8,7 +8,7 @@ Feature: financial statement page regression features
     Given navigate to edit drafting application with "User1"
     Then user is on home page
 
-  @addAndDeleteFinancialStatement @local
+  @addAndDeleteFinancialStatement @local @focus
   Scenario: add section for financial statement document on Proposal Screen
     When click on Create act button
     Then user is on create new legislative document window
@@ -52,6 +52,7 @@ Feature: financial statement page regression features
     When select content from offset 0 to 5 of p tag 1 of level in edition mode
     And  click delete button from keyboard in edition mode
     And  append "text" at p tag 1 of level in edition mode
+    And  move the cursor position to offset 4 in pTag 1 of fs level in edition mode
     When click on internal reference icon present in ck editor panel
     Then cke dialog window is displayed with title "Internal reference"
     When click on "Having regard to the proposal from the European..." link in citations on the left side of internal reference window
