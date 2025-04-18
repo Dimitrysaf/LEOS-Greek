@@ -276,6 +276,8 @@ public abstract class AnnexServiceImpl implements AnnexService {
                 xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
         if (updateInternalRefs) {
             updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
+        } else {
+            updatedBytes = xmlContentProcessor.doXMLPostProcessing(updatedBytes);
         }
         return updatedBytes;
     }
