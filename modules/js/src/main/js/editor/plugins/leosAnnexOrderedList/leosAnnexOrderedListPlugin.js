@@ -343,7 +343,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
 
     //This is removing num and origin() on indent and outdent also
     function _resetDataNumOnIndent(event) {
-        var editor = event.editor, range, node;
+        var editor = event.editor, isIndent = event.data.isIndent, range, node;
         var selection = editor.getSelection(),
             ranges = selection && selection.getRanges(),
             iterator = ranges.createIterator();
@@ -356,7 +356,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 if (range.startContainer.type === CKEDITOR.NODE_TEXT && startNode.getParent().getName() === leosPluginUtils.ORDER_LIST_ELEMENT && startNode.getParent().getAttribute('data-akn-name') === 'aknAnnexList') {
                     startNode = range.startContainer.getParent().getName() === 'p' ? range.startContainer.getParent() : startNode;
                 }
-                _handleNode(startNode, editor);
+                _handleNode(startNode, editor, isIndent);
             }
             if (range.endContainer) {
                 var endNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === leosPluginUtils.HTML_POINT
@@ -365,26 +365,26 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 if (range.endContainer.type === CKEDITOR.NODE_TEXT && endNode.getParent().getName() === leosPluginUtils.ORDER_LIST_ELEMENT && endNode.getParent().getAttribute('data-akn-name') === 'aknAnnexList') {
                     endNode = range.endContainer.getParent().getName() === 'p' ? range.endContainer.getParent() : endNode;
                 }
-                _handleNode(endNode, editor);
+                _handleNode(endNode, editor, isIndent);
             }
 
             var rangeWalker = new CKEDITOR.dom.walker(range);
             while (node = rangeWalker.next()) {
-                _handleNode(node, editor);
+                _handleNode(node, editor, isIndent);
             }
         }
     }
 
-    function _handleNode(node, editor) {
+    function _handleNode(node, editor, isIndent) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT || node.getParent().getAttribute('data-akn-name') === 'aknAnnexList'){
             return;
         }
-        leosPluginUtils.handleIndentAttributes(node, editor);
+        leosPluginUtils.handleIndentAttributes(node, editor, isIndent);
         if (!node.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) || node.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT).
             toLowerCase() != leosPluginUtils.CROSSHEADING.toLowerCase()) {
             node.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
         }
-        node.getChildren().toArray().forEach(_handleNode.bind(this, editor));
+        node.getChildren().toArray().forEach(_handleNode.bind(this, editor, isIndent));
     }
 
     /*

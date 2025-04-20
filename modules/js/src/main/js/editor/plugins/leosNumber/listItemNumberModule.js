@@ -485,6 +485,7 @@ define(function listItemNumberModule(require) {
                     listItems[idx].removeAttribute("data-akn-content-id");
                     listItems[idx].removeAttribute("data-akn-mp-id");
                     listItems[idx].removeAttribute("data-akn-tc-original-number");
+                    listItems[idx].removeAttribute("data-akn-tc-original-indent-action");
                     var softAttributes = ["data-akn-attr-softuser", "data-akn-attr-softdate", "data-akn-attr-softaction",
                         "data-akn-attr-softactionroot", "data-akn-attr-softmove_label", "data-akn-attr-softmove_from", "data-akn-attr-softmove_to"];
                     for (var attrName of softAttributes) {
@@ -495,7 +496,7 @@ define(function listItemNumberModule(require) {
                     for (var attrName of tcAttributes) {
                         listItems[idx].removeAttribute(attrName);
                     }
-                    var tcNumberingAttributes= ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number"];
+                    var tcNumberingAttributes= ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-tc-original-indent-action"];
                     for (var attrName of tcNumberingAttributes) {
                         listItems[idx].removeAttribute(attrName);
                     }
