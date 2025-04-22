@@ -272,14 +272,14 @@ public class BillContext {
 
         final String updateRefsComment = messageHelper.getMessage("internal.ref.updatedOnImport");
         final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(bill.getContent().get().getSource().getBytes()); //updateRefs
-        billService.updateBill(bill, updatedBytes, updateRefsComment);
+        billService.updateBill(bill, updatedBytes, updateRefsComment, false);
         for (Annex annex : annexes) {
             DocumentVO docChild = billDocument.getChildDocuments().stream()
                     .filter(p -> Integer.parseInt(p.getMetadata().getIndex()) == annex.getMetadata().get().getIndex())
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
             byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(docChild.getSource());  //updateRefs
-            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment);
+            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false);
         }
 
         final String createComment = actionMsgMap.get(ContextAction.DOCUMENT_CREATED);
@@ -362,7 +362,7 @@ public class BillContext {
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
-            billService.updateBill(bill, metadata, VersionType.MINOR, actionMsgMap.get(ContextAction.METADATA_UPDATED));
+            billService.updateBill(bill, metadata, VersionType.MINOR, actionMsgMap.get(ContextAction.METADATA_UPDATED), true);
             // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
             List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
             annexes.forEach(annex -> {

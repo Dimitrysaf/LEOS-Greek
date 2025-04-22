@@ -1401,12 +1401,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public byte[] updateReferences(byte[] xmlContent) {
+    public Pair<byte[], List<Element>> updateReferences(byte[] xmlContent) {
         Document document = createXercesDocument(xmlContent);
-        if (updateReferences(document)) {
-            return nodeToByteArray(document);
+        List<Element> updatedMrefs = updateReferences(document);
+        if (!updatedMrefs.isEmpty()) {
+            return new Pair<>(nodeToByteArray(document), updatedMrefs);
         } else {
-            return null;
+            return new Pair<>(xmlContent, updatedMrefs);
         }
     }
 
@@ -1423,8 +1424,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private boolean updateReferences(Document document) {
-        boolean updated = false;
+    private List<Element> updateReferences(Document document) {
+        List<Element> updatedMrefs = new ArrayList<>();
         String sourceRef = getContentByTagName(document, LEOS_REF);
         NodeList mrefList = XercesUtils.getElementsByName(document, MREF);
         boolean isRefConfigEnabled = isRefConfigEnabled(document, mrefList);
@@ -1462,29 +1463,23 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 parentStatementsOfReferences.put(id, completeStatement);
 
                 if (isRefConfigEnabled) {
-                    Result<String> labelResult;
-                    //obtain label for document node
-                    if (refs.size() == 1 && refs.get(0).isDocNodeRef()) {
-                        labelResult = referenceLabelService.generateRefLabelForDocNode(refs.get(0));
-                    } else {
-                        labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
-                    }
+                    Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
                     if (labelResult.isOk()) {
                         String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
                         String updatedMrefContent = labelResult.get();
                         if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
                             mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
-                            updated = true;
+                            updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
                         }
                         XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
                     } else {
                         XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
-                        updated = true;
+                        updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
                     }
                 }
             }
         }
-        return updated;
+        return updatedMrefs;
     }
 
     private boolean updateReferences(Document eltDoc, Document wholeDoc) {

@@ -42,11 +42,11 @@ public interface AnnexService {
     
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, VersionType versionType, String comment);
     
-    Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment);
+    Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs);
 
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, String comment);
 
-    Annex updateAnnex(String id, byte[] updatedAnnexContent);
+    Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs);
 
     Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest);
     

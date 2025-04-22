@@ -381,10 +381,10 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                         null));
 
         // When
-        byte[] result = xercesXmlContentProcessor.updateReferences(xml);
+        Pair<byte[], List<Element>> result = xercesXmlContentProcessor.updateReferences(xml);
 
         // Then
-        assertEquals(squeezeXmlAndRemoveAllNS(new String(expectedXml)), squeezeXmlAndRemoveAllNS(new String(result)));
+        assertEquals(squeezeXmlAndRemoveAllNS(new String(expectedXml)), squeezeXmlAndRemoveAllNS(new String(result.left())));
         verify(referenceLabelService, times(2)).generateLabel(ArgumentMatchers.any(List.class), ArgumentMatchers.any(String.class),
                 ArgumentMatchers.any(String.class), ArgumentMatchers.any(Document.class), ArgumentMatchers.any(Boolean.class));
     }
@@ -413,10 +413,10 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                         null));
 
         // When
-        byte[] actual = xercesXmlContentProcessor.updateReferences(xml);
+        Pair<byte[], List<Element>> result = xercesXmlContentProcessor.updateReferences(xml);
 
         // Then
-        assertNull(actual);
+        assertTrue(result.right().isEmpty());
     }
 
     @Test
@@ -431,10 +431,10 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 .thenReturn(new Result<String>("Article 3<ref href=\"bill/ref1\" xml:id=\"aid\">(a)</ref>", null));
 
         // When
-        byte[] result = xercesXmlContentProcessor.updateReferences(xml);
+        Pair<byte[], List<Element>> result = xercesXmlContentProcessor.updateReferences(xml);
 
         // Then
-        assertEquals(squeezeXmlAndRemoveAllNS(new String(expectedXml)), squeezeXmlAndRemoveAllNS(new String(result)));
+        assertEquals(squeezeXmlAndRemoveAllNS(new String(expectedXml)), squeezeXmlAndRemoveAllNS(new String(result.left())));
         verify(referenceLabelService, times(1)).generateLabel(ArgumentMatchers.any(List.class), ArgumentMatchers.any(String.class),
                 ArgumentMatchers.any(String.class), ArgumentMatchers.any(Document.class), ArgumentMatchers.any(Boolean.class));
     }
@@ -450,10 +450,10 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 .thenReturn(new Result<>("Article 1<ref href=\"bill/ref1\" xml:id=\"aid\">(1)</ref>", null));
 
         // When
-        byte[] actual = xercesXmlContentProcessor.updateReferences(xml);
+        Pair<byte[], List<Element>> result = xercesXmlContentProcessor.updateReferences(xml);
 
         // Then
-        assertNull(actual);
+        assertTrue(result.right().isEmpty());
     }
 
     @Test
@@ -468,10 +468,10 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 .thenReturn(new Result<>("", ErrorCode.DOCUMENT_REFERENCE_NOT_VALID));
 
         // When
-        byte[] resultBytes = xercesXmlContentProcessor.updateReferences(xml);
+        Pair<byte[], List<Element>> resultBytes = xercesXmlContentProcessor.updateReferences(xml);
 
         // Then
-        String result = new String(resultBytes, UTF_8);
+        String result = new String(resultBytes.left(), UTF_8);
         String expected = new String(xmlExpected, UTF_8);
         expected = squeezeXmlAndRemoveAllNS(expected);
         result = squeezeXmlAndRemoveAllNS(result);

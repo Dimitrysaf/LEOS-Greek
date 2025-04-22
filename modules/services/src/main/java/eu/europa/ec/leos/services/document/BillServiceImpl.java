@@ -140,11 +140,13 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     @Override
-    public Bill updateBill(Bill bill, byte[] updatedBillContent, String comments) {
+    public Bill updateBill(Bill bill, byte[] updatedBillContent, String comments, boolean updateInternalRefs) {
         LOG.trace("Updating Bill Xml Content... [id={}]", bill.getId());
         final BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
         bill = billRepository.updateBill(bill.getId(), metadata, updatedBillContent, VersionType.MINOR, comments);
-        updateInternalReferencesAsync(bill);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(bill);
+        }
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
         return bill;
@@ -159,21 +161,25 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     @Override
-    public Bill updateBill(String id, byte[] updatedContent) {
+    public Bill updateBill(String id, byte[] updatedContent, boolean updateInternalRefs) {
         LOG.trace("Updating Bill content... [id={}]", id);
         Bill bill = billRepository.updateBill(id, updatedContent);
-        updateInternalReferencesAsync(bill);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(bill);
+        }
         return bill;
     }
 
     @Override
-    public Bill updateBill(Bill bill, BillMetadata updatedMetadata, VersionType versionType, String comment) {
+    public Bill updateBill(Bill bill, BillMetadata updatedMetadata, VersionType versionType, String comment, boolean updateInternalRefs) {
         LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
         Stopwatch stopwatch = Stopwatch.createStarted();
         byte[] updatedBytes = updateDataInXml(getContent(bill), updatedMetadata);
         
         bill = billRepository.updateBill(bill.getId(), updatedMetadata, updatedBytes, versionType, comment);
-        updateInternalReferencesAsync(bill);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(bill);
+        }
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
         
@@ -339,7 +345,7 @@ public abstract class BillServiceImpl implements BillService {
         newXmlContent = numberService.renumberHigherSubDivisions(newXmlContent, tocList);
         newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
 
-        return updateBill(bill, newXmlContent, actionMsg);
+        return updateBill(bill, newXmlContent, actionMsg, true);
     }
     
     @Override

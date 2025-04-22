@@ -667,7 +667,7 @@
   "task.saving.ongoing": "Sauvegarde du document en cours...",
   "task.refresh.ongoing": "Mise à jour du document en cours...",
   "task.post-processing.ongoing": "La mise à jour des références internes est en cours.",
-  "task.post-processing.done": "La mise à jour des références internes est terminée. Pour pouvoir voir les références mises à jour, veuillez rafraîchir la page.",
+  "task.post-processing.done": "Le processus de mise à jour des références internes des documents est terminé.",
   "dialog.leos.light.mark.as.done.title": "Marquer comme traité",
   "dialog.leos.light.mark.as.done.content": "Il n'y a pas d'adresse de callback à exporter. Appuyez sur Ok pour télécharger le document."
 }

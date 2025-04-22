@@ -48,7 +48,7 @@ export class CoEditionServiceWS {
   private coEditionForDocument: BehaviorSubject<Record<string, CoEditionVO[]>> =
     new BehaviorSubject(null);
   //group per element id for the document being edited by the user
-  private coEditionForPostProcessing: BehaviorSubject<string> =
+  private coEditionForPostProcessing: BehaviorSubject<CoEditionUpdate> =
     new BehaviorSubject(null);
   //presenter id of the active editor page
   private presenterIDBS: BehaviorSubject<string> = new BehaviorSubject('');
@@ -360,9 +360,7 @@ export class CoEditionServiceWS {
   }
 
   private handleCoEditForPostProcessing(coEdit: CoEditionUpdate) {
-    if (this.user.login === coEdit.user.login) {
-      this.coEditionForPostProcessing.next(coEdit.documentId);
-    }
+    this.coEditionForPostProcessing.next(coEdit);
   }
 
   private handleDocumentChannel(message: Stomp.Message) {

@@ -105,7 +105,7 @@ public interface XmlContentProcessor {
 
     String updateReferences(String content, XmlDocument xmlDocument) throws Exception;
 
-    byte[] updateReferences(byte[] xmlContent) throws Exception;
+    Pair<byte[], List<Element>> updateReferences(byte[] xmlContent) throws Exception;
 
     Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent);
 

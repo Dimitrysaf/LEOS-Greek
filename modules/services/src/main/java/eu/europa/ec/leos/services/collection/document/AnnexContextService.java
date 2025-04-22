@@ -199,7 +199,7 @@ public class AnnexContextService {
         Validate.notNull(annex, "Annex is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
         byte[] content = this.postProcessingDocumentService.updateReferences(annex.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
-        annexService.updateAnnex(annex.getId(), content);
+        annexService.updateAnnex(annex.getId(), content, false);
     }
 
     public Annex executeCreateAnnex() {
@@ -320,7 +320,7 @@ public class AnnexContextService {
                 .withDocTemplate(template)
                 .build();
         
-        annex = annexService.updateAnnex(annex, xmlContent, annexMetadata, VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.ANNEX_STRUCTURE_UPDATED));
+        annex = annexService.updateAnnex(annex, xmlContent, annexMetadata, VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.ANNEX_STRUCTURE_UPDATED), true);
     }
     
     private byte[] getContent(Annex annex) {
