@@ -259,9 +259,9 @@ define(function aknOrderedListPluginModule(require) {
 
     //This is removing num and origin() on indent and outdent also
     function _resetDataNumOnIndent(event) {
-        var editor = event.editor, range, node;
+        var editor = event.editor, isIndent = event.data.isIndent, range, node;
         var selection = editor.getSelection();
-        selection = leosPluginUtils.selectCorrectElementForList(selection, true);
+        selection = leosPluginUtils.selectCorrectElementForList(selection, isIndent);
         var ranges = selection && selection.getRanges(),
             iterator = ranges.createIterator();
 
@@ -270,29 +270,29 @@ define(function aknOrderedListPluginModule(require) {
                 var startNode = range.startContainer.type !== CKEDITOR.NODE_TEXT && range.startContainer.getName() === "li"
                     ? range.startContainer
                     : range.startContainer.getAscendant('li');
-                _handleNode(startNode, editor);
+                _handleNode(startNode, editor, isIndent);
             }
             if (range.endContainer) {
                 var endNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === "li"
                     ? range.endContainer
                     : range.endContainer.getAscendant('li');
-                _handleNode(endNode, editor);
+                _handleNode(endNode, editor, isIndent);
             }
 
             var rangeWalker = new CKEDITOR.dom.walker(range);
             while (node = rangeWalker.next()) {
-                _handleNode(node, editor);
+                _handleNode(node, editor, isIndent);
             }
         }
     }
 
-    function _handleNode(node, editor) {
+    function _handleNode(node, editor, isIndent) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT){
             return;
         }
-        leosPluginUtils.handleIndentAttributes(node, editor);
+        leosPluginUtils.handleIndentAttributes(node, editor, isIndent);
         node.removeAttribute('data-akn-num');
-        node.getChildren().toArray().forEach(_handleNode.bind(this, editor));
+        node.getChildren().toArray().forEach(_handleNode.bind(this, editor, isIndent));
     }
 
     /*

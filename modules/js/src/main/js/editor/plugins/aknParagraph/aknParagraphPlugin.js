@@ -72,6 +72,9 @@ define(function aknParagraphPluginModule(require) {
                 akn: "leos:tc-original-number",
                 html: "data-akn-tc-original-number"
             }, {
+                akn: "leos:tc-original-indent-action",
+                html: "data-akn-tc-original-indent-action"
+            }, {
                 akn : "leos:action",
                 html : "data-akn-action"
             }, {

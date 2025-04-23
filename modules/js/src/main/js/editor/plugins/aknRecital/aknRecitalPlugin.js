@@ -193,6 +193,9 @@ define(function aknRecitalPluginModule(require) {
                     akn: "leos:tc-original-number",
                     html: "data-akn-tc-original-number"
                 }, {
+                    akn: "leos:tc-original-indent-action",
+                    html: "data-akn-tc-original-indent-action"
+                }, {
                     akn: "leos:title",
                     html: "title-number"
                 }, {
@@ -216,6 +219,9 @@ define(function aknRecitalPluginModule(require) {
                 }, {
                     akn: "leos:tc-original-number",
                     html: "data-akn-tc-original-number"
+                }, {
+                    akn: "leos:tc-original-indent-action",
+                    html: "data-akn-tc-original-indent-action"
                 }, {
                     akn: "leos:title",
                     html: "title-number"

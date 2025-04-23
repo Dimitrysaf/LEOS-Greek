@@ -25,9 +25,9 @@ define(function leosTrackChangesModule(require) {
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
         SOFT_ACTION_ATTR: "data-akn-attr-softaction", LEOS_SOFT_ACTION_ATTR: "leos:softaction", LEOS_SOFT_ACTION_MOVE_FROM_VALUE: "move_from",
         LEOS_ACTION_ATTR: "leos:action", ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article",
+        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", ID: "id",
 
-        DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
+        DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_TC_ORIGINAL_INDENT_ACTION: "data-akn-tc-original-indent-action", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
         DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
@@ -179,7 +179,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "NEW"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-tc-original-indent-action", "NEW"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -566,29 +566,33 @@ define(function leosTrackChangesModule(require) {
             return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
         },
 
-        hasTrackChanges: function(element) {
-            return element.hasAttribute(core.ACTION_ATTR) || element.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || element.hasAttribute(core.DATA_AKN_ACTION_ENTER);
+        hasTrackChanges: function(elementId, editor) {
+            var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
+            return element && (element.hasAttribute(this.ACTION_ATTR) || element.hasAttribute(this.DATA_AKN_ACTION_NUMBER) || element.hasAttribute(this.DATA_AKN_ACTION_ENTER));
         },
 
-        getLastTCElement: function(element, processedElements) {
+        getLastTCElement: function(elementId, editor, processedElements) {
+            var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
+            if(element) {
             for (var i = element.getChildCount()-1; i >= 0; i--) {
                 var childElement = element.getChild(i);
-                if(!childElement || childElement.type === CKEDITOR.NODE_TEXT || (processedElements && processedElements.includes(childElement.getAttribute('id')))) {
+                    if (!childElement || childElement.type === CKEDITOR.NODE_TEXT || (processedElements && processedElements.includes(childElement.getAttribute(this.ID)))) {
                     continue;
                 }
                 if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
-                    var lastTCElement = this.getLastTCElement(childElement, processedElements);
+                        var lastTCElement = this.getLastTCElement(childElement.getAttribute(this.ID), editor, processedElements);
                     if(lastTCElement) {
                         return lastTCElement;
                     }
                 }
-                if(this.hasTrackChanges(childElement)) {
+                    if (this.hasTrackChanges(childElement.getAttribute(this.ID), editor)) {
                     return childElement;
                 }
             }
-            if(this.hasTrackChanges(element)) {
+                if (this.hasTrackChanges(element.getAttribute(this.ID), editor)) {
                 return element;
             }
+        }
         }
     };
 
@@ -700,7 +704,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         isElementPresentInEditor(editor, element) {
-            return !!editor.document.find('.leos-placeholder').getItem(0).find(`#${element.getAttribute('id')}`).getItem(0);
+            return !!editor.document.find('.leos-placeholder').getItem(0).find(`#${element.getAttribute(core.ID)}`).getItem(0);
         },
 
         acceptAllChanges: function(editor) {
@@ -758,17 +762,15 @@ define(function leosTrackChangesModule(require) {
 
         processElement: function (editor, element, processedElements, actionName) {
             if (this.isElementPresentInEditor(editor, element)) {
-                var lastTCElement = core.getLastTCElement(element, processedElements);
+                var lastTCElement = core.getLastTCElement(element.getAttribute(core.ID), editor, processedElements);
                 if(lastTCElement) {
                     editor.execCommand(actionName, lastTCElement);
-                    if (lastTCElement.hasAttribute("id")) {
-                    processedElements.push(lastTCElement.getAttribute('id'));
+                    if (lastTCElement.hasAttribute(core.ID)) {
+                        processedElements.push(lastTCElement.getAttribute(core.ID));
                     }
-                    if (this.isElementPresentInEditor(editor, element)) {
                         this.processElement(editor, element, processedElements, actionName);
                     }
                 }
-            }
         },
 
         findOlElementsByDepth: function (root, targetDepth) {
@@ -982,8 +984,8 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        outdentList: function(element, editor) {
-            var keyCodeToUse = CKEDITOR.SHIFT + 9;
+        indentList: function(element, editor, isIndent) {
+            var keyCodeToUse = isIndent ? 9 : CKEDITOR.SHIFT + 9;
             var ckEditorEvent = new CKEDITOR.dom.event(
                 new KeyboardEvent('key', {
                     keyCode: 9,
@@ -1018,9 +1020,12 @@ define(function leosTrackChangesModule(require) {
             } else if(element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
                 if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
                     this.removeEnterInsert(element, editor, numberModule);
-                } else if(element.hasAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER)) {
-                    //TODO: This need to be improved to identify whether indent/outdent to be done.
-                    this.outdentList(element, editor);
+                } else if(element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) && element.hasAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
+                    if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION).toLowerCase() === 'indent') {
+                        this.indentList(element, editor, false);
+                    } else {
+                        this.indentList(element, editor, true);
+                    }
                 }
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
                 element.remove();

@@ -671,7 +671,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function aknindentList(editor) {
         var that = this, database = this.database, context = this.context, range;
-        editor.fire("beforeAknIndentList");
+        editor.fire("beforeAknIndentList", { isIndent: that.isIndent });
 
         function indent(listNode) {
             // Our starting and ending points of the range might be inside some blocks under a list item...
@@ -826,14 +826,14 @@ define(function leosAnnexIndentListPluginModule(require) {
                             pendingLis.push(child);
 
                         if((child = children.getItem(i)) && child.is && child.is('p')) {
-                            var indentOriginNumId = startItem.getAttribute("data-indent-origin-num-id");
-                            var indentOriginType = startItem.getAttribute("data-indent-origin-type");
-                            var indentOriginNumber = startItem.getAttribute("data-indent-origin-num");
-                            var indentOriginNumOrigin = startItem.getAttribute("data-indent-origin-num-origin");
-                            child.setAttribute("data-indent-origin-num-id", indentOriginNumId);
-                            child.setAttribute("data-indent-origin-type", indentOriginType);
-                            child.setAttribute("data-indent-origin-num", indentOriginNumber);
-                            child.setAttribute("data-indent-origin-num-origin", indentOriginNumOrigin);
+                            var indentOriginNumId = startItem.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER_ID);
+                            var indentOriginType = startItem.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_TYPE);
+                            var indentOriginNumber = startItem.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER);
+                            var indentOriginNumOrigin = startItem.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER_ORIGIN);
+                            child.setAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER_ID, indentOriginNumId);
+                            child.setAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_TYPE, indentOriginType);
+                            child.setAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER, indentOriginNumber);
+                            child.setAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER_ORIGIN, indentOriginNumOrigin);
                         }
                     }
                 }
