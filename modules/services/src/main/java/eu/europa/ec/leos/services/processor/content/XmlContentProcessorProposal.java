@@ -166,19 +166,6 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 (t.getAknTag().value().equalsIgnoreCase(PERSON)
                 || t.getAknTag().value().equalsIgnoreCase(ROLE))).findAny().isPresent()) {
             signatureLocationNode = getFirstChild(node, P);  //Conclusions location paragraph
-        } else if (tocVo.getTocItem().isAllowDeleteAllChildren() != null
-                && !tocVo.getTocItem().isAllowDeleteAllChildren()
-                && tocVo.getChildItemsView().stream().filter(elem -> elem.getTocItem().getAknTag().value().equals(tocVo.getTocItem().getCountableChildren())).count() == 0) {
-            List<Node> possibleChildrenNode = XmlContentProcessorHelper.extractChildrenNotNumHeadingIntro(node);
-            boolean hasId = false;
-            for (Node childNode : possibleChildrenNode) {
-                if (childNode.getAttributes().getNamedItem(XMLID) != null) {
-                    hasId = true;
-                }
-            }
-            if (!hasId) {
-                childrenNode = possibleChildrenNode;
-            }
         } else if (getChildren(node).size() > 0) {
             childrenNode = ELEMENTS_WITH_ONLY_TEXT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) ?
                     XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node) :

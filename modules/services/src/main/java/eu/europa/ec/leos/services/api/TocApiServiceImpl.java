@@ -576,12 +576,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(elementName)) {
             if (tableOfContentItemVO.getChildItems() != null
                     && (tableOfContentItemVO.getChildItems().isEmpty()
-                        || tableOfContentItemVO.getChildItems().stream().filter(elem ->
-                                rule.getLowerElements().getTypes().stream()
-                                        .map(elemType -> elemType.value())
-                                        .collect(Collectors.toList())
-                                        .contains(elem.getTocItem().getAknTag().value())
-                           ).filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)
+                        || tableOfContentItemVO.getChildItems().stream()
+                                .filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)
                     && tableOfContentItemVO.getSoftActionAttr() == null) {
                 return true;
             }

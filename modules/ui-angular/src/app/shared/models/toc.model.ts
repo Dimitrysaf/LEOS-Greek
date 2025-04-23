@@ -128,8 +128,6 @@ export class TocItem {
   template: string;
   maxDepth: string;
   actionsPosition: any;
-  allowDeleteAllChildren: boolean;
-  countableChildren: AknTag;
 }
 
 export class Node {}

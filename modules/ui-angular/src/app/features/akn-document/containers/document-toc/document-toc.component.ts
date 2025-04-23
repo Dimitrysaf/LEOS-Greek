@@ -286,18 +286,6 @@ export class DocumentTocComponent
   hasChildren = (index: number, node: TableOfContentItemVO) =>
     node.childItems.length > 0;
 
-  blockMoveOrDelete = (node: TableOfContentItemVO) => {
-    if (node.parentItem) {
-      const parentNode = findNodeById(
-        this.treeControl.dataNodes,
-        node.parentItem
-      );
-      return parentNode.tocItem.allowDeleteAllChildren === false
-        && parentNode.childItems.filter(elem => elem.tocItem.aknTag == parentNode.tocItem.countableChildren).filter(elem => elem.trackChangeAction !== 'delete').length === 1;
-    }
-    return false;
-  }
-
   shouldAddMoveLabel(tocItem: TableOfContentItemVO) {
     return (
       tocItem.softActionRoot &&
@@ -893,26 +881,6 @@ export class DocumentTocComponent
         sourceItem: nodeDragged,
         targetItem: nodeTarget,
         messageKey: 'toc.edit.window.drop.moved-or-deleted-cannot-move.error',
-      } as NodeValidation);
-      return;
-    }
-    if (nodeDragged.deletable === false) {
-      this.populateValidationMessage({
-        success: false,
-        warning: false,
-        sourceItem: nodeDragged,
-        targetItem: nodeTarget,
-        messageKey: 'toc.edit.window.drop.cannot.move.or.delete.error',
-      } as NodeValidation);
-      return;
-    }
-    if (this.blockMoveOrDelete(nodeDragged)) {
-      this.populateValidationMessage({
-        success: false,
-        warning: false,
-        sourceItem: nodeDragged,
-        targetItem: nodeTarget,
-        messageKey: 'toc.edit.window.drop.cannot.move.or.delete.only.child.error',
       } as NodeValidation);
       return;
     }

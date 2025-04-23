@@ -197,14 +197,12 @@
             <contentDisplayed>false</contentDisplayed>
             <deletable>true</deletable>
             <rootItemDeletable>false</rootItemDeletable>
-            <allowDeleteAllChildren>false</allowDeleteAllChildren>
-            <countableChildren>recital</countableChildren>
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
             <template>
-                <![CDATA[<recitals leos:editable="false"><num>1.</num><heading leos:editable="true">RECITAL SECTION HEADING</heading><recital leos:editable="true"><num>${num}</num><p>Recital text...</p></recital></recitals>]]>
+                <![CDATA[<recitals leos:editable="false"><num>1.</num><heading leos:editable="true">RECITAL SECTION HEADING</heading><recital leos:editable="true"><num>${num}</num><p>Recital...</p></recital></recitals>]]>
             </template>
         </tocItem>
 
@@ -1231,9 +1229,6 @@
             <description>No empty recitals</description>
             <type>notEmptyElement</type>
             <tocItem>recitals</tocItem>
-            <lowerElements>
-                <type>recital</type>
-            </lowerElements>
             <scope>save</scope>
             <errorMessage>toc.recitals.empty.validation.warning.message</errorMessage>
         </rule>
