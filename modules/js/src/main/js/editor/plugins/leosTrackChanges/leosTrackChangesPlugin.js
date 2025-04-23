@@ -201,6 +201,13 @@ define(function leosTrackChangesPluginModule(require) {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
+                        } else if (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER)
+                            && (elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER)
+                                || elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER))){
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
                         } else {
                             return {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
