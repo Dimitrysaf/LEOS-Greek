@@ -8,8 +8,7 @@ public enum MetadataFieldType {
     INTERINSTITUTIONAL_COTE("interinstitutionalCote"),
     INSERT_COTE("insertCote"),
     LINKED_DOCUMENTS("linkedDocuments"),
-    DOCUMENT_FINAL("isFinal"),
-    STAMP("stamp");
+    DOCUMENT_FINAL("isFinal");
 
     private final String typeName;
 
@@ -44,9 +43,6 @@ public enum MetadataFieldType {
         }
         if(MetadataFieldType.DOCUMENT_FINAL.getTypeName().equals(typeName)){
             return MetadataFieldType.DOCUMENT_FINAL;
-        }
-        if(MetadataFieldType.STAMP.getTypeName().equals(typeName)){
-            return MetadataFieldType.STAMP;
         }
         throw new IllegalArgumentException("Invalid metadata type name");
     }
