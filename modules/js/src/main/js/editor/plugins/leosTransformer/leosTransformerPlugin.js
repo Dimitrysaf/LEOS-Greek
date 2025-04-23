@@ -96,7 +96,9 @@ define(function leosTransformerPluginModule(require) {
         var isPBeforeTable = $(elem).is('p') && $(elem).prev().is('table');
         var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
         isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList;
-        if (($(elem).parents('table').length === 0) && !$(elem).attr("refersto") && !isPBeforeTable &&
+        if (($(elem).parents('table').length === 0)
+            && (!$(elem).attr("refersto") || $(elem).attr("refersto") === '~WRP')
+            && !isPBeforeTable &&
             UTILS.isEmptyElement(elem) && ($.trim($(elem).text()) === '')) {
             var parent = $(elem).parent();
             $(elem).remove();
