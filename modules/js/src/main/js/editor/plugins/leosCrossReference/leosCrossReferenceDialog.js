@@ -87,6 +87,9 @@ define(function leosCrossReferenceDialog(require) {
                                     if (tabRef && tabRef.lastIndexOf('.') > 0) {
                                         tabRef = tabRef.substring(0, tabRef.lastIndexOf('.'));
                                         this.getDialog().selectPage(tabRef);
+                                    } else if (tabRef && tabRef.startsWith('docNodeRef_')) {
+                                        tabRef =  tabRef.replace('docNodeRef_', '');
+                                        this.getDialog().selectPage(tabRef);
                                     }
 
                                     var brokenRef =  widget.element.getAttribute('leos:broken');
@@ -599,7 +602,10 @@ define(function leosCrossReferenceDialog(require) {
             }
             var that = this;
             tocItems.forEach(function(item) {
-                if (selectedIds.indexOf(item.id) !== -1) {
+                if(selectedIds[0].startsWith('docNodeRef_') && item.tocItem.aknTag === 'DOC') {
+                    item.id = selectedIds[0]
+                    currentItem.push(item);
+                } else if (selectedIds.indexOf(item.id) !== -1) {
                     if (item.children.length > 0) {
                         var childCurrentItem = that._matchSelectedTreeItem(item.children, selectedIds.slice(1));
                         if (childCurrentItem && childCurrentItem.length > 0) {
@@ -626,6 +632,7 @@ define(function leosCrossReferenceDialog(require) {
                     if (isDocNode) {
                         that.nodeContentHandler.setDocNodeRefTextLabel(firstSelectedNode.text);
                         that.nodeContentHandler.setDocNodeRef();
+                        that.nodeContentHandler.$contentContainer.text(firstSelectedNode.text);
                     } else {
                         var result = leosCrossReferenceRuleResolver.isSelectionAllowed(data.node, firstSelectedNode, true);
                         if (result) {

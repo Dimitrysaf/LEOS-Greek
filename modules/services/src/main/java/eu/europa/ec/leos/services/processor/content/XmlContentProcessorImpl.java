@@ -1969,7 +1969,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
-        if (node == null) {
+        if (idAttributeValue.startsWith("docNodeRef_")) {
+            ancestorsIds.addFirst(idAttributeValue);
+            return ancestorsIds;
+        } else if (node == null) {
             String errorMsg = String.format("Element with id: %s does not exists.", idAttributeValue);
             LOG.error(errorMsg);
             throw new IllegalArgumentException(errorMsg);
