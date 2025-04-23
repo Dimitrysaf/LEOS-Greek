@@ -82,11 +82,6 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
                                 updatedElts));
             }
         }
-        final String documentRef = message.getDocumentRef();
-        User user = securityContext.getUser();
-        simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
-                new UpdateCoEditionResponse(user, null, documentRef, InfoType.DOCUMENT_POST_PROCESSING,
-                        Collections.emptyList()));
     }
 
     private List<Element> updateInternalReference(XmlDocument xmlDocument) throws Exception {
