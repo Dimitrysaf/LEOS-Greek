@@ -1472,7 +1472,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                             updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
                         }
                         XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
-                    } else {
+                    } else if (!XercesUtils.hasAttribute(mref, LEOS_REF_BROKEN_ATTR)
+                            || !XercesUtils.getAttributeValue(mref, LEOS_REF_BROKEN_ATTR).equals("true")) {
                         XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
                         updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
                     }
