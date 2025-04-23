@@ -19,7 +19,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutputList;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
-import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
+import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.rest.Akn4EUUtilRestClient;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +38,15 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
 
     private final LeosLegDocumentService leosLegDocumentService;
     private final XmlDocumentService xmlDocumentService;
-    private final LeosPrefinalisationService leosPrefinalisationService;
+    private final MetadataService metadataService;
     private final Akn4EUUtilRestClient restClient;
 
     public LeosDocumentServiceImpl(LeosLegDocumentService leosLegDocumentService,
                                    XmlDocumentService xmlDocumentService,
-                                   LeosPrefinalisationService leosPrefinalisationService, Akn4EUUtilRestClient restClient) {
+                                   MetadataService metadataService, Akn4EUUtilRestClient restClient) {
         this.leosLegDocumentService = leosLegDocumentService;
         this.xmlDocumentService = xmlDocumentService;
-        this.leosPrefinalisationService = leosPrefinalisationService;
+        this.metadataService = metadataService;
         this.restClient = restClient;
     }
 
@@ -86,10 +86,10 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
     }
 
     public byte[] applyMetadata(MultipartFile inputFile) {
-        return leosPrefinalisationService.applyMetadata(inputFile);
+        return metadataService.applyMetadata(inputFile);
     }
 
     public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
-        this.leosPrefinalisationService.applyMetadataAsync(inputFile, callbackUrl);
+        this.metadataService.applyMetadataAsync(inputFile, callbackUrl);
     }
 }
