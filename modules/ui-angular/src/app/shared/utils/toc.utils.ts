@@ -1162,11 +1162,11 @@ export const isDeletableItem = (
       !(PARAGRAPH === elementName
         ? isLastExistingChildElement(tableOfContentItemVO, parentItem)
         : false) &&
-      !hasTocItemTrackChangeAction(
+      (!hasTocItemTrackChangeAction(
         tableOfContentItemVO,
         LEOS_TC_DELETE_ACTION,
-      ) &&
-      !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)
+      ) ||
+      !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION))
     );
   }
 };
