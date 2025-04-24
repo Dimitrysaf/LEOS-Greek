@@ -344,3 +344,194 @@ Feature: Annex Page Regression Features
         And click save and close button of ck editor
         Then ck editor window is not displayed
         Then attribute 'leos:indent-origin-num-id' of subparagraph 2 of list 1 of level 1 should not be equal to same attribute in subparagraph 1 of same level
+
+    @levelNumbering @indentOutdentLevel @local
+    Scenario: issues/2479 indent and outdent is not working for level
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "level numbering" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 1
+        When click on annex 1 link
+        Then user is on annex page
+        And  ribbon toolbar is maximized
+        And  annotation side bar is present
+        When click on insert after icon of level 3
+        Then total number of level is 4
+        When click on insert after icon of level 4
+        Then total number of level is 5
+        When click on insert after icon of level 5
+        Then total number of level is 6
+        When click on insert after icon of level 6
+        Then total number of level is 7
+        When click on insert after icon of level 7
+        Then total number of level is 8
+        When mouseover and click on level 2
+        Then ck editor window is displayed
+        And  increase indent icon is disabled in ck editor
+        And  decrease indent icon is displayed and enabled in ck editor panel
+        When click close button of ck editor
+        And  mouseover and click on level 3
+        Then ck editor window is displayed
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then increase indent icon is disabled in ck editor
+        And  decrease indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1." in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num value of level 3 contains "1.1.1."
+        And  num value of level 4 contains "2."
+        And  num value of level 5 contains "3."
+        And  num value of level 6 contains "4."
+        And  num value of level 7 contains "5."
+        And  num value of level 8 contains "6."
+        When mouseover and click on level 4
+        Then ck editor window is displayed
+        And  decrease indent icon is disabled in ck editor panel
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then increase indent icon is disabled in ck editor
+        And  decrease indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1." in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num value of level 4 contains "1.1.1.1."
+        And  num value of level 5 contains "2."
+        And  num value of level 6 contains "3."
+        And  num value of level 7 contains "4."
+        And  num value of level 8 contains "5."
+        When mouseover and click on level 5
+        Then ck editor window is displayed
+        And  decrease indent icon is disabled in ck editor panel
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then increase indent icon is disabled in ck editor
+        And  decrease indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.1." in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num value of level 5 contains "1.1.1.1.1."
+        And  num value of level 6 contains "2."
+        And  num value of level 7 contains "3."
+        And  num value of level 8 contains "4."
+        When mouseover and click on level 6
+        Then ck editor window is displayed
+        And  decrease indent icon is disabled in ck editor panel
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then increase indent icon is disabled in ck editor
+        And  decrease indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.1.1." in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num value of level 6 contains "1.1.1.1.1.1."
+        And  num value of level 7 contains "2."
+        And  num value of level 8 contains "3."
+        When mouseover and click on level 7
+        Then ck editor window is displayed
+        And  decrease indent icon is disabled in ck editor panel
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then increase indent icon is disabled in ck editor
+        And  decrease indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.1.1.1." in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num value of level 7 contains "1.1.1.1.1.1.1."
+        And  num value of level 8 contains "2."
+        When mouseover and click on level 8
+        Then ck editor window is displayed
+        And  decrease indent icon is disabled in ck editor panel
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then decrease indent icon is displayed and enabled in ck editor panel
+        And  increase indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.1.2." in edition mode
+        When click on increase indent icon present in ck editor panel
+        Then increase indent icon is disabled in ck editor
+        And  decrease indent icon is displayed and enabled in ck editor panel
+        And  level contains attribute name "data-akn-num" with attribute value "1.1.1.1.1.1.2." in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num value of level 1 contains "1."
+        And  num value of level 2 contains "1.1."
+        And  num value of level 3 contains "1.1.1."
+        And  num value of level 4 contains "1.1.1.1."
+        And  num value of level 5 contains "1.1.1.1.1."
+        And  num value of level 6 contains "1.1.1.1.1.1."
+        And  num value of level 7 contains "1.1.1.1.1.1.1."
+        And  num value of level 8 contains "1.1.1.1.1.1.2."

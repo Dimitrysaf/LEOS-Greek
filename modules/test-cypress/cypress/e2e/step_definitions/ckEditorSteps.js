@@ -601,3 +601,7 @@ Then('check content inside ckeditor is greater than {int}', function (size) {
 When('click at offset {int} of pTag {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode', function (offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement) {
     ckEditorWindow.clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement);
 });
+
+Then('level contains attribute name {string} with attribute value {string} in edition mode', function (attributeName, attributeValue) {
+    ckEditorWindow.getElementLiTagOfLevel().should('have.attr', attributeName).and('equal', attributeValue);
+});
