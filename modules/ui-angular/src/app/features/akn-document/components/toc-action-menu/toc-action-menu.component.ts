@@ -21,7 +21,6 @@ import {getTocItemByAknTag} from "@/shared/utils/toc.utils";
 })
 export class TocActionMenuComponent implements OnInit, OnDestroy {
   @Input() node: TableOfContentItemVO;
-  @Input() blockMoveOrDelete: boolean;
 
   menuItems: DropdownModel[] = [];
   isEditMode: boolean;

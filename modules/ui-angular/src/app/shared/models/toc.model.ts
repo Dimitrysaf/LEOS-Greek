@@ -127,8 +127,6 @@ export class TocItem {
   addSoftAttr: boolean;
   maxDepth: string;
   actionsPosition: any;
-  allowDeleteAllChildren: boolean;
-  countableChildren: AknTag;
 }
 
 export class Node {}

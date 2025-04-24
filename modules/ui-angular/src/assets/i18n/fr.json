@@ -622,8 +622,6 @@
   "toc.edit.window.drop.success.message": "<b>{{0}}</b> a été ajouté avec succès !",
   "toc.edit.window.drop.unexpected.error": "Une erreur inattendue s'est produite lors de l'édition de la table des matières",
   "toc.edit.window.drop.moved-or-deleted-cannot-move.error": "<b>Éléments supprimés ou déplacés</b> ne peuvent pas être déplacés",
-  "toc.edit.window.drop.cannot.move.or.delete.only.child.error": "Un dernier sous-élément ne peut être déplacé",
-  "toc.edit.window.drop.cannot.move.or.delete.error": "Cet élément ne peut être déplacé ou supprimé",
   "toc.edit.window.drop.already.contains.list.error.message": "<b>{{0}}</b> déjà présent dans <b>{{1}}</b>",
   "toc.edit.window.softmove.label": "DÉPLACÉ",
   "version.view.header": "v{{ version }} - dernière modification par {{ updatedByFull }} le {{ updatedOn }}",

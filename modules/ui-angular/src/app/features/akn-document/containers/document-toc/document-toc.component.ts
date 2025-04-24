@@ -973,26 +973,6 @@ export class DocumentTocComponent
       } as NodeValidation);
       return;
     }
-    if (nodeDragged.deletable === false) {
-      this.populateValidationMessage({
-        success: false,
-        warning: false,
-        sourceItem: nodeDragged,
-        targetItem: nodeTarget,
-        messageKey: 'toc.edit.window.drop.cannot.move.or.delete.error',
-      } as NodeValidation);
-      return;
-    }
-    if (this.blockMoveOrDelete(nodeDragged)) {
-      this.populateValidationMessage({
-        success: false,
-        warning: false,
-        sourceItem: nodeDragged,
-        targetItem: nodeTarget,
-        messageKey: 'toc.edit.window.drop.cannot.move.or.delete.only.child.error',
-      } as NodeValidation);
-      return;
-    }
 
     // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
     if (position === 'AS_CHILDREN') {
