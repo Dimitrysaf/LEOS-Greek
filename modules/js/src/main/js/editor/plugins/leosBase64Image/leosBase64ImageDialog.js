@@ -16,7 +16,9 @@ define(function leosBase64ImageDialog(require) {
     "use strict";
     
     var CKEDITOR = require("promise!ckEditor");
-    
+    var leosPluginUtils = require("plugins/leosPluginUtils");
+    var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
+
     var dialogDefinition = {
         dialogName: "leosBase64ImageDialog"
     };
@@ -171,7 +173,22 @@ define(function leosBase64ImageDialog(require) {
             if (isNaN(v)) v = 0;
             elem.setValue(v + u);
         }
-        
+
+        function insertImgInNewP(selection, selectedElement, img) {
+            let range = selection.getRanges()[0];
+            if (leosPluginUtils.getElementName(selectedElement) === "p") {
+                img.insertAfter(selectedElement);
+                range.setStartAfter(selectedElement);
+            } else {
+                editor.insertElement(img);
+            }
+            range.fixBlock(true, 'p');
+            range.startContainer.setAttribute('data-akn-name', 'structuredContent');
+            range.startContainer.setAttribute('data-akn-hcontainer', 'FGR');
+            range.startContainer.setAttribute('data-akn-sub-hcontainer', 'IMG');
+            leosPluginUtils.setFocus(img, editor);
+        }
+
         /* Dialog */
         return {
             title: editor.lang.common.image,
@@ -295,10 +312,18 @@ define(function leosBase64ImageDialog(require) {
                     
                 }
                 if (css.length > 0) newImg.setAttribute("style", css.join(""));
-                
+
                 /* Insert new image */
-                if (!selectedImg) editor.insertElement(newImg);
-                
+                if (!selectedImg) {
+                    let selection = editor.getSelection();
+                    const selectedElement = leosKeyHandler.getSelectedElement(selection);
+                    if (leosPluginUtils.isRecital(selectedElement)) {
+                        insertImgInNewP(selection, selectedElement, newImg);
+                    } else {
+                        editor.insertElement(newImg);
+                    }
+                }
+
                 /* Resize image */
                 if (editor.plugins.imageresize) editor.plugins.imageresize.resize(editor, newImg, 800, 800);
                 
