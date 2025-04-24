@@ -354,8 +354,12 @@ class ckEditorWindow {
         return this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1);
     }
 
+    getElementLiTagOfLevel(){
+        return this.elements.ckEditableInline().find("ol[data-akn-element='level']").find("li[data-akn-element='level']");
+    }
+
     addContentInSubParagraphOfLevel(content, pTagNumber) {
-        this.elements.ckEditableInline().find("ol[data-akn-element='level']").find("li[data-akn-element='level']").find("p[data-akn-element='subparagraph']").eq(pTagNumber - 1).type(content);
+        this.getElementLiTagOfLevel().find("p[data-akn-element='subparagraph']").eq(pTagNumber - 1).type(content);
     }
 
     clickAtSpecificOffsetInSubparagraphOfLevel(offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3) {
@@ -371,7 +375,7 @@ class ckEditorWindow {
     }
 
     getHeadingOfLevel() {
-        return this.elements.ckEditableInline().find("ol[data-akn-element='level']").find("li[data-akn-element='level']").find('h2 strong');
+        return this.getElementLiTagOfLevel().find('h2 strong');
     }
 
     getAuthorialNoteWithMarkerNumber(markerNumber) {
