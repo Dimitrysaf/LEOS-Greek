@@ -67,6 +67,7 @@ define(function aknLevelProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosDapInfo/leosDapInfo"));
     plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
+    plugins.push(require("plugins/leosSubElementMove/leosSubElementMovePlugin"));
 
     var pluginNames=[];
     var specificConfig={
