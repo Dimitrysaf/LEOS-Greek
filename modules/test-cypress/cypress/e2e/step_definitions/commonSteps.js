@@ -76,3 +76,7 @@ When(/^wait for (\d+) milliseconds$/, function (milliseconds) {
 Given(/^refresh the browser$/, function () {
     cy.reload();
 });
+
+Then(/^"([^"]*)" is displayed$/, function (content) {
+    cy.contains(content).should('be.visible');
+});
