@@ -61,6 +61,7 @@ define(function aknInlineArticleProfileModule(require) {
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
     plugins.push(require("plugins/leosDapInfo/leosDapInfo"));
     plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
+    plugins.push(require("plugins/leosInsertAfter/leosInsertAfterPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
