@@ -84,41 +84,46 @@ public class NumberConfigFactory {
     private NumberConfig getNumberConfig(NumberingType numberingType, NumberingConfig numberingConfig) {
         String prefix = numberingConfig.getPrefix();
         String suffix = numberingConfig.getSuffix();
+        boolean suffixInEnd = true;
+        if (numberingConfig.isSuffixInEnd() != null && !numberingConfig.isSuffixInEnd()) {
+            suffixInEnd = numberingConfig.isSuffixInEnd();
+        }
         switch (numberingType) {
             case ARABIC:
             case ARABIC_POSTFIXDOT:
+            case ARABIC_POSTFIXDOT_NODOT_END:
             case ARABIC_PARENTHESIS:
-                return new NumberConfigArabic(prefix, suffix);
+                return new NumberConfigArabic(prefix, suffix, suffixInEnd);
             case ROMAN_LOWER_PARENTHESIS:
-                return new NumberConfigRoman(false, prefix, suffix);
+                return new NumberConfigRoman(false, prefix, suffix, suffixInEnd);
             case ROMAN_UPPER:
             case ROMAN_UPPER_POSTFIXDOT:
             case ROMAN_UPPER_POSTFIXPARENTHESIS:
-                return new NumberConfigRoman(true, prefix, suffix);
+                return new NumberConfigRoman(true, prefix, suffix, suffixInEnd);
             case ALPHA_LOWER_PARENTHESIS:
-                return new NumberConfigAlpha(false, prefix, suffix);
+                return new NumberConfigAlpha(false, prefix, suffix, suffixInEnd);
             case GREEK_ALPHA_LOWER_PARENTHESIS:
-                return new NumberConfigGreekAlpha(false, prefix, suffix);
+                return new NumberConfigGreekAlpha(false, prefix, suffix, suffixInEnd);
             case CYRILLIC_ALPHA_LOWER_PARENTHESIS:
-                return new NumberConfigCyrillicAlpha(false, prefix, suffix);
+                return new NumberConfigCyrillicAlpha(false, prefix, suffix, suffixInEnd);
             case ALPHA_UPPER_POSTFIXDOT:
             case ALPHA_UPPER_POSTFIXPARENTHESIS:
-                return new NumberConfigAlpha(true, prefix, suffix);
+                return new NumberConfigAlpha(true, prefix, suffix, suffixInEnd);
             case BULLET_BLACK_CIRCLE:
             case BULLET_WHITE_CIRCLE:
             case BULLET_BLACK_SQUARE:
             case BULLET_WHITE_SQUARE:
             case INDENT:
-                return new NumberConfigSymbol(numberingConfig.getSequence(), prefix, suffix);
+                return new NumberConfigSymbol(numberingConfig.getSequence(), prefix, suffix, suffixInEnd);
             case HIGHER_ELEMENT_NUM:
-                return new NumberConfigArabic("","");
+                return new NumberConfigArabic("","", suffixInEnd);
             case SOLE_ARTICLE:
             case SOLE_ARTICLE_CYRILLIC:
             case SOLE_ARTICLE_GREEK:
             case SOLE_RECITAL:
             case SOLE_RECITAL_CYRILLIC:
             case SOLE_RECITAL_GREEK:
-                return new SoleNumberConfig(numberingConfig.getLabel(), true);
+                return new SoleNumberConfig(numberingConfig.getLabel(), true, suffixInEnd);
             case NONE:
                 return null;
             default:

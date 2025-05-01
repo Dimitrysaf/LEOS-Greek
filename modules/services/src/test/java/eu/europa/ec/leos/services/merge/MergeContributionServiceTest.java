@@ -316,8 +316,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         this.contribution7.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
         this.contribution7.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
         this.contribution7.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
-        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor,
-                documentLanguageContext);
+        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, documentLanguageContext);
         mergeContributionService = Mockito.spy(new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext,
                 numberService));
         ReflectionTestUtils.setField(numberProcessorArticle, "securityContext", securityContext);

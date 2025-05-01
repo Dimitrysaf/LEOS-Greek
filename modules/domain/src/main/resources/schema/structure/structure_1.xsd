@@ -121,6 +121,7 @@
             <xs:element name="numbered" type="xs:boolean" default="false"/>
             <xs:element name="prefix" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="suffix" type="xs:string" default="" minOccurs="0"/>
+            <xs:element name="suffixInEnd" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="sequence" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="description" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="regex" type="xs:string" default="" minOccurs="0"/>
@@ -224,6 +225,7 @@
             <xs:enumeration value="SOLE_RECITAL_GREEK"/>
             <xs:enumeration value="ARABIC"/>
             <xs:enumeration value="ARABIC_POSTFIXDOT"/>
+            <xs:enumeration value="ARABIC_POSTFIXDOT_NODOT_END"/>
             <xs:enumeration value="ARABIC_PARENTHESIS"/>
             <xs:enumeration value="GREEK"/>
             <xs:enumeration value="GREEK_POSTFIXDOT"/>

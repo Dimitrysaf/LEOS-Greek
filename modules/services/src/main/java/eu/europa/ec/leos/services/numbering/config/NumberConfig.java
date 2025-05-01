@@ -24,4 +24,6 @@ public interface NumberConfig {
     String getComplexValueToShow();
     void incrementComplexValue();
     void resetComplexValue();
+    boolean isSuffixInEnd();
+
 }
