@@ -138,6 +138,11 @@ define(function leosInsertAfterPluginModule(require) {
                         });
                         context.editor.once("receiveData", context.editor.fire("close"));
                     }
+                    else{
+                        insertionInProgress = false;
+                        saveCompleteSub.unsubscribe();
+                        insertCompleteSub.unsubscribe();
+                    }
                 }
 
             }
