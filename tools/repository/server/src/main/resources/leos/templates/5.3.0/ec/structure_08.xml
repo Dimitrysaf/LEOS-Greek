@@ -199,7 +199,8 @@
             <rootItemDeletable>false</rootItemDeletable>
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>false</sameParentAsChild>
+            <sameParentAsChild>true</sameParentAsChild>
+            <onlySameParentAsChild>true</onlySameParentAsChild>
             <editable>false</editable>
             <template>
                 <![CDATA[<recitals leos:editable="false"><num>1.</num><heading leos:editable="true">RECITAL SECTION HEADING</heading><recital leos:editable="true"><num>${num}</num><p>Recital...</p></recital></recitals>]]>

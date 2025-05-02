@@ -47,6 +47,7 @@
             <xs:element name="numWithType" type="xs:boolean" default="false"/>
             <xs:element name="expandedByDefault" type="xs:boolean" default="false"/>
             <xs:element name="sameParentAsChild" type="xs:boolean" default="false"/>
+            <xs:element name="onlySameParentAsChild" type="xs:boolean" default="false" minOccurs="0"/>
             <xs:element name="tocItemTypes" type="tocItemTypes" minOccurs="0"/>
             <xs:element name="parentNameNumberingTypeDependency" type="aknTag" minOccurs="0"/>
             <xs:element name="profiles" type="profiles" minOccurs="0"/>
