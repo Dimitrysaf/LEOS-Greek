@@ -122,7 +122,7 @@ define(function leosInsertAfterPluginModule(require) {
                                     elementType: elementType,
                                     elementCursorPos: 0,
                                     elementCursorChildPos: 0,
-                                    elementCursorId: newElementId
+                                    elementCursorId: ""
                                 });
                             }
                             clearInterval(id);
