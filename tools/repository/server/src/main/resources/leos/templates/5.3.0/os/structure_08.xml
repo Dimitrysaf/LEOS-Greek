@@ -181,14 +181,14 @@
             <autoNumbering>
                 <!-- Default Configuration for all languages -->
                 <langNumConfig langGroup="latin" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
                 </langNumConfig>
                 <!-- Configuration for specific languages -->
                 <langNumConfig langGroup="cyrillic" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
                 </langNumConfig>
                 <langNumConfig langGroup="greek" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>mandatory</itemHeading>
@@ -815,6 +815,18 @@
             <numbered>true</numbered>
             <prefix></prefix>
             <suffix>.</suffix>
+            <sequence>1</sequence>
+            <description>1., 2., etc</description>
+            <regex>\d+$|#</regex>
+            <regexJS>^\d+$</regexJS>
+            <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
+        </numberingConfig>
+        <numberingConfig>
+            <type>ARABIC_POSTFIXDOT_NODOT_END</type>
+            <numbered>true</numbered>
+            <prefix></prefix>
+            <suffix>.</suffix>
+            <suffixInEnd>false</suffixInEnd>
             <sequence>1</sequence>
             <description>1., 2., etc</description>
             <regex>\d+$|#</regex>

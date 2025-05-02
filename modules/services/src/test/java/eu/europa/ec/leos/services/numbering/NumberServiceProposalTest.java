@@ -64,8 +64,7 @@ public abstract class NumberServiceProposalTest extends NumberServiceTest {
         super.setup();
         getStructureFile();
         when(cloneContext.isClonedProposal()).thenReturn(false);
-        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, contentProcessor,
-                documentLanguageContext);
+        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, documentLanguageContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
     }
