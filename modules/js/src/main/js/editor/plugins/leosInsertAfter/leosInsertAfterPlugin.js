@@ -122,7 +122,7 @@ define(function leosInsertAfterPluginModule(require) {
                                     elementType: elementType,
                                     elementCursorPos: 0,
                                     elementCursorChildPos: 0,
-                                    elementCursorId: newElementId
+                                    elementCursorId: ""
                                 });
                             }
                             clearInterval(id);
@@ -137,6 +137,11 @@ define(function leosInsertAfterPluginModule(require) {
                             data: context.editor.getData(),
                         });
                         context.editor.once("receiveData", context.editor.fire("close"));
+                    }
+                    else{
+                        insertionInProgress = false;
+                        saveCompleteSub.unsubscribe();
+                        insertCompleteSub.unsubscribe();
                     }
                 }
 
