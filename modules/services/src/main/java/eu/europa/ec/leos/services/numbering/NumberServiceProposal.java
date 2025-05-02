@@ -18,7 +18,6 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildConverter;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -55,6 +54,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
@@ -77,18 +77,14 @@ public class NumberServiceProposal implements NumberService {
     private final Provider<StructureContext> structureContextProvider;
     private final NumberProcessorHandler numberProcessorHandler;
     private final ParentChildConverter parentChildConverter;
-    private final XmlContentProcessor xmlContentProcessor;
     private final DocumentLanguageContext documentLanguageContext;
-
-    private List<TocItem> tocItems;
 
     @Autowired
     public NumberServiceProposal(Provider<StructureContext> structureContextProvider, NumberProcessorHandler numberProcessorHandler,
-            ParentChildConverter parentChildConverter, XmlContentProcessor xmlContentProcessor, DocumentLanguageContext documentLanguageContext) {
+            ParentChildConverter parentChildConverter, DocumentLanguageContext documentLanguageContext) {
         this.structureContextProvider = structureContextProvider;
         this.numberProcessorHandler = numberProcessorHandler;
         this.parentChildConverter = parentChildConverter;
-        this.xmlContentProcessor = xmlContentProcessor;
         this.documentLanguageContext = documentLanguageContext;
     }
 
@@ -108,7 +104,7 @@ public class NumberServiceProposal implements NumberService {
         Node specificNode = XercesUtils.getElementById(document, elementId);
         if (specificNode != null) {
             Document specificNodeDoc = createXercesDocument(nodeToByteArray(specificNode), true);
-            numberProcessorHandler.renumberDocument(specificNodeDoc, tagName, documentLanguageContext.getDocumentLanguage(),true);
+            numberProcessorHandler.renumberDocument(specificNodeDoc, tagName, documentLanguageContext.getDocumentLanguage(), true);
             replaceElement(specificNode, nodeToString(specificNodeDoc));
         }
         return nodeToByteArray(document);
@@ -116,7 +112,24 @@ public class NumberServiceProposal implements NumberService {
 
     @Override
     public byte[] renumberRecitals(byte[] xmlContent) {
-        return renumberDocument(xmlContent, RECITAL, true, false);
+        xmlContent = renumberDocument(xmlContent, RECITAL, true, false);
+        return this.renumberRecitalSections(xmlContent);
+    }
+
+    @Override
+    public byte[] renumberRecitalSections(byte[] xmlContent) {
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
+        if (isAutoNumberingEnabled(tocItems, RECITALS, documentLanguageContext.getDocumentLanguage())) {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            Document document = createXercesDocument(xmlContent);
+            NodeList nodeList = document.getElementsByTagName(RECITALS);
+            List<ParentChildNode> parentChildList = parentChildConverter.getParentChildByHierarchicalStructure(nodeList, true);
+            LOG.trace("renumberRecitalSections - Found {} '{}'s element in the document", nodeList.getLength(), RECITALS);
+            numberProcessorHandler.renumberDepthBased(parentChildList, RECITALS, 1);
+            LOG.debug("renumberRecitalSections {} '{}' in {} milliseconds ({} sec)", nodeList.getLength(), RECITALS, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            return nodeToByteArray(document);
+        }
+        return xmlContent;
     }
 
     @Override
@@ -138,7 +151,7 @@ public class NumberServiceProposal implements NumberService {
     }
 
     private byte[] renumberDocument(byte[] xmlContent, String elementName, boolean namespaceEnabled, boolean renumberChildren) {
-        tocItems = structureContextProvider.get().getTocItems();
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, elementName, documentLanguageContext.getDocumentLanguage())) {
             Document document = createXercesDocument(xmlContent, namespaceEnabled);
             numberProcessorHandler.renumberDocument(document, elementName, documentLanguageContext.getDocumentLanguage(), renumberChildren);
@@ -258,7 +271,7 @@ public class NumberServiceProposal implements NumberService {
     }
 
     private byte[] renumberDocumentSubdivision(byte[] xmlContent, List<TableOfContentItemVO> tableOfContentItemVOList, String elementName, boolean namespaceEnabled) {
-        tocItems = structureContextProvider.get().getTocItems();
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         String language = documentLanguageContext.getDocumentLanguage();
         TocItem tocItem = getTocItemByName(tocItems, elementName);
         NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);

@@ -40,6 +40,34 @@ public class ParentChildConverter {
         return basedOnDepthList;
     }
 
+    public List<ParentChildNode> getParentChildByHierarchicalStructure(NodeList nodeList, boolean showParentSuffix) {
+        List<Node> nodes = getNodesAsList(nodeList);
+        List<ParentChildNode> basedOnDepthList = new ArrayList<>();
+        // We don't get the first, as it is the recital root
+        for (int i = 1; i < nodes.size(); i++) {
+            Node node = nodes.get(i);
+            Integer depth = getNodeHierarchicalDepth(node);
+            if(depth == null) {
+                LOG.warn("Node {} does not contain attribute 'depth'", getId(node));
+            }
+            basedOnDepthList.add(new ParentChildNode(depth, nodes.get(i), showParentSuffix));
+        }
+
+        basedOnDepthList = groupByHierarchicalDepth(basedOnDepthList);
+        return basedOnDepthList;
+    }
+
+    public static Integer getNodeHierarchicalDepth(Node node) {
+        Integer depth = 0;
+        Node current = node.getParentNode();
+        String nodeName = node.getNodeName();
+        while (current != null && nodeName.equals(current.getNodeName())) {
+            depth++;
+            current = current.getParentNode();
+        }
+        return depth;
+    }
+
     public static Integer getNodeDepth(Node node) {
         Integer depth = 1;
         if (DIVISION.equals(node.getNodeName())) {
@@ -97,6 +125,45 @@ public class ParentChildConverter {
         return basedOnDepthList;
     }
 
+    private static List<ParentChildNode> groupByHierarchicalDepth(List<ParentChildNode> nodeList) {
+        List<ParentChildNode> basedOnDepthList = new ArrayList<>();
+        ParentChildNode lastNode = null;
+        int elementsToProcess = nodeList.size();
+        for (int i = 0; i < elementsToProcess; i++) {
+            if (i == 0) {
+                lastNode = nodeList.get(i);
+            }
+            if (isNodeRemoved(lastNode)) {
+                // A deleted node cannot be parent
+                ParentChildNode prevLastNode = lastNode;
+                if (!nodeList.isEmpty()) {
+                    if (i == 0) {
+                        addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
+                        nodeList.remove(0);
+                        i++;
+                    }
+                    lastNode = nodeList.remove(0);
+                    if (lastNode.getDepth() > prevLastNode.getDepth() || isNodeRemoved(lastNode)) {
+                        addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
+                        lastNode.setDepth(prevLastNode.getDepth() != null ? prevLastNode.getDepth() : 1);
+                    } else if (!nodeList.isEmpty()) {
+                        if (lastNode.getDepth() == prevLastNode.getDepth()) {
+                            addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
+                        } else {
+                            addChildAtHierarchicalDepth(basedOnDepthList, lastNode);
+                        }
+                        // As we treat it here, we have to skip one
+                        i++;
+                        lastNode = findChildrenHierarchicallyForNode(basedOnDepthList, nodeList, lastNode);
+                    }
+                }
+            } else {
+                lastNode = findChildrenHierarchicallyForNode(basedOnDepthList, nodeList, lastNode);
+            }
+        }
+        return basedOnDepthList;
+    }
+
     private static boolean isNodeRemoved(ParentChildNode node) {
         return XercesUtils.isTCDeleted(node.getNode())
                 || XercesUtils.isSoftMovedTo(node.getNode());
@@ -127,6 +194,27 @@ public class ParentChildConverter {
         return node;
     }
 
+    private static ParentChildNode findChildrenHierarchicallyForNode(List<ParentChildNode> basedOnDepthList, List<ParentChildNode> nodeList, ParentChildNode lastNode) {
+        ParentChildNode node = nodeList.remove(0);
+        LOG.trace("-> NODE: [ {} ] --- LASTNODE: [ {} ]", node, lastNode);
+        int lastDepth = (lastNode.getDepth() != null) ? lastNode.getDepth() : 1;
+
+        int depth = (node.getDepth() != null) ? node.getDepth() : 1;
+        if (depth - lastDepth == 1) {
+            lastNode.addChild(node);  //add as child. Parent will be updated to lastNode.
+        } else if (depth - lastDepth == 0) {
+            addSiblingOrInRoot(basedOnDepthList, lastNode, node); // add as sibling
+        } else {
+            if(lastDepth < depth) { // decreasing
+                node.setDepth(lastDepth + 1);
+                lastNode.addChild(node);
+            } else {
+                addChildAtHierarchicalDepth(basedOnDepthList, node);
+            }
+        }
+        return node;
+    }
+
     private static void addChildAtDepth(List<ParentChildNode> nodeList, ParentChildNode node) {
         int depthNode = getNodeDepth(node.getNode());
         List<ParentChildNode> flatNodeList = nodeList.stream()
@@ -136,6 +224,22 @@ public class ParentChildConverter {
         if (flatNodeList.size() == 0) {
             //throw new IllegalStateException("No element found with depth: " + depthNode);
             XercesUtils.addAttribute(node.getNode(), LEOS_DEPTH_ATTR, String.valueOf(1));
+            node.setDepth(1);
+            addSiblingOrInRoot(nodeList, null, node);
+            return;
+        }
+        ParentChildNode lastOfSameDepth = flatNodeList.get(flatNodeList.size() - 1);
+
+        addSiblingOrInRoot(nodeList, lastOfSameDepth, node);
+    }
+
+    private static void addChildAtHierarchicalDepth(List<ParentChildNode> nodeList, ParentChildNode node) {
+        int depthNode = getNodeHierarchicalDepth(node.getNode());
+        List<ParentChildNode> flatNodeList = nodeList.stream()
+                .flatMap(ParentChildNode::flattened)
+                .filter(n -> getNodeHierarchicalDepth(n.getNode()) == depthNode)
+                .collect(Collectors.toList());
+        if (flatNodeList.size() == 0) {
             node.setDepth(1);
             addSiblingOrInRoot(nodeList, null, node);
             return;
