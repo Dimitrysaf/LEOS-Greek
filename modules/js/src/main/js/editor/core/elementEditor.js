@@ -197,6 +197,7 @@ define(function elementEditorModule(require) {
                 instanceType: params.instanceType,
                 user: user,
                 implicitSaveEnabled: connector.getState().isImplicitSaveEnabled,
+                elementId: params.elementId,
                 elementType: params.elementType,
                 spellCheckerName: connector.getState().spellCheckerName,
                 spellCheckerServiceUrl: connector.getState().spellCheckerServiceUrl,
@@ -514,7 +515,15 @@ define(function elementEditorModule(require) {
                 isSaveAndClose: !!event.data.isSaveAndClose ? true : false,
             };
             editor.LEOS.saveCmdExecuted = true;
-            connector.saveElement(data);
+            connector.saveElement(data)
+                .then((response) => {
+                    if (connector.editorChannel) {
+                        connector.editorChannel.publish('save.complete', response);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Save failed:", error);
+                });
             return true;
         }
         return false;

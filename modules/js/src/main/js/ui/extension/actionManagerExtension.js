@@ -169,6 +169,7 @@ define(function actionManagerExtensionModule(require) {
         actions.target = element;
         element.actions = actions;
 
+
         _showActionButtons(actions, element, false);
     }
 

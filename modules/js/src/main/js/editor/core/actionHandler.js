@@ -54,7 +54,15 @@ define(function actionHandlerModule(require) {
         let matches = regExp.exec(data.action);
         if (matches) {
             data.position = matches[1];
-            connector.insertElementAction(data);
+            connector.insertElementAction(data)
+                .then((response) => {
+                    if (connector.editorChannel) {
+                        connector.editorChannel.publish("actions.insert.after.completed", response);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Save failed:", error);
+                });
         }
     }
 
