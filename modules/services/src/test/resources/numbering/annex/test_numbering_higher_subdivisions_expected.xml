@@ -148,67 +148,67 @@
                     </content>
                 </paragraph>
             </article>
-            <part leos:depth="1" xml:id="__akn_part_hteM8g">
+            <part xml:id="__akn_part_hteM8g">
                 <num>Part I</num>
                 <heading>Part heading...</heading>
-                <title leos:depth="2" xml:id="__akn_title_k82PDW">
+                <title xml:id="__akn_title_k82PDW">
                     <num>Title I</num>
                     <heading>Title heading...</heading>
-                    <chapter leos:depth="3" xml:id="__akn_chapter_BF3FBy">
+                    <chapter xml:id="__akn_chapter_BF3FBy">
                         <num>Chapter 1</num>
                         <heading>Chapter heading...</heading>
-                        <section leos:depth="4" xml:id="__akn_section_cJ7uaR">
+                        <section xml:id="__akn_section_cJ7uaR">
                             <num>Section 1</num>
                             <heading>Section heading...</heading>
                         </section>
-                        <section leos:depth="4" xml:id="__akn_section_Hs6SwI">
+                        <section xml:id="__akn_section_Hs6SwI">
                             <num>Section 2</num>
                             <heading>Section heading...</heading>
                         </section>
                     </chapter>
-                    <section leos:depth="3" xml:id="__akn_section_5PIPuJ">
+                    <section xml:id="__akn_section_5PIPuJ">
                         <num>Section 1</num>
                         <heading>Section heading...</heading>
                     </section>
                 </title>
-                <chapter leos:depth="2" xml:id="__akn_chapter_qekDNv">
+                <chapter xml:id="__akn_chapter_qekDNv">
                     <num>Chapter 1</num>
                     <heading>Chapter heading...</heading>
                 </chapter>
-                <section leos:depth="2" xml:id="__akn_section_gH8Qcp">
+                <section xml:id="__akn_section_gH8Qcp">
                     <num>Section 1</num>
                     <heading>Section heading...</heading>
                 </section>
             </part>
-            <title leos:depth="1" xml:id="__akn_title_OWWq8q">
+            <title xml:id="__akn_title_OWWq8q">
                 <num>Title I</num>
                 <heading>Title heading...</heading>
             </title>
-            <chapter leos:depth="1" xml:id="__akn_chapter_7n6QyU">
+            <chapter xml:id="__akn_chapter_7n6QyU">
                 <num>Chapter 1</num>
                 <heading>Chapter heading...</heading>
             </chapter>
-            <section leos:depth="1" xml:id="__akn_section_qfuTFr">
+            <section xml:id="__akn_section_qfuTFr">
                 <num>Section 1</num>
                 <heading>Section heading...</heading>
             </section>
-            <part leos:depth="1" xml:id="__akn_part_KEWrDc">
+            <part xml:id="__akn_part_KEWrDc">
                 <num>Part II</num>
                 <heading>Part heading...</heading>
             </part>
-            <chapter leos:depth="1" xml:id="__akn_chapter_Fqmmqz">
+            <chapter xml:id="__akn_chapter_Fqmmqz">
                 <num>Chapter 2</num>
                 <heading>Chapter heading...</heading>
             </chapter>
-            <title leos:depth="1" xml:id="__akn_title_XzyTz4">
+            <title xml:id="__akn_title_XzyTz4">
                 <num>Title II</num>
                 <heading>Title heading...</heading>
             </title>
-            <section leos:depth="1" xml:id="__akn_section_Ldl0r5">
+            <section xml:id="__akn_section_Ldl0r5">
                 <num>Section 2</num>
                 <heading>Section heading...</heading>
             </section>
-            <title leos:depth="1" xml:id="__akn_title_Y0XTgh">
+            <title xml:id="__akn_title_Y0XTgh">
                 <num>Title III</num>
                 <heading>Title heading...</heading>
             </title>

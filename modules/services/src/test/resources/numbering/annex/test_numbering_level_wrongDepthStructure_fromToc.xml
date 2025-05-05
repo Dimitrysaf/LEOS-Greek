@@ -7,14 +7,14 @@
                     <p xml:id="level_1_content_p">Text...</p>
                 </content>
             </level>
-            <chapter leos:depth="2" xml:id="_cha_SHyjRL">
+            <chapter xml:id="_cha_SHyjRL">
                 <level leos:depth="2" xml:id="level_1_1">
                     <num xml:id="level_1_1_num">1.1.</num>
                     <content xml:id="level_1_1_content">
                         <p xml:id="level_1_1_content_p">Text...</p>
                     </content>
                 </level>
-                <section leos:depth="2" xml:id="sec">
+                <section xml:id="sec">
                     <level leos:depth="5" xml:id="_akn_level_CQejYj">
                         <num xml:id="_akn_aJZlFO">#</num>
                         <content xml:id="_akn_t4EnZS">
