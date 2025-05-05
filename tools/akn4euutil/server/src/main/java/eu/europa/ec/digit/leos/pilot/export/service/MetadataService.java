@@ -33,4 +33,5 @@ public interface MetadataService {
     void processEmissionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processAdoptionLocation(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 }

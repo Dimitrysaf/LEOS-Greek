@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -75,7 +76,6 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
             validateDocumentXmlFiles(documentXmlFiles);
             ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles);
-            XmlFile xmlResponse = getResponseConverter().applyMetadataResponseToXmlFile(response); // TODO: check: it's unused - required?
             return buildResponse(response, documentXmlFiles, documentFurtherContent);
         }
         catch(XmlValidationException ex) {
@@ -246,6 +246,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         for (XmlFile xmlFile : documentXmlFiles){
             LOG.debug("Process xml file '{}'", xmlFile.getName());
             switch(fieldInfo.getFieldType()){
+                case ADOPTION_DATE:
+                    metadataService.processAdoptionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
                 case ADOPTION_LOCATION:
                     metadataService.processAdoptionLocation((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;

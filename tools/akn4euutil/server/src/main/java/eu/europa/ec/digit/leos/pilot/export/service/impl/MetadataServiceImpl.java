@@ -66,6 +66,8 @@ public class MetadataServiceImpl implements MetadataService {
         try {
             MetadataFieldType fieldType = MetadataFieldType.valueOfTypeName(field);
             switch(fieldType){
+                case ADOPTION_DATE:
+                    return MetadataUtil.parseAdoptionDate(fieldValue);
                 case ADOPTION_LOCATION:
                     return MetadataUtil.parseAdoptionLocation(fieldValue);
                 case EMISSION_DATE:
@@ -96,6 +98,33 @@ public class MetadataServiceImpl implements MetadataService {
         addAdoptionLocationToMetaReference(locationToLanguage, xmlFile);
         addAdoptionLocationToCoverPage(locationToLanguage, xmlFile);
         addAdoptionLocationToConclusion(locationToLanguage, xmlFile);
+    }
+
+    @Override
+    public void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
+            addAdoptionDate(fieldInfo, xmlFile);
+        }
+    }
+
+    private void addAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node longTitle = xmlFile.getElementByName("longTitle");
+        if (longTitle == null) return;
+
+        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, "p");
+        if (pNode == null) return;
+
+        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.DATE);
+        if (dateNode == null) return;
+
+
+        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.DATE, fieldInfo.getId());
+        final String displayValue = this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
+        dateNode.setTextContent(displayValue);
+    }
+
+    private String readAdoptionDateDisplayValue(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        return this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
     }
 
     private ReferenceFieldInfo adaptLocationToLanguage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -242,7 +271,7 @@ public class MetadataServiceImpl implements MetadataService {
     @Override
     public void processFinalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         processCote(fieldInfo, xmlFile);
-        final ReferenceFieldInfo finalFieldInfo = new ReferenceFieldInfo("", "", "final", "final", MetadataFieldType.FINAL_COTE);
+        final ReferenceFieldInfo finalFieldInfo = fieldInfo.withFieldType(MetadataFieldType.FINAL_COTE);
         addFinalToCoverPage(finalFieldInfo, xmlFile);
         addFinalToIdentification(finalFieldInfo, xmlFile);
         addFinalToFilename(finalFieldInfo, xmlFile);
