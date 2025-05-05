@@ -254,7 +254,7 @@ export class DocumentComponent
         .getPostProcessingCoEditionInfo()
         .pipe(takeUntil(this.destroy$))
         .subscribe((coEditionUpdate) => {
-          if (coEditionUpdate && coEditionUpdate.documentId === this.documentService.documentRef) {
+          if (!!coEditionUpdate && coEditionUpdate.documentId === this.documentService.documentRef) {
             this.updateElementsInContent(coEditionUpdate);
             this.loadingService.setTaskOver('post-processing', this.documentService.documentRef);
           }
