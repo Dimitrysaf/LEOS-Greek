@@ -176,14 +176,13 @@ define(function leosBase64ImageDialog(require) {
 
         function insertImgInNewP(selection, selectedElement, img) {
             let range = selection.getRanges()[0];
-            if (leosPluginUtils.getElementName(selectedElement) === "p") {
-                img.insertAfter(selectedElement);
-                range.setStartAfter(selectedElement);
-            } else {
-                editor.insertElement(img);
+            while (leosPluginUtils.getElementName(selectedElement) !== "p") {
+                selectedElement = selectedElement.getChildren().getItem(selectedElement.getChildren().count() - 1);
             }
+            img.insertAfter(selectedElement);
+            range.setStartAfter(selectedElement);
             range.fixBlock(true, 'p');
-            range.startContainer.setAttribute('data-akn-name', 'structuredContent');
+            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
             range.startContainer.setAttribute('data-akn-hcontainer', 'FGR');
             range.startContainer.setAttribute('data-akn-sub-hcontainer', 'IMG');
             leosPluginUtils.setFocus(img, editor);
@@ -315,8 +314,8 @@ define(function leosBase64ImageDialog(require) {
 
                 /* Insert new image */
                 if (!selectedImg) {
-                    let selection = editor.getSelection();
-                    const selectedElement = leosKeyHandler.getSelectedElement(selection);
+                    var selection = editor.getSelection();
+                    var selectedElement = leosKeyHandler.getSelectedElement(selection);
                     if (leosPluginUtils.isRecital(selectedElement)) {
                         insertImgInNewP(selection, selectedElement, newImg);
                     } else {

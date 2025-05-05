@@ -95,7 +95,7 @@ define(function hierarchicalElementTransformer(require) {
     var PARAGRAPH = 'paragraph';
     var AKN_NUMBERED_PARAGRAPH = 'aknNumberedParagraph';
     var RECITAL = "recital";
-    var STRUCTURED_CONTENT = "structuredContent";
+    var SUBFLOW_NAME = "structuredContent";
     var DATA_AKN_SUBFLOW_ID = "data-akn-subflow-id";
     var DATA_AKN_HCONTAINER_ID = "data-akn-hcontainer-id";
     var DATA_AKN_SUB_HCONTAINER_ID = "data-akn-sub-hcontainer-id";
@@ -351,7 +351,7 @@ define(function hierarchicalElementTransformer(require) {
             }]
         });
         contentPath += "/mp";
-        if (element.attributes[DATA_AKN_NAME] === STRUCTURED_CONTENT) {
+        if (element.attributes[DATA_AKN_NAME] === SUBFLOW_NAME) {
             this.mapToChildProducts(element, {
                 toPath: contentPath,
                 toChild: "subflow",
@@ -630,9 +630,10 @@ define(function hierarchicalElementTransformer(require) {
             var rootElementsWithContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content\/mp"].join("")));
             var rootElementsWithMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp"].join("")));
             var rootElementsWithMpAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/text"].join("")));
+            var rootElementsWithMpAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/((?!text|subflow).)+"].join("")));
             var rootElementsWithSubflowSubHcontainerAndContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content"].join("")));
             var rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp"].join("")));
-            var rootElementsWithSubflowAndImgForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp\/img"].join("")));
+            var rootElementsWithSubflowAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp\/.+"].join("")));
             // path = paragraph/subparagraph
             var rootElementsWithContentWrapperForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, PSR, contentWrapperForFrom].join("")));
             //path = paragraph/subparagraph/content
@@ -1068,10 +1069,6 @@ define(function hierarchicalElementTransformer(require) {
                                         action: "passAttributeTransformer"
                                     }]
                                 });
-                            } else if (rootElementsWithSubflowAndImgForFromRegExp.test(path)) {
-                                this.mapToNestedChildProduct(element, {
-                                    toPath: rootsElementsPathForTo + "/p"
-                                });
                             } else if (rootElementsWithContentAndMpForFromRegExp.test(path)) {
                                 this.mapToProducts(element, {
                                     toPath: rootsElementsPathForTo,
@@ -1267,6 +1264,10 @@ define(function hierarchicalElementTransformer(require) {
                             } else if (rootElementsWithNestedElementForFromRegExp.test(path)) {
                                 this.mapToNestedChildProduct(element, {
                                     toPath: rootsElementsPathForTo
+                                });
+                            } else if (rootElementsWithMpAndNestedForFromRegExp.test(path) || rootElementsWithSubflowAndNestedForFromRegExp.test(path)) {
+                                this.mapToNestedChildProduct(element, {
+                                    toPath: rootsElementsWithPPathForTo
                                 });
                             }
                         },
