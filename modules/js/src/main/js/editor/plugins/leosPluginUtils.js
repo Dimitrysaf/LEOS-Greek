@@ -58,6 +58,8 @@ define(function leosPluginUtilsModule(require) {
     var NUM = "num";
     var SUBPARAGRAPH = "subparagraph";
     var PARAGRAPH = "paragraph";
+    var RECITAL = "recital";
+    var SUBFLOW_NAME = "structuredContent"
     var ARTICLE = "article";
     var LEVEL = "level";
     var CROSSHEADING = "crossHeading";
@@ -188,6 +190,10 @@ define(function leosPluginUtilsModule(require) {
 
     function _isOrderedList(element) {
         return !!element && AKN_ORDERED_LIST === element.getAttribute(DATA_AKN_NAME);
+    }
+
+    function _isRecital(element) {
+        return !!element && element.getAscendant('ol', true)?.getAttribute(DATA_AKN_NAME) === RECITAL;
     }
 
     function _isUnnumberedCNParagraph(el) {
@@ -1481,6 +1487,10 @@ define(function leosPluginUtilsModule(require) {
         return element && $(element).children() && $(element).children().length > 0 && $(element).children().get(0).nodeName.ignoreCase === BOGUS.ignoreCase;
     }
 
+    function _isEmptyWithBogus(element) {
+        return element && $(element).children() && $(element).children().length > 0 && $(element).children().get(0).nodeName.toLowerCase() === BOGUS;
+    }
+
     function _isInsideTable(element) {
         return element && element.hasAscendant('table');
     }
@@ -1621,6 +1631,7 @@ define(function leosPluginUtilsModule(require) {
         isAnnexList: _isAnnexList,
         isOrderedAnnexList: _isOrderedAnnexList,
         isOrderedList: _isOrderedList,
+        isRecital: _isRecital,
 		isUnnumberedCNParagraph: _isUnnumberedCNParagraph,
 		isAnnexUnnumberedCNParagraph: _isAnnexUnnumberedCNParagraph,
 		isAnnexSubparagraphElement: _isAnnexSubparagraphElement,
@@ -1688,6 +1699,7 @@ define(function leosPluginUtilsModule(require) {
         selectCorrectPathForList: _selectCorrectPathForList,
         getRefConfig: _getRefConfig,
         isEmpty: _isEmpty,
+        isEmptyWithBogus: _isEmptyWithBogus,
         isInsideTable: _isInsideTable,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
@@ -1741,6 +1753,7 @@ define(function leosPluginUtilsModule(require) {
         INLINE_FROM_MATCH: INLINE_FROM_MATCH,
         BOGUS: BOGUS,
         TD: TD,
-        WRP: WRP
+        WRP: WRP,
+        SUBFLOW_NAME: SUBFLOW_NAME
     };
 });

@@ -27,16 +27,19 @@ $RECITAL_SPACING: 32px;
         }
 
         // If num tag does NOT exist, adjust margin-left for aknP or p
-        & > aknP:first-child,
-        & > p:first-child {
-            margin-left: 0px;
+        &:not(:has(> num)) > aknP,
+        &:not(:has(> num)) > p {
+            margin-left: 0;
         }
 
+        &:has(> num) > aknP,
+        &:has(> num) > p {
+            margin-left: $RECITAL_SPACING;
+        }
 
         & > aknP, & > p {
             @extend %paddedText;
             display: block;
-            margin-left: $RECITAL_SPACING;   
         }
     }    
 }
@@ -85,7 +88,7 @@ $RECITAL_SPACING: 32px;
 //------------------------------- Showblock Styles --------------------------//
 %showblockRecital {
     div[data-akn-name=recitals] {
-        p[data-akn-name="recital"] {
+        p[data-akn-name="recital"], li[data-akn-name="recital"] {
             @include blockOutline("RECITAL", $RECITAL_SPACING);
         }
     }

@@ -73,6 +73,7 @@ $LIST_SPACING: 40px;
     ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknNumberedParagraphMandate],
     ol[data-akn-name=aknSubParagraphMandate],
+    ol[data-akn-name=recital],
     li > ol,
     li > ul {
         list-style-type: none;
@@ -85,11 +86,20 @@ $LIST_SPACING: 40px;
         & > li[data-akn-num] {
             position: relative;
 
-            &:not([data-akn-action-enter='delete']):before {
-                color: $GREY_COLOR;
-                content: attr(data-akn-num);
-                min-width: $LIST_SPACING;
-                float: left;
+            &:not([data-akn-action-enter='delete']){
+                &:before {
+                    color: $GREY_COLOR;
+                    content: attr(data-akn-num);
+                    float: left;
+                }
+
+                &:not([data-akn-name=recital]):before {
+                    min-width: $LIST_SPACING;
+                }
+
+                &[data-akn-name=recital]:before {
+                    min-width: $RECITAL_SPACING;
+                }
             }
 
             &[data-akn-attr-softmove_label]:not([data-akn-action-enter='delete']):before {
@@ -123,6 +133,7 @@ $LIST_SPACING: 40px;
 
     ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknNumberedParagraphMandate],
+    ol[data-akn-name=recital],
     paragraph > ol[data-akn-name=aknSubParagraphMandate],
     point > ol[data-akn-name=aknSubParagraphMandate],
     indent > ol[data-akn-name=aknSubParagraphMandate],
@@ -136,6 +147,13 @@ $LIST_SPACING: 40px;
     ol[data-akn-name=aknPointMandateOrderedList] > li,
     li > ol > li[data-akn-num] {
         padding-left: $LIST_SPACING;
+    }
+
+    ol[data-akn-name=recital] > li[data-akn-num] {
+        padding-left: $RECITAL_SPACING;
+        &:before {
+            margin-left: -$RECITAL_SPACING;
+        }
     }
 
     li[data-akn-name=aknNumberedParagraph]:not([data-akn-num]) > ol[data-akn-name=aknOrderedList] > li[data-akn-element=subparagraph] {
