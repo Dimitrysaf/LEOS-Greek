@@ -20,6 +20,7 @@ define(function hierarchicalElementTransformer(require) {
     var INLINE_FROM_MATCH = /^(text|span|strong|em|u|sup|sub|br|a|img|mref|del)$/;
     var TABLE_ELEMENT_MATCH = /^(table)$/;
 
+    var DATA_AKN_NAME = "data-akn-name";
     var DATA_AKN_NUM = "data-akn-num";
     var DATA_AKN_INLINE_NAME = "data-akn-inline-name";
     var DATA_AKN_NUM_ID = "data-akn-num-id";
@@ -96,6 +97,13 @@ define(function hierarchicalElementTransformer(require) {
     var INLINE_NUM = "crossHnum";
     var PARAGRAPH = 'paragraph';
     var AKN_NUMBERED_PARAGRAPH = 'aknNumberedParagraph';
+    var RECITAL = "recital";
+    var SUBFLOW_NAME = "structuredContent";
+    var DATA_AKN_SUBFLOW_ID = "data-akn-subflow-id";
+    var DATA_AKN_HCONTAINER_ID = "data-akn-hcontainer-id";
+    var DATA_AKN_SUB_HCONTAINER_ID = "data-akn-sub-hcontainer-id";
+    var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
+    var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
 
     /*
      * Create content elements with wrapping element(e.g.: alinea, subparagraph)
@@ -291,7 +299,25 @@ define(function hierarchicalElementTransformer(require) {
         var that = this;
         element.children.forEach(function (childElement) {
             var childElementName = that._getElementName(childElement);
-            if ((typeof childElement.parent.attributes[DATA_AKN_CROSS_HEADING_TYPE] !== 'undefined') && childElement.parent.attributes[DATA_AKN_CROSS_HEADING_TYPE] == "list") {
+
+            function createInlineGroup() {
+                if (childElement.getAscendant('ol')?.attributes[DATA_AKN_NAME] === RECITAL) {
+                    createMp.call(that, childElement.parent, rootPath, inlineGroup);
+                } else {
+                    var contentId = childElement.parent.attributes[DATA_AKN_WRAPPED_CONTENT_ID] ?
+                        DATA_AKN_WRAPPED_CONTENT_ID : DATA_AKN_CONTENT_ID;
+
+                    var contentOrigin = childElement.parent.attributes[DATA_WRAPPED_CONTENT_ORIGIN] ?
+                        DATA_WRAPPED_CONTENT_ORIGIN : DATA_CONTENT_ORIGIN;
+
+                    createContent.call(that, childElement.parent, rootPath, inlineGroup, contentId, contentOrigin);
+                }
+                inlineGroup = [];
+            }
+
+            if (childElement.parent.attributes[DATA_AKN_NAME] === RECITAL) {
+                createContentDirectly.call(that, childElement, rootPath);
+            } else if ((typeof childElement.parent.attributes[DATA_AKN_CROSS_HEADING_TYPE] !== 'undefined') && childElement.parent.attributes[DATA_AKN_CROSS_HEADING_TYPE] == "list") {
                 if (childElementName === "text") {
                     that.mapToChildProducts(element, {
                         toPath: rootPath,
@@ -307,14 +333,7 @@ define(function hierarchicalElementTransformer(require) {
                 inlineGroup.push(childElement);
                 var nextElementName = childElement.next ? that._getElementName(childElement.next) : null;
                 if (!nextElementName || !INLINE_FROM_MATCH.test(nextElementName)) {
-                    var contentId = childElement.parent.attributes[DATA_AKN_WRAPPED_CONTENT_ID] ?
-                        DATA_AKN_WRAPPED_CONTENT_ID : DATA_AKN_CONTENT_ID;
-
-                    var contentOrigin = childElement.parent.attributes[DATA_WRAPPED_CONTENT_ORIGIN] ?
-                        DATA_WRAPPED_CONTENT_ORIGIN : DATA_CONTENT_ORIGIN;
-
-                    createContent.call(that, childElement.parent, rootPath, inlineGroup, contentId, contentOrigin);
-                    inlineGroup = [];
+                    createInlineGroup();
                 }
             } else if (childElementName === "p") {
                 createContent.call(that, childElement, rootPath, childElement.children, DATA_AKN_WRAPPED_CONTENT_ID, DATA_CONTENT_ORIGIN);
@@ -326,6 +345,74 @@ define(function hierarchicalElementTransformer(require) {
                 });
             }
         });
+    }
+
+    function createMp(element, contentPath, contentChildren) {
+        this.mapToChildProducts(element, {
+            toPath: contentPath,
+            toChild: "mp",
+            attrs: [{
+                from: "id",
+                to: "xml:id",
+                action: "passAttributeTransformer"
+            }, {
+                from: DATA_MP_ORIGIN,
+                to: "leos:origin",
+                action: "passAttributeTransformer"
+            }]
+        });
+        contentPath += "/mp";
+        if (element.attributes[DATA_AKN_NAME] === SUBFLOW_NAME) {
+            this.mapToChildProducts(element, {
+                toPath: contentPath,
+                toChild: "subflow",
+                attrs: [{
+                    from: DATA_AKN_SUBFLOW_ID,
+                    to: "xml:id",
+                    action: "passAttributeTransformer"
+                }, {
+                    from: DATA_AKN_NAME,
+                    to: "name",
+                    action: "passAttributeTransformer"
+                }]
+            });
+            contentPath += "/subflow";
+            if (element.attributes[DATA_AKN_HCONTAINER]) {
+                this.mapToChildProducts(element, {
+                    toPath: contentPath,
+                    toChild: "hcontainer",
+                    attrs: [{
+                        from: DATA_AKN_HCONTAINER_ID,
+                        to: "xml:id",
+                        action: "passAttributeTransformer"
+                    }, {
+                        from: DATA_AKN_HCONTAINER,
+                        to: "name",
+                        action: "passAttributeTransformer"
+                    }]
+                });
+                contentPath += "/hcontainer";
+                if (element.attributes[DATA_AKN_SUB_HCONTAINER]) {
+                    this.mapToChildProducts(element, {
+                        toPath: contentPath,
+                        toChild: "hcontainer",
+                        attrs: [{
+                            from: DATA_AKN_SUB_HCONTAINER_ID,
+                            to: "xml:id",
+                            action: "passAttributeTransformer"
+                        }, {
+                            from: DATA_AKN_SUB_HCONTAINER,
+                            to: "name",
+                            action: "passAttributeTransformer"
+                        }]
+                    });
+                    contentPath += "/hcontainer";
+                }
+            }
+            createContent.call(this, element, contentPath, contentChildren, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN);
+        } else {
+            createContentChildren.call(this, element, contentPath, contentChildren);
+        }
     }
 
     function createContent(element, rootPath, contentChildren, contentId, contentOrigin) {
@@ -552,6 +639,12 @@ define(function hierarchicalElementTransformer(require) {
             var rootElementsWithCrossHeadingInlineAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/inline\/text"].join("")));
             var rootElementsWithContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content"].join("")));
             var rootElementsWithContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content\/mp"].join("")));
+            var rootElementsWithMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp"].join("")));
+            var rootElementsWithMpAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/text"].join("")));
+            var rootElementsWithMpAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/((?!text|subflow).)+"].join("")));
+            var rootElementsWithSubflowSubHcontainerAndContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content"].join("")));
+            var rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp"].join("")));
+            var rootElementsWithSubflowAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp\/.+"].join("")));
             // path = paragraph/subparagraph
             var rootElementsWithContentWrapperForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, PSR, contentWrapperForFrom].join("")));
             //path = paragraph/subparagraph/content
@@ -936,6 +1029,73 @@ define(function hierarchicalElementTransformer(require) {
                                         action: "passAttributeTransformer"
                                     }]
                                 });
+                            } else if (rootElementsWithMpForFromRegExp.test(path)) {
+                                this.mapToChildProducts(element, {
+                                    toPath: rootsElementsPathForTo,
+                                    toChild: "p",
+                                    attrs: [{
+                                        from: "xml:id",
+                                        to: "id",
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "leos:origin",
+                                        to: DATA_MP_ORIGIN,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
+                            } else if (rootElementsWithMpAndTextForFromRegExp.test(path)) {
+                                this.mapToChildProducts(element, {
+                                    toPath: rootsElementsWithPPathForTo,
+                                    toChild: "text",
+                                    toChildTextValue: element.value
+                                });
+                            } else if (rootElementsWithSubflowSubHcontainerAndContentForFromRegExp.test(path)) {
+                                this.mapToProducts(element, {
+                                    toPath: rootsElementsWithPPathForTo,
+                                    attrs: [{
+                                        to: DATA_AKN_SUBFLOW_ID,
+                                        toValue: getElementAttrVal.call(that, "subflow", "xml:id", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_NAME,
+                                        toValue: getElementAttrVal.call(that, "subflow", "name", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_HCONTAINER_ID,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "xml:id", element.parent),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "name",
+                                        to: DATA_AKN_HCONTAINER,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "name", element.parent),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_SUB_HCONTAINER_ID,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "xml:id", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_SUB_HCONTAINER,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "name", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "xml:id",
+                                        to: DATA_AKN_CONTENT_ID,
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "leos:origin",
+                                        to: DATA_CONTENT_ORIGIN,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
+                            } else if (rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp.test(path)) {
+                                this.mapToProducts(element, {
+                                    toPath: rootsElementsWithPPathForTo,
+                                    attrs: [{
+                                        from: "xml:id",
+                                        to: DATA_AKN_MP_ID,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
                             } else if (rootElementsWithContentAndMpForFromRegExp.test(path)) {
                                 this.mapToProducts(element, {
                                     toPath: rootsElementsPathForTo,
@@ -1140,6 +1300,10 @@ define(function hierarchicalElementTransformer(require) {
                             } else if (rootElementsWithNestedElementForFromRegExp.test(path)) {
                                 this.mapToNestedChildProduct(element, {
                                     toPath: rootsElementsPathForTo
+                                });
+                            } else if (rootElementsWithMpAndNestedForFromRegExp.test(path) || rootElementsWithSubflowAndNestedForFromRegExp.test(path)) {
+                                this.mapToNestedChildProduct(element, {
+                                    toPath: rootsElementsWithPPathForTo
                                 });
                             }
                         },
@@ -2170,7 +2334,7 @@ define(function hierarchicalElementTransformer(require) {
                                     }
                                 }
                                 var isContentWrapperPresent = shouldContentBeWrapped.call(this, element);
-                                if (isContentWrapperPresent) {
+                                if (isContentWrapperPresent && contentWrapperForFrom) {
                                     createContentWrapper.call(this, element, rootsElementsPathForFrom, contentWrapperForFrom);
                                 } else {
                                     createContentDirectly.call(this, element, rootsElementsPathForFrom);

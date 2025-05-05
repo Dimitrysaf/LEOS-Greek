@@ -3,8 +3,8 @@
            xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
            xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ structure_1.xsd">
 
-    <name>structure_08.xml</name>
-    <description>Structure used for Autonomous Acts</description>
+    <name>structure_01.xml</name>
+    <description>Structure used for Bill</description>
     <version>1</version>
 
     <tocItems>
@@ -174,37 +174,19 @@
             <aknTag>recitals</aknTag>
             <root>false</root>
             <higherElement>false</higherElement>
-            <draggable>true</draggable>
+            <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
-            <itemNumber>mandatory</itemNumber>
-            <autoNumbering>
-                <!-- Default Configuration for all languages -->
-                <langNumConfig langGroup="latin" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
-                </langNumConfig>
-                <!-- Configuration for specific languages -->
-                <langNumConfig langGroup="cyrillic" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
-                </langNumConfig>
-                <langNumConfig langGroup="greek" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
-                </langNumConfig>
-            </autoNumbering>
-            <itemHeading>mandatory</itemHeading>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>false</numberEditable>
             <contentDisplayed>false</contentDisplayed>
-            <deletable>true</deletable>
-            <rootItemDeletable>false</rootItemDeletable>
+            <deletable>false</deletable>
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>true</sameParentAsChild>
-            <onlySameParentAsChild>true</onlySameParentAsChild>
+            <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
-            <template>
-                <![CDATA[<recitals leos:editable="false"><num>1.</num><heading leos:editable="true">RECITAL SECTION HEADING</heading><recital leos:editable="true"><num>${num}</num><p>Recital...</p></recital></recitals>]]>
-            </template>
         </tocItem>
 
         <tocItem>
@@ -250,7 +232,7 @@
             <sameParentAsChild>false</sameParentAsChild>
             <profiles>
                 <profile>
-                    <profileName>inlineAknRecitalAA</profileName>
+                    <profileName>inlineAknRecital</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
@@ -950,18 +932,6 @@
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
-            <type>ARABIC_POSTFIXDOT_NODOT_END</type>
-            <numbered>true</numbered>
-            <prefix></prefix>
-            <suffix>.</suffix>
-            <suffixInEnd>false</suffixInEnd>
-            <sequence>1</sequence>
-            <description>1., 2., etc</description>
-            <regex>\d+$|#</regex>
-            <regexJS>^\d+$</regexJS>
-            <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
-        </numberingConfig>
-        <numberingConfig>
             <type>ARABIC_PARENTHESIS</type>
             <numbered>true</numbered>
             <prefix>(</prefix>
@@ -1272,7 +1242,6 @@
             <tocItem>recitals</tocItem>
             <list>
                 <tocItem>recital</tocItem>
-                <tocItem>recitals</tocItem>
             </list>
         </entry>
         <entry>
@@ -1381,7 +1350,7 @@
 
     <documentRules>
         <rule>
-            <description>Only one occurence validation rule</description>
+            <description>Signature validation rule</description>
             <type>onlyOneOccurenceElement</type>
             <tocItem>signature</tocItem>
             <scope>drop</scope>
@@ -1451,13 +1420,6 @@
             </higherDivisions>
             <scope>drop</scope>
             <errorMessage>toc.higher.division.hierarchy.validation.warning.message</errorMessage>
-        </rule>
-        <rule>
-            <description>No empty recitals</description>
-            <type>notEmptyElement</type>
-            <tocItem>recitals</tocItem>
-            <scope>save</scope>
-            <errorMessage>toc.recitals.empty.validation.warning.message</errorMessage>
         </rule>
     </documentRules>
 
