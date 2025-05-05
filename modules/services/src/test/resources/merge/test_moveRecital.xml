@@ -304,7 +304,7 @@
                         </authorialNote>
                         .</p>
                 </recital>
-                <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ls" leos:softaction="add" leos:softactionroot="true" leos:softdate="2024-03-11T11:02:45.000Z" leos:softuser="DOE Jane(DGT)" leos:title="NYSTEN Pascal : 2024-03-12T12:04:20.374+01:00" leos:uid="nystepa" xml:id="__akn_recital_GGRRGI">
+                <recital leos:action="insert" leos:editable="true" leos:origin="ls" leos:softaction="add" leos:softactionroot="true" leos:softdate="2024-03-11T11:02:45.000Z" leos:softuser="DOE Jane(DGT)" leos:title="NYSTEN Pascal : 2024-03-12T12:04:20.374+01:00" leos:uid="nystepa" xml:id="__akn_recital_GGRRGI">
                     <num leos:editable="false" xml:id="_recs_Iz6xi8">(29)</num>
                     <p xml:id="_recs_kmFJrc">Recital...</p>
                 </recital>
@@ -330,23 +330,23 @@
             </formula>
         </preamble>
         <body xml:id="body">
-            <part leos:depth="1" xml:id="__akn_part_LfUhVE">
+            <part xml:id="__akn_part_LfUhVE">
                 <num xml:id="_akn_5m57iU">Part #</num>
                 <heading xml:id="_akn_PSu8kO">Part heading...</heading>
-                <title leos:depth="2" xml:id="__akn_title_VQ9CTh">
+                <title xml:id="__akn_title_VQ9CTh">
                     <num xml:id="_akn_AWjBcM">Title #</num>
                     <heading xml:id="_akn_qmc6PN">Title heading...</heading>
-                    <chapter leos:depth="3" xml:id="__akn_chapter_z3Ibxh">
+                    <chapter xml:id="__akn_chapter_z3Ibxh">
                         <num xml:id="_akn_nzX8wI">Chapter #</num>
                         <heading xml:id="_akn_BceP3R">Chapter heading...</heading>
-                        <section leos:depth="4" xml:id="__akn_section_UG4Uqt">
+                        <section xml:id="__akn_section_UG4Uqt">
                             <num xml:id="_akn_F9pAlu">Section #</num>
                             <heading xml:id="_akn_C3WpRQ">Section heading...</heading>
                         </section>
                     </chapter>
                 </title>
             </part>
-            <chapter leos:depth="1" xml:id="__akn_chapter_BjDYqk">
+            <chapter xml:id="__akn_chapter_BjDYqk">
                 <num xml:id="_akn_NoOLoV">Chapter #</num>
                 <heading xml:id="_akn_py0g2K">IntitulÃ© du Chapitre...</heading>
             </chapter>

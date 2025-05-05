@@ -140,7 +140,7 @@
             </formula>
         </preamble>
         <body leos:origin="ec" xml:id="ecCi6z52gDQBuz6ed">
-            <chapter leos:depth="1" leos:origin="ec" xml:id="ecEy2yYLKugHkHMWs">
+            <chapter leos:origin="ec" xml:id="ecEy2yYLKugHkHMWs">
                 <num leos:origin="ec" xml:id="ecVNIUOvhrdhuqNwi">Chapter 1</num>
                 <heading leos:origin="ec" leos:softdate="2024-09-12T13:03:53+02:00" leos:softuser="DOE Jane(undefined)" xml:id="ecMx441KrjVTv0g4c">IntitulÃ© du Chapitre
                     <del leos:title="DOE Jane : 2024-09-12T13:03:53+02:00" leos:uid="jane" xml:id="ec0Z1KZaD0pI8KdFB">...</del>
@@ -190,7 +190,7 @@
                     </paragraph>
                 </article>
             </chapter>
-            <chapter leos:action="insert" leos:depth="1" leos:origin="ls" leos:softaction="add" leos:softactionroot="true" leos:softdate="2024-09-12T13:01:16.121+02:00" leos:softuser="DOE Jane(DGT)" leos:title="DOE Jane : 2024-09-12T13:01:16+02:00" leos:uid="jane" xml:id="ecSgPYRxsyHboa5U2">
+            <chapter leos:action="insert" leos:origin="ls" leos:softaction="add" leos:softactionroot="true" leos:softdate="2024-09-12T13:01:16.121+02:00" leos:softuser="DOE Jane(DGT)" leos:title="DOE Jane : 2024-09-12T13:01:16+02:00" leos:uid="jane" xml:id="ecSgPYRxsyHboa5U2">
                 <num xml:id="ecm3WAp9k41ZVzG96">Chapter 2</num>
                 <heading leos:softdate="2024-09-13T15:35:39+02:00" leos:softuser="DEMO Demo(undefined)" xml:id="ecYFHe8DuAmN3nEpI">IntitulÃ© du Chapitre
                     <del leos:title="DEMO Demo : 2024-09-13T15:35:39+02:00" leos:uid="demo" xml:id="ecMcQKAhdZ7rb0n19">...</del>
@@ -382,7 +382,7 @@
                     </paragraph>
                 </article>
             </chapter>
-            <title leos:depth="1" leos:origin="ec" xml:id="ecPELq4YhkN8fPjJY">
+            <title leos:origin="ec" xml:id="ecPELq4YhkN8fPjJY">
                 <num leos:origin="ec" xml:id="ecAZeYq9pcOLghJR0">Title I</num>
                 <heading leos:origin="ec" xml:id="ecqPeZyuax7hNdKrB">IntitulÃ© du titre...</heading>
                 <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="eczzzFVWtS3Czor2g" leos:origin="ec" xml:id="ecsS3cB7DIW5ASm0R">
@@ -422,7 +422,7 @@
                         </content>
                     </paragraph>
                 </article>
-                <article leos:autonumbering="true" leos:deletable="true" leos:depth="2" leos:editable="true" leos:initial-num="Article 3" leos:listIdAttr="ecdIrQ0Tb2hrt0e0e" leos:origin="ec" xml:id="ecFoz8bdkkbHHZY05">
+                <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:initial-num="Article 3" leos:listIdAttr="ecdIrQ0Tb2hrt0e0e" leos:origin="ec" xml:id="ecFoz8bdkkbHHZY05">
                     <num leos:editable="false" leos:origin="ec" xml:id="ecCcKdHDtGCIUm1mb">
                         <del leos:title="DOE Jane : 2024-09-12T13:01:16+02:00" leos:uid="jane" xml:id="ec47tQfxRiAfelUyW">Article 3</del>
                         <ins leos:title="DEMO Demo : 2024-09-13T15:38:58+02:00" leos:uid="demo" xml:id="ec5mMHlwAETYLLa9O">Article 5</ins>
@@ -438,7 +438,7 @@
                     </paragraph>
                 </article>
             </title>
-            <chapter leos:depth="1" leos:origin="ec" xml:id="ec3k9zplOk8pdQoUo">
+            <chapter leos:origin="ec" xml:id="ec3k9zplOk8pdQoUo">
                 <num leos:origin="ec" xml:id="ecn0TDEWg0324mNrC">
                     <del leos:title="DOE Jane : 2024-09-12T13:01:16+02:00" leos:uid="jane" xml:id="ecBP1KIOIP1yevtZy">Chapter 2</del>
                     <ins leos:title="DOE Jane : 2024-09-12T13:01:16+02:00" leos:uid="jane" xml:id="ecQYYJ4wZ7VEp2edt">Chapter 3</ins>
@@ -692,7 +692,7 @@
                         </list>
                     </paragraph>
                 </article>
-                <article leos:action="delete" leos:deletable="false" leos:depth="2" leos:editable="false" leos:initial-num="Article 6" leos:listIdAttr="ec34EU7dLoi7miAPm" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-09-12T13:01:16.129+02:00" leos:softmove_label="MOVED to Article 3" leos:softmove_to="impXart_d1e3059XecxFWu00Wfj5RIKLM" leos:softuser="DOE Jane(DGT)" leos:title="DEMO Demo : 2024-09-13T15:38:58+02:00" leos:uid="jane" xml:id="movedXimpXart_d1e3059XecxFWu00Wfj5RIKLM">
+                <article leos:action="delete" leos:deletable="false" leos:editable="false" leos:initial-num="Article 6" leos:listIdAttr="ec34EU7dLoi7miAPm" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-09-12T13:01:16.129+02:00" leos:softmove_label="MOVED to Article 3" leos:softmove_to="impXart_d1e3059XecxFWu00Wfj5RIKLM" leos:softuser="DOE Jane(DGT)" leos:title="DEMO Demo : 2024-09-13T15:38:58+02:00" leos:uid="jane" xml:id="movedXimpXart_d1e3059XecxFWu00Wfj5RIKLM">
                     <num leos:origin="ec" leos:title="DEMO Demo : 2024-09-13T15:38:58+02:00" xml:id="movedXecSBoQS1m2LqbiLER">Article 6</num>
                 </article>
             </chapter>
