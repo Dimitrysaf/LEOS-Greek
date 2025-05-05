@@ -54,13 +54,14 @@ export class LoadingService {
             ' '),
       );
     if (this.tasksOngoing.length > 0) {
-      if (target === ' ' + this.translate.instant('task.post-processing.ongoing') + ' ') {
+      if (target.trim() === this.translate.instant('task.post-processing.ongoing')) {
         this.appShellService.growl({
           severity: 'info',
           summary: 'Tasks ongoing',
           detail: target,
           life: 3000,
         });
+
       } else {
         this.appShellService.growl({
           severity: 'info',
@@ -69,22 +70,21 @@ export class LoadingService {
           sticky: true,
         }, true);
       }
-    } else {
-      if (taskName === 'post-processing') {
-        this.appShellService.growl({
-          severity: 'success',
-          summary: 'Tasks over',
-          detail: this.translate.instant('task.' + taskName + '.done'),
-          life: 3000,
-        });
-      } else {
+    } else if (taskName !== 'post-processing') {
         this.appShellService.growl({
           severity: 'info',
           summary: 'Tasks over',
           detail: target,
           life: 1,
         });
-      }
+    }
+    if (taskName === 'post-processing' && !ongoing) {
+      this.appShellService.growl({
+        severity: 'success',
+        summary: 'Tasks over',
+        detail: this.translate.instant('task.' + taskName + '.done'),
+        life: 3000,
+      });
     }
   }
 
