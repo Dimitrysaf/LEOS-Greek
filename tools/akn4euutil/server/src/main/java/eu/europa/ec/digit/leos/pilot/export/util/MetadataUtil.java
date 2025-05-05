@@ -423,6 +423,10 @@ public class MetadataUtil {
         return new ReferenceFieldInfo(fieldValue, "", "", "", MetadataFieldType.EMISSION_DATE);
     }
 
+    public static MetadataFieldInfo parseAdoptionDate(String fieldValue) throws MetadataUtilsException {
+        return ((ReferenceFieldInfo)parseEmissionDate(fieldValue)).withFieldType(MetadataFieldType.ADOPTION_DATE);
+    }
+
     public static MetadataFieldInfo parseInterinstitutionalCote(String fieldValue) throws MetadataUtilsException {
         if (!fieldValue.matches(MetadataUtil.INTERINSTITUTIONAL_COTE_PARSE_PATTERN)){
             throw new MetadataUtilsException(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE);

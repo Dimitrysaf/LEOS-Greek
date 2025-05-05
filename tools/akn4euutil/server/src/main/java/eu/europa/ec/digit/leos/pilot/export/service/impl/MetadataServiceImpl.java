@@ -79,6 +79,8 @@ public class MetadataServiceImpl implements MetadataService {
             LOG.debug("Lookup field ", field);
             MetadataFieldType fieldType = MetadataFieldType.valueOfTypeName(field);
             switch(fieldType){
+                case ADOPTION_DATE:
+                    return MetadataUtil.parseAdoptionDate(fieldValue);
                 case ADOPTION_LOCATION:
                     return MetadataUtil.parseAdoptionLocation(fieldValue);
                 case EMISSION_DATE:
@@ -109,6 +111,27 @@ public class MetadataServiceImpl implements MetadataService {
         this.addAdoptionLocationToMetaReference(locationToLanguage, xmlFile);
         this.addAdoptionLocationToCoverPage(locationToLanguage, xmlFile);
         this.addAdoptionLocationToConclusion(locationToLanguage, xmlFile);
+    }
+
+    @Override
+    public void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
+            addAdoptionDate(fieldInfo, xmlFile);
+        }
+    }
+
+    private void addAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node longTitle = xmlFile.getElementByName("longTitle");
+        if (longTitle == null) return;
+
+        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, "p");
+        if (pNode == null) return;
+
+        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.DATE);
+        if (dateNode == null) return;
+
+        String displayValue = this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
+        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.DATE, displayValue);
     }
 
     private ReferenceFieldInfo adaptLocationToLanguage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {

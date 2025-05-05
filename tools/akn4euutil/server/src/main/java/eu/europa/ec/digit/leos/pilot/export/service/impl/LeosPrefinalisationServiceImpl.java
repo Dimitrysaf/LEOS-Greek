@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -59,6 +60,44 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     @Autowired
     public LeosPrefinalisationServiceImpl(final MetadataService metadataService) {
         this.metadataService = metadataService;
+    }
+
+
+    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles){
+        LOG.debug("Process field info  '{}'", fieldInfo);
+
+        final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
+        for (XmlFile xmlFile : documentXmlFiles){
+            LOG.debug("Process xml file '{}'", xmlFile.getName());
+            switch(fieldInfo.getFieldType()){
+                case ADOPTION_DATE:
+                    metadataService.processAdoptionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case ADOPTION_LOCATION:
+                    metadataService.processAdoptionLocation((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case EMISSION_DATE:
+                    metadataService.processEmissionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case INTERINSTITUTIONAL_COTE:
+                    metadataService.processInterinstitutionalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case INSERT_COTE:
+                    metadataService.processInsertCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case LINKED_DOCUMENTS:
+                    metadataService.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case DOCUMENT_FINAL:
+                    metadataService.processDocumentFinal((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case STAMP:
+                    if(isAutonomousAct) {
+                        metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    }
+                    break;
+            }
+        }
     }
 
     public byte[] applyMetadata(MultipartFile inputFile) {
@@ -237,40 +276,6 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         } catch(MetadataUtilsException e) {
             LOG.error("Lookup field info failed: {}", e);
             return metadataService.getLookupFieldInfoErrorResult(field, e);
-        }
-    }
-
-    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles){
-        LOG.debug("Process field info  '{}'", fieldInfo);
-
-        final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
-        for (XmlFile xmlFile : documentXmlFiles){
-            LOG.debug("Process xml file '{}'", xmlFile.getName());
-            switch(fieldInfo.getFieldType()){
-                case ADOPTION_LOCATION:
-                    metadataService.processAdoptionLocation((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case EMISSION_DATE:
-                    metadataService.processEmissionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case INTERINSTITUTIONAL_COTE:
-                    metadataService.processInterinstitutionalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case INSERT_COTE:
-                    metadataService.processInsertCote((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case LINKED_DOCUMENTS:
-                    metadataService.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case DOCUMENT_FINAL:
-                    metadataService.processDocumentFinal((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case STAMP:
-                    if(isAutonomousAct) {
-                        metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    }
-                    break;
-            }
         }
     }
 
