@@ -729,7 +729,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
             isTocItemSibling = true;
         } else if (CollectionUtils.isNotEmpty(targetTocItems) && targetTocItems.contains(sourceTocItem)) {
             //If target item type is root, source item will be added as child, else validate dropping item at dragged location
-            if (targetTocItem.isRoot()) {
+            if (targetTocItem.isRoot()
+                    && (sourceTocItem.isOnlySameParentAsChild() == null || !sourceTocItem.isOnlySameParentAsChild())) {
                 return true;
             }
             isTocItemSibling = false;
@@ -870,14 +871,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
 
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,
-                                                             final TocItem parentTocItem, final List<TocItem> parentTocItems) {
+            final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
         TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
                 sourceItem.getTagName());
         if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.stream().anyMatch(tocItem -> tocItem.getAknTag().equals(sourceItem.getTagName()))
-                || (!sourceTocItem.isSameParentAsChild() && parentTocItem.getAknTag().equals(sourceItem.getTagName())
-                    && !sourceItem.getTagName().value().equals(RECITALS)
-                    )) {
+                || (!sourceTocItem.isSameParentAsChild() && parentTocItem.getAknTag().equals(sourceItem.getTagName()))
+                || (sourceTocItem.isOnlySameParentAsChild() != null && sourceTocItem.isOnlySameParentAsChild() && !parentTocItem.getAknTag().value().equals(sourceTocItem.getAknTag().value()))) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");
             result.setSourceItem(sourceItem);
