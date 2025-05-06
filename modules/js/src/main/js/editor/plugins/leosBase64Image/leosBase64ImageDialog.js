@@ -177,7 +177,7 @@ define(function leosBase64ImageDialog(require) {
         function insertImgInNewP(selection, selectedElement, img) {
             let range = selection.getRanges()[0];
             while (leosPluginUtils.getElementName(selectedElement) !== "p") {
-                selectedElement = selectedElement.getChildren().getItem(selectedElement.getChildren().count() - 1);
+                selectedElement = selectedElement.getLast();
             }
             img.insertAfter(selectedElement);
             range.setStartAfter(selectedElement);
