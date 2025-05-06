@@ -711,7 +711,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
             isTocItemSibling = true;
         } else if (CollectionUtils.isNotEmpty(targetTocItems) && targetTocItems.contains(sourceItem.getTocItem())) {
             //If target item type is root, source item will be added as child, else validate dropping item at dragged location
-            if (targetTocItem.isRoot()) {
+            if (targetTocItem.isRoot()
+                    && (sourceItem.getTocItem().isOnlySameParentAsChild() == null || !sourceItem.getTocItem().isOnlySameParentAsChild())) {
                 return true;
             }
             isTocItemSibling = false;
@@ -852,9 +853,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
                                                              final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
         if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.stream().anyMatch(tocItem -> tocItem.getAknTag().equals(sourceItem.getTocItem().getAknTag()))
-                || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value())
-                    && !sourceItem.getTocItem().getAknTag().value().equals(RECITALS)
-                    )) {
+                || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value()))
+                || (sourceItem.getTocItem().isOnlySameParentAsChild() != null && sourceItem.getTocItem().isOnlySameParentAsChild() && !parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value()))) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");
             result.setSourceItem(sourceItem);
