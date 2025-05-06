@@ -457,6 +457,7 @@ export class DocumentTocComponent
     );
 
     const nodesDragged = event.item.data instanceof Array ? event.item.data : [event.item.data];
+    const nodesDraggedOrdered = this.reorderIdsByTreeTraversal(this.treeControl.dataNodes, nodesDragged);
     //TODO : Fix this => this is a hack for allowing the root to go for validation otherwise it will fail to find the nodeParent and will not send it for validaiton
     if (nodeTarget.tocItem.root) {
       nodeTarget.parentItem = nodeTarget.id;
@@ -469,13 +470,54 @@ export class DocumentTocComponent
 
     // validate Drop
     this.validateAndMove(
-      nodesDragged,
+      nodesDraggedOrdered,
       nodeTarget,
       parentNode,
       this.dragAction.action,
       this.dragAction.isAdd,
     );
   }
+
+  reorderIdsByTreeTraversal(rootNodes: TableOfContentItemVO[], unorderedNodes: TableOfContentItemVO[]): TableOfContentItemVO[] {
+    const targetIds = new Set(unorderedNodes.map(n => n.id));
+    const ordered: TableOfContentItemVO[] = [];
+    let found = 0;
+    const total = targetIds.size;
+
+    function depthFirstSearch(node: TableOfContentItemVO): boolean {
+
+      if (targetIds.has(node.id)) {
+        const match = unorderedNodes.find(n => n.id === node.id);
+
+        if (match) {
+          ordered.push(match);
+        }
+
+        found++;
+
+        if (found === total) {
+          return true;
+        }
+      }
+
+      for (const child of node.childItems || []) {
+        if (depthFirstSearch(child)) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    for (const root of rootNodes) {
+      if (depthFirstSearch(root)) {
+        break;
+      }
+    }
+
+    return ordered;
+  }
+
 
   dragMoved(event: CdkDragMove<TableOfContentItemVO[]>, isAdd: boolean = false) {
     //introduce a small debounce , when the toc gets to large we have performance issues
@@ -806,7 +848,7 @@ export class DocumentTocComponent
     );
   }
 
-  private validateAndMove(
+  private async validateAndMove(
     nodesDragged: TableOfContentItemVO[],
     nodeTarget: TableOfContentItemVO,
     parentNode: any,
@@ -815,25 +857,38 @@ export class DocumentTocComponent
   ) {
     this.draggedItems = nodesDragged;
     this.targetNode = nodeTarget;
-    for (var i=0; i<nodesDragged.length; i++) {
-      let nodeDragged: TableOfContentItemVO = nodesDragged[i];
-      this.validateTocService.validateNodeDrop(
-        this.treeControl.dataNodes,
-        parentNode,
-        nodeTarget,
-        nodeDragged,
-        [nodeDragged.id],
-        nodeDragged.tocItem.aknTag,
-        nodeTarget.id,
-        nodeTarget.tocItem.aknTag,
-        parentNode.id,
-        parentNode.tocItem.aknTag,
-        position,
-        this.documentType,
-        this.documentRef,
-        isAdd,
-      );
-    }
+
+    const validateOneByOne = async () => {
+      for (let i = 0; i < nodesDragged.length; i++) {
+        await new Promise<void>((resolve) => {
+          const subscription = this.validateTocService.dropValidationResult$.subscribe((res) => {
+            if (res?.sourceItem?.id === nodesDragged[i].id) {
+              subscription.unsubscribe();
+              resolve();
+            }
+          });
+
+          this.validateTocService.validateNodeDrop(
+            this.treeControl.dataNodes,
+            parentNode,
+            nodeTarget,
+            nodesDragged[i],
+            [nodesDragged[i].id],
+            nodesDragged[i].tocItem.aknTag,
+            nodeTarget.id,
+            nodeTarget.tocItem.aknTag,
+            parentNode.id,
+            parentNode.tocItem.aknTag,
+            position,
+            this.documentType,
+            this.documentRef,
+            isAdd
+          );
+        });
+      }
+    };
+
+    await validateOneByOne();
   }
 
   private handleNodeValidationResult(result: NodeValidation) {
