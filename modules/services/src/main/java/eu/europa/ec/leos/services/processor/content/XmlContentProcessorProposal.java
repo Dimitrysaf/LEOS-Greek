@@ -266,7 +266,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     }
 
     private void updateDepthAttribute(TableOfContentItemVO tocVo, Node node) {
-        if (tocVo.getItemDepth() > 0 && tocVo.getTocItem().getAknTag().value().equals(LEVEL)) {
+        if (tocVo.getItemDepth() > 0
+                && Boolean.TRUE.equals(tocVo.getTocItem().isDepthEnabled())) {
             addAttribute(node, LEOS_DEPTH_ATTR, String.valueOf(tocVo.getItemDepth()));
         }
     }
