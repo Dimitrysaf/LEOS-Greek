@@ -188,7 +188,10 @@ define(function aknRecitalAAPluginModule(require) {
     function _preventTextInputInSubflow(e) {
         var selection = e.data[0].getSelection();
         var startElement = leosKeyHandler.getSelectedElement(selection);
-        if (startElement?.$.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME &&
+        while (startElement && leosPluginUtils.getElementName(startElement) !== "p") {
+            startElement = startElement.getLast();
+        }
+        if (startElement?.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME &&
                 !ARROW_KEYS.includes(e.keyCode) && e.keyCode !== BACKSPACE && e.keyCode !== DELETE) {
             //Cancel the event
             e.stopImmediatePropagation();
