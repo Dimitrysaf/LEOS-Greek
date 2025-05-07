@@ -224,6 +224,7 @@ public class TocVOCreateUtils {
                         .withItemHeading(OptionsType.OPTIONAL)
                         .withMaxDepth("7")
                         .withNumberingType(NumberingType.LEVEL_NUM)
+                        .withDepthEnabled(true)
                         .build()
                 )
                 .withOriginAttr(instance)
