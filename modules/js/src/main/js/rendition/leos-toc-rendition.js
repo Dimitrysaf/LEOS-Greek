@@ -14,7 +14,10 @@ if (typeof jQuery == 'undefined') {
 function buildTree(tree, toc_data) {
     tree.tree({
         data: toc_data,
-        autoOpen: true
+        autoOpen: true,
+        onCreateLi: function(node, $li) {
+            $li.find('.jqtree-title').html(node.name); // render HTML
+        }
     });
     
     tree.on(
