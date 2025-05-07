@@ -9,10 +9,11 @@ import {
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
-import { TableOfContentItemVO } from '@/shared/models/toc.model';
+import {TableOfContentItemVO, TocItem} from '@/shared/models/toc.model';
 
 import { TocInlineEditMenuService } from '../../services/toc-inline-edit-menu.service';
 import { DropdownModel } from '@/shared/dropdown.model';
+import {getTocItemByAknTag} from "@/shared/utils/toc.utils";
 
 @Component({
   selector: 'app-toc-action-menu',
@@ -53,5 +54,10 @@ export class TocActionMenuComponent implements OnInit, OnDestroy {
 
   onMenuIconClick() {
     this.tocInlineEditMenuService.setTargetNode(this.node);
+  }
+
+  isDropDown() {
+    const tocItem : TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), this.node.tagName);
+    return this.isEditMode && tocItem.draggable && !tocItem.root;
   }
 }

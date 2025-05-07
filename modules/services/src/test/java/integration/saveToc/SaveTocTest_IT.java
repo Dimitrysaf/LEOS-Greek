@@ -57,6 +57,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJaneTestUser;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static org.mockito.Mockito.when;
 
 public abstract class SaveTocTest_IT extends LeosTest {

@@ -14,12 +14,18 @@
 package eu.europa.ec.leos.vo.toc;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
+import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.AutoNumbering;
 import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
+import eu.europa.ec.leos.vo.structure.TocItemTypes;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import org.w3c.dom.Node;
 
@@ -42,54 +48,91 @@ public class TableOfContentItemVO implements Serializable {
 
     public static final long serialVersionUID = -1;
 
-    private TocItem tocItem;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private AknTag tagName;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String originAttr;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String number;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String initialNum;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String originNumAttr;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String heading;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String originalHeading;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private TocItemTypeName originalTocItemType;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String originHeadingAttr;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String content;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Node node;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String list;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private boolean movedOnEmptyParent;
     private boolean undeleted;
     private boolean isBlock;
     private boolean isCrossHeading;
+    private boolean blockSignature;
+    private boolean newNode;
     private boolean isCrossHeadingInList;
     private TocItemTypeName tocItemType = TocItemTypeName.REGULAR;
     private final List<TableOfContentItemVO> childItems = new ArrayList<>();
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private TableOfContentItemVO parentItem;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private SoftActionType softActionAttr;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean isSoftActionRoot;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String trackChangeAction = "";
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String softMoveTo;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String softMoveFrom;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String softTransFrom;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String softUserAttr;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private GregorianCalendar softDateAttr;
     private final List<CoEditionVO> coEditionVos = new ArrayList<>();
     private boolean isAffected;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean isNumberingToggled;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private SoftActionType numSoftActionAttr;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private SoftActionType headingSoftActionAttr;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean restored;
     private int itemDepth;
     private int originalIndentLevel;
     private int indentLevel;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String elementNumberId;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private IndentedItemType indentOriginType = null;
     private int indentOriginIndentLevel = -1;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String indentOriginNumId = null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String indentOriginNumValue = null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String indentOriginNumOrigin = null;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String style;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean isAutoNumOverwritten = false;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private NumberingType numberingType;
     private boolean isSoleNumbered;
 
@@ -97,10 +140,99 @@ public class TableOfContentItemVO implements Serializable {
         super();
     }
 
+    public TableOfContentItemVO(AknTag tocItem, String id, String originAttr, String number, String originNumAttr,
+                                String heading, String originalHeading, TocItemTypeName originalTocItemType,
+                                Node node, String content) {
+        this.tagName = tocItem;
+        this.id = id;
+        this.originAttr = originAttr;
+        this.number = number;
+        this.originNumAttr = originNumAttr;
+        this.heading = heading;
+        this.originalHeading = originalHeading;
+        this.originalTocItemType = originalTocItemType;
+        this.node = node;
+        this.content = content;
+        this.isAffected = false;
+        this.itemDepth = 0;
+        this.originalIndentLevel = 0;
+    }
+
+    public TableOfContentItemVO(AknTag tocItem, String id, String originAttr, String number, String originNumAttr,
+                                String heading, String originalHeading, TocItemTypeName originalTocItemType,
+                                Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr, GregorianCalendar softDateAttr) {
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node, content);
+        this.list = list;
+        this.softActionAttr = softActionAttr;
+        this.isSoftActionRoot = isSoftActionRoot;
+        this.softUserAttr = softUserAttr;
+        this.softDateAttr = softDateAttr;
+    }
+
+    public TableOfContentItemVO(AknTag tocItem, String id, String originAttr, String number, String originNumAttr,
+                                String heading, String originalHeading, TocItemTypeName originalTocItemType,
+                                Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr,
+                                GregorianCalendar softDateAttr, String trackChangeAction) {
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node, list, content, softActionAttr,
+                isSoftActionRoot, softUserAttr, softDateAttr);
+        this.trackChangeAction = trackChangeAction;
+    }
+
+    public TableOfContentItemVO(AknTag tocItem, String id, String originAttr, String number, String originNumAttr, String heading, String originalHeading,
+                                TocItemTypeName originalTocItemType,
+                                Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr, GregorianCalendar softDateAttr,
+                                String softMoveFrom, String softMoveTo, String softTransFrom, boolean undeleted, SoftActionType numSoftActionAttr) {
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node,
+                list, content, softActionAttr, isSoftActionRoot, softUserAttr, softDateAttr);
+        this.softMoveFrom = softMoveFrom;
+        this.softMoveTo = softMoveTo;
+        this.softTransFrom = softTransFrom;
+        this.undeleted = undeleted;
+        this.numSoftActionAttr = numSoftActionAttr;
+    }
+
+    public TableOfContentItemVO(AknTag tocItem, String id, String originAttr, String number, String originNumAttr, String heading, String originalHeading,
+                                TocItemTypeName originalTocItemType,
+                                Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr, GregorianCalendar softDateAttr,
+                                String softMoveFrom, String softMoveTo, String softTransFrom, boolean undeleted, SoftActionType numSoftActionAttr, String trackChangeAction) {
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node,
+                list, content, softActionAttr, isSoftActionRoot, softUserAttr,
+                softDateAttr, softMoveFrom, softMoveTo, softTransFrom, undeleted,
+                numSoftActionAttr);
+        this.trackChangeAction = trackChangeAction;
+    }
+
+    public TableOfContentItemVO(AknTag tocItem, String id, String originAttr, String number, String originNumAttr, String heading,
+                                String originalHeading, TocItemTypeName originalTocItemType, String originHeadingAttr,
+                                Node node, String list, String content, SoftActionType softActionAttr, Boolean isSoftActionRoot, String softUserAttr,
+                                GregorianCalendar softDateAttr, String softMoveFrom, String softMoveTo, String softTransFrom, boolean undeleted, SoftActionType numSoftActionAttr, SoftActionType headingSoftActionAttr, int itemDepth,
+                                int indentLevel, String elementNumberId, IndentedItemType indentOriginType, Integer indentOriginIndentLevel, String indentOriginNumId, String indentOriginNumValue, String indentOriginNumOrigin,
+                                String style, Boolean isAutoNumOverwritten) {
+        this(tocItem, id, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, node,
+                list, content, softActionAttr, isSoftActionRoot, softUserAttr, softDateAttr);
+        this.softMoveFrom = softMoveFrom;
+        this.softMoveTo = softMoveTo;
+        this.softTransFrom = softTransFrom;
+        this.undeleted = undeleted;
+        this.numSoftActionAttr = numSoftActionAttr;
+        this.itemDepth = itemDepth;
+        this.originHeadingAttr = originHeadingAttr;
+        this.headingSoftActionAttr = headingSoftActionAttr;
+        this.elementNumberId = elementNumberId;
+        this.indentLevel = indentLevel;
+        this.indentOriginType = indentOriginType;
+        this.indentOriginIndentLevel = indentOriginIndentLevel != null ? indentOriginIndentLevel : -1;
+        this.indentOriginNumId = indentOriginNumId;
+        this.indentOriginNumValue = indentOriginNumValue;
+        this.indentOriginNumOrigin = indentOriginNumOrigin;
+        this.style = style;
+        this.isAutoNumOverwritten = isAutoNumOverwritten;
+    }
+
     public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr,
                                 String heading, String originalHeading, TocItemTypeName originalTocItemType,
                                 Node node, String content) {
-        this.tocItem = tocItem;
+        this.tagName = tocItem.getAknTag() != null ? tocItem.getAknTag() : null;
         this.id = id;
         this.originAttr = originAttr;
         this.number = number;
@@ -273,12 +405,12 @@ public class TableOfContentItemVO implements Serializable {
         this.originNumAttr = originNumAttr;
     }
 
-    public TocItem getTocItem() {
-        return tocItem;
+    public AknTag getTagName() {
+        return this.tagName;
     }
 
     public void setTocItem(TocItem tocItem) {
-        this.tocItem = tocItem;
+        this.tagName = tocItem.getAknTag();
     }
 
     public Node getNode() {
@@ -431,6 +563,22 @@ public class TableOfContentItemVO implements Serializable {
         isBlock = block;
     }
 
+    public boolean isBlockSignature() {
+        return blockSignature;
+    }
+
+    public void setBlockSignature(boolean blockSignature) {
+        this.blockSignature = blockSignature;
+    }
+
+    public boolean isNewNode() {
+        return this.newNode;
+    }
+
+    public void setNewNode(boolean isNew) {
+        this.newNode = isNew;
+    }
+
     public boolean isCrossHeading() {
         return isCrossHeading;
     }
@@ -448,17 +596,11 @@ public class TableOfContentItemVO implements Serializable {
     }
 
     public void addChildItem(TableOfContentItemVO tableOfContentItemVO) {
-        if (tableOfContentItemVO.getTocItem().isRoot()) {
-            throw new IllegalArgumentException("Cannot add a root item as a child!");
-        }
         childItems.add(tableOfContentItemVO);
         tableOfContentItemVO.parentItem = this;
     }
 
     public void addChildItem(int index, TableOfContentItemVO tableOfContentItemVO) {
-        if (tableOfContentItemVO.getTocItem().isRoot()) {
-            throw new IllegalArgumentException("Cannot add a root item as a child!");
-        }
         childItems.add(index, tableOfContentItemVO);
         tableOfContentItemVO.parentItem = this;
     }
@@ -484,7 +626,7 @@ public class TableOfContentItemVO implements Serializable {
     public boolean containsItem(String aknTag) {
         List<TableOfContentItemVO> chldItms = this.childItems;
         for(TableOfContentItemVO child : chldItms) {
-            if(child.getTocItem().getAknTag().value().equals(aknTag)) {
+            if(child.getTagName().value().equals(aknTag)) {
                 return true;
             }
         }
@@ -626,7 +768,7 @@ public class TableOfContentItemVO implements Serializable {
         final StringBuilder sb = new StringBuilder(RIGHT_CHAR);
         sb.append(leftPadClassname).append( "TableOfContentItemVO[").append(RIGHT_CHAR);
         addFieldIfNotNull("id", item.id, leftPad, RIGHT_CHAR, sb);
-        addFieldIfNotNull("tocItem", item.tocItem != null ? item.tocItem.getAknTag() : null, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("tagName", item.getTagName().value(), leftPad, RIGHT_CHAR, sb);
         addFieldIfNotNull("node", item.node, leftPad, RIGHT_CHAR, sb);
         addFieldIfNotNull("originAttr", item.originAttr, leftPad, RIGHT_CHAR, sb);
         addFieldIfNotNull("number", item.number, leftPad, RIGHT_CHAR, sb);
@@ -671,7 +813,7 @@ public class TableOfContentItemVO implements Serializable {
         if(parentItem != null){
             sb.append("TableOfContentItemVO[");
             sb.append("id=").append(parentItem.getId());
-            sb.append(", tocItem=").append(parentItem.tocItem != null ? parentItem.tocItem.getAknTag() : "null");
+            sb.append(", tagName=").append(parentItem.getTagName().value());
             sb.append("]");
         }
         return sb.toString();

@@ -18,6 +18,7 @@ define(function mergeContributionExtensionModule(require) {
     var log = require("logger");
     var $ = require("jquery");
     var UTILS = require("core/leosUtils");
+    var lodash = require('lodash');
 
     var MAIN_ELEMENT_SELECTOR = "";
     var REVISION_PREFIX = "revision-";
@@ -328,7 +329,7 @@ define(function mergeContributionExtensionModule(require) {
     function _populateTocItemList() {
         let connector = this;
         wrapperElementsList = JSON.parse(connector.getState().tocItemsJsonArray);
-        var wrappedEltsList = wrapperElementsList.filter(elt => elt.draggable).map(elt => elt.aknTag);
+        var wrappedEltsList = wrapperElementsList.filter(elt => elt.draggable).map(elt => lodash.camelCase(elt.aknTag));
         wrappedEltsList.push(UTILS.NUM);
         wrappedEltsList.push(UTILS.PARAGRAPH);
         wrappedEltsList.push(UTILS.HEADING);

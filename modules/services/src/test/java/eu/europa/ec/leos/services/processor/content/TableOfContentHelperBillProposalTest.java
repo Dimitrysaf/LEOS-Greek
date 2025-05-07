@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.util.TestUtils;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TocItemVOBuilder;
@@ -35,7 +36,7 @@ public class TableOfContentHelperBillProposalTest extends TableOfXmlContentProce
     public void test_buildTableOfContent() {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/bill_basic.xml");
 
-        List<TableOfContentItemVO> xercesTOC = tableOfContentProcessor.buildTableOfContent(BILL, fileContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> xercesTOC = tableOfContentProcessor.buildTableOfContent(BILL, fileContent, TocMode.NOT_SIMPLIFIED, true);
         assertThat(xercesTOC, is(notNullValue()));
         assertThat(xercesTOC.size(), is(4));
 
@@ -45,7 +46,7 @@ public class TableOfContentHelperBillProposalTest extends TableOfXmlContentProce
     }
 
     private List<TableOfContentItemVO> buildTOCProgrammatically() {
-        TableOfContentItemVO preface = buildSingleTOCVo("preface", PREFACE, null, null, null, null, "");
+        TableOfContentItemVO preface = buildSingleTOCVo("preface", AknTag.PREFACE, null, null, null, null, "");
 
         TableOfContentItemVO preamble = TocItemVOBuilder.getBuilder()
                 .withId("preamble")
@@ -54,19 +55,17 @@ public class TableOfContentHelperBillProposalTest extends TableOfXmlContentProce
                 )
                 .withContent("")
                 .withChild(
-                        buildSingleTOCVo("preamble__formula_1", FORMULA, null, null, null, null,
+                        buildSingleTOCVo("preamble__formula_1", AknTag.FORMULA, null, null, null, null,
                                 "THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,")
                 )
                 .withChild(TocItemVOBuilder.getBuilder()
                         .withId("cits")
-                        .withTocItem(
-                                StructureConfigUtils.getTocItemByName(tocItems, "citations")
+                        .withTocItem(AknTag.CITATIONS)
+                        .withChild(
+                                buildSingleTOCVo("cit_1", AknTag.CITATION, null, null, null, null, "Citation 1 content with newLine")
                         )
                         .withChild(
-                                buildSingleTOCVo("cit_1", CITATION, null, null, null, null, "Citation 1 content with newLine")
-                        )
-                        .withChild(
-                                buildSingleTOCVo("cit_2", CITATION, null, null, null, null, "Citation 2 content with AuthorialNote Inside Authorial note ,")
+                                buildSingleTOCVo("cit_2", AknTag.CITATION, null, null, null, null, "Citation 2 content with AuthorialNote Inside Authorial note ,")
                         )
                         .withContent("")
                         .withNode(null)
@@ -75,14 +74,12 @@ public class TableOfContentHelperBillProposalTest extends TableOfXmlContentProce
                 )
                 .withChild(TocItemVOBuilder.getBuilder()
                         .withId("recs")
-                        .withTocItem(
-                                StructureConfigUtils.getTocItemByName(tocItems, "recitals")
+                        .withTocItem(AknTag.RECITALS)
+                        .withChild(
+                                buildSingleTOCVo("rec_1", AknTag.RECITAL, null, "(1)", "rec_1_num", null, "Recital 1 content")
                         )
                         .withChild(
-                                buildSingleTOCVo("rec_1", RECITAL, null, "(1)", "rec_1_num", null, "Recital 1 content")
-                        )
-                        .withChild(
-                                buildSingleTOCVo("rec_2", RECITAL, null, "(2)", "rec_2_num", null, "Recital 2 content with special character Larosière")
+                                buildSingleTOCVo("rec_2", AknTag.RECITAL, null, "(2)", "rec_2_num", null, "Recital 2 content with special character Larosière")
                         )
                         .withContent("")
                         .withNode(null)
@@ -90,7 +87,7 @@ public class TableOfContentHelperBillProposalTest extends TableOfXmlContentProce
                         .build()
                 )
                 .withChild(
-                        buildSingleTOCVo("preamble__formula_2", FORMULA, null, null, null, null, "HAVE ADOPTED THIS REGULATION:")
+                        buildSingleTOCVo("preamble__formula_2", AknTag.FORMULA, null, null, null, null, "HAVE ADOPTED THIS REGULATION:")
                 )
                 .withNode(null)
                 .withParentItem(null)
@@ -99,9 +96,7 @@ public class TableOfContentHelperBillProposalTest extends TableOfXmlContentProce
 
         TableOfContentItemVO body = TocItemVOBuilder.getBuilder()
                 .withId("body")
-                .withTocItem(
-                        StructureConfigUtils.getTocItemByName(tocItems, "body")
-                )
+                .withTocItem(AknTag.BODY)
                 .withContent("")
                 .withChild(TocItemVOBuilder.getBuilder()
                         .withId("akn_part_htJBP6")
@@ -111,14 +106,14 @@ public class TableOfContentHelperBillProposalTest extends TableOfXmlContentProce
                         .withHeading("100 [...] Articles(bold Article) text in header")
                         .withContent("Article 1 Article 1 Heading 1. Article 1 paragraph 1 content 2. Article 1 paragraph 2 content")
                         .withChild(
-                                buildSingleTOCVo("art_1", ARTICLE, "Article 1 Heading", "1", "art_1_num", CN, "1. Article 1 paragraph 1 content")
+                                buildSingleTOCVo("art_1", AknTag.ARTICLE, "Article 1 Heading", "1", "art_1_num", CN, "1. Article 1 paragraph 1 content")
                         )
                         .withChild(
-                                buildSingleTOCVo("art_2", ARTICLE, "Article 2 Heading", "2", "art_2_num", EC,
+                                buildSingleTOCVo("art_2", AknTag.ARTICLE, "Article 2 Heading", "2", "art_2_num", EC,
                                         "1. Sub paragraph -- of Paragraph 1 Article 2 (a) point (a) (b) point (b) (c) point (c) content. This is alinea (i) point (i) content (ii) point (i) content (1) point (1) content. This is alinea (2) point (2) content - point - (first indent) content. this is alinea point - (first indent) content. this is alinea (3) point (3) content (iii) point (iii) content")
                         )
                         .withChild(
-                                buildSingleTOCVo("art_3", ARTICLE, "Article 3 Heading", "3", "art_3_num", null, "Article 3 first paragraph (unnumbered) content")
+                                buildSingleTOCVo("art_3", AknTag.ARTICLE, "Article 3 Heading", "3", "art_3_num", null, "Article 3 first paragraph (unnumbered) content")
                         )
                         .withNumber("I")
                         .withNode(null)
@@ -131,18 +126,16 @@ public class TableOfContentHelperBillProposalTest extends TableOfXmlContentProce
                 .withItemDepth(0)
                 .build();
 
-        TableOfContentItemVO conclusions = buildSingleTOCVo("conclusions", CONCLUSIONS, null, null, null, null,
+        TableOfContentItemVO conclusions = buildSingleTOCVo("conclusions", AknTag.CONCLUSIONS, null, null, null, null,
                 "Done at Brussels, For the European Parliament The President [...] For the Council The President [...]");
 
         return Arrays.asList(preface, preamble, body, conclusions);
     }
 
-    private TableOfContentItemVO buildSingleTOCVo(String id, String aknTag, String heading, String number, String numberId, String origin, String content) {
+    private TableOfContentItemVO buildSingleTOCVo(String id, AknTag aknTag, String heading, String number, String numberId, String origin, String content) {
         return TocItemVOBuilder.getBuilder()
                 .withId(id)
-                .withTocItem(
-                        StructureConfigUtils.getTocItemByName(tocItems, aknTag)
-                )
+                .withTocItem(aknTag)
                 .withContent(content)
                 .withHeading(heading)
                 .withNumber(number)

@@ -26,7 +26,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 public abstract class SaveTocBillMandateTest_IT extends SaveTocMandateTest_IT {
 
     protected List<TableOfContentItemVO> buildTableOfContentBill(byte[] xmlInput) {
-        return tableOfContentProcessor.buildTableOfContent(BILL, xmlInput, TocMode.NOT_SIMPLIFIED);
+        return tableOfContentProcessor.buildTableOfContent(BILL, xmlInput, TocMode.NOT_SIMPLIFIED, true);
     }
 
     protected void getStructureFile() {

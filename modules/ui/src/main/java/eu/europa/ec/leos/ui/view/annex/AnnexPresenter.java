@@ -1715,7 +1715,9 @@ class AnnexPresenter extends AbstractLeosPresenter {
         // we are combining two operations (get toc + get selected element ancestors)
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(annex,
         TocMode.SIMPLIFIED_CLEAN);
-        eventBus.post(new FetchCrossRefTocResponseEvent(new TocAndAncestorsVO(tocItemList, elementAncestorsIds, messageHelper, structureContextProvider.get().getNumberingConfigs())));
+        eventBus.post(new FetchCrossRefTocResponseEvent(new TocAndAncestorsVO(tocItemList, structureContextProvider.get().getTocItems(), elementAncestorsIds,
+                messageHelper,
+                structureContextProvider.get().getNumberingConfigs())));
     }
 
     @Subscribe

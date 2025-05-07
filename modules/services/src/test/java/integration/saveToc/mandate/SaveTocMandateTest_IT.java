@@ -13,6 +13,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,6 +27,9 @@ import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildConverter;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import integration.saveToc.SaveTocTest_IT;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static org.mockito.Mockito.when;
 
 public abstract class SaveTocMandateTest_IT extends SaveTocTest_IT {
 

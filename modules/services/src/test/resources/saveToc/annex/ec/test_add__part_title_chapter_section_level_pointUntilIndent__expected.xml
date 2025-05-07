@@ -9,16 +9,16 @@
                 </content>
             </level>
             <part xml:id="par_M0cfqI">
-                <num>#</num>
+                <num>Part #</num>
                 <heading>Part heading...</heading>
                 <title xml:id="tit_skbamQ">
-                    <num>#</num>
+                    <num>Title #</num>
                     <heading>Title heading...</heading>
                     <chapter xml:id="cha_UNLWxQ">
-                        <num>#</num>
+                        <num>Chapter #</num>
                         <heading>Chapter heading...</heading>
                         <section xml:id="sec_WEoPGW">
-                            <num>#</num>
+                            <num>Section #</num>
                             <heading>Section heading...</heading>
                             <level leos:depth="2" xml:id="akn_level_diwyvq">
                                 <num leos:editable="false">1.1.</num>

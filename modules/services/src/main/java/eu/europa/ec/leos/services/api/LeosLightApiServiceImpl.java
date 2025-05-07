@@ -40,9 +40,11 @@ import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
 import eu.europa.ec.leos.services.leoslight.util.ByteChecksumComparator;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.light.SystemName;
+import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +56,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 
+import javax.inject.Provider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -68,6 +71,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentMetadata;
@@ -109,12 +113,16 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     private CreateCollectionService createCollectionService;
     private TokenService tokenService;
     private CollaboratorService collaboratorService;
+    private Provider<StructureContext> structureContextProvider;
 
     @Autowired
     public LeosLightApiServiceImpl(ValidationService validationService, ProposalConverterService proposalConverterService, LeosRepository leosRepository,
                                    PackageService packageService, MessageHelper messageHelper, SecurityContext securityContext,
                                    LeosLightXmlDocumentService leosLightXmlDocumentService,
-                                   Properties applicationProperties, ApiService apiService, CreateCollectionService createCollectionService, TokenService tokenService, CollaboratorService collaboratorService) {
+                                   Properties applicationProperties, ApiService apiService,
+                                   CreateCollectionService createCollectionService,
+                                   TokenService tokenService,
+                                   CollaboratorService collaboratorService, Provider<StructureContext> structureContextProvider) {
         this.validationService = validationService;
         this.proposalConverterService = proposalConverterService;
         this.leosRepository = leosRepository;
@@ -127,6 +135,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         this.createCollectionService = createCollectionService;
         this.tokenService = tokenService;
         this.collaboratorService = collaboratorService;
+        this.structureContextProvider = structureContextProvider;
     }
 
     @Override
@@ -490,6 +499,15 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         return file;
     }
 
+    private String getDocTemplate(XmlDocument document) {
+        return Optional.of(document)
+                .map(XmlDocument::getMetadata)
+                .map(Maybe::get)
+                .map(meta -> meta.getDocTemplate())
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("Document %s is missing docTemplate", document.getId())));
+    }
+
     private File getZipFile(LeosDocument document, ExportDocumentOptions options) throws IOException {
         String docName = document.getName();
         byte[] docContent = document.getContent().get().getSource().getBytes();
@@ -502,7 +520,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
         //2. HTML rendition
         String cssFileName = document.getCategory().name().toLowerCase(Locale.ROOT) + ".css";
-        leosLightXmlDocumentService.addDocumentHtmlRendition(contentToZip, docName, docContent, cssFileName);
+        this.structureContextProvider.get().useDocumentTemplate(getDocTemplate((XmlDocument) document));
+        leosLightXmlDocumentService.addDocumentHtmlRendition(this.structureContextProvider, contentToZip, docName, docContent, cssFileName);
 
         //3.process annotation and add document conversion
         ExportOptions exportOptions = new ExportLW(ExportOptions.Output.valueOf(options.getOutputType().name()), docType, options.isWithAnnotations(), true);

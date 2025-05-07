@@ -133,7 +133,6 @@
             </div>
             <app-document-toc
               [isEditMode]="isEditMode"
-              [tocItems]="tocItems"
               [documentType]="documentType"
               [documentRef]="documentRef"
               (reBuildTocItems)="onRebuildTocItems($event)"
@@ -407,14 +406,14 @@
                 (cdkDragMoved)="handleListItemDragged($event, true)"
                 *ngFor="let item of dragItems"
               >
-                <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
+                <span>{{ getTocItemDisplayTitle(item) }}</span>
                 <div
                   *cdkDragPlaceholder
                   euiListItem
                   euiPrimary
                   class="drag-preview"
                 >
-                  <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
+                  <span>{{ getTocItemDisplayTitle(item) }}</span>
                 </div>
               </li>
             </ul>

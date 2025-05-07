@@ -17,6 +17,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,13 +86,16 @@ public class TableOfContentHelper {
                 && (MOVE_TO.equals(tocItem.getSoftActionAttr()) || SoftActionType.MOVE_FROM.equals(tocItem.getSoftActionAttr()));
     }
 
-    public static String buildItemCaption(TableOfContentItemVO tocItem, int captionMaxSize, MessageHelper messageHelper, String language) {
-        Validate.notNull(tocItem.getTocItem(), "Type should not be null");
+    public static String buildItemCaption(TableOfContentItemVO tocItem, List<TocItem> tocItems, int captionMaxSize, MessageHelper messageHelper,
+                                          String language) {
+        Validate.notNull(tocItem.getTagName(), "Type should not be null");
 
         boolean shoudlAddMovedLabel = shouldAddMoveLabel(tocItem);
 
-        StringBuilder itemDescription = tocItem.getTocItem().isItemDescription()
-                ? new StringBuilder(getDisplayableTocItem(tocItem.getTocItem(), language, messageHelper)).append(SPACE)
+        TocItem tocItemStructure = StructureConfigUtils.getTocItemByName(tocItems,
+                tocItem.getTagName());
+        StringBuilder itemDescription = tocItemStructure.isItemDescription()
+                ? new StringBuilder(getDisplayableTocItem(tocItemStructure, language, messageHelper)).append(SPACE)
                 : new StringBuilder();
 
         if (shoudlAddMovedLabel) {
@@ -103,7 +108,7 @@ public class TableOfContentHelper {
         }
 
         if (!StringUtils.isEmpty(tocItem.getNumber()) && !StringUtils.isEmpty(tocItem.getHeading())) {
-            if(tocItem.getTocItem().getAknTag().value().equalsIgnoreCase(tocItem.getNumber().trim())){
+            if(tocItem.getTagName().value().equalsIgnoreCase(tocItem.getNumber().trim())){
                 tocItem.setNumber(StructureConfigUtils.HASH_NUM_VALUE);
             }
             itemDescription.append(tocItem.getNumber());
@@ -114,7 +119,7 @@ public class TableOfContentHelper {
             if (shoudlAddMovedLabel) {
                 itemDescription.append(SPAN_END_TAG).append(getMovedLabel(messageHelper));
             }
-            if (TBLOCK.equals(tocItem.getTocItem().getAknTag().name()) || StringUtils.isEmpty(tocItem.getContent())) {
+            if (AknTag.TBLOCK.equals(tocItem.getTagName()) || StringUtils.isEmpty(tocItem.getContent())) {
                 itemDescription.append(StructureConfigUtils.CONTENT_SEPARATOR).append(tocItem.getHeading());
             } else if (!StringUtils.isEmpty(tocItem.getContent())) {
                 itemDescription.append(StructureConfigUtils.NUM_HEADING_SEPARATOR).append(tocItem.getHeading());
@@ -123,10 +128,10 @@ public class TableOfContentHelper {
             SoftActionType softAction = tocItem.getNumSoftActionAttr();
 
             if(softAction != null){
-                if (PARAGRAPH.equals(tocItem.getTocItem().getAknTag().value()) && (DELETE.equals(softAction))
+                if (AknTag.PARAGRAPH.equals(tocItem.getTagName()) && (DELETE.equals(softAction))
                         && !MOVE_TO.equals(tocItem.getSoftActionAttr())) {
                     itemDescription.append("<span class=\"leos-soft-num-removed\">" + tocItem.getNumber() + SPAN_END_TAG);
-                } else if (PARAGRAPH.equals(tocItem.getTocItem().getAknTag().value())
+                } else if (AknTag.PARAGRAPH.equals(tocItem.getTagName())
                         && SoftActionType.ADD.equals(softAction) && !MOVE_TO.equals(tocItem.getSoftActionAttr())) {
                     itemDescription.append("<span class=\"leos-soft-num-new\">" + tocItem.getNumber() + SPAN_END_TAG);
                 }
@@ -151,7 +156,7 @@ public class TableOfContentHelper {
             itemDescription.append(SPAN_END_TAG).append(getMovedLabel(messageHelper));
         }
 
-        if (tocItem.getTocItem().isContentDisplayed()) {
+        if (tocItemStructure.isContentDisplayed()) {
             if (tocItem.getSoftMoveTo() != null){
                 itemDescription.append(itemDescription.length() > 0 ? StructureConfigUtils.CONTENT_SEPARATOR : "").append(MOVED_CONTENT_SPAN_START_TAG).append(removeTag(tocItem.getContent())).append(SPAN_END_TAG);
             }
@@ -341,9 +346,10 @@ public class TableOfContentHelper {
     private static void updateTocItemsNumberingConfig(List<TocItem> tocItems, TableOfContentItemVO item, NumberingType fromNumberingType,
             NumberingType toNumberingType, String language) {
         for (TableOfContentItemVO child : item.getChildItems()) {
-            NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(child.getTocItem(), language);
+            NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(tocItems,
+                    child.getTagName()), language);
             if (numberingType.equals(fromNumberingType)) {
-                TocItem tocItem = StructureConfigUtils.getTocItemByNumberingType(tocItems, toNumberingType, child.getTocItem().getAknTag().name(), language);
+                TocItem tocItem = StructureConfigUtils.getTocItemByNumberingType(tocItems, toNumberingType, child.getTagName().value(), language);
                 child.setTocItem(tocItem);
             }
             child.setAffected(true);
@@ -500,5 +506,15 @@ public class TableOfContentHelper {
             }
         }
         return null;
+    }
+
+    public static List<TocItem> searchInRules(AknTag aknTag, Map<TocItem, List<TocItem>> rules) {
+        Optional<TocItem> foundTocItem = rules.keySet().stream().filter((t) -> t.getAknTag().equals(aknTag)).findFirst();
+        return foundTocItem.map(rules::get).orElse(new ArrayList<>());
+    }
+
+    public static List<List<TocItem>> searchInOrderRules(TocItem tocItem, Map<TocItem, List<List<TocItem>>> rules) {
+        Optional<TocItem> foundTocItem = rules.keySet().stream().filter((t) -> t.getAknTag().equals(tocItem.getAknTag())).findFirst();
+        return foundTocItem.map(rules::get).orElse(new ArrayList<>());
     }
 }

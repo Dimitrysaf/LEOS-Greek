@@ -10,6 +10,12 @@
                         <p xml:id="art_2_COLMH3">Text...</p>
                     </content>
                 </paragraph>
+                <paragraph xml:id="art_2-par2">
+                    <num xml:id="art_2_QbZpeT">2.</num>
+                    <content xml:id="art_2_3VsECY">
+                        <p xml:id="art_2_COLMH4">Text...</p>
+                    </content>
+                </paragraph>
             </article>
             <article xml:id="art_3">
                 <num leos:editable="false" xml:id="art_3_eKam21">Article 2</num>
@@ -18,6 +24,12 @@
                     <num xml:id="art_3_QbZpeS">1.</num>
                     <content xml:id="art_3_3VsECX">
                         <p xml:id="art_3_COLMH3">Text...</p>
+                    </content>
+                </paragraph>
+                <paragraph xml:id="art_3-par2">
+                    <num xml:id="art_3_QbZpeT">2.</num>
+                    <content xml:id="art_3_3VsEC">
+                        <p xml:id="art_3_COLMH4">Text...</p>
                     </content>
                 </paragraph>
             </article>
@@ -40,6 +52,12 @@
                     <num xml:id="art_4_QbZpeS">1.</num>
                     <content xml:id="art_4_3VsECX">
                         <p xml:id="art_4_COLMH3">Text...</p>
+                    </content>
+                </paragraph>
+                <paragraph xml:id="art_4-par2">
+                    <num xml:id="art_4_QbZpeT">2.</num>
+                    <content xml:id="art_4_3VsECY">
+                        <p xml:id="art_4_COLMH4">Text...</p>
                     </content>
                 </paragraph>
             </article>

@@ -481,22 +481,6 @@ export class CKEditorService {
     const oldConfig: LeosAppConfig & DocumentConfig = cloneDeep(config);
     const tocItems: any = cloneDeep(oldConfig.tocItems);
 
-    tocItems.forEach((i: TocItem) => {
-      i.aknTag = i.aknTag.toLowerCase() as any;
-      if (this.documentService.documentType.toLowerCase() === 'coverpage') {
-        if (i.aknTag.toLowerCase() === 'doc_purpose') {
-          i.aknTag = 'docpurpose';
-        }
-      }
-      if (this.documentService.documentType === 'memorandum') {
-        if (i.aknTag === 'main_body') {
-          i.aknTag = 'mainBody';
-        } else if (i.aknTag === 'block_container') {
-          i.aknTag = 'blockContainer';
-        }
-      }
-    });
-
     //toc-items
     Object.defineProperty(
       config,

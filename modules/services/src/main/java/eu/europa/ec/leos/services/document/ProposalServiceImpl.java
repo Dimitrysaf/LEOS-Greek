@@ -501,7 +501,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Validate.notNull(proposal, "Proposal is required");
         final Content content = proposal.getContent().getOrError(() -> "Proposal content is required!");
         final byte[] proposalContent = content.getSource().getBytes();
-        return tableOfContentProcessor.buildTableOfContent(COVERPAGE, proposalContent, mode);
+        return tableOfContentProcessor.buildTableOfContent(COVERPAGE, proposalContent, mode, true);
     }
 
     @Override public List<Proposal> findVersions(String id) {

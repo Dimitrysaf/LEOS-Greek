@@ -79,7 +79,7 @@ export const getNumberingTypeByTagNameAndTocItemType = (
         }
       }
     } else if (subElementTocItems.length >= 1) {
-      return getNumberingTypeByLanguage(subElementTocItems[0], langGroup);
+      return getNumberingTypeByLanguageFromTocItem(subElementTocItems[0], langGroup);
     }
     return null;
   }
@@ -120,7 +120,7 @@ export const getNumberingTypeFromSubElementNumberingConfigs = (
     }
     const tocItem: TocItem = getTocItemByName(tocItems, subElementTagName);
     if (tocItem != null) {
-      return getNumberingTypeByLanguage(tocItem, langGroup);
+      return getNumberingTypeByLanguageFromTocItem(tocItem, langGroup);
     }
   }
   return null;
@@ -134,14 +134,14 @@ const updateTocItemsNumberingConfig = (
   langGroup: string
 ): void => {
   for (const child of item.childItems) {
-    if (getNumberingTypeByLanguage(child.tocItem, langGroup) === fromNumberingType) {
+    if (getNumberingTypeByLanguage(tocItems, child.tagName, langGroup) === fromNumberingType) {
       const tocItem = getTocItemByNumberingType(
         tocItems,
         toNumberingType,
-        child.tocItem.aknTag,
+        child.tagName,
         langGroup
       );
-      child.tocItem = tocItem;
+      child.tagName = tocItem.aknTag;
     }
     child.isAffected = true;
     updateTocItemsNumberingConfig(
@@ -160,9 +160,16 @@ export const getTocItemsByName = (
 ): TocItem[] =>
   tocItems.filter((m) => m.aknTag.toLowerCase() === tagName.toLowerCase());
 
+export const getTocItemByAknTag = (tocItems: TocItem[], tagName: AknTag) => {
+  const items = tocItems.filter(
+    (tocItem) => tocItem.aknTag.toString().toUpperCase() === tagName.toString().toUpperCase(),
+  );
+  return items.length > 0 ? items[0] : null;
+};
+
 export const getTocItemByName = (tocItems: TocItem[], tagName: string) => {
   const items = tocItems.filter(
-    (tocItem) => tocItem.aknTag.toLowerCase() === tagName.toLowerCase(),
+    (tocItem) => toCamelCaseEnum(tocItem.aknTag.toString()).toLowerCase() === toCamelCaseEnum(tagName).toLowerCase(),
   );
   return items.length > 0 ? items[0] : null;
 };
@@ -175,13 +182,13 @@ export const getTocItemByNumberingType = (
 ): TocItem => {
   const filtered = tocItems.filter(
     (tocItem) =>
-      tocItem.aknTag.toLowerCase() === tagName.toLowerCase() &&
-      getNumberingTypeByLanguage(tocItem, langGroup).toLocaleLowerCase() === numType.toLocaleLowerCase(),
+      toCamelCaseEnum(tocItem.aknTag).toLowerCase() === toCamelCaseEnum(tagName).toLowerCase() &&
+      getNumberingTypeByLanguageFromTocItem(tocItem, langGroup).toLocaleLowerCase() === numType.toLocaleLowerCase(),
   );
   return filtered.length > 0 ? filtered[0] : null;
 };
 
-export const getNumberingTypeByLanguage = (
+export const getNumberingTypeByLanguageFromTocItem = (
   tocItem: TocItem,
   langGroup: string,
 ): NumberingType => {
@@ -192,6 +199,15 @@ export const getNumberingTypeByLanguage = (
       ?.numberingTypes[0];
   }
   return numType;
+};
+
+export const getNumberingTypeByLanguage = (
+  tocItems: Array<TocItem>,
+  tagName: AknTag,
+  langGroup: string,
+): NumberingType => {
+  const tocItem: TocItem = getTocItemByAknTag(tocItems, tagName);
+  return getNumberingTypeByLanguageFromTocItem(tocItem, langGroup);
 };
 
 export const getNumberingConfig = (
@@ -205,16 +221,18 @@ export const getNumberingConfig = (
 };
 
 export const getItemIndentLevel = (
+  tocItems: TocItem[],
   tree: TableOfContentItemVO[],
   parent: TableOfContentItemVO,
   startingDepth: number,
   tags: string[],
 ) => {
-  if (parent && tags.includes(parent.tocItem.aknTag)) startingDepth++;
+  const tocItem: TocItem = getTocItemByAknTag(tocItems, parent.tagName);
+  if (parent && tags.includes(parent.tagName)) startingDepth++;
   //this is required because Java maps the parentItem = node.id , so this causes infinite loop
-  if (parent.parentItem && !parent.tocItem.root) {
+  if (parent.parentItem && !tocItem.root) {
     const nextParent = findNodeById(tree, parent.parentItem);
-    getItemIndentLevel(tree, nextParent, startingDepth, tags);
+    getItemIndentLevel(tocItems, tree, nextParent, startingDepth, tags);
   }
 };
 
@@ -236,6 +254,21 @@ export const findNodeById = (
 
   return undefined;
 };
+
+export const indexOfChild = (
+  parent: TableOfContentItemVO,
+  id: string,
+): number => {
+  for (var i = 0; i < parent.childItems.length; i++) {
+    const child = parent.childItems[i];
+    if (id === child.id) {
+      return i;
+    }
+  }
+
+  return -1;
+};
+
 export const findNodeSiblingById = (
   root: TableOfContentItemVO[],
   node: TableOfContentItemVO,
@@ -244,7 +277,7 @@ export const findNodeSiblingById = (
   if (node && node.parentItem) {
     const parent = findNodeById(root, node.parentItem);
     if (parent) {
-      const index = parent.childItems.indexOf(node);
+      const index = indexOfChild(parent, node.id);
       if (index > -1) {
         if (before && index > 0) return parent.childItems[index-1];
         if (!before && index < parent.childItems.length-1) return parent.childItems[index+1];
@@ -253,13 +286,15 @@ export const findNodeSiblingById = (
   }
   return undefined;
 };
+
 export const checkPositionAfterValidationExplanatory = (
+  tocItems: TocItem[],
   nodeTarget: TableOfContentItemVO,
   nodeDragged: TableOfContentItemVO,
   position: string,
   langGroup: string
 ) => {
-  switch (nodeDragged.tocItem.aknTag) {
+  switch (nodeDragged.tagName) {
     case PART: {
       if (
         (
@@ -271,8 +306,8 @@ export const checkPositionAfterValidationExplanatory = (
             DIVISION,
             CROSSHEADING,
             PARAGRAPH,
-          ] as AknTag[]
-        ).includes(nodeTarget.tocItem.aknTag)
+          ] as string[]
+        ).includes(nodeTarget.tagName)
       ) {
         return 'AFTER';
       }
@@ -281,11 +316,11 @@ export const checkPositionAfterValidationExplanatory = (
     case TITLE: {
       if (
         (
-          [BLOCK, CHAPTER, DIVISION, CROSSHEADING, PARAGRAPH, LEVEL] as AknTag[]
-        ).includes(nodeTarget.tocItem.aknTag)
+          [BLOCK, CHAPTER, DIVISION, CROSSHEADING, PARAGRAPH, LEVEL] as string[]
+        ).includes(nodeTarget.tagName)
       )
         return 'AFTER';
-      if (([PART] as AknTag[]).includes(nodeTarget.tocItem.aknTag)) {
+      if (([PART] as string[]).includes(nodeTarget.tagName)) {
         return position;
       }
       return position;
@@ -301,8 +336,8 @@ export const checkPositionAfterValidationExplanatory = (
             CROSSHEADING,
             POINT,
             PARAGRAPH,
-          ] as AknTag[]
-        ).includes(nodeTarget.tocItem.aknTag)
+          ] as string[]
+        ).includes(nodeTarget.tagName)
       ) {
         return 'AFTER';
       }
@@ -311,8 +346,8 @@ export const checkPositionAfterValidationExplanatory = (
     case SECTION: {
       if (
         (
-          [BLOCK, LEVEL, DIVISION, CROSSHEADING, PARAGRAPH, SECTION] as AknTag[]
-        ).includes(nodeTarget.tocItem.aknTag)
+          [BLOCK, LEVEL, DIVISION, CROSSHEADING, PARAGRAPH, SECTION] as string[]
+        ).includes(nodeTarget.tagName)
       )
         return 'AFTER';
       return position;
@@ -330,8 +365,8 @@ export const checkPositionAfterValidationExplanatory = (
             POINT,
             SECTION,
             PARAGRAPH,
-          ] as AknTag[]
-        ).includes(nodeTarget.tocItem.aknTag)
+          ] as string[]
+        ).includes(nodeTarget.tagName)
       ) {
         return 'AFTER';
       }
@@ -339,7 +374,7 @@ export const checkPositionAfterValidationExplanatory = (
     }
     case CROSSHEADING: {
       if (
-        ([DIVISION, PARAGRAPH] as AknTag[]).includes(nodeTarget.tocItem.aknTag)
+        ([DIVISION, PARAGRAPH] as string[]).includes(nodeTarget.tagName)
       )
         return 'AFTER';
       return position;
@@ -347,8 +382,8 @@ export const checkPositionAfterValidationExplanatory = (
     case LEVEL: {
       if (
         (
-          [DIVISION, CROSSHEADING, LEVEL, PARAGRAPH, BLOCK] as AknTag[]
-        ).includes(nodeTarget.tocItem.aknTag)
+          [DIVISION, CROSSHEADING, LEVEL, PARAGRAPH, BLOCK] as string[]
+        ).includes(nodeTarget.tagName)
       ) {
         return 'AFTER';
       }
@@ -365,8 +400,8 @@ export const checkPositionAfterValidationExplanatory = (
             CROSSHEADING,
             LEVEL,
             PARAGRAPH,
-          ] as AknTag[]
-        ).includes(nodeTarget.tocItem.aknTag)
+          ] as string[]
+        ).includes(nodeTarget.tagName)
       ) {
         return 'AFTER';
       }
@@ -374,25 +409,25 @@ export const checkPositionAfterValidationExplanatory = (
     }
     case SUBPARAGRAPH: {
       if (
-        ([DIVISION, SUBPARAGRAPH] as AknTag[]).includes(
-          nodeTarget.tocItem.aknTag,
+        ([DIVISION, SUBPARAGRAPH] as string[]).includes(
+          nodeTarget.tagName,
         ) ||
-        getNumberingTypeByLanguage(nodeTarget.tocItem, langGroup) === BULLET_NUM
+        getNumberingTypeByLanguage(tocItems, nodeTarget.tagName, langGroup) === BULLET_NUM
       ) {
         return 'AFTER';
       }
       return position;
     }
     case POINT: {
-      if (([SUBPARAGRAPH] as AknTag[]).includes(nodeTarget.tocItem.aknTag)) {
+      if (([SUBPARAGRAPH] as string[]).includes(nodeTarget.tagName)) {
         return 'AFTER';
       }
       return position;
     }
     case INDENT: {
       if (
-        ([SUBPARAGRAPH] as AknTag[]).includes(nodeTarget.tocItem.aknTag) &&
-        getNumberingTypeByLanguage(nodeDragged.tocItem, langGroup) === BULLET_NUM
+        ([SUBPARAGRAPH] as string[]).includes(nodeTarget.tagName) &&
+        getNumberingTypeByLanguage(tocItems, nodeDragged.tagName, langGroup) === BULLET_NUM
       ) {
         return 'AFTER';
       }
@@ -406,56 +441,56 @@ export const checkPositionAfterValidation = (
   nodeDragged: TableOfContentItemVO,
   position: string,
 ) => {
-  switch (nodeTarget.tocItem.aknTag) {
+  switch (nodeTarget.tagName) {
     case 'CITATION': {
-      if (['CITATION'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
+      if (['CITATION'].includes(nodeDragged.tagName)) return 'AFTER';
       return position;
     }
     case 'RECITAL': {
-      if (['RECITALS'].includes(nodeDragged.tocItem.aknTag)) return position;
-      if (['RECITAL'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
+      if (['RECITALS'].includes(nodeDragged.tagName)) return position;
+      if (['RECITAL'].includes(nodeDragged.tagName)) return 'AFTER';
       break;
     }
     case PART: {
-      if ([PART].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
+      if ([PART].includes(nodeDragged.tagName)) return 'AFTER';
       return position;
     }
     case TITLE: {
-      if ([TITLE, PART].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
+      if ([TITLE, PART].includes(nodeDragged.tagName)) return 'AFTER';
       return position;
     }
     case CHAPTER: {
-      if ([CHAPTER, PART, TITLE].includes(nodeDragged.tocItem.aknTag))
+      if ([CHAPTER, PART, TITLE].includes(nodeDragged.tagName))
         return 'AFTER';
       return position;
     }
     case SECTION: {
-      if ([SECTION, PART, TITLE, CHAPTER].includes(nodeDragged.tocItem.aknTag))
+      if ([SECTION, PART, TITLE, CHAPTER].includes(nodeDragged.tagName))
         return 'AFTER';
       return position;
     }
     case ARTICLE: {
       if (
         [PART, 'BODY', TITLE, CHAPTER, SECTION, ARTICLE].includes(
-          nodeDragged.tocItem.aknTag,
+          nodeDragged.tagName,
         )
       )
         return 'AFTER';
       return position;
     }
     case PARAGRAPH: {
-      if ([PARAGRAPH].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
+      if ([PARAGRAPH].includes(nodeDragged.tagName)) return 'AFTER';
       return position;
     }
     case SUBPARAGRAPH: {
-      if ([SUBPARAGRAPH, POINT].includes(nodeDragged.tocItem.aknTag))
+      if ([SUBPARAGRAPH, POINT].includes(nodeDragged.tagName))
         return 'AFTER';
       return position;
     }
     case LEVEL: {
       if (
         [SECTION, CHAPTER, TITLE, PART, LEVEL, PARAGRAPH].includes(
-          nodeDragged.tocItem.aknTag,
+          nodeDragged.tagName,
         )
       )
         return 'AFTER';
@@ -464,7 +499,7 @@ export const checkPositionAfterValidation = (
     case ROLE: {
       if (
         [ROLE, PERSON].includes(
-          nodeDragged.tocItem.aknTag,
+          nodeDragged.tagName,
         )
       )
         return 'AFTER';
@@ -473,7 +508,7 @@ export const checkPositionAfterValidation = (
     case PERSON: {
       if (
         [ROLE, PERSON].includes(
-          nodeDragged.tocItem.aknTag,
+          nodeDragged.tagName,
         )
       )
         return 'AFTER';
@@ -484,11 +519,12 @@ export const checkPositionAfterValidation = (
   }
 };
 export const setNumber = (
+  tocItems: TocItem[],
   newTree: TableOfContentItemVO[],
   droppedElement: TableOfContentItemVO,
   targetElement: TableOfContentItemVO,
 ) => {
-  if (isNumbered(newTree, droppedElement, targetElement)) {
+  if (isNumbered(tocItems, newTree, droppedElement, targetElement)) {
     if (!droppedElement.autoNumOverwritten) {
       droppedElement.number = HASH_NUM_VALUE;
     }
@@ -501,15 +537,17 @@ export const setNumber = (
 };
 
 export const isNumbered = (
+  tocItems: TocItem[],
   toc: TableOfContentItemVO[],
   droppedElement: TableOfContentItemVO,
   targetElement: TableOfContentItemVO,
 ): boolean => {
   let numbered = true;
-  if (droppedElement.tocItem.itemNumber === 'NONE') {
+  const droppedTocItem: TocItem = getTocItemByAknTag(tocItems, droppedElement.tagName);
+  if (droppedTocItem.itemNumber === 'NONE') {
     numbered = false;
-  } else if (droppedElement.tocItem.itemNumber === 'OPTIONAL') {
-    if (targetElement.tocItem.aknTag === droppedElement.tocItem.aknTag) {
+  } else if (droppedTocItem.itemNumber === 'OPTIONAL') {
+    if (targetElement.tagName === droppedElement.tagName) {
       if (
         targetElement.number === '' ||
         targetElement.number === null ||
@@ -522,7 +560,7 @@ export const isNumbered = (
       targetElement.childItems.length > 0
     ) {
       for (const itemVO of targetElement.childItems) {
-        if (itemVO.tocItem.aknTag === droppedElement.tocItem.aknTag) {
+        if (itemVO.tagName === droppedElement.tagName) {
           if (itemVO.number === '' || itemVO.numSoftActionAttr === 'DELETE') {
             numbered = false;
             break;
@@ -534,7 +572,7 @@ export const isNumbered = (
   const droppedElementParent = findNodeById(toc, droppedElement.parentItem);
   if (
     numbered &&
-    droppedElement.tocItem.aknTag === PARAGRAPH &&
+    droppedElement.tagName === PARAGRAPH &&
     droppedElementParent &&
     droppedElementParent.numberingToggled &&
     droppedElement.numberingToggled === false
@@ -543,7 +581,7 @@ export const isNumbered = (
   }
   if (
     !numbered &&
-    droppedElement.tocItem.aknTag === PARAGRAPH &&
+    droppedElement.tagName === PARAGRAPH &&
     droppedElementParent &&
     droppedElementParent.numberingToggled &&
     droppedElement.numberingToggled === false
@@ -558,10 +596,10 @@ export const setBlockOrCrossHeading = (
   sourceItem: TableOfContentItemVO,
 ) => {
   const isCross =
-    sourceItem.tocItem.aknTag === CROSSHEADING ||
-    sourceItem.tocItem.aknTag === BLOCK;
+    sourceItem.tagName === CROSSHEADING ||
+    sourceItem.tagName === BLOCK;
   const parentItem = findNodeById(toc, sourceItem.parentItem);
-  if (isCross && parentItem.tocItem.aknTag === 'MAIN_BODY') {
+  if (isCross && parentItem.tagName === 'MAIN_BODY') {
     sourceItem.isBlock = true;
   } else if (isCross) {
     sourceItem.isCrossHeading = true;
@@ -577,11 +615,11 @@ export const isInList = (
 ): boolean => {
   const parent = findNodeById(toc, sourceItem.parentItem);
   if (parent != null) {
-    if (parent.tocItem.aknTag === 'LIST') {
+    if (parent.tagName === 'LIST') {
       return true;
     }
     for (const item of parent.childItems) {
-      if (item.tocItem.aknTag === POINT || item.tocItem.aknTag === 'INDENT')
+      if (item.tagName === POINT || item.tagName === 'INDENT')
         return true;
     }
   }
@@ -594,8 +632,8 @@ export const handleLevelMove = (
   targetItem: TableOfContentItemVO,
 ) => {
   if (
-    sourceItem.tocItem.aknTag === LEVEL &&
-    targetItem.tocItem.aknTag === LEVEL
+    sourceItem.tagName === LEVEL &&
+    targetItem.tagName === LEVEL
   )
     sourceItem.itemDepth = targetItem.itemDepth;
 };
@@ -611,7 +649,7 @@ export const updateDepthOfTocItems = (list: TableOfContentItemVO[], isCouncil) =
   const tocItems = list
     .flatMap((l) => flattened(l))
     .filter(
-      (tocItemVO: TableOfContentItemVO) => tocItemVO.tocItem.aknTag === LEVEL,
+      (tocItemVO: TableOfContentItemVO) => tocItemVO.tagName === LEVEL,
     );
 
   for (let index = 0; index < tocItems.length; index++) {
@@ -646,16 +684,19 @@ export const updateDepthOfTocItems = (list: TableOfContentItemVO[], isCouncil) =
 };
 
 export const setItemDepth = (
+  tocItems: TocItem[],
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
   position: string,
 ) => {
-  if (sourceItem.tocItem.higherElement || targetItem.tocItem.higherElement) {
+  const sourceTocItem: TocItem = getTocItemByAknTag(tocItems, sourceItem.tagName);
+  const targetTocItem: TocItem = getTocItemByAknTag(tocItems, targetItem.tagName);
+  if (sourceTocItem.higherElement || targetTocItem.higherElement) {
     setItemDepthInHigherElements(sourceItem, targetItem);
   } else {
     switch (position) {
       case 'AFTER':
-        if (targetItem.tocItem.root) {
+        if (targetTocItem.root) {
           sourceItem.itemDepth = 1;
         } else
           sourceItem.itemDepth =
@@ -683,25 +724,27 @@ export const setItemDepthInHigherElements = (
 };
 
 export const setItemLevel = (
+  tocItems: TocItem[],
   toc: TableOfContentItemVO[],
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
   position: string,
 ) => {
   const targetItemLevel = 0;
-  getItemIndentLevel(toc, targetItem, targetItemLevel, [
+  getItemIndentLevel(tocItems, toc, targetItem, targetItemLevel, [
     LEVEL,
     PARAGRAPH,
     'INDENT',
     POINT,
   ]);
 
+  const targetTocItem: TocItem = getTocItemByAknTag(tocItems, targetItem.tagName);
   switch (position) {
     case 'AS_CHILDREN':
-      if (targetItem.tocItem.root) {
+      if (targetTocItem.root) {
         sourceItem.indentLevel = 0;
       } else if (
-        [LEVEL, PARAGRAPH, 'INDENT', POINT].includes(targetItem.tocItem.aknTag)
+        [LEVEL, PARAGRAPH, 'INDENT', POINT].includes(targetItem.tagName.toString())
       ) {
         sourceItem.indentLevel = targetItemLevel + 1;
       } else {
@@ -712,7 +755,7 @@ export const setItemLevel = (
       sourceItem.indentLevel = targetItemLevel;
       break;
     case 'AFTER':
-      if (targetItem.tocItem.root) {
+      if (targetTocItem.root) {
         sourceItem.indentLevel = 0;
       } else {
         sourceItem.indentLevel = targetItemLevel;
@@ -951,26 +994,28 @@ export const isRootElement = (element: TableOfContentItemVO) =>
   element.softActionRoot;
 
 export const isSourceDivision = (sourceItem: TableOfContentItemVO) =>
-  sourceItem.tocItem.aknTag === DIVISION;
+  sourceItem.tagName === DIVISION;
 
 export const getActualTargetItem = (
+  tocItems: TocItem[],
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
   parentItem: TableOfContentItemVO,
   position: string,
   isTocItemSibling: boolean,
 ) => {
+  const targetTocItem: TocItem = getTocItemByAknTag(tocItems, targetItem.tagName);
   switch (position) {
     case 'AS_CHILDREN':
       if (
         (isTocItemSibling &&
           parentItem != null &&
-          !targetItem.tocItem.sameParentAsChild &&
+          !targetTocItem.sameParentAsChild &&
           !isCrossheading(sourceItem)) ||
-        (targetItem.tocItem.sameParentAsChild &&
+        (targetTocItem.sameParentAsChild &&
           containsItem(targetItem, LIST)) ||
         targetItem.id === SOFT_MOVE_PLACEHOLDER_ID_PREFIX + sourceItem.id ||
-        (targetItem.tocItem.aknTag === SUBPARAGRAPH &&
+        (targetItem.tagName === SUBPARAGRAPH &&
           isCrossheading(sourceItem))
       ) {
         return parentItem;
@@ -987,13 +1032,13 @@ export const getActualTargetItem = (
 };
 
 export const isCrossheading = (sourceItem: TableOfContentItemVO) => {
-  const sourceTagValue = sourceItem.tocItem.aknTag;
+  const sourceTagValue = sourceItem.tagName;
   return sourceTagValue === CROSSHEADING;
 };
 
 export const containsItem = (node: TableOfContentItemVO, aknTag: AknTag) => {
   for (const child of node.childItems) {
-    if (child.tocItem.aknTag === aknTag) {
+    if (child.tagName === aknTag) {
       return true;
     }
   }
@@ -1024,8 +1069,8 @@ export const isDroppedOnPointOrIndent = (
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
 ) => {
-  const sourceTagValue: string = sourceItem.tocItem.aknTag;
-  const targetTagValue: string = targetItem.tocItem.aknTag;
+  const sourceTagValue: string = sourceItem.tagName;
+  const targetTagValue: string = targetItem.tagName;
   return (
     (sourceTagValue === CROSSHEADING ||
       sourceTagValue === POINT ||
@@ -1109,7 +1154,7 @@ export const checkDeleteOnLastItemInList = (
 ) => {
   const parentItem = findNodeById(tocTree, deletedItem.id);
   if (
-    parentItem.tocItem.aknTag === LIST &&
+    parentItem.tagName === LIST &&
     isLastExistingChildElement(deletedItem, parentItem)
   ) {
     return parentItem;
@@ -1147,7 +1192,7 @@ export const isDeletableItem = (
   treeData: TableOfContentItemVO[],
   tableOfContentItemVO: TableOfContentItemVO,
 ) => {
-  const elementName = tableOfContentItemVO.tocItem.aknTag;
+  const elementName = tableOfContentItemVO.tagName;
   const parentItem = findNodeById(treeData, tableOfContentItemVO.parentItem);
   if (process.env.NG_APP_LEOS_INSTANCE === CN)
     return !(
@@ -1207,12 +1252,14 @@ export const containsNoSoftDeletedItem = (
 };
 
 export const validateMaxDepth = (
+  tocItems: TocItem[],
   validationResult: NodeValidation,
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
 ) => {
-  if (targetItem.tocItem.maxDepth != null) {
-    const maxDepthRule = parseInt(targetItem.tocItem.maxDepth, 10);
+  const targetTocItem: TocItem = getTocItemByAknTag(tocItems, targetItem.tagName);
+  if (targetTocItem.maxDepth != null) {
+    const maxDepthRule = parseInt(targetTocItem.maxDepth, 10);
     if (maxDepthRule > 0 && targetItem.itemDepth >= maxDepthRule) {
       validationResult.success = false;
       validationResult.messageKey = 'toc.edit.window.drop.error.depth.message';
@@ -1224,6 +1271,7 @@ export const validateMaxDepth = (
 };
 
 export const validateAddingToItem = (
+  tocItems: TocItem[],
   validationResult: NodeValidation,
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
@@ -1233,11 +1281,12 @@ export const validateAddingToItem = (
   langGroup: string
 ) => {
   const isNumberedCN = (element: TableOfContentItemVO) => {
+    const tocItem: TocItem = getTocItemByAknTag(tocItems, element.tagName);
     let _isNumbered = true;
-    if (element.tocItem.itemNumber === 'NONE') {
+    if (tocItem.itemNumber === 'NONE') {
       _isNumbered = false;
     } else if (
-      element.tocItem.itemNumber === 'OPTIONAL' &&
+      tocItem.itemNumber === 'OPTIONAL' &&
       (!element.number ||
         element.number === '' ||
         isNumSoftDeleted(element.numSoftActionAttr))
@@ -1254,10 +1303,10 @@ export const validateAddingToItem = (
   if (!actualTargetItem) {
     actualTargetItem = targetItem;
   }
-  const droppedElementTagName = sourceItem.tocItem.aknTag;
-  const droppedElementTagNumberingType = getNumberingTypeByLanguage(sourceItem.tocItem, langGroup);
+  const droppedElementTagName = sourceItem.tagName;
+  const droppedElementTagNumberingType = getNumberingTypeByLanguage(tocItems, sourceItem.tagName, langGroup);
 
-  const targetName = actualTargetItem.tocItem.aknTag;
+  const targetName = actualTargetItem.tagName;
   let indentAllowed = false;
 
   switch (droppedElementTagName) {
@@ -1287,13 +1336,14 @@ export const validateAddingToItem = (
         ([PARAGRAPH, LEVEL].includes(targetName) &&
           (containsItem(actualTargetItem, LIST) ||
             !containsOnlySameIndentType(
+              tocItems,
               actualTargetItem,
               droppedElementTagNumberingType,
               langGroup
             ))) ||
         (targetName === droppedElementTagName &&
           containsItem(actualTargetItem, LIST)) ||
-        !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem, langGroup)
+        !validateAgainstOtherIndentsInList(tocItems, tocTree, sourceItem, targetItem, langGroup)
       ) {
         validationResult.success = false;
         if (!indentAllowed) {
@@ -1348,7 +1398,7 @@ export const isIndentAllowed = (
   if (indentLevel < 0) {
     isAllowed = false;
   } else if (targetElement != null) {
-    const tagValue = targetElement.tocItem.aknTag;
+    const tagValue = targetElement.tagName;
     const parentItem = findNodeById(treeData, targetElement.parentItem);
     isAllowed = isIndentAllowed(
       treeData,
@@ -1364,54 +1414,57 @@ export const getIndentLevel = (element: TableOfContentItemVO) => {
   for (const child of element.childItems) {
     identLevel = Math.max(identLevel, getIndentLevel(child));
   }
-  const tagValue = element.tocItem.aknTag;
+  const tagValue = element.tagName;
   return tagValue === POINT || tagValue === INDENT
     ? identLevel + 1
     : identLevel;
 };
 
 export const validateAgainstOtherIndentsInList = (
+  tocItems: TocItem[],
   tocTree: TableOfContentItemVO[],
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
   langGroup: string
 ) => {
   if (
-    targetItem.tocItem.aknTag !== INDENT &&
-    targetItem.tocItem.aknTag !== POINT &&
+    targetItem.tagName !== INDENT &&
+    targetItem.tagName !== POINT &&
     targetItem.childItems.length > 0
   ) {
     for (const child of targetItem.childItems) {
-      if (!validateAgainstOtherIndent(sourceItem, child, langGroup)) {
+      if (!validateAgainstOtherIndent(tocItems, sourceItem, child, langGroup)) {
         return false;
       }
     }
   } else if (
-    targetItem.tocItem.aknTag === POINT ||
-    targetItem.tocItem.aknTag === INDENT
+    targetItem.tagName === POINT ||
+    targetItem.tagName === INDENT
   ) {
-    return validateAgainstOtherIndent(sourceItem, targetItem, langGroup);
+    return validateAgainstOtherIndent(tocItems, sourceItem, targetItem, langGroup);
   } else if (
-    targetItem.tocItem.aknTag === LIST &&
+    targetItem.tagName === LIST &&
     targetItem.childItems.length === 0
   ) {
     const parentItem = findNodeById(tocTree, sourceItem.parentItem);
-    return validateAgainstOtherIndentsInList(tocTree, sourceItem, parentItem, langGroup);
+    return validateAgainstOtherIndentsInList(tocItems, tocTree, sourceItem, parentItem, langGroup);
   }
   return true;
 };
 
 export const validateAgainstOtherIndent = (
+  tocItems: TocItem[],
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
   langGroup: string
 ) => {
-  const targetNumberingType = getNumberingTypeByLanguage(targetItem.tocItem, langGroup);
-  const sourceNumberingType = getNumberingTypeByLanguage(sourceItem.tocItem, langGroup);
+  const targetNumberingType = getNumberingTypeByLanguage(tocItems, targetItem.tagName, langGroup);
+  const sourceNumberingType = getNumberingTypeByLanguage(tocItems, sourceItem.tagName, langGroup);
   return targetNumberingType === sourceNumberingType;
 };
 
 export const containsOnlySameIndentType = (
+  tocItems: TocItem[],
   node: TableOfContentItemVO,
   numberingType: string,
   langGroup: string
@@ -1419,8 +1472,8 @@ export const containsOnlySameIndentType = (
   const childItems: TableOfContentItemVO[] = node.childItems;
   for (const child of childItems || []) {
     if (
-      child.tocItem.aknTag === INDENT &&
-      getNumberingTypeByLanguage(child.tocItem, langGroup) !== numberingType
+      child.tagName === INDENT &&
+      getNumberingTypeByLanguage(tocItems, child.tagName, langGroup) !== numberingType
     ) {
       return false;
     }
@@ -1442,12 +1495,13 @@ export const isNodeLastElement = (
 };
 
 export const restoreMovedItemOrSetNumber = (
+  tocItems: TocItem[],
   tocTree: TableOfContentItemVO[],
   droppedItem: TableOfContentItemVO,
   newPosition: TableOfContentItemVO,
   position: string,
 ) => {
-  setNumber(tocTree, droppedItem, newPosition);
+  setNumber(tocItems, tocTree, droppedItem, newPosition);
 };
 
 const isPlaceholderForDroppedItem = (
@@ -1472,7 +1526,7 @@ export const isFirstPointOrSubparagraph = (
   const parentNodeOfItem = findNodeById(tocTree, item.parentItem);
   return (
     item.parentItem !== null &&
-    [SUBPARAGRAPH, SUBPOINT].includes(item.tocItem.aknTag) &&
+    [SUBPARAGRAPH, SUBPOINT].includes(item.tagName) &&
     isTocItemFirstChild(tocTree, parentNodeOfItem, item)
   );
 };
@@ -1483,13 +1537,11 @@ export const isTocItemFirstChild = (
   child: TableOfContentItemVO,
 ) => {
   const parentOfItem = findNodeById(tocTree, item.parentItem);
-  return LIST === item.tocItem.aknTag &&
-    child.tocItem.aknTag === SUBPARAGRAPH &&
-    item.childItems.indexOf(child) === 0
-    ? parentOfItem.childItems.indexOf(
-        findNodeById(tocTree, child.parentItem),
-      ) === 0
-    : item.childItems.indexOf(child) === 0;
+  return LIST === item.tagName &&
+    child.tagName === SUBPARAGRAPH &&
+    indexOfChild(item, child.id) === 0
+    ? indexOfChild(parentOfItem, findNodeById(tocTree, child.parentItem).id) === 0
+    : indexOfChild(item, child.id) === 0;
 };
 
 export const getInstanceType = (instance: string) => {
@@ -1501,3 +1553,10 @@ export const getInstanceType = (instance: string) => {
     return 'OS';
   }
 };
+
+export const toCamelCaseEnum = (value: string) => {
+  return value
+    .toLowerCase()
+    .replace(/_([a-z])/g, (_, char) => char.toUpperCase());
+};
+

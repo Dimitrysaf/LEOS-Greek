@@ -960,7 +960,7 @@ public class LegServiceImpl implements LegService {
         if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
-            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN, structureContextProvider.get().getTocItems()));
+            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN, structureContextProvider.get().getTocItems(), true));
             final String coverPage = exportProposalResource.getComponentId(XmlNodeConfigProcessor.DOC_REF_COVER);
             addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposal.getMetadata().getOrNull().getRef());
         }
@@ -1114,7 +1114,9 @@ public class LegServiceImpl implements LegService {
     private List<TableOfContentItemHtmlVO> buildTocHtml(List<TableOfContentItemVO> tableOfContents) {
         List<TableOfContentItemHtmlVO> tocHtml = new ArrayList<>();
         for (TableOfContentItemVO item : tableOfContents) {
-            String name = TableOfContentHelper.buildItemCaption(item, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper,
+            String name = TableOfContentHelper.buildItemCaption(item, structureContextProvider.get().getTocItems(),
+                    TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE,
+                    messageHelper,
                     documentLanguageContext.getDocumentLanguage());
             TableOfContentItemHtmlVO itemHtml = new TableOfContentItemHtmlVO(name, "#" + item.getId());
             if (item.getChildItems().size() > 0) {
@@ -1885,7 +1887,7 @@ public class LegServiceImpl implements LegService {
             addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
             final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN,
-                    structureContextProvider.get().getTocItems()));
+                    structureContextProvider.get().getTocItems(), true));
 
             addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposal.getMetadata().getOrNull().getRef());
         }

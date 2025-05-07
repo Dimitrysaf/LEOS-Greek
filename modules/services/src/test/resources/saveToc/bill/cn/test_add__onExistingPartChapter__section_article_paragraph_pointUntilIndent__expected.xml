@@ -18,10 +18,10 @@
                         </paragraph>
                     </article>
                     <section leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:31:02.135+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_section_jyufB3">
-                        <num leos:origin="cn">#</num>
+                        <num leos:origin="cn">Section #</num>
                         <heading>Section heading...</heading>
                         <article leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:31:02.135+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_article_M3masy">
-                            <num leos:editable="false" leos:origin="cn">#</num>
+                            <num leos:editable="false" leos:origin="cn">Article #</num>
                             <heading>Article heading...</heading>
                             <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:31:02.135+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_paragraph_lGYruk">
                                 <num leos:editable="false" leos:origin="cn">#</num>

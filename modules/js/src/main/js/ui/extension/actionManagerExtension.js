@@ -22,6 +22,7 @@ define(function actionManagerExtensionModule(require) {
     var $ = require("jquery");
     var postal = require("postal");
     var CKEDITOR = require("promise!ckEditor");
+    var lodash = require('lodash');
 
     // configuration
     var EDITOR_CHANNEL_CFG = CONFIG.channels.editor;
@@ -69,12 +70,12 @@ define(function actionManagerExtensionModule(require) {
     function _getType($element) {
         let tagName = $element.prop('tagName').toLowerCase();
         let tocItemElement = _getTocItemElement(tocItemsList, tagName);
-        return tocItemElement ? tocItemElement.aknTag : tagName;
+        return tocItemElement ? lodash.camelCase(tocItemElement.aknTag) : tagName;
     }
 
     function _getTocItemElement(tocItemsList, tagName) {
         let tocItemElement = tocItemsList.find(function (e) {
-            return e.aknTag.toLowerCase() === tagName
+            return lodash.camelCase(e.aknTag.toString()).toLowerCase() === lodash.camelCase(tagName).toLowerCase()
         });
         return tocItemElement;
     }
@@ -119,7 +120,7 @@ define(function actionManagerExtensionModule(require) {
         tocItemsList.forEach(function(element) {
             if (element.editable && element.profiles) {
                 element.profiles["profiles"].forEach(function(profile) {
-                    var selector = profile.elementSelector ? profile.elementSelector : element.aknTag.toLowerCase();
+                    var selector = profile.elementSelector ? profile.elementSelector : lodash.camelCase(element.aknTag).toLowerCase();
                     EDITABLE_ELEMENTS = EDITABLE_ELEMENTS + selector + ", ";
                 });
             }
@@ -260,7 +261,7 @@ define(function actionManagerExtensionModule(require) {
             var remainingSpace = _getRemainingSpace($element, elementHeight, showActionsList);
             var top = (remainingSpace / 3.33);
 
-            let tocItemElement = tocItemsList.find(function(e){return e.aknTag.toLowerCase() === element.tagName.toLowerCase()});
+            let tocItemElement = tocItemsList.find(function(e){return lodash.camelCase(e.aknTag).toLowerCase() === lodash.camelCase(element.tagName).toLowerCase()});
             var left_position;
 
             var offsetLeft = $element[0].offsetLeft;

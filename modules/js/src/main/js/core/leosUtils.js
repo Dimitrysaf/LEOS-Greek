@@ -18,6 +18,7 @@ define(function leosUtilsModule(require) {
     // load module dependencies
     require("dateFormat");
     var log = require("logger");
+    var lodash = require('lodash');
     //var $ = require("jquery");
     var CKEDITOR = require("promise!ckEditor");
     var REGEX_ORIGIN = new RegExp("[leos:|data-](\\w-?)*origin");
@@ -86,9 +87,9 @@ define(function leosUtilsModule(require) {
             var parentTocItem;
             do {
                 parentTocItem = tocItemsList.find(function(elem) {
-                    return elem.aknTag.toLowerCase() === currentElem.parentElement.tagName.toLowerCase()
+                    return lodash.camelCase(elem.aknTag).toLowerCase() === currentElem.parentElement.tagName.toLowerCase()
                         // Added title tag special condition in the scope of LEOS-6070
-                        || (elem.aknTag.toLowerCase() === 'title' && currentElem.parentElement.tagName.toLowerCase() === 'akntitle');
+                        || (lodash.camelCase(elem.aknTag).toLowerCase() === 'title' && currentElem.parentElement.tagName.toLowerCase() === 'akntitle');
                 });
                 currentElem = currentElem.parentElement;
             } while (!parentTocItem && currentElem.parentElement);
@@ -220,7 +221,7 @@ define(function leosUtilsModule(require) {
     function _getWrapper($element, tocItemsList) {
         var wrapperTag = _getElementTagName($element);
         var wrapperElement = tocItemsList.find(function (elem) {
-            return elem.aknTag.toLowerCase() === wrapperTag;
+            return lodash.camelCase(elem.aknTag).toLowerCase() === wrapperTag;
         });
 
         if (wrapperElement) {
@@ -231,7 +232,7 @@ define(function leosUtilsModule(require) {
                 return;
             }
             var parentElement = tocItemsList.find(function (elem) {
-                return elem.aknTag.toLowerCase() === wrapperTag;
+                return lodash.camelCase(elem.aknTag).toLowerCase() === wrapperTag;
             });
             if(parentElement && parentElement.root) {
                 return $element.parent();

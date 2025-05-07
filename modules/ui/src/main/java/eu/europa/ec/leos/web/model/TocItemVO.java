@@ -15,7 +15,9 @@ package eu.europa.ec.leos.web.model;
 
 import elemental.json.JsonException;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 
@@ -36,8 +38,8 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
     private String text;
     private List <TocItemVO> children;
 
-    public TocItemVO(TableOfContentItemVO tableOfContentItemVO, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs) {
-        super(tableOfContentItemVO.getTocItem(),
+    public TocItemVO(TableOfContentItemVO tableOfContentItemVO, List<TocItem> tocItems, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs) {
+        super(StructureConfigUtils.getTocItemByName(tocItems, tableOfContentItemVO.getTagName()),
                 tableOfContentItemVO.getId(),
                 tableOfContentItemVO.getOriginAttr(),
                 tableOfContentItemVO.getNumber(),
@@ -48,8 +50,8 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
                 tableOfContentItemVO.getNode(),
                 tableOfContentItemVO.getContent());
 
-        this.setText(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN"));
-        this.setChildren( convertChildren(tableOfContentItemVO.getChildItemsView(),messageHelper, numberingConfigs));
+        this.setText(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, tocItems, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN"));
+        this.setChildren( convertChildren(tableOfContentItemVO.getChildItemsView(), tocItems, messageHelper, numberingConfigs));
     }
 
     public String getText() {
@@ -69,10 +71,10 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
     }
 
     //helper methods to convert easily
-    private List<TocItemVO> convertChildren(List<TableOfContentItemVO> tableOfContentItemVOList, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs) throws JsonException {
+    private List<TocItemVO> convertChildren(List<TableOfContentItemVO> tableOfContentItemVOList, List<TocItem> tocItems, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs) throws JsonException {
         List<TocItemVO> tocItemListVOList = new ArrayList<TocItemVO>();
         for (TableOfContentItemVO tableOfContentItemVO: tableOfContentItemVOList) {
-            TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO, messageHelper, numberingConfigs);
+            TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO, tocItems, messageHelper, numberingConfigs);
             tocItemListVOList.add(tocItemVO);
         }
         return tocItemListVOList;

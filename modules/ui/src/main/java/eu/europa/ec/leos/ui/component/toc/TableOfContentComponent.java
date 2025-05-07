@@ -182,7 +182,8 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         public NumberingType getNumberingType(List<TocItem> tocItems, TableOfContentItemVO item) {
             NumberingType numberingType = this.getDefaultNumberingType();
             if (this.equals(POINT_NUMBERING_TYPE.NUMBERED)) {
-                AknTag tocItemToBeChecked = item.getTocItem().getParentNameNumberingTypeDependency();
+                TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, item.getTagName());
+                AknTag tocItemToBeChecked = tocItem.getParentNameNumberingTypeDependency();
                 TableOfContentItemVO article = tocItemToBeChecked == null ? null
                         : getFirstAscendant(item, Arrays.asList(tocItemToBeChecked.value()));
                 if (article != null) {
@@ -376,7 +377,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         this.indentListRadioButtonGroupItemsToEnable = indentListRadioButtonGroupItemsToEnable;
         Design.read(this);
         buildToc();
-        this.checkDeleteLastEditingTypeConsumer = new CheckDeleteLastEditingTypeConsumer(tocTree, messageHelper, eventBus);
+        this.checkDeleteLastEditingTypeConsumer = new CheckDeleteLastEditingTypeConsumer(tocTree, messageHelper, eventBus, structureContextProvider);
     }
 
     @Override
@@ -437,7 +438,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         toolbar.setComponentAlignment(closeButton, Alignment.TOP_RIGHT);
         itemEditorLayout.addComponent(toolbar);
 
-        final Editor tocItemEditor = new Editor(tocEditor);
+        final Editor tocItemEditor = new Editor(tocEditor, this.structureContextProvider);
         tocItemEditor.addStyleName("leos-toc-editor");
         tocItemEditor.setSpacing(true);
         tocItemEditor.setMargin(false);
@@ -512,7 +513,8 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
     private void expandDefaultTreeNodes(List<TableOfContentItemVO> items) {
         items.forEach(item -> {
-            if (!item.getChildItems().isEmpty() && item.getTocItem().isExpandedByDefault()) {
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, item.getTagName());
+            if (!item.getChildItems().isEmpty() && tocItem.isExpandedByDefault()) {
                 tocTree.expand(item);
                 expandDefaultTreeNodes(item.getChildItems());
             }
@@ -750,16 +752,17 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     }
 
     private boolean isElementHeadingOrContentEmpty(TableOfContentItemVO item, String element) {
-        if (item.getTocItem().getAknTag().value().equalsIgnoreCase(element) &&
-                item.getTocItem().getItemHeading() == OptionsType.OPTIONAL) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, item.getTagName());
+        if (item.getTagName().value().equalsIgnoreCase(element) &&
+                tocItem.getItemHeading() == OptionsType.OPTIONAL) {
             return StringUtils.isEmpty(item.getHeading()) && StringUtils.isEmpty(item.getContent());
         } else
             return false;
     }
 
-    private boolean isCrossHeading(TocItem tocItem) {
-        return tocItem.getAknTag().value().equalsIgnoreCase(CROSSHEADING) ||
-                tocItem.getAknTag().value().equalsIgnoreCase(BLOCK);
+    private boolean isCrossHeading(String tocItem) {
+        return tocItem.equalsIgnoreCase(CROSSHEADING) ||
+                tocItem.equalsIgnoreCase(BLOCK);
     }
 
     private boolean invalidToc(TreeData<TableOfContentItemVO> treeData, TableOfContentItemVO parent) {
@@ -812,16 +815,18 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     }
 
     private boolean invalidNumber(TableOfContentItemVO item) {
-        return item.getTocItem().getItemNumber() == OptionsType.MANDATORY && StringUtils.isBlank(item.getNumber());
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, item.getTagName());
+        return tocItem.getItemNumber() == OptionsType.MANDATORY && StringUtils.isBlank(item.getNumber());
     }
 
     private boolean invalidHeading(TableOfContentItemVO item) {
-        return (item.getTocItem().getItemHeading() == OptionsType.MANDATORY
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, item.getTagName());
+        return (tocItem.getItemHeading() == OptionsType.MANDATORY
                 || isElementHeadingOrContentEmpty(item, AnnexStructureType.LEVEL.getType())) && StringUtils.isBlank(item.getHeading());
     }
 
     private boolean invalidContent(TableOfContentItemVO item) {
-        return isCrossHeading(item.getTocItem()) && (StringUtils.isBlank(item.getContent()) || XmlHelper.containsXmlTags(item.getContent()));
+        return isCrossHeading(item.getTagName().value()) && (StringUtils.isBlank(item.getContent()) || XmlHelper.containsXmlTags(item.getContent()));
     }
 
     private boolean isArticleBiggerThanDefinitionDepth(TableOfContentItemVO item) {
@@ -949,7 +954,9 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
     private String getColumnItemHtml(TableOfContentItemVO tableOfContentItemVO) {
         StringBuilder itemHtml = new StringBuilder(
-                StringUtils.stripEnd(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN"), null));
+                StringUtils.stripEnd(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, structureContextProvider.get().getTocItems(),
+                        DEFAULT_CAPTION_MAX_SIZE,
+                        messageHelper, "EN"), null));
         if (isItemCoEditionActive(tableOfContentItemVO)) {
             if (tableOfContentItemVO.getCoEditionVos().stream().anyMatch(x -> !x.getUserLoginName().equals(user.getLogin()))) {
                 itemHtml.insert(0, "<span class=\"leos-toc-user-coedition Vaadin-Icons\">&#xe80d</span>");
@@ -1040,7 +1047,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             }
         });
         dragSource.setDragDataGenerator("nodetype", tocVO -> {
-            String dragType = tocVO.getTocItem().getAknTag().value();
+            String dragType = tocVO.getTagName().value();
             dragSource.clearDataTransferData();
             dragSource.setDataTransferData("nodetype", dragType);
             dragSource.setDataTransferText(dragType);
@@ -1054,10 +1061,10 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     private Optional<String> areSameType(List<TableOfContentItemVO> items) {
         if (items.size() > 1) {
             for (int i = 1; i < items.size(); i++) {
-                if (!items.get(i - 1).getTocItem().getAknTag().value().equalsIgnoreCase(items.get(i).getTocItem().getAknTag().value())) {
-                    final String prevSelectedTocItem = messageHelper.getMessage("toc.item.type." + items.get(i).getTocItem().getAknTag().value().toLowerCase());
+                if (!items.get(i - 1).getTagName().equals(items.get(i).getTagName())) {
+                    final String prevSelectedTocItem = messageHelper.getMessage("toc.item.type." + items.get(i).getTagName().value().toLowerCase());
                     final String nextSelectedTocItem = messageHelper.getMessage(
-                            "toc.item.type." + items.get(i - 1).getTocItem().getAknTag().value().toLowerCase());
+                            "toc.item.type." + items.get(i - 1).getTagName().value().toLowerCase());
                     final String statusMsg = messageHelper.getMessage("toc.item.cross.item.selection.error.message", nextSelectedTocItem, prevSelectedTocItem);
                     return Optional.of(statusMsg);
                 }
@@ -1248,8 +1255,11 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         private Button dapButton;
         private Label warningLabel;
 
-        public Editor(TocEditor tocEditor) {
+        private Provider<StructureContext> structureContextProvider;
+
+        public Editor(TocEditor tocEditor, Provider<StructureContext> structureContextProvider) {
             this.tocEditor = tocEditor;
+            this.structureContextProvider = structureContextProvider;
             initEditor();
         }
 
@@ -1383,10 +1393,10 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                         isArticle = getTagValueFromTocItemVo(item).equals(ARTICLE);
                         tocItemType = item.getTocItemType();
 
-                        TocItem tocItem = item.getTocItem();
-                        if (isCrossHeading(tocItem)) {
+                        TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, item.getTagName());
+                        if (isCrossHeading(item.getTagName().value())) {
                             hasList = true;
-                            listType = StructureConfigUtils.getNumberingTypeByLanguage(item.getTocItem(), "EN");
+                            listType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, "EN");
                             showItemContent = true;
                             enableItemContent = true;
                             if (tableOfContentProcessor.containsInlineElement(item)) {
@@ -1482,7 +1492,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                             return TableOfContentHelper.getDisplayableTocItem(value, null, messageHelper);
                         }
                     })
-                    .bind(TableOfContentItemVO::getTocItem, null);
+                    .bind((t) -> StructureConfigUtils.getTocItemByName(structureContextProvider, t.getTagName()), null);
 
             itemTypeField.addValueChangeListener(event -> {
                 if (event.isUserOriginated())
@@ -1498,7 +1508,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
             TableOfContentItemVO item = binder.getBean();
             if (item != null && tobeValidated) {
-                TocItem tocItem = item.getTocItem();
+                TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, item.getTagName());
                 if (tocItem.getItemNumber() != null && tocItem.getItemNumber() == OptionsType.MANDATORY) {
                     binding.withValidator(number -> {
                         return StringUtils.isNotBlank(number);
@@ -1542,7 +1552,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                     bindNumberField(binder, numberField, true);
                     item.setAutoNumOverwritten(true);
                     updateUserInfo(item, user);
-                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTocItem().getAknTag().name());
+                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTagName().value());
                     enableSaveOnUpdate(binder.validate().isOk(), new TocUpdate(item, ACTION_ON_ITEM.NUMBER_UPDATE), oldValue, item.getNumber());
                 }
             });
@@ -1561,15 +1571,17 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                 if (event.isUserOriginated()) {
                     dataChanged = true;
                     TableOfContentItemVO item = binder.getBean();
-                    NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(item.getTocItem(), "EN");
+                    NumberingType numberingType =
+                            StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                                    item.getTagName()), "EN");
                     NumberingConfig oldValue = StructureConfigUtils.getNumberingConfig(numberingConfigs, numberingType);
                     NumberingConfig numberingConfig = StructureConfigUtils.getNumberingConfig(numberingConfigs, NumberingType.valueOf(event.getValue()));
                     item.setTocItem(StructureConfigUtils.getTocItemByNumberingType(tocItems, NumberingType.valueOf(event.getValue()),
-                            item.getTocItem().getAknTag().name(), "EN"));
+                            item.getTagName().value(), "EN"));
                     item.setNumber(numberingConfig.getSequence());
                     updateUserInfo(item, user);
                     tocTree.getDataProvider().refreshItem(item);
-                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTocItem().getAknTag().name());
+                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTagName().value());
                     enableSaveOnUpdate(binder.validate().isOk(), new TocUpdate(item, ACTION_ON_ITEM.TYPE_UPDATE), oldValue, numberingConfig);
                 }
             });
@@ -1600,7 +1612,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                     tocEditor.propagateChangeListType(item, tocItem, numberingConfigs, tocTree);
                     updateUserInfo(item, user);
                     tocTree.getDataProvider().refreshItem(item);
-                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTocItem().getAknTag().name());
+                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTagName().value());
                     enableSaveOnUpdate(binder.validate().isOk(), new TocUpdate(item, ACTION_ON_ITEM.TYPE_UPDATE), oldValue, numberingType);
                 }
             });
@@ -1673,7 +1685,8 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             binder.forField(headingField)
                     .withNullRepresentation("")
                     .withValidator(heading -> {
-                        if (binder.getBean().getTocItem().getItemHeading() == OptionsType.MANDATORY ||
+                        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, binder.getBean().getTagName());
+                        if (tocItem .getItemHeading() == OptionsType.MANDATORY ||
                                 isElementHeadingOrContentEmpty(binder.getBean(), AnnexStructureType.LEVEL.getType())) {
                             return StringUtils.isNotBlank(heading);
                         }
@@ -1708,7 +1721,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                     }
                     item.setHeading(parseXml(event.getValue()));
                     tocTree.getDataProvider().refreshItem(item);
-                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTocItem().getAknTag().name());
+                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTagName().value());
                     enableSaveOnUpdate(binder.validate().isOk(), new TocUpdate(item, ACTION_ON_ITEM.HEADING_UPDATE), oldValue, item.getHeading());
                 }
             });
@@ -1727,10 +1740,10 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             binder.removeBinding(contentField);
             binder.forField(contentField)
                     .withValidator(content -> {
-                        return (!isCrossHeading(binder.getBean().getTocItem()) || !content.isEmpty());
+                        return (!isCrossHeading(binder.getBean().getTagName().value()) || !content.isEmpty());
                     }, messageHelper.getMessage("toc.edit.window.item.selected.content.empty.message"))
                     .withValidator(content -> {
-                        return (!isCrossHeading(binder.getBean().getTocItem()) || !XmlHelper.containsXmlTags(content));
+                        return (!isCrossHeading(binder.getBean().getTagName().value()) || !XmlHelper.containsXmlTags(content));
                     }, messageHelper.getMessage("toc.edit.window.item.selected.content.error.message"))
                     .bind(it -> {
                         return StringEscapeUtils.unescapeXml(XmlHelper.removeXmlTags(XmlHelper.extractContentFromTocItem(it)));
@@ -1753,7 +1766,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                     tableOfContentProcessor.replaceContentFromTocItem(item, event.getValue());
                     updateUserInfo(item, user);
                     tocTree.getDataProvider().refreshItem(item);
-                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTocItem().getAknTag().name());
+                    addElementInTocChangedList(ActionType.UPDATED, item.getId(), item.getTagName().value());
                     enableSaveOnUpdate(binder.validate().isOk(), new TocUpdate(item, ACTION_ON_ITEM.CONTENT_UPDATE), oldValue, item.getContent());
                 }
             });
@@ -1939,9 +1952,9 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             tocEditor.undeleteItem(tocTree, item);
             tocTree.getDataProvider().refreshAll();
             tocTree.deselectAll();
-            final CheckinElement checkinElement = new CheckinElement(ActionType.UNDELETED, item.getId(), item.getTocItem().getAknTag().name());
+            final CheckinElement checkinElement = new CheckinElement(ActionType.UNDELETED, item.getId(), item.getTagName().value());
             final String statusMsg = messageHelper.getMessage("toc.edit.window.undelete.confirmation.success",
-                    TableOfContentHelper.getDisplayableTocItem(item.getTocItem(),
+                    TableOfContentHelper.getDisplayableTocItem(StructureConfigUtils.getTocItemByName(this.structureContextProvider, item.getTagName()),
                             null, messageHelper));
             eventBus.post(new TocChangedEvent(statusMsg, TocChangedEvent.Result.SUCCESSFUL, Arrays.asList(checkinElement)));
             enableSaveOnUpdate(true, new TocUpdate(item, ACTION_ON_ITEM.REMOVED), true, false);
@@ -1951,8 +1964,9 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         private void deleteItem(TableOfContentItemVO item) {
             item.setTrackChangeAction(LEOS_TC_DELETE_ACTION);
             final ActionType actionType = tocEditor.deleteItem(tocTree, item, isTrackChangesEnabled);
-            final CheckinElement checkinElement = new CheckinElement(actionType, item.getId(), item.getTocItem().getAknTag().name());
-            final String statusMsg = messageHelper.getMessage("toc.edit.window.delete.message", TableOfContentHelper.getDisplayableTocItem(item.getTocItem(),
+            final CheckinElement checkinElement = new CheckinElement(actionType, item.getId(), item.getTagName().value());
+            final String statusMsg = messageHelper.getMessage("toc.edit.window.delete.message",
+                    TableOfContentHelper.getDisplayableTocItem(StructureConfigUtils.getTocItemByName(this.structureContextProvider, item.getTagName()),
                     null, messageHelper));
             eventBus.post(new TocChangedEvent(statusMsg, TocChangedEvent.Result.SUCCESSFUL, Arrays.asList(checkinElement)));
             closeItemTocEditor();
@@ -2079,7 +2093,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         private int getPreviousDivisionType(TableOfContentItemVO itemVO) {
             List<TableOfContentItemVO> tableOfContentItemVODivisionList =
                     itemVO.getParentItem().getChildItems().stream()
-                            .filter(tocItemVO -> tocItemVO.getTocItem().getAknTag().value().equals(DIVISION))
+                            .filter(tocItemVO -> tocItemVO.getTagName().equals(AknTag.DIVISION))
                             .collect(Collectors.toList());
             int itemIndex = tableOfContentItemVODivisionList.indexOf(itemVO);
             if (itemIndex > 0) {
@@ -2120,7 +2134,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         private void unToggleSiblings(TableOfContentItemVO item) {
             List<TableOfContentItemVO> listOfArticle = tocTree.getTreeData().getParent(item).getChildItems();
             for (TableOfContentItemVO itemVO : listOfArticle) {
-                if (ARTICLE.equals(itemVO.getTocItem().getAknTag().value()) && !itemVO.equals(item) && itemVO.isNumberingToggled() != null) {
+                if (ARTICLE.equals(itemVO.getTagName()) && !itemVO.equals(item) && itemVO.isNumberingToggled() != null) {
                     itemVO.setNumberingToggled(null);
                 }
             }

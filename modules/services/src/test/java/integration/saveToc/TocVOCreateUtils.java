@@ -46,7 +46,7 @@ public class TocVOCreateUtils {
                 .withHeading("Part heading...")
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth).withNewNode(true);
         return builder.build();
     }
 
@@ -66,7 +66,7 @@ public class TocVOCreateUtils {
                 .withHeading("Title heading...")
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth).withNewNode(true);
         return builder.build();
     }
 
@@ -86,7 +86,7 @@ public class TocVOCreateUtils {
                 .withHeading("Chapter heading...")
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth).withNewNode(true);
         return builder.build();
     }
 
@@ -106,7 +106,7 @@ public class TocVOCreateUtils {
                 .withHeading("Section heading...")
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth).withNewNode(true);
         return builder.build();
     }
 
@@ -127,7 +127,7 @@ public class TocVOCreateUtils {
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
                 .withItemDepth(itemDepth)
-                .withAffected(true);
+                .withAffected(true).withNewNode(true);
         return builder.build();
     }
 
@@ -146,7 +146,7 @@ public class TocVOCreateUtils {
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
                 .withItemDepth(itemDepth)
-                .withAffected(true);
+                .withAffected(true).withNewNode(true);
         return builder.build();
     }
 
@@ -160,7 +160,7 @@ public class TocVOCreateUtils {
                         .build()
                 )
                 .withOriginAttr(instance)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth).withNewNode(true);
         return builder.build();
     }
 
@@ -177,7 +177,7 @@ public class TocVOCreateUtils {
                 .withOriginNumAttr(instance)
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth).withNewNode(true);
         return builder.build();
     }
 
@@ -195,7 +195,7 @@ public class TocVOCreateUtils {
                 .withOriginNumAttr(instance)
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth).withNewNode(true);
         return builder.build();
     }
 
@@ -210,7 +210,7 @@ public class TocVOCreateUtils {
                 )
                 .withOriginAttr(instance)
                 .withNumber(StructureConfigUtils.HASH_NUM_VALUE)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth).withNewNode(true);
         return builder.build();
     }
 
@@ -232,14 +232,16 @@ public class TocVOCreateUtils {
                 .withOriginNumAttr(instance)
                 .withSoftActionAttr(SoftActionType.ADD)
                 .withIsSoftActionRoot(true)
-                .withItemDepth(itemDepth);
+                .withItemDepth(itemDepth)
+                .withNewNode(true);
+
         return builder.build();
     }
 
     public static TableOfContentItemVO createMoveToElement(TableOfContentItemVO originalElement) {
         TocItemVOBuilder builder = TocItemVOBuilder.getBuilder()
                 .withId(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalElement.getId())
-                .withTocItem(originalElement.getTocItem())
+                .withTocItem(originalElement.getTagName())
                 .withParentItem(originalElement.getParentItem())
                 .withOriginAttr(originalElement.getOriginAttr())
                 .withNumber(originalElement.getNumber())
@@ -247,14 +249,14 @@ public class TocVOCreateUtils {
                 .withOriginNumAttr(originalElement.getOriginNumAttr())
                 .withSoftActionAttr(SoftActionType.MOVE_TO)
                 .withIsSoftActionRoot(true)
-                .withSoftMoveTo(originalElement.getId());
+                .withSoftMoveTo(originalElement.getId()).withNewNode(originalElement.getNode() == null);
         return builder.build();
     }
 
     public static TableOfContentItemVO createMoveToPoint(TableOfContentItemVO originalElement) {
         TocItemVOBuilder builder = TocItemVOBuilder.getBuilder()
                 .withId(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalElement.getId())
-                .withTocItem(originalElement.getTocItem())
+                .withTocItem(originalElement.getTagName())
                 .withParentItem(originalElement.getParentItem())
                 .withOriginAttr(originalElement.getOriginAttr())
                 .withNumber(originalElement.getNumber())
@@ -268,7 +270,7 @@ public class TocVOCreateUtils {
                 .withSoftActionAttr(SoftActionType.MOVE_TO)
                 .withIsSoftActionRoot(true)
                 .withSoftMoveTo(originalElement.getId())
-                .withItemDepth(originalElement.getItemDepth());
+                .withItemDepth(originalElement.getItemDepth()).withNewNode(originalElement.getNode() == null);
         return builder.build();
     }
 
@@ -288,7 +290,7 @@ public class TocVOCreateUtils {
     public static TableOfContentItemVO createMoveFromElement(TableOfContentItemVO originalElement, String instance) {
         TocItemVOBuilder builder = TocItemVOBuilder.getBuilder()
                 .withId(originalElement.getId())
-                .withTocItem(originalElement.getTocItem())
+                .withTocItem(originalElement.getTagName())
                 .withParentItem(originalElement.getParentItem())
                 .withOriginAttr(EC)
                 .withNumber(StructureConfigUtils.HASH_NUM_VALUE)
@@ -302,7 +304,7 @@ public class TocVOCreateUtils {
                 .withSoftActionAttr(SoftActionType.MOVE_FROM)
                 .withIsSoftActionRoot(true)
                 .withSoftMoveFrom(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalElement.getId())
-                .withItemDepth(originalElement.getItemDepth());
+                .withItemDepth(originalElement.getItemDepth()).withNewNode(originalElement.isNewNode());
         return builder.build();
     }
 
@@ -312,7 +314,7 @@ public class TocVOCreateUtils {
                 .collect(Collectors.toList());
 
         return allToc.stream()
-                //.filter(toc -> toc.getTocItem().getAknTag().value().equals(tagName))
+                //.filter(toc -> toc.getTagName().equals(tagName))
                 .filter(toc -> toc.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Didn't find element with id " + id));

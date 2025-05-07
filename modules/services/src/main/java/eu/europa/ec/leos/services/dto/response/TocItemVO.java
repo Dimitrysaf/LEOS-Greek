@@ -15,7 +15,9 @@ package eu.europa.ec.leos.services.dto.response;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.io.Serializable;
@@ -37,8 +39,10 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
     private List<TocItemVO> children;
     private String language;
 
-    public TocItemVO(TableOfContentItemVO tableOfContentItemVO, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs, String language) {
-        super(tableOfContentItemVO.getTocItem(),
+    public TocItemVO(TableOfContentItemVO tableOfContentItemVO, TocItem tocItem, List<TocItem> tocItems, MessageHelper messageHelper,
+                     List<NumberingConfig> numberingConfigs,
+                     String language) {
+        super(tocItem,
                 tableOfContentItemVO.getId(),
                 tableOfContentItemVO.getOriginAttr(),
                 tableOfContentItemVO.getNumber(),
@@ -50,8 +54,9 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
                 tableOfContentItemVO.getContent());
         this.language = language;
 
-        this.setText(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, language));
-        this.setChildren(convertChildren(tableOfContentItemVO.getChildItemsView(), messageHelper, numberingConfigs, language));
+        this.setText(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, tocItems, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper,
+                language));
+        this.setChildren(convertChildren(tableOfContentItemVO.getChildItemsView(), tocItems, messageHelper, numberingConfigs, language));
     }
 
     public String getText() {
@@ -71,11 +76,13 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
     }
 
     //helper methods to convert easily
-    private List<TocItemVO> convertChildren(List<TableOfContentItemVO> tableOfContentItemVOList, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs,
+    private List<TocItemVO> convertChildren(List<TableOfContentItemVO> tableOfContentItemVOList, List<TocItem> tocItems, MessageHelper messageHelper,
+                                            List<NumberingConfig> numberingConfigs,
             String language) {
         List<TocItemVO> tocItemListVOList = new ArrayList<TocItemVO>();
         for (TableOfContentItemVO tableOfContentItemVO : tableOfContentItemVOList) {
-            TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO, messageHelper, numberingConfigs, language);
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, tableOfContentItemVO.getTagName());
+            TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO, tocItem, tocItems, messageHelper, numberingConfigs, language);
             tocItemListVOList.add(tocItemVO);
         }
         return tocItemListVOList;

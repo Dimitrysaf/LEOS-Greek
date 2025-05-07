@@ -61,6 +61,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.searchInOrderRules;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.searchInRules;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.buildTableOfContentsItemVO;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
@@ -81,7 +83,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private static final Logger LOG = LoggerFactory.getLogger(TocApiServiceImpl.class);
     private static final String DOCUMENT_CONTENT_IS_REQUIRED = "Document content is required!";
 
-    private Provider<StructureContext> structureContextProvider;
+    protected Provider<StructureContext> structureContextProvider;
     private ProposalService proposalService;
     private BillService billService;
     private AnnexService annexService;
@@ -120,12 +122,14 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 throw new RuntimeException(e);
             }
             if (result != null) {
-                final String srcItemType = TableOfContentHelper.getDisplayableTocItem(result.getSourceItem().getTocItem(), output.language, messageHelper);
+                final String srcItemType = TableOfContentHelper.getDisplayableTocItem(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                        result.getSourceItem().getTagName()), output.language, messageHelper);
                 if (result.getMessageKey().equals("toc.level.only.higher.division.allowed.between")) {
                     result.setSourceItem(null);
                     result.setTargetItem(null);
                 } else if (result.getTargetItem() != null) {
-                    final String targetItemType = TableOfContentHelper.getDisplayableTocItem(result.getTargetItem().getTocItem(), output.language, messageHelper);
+                    final String targetItemType = TableOfContentHelper.getDisplayableTocItem(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                            result.getTargetItem().getTagName()), output.language, messageHelper);
                     result.setMessageKey(messageHelper.getMessage(result.getMessageKey(), srcItemType, targetItemType));
                 } else {
                     result.setMessageKey(messageHelper.getMessage("toc.edit.window.drop.error.root.message", srcItemType));
@@ -176,8 +180,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 for (String documentRulesKey : tableOfContentDocumentRules.keySet()) {
                     DocumentRules.Rule rule = tableOfContentDocumentRules.get(documentRulesKey);
                     for (TableOfContentItemVO tableOfContentItemVO : request.getTableOfContentItemVOs()) {
-                        if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(BODY)
-                                || tableOfContentItemVO.getTocItem().getAknTag().value().equals(BLOCK)) {
+                    if (tableOfContentItemVO.getTagName().equals(AknTag.BODY)
+                                || tableOfContentItemVO.getTagName().equals(AknTag.BLOCK)) {
                             validateTocStructure(rule, tableOfContentItemVO, checkDocumentRulesVO);
                         }
                     }
@@ -243,8 +247,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
         // This is a recursive call that will add the realSourceItemVO in checkDocumentRulesVO
         for (TableOfContentItemVO tableOfContentItemVO : tableOfContentItemVOs) {
-            if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(MAIN_BODY) ||
-                    tableOfContentItemVO.getTocItem().getAknTag().value().equals(BODY)) {
+            if (tableOfContentItemVO.getTagName().equals(AknTag.MAIN_BODY) ||
+                    tableOfContentItemVO.getTagName().equals(AknTag.BODY)) {
                 // This is a recursive call that will add data in checkDocumentRulesVO
                 this.getActualSourceItemVO(tableOfContentItemVO, sourceItem, checkDocumentRulesVO);
             }
@@ -257,10 +261,10 @@ public abstract class TocApiServiceImpl implements TocApiService {
             for (String documentRulesKey : tableOfContentDocumentRules.keySet()) {
                 DocumentRules.Rule rule = tableOfContentDocumentRules.get(documentRulesKey);
                 for (TableOfContentItemVO tableOfContentItemVO : tableOfContentItemVOs) {
-                    if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(MAIN_BODY)) {
+                    if (tableOfContentItemVO.getTagName().equals(AknTag.MAIN_BODY)) {
                         // This is a recursive call that will add data in checkDocumentRulesVO
                         this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
-                    } else if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(BODY)) {
+                    } else if (tableOfContentItemVO.getTagName().equals(AknTag.BODY)) {
                         validateHigherDivisionStructure(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem,
                                 targetTocItemVO, parentTocItemVO, position);
                     }
@@ -294,7 +298,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     private void validateTocStructure(DocumentRules.Rule rule, TableOfContentItemVO tableOfContentItemVO,
                                       CheckDocumentRulesVO checkDocumentRulesVO) {
-        String tocItem = rule.getTocItem().value();
+        AknTag tocItem = rule.getTocItem();
         String ruleTypeString = rule.getType(); // Get the string
         DocumentRuleType ruleType = Arrays.stream(DocumentRuleType.values())
                 .filter(r -> r.getRuleType().equals(ruleTypeString))
@@ -336,7 +340,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                                                           TableOfContentItemVO targetItem,
                                                           TableOfContentItemVO parentTocItemVO,
                                                           TocItemPosition position) {
-        String tocItem = rule.getTocItem().value();
+        AknTag tocItem = rule.getTocItem();
         String ruleTypeString = rule.getType(); // Get the string
         DocumentRuleType ruleType = Arrays.stream(DocumentRuleType.values())
                 .filter(r -> r.getRuleType().equals(ruleTypeString))
@@ -349,7 +353,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (position.equals(TocItemPosition.AS_CHILDREN)) {
             parentTargetItem = targetItem;
         }
-        if (parentTargetItem.getId() != null && ruleType.equals(DocumentRuleType.ONLY_ONE_OCCURENCE_ELEMENT) && parentTargetItem.getTocItem().getAknTag().value().equals(tocItem)) {
+        if (parentTargetItem.getId() != null && ruleType.equals(DocumentRuleType.ONLY_ONE_OCCURENCE_ELEMENT) && parentTargetItem.getTagName().equals(tocItem)) {
             Optional<TableOfContentItemVO> foundTargetItem = TableOfContentHelper.getItemFromTocById(parentTargetItem.getId(), tableOfContentItemVOs);
             if (foundTargetItem.isPresent()) {
                 List<TableOfContentItemVO> foundChildren = TableOfContentHelper.getChildrenWithTags(foundTargetItem.get(),
@@ -374,7 +378,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                                                  CheckDocumentRulesVO checkDocumentRulesVO, TableOfContentItemVO sourceItem,
                                                  TableOfContentItemVO targetItem, TableOfContentItemVO parentTocItemVO,
                                                  TocItemPosition position) {
-        String tocItem = rule.getTocItem().value();
+        AknTag tocItem = rule.getTocItem();
         String ruleTypeString = rule.getType(); // Get the string
         DocumentRuleType ruleType = Arrays.stream(DocumentRuleType.values())
                 .filter(r -> r.getRuleType().equals(ruleTypeString))
@@ -383,16 +387,19 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (ruleType == null) {
             return;
         }
-        boolean sourceIsHigherElement = sourceItem.getTocItem().isHigherElement();
-        boolean targetIsHigherElement = targetItem.getTocItem().isHigherElement();
-        boolean parentIsNotHigherElement = !parentTocItemVO.getTocItem().isHigherElement();
+        TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, sourceItem.getTagName());
+        TocItem targetTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
+        TocItem parentTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, parentTocItemVO.getTagName());
+        boolean sourceIsHigherElement = sourceTocItem.isHigherElement();
+        boolean targetIsHigherElement = targetTocItem.isHigherElement();
+        boolean parentIsNotHigherElement = !parentTocItem.isHigherElement();
         boolean positionAsChildren = position.equals(TocItemPosition.AS_CHILDREN);
         boolean targetAndSourceAreNotHigherElements = !sourceIsHigherElement && !targetIsHigherElement;
-        String sourceItemTag = sourceItem.getTocItem().getAknTag().value();
+        AknTag sourceItemTag = sourceItem.getTagName();
 
         switch (ruleType) {
             case STRUCTURE_VALIDATION:
-                if (sourceItemTag.equalsIgnoreCase(tocItem)) {
+                if (sourceItemTag.equals(tocItem)) {
                     if (targetIsHigherElement && positionAsChildren) {
                         return;
                     } else {
@@ -421,10 +428,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
         }
     }
 
-    private boolean isTocItemOutsideHigherDivision(String tocItem, TableOfContentItemVO tableOfContentItemVO) {
-        TocItem currentItem = tableOfContentItemVO.getTocItem();
-        if (!currentItem.isHigherElement() && currentItem.getAknTag().value().equalsIgnoreCase(tocItem)) {
-            return !tableOfContentItemVO.getParentItem().getTocItem().isHigherElement();
+    private boolean isTocItemOutsideHigherDivision(AknTag tocItem, TableOfContentItemVO tableOfContentItemVO) {
+        TocItem currentItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                tableOfContentItemVO.getTagName());
+        if (!currentItem.isHigherElement() && currentItem.getAknTag().equals(tocItem)) {
+            TocItem parentTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                    tableOfContentItemVO.getParentItem().getTagName());
+            return !parentTocItem.isHigherElement();
         }
         return tableOfContentItemVO.getChildItems().stream()
                 .anyMatch(child -> isTocItemOutsideHigherDivision(tocItem, child));
@@ -432,20 +442,20 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     private boolean checkSeveralOccurences(TableOfContentItemVO tableOfContentItemVO, DocumentRules.Rule rule) {
         AknTag ruleTocItem = rule.getTocItem();
-        if(tableOfContentItemVO.getTocItem().getAknTag().equals(ruleTocItem)) {
+        if(tableOfContentItemVO.getTagName().equals(ruleTocItem)) {
             List<TableOfContentItemVO> childItems =
                     tableOfContentItemVO.getChildItems().stream().filter(t -> (t.getSoftActionAttr() == null ||
                             (!t.getSoftActionAttr().equals(SoftActionType.DELETE)
                             && !t.getSoftActionAttr().equals(SoftActionType.MOVE_TO)))
                             && (t.getTrackChangeAction() == null
                             || !t.getTrackChangeAction().equals(TrackChangeActionType.DELETE))).collect(Collectors.toList());
-            return childItems.stream()
-                    .collect(Collectors.groupingBy(t -> t.getTocItem().getAknTag().value(), Collectors.toList()))
+            return !childItems.stream()
+                    .collect(Collectors.groupingBy(t -> t.getTagName().value(), Collectors.toList()))
                     .values()
                     .stream()
                     .filter(i -> i.size() > 1)
                     .flatMap(j -> j.stream())
-                    .collect(Collectors.toList()).size() > 0;
+                    .collect(Collectors.toList()).isEmpty();
         }
         for(TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
             if (checkSeveralOccurences(childTableOfContentItemVO, rule)) {
@@ -456,7 +466,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private boolean checkHigherDivisionExists(TableOfContentItemVO tableOfContentItemVO) {
-        if (tableOfContentItemVO.getTocItem().isHigherElement()) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tableOfContentItemVO.getTagName());
+        if (tocItem.isHigherElement()) {
             return true;
         }
         for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
@@ -468,8 +479,9 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private String getHigherDivisionFromTree(TableOfContentItemVO tableOfContentItemVO) {
-        if (tableOfContentItemVO.getTocItem().isHigherElement()) {
-            return tableOfContentItemVO.getTocItem().getAknTag().value();
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tableOfContentItemVO.getTagName());
+        if (tocItem.isHigherElement()) {
+            return tableOfContentItemVO.getTagName().value();
         }
         for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
             if (checkHigherDivisionExists(childTableOfContentItemVO)) {
@@ -480,9 +492,9 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private boolean isInHierarchy(TableOfContentItemVO sourceItem, TableOfContentItemVO tableOfContentItemVO,
-                                  List<HigherDivisionType> higherDivisionTypes, String tocItem, TocItemPosition position) {
+                                  List<HigherDivisionType> higherDivisionTypes, AknTag tocItem, TocItemPosition position) {
         boolean addedInHierarchy = true;
-        if (sourceItem.getTocItem().getAknTag().value().equalsIgnoreCase(tocItem)) {
+        if (sourceItem.getTagName().equals(tocItem)) {
             String higherDivision = getHigherDivisionFromTree(tableOfContentItemVO);
             if (!StringUtils.isEmpty(higherDivision)) {
                 addedInHierarchy = higherDivisionTypes.stream().anyMatch(higherDivisionType ->
@@ -493,28 +505,28 @@ public abstract class TocApiServiceImpl implements TocApiService {
         return addedInHierarchy;
     }
 
-    private boolean isItemExistsInToc(String tocItem, List<TableOfContentItemVO> higherDivisions) {
+    private boolean isItemExistsInToc(AknTag tocItem, List<TableOfContentItemVO> higherDivisions) {
         TableOfContentItemVO tableOfContentItemVO = higherDivisions.stream().filter(higherDivision ->
-                higherDivision.getTocItem().getAknTag().value().equalsIgnoreCase(tocItem)).findFirst().orElse(null);
+                higherDivision.getTagName().equals(tocItem)).findFirst().orElse(null);
         return tableOfContentItemVO != null;
     }
 
-    private boolean isHierarchyValid(TableOfContentItemVO tableOfContentItemVO, String tocItem,
+    private boolean isHierarchyValid(TableOfContentItemVO tableOfContentItemVO, AknTag tocItem,
                                      List<HigherDivisionType> higherDivisionTypes) {
         List<TableOfContentItemVO> higherDivisions = getAllHigherDivisionsFromTree(tableOfContentItemVO);
         boolean isHierarchyValid = true;
         List<String> matchedHigherDivisionsWithRule = new ArrayList<>();
         if (higherDivisions != null && higherDivisions.size() > 1 && isItemExistsInToc(tocItem, higherDivisions)) {
             higherDivisions.forEach(higherDivision -> {
-                String aknTagValue = higherDivision.getTocItem().getAknTag().value();
-                if (higherDivisionTypes.stream().anyMatch(type -> type.value().equalsIgnoreCase(aknTagValue))) {
-                    matchedHigherDivisionsWithRule.add(aknTagValue);
+                AknTag aknTagValue = higherDivision.getTagName();
+                if (higherDivisionTypes.stream().anyMatch(type -> type.value().equals(aknTagValue.value()))) {
+                    matchedHigherDivisionsWithRule.add(aknTagValue.value());
                 }
             });
             if (!matchedHigherDivisionsWithRule.isEmpty()) {
                 List<TableOfContentItemVO> matchedHigherDivisions = higherDivisions.stream().filter(division -> {
-                    String aknTagValue = division.getTocItem().getAknTag().value();
-                    return aknTagValue.equalsIgnoreCase(tocItem);
+                    AknTag aknTagValue = division.getTagName();
+                    return aknTagValue.equals(tocItem);
                 }).collect(Collectors.toList());
 
                 if (matchedHigherDivisions != null && !matchedHigherDivisions.isEmpty()) {
@@ -527,10 +539,11 @@ public abstract class TocApiServiceImpl implements TocApiService {
         return isHierarchyValid;
     }
 
-    private static boolean checkValidHierarchy(List<TableOfContentItemVO> matchedHigherDivisions) {
+    private boolean checkValidHierarchy(List<TableOfContentItemVO> matchedHigherDivisions) {
         boolean matches = true;
         for (TableOfContentItemVO higherDivision : matchedHigherDivisions) {
-            if (!higherDivision.getParentItem().getTocItem().isHigherElement()) {
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, higherDivision.getParentItem().getTagName());
+            if (!tocItem.isHigherElement()) {
                 matches = false;
                 break;
             }
@@ -539,7 +552,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private List<TableOfContentItemVO> getAllHigherDivisionsFromTree(TableOfContentItemVO tableOfContentItemVO) {
-        Stream<TableOfContentItemVO> currentElement = tableOfContentItemVO.getTocItem().isHigherElement() ?
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, tableOfContentItemVO.getTagName());
+        Stream<TableOfContentItemVO> currentElement = tocItem.isHigherElement() ?
                 Stream.of(tableOfContentItemVO) : Stream.empty();
 
         Stream<TableOfContentItemVO> childElements = tableOfContentItemVO.getChildItems().stream()
@@ -549,7 +563,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private boolean checkHigherDivisionIsEmpty(TableOfContentItemVO tableOfContentItemVO) {
-        if (tableOfContentItemVO.getTocItem().isHigherElement()) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, tableOfContentItemVO.getTagName());
+        if (tocItem.isHigherElement()) {
             if (tableOfContentItemVO.getChildItems() != null && tableOfContentItemVO.getChildItems().isEmpty() &&
                     tableOfContentItemVO.getSoftActionAttr() == null) {
                 return true;
@@ -582,15 +597,15 @@ public abstract class TocApiServiceImpl implements TocApiService {
         List<String> exceptionElementsList = rule.getException().getTocItems().stream().map(element -> element.value()).collect(Collectors.toList());
         exceptionElementsList.add(aknElementName);
 
-        if (!checkDocumentRulesVO.isFirstElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
+        if (!checkDocumentRulesVO.isFirstElementFound() && sourceItem.getTagName().value().equals(aknElementName)
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
             checkDocumentRulesVO.setFirstElementFound(true);
         }
-        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(sourceItem.getTocItem().getAknTag().value())
+        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(sourceItem.getTagName().value())
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
             checkDocumentRulesVO.setNotAllowedElementFound(true);
         }
-        if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
+        if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound() && sourceItem.getTagName().value().equals(aknElementName)
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
             checkDocumentRulesVO.setValidStructure(false);
             checkDocumentRulesVO.getMessageKey().add(rule.getErrorMessage());
@@ -602,14 +617,14 @@ public abstract class TocApiServiceImpl implements TocApiService {
             }
         }
 
-        if (!checkDocumentRulesVO.isFirstElementFound() && tableOfContentItemVOToCheck.getTocItem().getAknTag().value().equals(aknElementName)) {
+        if (!checkDocumentRulesVO.isFirstElementFound() && tableOfContentItemVOToCheck.getTagName().value().equals(aknElementName)) {
             checkDocumentRulesVO.setFirstElementFound(true);
         }
-        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(tableOfContentItemVOToCheck.getTocItem().getAknTag().value())) {
+        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(tableOfContentItemVOToCheck.getTagName().value())) {
             checkDocumentRulesVO.setNotAllowedElementFound(true);
         }
         if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound()
-                && tableOfContentItemVOToCheck.getTocItem().getAknTag().value().equals(aknElementName)) {
+                && tableOfContentItemVOToCheck.getTagName().value().equals(aknElementName)) {
             checkDocumentRulesVO.setValidStructure(false);
             checkDocumentRulesVO.getMessageKey().add(rule.getErrorMessage());
             return;
@@ -620,17 +635,17 @@ public abstract class TocApiServiceImpl implements TocApiService {
         }
 
         boolean isAfter = position.equals(TocItemPosition.AFTER) || position.equals(TocItemPosition.AS_CHILDREN);
-        if (!checkDocumentRulesVO.isFirstElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
+        if (!checkDocumentRulesVO.isFirstElementFound() && sourceItem.getTagName().value().equals(aknElementName)
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId())
                 && isAfter) {
             checkDocumentRulesVO.setFirstElementFound(true);
         }
-        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(sourceItem.getTocItem().getAknTag().value())
+        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(sourceItem.getTagName().value())
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId())
                 && isAfter) {
             checkDocumentRulesVO.setNotAllowedElementFound(true);
         }
-        if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
+        if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound() && sourceItem.getTagName().value().equals(aknElementName)
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId())
                 && isAfter) {
             checkDocumentRulesVO.setValidStructure(false);
@@ -650,7 +665,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (nodeId != null) {
             Node node = getElementById(document, nodeId);
             if (node != null) {
-                tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, messageHelper);
+                tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, messageHelper, true);
             } else {
                 TocItem draggedTocItem = StructureConfigUtils.getTocItemByName(tocItems, nodeName);
                 tableOfContentItemVO = new TableOfContentItemVO(draggedTocItem, nodeId, null, null, null, null, null, null, null, null);
@@ -676,13 +691,16 @@ public abstract class TocApiServiceImpl implements TocApiService {
             final Map<TocItem, List<TocItem>> tableOfContentRules, final Map<TocItem, List<List<TocItem>>> tableOfContentRulesOrders,
             final TableOfContentItemVO parentItem, final TocItemPosition position, String language) {
 
-        TocItem targetTocItem = targetItem.getTocItem();
-        List<TocItem> targetTocItems = tableOfContentRules.get(targetTocItem);
+        TocItem targetTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                targetItem.getTagName());
+        TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                sourceItem.getTagName());
+        List<TocItem> targetTocItems = searchInRules(targetTocItem.getAknTag(), tableOfContentRules);
         boolean isTocItemSibling;
         if (isSourceDivision(sourceItem) || isCrossheading(sourceItem) || isDroppedOnPointOrIndent(sourceItem, targetItem) || getTagValueFromTocItemVo(sourceItem).
                 equals(getTagValueFromTocItemVo(targetItem))) {
             isTocItemSibling = true;
-        } else if (CollectionUtils.isNotEmpty(targetTocItems) && targetTocItems.contains(sourceItem.getTocItem())) {
+        } else if (CollectionUtils.isNotEmpty(targetTocItems) && targetTocItems.contains(sourceTocItem)) {
             //If target item type is root, source item will be added as child, else validate dropping item at dragged location
             if (targetTocItem.isRoot()) {
                 return true;
@@ -700,10 +718,11 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     protected TableOfContentItemVO getActualTargetItem(final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem, final TableOfContentItemVO parentItem,
                                                        final TocItemPosition position, boolean isTocItemSibling) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, targetItem.getTagName());
         switch (position) {
             case AS_CHILDREN:
-                if ((isTocItemSibling && parentItem != null && !targetItem.getTocItem().isSameParentAsChild() && !isCrossheading(sourceItem)
-                        || (targetItem.getTocItem().isSameParentAsChild() && targetItem.containsItem(LIST)))
+                if ((isTocItemSibling && parentItem != null && !tocItem.isSameParentAsChild() && !isCrossheading(sourceItem)
+                        || (tocItem.isSameParentAsChild() && targetItem.containsItem(LIST)))
                         || (targetItem.getId().equals(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + sourceItem.getId()))
                         || (getTagValueFromTocItemVo(targetItem).equalsIgnoreCase(SUBPARAGRAPH) && isCrossheading(sourceItem))) {
                     return parentItem;
@@ -744,8 +763,9 @@ public abstract class TocApiServiceImpl implements TocApiService {
                                                        final TableOfContentItemVO actualTargetItem,
                                                        final TocItemPosition position, String language) {
 
-        TocItem parentTocItem = actualTargetItem != null ? actualTargetItem.getTocItem() : null;
-        List<TocItem> parentTocItems = tableOfContentRules.get(parentTocItem);
+        TocItem parentTocItem = actualTargetItem != null ? StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                actualTargetItem.getTagName()) : null;
+        List<TocItem> parentTocItems = searchInRules(actualTargetItem.getTagName(), tableOfContentRules);
         boolean validOrder =  validateOnOrderRule(result, sourceItem, targetItem, parentItem, tableOfContentOrderRules, position);
         boolean parentAndSourceTypeCompatible = validateParentAndSourceTypeCompatibility(result, sourceItem, actualTargetItem, parentTocItem, parentTocItems);
         boolean validAddingToItem = validateAddingToItem(result, sourceItem, targetItem, actualTargetItem, position, language);
@@ -773,21 +793,22 @@ public abstract class TocApiServiceImpl implements TocApiService {
             default:
                 return true;
         }
-        List<List<TocItem>> listsOrders = tableOfContentOrderRules.get(actualTargetItem.getTocItem());
+        List<List<TocItem>> listsOrders = searchInOrderRules(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                actualTargetItem.getTagName()), tableOfContentOrderRules);
         if (listsOrders != null) {
             for (List<TocItem> list : listsOrders) {
                 switch (position) {
                     case AS_CHILDREN:
-                        if (list.get(list.size() - 1).getAknTag().equals(sourceItem.getTocItem().getAknTag())) {
+                        if (list.get(list.size() - 1).getAknTag().equals(sourceItem.getTagName())) {
                             return true;
                         }
                         break;
                     case BEFORE:
                         for (int i = 0; i < list.size(); i++) {
                             TocItem tocItem = list.get(i);
-                            if (targetItem.getTocItem().getAknTag().equals(tocItem.getAknTag())
+                            if (targetItem.getTagName().equals(tocItem.getAknTag())
                                     && i > 0
-                                    && list.get(i - 1).getAknTag().equals(sourceItem.getTocItem().getAknTag())) {
+                                    && list.get(i - 1).getAknTag().equals(sourceItem.getTagName())) {
                                 return true;
                             }
                         }
@@ -795,9 +816,9 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     case AFTER:
                         for (int i = 0; i < list.size(); i++) {
                             TocItem tocItem = list.get(i);
-                            if (targetItem.getTocItem().getAknTag().equals(tocItem.getAknTag())
+                            if (targetItem.getTagName().equals(tocItem.getAknTag())
                                     && i < list.size() - 1
-                                    && list.get(i + 1).getAknTag().equals(sourceItem.getTocItem().getAknTag())) {
+                                    && list.get(i + 1).getAknTag().equals(sourceItem.getTagName())) {
                                 return true;
                             }
                         }
@@ -824,8 +845,10 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,
                                                              final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
-        if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.stream().anyMatch(tocItem -> tocItem.getAknTag().equals(sourceItem.getTocItem().getAknTag()))
-                || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value()))) {
+        TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                sourceItem.getTagName());
+        if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.stream().anyMatch(tocItem -> tocItem.getAknTag().equals(sourceItem.getTagName()))
+                || (!sourceTocItem.isSameParentAsChild() && parentTocItem.getAknTag().equals(sourceItem.getTagName()))) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");
             result.setSourceItem(sourceItem);
@@ -836,8 +859,10 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     protected boolean validateMaxDepth(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem) {
-        if (targetItem.getTocItem().getMaxDepth() != null) {
-            int maxDepthRule = Integer.valueOf(targetItem.getTocItem().getMaxDepth());
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                targetItem.getTagName());
+        if (tocItem.getMaxDepth() != null) {
+            int maxDepthRule = Integer.valueOf(tocItem.getMaxDepth());
             if (maxDepthRule > 0 && targetItem.getItemDepth() >= maxDepthRule) {
                 result.setSuccess(false);
                 result.setMessageKey("toc.edit.window.drop.error.same.item.message");
