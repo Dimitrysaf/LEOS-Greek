@@ -58,6 +58,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
@@ -536,7 +537,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
                 explanatory,
                 TocMode.SIMPLIFIED_CLEAN);
-        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, ctxt.getNumberingConfigs(),
+        return new TocAndAncestorsResponse(tocItemList, this.structureContext.get().getTocItems(), elementAncestorsIds, messageHelper,
+                ctxt.getNumberingConfigs(),
                 explanatory.getMetadata().get().getLanguage());
     }
 
@@ -558,7 +560,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         boolean iscrossHeading =
                 getTagValueFromTocItemVo(sourceItem).equalsIgnoreCase(CROSSHEADING) || getTagValueFromTocItemVo(
                         sourceItem).equalsIgnoreCase(BLOCK);
-        if (iscrossHeading && MAIN_BODY.equals(sourceItem.getParentItem().getTocItem().getAknTag().value())) {
+        if (iscrossHeading && AknTag.MAIN_BODY.equals(sourceItem.getParentItem().getTagName())) {
             sourceItem.setBlock(true);
         } else if (iscrossHeading) {
             sourceItem.setCrossHeading(true);

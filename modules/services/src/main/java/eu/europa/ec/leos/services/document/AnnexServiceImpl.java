@@ -238,7 +238,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Validate.notNull(annex, "Annex is required");
         final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
         final byte[] annexContent = content.getSource().getBytes();
-        return tableOfContentProcessor.buildTableOfContent(DOC, annexContent, mode);
+        return tableOfContentProcessor.buildTableOfContent(DOC, annexContent, mode, true);
     }
 
     @Override

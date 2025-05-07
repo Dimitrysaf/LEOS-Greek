@@ -26,7 +26,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 public abstract class SaveTocAnnexMandateTest_IT extends SaveTocMandateTest_IT {
 
     protected List<TableOfContentItemVO> buildTableOfContentAnnex(byte[] xmlInput) {
-        return tableOfContentProcessor.buildTableOfContent(DOC, xmlInput, TocMode.NOT_SIMPLIFIED);
+        return tableOfContentProcessor.buildTableOfContent(DOC, xmlInput, TocMode.NOT_SIMPLIFIED, true);
     }
 
     protected void getStructureFile() {

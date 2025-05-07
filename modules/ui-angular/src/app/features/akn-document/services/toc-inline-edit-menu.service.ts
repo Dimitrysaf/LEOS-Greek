@@ -46,11 +46,11 @@ import {
   checkIfConfirmDeletion,
   convertArticle,
   findNodeById,
-  getNumberingTypeByLanguage,
+  getNumberingTypeByLanguage, getNumberingTypeByLanguageFromTocItem, getTocItemByAknTag,
   isDeletableItem,
   isDeletedItem,
   isMoveToItem,
-  isUndeletableItem,
+  isUndeletableItem, toCamelCaseEnum,
 } from '@/shared/utils/toc.utils';
 import { DropdownModel } from '@/shared/dropdown.model';
 import {CoEditionVO} from "@/shared/models/coEditionVO.model";
@@ -118,7 +118,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
 
   public getDisplayableTocItem(tocItem: TocItem): string {
     if (
-      getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup) ===
+      getNumberingTypeByLanguageFromTocItem(tocItem, this.documentConfig.langGroup) ===
       BULLET_NUM
     ) {
       return this.translateService.instant('toc.item.type.bullet');
@@ -130,7 +130,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
       return this.translateService.instant('toc.item.type.crossheading');
     }
     return this.translateService.instant(
-      'toc.item.type.' + tocItem.aknTag.toLowerCase(),
+      'toc.item.type.' + toCamelCaseEnum(tocItem.aknTag).toLowerCase(),
     );
   }
 
@@ -193,18 +193,18 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
         ? this.flatten(
             initialToc.filter(
               (obj) =>
-                obj.tocItem.aknTag === 'BODY' ||
-                obj.tocItem.aknTag === MAIN_BODY,
+                obj.tagName.toUpperCase() === 'BODY' ||
+                obj.tagName.toUpperCase() === MAIN_BODY,
             )[0].childItems,
-          ).filter((obj) => obj.tocItem.aknTag === node.tocItem.aknTag)
+          ).filter((obj) => obj.tagName.toUpperCase() === node.tagName.toUpperCase())
         : null;
     const toc = this.tocService.getCurrentToc();
     const chapterTocVos = this.flatten(
       toc.filter(
         (obj) =>
-          obj.tocItem.aknTag === 'BODY' || obj.tocItem.aknTag === MAIN_BODY,
+          obj.tagName.toUpperCase() === 'BODY' || obj.tagName.toUpperCase() === MAIN_BODY,
       )[0].childItems,
-    ).filter((obj) => obj.tocItem.aknTag === node.tocItem.aknTag);
+    ).filter((obj) => obj.tagName.toUpperCase() === node.tagName.toUpperCase());
     const itemWithNumType =
       chapterTocVos != null
         ? chapterTocVos.find((value) => value.numberingType != null)
@@ -232,7 +232,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
             'toc.edit.window.item.regular.chapter.num.roman',
           ),
           disabled:
-            node.tocItem.aknTag === 'CHAPTER' &&
+            node.tagName.toUpperCase() === 'CHAPTER' &&
             node.numberingType === 'ROMAN_UPPER',
           command: () =>
             this.handleHighSubdivChangeNumbering(
@@ -249,7 +249,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
             'toc.edit.window.item.regular.chapter.num.arabic',
           ),
           disabled:
-            node.tocItem.aknTag === 'CHAPTER' &&
+            node.tagName.toUpperCase() === 'CHAPTER' &&
             node.numberingType === 'HIGHER_ELEMENT_NUM',
           command: () =>
             this.handleHighSubdivChangeNumbering(
@@ -283,12 +283,11 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
     const currentType = selectedNode.tocItemType;
     const originalType = selectedNode.originalTocItemType;
     // Get the maxDepth for list
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(
-      selectedNode.node.toString(),
-      'application/xml',
-    );
-    const currentMaxDepth = this.getMaxDepth(xmlDoc);
+    let currentMaxDepth = 0;
+    if (selectedNode.id) {
+      const nodeInDom = document.getElementById(selectedNode.id);
+      currentMaxDepth = !!nodeInDom ? this.getMaxDepth(nodeInDom) : 0;
+    }
     const pointConfig = this.documentConfig.numberingConfig.find(
       (obj) =>
         (newType.toUpperCase() === 'REGULAR'
@@ -397,9 +396,10 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
   }
 
   private buildItemNameItem(node: TableOfContentItemVO): DropdownModel {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), node.tagName);
     return {
       id: ITEM_NAME_ACTION_ID,
-      label: this.getDisplayableTocItem(node.tocItem),
+      label: this.getDisplayableTocItem(tocItem),
       disabled: true,
     };
   }
@@ -416,8 +416,9 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
   private isDeleteButtonDisabled(node: TableOfContentItemVO) {
     const toc = this.tocService.getCurrentToc();
     const deletedItem = isDeletedItem(node) || isMoveToItem(node);
+    const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), node.tagName);
     let isDeleteDisabled = (
-      node.tocItem.deletable &&
+      tocItem.deletable &&
       (deletedItem ? isUndeletableItem(toc, node) : isDeletableItem(toc, node))
     );
     isDeleteDisabled &&= !this.isNodeCoEdited(node);
@@ -567,11 +568,11 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
       nodeTarget,
       nodeDragged,
       [nodeDragged.id],
-      nodeDragged.tocItem.aknTag,
+      nodeDragged.tagName,
       nodeTarget.id,
-      nodeTarget.tocItem.aknTag,
+      nodeTarget.tagName,
       parentNode.id,
-      parentNode.tocItem.aknTag,
+      parentNode.tagName,
       position,
       category,
       ref,
@@ -661,7 +662,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
         // Check if the child node is an element node
         if (childNode.nodeType === 1) {
           // Check if the element is a <list> element
-          if (childNode.nodeName === 'list') {
+          if (childNode.nodeName.toLowerCase() === 'list') {
             // Recursively calculate the depth for each child <list> element
             const childDepth = this.getMaxDepth(childNode, currentDepth + 1);
 

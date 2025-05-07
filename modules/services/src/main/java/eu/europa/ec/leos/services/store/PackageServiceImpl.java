@@ -148,7 +148,7 @@ class PackageServiceImpl implements PackageService {
             return tocItemsMap;
         }
 
-        List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(startingNode, document.getContent().get().getSource().getBytes(), mode);
+        List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(startingNode, document.getContent().get().getSource().getBytes(), mode, true);
         tocItemsMap.put(document.getMetadata().get().getRef(), toc);
         return tocItemsMap;
     }

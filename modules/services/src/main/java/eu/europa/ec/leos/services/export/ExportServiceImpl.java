@@ -21,11 +21,13 @@ import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Provider;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
@@ -42,10 +44,12 @@ abstract class ExportServiceImpl implements ExportService {
     protected final BillService billService;
     protected final AnnexService annexService;
     protected final TransformationService transformationService;
+    protected final Provider<StructureContext> structureContextProvider;
 
     @Autowired
     ExportServiceImpl(LegService legService, PackageService packageService, SecurityContext securityContext, ExportHelper exportHelper,
-                      BillService billService, AnnexService annexService, TransformationService transformationService) {
+                      BillService billService, AnnexService annexService, TransformationService transformationService,
+                      Provider<StructureContext> structureContextProvider) {
         this.legService = legService;
         this.packageService = packageService;
         this.securityContext = securityContext;
@@ -53,6 +57,7 @@ abstract class ExportServiceImpl implements ExportService {
         this.billService = billService;
         this.annexService = annexService;
         this.transformationService = transformationService;
+        this.structureContextProvider = structureContextProvider;
     }
 
     @Override

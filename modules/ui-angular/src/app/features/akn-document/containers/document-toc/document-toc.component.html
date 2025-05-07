@@ -23,7 +23,7 @@
         [cdkDragData]="getDraggedNodes(node)"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
-        [cdkDropListDisabled]="!isEditMode || !node.tocItem.draggable"
+        [cdkDropListDisabled]="!isEditMode || !this.isDraggable(node)"
       >
         <div *cdkDragPreview>
           <html>

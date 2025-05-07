@@ -47,7 +47,7 @@ import {
   getItemIndentLevel,
   getNumberingByName,
   getNumberingConfig,
-  getNumberingTypeByLanguage,
+  getNumberingTypeByLanguage, getNumberingTypeByLanguageFromTocItem, getTocItemByAknTag,
   getTocItemByNumberingType,
   isDeletableItem,
   isDeletedItem,
@@ -143,20 +143,20 @@ export class TocEditorComponent implements OnInit, OnChanges {
     this.handleTocRemove.emit(node);
   }
 
-  isArticle(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === ARTICLE.toLowerCase();
+  isArticle(item: TableOfContentItemVO) {
+    return item.tagName.toString().toLowerCase() === ARTICLE.toLowerCase();
   }
 
-  isPart(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === PART.toLowerCase();
+  isPart(item: TableOfContentItemVO) {
+    return item.tagName.toString().toLowerCase() === PART.toLowerCase();
   }
 
-  isChapter(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === CHAPTER.toLowerCase();
+  isChapter(item: TableOfContentItemVO) {
+    return item.tagName.toString().toLowerCase() === CHAPTER.toLowerCase();
   }
 
-  isDivision(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === DIVISION.toLowerCase();
+  isDivision(item: TableOfContentItemVO) {
+    return item.tagName.toString().toLowerCase() === DIVISION.toLowerCase();
   }
 
   isDivionStyleChecked(target: string) {
@@ -167,45 +167,50 @@ export class TocEditorComponent implements OnInit, OnChanges {
     return this.possibleDivisionType.indexOf(target) !== -1;
   }
 
-  isIndentList(tocItem: TocItem) {
-    return [POINT, INDENT].includes(tocItem.aknTag);
+  isIndentList(tocItem: string) {
+    return [POINT, INDENT].includes(tocItem);
   }
 
-  isCrossHeading(tocItem: TocItem) {
-    return tocItem.aknTag === CROSSHEADING;
+  isCrossHeading(tocItem: string) {
+    return tocItem === CROSSHEADING;
   }
 
-  showTypeField(tocItem: TocItem) {
-    return ![DIVISION].includes(tocItem.aknTag);
+  showTypeField(tocItem: string) {
+    return ![DIVISION].includes(tocItem);
   }
 
-  isItemHeadingVisible(tocItem: TocItem) {
+  isItemHeadingVisible(item: TableOfContentItemVO) {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocItems, item.tagName);
     return (
       tocItem.itemHeading === 'MANDATORY' || tocItem.itemHeading === 'OPTIONAL'
     );
   }
 
-  isItemHeadingEditable(tocItem: TocItem) {
-    return tocItem.aknTag === DIVISION
+  isItemHeadingEditable(item: TableOfContentItemVO) {
+    return item.tagName.toString().toLowerCase() === DIVISION.toLowerCase()
       ? false
-      : this.isItemHeadingVisible(tocItem);
+      : this.isItemHeadingVisible(item);
   }
 
   isHeadingItemMandatory(node: TableOfContentItemVO) {
-    return node.tocItem.itemHeading === 'MANDATORY';
+    const tocItem: TocItem = getTocItemByAknTag(this.tocItems, node.tagName);
+    return tocItem.itemHeading === 'MANDATORY';
   }
 
-  isItemNumberEditable(tocItem: TocItem) {
+  isItemNumberEditable(item: TableOfContentItemVO) {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocItems, item.tagName);
     return tocItem.numberEditable;
   }
 
-  isItemNumberVisible(tocItem: TocItem) {
+  isItemNumberVisible(item: TableOfContentItemVO) {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocItems, item.tagName);
     return (
       tocItem.itemNumber === 'MANDATORY' || tocItem.itemNumber === 'OPTIONAL'
     );
   }
 
-  isItemNumberMandatory(tocItem: TocItem) {
+  isItemNumberMandatory(item: TableOfContentItemVO) {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocItems, item.tagName);
     return tocItem.itemNumber === 'MANDATORY';
   }
 
@@ -215,7 +220,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
   ) {
     const config = getNumberingByName(
       this.documentConfig.numberingConfig,
-      getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup)
+      getNumberingTypeByLanguage(this.tocItems, node.tagName, this.documentConfig.langGroup)
     );
 
     switch (fieldName) {
@@ -239,7 +244,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     return (
       item.originAttr &&
       item.originAttr === EC &&
-      item.tocItem.aknTag === ARTICLE &&
+      item.tagName.toLowerCase() === ARTICLE.toLowerCase() &&
       item.childItems.length > 0 &&
       !(item.softActionAttr === DELETE || item.softActionAttr === 'MOVE')
     );
@@ -247,10 +252,11 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   hanldeNodeSelect(node: TableOfContentItemVO) {
     this.tocService.setSelectedNode(node);
-    this.type = this.getDisplayableTocItem(node.tocItem);
+    const tocItem: TocItem = getTocItemByAknTag(this.tocItems, node.tagName);
+    this.type = this.getDisplayableTocItem(tocItem);
     this.numberConfig = getNumberingByName(
       this.documentConfig.numberingConfig,
-      getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup)
+      getNumberingTypeByLanguageFromTocItem(tocItem, this.documentConfig.langGroup)
     );
     this.tocType = node.tocItemType?.toLowerCase();
     const deletedItem = isDeletedItem(node) || isMoveToItem(node);
@@ -258,7 +264,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     // - if the item has already been deleted => check if it can be undelete
     // - if has not been deleted => check if it can be deleted (Ex: when mixed EC/CN element are present)
     this.isDeleteButtonEnabled =
-      node.tocItem.deletable &&
+      tocItem.deletable &&
       (deletedItem
         ? isUndeletableItem(this.toc, node)
         : isDeletableItem(this.toc, node));
@@ -283,21 +289,21 @@ export class TocEditorComponent implements OnInit, OnChanges {
     ) {
       this.isIndentListRadioButtonGroupEnabled =
         this.indentListRadioButtonGroupItemsToEnable.includes(
-          getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup)
+          getNumberingTypeByLanguageFromTocItem(tocItem, this.documentConfig.langGroup)
         );
     }
 
-    if (this.isDivision(node.tocItem)) {
+    if (this.isDivision(node)) {
       this.active_division_style = node.autoNumOverwritten ? null : node.style;
       this.possibleDivisionType = this.getDivisionTypesToEnable(
         this.getPreviousDivisionType(node),
       );
     }
-    if (this.isIndentList(node.tocItem)) {
-      this.active_point_style = getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup);
+    if (this.isIndentList(node.tagName)) {
+      this.active_point_style = getNumberingTypeByLanguageFromTocItem(tocItem, this.documentConfig.langGroup);
     }
-    if (this.isCrossHeading(node.tocItem)) {
-      this.active_block_style = getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup);
+    if (this.isCrossHeading(node.tagName)) {
+      this.active_block_style = getNumberingTypeByLanguageFromTocItem(tocItem, this.documentConfig.langGroup);
     }
     if (this.showNumParagraphToggle(node)) {
       this.active_paragraph_style =
@@ -309,10 +315,11 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   handleHeadingChange(value: string) {
     clearTimeout(this.typingTimer);
+    const tocItem : TocItem = getTocItemByAknTag(this.tocItems, this.selectedNode.tagName);
     this.typingTimer = setTimeout(() => {
       if (
-        this.selectedNode.tocItem.itemHeading === 'OPTIONAL' ||
-        (this.selectedNode.tocItem.itemHeading === 'MANDATORY' && value)
+        tocItem.itemHeading === 'OPTIONAL' ||
+        (tocItem.itemHeading === 'MANDATORY' && value)
       ) {
         //clear invalid
         if (!this.numberInvalid) {
@@ -461,7 +468,6 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   handleListRadioButton(event) {
     const { value } = event.target;
-    const oldValue = getNumberingTypeByLanguage(this.selectedNode.tocItem, this.documentConfig.langGroup);
     this.active_block_style = value;
     //save snapshot of old tree
     this.handleNodeChanges(this.toc, true);
@@ -472,23 +478,21 @@ export class TocEditorComponent implements OnInit, OnChanges {
     const newTocItem = getTocItemByNumberingType(
       this.tocItems,
       value,
-      this.selectedNode.tocItem.aknTag,
+      this.selectedNode.tagName,
       this.documentConfig.langGroup
     );
-    this.selectedNode.tocItem = newTocItem;
+    this.selectedNode.tagName = newTocItem.aknTag;
     this.selectedNode.number = numberConfig.sequence;
     this.handleNodeChanges(this.toc);
   }
 
   handleIndentListRadioButtonGroupChange(event) {
     const { value } = event.target;
-    const oldValue = getNumberingTypeByLanguage(this.selectedNode.tocItem, this.documentConfig.langGroup);
     this.active_point_style = value;
 
     //save snapshot of old tree
     this.handleNodeChanges(this.toc, true);
     const newTocItem = getTocItemByNumberingType(this.tocItems, value, INDENT, this.documentConfig.langGroup);
-    const parentNode = findNodeById(this.toc, this.selectedNode.parentItem);
     this.propagateListType(
       this.toc,
       this.findRootList(this.toc, this.selectedNode),
@@ -517,12 +521,13 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
     //save snapshot of old tree
     this.handleNodeChanges(this.toc, true);
-    this.selectedNode.tocItem = getTocItemByNumberingType(
+
+    this.selectedNode.tagName = getTocItemByNumberingType(
       this.tocItems,
       event as NumberingType,
-      this.selectedNode.tocItem.aknTag,
+      this.selectedNode.tagName,
       this.documentConfig.langGroup
-    );
+    ).aknTag;
     this.selectedNode.number = numberingConfig.sequence;
     this.handleNodeChanges(this.toc);
   }
@@ -593,7 +598,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     numberingConfigs: NumberingConfig[],
   ) {
     let sequence = '#';
-    const numberingTYpe = getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup);
+    const numberingTYpe = getNumberingTypeByLanguageFromTocItem(tocItem, this.documentConfig.langGroup);
     const config = getNumberingConfig(numberingConfigs, numberingTYpe);
     if (list && list.length > 0 && config && !config.numbered) {
       const firstChild = list.at(0);
@@ -602,6 +607,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
       } else if (config && config.levels && config.levels.levels.length > 0) {
         const level = 0;
         getItemIndentLevel(
+          this.tocItems,
           this.toc,
           findNodeById(this.toc, firstChild.parentItem),
           level,
@@ -627,15 +633,15 @@ export class TocEditorComponent implements OnInit, OnChanges {
   private findChildLists(item: TableOfContentItemVO) {
     let childLists: TableOfContentItemVO[] = [];
     const childItems = item.childItems.filter((n) =>
-      [POINT, INDENT].includes(n.tocItem.aknTag),
+      [POINT, INDENT].includes(n.tagName.toUpperCase()),
     );
     if (childItems && childItems.length > 0) {
       childLists = [...childItems];
     } else {
       for (const child of item.childItems) {
-        if (child.tocItem.aknTag === LIST) {
+        if (child.tagName === LIST) {
           const filtered = item.childItems.filter((n) =>
-            [POINT, INDENT].includes(n.tocItem.aknTag),
+            [POINT, INDENT].includes(n.tagName.toLowerCase()),
           );
           filtered.forEach((n) => childLists.push(n));
         }
@@ -652,17 +658,17 @@ export class TocEditorComponent implements OnInit, OnChanges {
     let parentItem = findNodeById(root, item.parentItem);
     while (
       parentItem &&
-      (parentItem.tocItem.aknTag === LIST ||
-        parentItem.tocItem.aknTag === POINT ||
-        parentItem.tocItem.aknTag === INDENT)
+      (parentItem.tagName.toUpperCase() === LIST ||
+        parentItem.tagName.toUpperCase() === POINT ||
+        parentItem.tagName.toUpperCase() === INDENT)
     ) {
       tmpItem = parentItem;
       parentItem = findNodeById(root, parentItem.parentItem);
     }
-    if (tmpItem.tocItem.aknTag !== LIST)
+    if (tmpItem.tagName.toUpperCase() !== LIST)
       tmpItem = findNodeById(root, tmpItem.parentItem);
     return tmpItem.childItems.filter((n) =>
-      [POINT, INDENT].includes(n.tocItem.aknTag),
+      [POINT, INDENT].includes(n.tagName.toUpperCase()),
     );
   }
 
@@ -689,8 +695,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
       this.documentConfig.numberingConfig,
     );
     for (const n of list) {
-      if (n.tocItem.aknTag === POINT || n.tocItem.aknTag === INDENT) {
-        n.tocItem = newTocItem;
+      if (n.tagName.toUpperCase() === POINT || n.tagName.toUpperCase() === INDENT) {
+        n.tagName = newTocItem.aknTag;
         n.number = newNumberingValue;
 
         this.propagateListType(root, this.findChildLists(n), newTocItem);
@@ -699,7 +705,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   private getDisplayableTocItem(tocItem: TocItem): string {
-    const numberingType = getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup);
+    const numberingType = getNumberingTypeByLanguageFromTocItem(tocItem, this.documentConfig.langGroup);
     if (numberingType === BULLET_NUM) {
       return this.translateService.instant('toc.item.type.bullet');
     }
@@ -727,7 +733,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
   private getPreviousDivisionType(node: TableOfContentItemVO) {
     const parentNode = findNodeById(this.toc, node.parentItem);
     const divisionNodes = parentNode.childItems.filter(
-      (n) => n.tocItem.aknTag === DIVISION,
+      (n) => n.tagName === DIVISION,
     );
     const index = divisionNodes.indexOf(node);
     if (index > 0) {

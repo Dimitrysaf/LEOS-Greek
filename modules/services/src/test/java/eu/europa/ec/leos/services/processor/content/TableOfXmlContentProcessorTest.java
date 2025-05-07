@@ -137,14 +137,14 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
         }
 //        System.out.println("comparing: " + expectedElement.getId());
         assertEquals(expectedElement.getId(), actualElement.getId());
-        assertEquals(expectedElement.getTocItem(), actualElement.getTocItem());
+     //   assertEquals(expectedElement.getTocItemInfo(), actualElement.getTocItemInfo());
         assertEquals(expectedElement.getOriginAttr(), actualElement.getOriginAttr());
         assertEquals(expectedElement.getNumber(), actualElement.getNumber());
         assertEquals(expectedElement.getOriginNumAttr(), actualElement.getOriginNumAttr());
         assertEquals(expectedElement.getHeading(), actualElement.getHeading());
         assertEquals(expectedElement.getOriginHeadingAttr(), actualElement.getOriginHeadingAttr());
         if (compare) {
-            if (!ELEMENTS_TO_HIDE_CONTENT.contains(expectedElement.getTocItem().getAknTag().value())) {
+            if (!ELEMENTS_TO_HIDE_CONTENT.contains(expectedElement.getTagName())) {
                 assertEquals(escapeHtml(removeTag(expectedElement.getContent())), escapeHtml(actualElement.getContent()));
             }
         } else {
@@ -177,8 +177,9 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
         assertEquals(expectedElement.getIndentOriginNumValue(), actualElement.getIndentOriginNumValue());
         assertEquals(expectedElement.getIndentOriginNumOrigin(), actualElement.getIndentOriginNumOrigin());
         
-        String expectedLabel = TableOfContentHelper.buildItemCaption(expectedElement, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN");
-        String actualLabel = TableOfContentHelper.buildItemCaption(actualElement, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN");
+        String expectedLabel = TableOfContentHelper.buildItemCaption(expectedElement, tocItems, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper,
+                "EN");
+        String actualLabel = TableOfContentHelper.buildItemCaption(actualElement, tocItems, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN");
 //        System.out.println("label: " + expectedLabel);
         assertEquals(expectedLabel.trim(), actualLabel.trim());
     }

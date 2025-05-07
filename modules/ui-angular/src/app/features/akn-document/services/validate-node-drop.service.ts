@@ -13,13 +13,14 @@ import {
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { DocumentService } from '@/shared/services/document.service';
 import {
-  getActualTargetItem, getNumberingTypeByLanguage,
+  getActualTargetItem, getNumberingTypeByLanguage, getNumberingTypeByLanguageFromTocItem, getTocItemByAknTag,
   isCrossheading,
   isDroppedOnPointOrIndent,
   isSourceDivision,
 } from '@/shared/utils/toc.utils';
 import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
 import {cloneDeep} from "lodash-es";
+import {TableOfContentService} from "@/features/akn-document/services/table-of-content.service";
 
 Injectable();
 
@@ -27,17 +28,21 @@ export abstract class ValidateTocService {
   documentConfig: DocumentConfig;
   dropValidationResult$: Observable<NodeValidation>;
 
+  tocItems: TocItem[];
+
   private dropValidationResultBS: BehaviorSubject<NodeValidation> =
     new BehaviorSubject(null);
 
   protected constructor(
     protected http: HttpClient,
     protected documentService: DocumentService,
+    protected tocService: TableOfContentService,
   ) {
     this.dropValidationResult$ = this.dropValidationResultBS.asObservable();
     this.documentService.documentConfig$.subscribe(
       (documentConfig) => (this.documentConfig = documentConfig),
     );
+    this.tocService.tocItems$.subscribe((tocItems) => this.tocItems = tocItems);
   }
 
   public validateNodeDrop(
@@ -113,20 +118,22 @@ export abstract class ValidateTocService {
     parentItem: TableOfContentItemVO,
     position: string,
   ): boolean {
-    const targetTocItem = targetItem.tocItem;
+    const targetTocItem = getTocItemByAknTag(this.tocItems, targetItem.tagName);
     const targetRules = [
       targetTocItem.aknTag.toUpperCase(),
-      getNumberingTypeByLanguage(targetTocItem, this.documentConfig.langGroup).toUpperCase(),
+      getNumberingTypeByLanguageFromTocItem(targetTocItem, this.documentConfig.langGroup).toUpperCase(),
     ].join('_');
     const targetTocItems: TocItem[] = this.documentConfig.tocRules[targetRules];
+    const sourceTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), sourceItem.tagName);
 
     if (
       isSourceDivision(sourceItem) ||
       isCrossheading(sourceItem) ||
       isDroppedOnPointOrIndent(sourceItem, targetItem) ||
-      sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag
+      sourceItem.tagName === targetItem.tagName
     ) {
       const actualTargetItem = getActualTargetItem(
+        this.tocItems,
         sourceItem,
         targetItem,
         parentItem,
@@ -145,10 +152,11 @@ export abstract class ValidateTocService {
     //TODO : Add toc rules current problem rules are of type -> Map<TocItem,List<TocItem>> this cant't be parsed as json , and because some values have the same toc item key (aknTag) we can't map them by this identifier
     else if (
       targetTocItems?.length > 0 &&
-      targetTocItems.some((item) => isTocItemsEqual(item, sourceItem.tocItem, this.documentConfig.langGroup))
+      targetTocItems.some((item) => isTocItemsEqual(item, sourceTocItem, this.documentConfig.langGroup))
     ) {
       //If target item type is root, source item will be added as child, else validate dropping item at dragged location
       const actualTargetItem = getActualTargetItem(
+        this.tocItems,
         sourceItem,
         targetItem,
         parentItem,
@@ -212,6 +220,7 @@ export abstract class ValidateTocService {
     position: string,
   ) {
     const actualTargetItem = getActualTargetItem(
+      this.tocItems,
       sourceItem,
       targetItem,
       parentItem,
@@ -233,8 +242,9 @@ export abstract class ValidateTocService {
     sourceItem: TableOfContentItemVO,
     targetItem: TableOfContentItemVO,
   ) {
-    if (targetItem.tocItem.maxDepth != null) {
-      const maxDepthRule = parseInt(targetItem.tocItem.maxDepth, 10);
+    const targetTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), targetItem.tagName);
+    if (targetTocItem.maxDepth != null) {
+      const maxDepthRule = parseInt(targetTocItem.maxDepth, 10);
       if (maxDepthRule > 0 && targetItem.itemDepth >= maxDepthRule) {
         validationResult.success = false;
         validationResult.messageKey =

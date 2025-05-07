@@ -34,11 +34,11 @@ import eu.europa.ec.leos.services.support.EditableAttributeValue;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
@@ -307,7 +307,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private SoftActionType getSoftAction(Node node) {
         SoftActionType softActionType = null;
         String tagName = node.getNodeName();
-        String attrVal = XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
+        String attrVal = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
         if (!isExcludedNode(tagName) && attrVal != null) {
             softActionType = SoftActionType.of(attrVal);
         }
@@ -315,16 +315,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void cleanSoftActionAttributes(Node node) {
-        XercesUtils.removeAttribute(node, LEOS_SOFT_ACTION_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_SOFT_ACTION_ROOT_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_SOFT_USER_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_SOFT_DATE_ATTR);
+        removeAttribute(node, LEOS_SOFT_ACTION_ATTR);
+        removeAttribute(node, LEOS_SOFT_ACTION_ROOT_ATTR);
+        removeAttribute(node, LEOS_SOFT_USER_ATTR);
+        removeAttribute(node, LEOS_SOFT_DATE_ATTR);
     }
 
     private void cleanMoveFromAttributes(Node node) {
-        XercesUtils.removeAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_SOFT_MOVE_FROM);
-        XercesUtils.removeAttribute(node, LEOS_SOFT_MOVE_TO);
+        removeAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR);
+        removeAttribute(node, LEOS_SOFT_MOVE_FROM);
+        removeAttribute(node, LEOS_SOFT_MOVE_TO);
     }
 
     @Override
@@ -347,11 +347,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void removeMiscAttributes(Node node) {
         if(XercesUtils.containsAttributeWithValue(node, LEOS_ORIGIN_ATTR, EC)) {
-            XercesUtils.removeAttribute(node, LEOS_ORIGIN_ATTR);
+            removeAttribute(node, LEOS_ORIGIN_ATTR);
         }
-        XercesUtils.removeAttribute(node, LEOS_DEPTH_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_EDITABLE_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_DELETABLE_ATTR);
+        removeAttribute(node, LEOS_DEPTH_ATTR);
+        removeAttribute(node, LEOS_EDITABLE_ATTR);
+        removeAttribute(node, LEOS_DELETABLE_ATTR);
     }
 
     @Override
@@ -366,7 +366,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (childNode.getNodeType() != Node.TEXT_NODE) {
             cleanSoftActionAttributes(childNode);
             cleanMoveFromAttributes(childNode);
-            XercesUtils.removeAttribute(childNode, LEOS_ORIGIN_ATTR);
+            removeAttribute(childNode, LEOS_ORIGIN_ATTR);
             TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItemList, childNode.getNodeName());
             if(tocItem != null && tocItem.isEditable()) {
                 insertOrUpdateAttributeValue(childNode, LEOS_EDITABLE_ATTR, "true");
@@ -387,7 +387,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(content);
         for (TableOfContentItemVO tocVo : tableOfContentItemVOs) {
             Node node = navigateToTocElement(tocVo, document);
-            LOG.trace("Build content for parent TOC item '{}', node '{}'", tocVo.getTocItem().getAknTag().value(), node.getNodeName());
+            LOG.trace("Build content for parent TOC item '{}', node '{}'", tocVo.getTagName(), node.getNodeName());
             Node newNode = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, null, tocVo, user, isTrackChangesEnabled);
             newNode = importNodeInDocument(document, newNode);
             XercesUtils.replaceElement(newNode, node);
@@ -398,7 +398,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private Node navigateToTocElement(TableOfContentItemVO tocVo, Node document) {
-        return getFirstElementByName(document, tocVo.getTocItem().getAknTag().value());
+        return getFirstElementByName(document, tocVo.getTagName().value());
     }
 
     protected abstract Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
@@ -456,7 +456,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent, namespaceEnabled);
         Node node = XercesUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
         if (node != null) {
-            Node newNode = XercesUtils.createNodeFromXmlFragment(document, newContent.getBytes(UTF_8), false);
+            Node newNode = createNodeFromXmlFragment(document, newContent.getBytes(UTF_8), false);
             addSibling(newNode, node, false);
         }
         return nodeToByteArray(document);
@@ -491,13 +491,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (newContent.startsWith(PARA_OPEN_TAG) && newContent.contains(LIST_CLOSE)) {
             Document newNode = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8), false);
             if (newNode.getDocumentElement().getTagName().equals(PARAGRAPH)
-                    && XercesUtils.getFirstChild(XercesUtils.getFirstChild(newNode), NUM) == null) {
+                    && getFirstChild(getFirstChild(newNode), NUM) == null) {
                 Node updatedNode = XercesUtils.getElementById(updatedDocument, elementId);
                 if(updatedNode != null) {
-                    String updatedNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(updatedNode));
-                    List<Node> nodeList = XercesUtils.getChildren(updatedNode);
+                    String updatedNodeContent = removeAllNameSpaces(nodeToString(updatedNode));
+                    List<Node> nodeList = getChildren(updatedNode);
                     for (int i = 0; i < nodeList.size(); i++) {
-                        String childNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(nodeList.get(i)));
+                        String childNodeContent = removeAllNameSpaces(nodeToString(nodeList.get(i)));
                         if (nodeList.get(i).getNodeName().equals(LIST)) {
                             if (i == 0) {
                                 updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent + PARA_END);
@@ -554,11 +554,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node targetNode = before ? nodeList.get(0) : nodeList.get(nodeList.size()-1);
             for(int i = 0; i < nodeList.size(); i++) {
                 Node nodeToClone = nodeList.get(i);
-                Node newNode = XercesUtils.createNodeFromXmlFragment(document, nodeToByteArray(nodeToClone), false);
+                Node newNode = createNodeFromXmlFragment(document, nodeToByteArray(nodeToClone), false);
                 XercesUtils.removeAttributeRecursively(newNode, XMLID);
-                XercesUtils.addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
-                XercesUtils.addAttribute(newNode, LEOS_GROUP, newGroupNumber);
-                XercesUtils.addSibling(newNode, targetNode, before);
+                addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
+                addAttribute(newNode, LEOS_GROUP, newGroupNumber);
+                addSibling(newNode, targetNode, before);
 
                 if (isTrackChangesEnabled) {
                     addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
@@ -579,10 +579,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
         if (node != null) {
-            Node newNode = XercesUtils.createNodeFromXmlFragment(document, nodeToByteArray(node), false);
+            Node newNode = createNodeFromXmlFragment(document, nodeToByteArray(node), false);
             XercesUtils.removeAttributeRecursively(newNode, XMLID);
-            XercesUtils.addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
-            XercesUtils.addSibling(newNode, node, before);
+            addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
+            addSibling(newNode, node, before);
 
             if (isTrackChangesEnabled) {
                 addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
@@ -598,28 +598,28 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
         if (node != null) {
-            Node newNode = XercesUtils.createNodeFromXmlFragment(document, elementTemplate.getBytes(UTF_8), false);
+            Node newNode = createNodeFromXmlFragment(document, elementTemplate.getBytes(UTF_8), false);
             if (XercesUtils.isListIntro(node) && before) {
-                XercesUtils.addSibling(newNode, node.getParentNode(), before);
+                addSibling(newNode, node.getParentNode(), before);
             } else if (XercesUtils.isListIntro(node) && !before) {
                 node.getParentNode().getParentNode().insertBefore(node, node.getParentNode());
-                XercesUtils.removeAttribute(node, REFERS_TO_ATTR);
+                removeAttribute(node, REFERS_TO_ATTR);
                 node.getParentNode().insertBefore(newNode, node.getParentNode().getFirstChild());
-                XercesUtils.addAttribute(newNode, REFERS_TO_ATTR, INTRODUCTORY_PART);
+                addAttribute(newNode, REFERS_TO_ATTR, INTRODUCTORY_PART);
             } else if (XercesUtils.isListWrapper(node) && !before) {
-                XercesUtils.addSibling(newNode, node.getParentNode(), before);
+                addSibling(newNode, node.getParentNode(), before);
             } else if (XercesUtils.isListWrapper(node) && before) {
-                Node nextSiblingOfParent = XercesUtils.getNextSibling(node.getParentNode());
+                Node nextSiblingOfParent = getNextSibling(node.getParentNode());
                 if (nextSiblingOfParent == null) {
                     node.getParentNode().getParentNode().appendChild(node);
                 } else {
                     node.getParentNode().getParentNode().insertBefore(node, nextSiblingOfParent);
                 }
-                XercesUtils.removeAttribute(node, REFERS_TO_ATTR);
+                removeAttribute(node, REFERS_TO_ATTR);
                 node.getParentNode().appendChild(newNode);
-                XercesUtils.addAttribute(newNode, REFERS_TO_ATTR, ENDING_PART);
+                addAttribute(newNode, REFERS_TO_ATTR, ENDING_PART);
             }
-            XercesUtils.addSibling(newNode, node, before);
+            addSibling(newNode, node, before);
 
             if (isTrackChangesEnabled) {
                 addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
@@ -636,8 +636,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
         if (node != null) {
-            Node newNode = XercesUtils.createNodeFromXmlFragment(document, elementTemplate.getBytes(UTF_8), false);
-            XercesUtils.addSibling(newNode, node, before);
+            Node newNode = createNodeFromXmlFragment(document, elementTemplate.getBytes(UTF_8), false);
+            addSibling(newNode, node, before);
 
             if (isTrackChangesEnabled) {
                 addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
@@ -653,7 +653,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, parentId);
         if (node != null) {
-            Node newNode = XercesUtils.createNodeFromXmlFragment(document, elementContent.getBytes(UTF_8), false);
+            Node newNode = createNodeFromXmlFragment(document, elementContent.getBytes(UTF_8), false);
             node.appendChild(newNode);
         }
         return nodeToByteArray(document);
@@ -682,7 +682,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public String getParentIdById(byte[] xmlContent, String idAttributeValue) {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
-        return XercesUtils.getParentId(node);
+        return getParentId(node);
     }
 
     @Override
@@ -758,8 +758,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 String elementFragment = nodeToString(sibling);
                 element = new Element(elementId, elementTagName, elementFragment);
             }
-            String refersTo = XercesUtils.getAttributeValue(sibling, XmlHelper.REFERS_TO_ATTR);
-            foundIntro = refersTo != null && refersTo.equals(XmlHelper.INTRODUCTORY_PART);
+            String refersTo = getAttributeValue(sibling, REFERS_TO_ATTR);
+            foundIntro = refersTo != null && refersTo.equals(INTRODUCTORY_PART);
         }
         return element;
     }
@@ -934,7 +934,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
 
         if (elementTags.contains(tagName) || elementTags.isEmpty()) {
-            XercesUtils.removeAttribute(node, attrName);
+            removeAttribute(node, attrName);
         }
 
         List<Node> children = getChildren(node);
@@ -954,7 +954,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             if (val != null) {
                 LOG.trace("Attribute {} already exists. Updating the value to {}", attrName, attrValue);
             }
-            XercesUtils.addAttribute(node, attrName, String.valueOf(attrValue));
+            addAttribute(node, attrName, String.valueOf(attrValue));
         }
 
         List<Node> children = getChildren(node);
@@ -967,15 +967,15 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         NodeList points = XercesUtils.getElementsByName(parentNode, POINT);
         for (int i = 0; i < points.getLength(); i++) {
             Node point = points.item(i);
-            Node list = XercesUtils.getFirstChild(point, LIST);
+            Node list = getFirstChild(point, LIST);
             if(list != null) {
-                List<Node> level2Points = XercesUtils.getChildren(list, POINT);
-                List<Node> level2Indents = XercesUtils.getChildren(list, INDENT);
+                List<Node> level2Points = getChildren(list, POINT);
+                List<Node> level2Indents = getChildren(list, INDENT);
                 if((level2Points == null || level2Points.isEmpty()) && (level2Indents == null || level2Indents.isEmpty())) {
-                    List<Node> alineas = XercesUtils.getChildren(point, Arrays.asList(SUBPOINT, SUBPARAGRAPH));
+                    List<Node> alineas = getChildren(point, Arrays.asList(SUBPOINT, SUBPARAGRAPH));
                     if(alineas != null && alineas.size() == 1) {
                         Node alinea = alineas.get(0);
-                        Node content = XercesUtils.getFirstChild(alinea, CONTENT);
+                        Node content = getFirstChild(alinea, CONTENT);
                         XercesUtils.replaceElement(content, alinea);
                     }
                     point.removeChild(list);
@@ -988,15 +988,15 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         NodeList paragraphs = XercesUtils.getElementsByName(parentNode, PARAGRAPH);
         for (int i = 0; i < paragraphs.getLength(); i++) {
             Node paragraph = paragraphs.item(i);
-            Node list = XercesUtils.getFirstChild(paragraph, LIST);
+            Node list = getFirstChild(paragraph, LIST);
             if(list != null) {
-                List<Node> level2Points = XercesUtils.getChildren(list, POINT);
-                List<Node> level2Indents = XercesUtils.getChildren(list, INDENT);
+                List<Node> level2Points = getChildren(list, POINT);
+                List<Node> level2Indents = getChildren(list, INDENT);
                 if((level2Points == null || level2Points.isEmpty()) && (level2Indents == null || level2Indents.isEmpty())) {
-                    List<Node> subparagraphs = XercesUtils.getChildren(paragraph, SUBPARAGRAPH);
+                    List<Node> subparagraphs = getChildren(paragraph, SUBPARAGRAPH);
                     if(subparagraphs != null && subparagraphs.size() == 1) {
                         Node subparagraph = subparagraphs.get(0);
-                        Node content = XercesUtils.getFirstChild(subparagraph, CONTENT);
+                        Node content = getFirstChild(subparagraph, CONTENT);
                         XercesUtils.replaceElement(content, subparagraph);
                     }
                     paragraph.removeChild(list);
@@ -1192,14 +1192,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < elementsList.getLength(); i++) {
             Node node = elementsList.item(i);
             String elementOrigin = modifySubElement(node, origin);
-            List<Node> subElements = XercesUtils.getChildren(node, Arrays.asList(subElementTagName, LIST));
+            List<Node> subElements = getChildren(node, Arrays.asList(subElementTagName, LIST));
             for (int j = 0; j < subElements.size(); j++) {
                 Node subElement = subElements.get(j);
                 String subElementOrigin = getAttributeValue(subElement, LEOS_ORIGIN_ATTR);
                 if (j == 0 && !is(subElement, LIST) && elementOrigin.equals(EC) && (subElementOrigin == null)) {
                     createTransformationNode(node, subElement);
                 } else if (is(subElement, LIST)) {
-                    List<Node> listSubElements = XercesUtils.getChildren(subElement, subElementTagName);
+                    List<Node> listSubElements = getChildren(subElement, subElementTagName);
                     for (int k = 0; k < listSubElements.size(); k++) {
                         Node listSubElement = listSubElements.get(k);
                         String listSubElementOrigin = getAttributeValue(listSubElement, LEOS_ORIGIN_ATTR);
@@ -1216,20 +1216,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 } else {
                     modifySubElement(subElement, origin);
                 }
-                if (XercesUtils.getAttributeValue(node, LEOS_INDENT_ORIGIN_TYPE_ATTR) == null) {
-                    XercesUtils.removeAttribute(node, LEOS_SOFT_TRANS_FROM);
+                if (getAttributeValue(node, LEOS_INDENT_ORIGIN_TYPE_ATTR) == null) {
+                    removeAttribute(node, LEOS_SOFT_TRANS_FROM);
                 }
             }
         }
     }
 
     private void createTransformationNode(Node node, Node subElement) {
-        final String elementId = XercesUtils.getId(node);
-        XercesUtils.addAttribute(subElement, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
-        XercesUtils.addAttribute(subElement, LEOS_SOFT_DATE_ATTR, getDateAsXml());
-        XercesUtils.addAttribute(subElement, LEOS_ORIGIN_ATTR, EC);
-        XercesUtils.addAttribute(subElement, LEOS_SOFT_ACTION_ATTR, SoftActionType.TRANSFORM.getSoftAction());
-        XercesUtils.addAttribute(subElement, XMLID, SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + elementId);
+        final String elementId = getId(node);
+        addAttribute(subElement, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
+        addAttribute(subElement, LEOS_SOFT_DATE_ATTR, getDateAsXml());
+        addAttribute(subElement, LEOS_ORIGIN_ATTR, EC);
+        addAttribute(subElement, LEOS_SOFT_ACTION_ATTR, SoftActionType.TRANSFORM.getSoftAction());
+        addAttribute(subElement, XMLID, SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + elementId);
     }
 
     protected String modifySubElement(Node node, String parentOrigin) {
@@ -1241,12 +1241,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
 
         if (originAttr.equals(parentOrigin) && !is(node, LIST)) {
-            XercesUtils.addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
+            addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
             String softAction = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
             if (softAction == null && !CN.equals(originOfDocument) && !is(node, MAIN_BODY)) {
-                XercesUtils.addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.ADD.getSoftAction());
-                XercesUtils.addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
-                XercesUtils.addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
+                addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.ADD.getSoftAction());
+                addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
+                addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
             }
         }
         return originAttr;
@@ -1281,7 +1281,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private void convertAlineasToSubparagraphs(Document document) {
         int nbAlineas = XercesUtils.getElementCountByXpath(document, "//akn:" + SUBPOINT, true);
         for (int i = 0; i < nbAlineas; i++) {
-            Node alinea = XercesUtils.getFirstElementByName(document, SUBPOINT);
+            Node alinea = getFirstElementByName(document, SUBPOINT);
             XercesUtils.renameNode(document, alinea, SUBPARAGRAPH);
         }
     }
@@ -1290,12 +1290,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         NodeList nodeList = XercesUtils.getElementsByName(node, SUBPARAGRAPH);
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node subpara = nodeList.item(i);
-            Node nextSiblingList = XercesUtils.getNextSibling(subpara);
+            Node nextSiblingList = getNextSibling(subpara);
             boolean moved = false;
             if (((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(nextSiblingList)) || (isSoftDeletedOrMovedTo(subpara) && isSoftDeletedOrMovedTo(nextSiblingList)))
                     && nextSiblingList != null
                     && is(nextSiblingList, LIST)) {
-                Node firstChildList = XercesUtils.getFirstChild(nextSiblingList);
+                Node firstChildList = getFirstChild(nextSiblingList);
                 if (firstChildList != null
                         && (!is(firstChildList, SUBPARAGRAPH) || isSoftDeletedOrMovedTo(firstChildList)) && (compareSoftAction(subpara,
                         nextSiblingList) || isSoftAdded(nextSiblingList))) {
@@ -1308,7 +1308,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
                         || (isSoftDeletedOrMovedTo(subpara) && isSoftDeletedOrMovedTo(previousSiblingList)))) {
-                    List<Node> children = XercesUtils.getChildren(previousSiblingList);
+                    List<Node> children = getChildren(previousSiblingList);
                     Node lastChildList = children.size() > 0 ? children.get(children.size()-1) : null;
                     if (lastChildList != null && !is(lastChildList, SUBPARAGRAPH)) {
                         previousSiblingList.appendChild(subpara);
@@ -1316,25 +1316,25 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 }
             }
             if (is(subpara.getParentNode(), LIST)) {
-                List<Node> children = XercesUtils.getChildren(subpara.getParentNode());
+                List<Node> children = getChildren(subpara.getParentNode());
                 int index = children.indexOf(subpara);
                 if (index == 0) {
-                    addAttribute(subpara, XmlHelper.REFERS_TO_ATTR, XmlHelper.INTRODUCTORY_PART);
+                    addAttribute(subpara, REFERS_TO_ATTR, INTRODUCTORY_PART);
                 } else if (index == children.size()-1) {
-                    addAttribute(subpara, XmlHelper.REFERS_TO_ATTR, XmlHelper.ENDING_PART);
+                    addAttribute(subpara, REFERS_TO_ATTR, ENDING_PART);
                 } else if (index == children.size()-2 && is(children.get(index+1), SUBPARAGRAPH)) {
-                    addAttribute(subpara, XmlHelper.REFERS_TO_ATTR, XmlHelper.ENDING_PART);
+                    addAttribute(subpara, REFERS_TO_ATTR, ENDING_PART);
                     Node nextSibling = children.get(index+1);
-                    removeAttribute(nextSibling, XmlHelper.REFERS_TO_ATTR);
+                    removeAttribute(nextSibling, REFERS_TO_ATTR);
                     subpara.getParentNode().getParentNode().insertBefore(nextSibling, subpara.getParentNode().getNextSibling());
                 } else if (index == 1 && is(children.get(0), SUBPARAGRAPH)) {
-                    addAttribute(subpara, XmlHelper.REFERS_TO_ATTR, XmlHelper.INTRODUCTORY_PART);
+                    addAttribute(subpara, REFERS_TO_ATTR, INTRODUCTORY_PART);
                     Node prevSibling = children.get(0);
-                    removeAttribute(prevSibling, XmlHelper.REFERS_TO_ATTR);
+                    removeAttribute(prevSibling, REFERS_TO_ATTR);
                     subpara.getParentNode().getParentNode().insertBefore(prevSibling, subpara.getParentNode());
                 }
             } else {
-                removeAttribute(subpara, XmlHelper.REFERS_TO_ATTR);
+                removeAttribute(subpara, REFERS_TO_ATTR);
             }
         }
     }
@@ -1349,7 +1349,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             String idAttrValue = getAttributeValue(node, XMLID);
             if (idAttrValue == null || idAttrValue.isEmpty()) {
                 idAttrValue = IdGenerator.generateId();
-                XercesUtils.addAttribute(node, XMLID, idAttrValue);
+                addAttribute(node, XMLID, idAttrValue);
             }
         }
 
@@ -1366,9 +1366,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node child = nodeList.item(i);
             StringBuilder sb = new StringBuilder(5);
             sb.append('(').append(markerNumber++).append(')');
-            XercesUtils.addAttribute(child, MARKER_ATTRIBUTE, sb.toString());
-            if(XercesUtils.getAttributeValue(child, PLACEMENT) == null) {
-                XercesUtils.addAttribute(child, PLACEMENT, BOTTOM);
+            addAttribute(child, MARKER_ATTRIBUTE, sb.toString());
+            if(getAttributeValue(child, PLACEMENT) == null) {
+                addAttribute(child, PLACEMENT, BOTTOM);
             }
         }
     }
@@ -1384,16 +1384,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         NodeList mrefList = XercesUtils.getElementsByName(document, MREF);
         for (int i = 0; i < mrefList.getLength(); i++) {
             Node mref = mrefList.item(i);
-            List<Node> refs = XercesUtils.getChildren(mref);
+            List<Node> refs = getChildren(mref);
             for (Node ref: refs) {
-                String href = XercesUtils.getAttributeValue(ref, HREF);
+                String href = getAttributeValue(ref, HREF);
                 if (href != null) {
                     for (Map.Entry<String,String> refMatch : refsMatching.entrySet()) {
                         String newRef = refMatch.getKey();
                         String oldRef = refMatch.getValue();
                         href = href.replace(oldRef, newRef);
                     }
-                    XercesUtils.insertOrUpdateAttributeValue(ref, HREF, href);
+                    insertOrUpdateAttributeValue(ref, HREF, href);
                 }
             }
         }
@@ -1436,7 +1436,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             List<Ref> refs = findReferences(mref, sourceRef);
             if (!refs.isEmpty()) {
                 boolean capital = false;
-                String id = XercesUtils.getAttributeValue(mref.getParentNode(), XMLID);
+                String id = getAttributeValue(mref.getParentNode(), XMLID);
                 String completeStatement = "";
                 if (parentStatementsOfReferences.get(id) == null) {
                     completeStatement = mref.getParentNode().getTextContent();
@@ -1495,7 +1495,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             List<Ref> refs = findReferences(mref, sourceRef);
             if (!refs.isEmpty()) {
                 boolean capital = false;
-                String id = XercesUtils.getAttributeValue(mref.getParentNode(), XMLID);
+                String id = getAttributeValue(mref.getParentNode(), XMLID);
                 String completeStatement = "";
                 if (parentStatementsOfReferences.get(id) == null) {
                     completeStatement = mref.getParentNode().getTextContent();
@@ -1530,9 +1530,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                             mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
                             updated = true;
                         }
-                        XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
+                        removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
                     } else {
-                        XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
+                        addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
                         updated = true;
                     }
                 }
@@ -1568,8 +1568,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             if (subparagraphWithReferToINPAttributeNodeList.getLength() > 0) {
                 if (INPListNodes.getLength() == 0) {
                     Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_INP_ID, EMPTY_STRING);
-                    XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/INP");
-                    XercesUtils.insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "introductory part");
+                    insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/INP");
+                    insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "introductory part");
                     metaReferences.appendChild(tclNode);
                 }
             } else {
@@ -1584,8 +1584,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             if (subparagraphWithReferToWRPAttributeNodeList.getLength() > 0) {
                 if (WRPListNodes.getLength() == 0) {
                     Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_WRP_ID, EMPTY_STRING);
-                    XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/WRP");
-                    XercesUtils.insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "closing part");
+                    insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/WRP");
+                    insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "closing part");
                     metaReferences.appendChild(tclNode);
                 }
             } else {
@@ -1671,7 +1671,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private static byte[] getDocumentWithReplacedNewElement(Document document, Node node, StringBuilder eltContent, ImmutableTriple<String, Integer, Integer> result, String newElements) {
         eltContent.replace(result.middle, result.right, newElements);
-        Node newNode = XercesUtils.createNodeFromXmlFragment(document, eltContent.toString().getBytes(UTF_8), false);
+        Node newNode = createNodeFromXmlFragment(document, eltContent.toString().getBytes(UTF_8), false);
         XercesUtils.replaceElement(newNode, node);
         return nodeToByteArray(document);
     }
@@ -1701,11 +1701,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             userLogin = user.getLogin();
             userName = user.getName();
         }
-        String oldLogin = XercesUtils.getAttributeValue(node,"leos:uid");
+        String oldLogin = getAttributeValue(node,"leos:uid");
         if(StringUtils.equals(userLogin, oldLogin)){
             return getDocumentWithReplacedNewElement(document, node, eltContent, result, escapeXml10(normalizeNewText(origText, newText)));
         }
-        String prefixId = IdGenerator.getPrefixId(XercesUtils.getId(node.getParentNode()));
+        String prefixId = IdGenerator.getPrefixId(getId(node.getParentNode()));
         String uid = "";
         String title = "";
         if(userLogin != null && userName!= null) {
@@ -1715,7 +1715,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         String newNodeContentFromExisting = new  StringBuilder(eltContent.substring(0,result.middle)).append(INS_END_TAG).toString();
 
-        Node newNodeFromExisting = XercesUtils.createNodeFromXmlFragment(document, newNodeContentFromExisting.getBytes(UTF_8), false);
+        Node newNodeFromExisting = createNodeFromXmlFragment(document, newNodeContentFromExisting.getBytes(UTF_8), false);
         XercesUtils.replaceElement(newNodeFromExisting, node);
 
         String deleteTagContent = new StringBuilder("<del ") //delete tag added
@@ -1746,7 +1746,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }else{
             oldUid =  new StringBuilder(LEOS_UID_PREFIX).append(oldLogin).append(BACKSLASH_QUOTE).toString();
         }
-        String oldTitle = XercesUtils.getAttributeValue(node,"leos:title");
+        String oldTitle = getAttributeValue(node,"leos:title");
         if(oldTitle == null) {
             oldTitle = title;
         }else{
@@ -1767,7 +1767,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private static Node appendNodeFromContent(Document document, Node currentNode, String tagContent) {
         Node parentNode = currentNode.getParentNode();
-        Node createdNode = XercesUtils.createNodeFromXmlFragment(document, tagContent.getBytes(UTF_8), false);
+        Node createdNode = createNodeFromXmlFragment(document, tagContent.getBytes(UTF_8), false);
         // insert of deleted tag
         Node nextSibling = currentNode.getNextSibling();
 
@@ -1788,7 +1788,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             userName = user.getName();
         }
 
-        String prefixId = IdGenerator.getPrefixId(XercesUtils.getId(node));
+        String prefixId = IdGenerator.getPrefixId(getId(node));
         String uid = "";
         String title = "";
         if(userLogin != null && userName!= null) {
@@ -1841,7 +1841,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node node = XercesUtils.getElementById(document, elementId);
         if (tagName.equals(NUM)) {
             tagName = XercesUtils.getParentTagName(node);
-            elementId = XercesUtils.getParentId(node);
+            elementId = getParentId(node);
         }
 
         NodeList nodeList = document.getElementsByTagName(tagName);
@@ -2022,7 +2022,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void generateId(Node node) {
-        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + XercesUtils.getId(node).replaceAll("_", "");
+        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + getId(node).replaceAll("_", "");
         String newIdAttrValue = IdGenerator.generateId(idPrefix);
         addAttribute(node, XMLID, newIdAttrValue);
         for(int i = 0; i < node.getChildNodes().getLength(); i++) {
@@ -2045,7 +2045,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node pointOrIndent = XercesUtils.getFirstDescendant(node, Arrays.asList(POINT, INDENT));
             if (pointOrIndent != null) {
                 int depth = XercesUtils.getPointDepth(pointOrIndent);
-                String numValue = XercesUtils.getFirstChild(pointOrIndent, NUM).getTextContent();
+                String numValue = getFirstChild(pointOrIndent, NUM).getTextContent();
                 List<TocItem> tocItems = structureContextProvider.get().getTocItems();
                 List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
                 List<TocItem> foundTocItems = StructureConfigUtils.getTocItemsByName(tocItems, pointOrIndent.getNodeName());
@@ -2058,7 +2058,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                                         TocItemTypeName.DEFINITION, pointOrIndent.getNodeName(), documentLanguageContext.getDocumentLanguage()))) {
                     Attribute attribute =  StructureConfigUtils.getAttributeByTagNameAndTocItemType(tocItems, TocItemTypeName.DEFINITION, ARTICLE);
                     if (attribute != null) {
-                        XercesUtils.addAttribute(node, attribute.getAttributeName(), attribute.getAttributeValue());
+                        addAttribute(node, attribute.getAttributeName(), attribute.getAttributeValue());
                     }
                 }
             }
@@ -2091,7 +2091,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (node == null) {
             return null;
         }
-        return XercesUtils.getAttributeValue(node, XMLID);
+        return getAttributeValue(node, XMLID);
     }
 
     @Override
@@ -2099,13 +2099,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         boolean removed = false;
         Document document = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8), false);
         XercesUtils.addLeosNamespace(document);
-        Node heading = XercesUtils.getFirstElementByName(document, HEADING);
+        Node heading = getFirstElementByName(document, HEADING);
         if (heading != null && heading.getTextContent().replaceAll(NBSP, "").trim().isEmpty()) {
             removeElement(heading);
             removed = true;
         }
         if(removed){
-            return XercesUtils.nodeToString(document);
+            return nodeToString(document);
         } else { //skip re-parsing if no change
             return newContent;
         }
@@ -2116,9 +2116,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if(CN.equals(contentOrigin)) {
             XercesUtils.deleteElement(node);
         } else {
-            XercesUtils.addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.DELETE.getSoftAction());
-            XercesUtils.addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
-            XercesUtils.addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
+            addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.DELETE.getSoftAction());
+            addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
+            addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
             updateXMLIDAttributeFullStructureNode(node, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
         }
     }
@@ -2144,7 +2144,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private static int getElementDepth(Node node, String elementId) {
         int depth = 0;
         Node numNode = getFirstChild(node, NUM);
-        String autoNumberOverwrite = XercesUtils.getAttributeValue(node, LEOS_AUTO_NUM_OVERWRITE);
+        String autoNumberOverwrite = getAttributeValue(node, LEOS_AUTO_NUM_OVERWRITE);
         if (numNode != null) {
             if (autoNumberOverwrite != null && autoNumberOverwrite.equalsIgnoreCase(Boolean.TRUE.toString())) {
                 String typeAttr = getAttributeValue(node, CLASS_ATTR);
@@ -2155,12 +2155,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     }
                 }
             } else {
-                String elementNumber = XercesUtils.getChildContent(node, NUM);
+                String elementNumber = getChildContent(node, NUM);
                 if (elementNumber.contains(".")) {
                     String[] levelArr = StringUtils.split(elementNumber, LEVEL_NUM_SEPARATOR);
                     depth = levelArr.length;
                 } else {
-                    if (!XercesUtils.getId(node).equals(elementId) && elementNumber.contains("#")) {
+                    if (!getId(node).equals(elementId) && elementNumber.contains("#")) {
                         depth = calculateDepthForNewElement(node, elementId);
                     } else {
                         Node parent = node.getParentNode();
@@ -2224,7 +2224,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     String refXml = href.substring(0, index);
                     if (refXml.equals(oldRef)) {
                         String ref = newRef + href.substring(index);
-                        XercesUtils.addAttribute(child, HREF, ref);
+                        addAttribute(child, HREF, ref);
                         flag = true;
                     }
                 }
@@ -2280,7 +2280,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         List<String> ancestorIds = getAncestorsIdsForElements(xmlContent, elementIds);
         Document document = createXercesDocument(xmlContent);
         for (String rootElement : rootElements) {
-            Node node = XercesUtils.getFirstElementByName(document, rootElement);
+            Node node = getFirstElementByName(document, rootElement);
             if (node != null) {
                 ignoreNotSelectedElement(node, elementIds, ancestorIds);
             }
@@ -2326,9 +2326,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             Result<String> labelResult = referenceLabelService.generateSoftMoveLabel(getRefFromSoftMovedElt(node, attr),
-                    XercesUtils.getParentId(node), documentNode, attr, sourceDocumentRef);
+                    getParentId(node), documentNode, attr, sourceDocumentRef);
             if (labelResult != null && labelResult.isOk()) {
-                XercesUtils.addAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR, labelResult.get());
+                addAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR, labelResult.get());
                 coEditionContext.addUpdatedElement(getId(node), node.getNodeName(), nodeToString(node), null);
                 if (!Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE).contains(node.getNodeName())) {
                     addTrackChangeAttributes(node, attr);
@@ -2352,17 +2352,17 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
             if(leosAction != null) {
                 if (!XercesUtils.hasAttribute(node, LEOS_UID_ATTR)) {
-                    XercesUtils.addAttribute(node, LEOS_UID_ATTR, userLogin);
+                    addAttribute(node, LEOS_UID_ATTR, userLogin);
                 }
-                XercesUtils.addAttribute(node, LEOS_ACTION_ATTR, leosAction);
+                addAttribute(node, LEOS_ACTION_ATTR, leosAction);
             }
         }
     }
 
     private Ref getRefFromSoftMovedElt(Node node, String attr) {
-        String id = XercesUtils.getId(node);
-        String href = XercesUtils.getAttributeValue(node, attr);
-        String origin = XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
+        String id = getId(node);
+        String href = getAttributeValue(node, attr);
+        String origin = getAttributeValue(node, LEOS_ORIGIN_ATTR);
         return new Ref(id, href, null, origin);
     }
 
@@ -2419,7 +2419,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         boolean isProposalElement = isProposalElement(node) || (isTrackChangesEnabled && !cloneContext.isClonedProposal());
         boolean isSoftDeleted = isSoftDeletedOrMovedTo(node);
         Node parentNode = node.getParentNode();
-        List<Node> siblings =  XercesUtils.getChildren(parentNode, Arrays.asList(SUBPARAGRAPH, POINT, INDENT, LIST, CROSSHEADING));
+        List<Node> siblings =  getChildren(parentNode, Arrays.asList(SUBPARAGRAPH, POINT, INDENT, LIST, CROSSHEADING));
         boolean singleChild = siblings.size() <= 1;
         boolean firstChild = siblings.indexOf(node) == 0;
 
@@ -2432,7 +2432,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 // Cases when the deleted element should be the wrapping element (subparagraph is intro of the first list)
                 Node grandParentNode = parentNode.getParentNode();
                 if (grandParentNode != null && !is(grandParentNode, LEVEL)) {
-                    List<Node> parentNodeSiblings = XercesUtils.getChildren(grandParentNode, Arrays.asList(SUBPARAGRAPH, LIST));
+                    List<Node> parentNodeSiblings = getChildren(grandParentNode, Arrays.asList(SUBPARAGRAPH, LIST));
                     if (parentNodeSiblings.indexOf(parentNode) == 0) {
                         node = grandParentNode;
                     }
@@ -2454,7 +2454,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
 
         // Delete empty lists
-        if (list != null && XercesUtils.getChildren(list).isEmpty()) {
+        if (list != null && getChildren(list).isEmpty()) {
             XercesUtils.deleteElement(list);
         }
 
@@ -2464,14 +2464,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void softDeleteOriginalNode(Node node, boolean isTrackChangesEnabled) {
         doSoftDeleteOriginalNode(node, isTrackChangesEnabled);
-        List<Node> children = XercesUtils.getChildren(node);
+        List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
             softDeleteOriginalNode(children.get(i), isTrackChangesEnabled);
         }
     }
 
     private void doSoftDeleteOriginalNode(Node node, boolean isTrackChangesEnabled) {
-        String originalId = XercesUtils.getAttributeValue(node, LEOS_SOFT_MOVE_FROM);
+        String originalId = getAttributeValue(node, LEOS_SOFT_MOVE_FROM);
         Boolean originalActionRoot = XercesUtils.getAttributeValueAsBoolean(node, LEOS_SOFT_ACTION_ROOT_ATTR);
         LOG.debug("Setting original node {} as MOVED. Actual node {}", originalId, getId(node));
         if (originalId != null && Boolean.TRUE.equals(originalActionRoot)) {
@@ -2485,10 +2485,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void removeMovedInElements(Node node, boolean isTrackChangesEnabled) {
-        List<Node> children = XercesUtils.getChildren(node);
+        List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
             Node child = children.get(i);
-            String originalId = XercesUtils.getAttributeValue(child, LEOS_SOFT_MOVE_FROM);
+            String originalId = getAttributeValue(child, LEOS_SOFT_MOVE_FROM);
             if(originalId != null) {
                 LOG.debug("Deleting MOVED node {}. The original {} will be set to sofdelete ", getId(child), originalId);
                 XercesUtils.deleteElement(child);
@@ -2497,7 +2497,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             } else {
                 removeMovedInElements(child, isTrackChangesEnabled);
                 // If all children of LIST are removed remove LIST also
-                if(LIST.equals(child.getNodeName()) && XercesUtils.getChildren(child).size() == 0) {
+                if(LIST.equals(child.getNodeName()) && getChildren(child).size() == 0) {
                     XercesUtils.deleteElement(child);
                 }
             }
@@ -2536,9 +2536,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
      * </paragraph>
      */
     protected Node restoreTransformedNode(Node node) {
-        Node contentNode = XercesUtils.getFirstChild(node, CONTENT);
-        Node nextSameTypeNode = XercesUtils.getNextSibling(node, node.getNodeName()); // can be SUBPARAGRAPH and ALINEA (for now)
-        Node nextListNode = XercesUtils.getNextSibling(node, LIST);
+        Node contentNode = getFirstChild(node, CONTENT);
+        Node nextSameTypeNode = getNextSibling(node, node.getNodeName()); // can be SUBPARAGRAPH and ALINEA (for now)
+        Node nextListNode = getNextSibling(node, LIST);
         if (!isNull(nextSameTypeNode) && !isNull(nextListNode)) {
             if(isCNNode(nextSameTypeNode)){
                 XercesUtils.deleteElement(nextSameTypeNode);
@@ -2552,7 +2552,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private boolean isCNNode(Node node) {
-        return CN.equals(XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR));
+        return CN.equals(getAttributeValue(node, LEOS_ORIGIN_ATTR));
     }
 
     /**
@@ -2630,17 +2630,17 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     protected void restoreTransformedNodeToContent(Node node) {
         Node prevSibling = XercesUtils.getPrevSibling(node);
-        Node nextSibling = XercesUtils.getNextSibling(node);
+        Node nextSibling = getNextSibling(node);
         boolean isFirstSubParagraph = isFirstSubParagraph(prevSibling);
         if (nextSibling == null) {
             if (XercesUtils.isListIntro(prevSibling)) {
                 node.getParentNode().getParentNode().insertBefore(prevSibling, node.getParentNode());
-                if (XercesUtils.getNextSibling(node.getParentNode()) != null) {
+                if (getNextSibling(node.getParentNode()) != null) {
                     return;
                 }
             }
             if (isFirstSubParagraph) {
-                Node contentNode = XercesUtils.getFirstChild(prevSibling, CONTENT);
+                Node contentNode = getFirstChild(prevSibling, CONTENT);
                 XercesUtils.replaceElement(contentNode, prevSibling);
             }
         }
@@ -2651,7 +2651,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected boolean isProposalElement(Node node) {
-        String originAttr = XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
+        String originAttr = getAttributeValue(node, LEOS_ORIGIN_ATTR);
         return (originAttr != null && originAttr.equals(EC));
     }
 
@@ -2660,7 +2660,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected boolean isSoftMovedFrom(Node node) {
-        return XercesUtils.getAttributeValue(node, LEOS_SOFT_MOVE_FROM) != null;
+        return getAttributeValue(node, LEOS_SOFT_MOVE_FROM) != null;
     }
 
     protected String softDeleteElement(String content, boolean namespaceEnabled) {
@@ -2682,12 +2682,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         cleanMoveFromAttributes(node);
 
         updateXMLIDAttributeFullStructureNode(node, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, replacePrefix);
-        return XercesUtils.nodeToString(node);
+        return nodeToString(node);
     }
 
     protected void softDeleteElementForNode(Node node, boolean isTrackChangesEnabled) {
-        XercesUtils.insertOrUpdateAttributeValue(node, LEOS_EDITABLE_ATTR, Boolean.FALSE.toString());
-        XercesUtils.insertOrUpdateAttributeValue(node, LEOS_DELETABLE_ATTR, Boolean.FALSE.toString());
+        insertOrUpdateAttributeValue(node, LEOS_EDITABLE_ATTR, Boolean.FALSE.toString());
+        insertOrUpdateAttributeValue(node, LEOS_DELETABLE_ATTR, Boolean.FALSE.toString());
         SoftActionType actionType;
         if(SoftActionType.TRANSFORM.equals(getSoftAction(node))){
             actionType = SoftActionType.DELETE_TRANSFORM;
@@ -2705,19 +2705,19 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             addAttribute(node, LEOS_TITLE, getTitleValue(securityContext));
         }
 
-        propagateSoftDeleteToChildren(XercesUtils.getChildren(node), actionType);
+        propagateSoftDeleteToChildren(getChildren(node), actionType);
     }
 
     private void propagateSoftDeleteToChildren(List<Node> children, SoftActionType actionType) {
         for (int i = 0; i < children.size(); i++) {
             Node child = children.get(i);
-            String origin = XercesUtils.getAttributeValue(child, LEOS_ORIGIN_ATTR);
+            String origin = getAttributeValue(child, LEOS_ORIGIN_ATTR);
             if (CN.equals(origin) && is(child, Arrays.asList(SUBPARAGRAPH, SUBPOINT))) { // The CN part of the split should be
                 // removed
                 restoreTransformedNodeToContent(child);
                 XercesUtils.deleteElement(child);
             } else {
-                XercesUtils.removeAttribute(child, LEOS_SOFT_ACTION_ATTR);
+                removeAttribute(child, LEOS_SOFT_ACTION_ATTR);
                 propagateSoftDeleteToChildren(child, actionType);
             }
         }
@@ -2731,7 +2731,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             updateSoftAttributes(actionType, node, false);
         }
 
-        propagateSoftDeleteToChildren(XercesUtils.getChildren(node), actionType);
+        propagateSoftDeleteToChildren(getChildren(node), actionType);
     }
 
     protected void updateSoftAttributes(SoftActionType softAction, Node node, boolean isRoot) {
@@ -2787,18 +2787,25 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected Node getNode(Document document, TableOfContentItemVO tocVo) {
-        Node node;
-        if (tocVo.getNode() != null) {
-            node = tocVo.getNode();
-            node = importNodeInDocument(document, node);
-        } else {
+        Node node = tocVo.getNode();
+        if (!tocVo.isNewNode() && node == null) {
+            node = XercesUtils.getElementByNameAndId(document, tocVo.getTagName().value(), tocVo.getId());
+            if (node == null && hasIDAPrefix(tocVo.getId())) {
+                node = XercesUtils.getElementByNameAndId(document, tocVo.getTagName().value(), removeIDPrefix(tocVo.getId()));
+            }
+        }
+        if (node == null) {
             final String nodeTemplate;
-            if (tocVo.getTocItem().getAknTag().value().equals(LIST)) {
-                nodeTemplate = XmlHelper.getTemplate(LIST);
+            if (tocVo.getTagName().equals(AknTag.LIST)) {
+                nodeTemplate = getTemplate(LIST);
             } else {
-                nodeTemplate = XmlHelper.getTemplate(tocVo.getTocItem(), tocVo.getNumber(), tocVo.getHeading(), messageHelper);
+                List<TocItem> items = structureContextProvider.get().getTocItems();
+                nodeTemplate = getTemplate(StructureConfigUtils.getTocItemByName(items, tocVo.getTagName()), tocVo.getNumber(), tocVo.getHeading(),
+                        messageHelper);
             }
             node = createNodeFromXmlFragment(document, nodeTemplate.getBytes(UTF_8), false);
+        } else {
+            node = importNodeInDocument(document, node);
         }
         return node;
     }
@@ -2883,10 +2890,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node node = nodes.item(i);
             String num = XercesUtils.getNodeNum(node);
             if (num != null) {
-                XercesUtils.addAttribute(node, LEOS_INITIAL_NUM, num);
+                addAttribute(node, LEOS_INITIAL_NUM, num);
             }
         }
-        return XercesUtils.nodeToByteArray(document);
+        return nodeToByteArray(document);
     }
 
     @Override
@@ -2894,7 +2901,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(contentBytes);
         NodeList nodes = document.getElementsByTagName(DOC);
         if (nodes != null && nodes.getLength() > 0) {
-            Node bodyNode = XercesUtils.getFirstChild(nodes.item(0), MAIN_BODY);
+            Node bodyNode = getFirstChild(nodes.item(0), MAIN_BODY);
             XercesUtils.insertOrUpdateAttributeValueRecursively(bodyNode, ATTR_NAME, CONTENT_SOFT_ADDED_CLASS);
         }
         return nodeToByteArray(document);
@@ -2915,8 +2922,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(contentBytes);
         NodeList nodes = document.getElementsByTagName(DOC);
         if(nodes != null && nodes.getLength() > 0) {
-            Node node = XercesUtils.getFirstChild(nodes.item(0), MAIN_BODY);
-            String origin = XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
+            Node node = getFirstChild(nodes.item(0), MAIN_BODY);
+            String origin = getAttributeValue(node, LEOS_ORIGIN_ATTR);
             isRevisionAnnex = CN.equals(origin);
         }
         return isRevisionAnnex;
@@ -2934,8 +2941,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (document != null) {
             NodeList nodes = document.getElementsByTagName(DOC);
             if (nodes != null && nodes.getLength() > 0) {
-                Node child = XercesUtils.getFirstChild(nodes.item(0), MAIN_BODY);
-                origin = XercesUtils.getAttributeValue(child, LEOS_ORIGIN_ATTR);
+                Node child = getFirstChild(nodes.item(0), MAIN_BODY);
+                origin = getAttributeValue(child, LEOS_ORIGIN_ATTR);
             }
         }
         return origin;
@@ -2963,8 +2970,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             String wrappedContentXml = LeosDomainUtil.wrapXmlFragment(contentXml);
 
             Document document = createXercesDocument(wrappedContentXml.getBytes(UTF_8));
-            Node node = XercesUtils.getFirstElementByName(document, CONTENT);
-            String contentId = XercesUtils.getId(node);
+            Node node = getFirstElementByName(document, CONTENT);
+            String contentId = getId(node);
             mergeOnElement = new Element(contentId, CONTENT, contentXml);
         }
         return mergeOnElement;
@@ -2997,7 +3004,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     LOG.error("After 3 loops, the id '{}' is the same", idAttrValue);
                     throw new IllegalStateException("Duplicate id attribute generated three times! Try again!");
                 }
-                XercesUtils.addAttribute(node, XMLID, idAttrValue);
+                addAttribute(node, XMLID, idAttrValue);
             }
             idsSet.add(idAttrValue);
         }
@@ -3011,10 +3018,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private void createMoveInfoTitle(Node node) {
         if (cloneContext != null && cloneContext.isClonedProposal()) {
             String title = getTitleValue(securityContext);
-            XercesUtils.addAttribute(node, LEOS_TITLE, title);
-            Node numNode = XercesUtils.getFirstChild(node, NUM);
+            addAttribute(node, LEOS_TITLE, title);
+            Node numNode = getFirstChild(node, NUM);
             if (numNode != null) {
-                XercesUtils.addAttribute(numNode, LEOS_TITLE, title);
+                addAttribute(numNode, LEOS_TITLE, title);
             }
         }
     }

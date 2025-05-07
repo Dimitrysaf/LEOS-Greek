@@ -21,6 +21,7 @@ import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
@@ -98,12 +99,12 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
     @Autowired
     protected MessageHelper messageHelper;
 
-    public List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode) {
+    public List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode, boolean withNode) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        return buildTableOfContent(startingNode, xmlContent, mode, tocItems);
+        return buildTableOfContent(startingNode, xmlContent, mode, tocItems, withNode);
     }
 
-    public List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode, List<TocItem> tocItems) {
+    public List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode, List<TocItem> tocItems, boolean withNode) {
         LOG.trace("Start building TOC from tag {} and mode {}", startingNode, mode);
         long startTime = System.currentTimeMillis();
         Map<TocItem, List<TocItem>> tocRules = structureContextProvider.get().getTocRules();
@@ -115,7 +116,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             Node node = getFirstElementByName(document, startingNode);
             if (node != null) {
                 itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode,
-                        documentLanguageContext.getDocumentLanguage(), messageHelper);
+                        documentLanguageContext.getDocumentLanguage(), messageHelper, withNode);
             }
             setNumberingTypeForHigherSubDivision(itemVOList);
             LOG.debug("Xerces Build table of content completed in {} ms", (System.currentTimeMillis() - startTime));
@@ -132,12 +133,12 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
 
     private void setNumberingTypeForChapter(List<TableOfContentItemVO> itemVOList) {
         TableOfContentItemVO bodyToc = itemVOList.stream()
-                .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(BODY) || tocItemVO.getTocItem().getAknTag().value().equals(MAIN_BODY)))
+                .filter(tocItemVO -> (tocItemVO.getTagName().equals(AknTag.BODY) || tocItemVO.getTagName().equals(AknTag.MAIN_BODY)))
                 .findFirst().orElse(null);
         if (bodyToc != null) {
             TableOfContentItemVO chapterTocItemVo =
                     bodyToc.flattened()
-                            .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(CHAPTER)
+                            .filter(tocItemVO -> (tocItemVO.getTagName().equals(AknTag.CHAPTER)
                                     && (tocItemVO.getNumber() != null && (tocItemVO.getNumber().equals("1") || tocItemVO.getNumber().equals("I")))))
                             .findFirst().orElse(null);
             if (chapterTocItemVo != null) {
@@ -151,7 +152,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                     numberingType = chapterTocItemVo.getNumberingType();
                 }
                 bodyToc.flattened()
-                        .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(CHAPTER)))
+                        .filter(tocItemVO -> (tocItemVO.getTagName().equals(AknTag.CHAPTER)))
                         .collect(Collectors.toList())
                         .forEach(tocItemVO -> tocItemVO.setNumberingType(numberingType));
             }
@@ -526,7 +527,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             XercesUtils.insertOrUpdateAttributeValue(node, LEOS_INDENT_ORIGIN_NUM_ATTR, item.getIndentOriginNumValue());
             XercesUtils.insertOrUpdateAttributeValue(node, LEOS_INDENT_ORIGIN_NUM_ID_ATTR, item.getIndentOriginNumId());
             XercesUtils.insertOrUpdateAttributeValue(node, LEOS_INDENT_ORIGIN_NUM_ORIGIN_ATTR, item.getIndentOriginNumOrigin());
-            if (item.getTocItem().getAknTag().name().equalsIgnoreCase(PARAGRAPH) && StringUtils.isEmpty(item.getNumber())) {
+            if (item.getTagName().equals(AknTag.PARAGRAPH) && StringUtils.isEmpty(item.getNumber())) {
                 XercesUtils.insertOrUpdateAttributeValue(node, LEOS_INDENT_UNUMBERED_PARAGRAPH, "true");
             }
         } else {

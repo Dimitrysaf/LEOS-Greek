@@ -113,7 +113,7 @@ define(function elementEditorModule(require) {
             }).profile;
         } else {
             tocItemsList.forEach(function (e) {
-                if (elementType.toLowerCase() === e.aknTag.toLowerCase()) {
+                if (_.camelCase(elementType).toLowerCase() === _.camelCase(e.aknTag).toLowerCase()) {
                     e.profiles["profiles"].forEach(function (profile) {
                         if (!profile.elementSelector || $(element).is(profile.elementSelector)) {
                             selectedProfile = profile.profileName;

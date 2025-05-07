@@ -69,7 +69,7 @@ public interface BillService {
     
     List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize);
 
-    List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems);
+    List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems, boolean withNode);
 
     Bill saveTableOfContent(Bill bill, List<TableOfContentItemVO> tocList, String actionMsg, User user);
 

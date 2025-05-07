@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.processor.content.indent;
 
 import eu.europa.ec.leos.services.support.IdGenerator;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 
@@ -88,7 +89,7 @@ public class IndentXmlHelper {
                 insertOrUpdateAttributeValue(content, LEOS_INDENT_ORIGIN_NUM_ID_ATTR, item.getIndentOriginNumId());
             }
             insertOrUpdateAttributeValue(content, LEOS_INDENT_ORIGIN_NUM_ORIGIN_ATTR, item.getIndentOriginNumOrigin());
-            if (item.getTocItem().getAknTag().name().equalsIgnoreCase(PARAGRAPH) && StringUtils.isEmpty(item.getNumber())) {
+            if (item.getTagName().equals(AknTag.PARAGRAPH) && StringUtils.isEmpty(item.getNumber())) {
                 insertOrUpdateAttributeValue(content, LEOS_INDENT_UNUMBERED_PARAGRAPH, "true");
             }
         }

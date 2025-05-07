@@ -202,7 +202,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         Validate.notNull(memorandum, "Memorandum is required");
         final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
         final byte[] memorandumContent = content.getSource().getBytes();
-        return tableOfContentProcessor.buildTableOfContent(DOC, memorandumContent, mode);
+        return tableOfContentProcessor.buildTableOfContent(DOC, memorandumContent, mode, true);
     }
 
     protected byte[] updateDataInXml(final byte[] content, MemorandumMetadata dataObject) {

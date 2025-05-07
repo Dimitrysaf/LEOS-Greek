@@ -63,7 +63,11 @@ import { LeosLightService } from '@/shared/services/leos-light.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
-import {findNodeById, getNumberingTypeByLanguage, updateDepthOfTocItems} from '@/shared/utils/toc.utils';
+import {
+  findNodeById,
+  getNumberingTypeByLanguage, toCamelCaseEnum,
+  updateDepthOfTocItems
+} from '@/shared/utils/toc.utils';
 
 import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
 import { CKEditorService } from '../../services/ckeditor.service';
@@ -613,16 +617,16 @@ export class DocumentEditorComponent
     }
   }
 
-  getTocItemDisplayTitle(item: TocItem) {
-    const numType = getNumberingTypeByLanguage(item,  this.documentConfig.langGroup);
+  getTocItemDisplayTitle(item: Partial<TableOfContentItemVO>) {
+    const numType = getNumberingTypeByLanguage(this.tocItems, item.tagName, this.documentConfig.langGroup);
     if (numType === 'BULLET_NUM') {
       return this.translateService.instant('toc.item.type.bullet');
     }
-    if (item.aknTag === 'CROSS_HEADING') {
+    if (item.tagName === 'CROSS_HEADING') {
       return this.translateService.instant('toc.item.type.crossheading');
     } else {
       return this.translateService.instant(
-        'toc.item.type.' + item.aknTag.toLowerCase(),
+        'toc.item.type.' + toCamelCaseEnum(item.tagName).toLowerCase(),
       );
     }
   }
@@ -897,7 +901,7 @@ export class DocumentEditorComponent
 
         if (item.itemHeading === 'MANDATORY') {
           heading = this.translateService.instant(
-            'toc.item.type.' + item.aknTag.toLowerCase() + '.heading',
+            'toc.item.type.' + toCamelCaseEnum(item.aknTag).toLowerCase() + '.heading',
           );
         }
 
@@ -905,11 +909,11 @@ export class DocumentEditorComponent
           content =
             item.aknTag.toLowerCase() === 'recital' ||
             item.aknTag.toLowerCase() === 'citation'
-              ? capitalizeFirstLetter(item.aknTag) + '...'
+              ? capitalizeFirstLetter(toCamelCaseEnum(item.aknTag).toLowerCase()) + '...'
               : 'Text...';
         }
         dragItems.push({
-          tocItem: item,
+          tagName: item.aknTag,
           heading,
           number,
           content,

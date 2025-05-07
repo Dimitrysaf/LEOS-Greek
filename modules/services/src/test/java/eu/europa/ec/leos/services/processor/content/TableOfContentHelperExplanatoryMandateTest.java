@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.util.TestUtils;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -44,7 +45,7 @@ public class TableOfContentHelperExplanatoryMandateTest extends TableOfXmlConten
     public void test_buildTableOfContent() {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/explanatory_basic.xml");
 
-        List<TableOfContentItemVO> xercesTOC = tableOfContentProcessor.buildTableOfContent(DOC, fileContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> xercesTOC = tableOfContentProcessor.buildTableOfContent(DOC, fileContent, TocMode.NOT_SIMPLIFIED, true);
         assertThat(xercesTOC, is(notNullValue()));
         assertThat(xercesTOC.size(), is(1));
 
@@ -55,7 +56,7 @@ public class TableOfContentHelperExplanatoryMandateTest extends TableOfXmlConten
 
     // Mandate logic with more children
     private List<TableOfContentItemVO> buildTOCProgrammatically() {
-        TableOfContentItemVO preface = buildSingleTOCVo("_preface", PREFACE, null, null, null, null, "", 0);
+        TableOfContentItemVO preface = buildSingleTOCVo("_preface", AknTag.PREFACE, null, null, null, null, "", 0);
 
         TableOfContentItemVO mainBody = TocItemVOBuilder.getBuilder()
                 .withId("_body")
@@ -110,12 +111,10 @@ public class TableOfContentHelperExplanatoryMandateTest extends TableOfXmlConten
         return Arrays.asList(preface, mainBody);
     }
 
-    private TableOfContentItemVO buildSingleTOCVo(String id, String aknTag, String heading, String number, String numberId, String origin, String content, int indentLevel) {
+    private TableOfContentItemVO buildSingleTOCVo(String id, AknTag aknTag, String heading, String number, String numberId, String origin, String content, int indentLevel) {
         return TocItemVOBuilder.getBuilder()
                 .withId(id)
-                .withTocItem(
-                        StructureConfigUtils.getTocItemByName(tocItems, aknTag)
-                )
+                .withTocItem(aknTag)
                 .withContent(content)
                 .withHeading(heading)
                 .withNumber(number)

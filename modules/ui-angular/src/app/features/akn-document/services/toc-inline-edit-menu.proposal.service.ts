@@ -40,7 +40,7 @@ export class TocInlineEditMenuProposalService extends TocInlineEditMenuService {
 
   buildTypeSpecificItems(node: TableOfContentItemVO): DropdownModel[] {
     const items: DropdownModel[] = [];
-    switch (node.tocItem.aknTag) {
+    switch (node.tagName.toUpperCase()) {
       case ARTICLE:
         items.push(this.buildArticleItem(node));
         break;

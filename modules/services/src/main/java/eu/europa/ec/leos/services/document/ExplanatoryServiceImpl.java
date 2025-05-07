@@ -251,7 +251,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         Validate.notNull(explanatory, "Explanatory is required");
         final Content content = explanatory.getContent().getOrError(() -> "Explanatory content is required!");
         final byte[] explanatoryContent = content.getSource().getBytes();
-        return tableOfContentProcessor.buildTableOfContent(DOC, explanatoryContent, mode);
+        return tableOfContentProcessor.buildTableOfContent(DOC, explanatoryContent, mode, true);
     }
 
     @Override

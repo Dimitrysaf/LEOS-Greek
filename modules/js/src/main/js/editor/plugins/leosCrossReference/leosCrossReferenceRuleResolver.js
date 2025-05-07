@@ -57,10 +57,10 @@ define(function leosCrossReferenceRuleResolverModule(require) {
         var parentCurrentElement = document.getElementById(currentSelectedTreeNode.parent),
             parentPrevElement = document.getElementById(prevSelectedTreeNode.parent);
 
-        var currentAknTag = (currentSelectedTreeNode.original && currentSelectedTreeNode.original.tocItem) ?
-            currentSelectedTreeNode.original.tocItem.aknTag : null;
-        var prevAknTag = (currentSelectedTreeNode.original && prevSelectedTreeNode.original.tocItem) ?
-            prevSelectedTreeNode.original.tocItem.aknTag : null;
+        var currentAknTag = (currentSelectedTreeNode.original) ?
+            currentSelectedTreeNode.original.tagName : null;
+        var prevAknTag = (currentSelectedTreeNode.original && prevSelectedTreeNode.original.tagName) ?
+            prevSelectedTreeNode.original.tagName : null;
     
         var result = false;
         if (!currentAknTag || !prevAknTag) {

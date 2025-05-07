@@ -977,7 +977,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     }
 
     private List<TableOfContentItemVO> getListOfTableOfContent(Bill bill, TocMode mode) {
-        return billService.getTableOfContent(bill, mode, null);
+        return billService.getTableOfContent(bill, mode, null, true);
     }
 
     private Bill populateViewWithDocumentDetails(Bill bill, TocMode mode) {

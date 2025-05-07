@@ -20,6 +20,12 @@
                         <p xml:id="new_art_1_COLMH3">Text...</p>
                     </content>
                 </paragraph>
+                <paragraph xml:id="new_art_1-par2">
+                    <num xml:id="new_art_1_QbZpeT">2.</num>
+                    <content xml:id="new_art_1_3VsECY">
+                        <p xml:id="new_art_1_COLMH4">Text...</p>
+                    </content>
+                </paragraph>
             </article>
         </body>
     </bill>

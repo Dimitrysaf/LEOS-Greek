@@ -19,7 +19,7 @@ public abstract class SaveTocAnnexProposalTest_IT extends SaveTocProposalTest_IT
     }
 
     protected List<TableOfContentItemVO> buildTableOfContentAnnex(byte[] xmlInput) {
-        return tableOfContentProcessor.buildTableOfContent(DOC, xmlInput, TocMode.NOT_SIMPLIFIED);
+        return tableOfContentProcessor.buildTableOfContent(DOC, xmlInput, TocMode.NOT_SIMPLIFIED, true);
     }
 
     protected byte[] processSaveTocAnnex(byte[] xmlInput, List<TableOfContentItemVO> toc) {

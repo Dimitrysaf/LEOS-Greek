@@ -13,8 +13,10 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.OptionsType;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
@@ -61,10 +63,12 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
         if (actualTargetItem == null) {
             actualTargetItem = targetItem;
         }
-        String droppedElementTagName = sourceItem.getTocItem().getAknTag().value();
-        NumberingType droppedElementTagNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(sourceItem.getTocItem(), language);
+        String droppedElementTagName = sourceItem.getTagName().value();
+        NumberingType droppedElementTagNumberingType =
+                StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                        sourceItem.getTagName()), language);
 
-        String targetName = actualTargetItem.getTocItem().getAknTag().value();
+        String targetName = actualTargetItem.getTagName().value();
         result.setSourceItem(sourceItem);
         result.setTargetItem(targetItem);
         boolean indentAllowed;
@@ -127,8 +131,9 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
     private boolean containsOnlySameIndentType(TableOfContentItemVO tableOfContentItemVO, NumberingType numberingType, String language) {
         List<TableOfContentItemVO> chldItms = tableOfContentItemVO.getChildItems();
         for(TableOfContentItemVO child : chldItms) {
-            if(child.getTocItem().getAknTag().value().equals("indent") &&
-                    StructureConfigUtils.getNumberingTypeByLanguage(child.getTocItem(), language) != numberingType) {
+            if(child.getTagName().equals(AknTag.INDENT) &&
+                    StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                            child.getTagName()), language) != numberingType) {
                 return false;
             }
         }
@@ -137,9 +142,10 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
 
     private boolean isNumbered(TableOfContentItemVO element) {
         boolean isNumbered = true;
-        if (OptionsType.NONE.equals(element.getTocItem().getItemNumber())) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, element.getTagName());
+        if (OptionsType.NONE.equals(tocItem.getItemNumber())) {
             isNumbered = false;
-        } else if (OptionsType.OPTIONAL.equals(element.getTocItem().getItemNumber())
+        } else if (OptionsType.OPTIONAL.equals(tocItem.getItemNumber())
                 && ((element.getNumber() == null || element.getNumber().isEmpty()) || isNumSoftDeleted(element.getNumSoftActionAttr()))) {
             isNumbered = false;
         }
@@ -192,8 +198,10 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
     }
 
     private boolean validateAgainstOtherIndent(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem, String language) {
-        NumberingType targetNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(targetItem.getTocItem(), language);
-        NumberingType sourceNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(sourceItem.getTocItem(), language);
+        NumberingType targetNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                targetItem.getTagName()), language);
+        NumberingType sourceNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                sourceItem.getTagName()), language);
         return targetNumberingType.equals(sourceNumberingType);
     }
 
@@ -208,7 +216,7 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
         List<TableOfContentItemVO> siblingsOfTargetItem = targetItem.getParentItem().getChildItems();
         int targetItemIndex = siblingsOfTargetItem.indexOf(targetItem);
         int clauseItemIndex = IntStream.range(0, siblingsOfTargetItem.size())
-                .filter(i -> siblingsOfTargetItem.get(i).getTocItem().getAknTag().value().equals(CONCLUSIONS))
+                .filter(i -> siblingsOfTargetItem.get(i).getTagName().equals(AknTag.CONCLUSIONS))
                 .findFirst().orElse(-1);
         return (targetItemIndex > clauseItemIndex) ||
                 ((targetItemIndex == clauseItemIndex) && !position.equals(TocItemPosition.BEFORE));

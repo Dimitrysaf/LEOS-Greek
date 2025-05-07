@@ -608,21 +608,22 @@ public class IndentConversionHelper {
         if (hasTocItemSoftOrigin(originalItem, EC)) {
             if (originalItem.getId().startsWith(XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX)
                     || originalItem.getId().startsWith(XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX)) {
-                transItem = new TableOfContentItemVO(originalItem.getTocItem(), originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(), originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
+                transItem = new TableOfContentItemVO(originalItem.getTagName(), originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
+                        originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                         originalItem.getNode(), null, originalItem.getContent(), originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
                         originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(), originalItem.getNumSoftActionAttr());
             } else {
-                transItem = new TableOfContentItemVO(originalItem.getTocItem(), XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(), originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
+                transItem = new TableOfContentItemVO(originalItem.getTagName(), XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(), originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                         originalItem.getNode(), null, originalItem.getContent(), originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
                         originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(), originalItem.getNumSoftActionAttr());
             }
         } else {
             if (originalItem.getId().startsWith(INDENT_PLACEHOLDER_ID_PREFIX)) {
-                transItem = new TableOfContentItemVO(originalItem.getTocItem(), originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(), originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
+                transItem = new TableOfContentItemVO(originalItem.getTagName(), originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(), originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                         originalItem.getNode(), null, originalItem.getContent(), originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
                         originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(), originalItem.getNumSoftActionAttr());
             } else {
-                transItem = new TableOfContentItemVO(originalItem.getTocItem(), INDENT_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(), originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
+                transItem = new TableOfContentItemVO(originalItem.getTagName(), INDENT_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(), originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                         originalItem.getNode(), null, originalItem.getContent(), originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
                         originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(), originalItem.getNumSoftActionAttr());
             }

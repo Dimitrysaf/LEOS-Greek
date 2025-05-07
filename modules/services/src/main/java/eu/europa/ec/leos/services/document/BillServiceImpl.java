@@ -349,11 +349,11 @@ public abstract class BillServiceImpl implements BillService {
     }
     
     @Override
-    public List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems) {
+    public List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems, boolean withNode) {
         final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
         final byte[] xmlContent = content.getSource().getBytes();
         Stopwatch stopwatch = Stopwatch.createStarted();
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, mode, tocItems);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, mode, tocItems, withNode);
         LOG.info("getTableOfContent in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         return tocList;
     }

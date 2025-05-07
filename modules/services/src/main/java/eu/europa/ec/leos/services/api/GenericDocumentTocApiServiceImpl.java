@@ -119,7 +119,7 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
                         () -> new RuntimeException(String.format("Starting node not found for document %s", docRef)));
         documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
         this.getStructureContext().useDocumentTemplate(docTemplate);
-        List<TableOfContentItemVO> toc = this.tableOfContentProcessor.buildTableOfContent(startingNode, content, mode);
+        List<TableOfContentItemVO> toc = this.tableOfContentProcessor.buildTableOfContent(startingNode, content, mode, true);
         return toc;
     }
 
@@ -131,7 +131,7 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
         languageGroupService.getLanguageMap();
         documentLanguageContext.setDocumentLanguage(language);
         this.getStructureContext().useDocumentTemplate(docTemplate);
-        List<TableOfContentItemVO> toc = this.tableOfContentProcessor.buildTableOfContent(startingNode, content, mode);
+        List<TableOfContentItemVO> toc = this.tableOfContentProcessor.buildTableOfContent(startingNode, content, mode, true);
         String tocJson = getTocAsJson(toc);
         return tocJson;
     }
@@ -152,7 +152,8 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
     private List<TableOfContentItemHtmlVO> buildTocHtml(List<TableOfContentItemVO> tableOfContents) {
         List<TableOfContentItemHtmlVO> tocHtml = new ArrayList<>();
         for (TableOfContentItemVO item : tableOfContents) {
-            String name = TableOfContentHelper.buildItemCaption(item, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE,
+            String name = TableOfContentHelper.buildItemCaption(item, this.structureContextProvider.get().getTocItems(),
+                    TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE,
                     messageHelper, documentLanguageContext.getDocumentLanguage());
             TableOfContentItemHtmlVO itemHtml = new TableOfContentItemHtmlVO(name, "#" + item.getId());
             if (item.getChildItems().size() > 0) {

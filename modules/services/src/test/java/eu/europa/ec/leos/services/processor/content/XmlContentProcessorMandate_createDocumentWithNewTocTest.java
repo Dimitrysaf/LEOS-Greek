@@ -49,7 +49,7 @@ public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends Xml
     @Test
     public void test_createDocumentContentWithNewTocList() {
         byte[] xmlDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_explanatory_createDocumentContentWithNewTocList.xml");
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlDocument, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlDocument, TocMode.NOT_SIMPLIFIED, true);
 
         byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser(), false);
 

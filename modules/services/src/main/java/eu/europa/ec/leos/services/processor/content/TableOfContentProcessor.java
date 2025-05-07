@@ -16,7 +16,7 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
-import eu.europa.ec.leos.vo.light.Profile;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
@@ -35,28 +35,28 @@ import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 public interface TableOfContentProcessor {
 
     static String getTagValueFromTocItemVo(TableOfContentItemVO tableOfContentItemVO) {
-        if (tableOfContentItemVO != null && tableOfContentItemVO.getTocItem() != null && tableOfContentItemVO.getTocItem().getAknTag() != null) {
-            return tableOfContentItemVO.getTocItem().getAknTag().value();
+        if (tableOfContentItemVO != null && tableOfContentItemVO.getTagName() != null) {
+            return tableOfContentItemVO.getTagName().value();
         } else {
             return StringUtils.EMPTY;
         }
     }
 
     static Boolean checkIfParagraphNumberingIsToggled(TableOfContentItemVO tableOfContentItemVO) {
-        if (tableOfContentItemVO != null && PARAGRAPH.equals(tableOfContentItemVO.getTocItem().getAknTag().value())
+        if (tableOfContentItemVO != null && AknTag.PARAGRAPH.equals(tableOfContentItemVO.getTagName())
                 && tableOfContentItemVO.getParentItem().isNumberingToggled() != null) {
             return tableOfContentItemVO.getParentItem().isNumberingToggled();
         }
         return null;
     }
 
-    List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode);
+    List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode, boolean withNode);
 
-    List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode, List<TocItem> tocItems);
+    List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode, List<TocItem> tocItems, boolean withNode);
 
     static void updateStyleClassOfTocItems(List<TableOfContentItemVO> list, String elementName) {
         List<TableOfContentItemVO> divisionTocItems = list.stream()
-                .filter(tocItemVO -> tocItemVO.getTocItem().getAknTag().value().equals(elementName))
+                .filter(tocItemVO -> tocItemVO.getTagName().value().equals(elementName))
                 .collect(Collectors.toList());
 
         ClassToDepthType currentStyleType = ClassToDepthType.ofDepth(1);
@@ -80,7 +80,7 @@ public interface TableOfContentProcessor {
     static void updateDepthOfTocItems(List<TableOfContentItemVO> list) {
         List<TableOfContentItemVO> tocItems = list.stream()
                 .flatMap(l -> l.flattened())
-                .filter(tocItemVO -> tocItemVO.getTocItem().getAknTag().value().equals(LEVEL))
+                .filter(tocItemVO -> tocItemVO.getTagName().equals(AknTag.LEVEL))
                 .collect(Collectors.toList());
 
         for (int index = 0; index < tocItems.size(); index++) {

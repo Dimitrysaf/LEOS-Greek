@@ -16,6 +16,7 @@ define(function listUnumberModule(require) {
     "use strict";
 
     var leosPluginUtils = require("plugins/leosPluginUtils");
+    var lodash = require('lodash');
     var ckEditor;
     // Indent numbering configs
     var BULLET_NUM = 'bullet_num';
@@ -34,7 +35,7 @@ define(function listUnumberModule(require) {
      * initialize numbering config lists
     */
     function _initializeLists(editor) {
-        var tocItemsIdent = editor.LEOS.tocItemsList.filter(tocItem => tocItem.aknTag == leosPluginUtils.INDENT);
+        var tocItemsIdent = editor.LEOS.tocItemsList.filter(tocItem => lodash.camelCase(tocItem.aknTag).toLowerCase() == leosPluginUtils.INDENT);
         numberingConfigs = editor.LEOS.numberingConfigs;
         unumberedListNumberConfig = tocItemsIdent.map(tocItem => numberingConfigs
             .find(numberingConfig => numberingConfig.type == tocItem.autoNumbering.langNumConfigs

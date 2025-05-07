@@ -46,7 +46,7 @@ import {
   findNodeById,
   getItemIndentLevel,
   getNumberingConfig,
-  getNumberingTypeByLanguage,
+  getNumberingTypeByLanguage, getNumberingTypeByLanguageFromTocItem,
   getTocItemByNumberingType,
   updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
@@ -89,7 +89,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     node: TableOfContentItemVO,
   ): DropdownModel[] {
     const items: DropdownModel[] = [];
-    switch (node.tocItem.aknTag) {
+    switch (node.tagName.toUpperCase()) {
       case CROSSHEADING:
         items.push(this.buildCrossHeadingItem(node));
         break;
@@ -252,8 +252,8 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     const selectedNode = this.getTargetNode();
     const toc = this.tocService.getCurrentToc();
     const tocItems = this.tocService.getCurrentTocItems();
-    const oldValue = getNumberingTypeByLanguage(
-      selectedNode.tocItem,
+    const oldValue = getNumberingTypeByLanguage(tocItems,
+      selectedNode.tagName,
       this.documentConfig.langGroup,
     );
     this.active_block_style = value;
@@ -266,10 +266,10 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     const newTocItem = getTocItemByNumberingType(
       tocItems,
       value,
-      selectedNode.tocItem.aknTag,
+      selectedNode.tagName,
       this.documentConfig.langGroup,
     );
-    selectedNode.tocItem = newTocItem;
+    selectedNode.tagName = newTocItem.aknTag;
     selectedNode.number = numberConfig.sequence;
     this.tocEditService.handleNodeChanges(toc);
   }
@@ -292,7 +292,8 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     const tocItems = this.tocService.getCurrentTocItems();
     const toc = this.tocService.getCurrentToc();
     const oldValue = getNumberingTypeByLanguage(
-      selectedNode.tocItem,
+      tocItems,
+      selectedNode.tagName,
       this.documentConfig.langGroup,
     );
     this.active_point_style = value;
@@ -325,8 +326,8 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
       this.documentConfig.numberingConfig,
     );
     for (const n of list) {
-      if (n.tocItem.aknTag === POINT || n.tocItem.aknTag === INDENT) {
-        n.tocItem = newTocItem;
+      if (n.tagName.toUpperCase() === POINT || n.tagName.toUpperCase() === INDENT) {
+        n.tagName = newTocItem.aknTag;
         n.number = newNumberingValue;
 
         this.propagateListType(root, this.findChildLists(n), newTocItem);
@@ -341,7 +342,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
   ) {
     const toc = this.tocService.getCurrentToc();
     let sequence = '#';
-    const numType = getNumberingTypeByLanguage(
+    const numType = getNumberingTypeByLanguageFromTocItem(
       tocItem,
       this.documentConfig.langGroup,
     );
@@ -353,6 +354,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
       } else if (config && config.levels && config.levels.levels.length > 0) {
         const level = 0;
         getItemIndentLevel(
+          this.tocService.getCurrentTocItems(),
           toc,
           findNodeById(toc, firstChild.parentItem),
           level,
@@ -378,15 +380,15 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
   private findChildLists(item: TableOfContentItemVO) {
     let childLists: TableOfContentItemVO[] = [];
     const childItems = item.childItems.filter((n) =>
-      [POINT, INDENT].includes(n.tocItem.aknTag),
+      [POINT, INDENT].includes(n.tagName),
     );
     if (childItems && childItems.length > 0) {
       childLists = [...childItems];
     } else {
       for (const child of item.childItems) {
-        if (child.tocItem.aknTag === LIST) {
+        if (child.tagName === LIST) {
           const filtered = item.childItems.filter((n) =>
-            [POINT, INDENT].includes(n.tocItem.aknTag),
+            [POINT, INDENT].includes(n.tagName),
           );
           filtered.forEach((n) => childLists.push(n));
         }
@@ -403,17 +405,17 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     let parentItem = findNodeById(root, item.parentItem);
     while (
       parentItem &&
-      (parentItem.tocItem.aknTag === LIST ||
-        parentItem.tocItem.aknTag === POINT ||
-        parentItem.tocItem.aknTag === INDENT)
+      (parentItem.tagName === LIST ||
+        parentItem.tagName === POINT ||
+        parentItem.tagName === INDENT)
     ) {
       tmpItem = parentItem;
       parentItem = findNodeById(root, parentItem.parentItem);
     }
-    if (tmpItem.tocItem.aknTag !== LIST)
+    if (tmpItem.tagName.toUpperCase() !== LIST)
       tmpItem = findNodeById(root, tmpItem.parentItem);
     return tmpItem.childItems.filter((n) =>
-      [POINT, INDENT].includes(n.tocItem.aknTag),
+      [POINT, INDENT].includes(n.tagName.toUpperCase()),
     );
   }
 
@@ -433,7 +435,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     const toc = this.tocService.getCurrentToc();
     const parentNode = findNodeById(toc, node.parentItem);
     const divisionNodes = parentNode.childItems.filter(
-      (n) => n.tocItem.aknTag === DIVISION,
+      (n) => n.tagName === DIVISION,
     );
     const index = divisionNodes.indexOf(node);
     if (index > 0) {
