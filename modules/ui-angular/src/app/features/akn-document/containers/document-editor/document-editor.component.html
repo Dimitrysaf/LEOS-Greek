@@ -323,7 +323,7 @@
                 </eui-card-content>
               </eui-card>
             </div>
-            <app-versions-pane
+            <app-versions-pane *ngIf="isVersionsPaneInit"
               (exploreMilestone)="exploreMilestone($event)"
             ></app-versions-pane>
           </eui-fieldset>

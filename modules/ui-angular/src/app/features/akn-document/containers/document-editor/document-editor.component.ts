@@ -131,6 +131,7 @@ export class DocumentEditorComponent
   hasUpdatePermission = false;
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
+  isVersionsPaneInit = this.isVersionsPaneExpanded;
   isContributionsPaneExpanded = false;
   contributionActionSelected = 'accept_selected';
   processed = false;
@@ -703,6 +704,7 @@ export class DocumentEditorComponent
   }
 
   onVersionsPaneExpanded(e: any) {
+    this.isVersionsPaneInit = true;
     this.isVersionsPaneExpanded = !this.isVersionsPaneExpanded;
     if (this.isTocPaneExpanded) {
       this.isTocPaneExpanded = false;
