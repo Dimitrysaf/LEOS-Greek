@@ -97,6 +97,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             addCollaborator(user, collaboratorName, role, entity, leosClientId, p);
         });
 
+        proposal.getCollaborators().add(new Collaborator(collaboratorName, role.getName(), entity, leosClientId));
         sendNotification(new AddCollaborator(collaborator, entity, role.getName(), proposal.getId(), proposalUrl));
         LOG.info("Collaborator '{}', role '{}', entity '{}' inserted to proposal id {}", collaboratorName, role.getName(), entity, proposal.getId());
         return entity;
@@ -126,6 +127,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             deleteCollaborator(user, role, entity, leosClientId, p);
         });
 
+        proposal.getCollaborators().remove(new Collaborator(user.getLogin(), role.getName(), entity, leosClientId));
         sendNotification(new RemoveCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
         LOG.info("Collaborator '{}', role '{}', entity '{}' removed from proposal id {}", user.getLogin(), role.getName(), entity, proposal.getId());
         return entity;
@@ -343,12 +345,12 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     // Add collaborator on package
-    private void addCollaborator(User user, String collatorName, Role role, String entity, String systemClientId, LeosPackage leosPackage) {
+    private void addCollaborator(User user, String collaboratorName, Role role, String entity, String systemClientId, LeosPackage leosPackage) {
         Validate.notNull(leosPackage, "The package must not be null!");
         Validate.notNull(user, "The user must not be null!");
         List<Collaborator> collaborators = new ArrayList<>();
 
-        collaborators.add(new Collaborator(collatorName, role.getName(), entity, systemClientId));
+        collaborators.add(new Collaborator(collaboratorName, role.getName(), entity, systemClientId));
         securityService.addCollaborators(leosPackage.getId(), user.getLogin(), collaborators);
     }
 
