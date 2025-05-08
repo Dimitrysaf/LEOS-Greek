@@ -374,6 +374,10 @@ export class DocumentTocComponent
     }
   }
 
+  get selectedNodesArray() {
+    return Array.from(this.selectedNodes);
+  }
+
   clearHighlightInvalidNodes() {
     this.document
       .querySelectorAll('.invalid-node')

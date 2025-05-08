@@ -50,7 +50,7 @@
             </style>
           </head>
           <body>
-          <div *ngFor="let selectedNode of this.selectedNodes.values()"
+          <div *ngFor="let selectedNode of this.selectedNodesArray"
                [class]="'dragged-selected-node' + ' ' + 'dragged-label'"
                [innerHTML]="getNodeLabel(selectedNode.label)"
           ></div>
