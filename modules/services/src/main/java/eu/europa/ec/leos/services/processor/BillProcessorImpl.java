@@ -173,7 +173,7 @@ public class BillProcessorImpl implements BillProcessor {
         updatedContent = xmlContentProcessor.prepareForRenumber(updatedContent);
         updatedContent = numberService.renumberRecitals(updatedContent);
         updatedContent = numberService.renumberArticles(updatedContent);
-        updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        updatedContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedContent);
         return updatedContent;
     }
 
@@ -420,7 +420,7 @@ public class BillProcessorImpl implements BillProcessor {
 
     private byte[] renumberAndProcess(byte[] docContent, boolean renumberChildElements) {
         byte [] updatedContent = renumbering(docContent, renumberChildElements);
-        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedContent);
     }
 
     private byte[] getContent(Bill document) {

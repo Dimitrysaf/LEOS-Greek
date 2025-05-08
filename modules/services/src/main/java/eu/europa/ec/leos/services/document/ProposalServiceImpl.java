@@ -60,7 +60,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -220,9 +219,6 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
         //Do the xml update
         byte[] xmlBytes = proposal.getContent().get().getSource().getBytes();
-
-        Document document = createXercesDocument(xmlBytes);
-        NodeList nodeList = XercesUtils.getElementsByXPath(document, ".//akn:longTitle//*[@refersTo]");
 
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(xmlBytes,
                 keyValueMap,

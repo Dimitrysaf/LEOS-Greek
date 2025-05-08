@@ -17,7 +17,7 @@
                     <chapter xml:id="cha_UNLWxQ">
                         <num>#</num>
                         <heading>Chapter heading...</heading>
-                        <section leos:depth="2" xml:id="sec_WEoPGW">
+                        <section xml:id="sec_WEoPGW">
                             <num>#</num>
                             <heading>Section heading...</heading>
                             <level leos:depth="2" xml:id="akn_level_diwyvq">

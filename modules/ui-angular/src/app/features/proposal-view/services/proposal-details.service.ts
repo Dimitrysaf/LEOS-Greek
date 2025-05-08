@@ -218,7 +218,7 @@ export class ProposalDetailsService implements OnDestroy {
         responseType: 'blob',
       })
       .subscribe({
-        next: (blob) => downloadBlob(blob, `Proposal_${this.proposalRef}.zip`),
+        next: (blob) => downloadBlob(blob, `${this.proposalRef}.zip`),
         complete: () => this.loadingService.setLoading(false),
       });
   }

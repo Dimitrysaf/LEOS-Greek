@@ -204,6 +204,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(annex);
+        elementContent = elementProcessor.updateReferences(elementContent, annex);
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
         boolean splittedContentIsEmpty = false;
         Element elementToEditAfterClose = null;
@@ -349,7 +350,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 .build();
 
         Annex updatedAnnex = annexService.updateAnnex(annex,  resultXmlContent, annexMetadata, VersionType.MINOR,
-                messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+                messageHelper.getMessage("operation.restore.version", version.getVersionLabel()), true);
         this.setStructureContext(version.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getTemplate());
         return this.documentViewService.updateDocumentView(updatedAnnex);
     }

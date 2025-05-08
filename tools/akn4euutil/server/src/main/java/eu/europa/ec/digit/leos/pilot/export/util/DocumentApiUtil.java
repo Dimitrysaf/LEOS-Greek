@@ -22,7 +22,7 @@ public class DocumentApiUtil {
         } else {
             LOG.info(message, e);
         }
-        return new ResponseEntity<>(message + ": " + e.getMessage(), httpStatus);
+        return new ResponseEntity<>(message + ": " + e.getCause(), httpStatus);
     }
 
     public static ResponseEntity<Object> buildValidZipResponse(byte[] outputFile) {

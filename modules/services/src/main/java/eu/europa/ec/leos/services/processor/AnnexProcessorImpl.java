@@ -251,7 +251,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
                 updatedContent = numberService.renumberParagraph(updatedContent);
                 break;
         }
-        updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        updatedContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedContent);
         return updatedContent;
     }
 
@@ -347,7 +347,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         byte [] updatedContent = numberService.renumberLevel(docContent);
         updatedContent = numberService.renumberParagraph(updatedContent);
         updatedContent = numberService.renumberArticles(updatedContent);
-        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedContent);
     }
 
     @Override

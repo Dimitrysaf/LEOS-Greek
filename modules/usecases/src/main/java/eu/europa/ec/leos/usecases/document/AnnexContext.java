@@ -280,7 +280,7 @@ public class AnnexContext {
                 .withDocTemplate(template)
                 .build();
         
-        annex = annexService.updateAnnex(annex, xmlContent, annexMetadata, VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.ANNEX_STRUCTURE_UPDATED));
+        annex = annexService.updateAnnex(annex, xmlContent, annexMetadata, VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.ANNEX_STRUCTURE_UPDATED), true);
     }
     
     private byte[] getContent(Annex annex) {

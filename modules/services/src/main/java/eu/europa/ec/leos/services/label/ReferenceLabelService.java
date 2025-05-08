@@ -24,4 +24,6 @@ public interface ReferenceLabelService {
     Node getTargetDocument(String targetDocumentRef);
 
     String getTargetDocumentType(String targetDocumentRef, Node node);
+
+    Result<String> generateRefLabelForDocNode(Ref ref);
 }

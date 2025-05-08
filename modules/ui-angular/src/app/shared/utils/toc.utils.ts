@@ -1161,12 +1161,7 @@ export const isDeletableItem = (
     return (
       !(PARAGRAPH === elementName
         ? isLastExistingChildElement(tableOfContentItemVO, parentItem)
-        : false) &&
-      !hasTocItemTrackChangeAction(
-        tableOfContentItemVO,
-        LEOS_TC_DELETE_ACTION,
-      ) &&
-      !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)
+        : false)
     );
   }
 };

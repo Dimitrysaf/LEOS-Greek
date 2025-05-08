@@ -89,7 +89,7 @@ public class ElementProcessorImplTest extends LeosTest {
 
     @InjectMocks
     private ElementProcessorImpl elementServiceImpl = new ElementProcessorImpl(xmlContentProcessor, structureContextProvider,
-            cloneContext, xPathCatalog, documentContentService, compareService);
+            cloneContext, xPathCatalog);
 
     private List<TocItem> tocItems;
 

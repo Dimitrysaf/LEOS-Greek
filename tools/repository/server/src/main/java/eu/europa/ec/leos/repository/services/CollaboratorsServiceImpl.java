@@ -24,7 +24,10 @@ import eu.europa.ec.leos.repository.repositories.LeosClientsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +44,8 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
     private final PackageCollaboratorsRepository packageCollaboratorsRepository;
     private final PackageRepository packageRepository;
     private final LeosClientsRepository leosClientsRepository;
+
+    private static final Logger LOG = LoggerFactory.getLogger(CollaboratorsServiceImpl.class);
 
     public List<Collaborator> getCollaborators(Package pkg) {
         List<Collaborator> collaboratorList = new ArrayList<>();
@@ -65,29 +71,70 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         return Arrays.asList();
     }
 
-    public void updateCollaborators(Package pkg, List<Collaborator> collaboratorList, String userId) {
-        List<Collaborator> currentCollaboratorList = getCollaborators(pkg);
-        for (Collaborator c : collaboratorList) {
-            if (currentCollaboratorList.contains(c)) {
-                Collaborator foundC = currentCollaboratorList.get(currentCollaboratorList.indexOf(c));
-                if (!foundC.getRole().equals(c.getRole())) {
-                    updateCollaborator(pkg, c, foundC, userId);
+    @Transactional
+    public void deleteCollaborators(Package pkg, List<Collaborator> collaboratorList) {
+        List<PackageCollaborators> currentCollaboratorList = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg);
+        for (PackageCollaborators c : currentCollaboratorList) {
+            for (Collaborator nc : collaboratorList) {
+                if (nc.getLogin().equals(c.getCollaborator().getCollaboratorName())) {
+                    packageCollaboratorsRepository.delete(c);
                 }
-            } else {
-                updateCollaborator(pkg, c, null, userId);
             }
         }
-        for (Collaborator c : currentCollaboratorList) {
-            if (!collaboratorList.contains(c)) {
-                Optional<Collaborators> collaborator = findCollaborator(c);
-                if (collaborator.isPresent()) {
-                    Optional<PackageCollaborators> pkgCollaborators =
-                            packageCollaboratorsRepository.findPackageCollaboratorsByPkgAndCollaborator(pkg, collaborator.get());
-                    if (pkgCollaborators.isPresent()) {
-                        packageCollaboratorsRepository.delete(pkgCollaborators.get());
+    }
+
+    @Transactional
+    public void addCollaborators(Package pkg, List<Collaborator> collaboratorList, String userId) {
+        List<PackageCollaborators> currentCollaboratorList = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg);
+        List<Collaborator> toBeRemovedCollaboratorList = new ArrayList<>();
+        for (PackageCollaborators c : currentCollaboratorList) {
+            for (Collaborator nc : collaboratorList) {
+                if (nc.getLogin().equals(c.getCollaborator().getCollaboratorName())) {
+                    if (!nc.getRole().equals(c.getCollaborator().getRole())) {
+                        packageCollaboratorsRepository.delete(c);
+                    } else {
+                        toBeRemovedCollaboratorList.add(nc);
                     }
                 }
             }
+        }
+
+        for (Collaborator nc : toBeRemovedCollaboratorList) {
+            collaboratorList.remove(nc);
+        }
+        collaboratorList = collaboratorList.stream().distinct().collect(Collectors.toList());
+        for (Collaborator c : collaboratorList) {
+            updateCollaborator(pkg, c, userId);
+        }
+    }
+
+    @Transactional
+    public void updateCollaborators(Package pkg, List<Collaborator> collaboratorList, String userId) {
+        List<PackageCollaborators> currentCollaboratorList = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg);
+        List<Collaborator> toBeRemovedCollaboratorList = new ArrayList<>();
+        for (PackageCollaborators c : currentCollaboratorList) {
+            boolean found = false;
+            for (Collaborator nc : collaboratorList) {
+                if (nc.getLogin().equals(c.getCollaborator().getCollaboratorName())) {
+                    found = true;
+                    if (!nc.getRole().equals(c.getCollaborator().getRole())) {
+                        packageCollaboratorsRepository.delete(c);
+                    } else {
+                        toBeRemovedCollaboratorList.add(nc);
+                    }
+                }
+            }
+            if (!found) {
+                packageCollaboratorsRepository.delete(c);
+            }
+        }
+
+        for (Collaborator nc : toBeRemovedCollaboratorList) {
+            collaboratorList.remove(nc);
+        }
+        collaboratorList = collaboratorList.stream().distinct().collect(Collectors.toList());
+        for (Collaborator c : collaboratorList) {
+            updateCollaborator(pkg, c, userId);
         }
     }
 
@@ -122,7 +169,21 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         }
     }
 
-    private void updateCollaborator(Package pkg, Collaborator c, Collaborator previousC, String userId) {
+    public void addCollaborators(BigDecimal pkgId, List<Collaborator> collaboratorList, String userId) {
+        Optional<Package> pkg = packageRepository.findById(pkgId);
+        if (pkg.isPresent()) {
+            addCollaborators(pkg.get(), collaboratorList, userId);
+        }
+    }
+
+    public void deleteCollaborators(BigDecimal pkgId, List<Collaborator> collaboratorList) {
+        Optional<Package> pkg = packageRepository.findById(pkgId);
+        if (pkg.isPresent()) {
+            deleteCollaborators(pkg.get(), collaboratorList);
+        }
+    }
+
+    private void updateCollaborator(Package pkg, Collaborator c, String userId) {
         LocalDateTime creationDate = LocalDateTime.now();
         //Extend the search to wor
         final Optional<LeosClients> leosClient = (c.getLeosClientId()!=null)?leosClientsRepository.findByName(c.getLeosClientId()):Optional.empty();
@@ -149,30 +210,9 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         pkgCollaborator.setAuditCDate(creationDate);
         pkgCollaborator.setAuditLastMBy(userId);
         pkgCollaborator.setAuditLastMDate(creationDate);
-        if (previousC != null) {
-            Optional<Collaborators> prevCollaborators = findCollaborator(previousC);
-            if (prevCollaborators.isPresent()) {
-                Optional<PackageCollaborators> pkgCollaborators =
-                        packageCollaboratorsRepository.findPackageCollaboratorsByPkgAndCollaborator(pkg, prevCollaborators.get());
-                if (pkgCollaborators.isPresent()) {
-                    pkgCollaborator.setId(pkgCollaborators.get().getId());
-                    pkgCollaborator.setAuditCBy(pkgCollaborators.get().getAuditCBy());
-                    pkgCollaborator.setAuditCDate(pkgCollaborators.get().getAuditCDate());
-                }
-            }
-        }
         pkgCollaborator.setPackage(pkg);
         pkgCollaborator.setCollaborator(updatedCollaborators);
-        savePackageCollaborator(pkgCollaborator);
-    }
-
-    public void savePackageCollaborator(PackageCollaborators pkgCollaborator) {
-        Optional<PackageCollaborators> pkgC =
-                packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(pkgCollaborator.getPackage().getId(),
-                        pkgCollaborator.getCollaborator().getId());
-        if (!pkgC.isPresent() || pkgCollaborator.getId() != null) {
-            packageCollaboratorsRepository.save(pkgCollaborator);
-        }
+        packageCollaboratorsRepository.save(pkgCollaborator);
     }
 
     public void removeCollaborator(final String id) throws RepositoryException {

@@ -90,6 +90,7 @@ define(function leosPluginUtilsModule(require) {
     var DATA_INDENT_ORIGIN_TYPE = "data-indent-origin-type";
 
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
+    var DATA_AKN_TC_ORIGINAL_INDENT_ACTION = "data-akn-tc-original-indent-action";
 
     var LEOS_SOFTACTION = "leos:softaction";
     var DATA_AKN_NUM_SOFTACTION = "data-akn-num-attr-softaction";
@@ -513,6 +514,20 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
+    function _manageParagraphs(editor) {
+        var paragraphs = editor.element.find('li');
+        for (var i = 0; i < paragraphs.count(); i++) {
+            var paragraph = paragraphs.getItem(i);
+            if(_isParagraph(paragraph)) {
+                paragraph.getChildren().toArray().forEach(function(child) {
+                    if (child.type === CKEDITOR.NODE_TEXT && child.getText() === '') {
+                        child.remove();
+                    }
+                });
+            }
+        }
+    }
+
     // Check subparagraphs, if there is a subparagraph without text, it should be removed
     function _manageEmptySubparagraphs(editor) {
         var subparagraphs = editor.element.find('li');
@@ -601,6 +616,9 @@ define(function leosPluginUtilsModule(require) {
                 tmpElement = tmpElement.getParent();
             }
             element = !!tmpElement ? tmpElement : element;
+        }
+        if(!element.getParent()) {
+            return false;
         }
         return (_isSubparagraph(element) && element.getParent().getName().toLowerCase() != 'ol' && !element.$.previousSibling);
     }
@@ -1265,7 +1283,7 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
-    function _handleIndentAttributes(node, editor) {
+    function _handleIndentAttributes(node, editor, isIndent) {
         if (editor.LEOS.isTrackChangesEnabled && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
             var elementName = node.getAttribute(DATA_AKN_ELEMENT).toUpperCase();
             switch(elementName) {
@@ -1297,6 +1315,9 @@ define(function leosPluginUtilsModule(require) {
             }
             if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
                 node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
+            }
+            if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
+                node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
             }
             editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
         }
@@ -1670,6 +1691,7 @@ define(function leosPluginUtilsModule(require) {
         handleIndentAttributes : _handleIndentAttributes,
         moveChildren: _moveChildren,
         moveElementChildren: _moveElementChildren,
+        manageParagraphs: _manageParagraphs,
         managePoints: _managePoints,
         manageEmptyLists: _manageEmptyLists,
         manageEmptySubparagraphs: _manageEmptySubparagraphs,
@@ -1732,6 +1754,11 @@ define(function leosPluginUtilsModule(require) {
         CN: CN,
         DATA_AKN_NUM: DATA_AKN_NUM,
         DATA_AKN_NUM_ID: DATA_AKN_NUM_ID,
+        DATA_AKN_TC_ORIGINAL_INDENT_ACTION: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+        DATA_INDENT_ORIGIN_NUMBER: DATA_INDENT_ORIGIN_NUMBER,
+        DATA_INDENT_ORIGIN_NUMBER_ID: DATA_INDENT_ORIGIN_NUMBER_ID,
+        DATA_INDENT_ORIGIN_NUMBER_ORIGIN: DATA_INDENT_ORIGIN_NUMBER_ORIGIN,
+        DATA_INDENT_ORIGIN_TYPE: DATA_INDENT_ORIGIN_TYPE,
         DATA_INDENT_ORIGIN_NUM_ID: DATA_INDENT_ORIGIN_NUM_ID,
         DATA_AKN_WRAPPED_CONTENT_ID: DATA_AKN_WRAPPED_CONTENT_ID,
         DATA_AKN_MP_ID: DATA_AKN_MP_ID,

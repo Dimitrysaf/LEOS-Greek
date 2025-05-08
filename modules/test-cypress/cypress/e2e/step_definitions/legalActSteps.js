@@ -605,3 +605,11 @@ When(/^right click on article (\d+)$/, function (articleNumber) {
 When(/^click on delete icon of article (\d+)$/, function (articleNumber) {
     legalActPage.clickDeleteIconOfArticle(articleNumber);
 });
+
+Then(/^chapter (\d+) contains attribute "([^"]*)" with value "([^"]*)"$/, function (chapterNumber, attributeName, attributeValue) {
+    legalActPage.getChapter(chapterNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then(/^article (\d+) doesn't contain attribute "([^"]*)"$/, function (articleNumber, attributeName) {
+    legalActPage.getArticle(articleNumber).should('not.have.attr', attributeName);
+});

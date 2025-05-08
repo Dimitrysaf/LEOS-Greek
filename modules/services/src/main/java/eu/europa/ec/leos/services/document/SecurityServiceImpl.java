@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 // REFACTOR SecurityService API should probably be moved into WorkspaceService
@@ -54,5 +55,15 @@ class SecurityServiceImpl implements SecurityService {
         List<Collaborator> collaborators = document.getCollaborators();
         collaborators.removeIf(c -> userLogin.equals(c.getLogin()));
         return workspaceRepository.updateDocumentCollaborators(document.getMetadata().get().getRef(), id, collaborators, type);
+    }
+
+    @Override
+    public void addCollaborators(String packageId, String userId, List<Collaborator> collaborators) {
+        workspaceRepository.addCollaborators(packageId, userId, collaborators);
+    }
+
+    @Override
+    public void deleteCollaborators(String packageId, List<Collaborator> collaborators) {
+        workspaceRepository.deleteCollaborators(packageId, collaborators);
     }
 }

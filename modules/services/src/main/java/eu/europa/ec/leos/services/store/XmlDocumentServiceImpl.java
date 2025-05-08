@@ -6,15 +6,25 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
+import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
+import eu.europa.ec.leos.services.dto.coedition.UpdateCoEditionResponse;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.vo.coedition.InfoType;
+import io.atlassian.fugue.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,17 +39,21 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     private final PackageService packageService;
     private final WorkspaceService workspaceService;
     private final MessageHelper messageHelper;
+    private final SecurityContext securityContext;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     private static final List<LeosCategory> DOCUMENTS_TO_IGNORE = Arrays.asList(LeosCategory.PROPOSAL, LeosCategory.MEMORANDUM);
 
     @Autowired
     public XmlDocumentServiceImpl(LeosRepository leosRepository, XmlContentProcessor xmlContentProcessor, PackageService packageService,
-            WorkspaceService workspaceService, MessageHelper messageHelper) {
+                                  WorkspaceService workspaceService, MessageHelper messageHelper, SecurityContext securityContext, SimpMessagingTemplate simpMessagingTemplate) {
         this.leosRepository = leosRepository;
         this.xmlContentProcessor = xmlContentProcessor;
         this.packageService = packageService;
         this.workspaceService = workspaceService;
         this.messageHelper = messageHelper;
+        this.securityContext = securityContext;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @Override
@@ -50,30 +64,35 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
         List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
         for (XmlDocument document : documents) {
             String ref = document.getMetadata().get().getRef();
-            boolean isDifferentDocument = !ref.equals(message.getDocumentRef());
             boolean canProcess = DOCUMENTS_TO_IGNORE.stream().noneMatch(p -> document.getMetadata().get().getCategory().equals(p));
-            if (isDifferentDocument && canProcess) {
+            List<Element> updatedElts = new ArrayList<>();
+            if (canProcess) {
                 try {
                     XmlDocument xmlDocument = workspaceService.findDocumentById(document.getId(), XmlDocument.class);
-                    boolean updated = updateInternalReference(xmlDocument);
-                    LOG.debug("updateInternalReferences processed for {}, isXmlChanged {}: ", ref, updated);
+                    updatedElts = updateInternalReference(xmlDocument);
+                    LOG.debug("updateInternalReferences processed for {}, isXmlChanged {}: ", ref, !updatedElts.isEmpty());
                 } catch (Exception e) {
                     LOG.error("Error occurred calling updateInternalRef() for doc {}", ref, e);
                 }
             }
+            if (!updatedElts.isEmpty()) {
+                User user = securityContext.getUser();
+                simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + ref,
+                        new UpdateCoEditionResponse(user, null, ref, InfoType.DOCUMENT_POST_PROCESSING,
+                                updatedElts));
+            }
         }
     }
 
-    private boolean updateInternalReference(XmlDocument xmlDocument) throws Exception {
+    private List<Element> updateInternalReference(XmlDocument xmlDocument) throws Exception {
         byte[] content = xmlDocument.getContent().get().getSource().getBytes();
-        byte[] newContent = xmlContentProcessor.updateReferences(content);
-        boolean updated = ((newContent != null) && !Arrays.equals(newContent,content));
-        if(updated) {
+        Pair<byte[], List<Element>> result = xmlContentProcessor.updateReferences(content);
+        if(!result.right().isEmpty()) {
             String message = messageHelper.getMessage("internal.ref.checkinComment");
-            leosRepository.updateDocument(xmlDocument.getId(), newContent,
+            leosRepository.updateDocument(xmlDocument.getId(), result.left(),
                     (Map<String, Object>) updateDocumentProperties(xmlDocument.getMetadata().get()), VersionType.MINOR,
                     message, XmlDocument.class);
         }
-        return updated;
+        return result.right();
     }
 }

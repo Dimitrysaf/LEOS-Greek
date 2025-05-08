@@ -464,6 +464,7 @@ public class GenericDocumentApiService {
         StructureContext structure = this.getStructureContext();
         structure.useDocumentTemplate(this.getDocTemplate(document));
 
+        elementContent = elementProcessor.updateReferences(elementContent, document);
         byte[] newXmlContent = this.elementProcessor.updateElement(document, elementContent, elementName, elementId,
                 true);
         newXmlContent = this.xmlContentProcessor.doXMLPostProcessing(newXmlContent);
@@ -711,7 +712,7 @@ public class GenericDocumentApiService {
         }
         // we are combining two operations (get toc + get selected element ancestors)
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
-                xmlDocument.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN);
+                xmlDocument, TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
                 context.getNumberingConfigs(), xmlDocument.getMetadata().get().getLanguage());
     }

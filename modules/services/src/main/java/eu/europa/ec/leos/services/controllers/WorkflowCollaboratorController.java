@@ -104,7 +104,7 @@ public class WorkflowCollaboratorController {
             }
         }
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        collaboratorService.addCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, systemClientId);
+        collaboratorService.addCollaborator(proposal, userId, userId, roleName, connectedDG, proposalUrl, systemClientId);
     }
 
     /**

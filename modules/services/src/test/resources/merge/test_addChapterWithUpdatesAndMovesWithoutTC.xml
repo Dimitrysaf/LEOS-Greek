@@ -133,10 +133,10 @@
             </formula>
         </preamble>
         <body xml:id="ecCi6z52gDQBuz6ed">
-            <chapter leos:depth="1" xml:id="ecEy2yYLKugHkHMWs">
+            <chapter xml:id="ecEy2yYLKugHkHMWs">
                 <num xml:id="ecVNIUOvhrdhuqNwi">Chapter 1</num>
                 <heading xml:id="ecMx441KrjVTv0g4c">IntitulÃ© du Chapitre...</heading>
-                <article leos:autonumbering="true" leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecKhvPMzdjz0gwkyi" refersTo="~ART_DEF" xml:id="eciR7LQcISID7oGs5">
+                <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="ecKhvPMzdjz0gwkyi" refersTo="~ART_DEF" xml:id="eciR7LQcISID7oGs5">
                     <num leos:editable="true" leos:origin="ec" xml:id="ecjxYLuyQS97O3QJm">Article 1</num>
                     <heading xml:id="ec0zUH5kjTzvaIObN">Definitions</heading>
                     <paragraph xml:id="ec48MlA9PbWiYmAOR">
@@ -145,7 +145,7 @@
                         </content>
                     </paragraph>
                 </article>
-            </chapter><chapter leos:depth="1" leos:origin="ec" xml:id="ecSgPYRxsyHboa5U2">
+            </chapter><chapter leos:origin="ec" xml:id="ecSgPYRxsyHboa5U2">
             <num xml:id="ecm3WAp9k41ZVzG96">Chapter 2</num>
             <heading xml:id="ecYFHe8DuAmN3nEpI">IntitulÃ© du Chapitre
 
@@ -186,7 +186,7 @@
             </list>
 
             </paragraph>
-        </article><article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ec34EU7dLoi7miAPm" xml:id="impXart_d1e3059XecxFWu00Wfj5RIKLM">
+        </article><article leos:deletable="true" leos:editable="true" leos:listIdAttr="ec34EU7dLoi7miAPm" xml:id="impXart_d1e3059XecxFWu00Wfj5RIKLM">
             <num xml:id="ecSBoQS1m2LqbiLER">Article 3</num>
             <heading xml:id="ecMyT0200HztkN18O">Derogation to the application of liquidity requirements on an individual basis</heading>
             <paragraph xml:id="ecUpyGAzgtDityz98">
@@ -298,7 +298,7 @@
 
 
         </chapter>
-            <title leos:depth="1" xml:id="ecPELq4YhkN8fPjJY">
+            <title xml:id="ecPELq4YhkN8fPjJY">
                 <num xml:id="ecAZeYq9pcOLghJR0">Title I</num>
                 <heading xml:id="ecqPeZyuax7hNdKrB">IntitulÃ© du titre...</heading>
                 <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="eczzzFVWtS3Czor2g" leos:origin="ec" xml:id="ecsS3cB7DIW5ASm0R">
@@ -327,7 +327,7 @@
                         </content>
                     </paragraph>
                 </article>
-                <article leos:autonumbering="true" leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecdIrQ0Tb2hrt0e0e" xml:id="ecFoz8bdkkbHHZY05">
+                <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="ecdIrQ0Tb2hrt0e0e" xml:id="ecFoz8bdkkbHHZY05">
                     <num leos:editable="false" xml:id="ecCcKdHDtGCIUm1mb">Article 5</num>
                     <heading xml:id="eclNm3bkqfST334H7">Entry into force</heading>
                     <paragraph xml:id="ecaNNBpQo7OeKUJJv">
@@ -340,10 +340,10 @@
                     </paragraph>
                 </article>
             </title>
-            <chapter leos:depth="1" xml:id="ec3k9zplOk8pdQoUo">
+            <chapter xml:id="ec3k9zplOk8pdQoUo">
                 <num xml:id="ecn0TDEWg0324mNrC">Chapter 3</num>
                 <heading xml:id="ecu21YMuEgoIRv2E6">IntitulÃ© du Chapitre...</heading>
-                <article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecZdHbb0O0cAg00oY" xml:id="impXart_d1e2966XeczINChiCt4jIqlbo">
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="ecZdHbb0O0cAg00oY" xml:id="impXart_d1e2966XeczINChiCt4jIqlbo">
                     <num xml:id="ecZ33sxM8deOUhBEC">Article 6</num>
                     <heading xml:id="ecbzLJK0T1wOYc7M2">General principles</heading>
                     <paragraph xml:id="ecEYryrUhdvMUaot1">
@@ -377,7 +377,7 @@
                         </content>
                     </paragraph>
                 </article>
-                <article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecru6CBHo3LtTWtfz" xml:id="impXart_d1e2997Xec00tGmYwGEGOx6mE">
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="ecru6CBHo3LtTWtfz" xml:id="impXart_d1e2997Xec00tGmYwGEGOx6mE">
                     <num xml:id="ecTdghhHGGayGyido">Article 7</num>
                     <heading xml:id="ec6mWOTOvUmElS6Mm">Derogation to the application of prudential requirements on an individual basis</heading>
                     <paragraph xml:id="ecf9svD7kRPkwD9VR">

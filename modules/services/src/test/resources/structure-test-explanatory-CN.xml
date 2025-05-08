@@ -546,6 +546,7 @@
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
             <maxDepth>7</maxDepth>
+            <depthEnabled>true</depthEnabled>
         </tocItem>
 
         <tocItem>

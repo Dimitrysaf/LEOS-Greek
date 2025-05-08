@@ -8,7 +8,7 @@ Feature: financial statement page regression features
     Given navigate to edit drafting application with "User1"
     Then user is on home page
 
-  @addAndDeleteFinancialStatement @local
+  @operationInFinancialStatement @local
   Scenario: add section for financial statement document on Proposal Screen
     When click on Create act button
     Then user is on create new legislative document window
@@ -151,3 +151,43 @@ Feature: financial statement page regression features
     Then repeated subparagraph group after should exist
     When click on insert group before icon of repeatable subparagraph
     Then repeated subparagraph group before should exist
+
+  @LFDSConfiguration @local
+  Scenario: LFDS configuration of document depending on template
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing LFDS configuration SJ-023" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    And  delete button of financial statement is displayed
+    When click on delete button of financial statement
+    Then "Digital financial statement deletion: confirmation" dialog box window is displayed
+    And  dialog box body contains "Are you sure you want to delete the digital financial statement?"
+    And  dialog box body contains "A justification of this removal should be provided in the Explanatory Memorandum"
+    When click on delete button in dialog box window
+    Then " There is no digital financial statement in this document " is displayed
+    And  add button is displayed under financial statement section
+    When click on add button in financial statement section
+    Then delete button of financial statement is displayed
+    When click on home button
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-025" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing LFDS configuration SJ-025" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    And  " There is no digital financial statement in this document " is displayed
+    And  add button is displayed under financial statement section
+    When click on add button in financial statement section
+    Then delete button of financial statement is displayed
+    When click on delete button of financial statement
+    Then "Digital financial statement deletion: confirmation" dialog box window is displayed
+    And  dialog box body contains "Are you sure you want to delete the digital financial statement?"
+    And  dialog box body doesn't contain "A justification of this removal should be provided in the Explanatory Memorandum"
+    When click on delete button in dialog box window
+    Then " There is no digital financial statement in this document " is displayed
+    And  add button is displayed under financial statement section

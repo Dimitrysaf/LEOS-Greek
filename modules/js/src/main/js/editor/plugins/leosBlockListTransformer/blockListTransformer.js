@@ -29,6 +29,8 @@ define(function blockListTransformer(require) {
     var DATA_AKN_UID_NUMBER = "data-akn-uid-number";
     var TITLE_NUMBER = "title-number";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
+    var LEOS_TC_ORIGINAL_INDENT_ACTION = "leos:tc-original-indent-action";
+    var DATA_AKN_TC_ORIGINAL_INDENT_ACTION = "data-akn-tc-original-indent-action";
     var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
     var DATA_AKN_UID_ENTER = "data-akn-uid-enter";
     var DATA_AKN_TITLE_ENTER = "title-enter";
@@ -225,6 +227,10 @@ define(function blockListTransformer(require) {
                                              from: "leos:tc-original-number",
                                              to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                              action: "passAttributeTransformer"
+                                         }, {
+                                            from: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                            to: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                            action: "passAttributeTransformer"
                                          }]
                                     }]);
 
@@ -285,6 +291,10 @@ define(function blockListTransformer(require) {
                                                 from: "leos:tc-original-number",
                                                 to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                 action: "passAttributeTransformer"
+                                            }, {
+                                                from: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                                to: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                action: "passAttributeTransformer"
                                             }]
                                         });
                                     }
@@ -319,6 +329,10 @@ define(function blockListTransformer(require) {
                                         }, {
                                             from: "leos:tc-original-number",
                                             to: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                            to: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
                                             action: "passAttributeTransformer"
                                         }]
                                     });
@@ -364,6 +378,10 @@ define(function blockListTransformer(require) {
                                              from: "leos:tc-original-number",
                                              to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                              action: "passAttributeTransformer"
+                                         }, {
+                                            from: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                            to: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                            action: "passAttributeTransformer"
                                          }]
 //-------------
                                     });
@@ -522,6 +540,10 @@ define(function blockListTransformer(require) {
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                     to: "leos:tc-original-number",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                    to: LEOS_TC_ORIGINAL_INDENT_ACTION,
                                                     action: "passAttributeTransformer"
                                                 }]
                                             }, {
@@ -699,6 +721,10 @@ define(function blockListTransformer(require) {
                                                         from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                         to: "leos:tc-original-number",
                                                         action: "passAttributeTransformer"
+                                                    }, {
+                                                        from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                        to: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                                        action: "passAttributeTransformer"
                                                     }]
                                                 });
                                                 this.mapToChildProducts(element, {
@@ -726,6 +752,10 @@ define(function blockListTransformer(require) {
                                                     }, {
                                                         from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                         to: "leos:tc-original-number",
+                                                        action: "passAttributeTransformer"
+                                                    }, {
+                                                        from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                        to: LEOS_TC_ORIGINAL_INDENT_ACTION,
                                                         action: "passAttributeTransformer"
                                                     }]
                                                 });
@@ -862,6 +892,10 @@ define(function blockListTransformer(require) {
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                 to: "leos:tc-original-number",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                to: LEOS_TC_ORIGINAL_INDENT_ACTION,
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_ACTION_ENTER,

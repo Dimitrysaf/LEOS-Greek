@@ -73,7 +73,11 @@ define(function leosTransformerPluginModule(require) {
         - empty node is the last point of a List removing it means removing also the List.
         - the list contains an intro subparagraph remove it outside the list structure
         */
-        eventDataAsObject.find("ol[data-akn-name='aknOrderedList']").each(function( index, elem ){
+        var olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknOrderedList']");
+        if(!olOrderedList || olOrderedList.length == 0){
+            olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknAnnexOrderedList']");
+        }
+        olOrderedList.each(function( index, elem ){
             if (this.childElementCount == 1 && this.childNodes[0].getAttribute("data-akn-element") !== "point"){
                 for (var i = 0; i < this.firstChild.childNodes.length; i++){
                     this.parentElement.appendChild(this.firstChild.childNodes[i]);
@@ -92,7 +96,9 @@ define(function leosTransformerPluginModule(require) {
         var isPBeforeTable = $(elem).is('p') && $(elem).prev().is('table');
         var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
         isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList;
-        if (($(elem).parents('table').length === 0) && !$(elem).attr("refersto") && !isPBeforeTable &&
+        if (($(elem).parents('table').length === 0)
+            && (!$(elem).attr("refersto") || $(elem).attr("refersto") === '~WRP')
+            && !isPBeforeTable &&
             UTILS.isEmptyElement(elem) && ($.trim($(elem).text()) === '')) {
             var parent = $(elem).parent();
             $(elem).remove();

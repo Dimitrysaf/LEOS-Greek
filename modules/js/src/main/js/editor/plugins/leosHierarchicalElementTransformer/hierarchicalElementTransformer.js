@@ -53,6 +53,8 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_UID_ENTER = "data-akn-uid-enter";
     var DATA_AKN_TITLE_ENTER = "title-enter";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
+    var LEOS_TC_ORIGINAL_INDENT_ACTION = "leos:tc-original-indent-action";
+    var DATA_AKN_TC_ORIGINAL_INDENT_ACTION = "data-akn-tc-original-indent-action";
     var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
     var DATA_AKN_RENUMBER_ORIGIN = "data-akn-renumber-origin";
     var LEOS_ID_TO_BE_REMOVED = "leos:id-to-be-removed";
@@ -205,6 +207,10 @@ define(function hierarchicalElementTransformer(require) {
                     }, {
                         from: DATA_AKN_TC_ORIGINAL_NUMBER,
                         to: "leos:tc-original-number",
+                        action: "passAttributeTransformer"
+                    }, {
+                        from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                        to: LEOS_TC_ORIGINAL_INDENT_ACTION,
                         action: "passAttributeTransformer"
                     }, {
                         from: DATA_AKN_ACTION_ENTER,
@@ -820,6 +826,10 @@ define(function hierarchicalElementTransformer(require) {
                                             to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                             action: "passAttributeTransformer"
                                         }, {
+                                            from: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                            to: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                            action: "passAttributeTransformer"
+                                        }, {
                                             from: "leos:action-enter",
                                             to: DATA_AKN_ACTION_ENTER,
                                             action: "passAttributeTransformer"
@@ -881,6 +891,10 @@ define(function hierarchicalElementTransformer(require) {
                                     }, {
                                         from: "leos:tc-original-number",
                                         to: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                        to: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
                                         action: "passAttributeTransformer"
                                     }]
                                 });
@@ -952,6 +966,10 @@ define(function hierarchicalElementTransformer(require) {
                                     }, {
                                         from: "leos:tc-original-number",
                                         to: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                        to: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
                                         action: "passAttributeTransformer"
                                     }]
                                 });
@@ -1670,6 +1688,10 @@ define(function hierarchicalElementTransformer(require) {
                                                     to: "leos:tc-original-number",
                                                     action: "passAttributeTransformer"
                                                 }, {
+                                                    from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                    to: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                                    action: "passAttributeTransformer"
+                                                }, {
                                                     to: "leos:action-number",
                                                     toValue: DELETE,
                                                     action: "passAttributeTransformer"
@@ -1702,6 +1724,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                     to: "leos:tc-original-number",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                    to: LEOS_TC_ORIGINAL_INDENT_ACTION,
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -1983,6 +2009,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                 to: "leos:tc-original-number",
                                                 action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                to: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                                action: "passAttributeTransformer"
                                             }]
                                         }, {
                                             toPath: [rootsElementsPathForFrom, "num"].join("/"),
@@ -2065,6 +2095,10 @@ define(function hierarchicalElementTransformer(require) {
                                                     to: "leos:tc-original-number",
                                                     action: "passAttributeTransformer"
                                                 }, {
+                                                    from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                    to: LEOS_TC_ORIGINAL_INDENT_ACTION,
+                                                    action: "passAttributeTransformer"
+                                                }, {
                                                     to: "leos:action-number",
                                                     toValue: DELETE,
                                                     action: "passAttributeTransformer"
@@ -2097,6 +2131,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                     to: "leos:tc-original-number",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                    to: LEOS_TC_ORIGINAL_INDENT_ACTION,
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -2236,6 +2274,10 @@ define(function hierarchicalElementTransformer(require) {
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                 to: "leos:tc-original-number",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
+                                                to: LEOS_TC_ORIGINAL_INDENT_ACTION,
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_ACTION_ENTER,

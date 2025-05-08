@@ -67,7 +67,7 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
         } else {
             updatedContent = xmlContentProcessor.appendElementToTag(xmlContent, "attachments", createAttachmentTag(href, showAs), false);
         }
-        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedContent);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
                 parentNode.appendChild(node);
             });
             xmlContent = xercesUtils.nodeToByteArray(document);
-            xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
+            xmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
         }
         return xmlContent;
     }

@@ -54,7 +54,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
@@ -482,7 +481,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 annexService.updateAnnex((Annex) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
                 break;
             case BILL:
-                billService.updateBill((Bill) xmlDocument, xmlContent, versionComment);
+                billService.updateBill((Bill) xmlDocument, xmlContent, versionComment, true);
                 break;
             case STAT_DIGIT_FINANC_LEGIS:
                 financialStatementService.updateFinancialStatement((FinancialStatement) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
@@ -602,7 +601,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     public XmlDocument updateDocument(XmlDocument document, byte[] xmlContent, String message) {
         switch (document.getCategory()) {
             case BILL:
-                document = billService.updateBill((Bill) document, xmlContent, message);
+                document = billService.updateBill((Bill) document, xmlContent, message, true);
                 break;
             case MEMORANDUM:
                 document = memorandumService.updateMemorandum((Memorandum) document, xmlContent, message);
@@ -624,7 +623,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 throw new UnsupportedOperationException("Invalid Document Type category : " + document.getCategory());
         }
         try {
-            document = updateInternalReferencesAsync(document, LeosCategoryClass.caseInsensitiveValueOf(document.getCategory().name()));
+            updateInternalReferencesAsync(document, LeosCategoryClass.caseInsensitiveValueOf(document.getCategory().name()));
             if(!document.getCategory().equals(LeosCategoryClass.PROPOSAL)) {
                 updateProposalAsync(document, message);
             }
@@ -635,7 +634,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return document;
     }
 
-    private XmlDocument updateInternalReferencesAsync(XmlDocument document, LeosCategoryClass category) {
+    private void updateInternalReferencesAsync(XmlDocument document, LeosCategoryClass category) {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(document.getId(),
                     document.getMetadata().get().getRef()));
@@ -643,8 +642,6 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
-        //fetch updated version
-        return getDocumentById(document.getId(), category);
     }
 
     private void updateDocPurposeInChildDocuments(Proposal proposal, String message) {

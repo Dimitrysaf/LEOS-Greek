@@ -162,21 +162,6 @@ Feature: Legal Act Page Regression Features
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is maximized
-    And  toc editing button is displayed and enabled
-    When click search button in ribbon toolbar
-    Then document search bar is displayed
-    When put keyword "regard" in document search input box
-    Then search result is showing "1 of 7"
-    And  number of focus search result is 1
-    And  number of other search results are 6
-    When click next button in document search bar
-    Then search result is showing "2 of 7"
-    When click next button in document search bar
-    Then search result is showing "3 of 7"
-    When click previous button in document search bar
-    Then search result is showing "2 of 7"
-    When click on cancel button in document search bar
-    Then document search bar is not present
     When click on toc edit button
     Then cancel button is displayed and enabled in navigation pane
     Then below element lists are displayed in Elements menu
@@ -903,3 +888,148 @@ Feature: Legal Act Page Regression Features
     Then "Archive Version" dialog box window is displayed
     And  click on archive button
     Then subversion of recent changes version card doesn't contain "Article 1 updated"
+
+  # Ticket LEOS#2446 : Error with functionality 'Add Subparagraph' in article edition
+  @addSubParagraph @local
+  Scenario: test add subparagraph functionality for first subparagraph inside article
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation test add subparagraph plugin for article" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click on add subparagraph icon present in ck editor panel
+    And  add "subparagraph 1" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph 1 of paragraph 1 of article 1 contains "Text..."
+    And  content of subparagraph 2 of paragraph 1 of article 1 contains "subparagraph 1"
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of pTag 1 with data-akn-element "subparagraph" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click on add subparagraph icon present in ck editor panel
+    And  add "subparagraph 2" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph 1 of paragraph 1 of article 1 contains "Text..."
+    And  content of subparagraph 2 of paragraph 1 of article 1 contains "subparagraph 2"
+    And  content of subparagraph 3 of paragraph 1 of article 1 contains "subparagraph 1"
+
+  @searchAndReplaceLimitNumbers @local
+  Scenario: search and limit numbers and replace search word
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation search and replace testing" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And  search button is displayed in ribbon toolbar
+    When click search button in ribbon toolbar
+    Then document search bar is displayed
+    When put keyword "the" in document search input box
+    Then search result is showing "1 of 26"
+    Then total occurrences of keyword "the" is "26"
+    When click on the replace button from search bar
+    Then document replace bar is displayed
+    When put keyword "that" in replace document search input box
+    When click on replace all button from document replace bar
+    Then "Replace all text" dialog box window is displayed
+    When click on ok button in dialog box window
+    And  click on save and close button from search bar
+    And  click search button in ribbon toolbar
+    Then document search bar is displayed
+    When put keyword "the" in document search input box
+    Then total occurrences of keyword "the" is "0"
+    And  search result is showing "Not Found"
+    When put keyword "regard" in document search input box
+    Then search result is showing "1 of 4"
+    And  number of focus search result is 1
+    And  number of other search results are 3
+    When click next button in document search bar
+    Then search result is showing "2 of 4"
+    When click next button in document search bar
+    Then search result is showing "3 of 4"
+    When click previous button in document search bar
+    Then search result is showing "2 of 4"
+    When click on cancel button in document search bar
+    Then document search bar is not present
+
+  @multiDragAndDrop @higherDivisionValidation @local
+  Scenario: user is able to drag and drop multiple element with same type
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation multi drag and drop testing" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When drag element "Chapter" from element tree list and drop before node label "Article 1 - Scope 1. Text..." in navigation pane
+    Then success message "Chapter has been added successfully!" is displayed in navigation pane
+    And  success message disappears from table of content
+    And  ngContent "Chapter # Chapter heading..." is showing as bold in toc
+    When drag element "Section" from element tree list and drop before node label "Article 1 - Scope 1. Text..." in navigation pane
+    Then ngContent "Section # Section heading..." is showing as bold in toc
+    And  warning symbol is displayed in navigation pane
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  warning symbol is displayed in navigation pane
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
+    When click on toc edit button
+    And  click on ngContent "Section 1 Section heading..." from navigation pane along with control button from keyboard
+    And  click on ngContent "Article 1 - Scope 1. Text..." from navigation pane along with control button from keyboard
+    Then below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
+      | Only elements of the same type can be selected together.                                               |
+    When click on ngContent "Article 1 - Scope 1. Text..." from navigation pane
+    And  click on ngContent "Article 2 - Definitions Text..." from navigation pane along with control button from keyboard
+    And  drag node label "Article 1 - Scope 1. Text..." and drop to node label "Section 1 Section heading..." in navigation pane
+    And  wait for 5000 milliseconds
+    Then below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+    And  node label "Section 1 Section heading..." contains node label "Article 1 -"
+    And  node label "Section 1 Section heading..." contains node label "Article 2 -"
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
+    And  node label "Section 1 - Section heading..." contains node label "Article 1 -"
+    And  node label "Section 1 - Section heading..." contains node label "Article 2 -"

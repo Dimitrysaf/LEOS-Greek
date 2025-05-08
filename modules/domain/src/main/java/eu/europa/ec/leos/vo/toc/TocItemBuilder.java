@@ -46,6 +46,7 @@ public class TocItemBuilder {
     protected String maxDepth;
     protected ActionPositions actionsPosition;
     protected DapInfos dapInfos;
+    protected boolean depthEnabled;
 
     private TocItemBuilder() {
     }
@@ -167,6 +168,10 @@ public class TocItemBuilder {
         this.dapInfos = dapInfos;
         return this;
     }
+    public TocItemBuilder withDepthEnabled(boolean depthEnabled) {
+        this.depthEnabled = depthEnabled;
+        return this;
+    }
     public TocItem build() {
         TocItem tocItem = new TocItem();
         tocItem.setAknTag(aknTag);
@@ -191,6 +196,7 @@ public class TocItemBuilder {
         tocItem.setMaxDepth(maxDepth);
         tocItem.setActionsPosition(actionsPosition);
         tocItem.setDapInfos(dapInfos);
+        tocItem.setDepthEnabled(depthEnabled);
         return tocItem;
     }
 }

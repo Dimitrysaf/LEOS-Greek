@@ -251,7 +251,7 @@ public class BillContextService {
         Validate.notNull(bill, "Bill is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
         byte[] content = this.postProcessingDocumentService.updateReferences(bill.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
-        billService.updateBill(bill.getId(), content);
+        billService.updateBill(bill.getId(), content, false);
     }
 
     public Bill executeCreateBill() {
@@ -317,16 +317,16 @@ public class BillContextService {
         }
     
         final String updateRefsComment = messageHelper.getMessage("internal.ref.updatedOnImport");
-        final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessing(bill.getContent().get().getSource().getBytes()); //updateRefs
-        bill = billService.updateBill(bill, updatedBytes, updateRefsComment);
+        final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(bill.getContent().get().getSource().getBytes()); //updateRefs
+        bill = billService.updateBill(bill, updatedBytes, updateRefsComment, false);
 
         for (Annex annex : annexes) {
             DocumentVO docChild = billDocument.getChildDocuments().stream()
                     .filter(p -> Integer.parseInt(p.getMetadata().getIndex()) == annex.getMetadata().get().getIndex())
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
-            byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
-            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment);
+            byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(docChild.getSource());  //updateRefs
+            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false);
             idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
             refsMatching.put(docChild.getRef(), annex);
         }
@@ -421,7 +421,7 @@ public class BillContextService {
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
-            billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
+            billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
             if(isAnnexToBeUpdated) {
                 // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
                 List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);

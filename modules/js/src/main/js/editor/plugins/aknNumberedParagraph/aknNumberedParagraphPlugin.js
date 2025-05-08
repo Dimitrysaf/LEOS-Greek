@@ -26,6 +26,9 @@ define(function aknNumberedParagraphPluginModule(require) {
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
+    var DATA_INDENT_ACTION = "data-indent-action";
+    var LEOS_INDENT_ACTION = "leos:data-indent-action";
+
     var DATA_INDENT_ORIGIN_LEVEL = "data-indent-origin-indent-level";
     var DATA_INDENT_ORIGIN_NUMBER = "data-indent-origin-num";
     var DATA_INDENT_ORIGIN_NUMBER_ID = "data-indent-origin-num-id";
@@ -585,6 +588,9 @@ define(function aknNumberedParagraphPluginModule(require) {
                 akn: 'leos:softtrans_from',
                 html: 'data-akn-attr-softtrans_from'
             }, {
+                akn: LEOS_INDENT_ACTION,
+                html: DATA_INDENT_ACTION
+            }, {
                 akn: LEOS_INDENT_ORIGIN_TYPE,
                 html: DATA_INDENT_ORIGIN_TYPE
             }, {
@@ -621,6 +627,9 @@ define(function aknNumberedParagraphPluginModule(require) {
             }, {
                 akn: "leos:tc-original-number",
                 html: "data-akn-tc-original-number"
+            }, {
+                akn: "leos:tc-original-indent-action",
+                html: "data-akn-tc-original-indent-action"
             }, {
                 akn : "leos:action",
                 html : "data-akn-action"
