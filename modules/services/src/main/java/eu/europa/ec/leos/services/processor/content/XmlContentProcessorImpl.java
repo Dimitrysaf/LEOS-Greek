@@ -1463,7 +1463,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 parentStatementsOfReferences.put(id, completeStatement);
 
                 if (isRefConfigEnabled) {
-                    Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
+                    Result<String> labelResult;
+                    if (refs.size() == 1 && refs.get(0).isDocNodeRef()) {
+                        labelResult = referenceLabelService.generateRefLabelForDocNode(refs.get(0));
+                    } else {
+                        labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
+                    }
                     if (labelResult.isOk()) {
                         String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
                         String updatedMrefContent = labelResult.get();
@@ -1522,13 +1527,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 parentStatementsOfReferences.put(id, completeStatement);
 
                 if (isRefConfigEnabled) {
-                    Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), wholeDoc, capital);
+                    Result<String> labelResult;
+                    if (refs.size() == 1 && refs.get(0).isDocNodeRef()) {
+                        labelResult = referenceLabelService.generateRefLabelForDocNode(refs.get(0));
+                    } else {
+                        labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), wholeDoc, capital);
+                    }
                     if (labelResult.isOk()) {
                         String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
                         String updatedMrefContent = labelResult.get();
                         if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
                             mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
                             updated = true;
+                        } else {
+                            updated = hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true");
                         }
                         removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
                     } else {

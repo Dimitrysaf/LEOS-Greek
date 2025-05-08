@@ -102,7 +102,6 @@ export class DocumentComponent
   }
 
   ngOnDestroy(): void {
-    this.loadingService.reset('post-processing');
     this.documentService.setIsEditorOpen(false);
     this.bookmarkMutationObserver?.disconnect();
     if (!this.readonly) {
@@ -125,7 +124,6 @@ export class DocumentComponent
   }
 
   ngOnInit(): void {
-    this.loadingService.reset('post-processing');
     if (!this.readonly) {
       this.documentService.refreshView$
         .pipe(takeUntil(this.destroy$))
@@ -256,7 +254,7 @@ export class DocumentComponent
         .subscribe((coEditionUpdate) => {
           if (!!coEditionUpdate && coEditionUpdate.documentId === this.documentService.documentRef) {
             this.updateElementsInContent(coEditionUpdate);
-            this.loadingService.setTaskOver('post-processing', this.documentService.documentRef);
+            this.loadingService.showPostProcessingEnded();
           }
         });
       this.initTrackChangesActions();

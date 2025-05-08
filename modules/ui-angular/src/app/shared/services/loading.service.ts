@@ -17,12 +17,28 @@ export class LoadingService {
     });
   }
 
+  showPostProcessingStarted() {
+    this.showOrHideTask('post-processing', null, true);
+    setTimeout(() => {
+      this.showOrHideTask('post-processing', null, false);
+    }, 2000);
+  }
+
+  showPostProcessingEnded() {
+    this.appShellService.growl({
+      severity: 'success',
+      summary: this.translate.instant('task.over'),
+      detail: this.translate.instant('task.post-processing.done'),
+      life: 2000,
+    });
+  }
+
   showOrHideTask(taskName: string, key: string, ongoing: boolean) {
     if (ongoing) {
       if (
         !this.tasksOngoing.some(
           (i) => i.name === taskName && i.key === key,
-        ) || taskName === 'post-processing'
+        )
       ) {
         this.tasksOngoing.push({
           name: taskName,
@@ -54,47 +70,19 @@ export class LoadingService {
             ' '),
       );
     if (this.tasksOngoing.length > 0) {
-      if (target.trim() === this.translate.instant('task.post-processing.ongoing')) {
-        this.appShellService.growl({
+      this.appShellService.growl({
           severity: 'info',
-          summary: 'Tasks ongoing',
-          detail: target,
-          life: 3000,
-        });
-
-      } else {
-        this.appShellService.growl({
-          severity: 'info',
-          summary: 'Tasks ongoing',
+          summary: this.translate.instant('task.ongoing'),
           detail: target,
           sticky: true,
         }, true);
-      }
-    } else if (taskName !== 'post-processing') {
+    } else {
         this.appShellService.growl({
           severity: 'info',
-          summary: 'Tasks over',
+          summary: this.translate.instant('task.over'),
           detail: target,
           life: 1,
         });
-    }
-    if (taskName === 'post-processing' && !ongoing) {
-      this.appShellService.growl({
-        severity: 'success',
-        summary: 'Tasks over',
-        detail: this.translate.instant('task.' + taskName + '.done'),
-        life: 3000,
-      });
-    }
-  }
-
-  reset(task: string) {
-    this.tasksOngoing = this.tasksOngoing.filter(
-      (item) =>
-        item.name !== task,
-    );
-    if (this.tasksOngoing.length === 0) {
-      this.appShellService.clearGrowl();
     }
   }
 
