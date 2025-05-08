@@ -1317,6 +1317,7 @@ define(function leosArticleListPluginModule(require) {
                         }
 
                     }
+                    leosPluginUtils.manageParagraphs(editor);
                     leosPluginUtils.manageEmptyLists(editor);
                     leosPluginUtils.managePoints(editor);
                     leosPluginUtils.manageEmptySubparagraphs(editor);

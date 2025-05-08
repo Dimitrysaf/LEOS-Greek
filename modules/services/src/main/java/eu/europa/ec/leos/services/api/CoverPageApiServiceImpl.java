@@ -195,6 +195,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         // Check if new doc purpose is not empty
         if (docPurpose != null && docPurpose.trim().replaceAll("(^\\h*)|(\\h*$)", "").length() > 0) {
 
+            elementFragment = elementProcessor.updateReferences(elementFragment, proposal);
             byte[] newXmlContent =
                     !docPurposeElements.isEmpty() ? xmlContentProcessor.replaceElementById(proposalContent,
                             elementFragment,

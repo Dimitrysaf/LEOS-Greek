@@ -26,7 +26,7 @@ public abstract class SaveTocBillProposalTest_IT extends SaveTocProposalTest_IT 
         byte[] xmlResult = xmlContentProcessor.createDocumentContentWithNewTocList(toc, xmlInput, getJaneTestUser(), false);
         xmlResult = numberService.renumberArticles(xmlResult);
         xmlResult = numberService.renumberRecitals(xmlResult);
-        xmlResult = xmlContentProcessor.doXMLPostProcessing(xmlResult);
+        xmlResult = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlResult);
         return xmlResult;
     }
 

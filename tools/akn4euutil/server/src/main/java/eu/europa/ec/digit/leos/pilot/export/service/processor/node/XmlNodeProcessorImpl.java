@@ -49,6 +49,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             }
         } catch (Exception e) {
             LOG.error("Error parsing XML", e);
+            throw new RuntimeException("Error parsing XML", e);
         }
         return metaDataMap;
     }

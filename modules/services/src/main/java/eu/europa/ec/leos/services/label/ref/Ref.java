@@ -8,6 +8,7 @@ public class Ref {
     private final String documentref;
     private final String origin;
     private String refValue;
+    private boolean isDocNodeRef;
 
     public Ref(String id, String href, String documentref, String origin) {
         this.id = id;
@@ -16,12 +17,13 @@ public class Ref {
         this.origin = origin;
     }
 
-    public Ref(String id, String href, String documentref, String origin, String refValue) {
+    public Ref(String id, String href, String documentref, String origin, String refValue, boolean isDocNodeRef) {
         this.id = id;
         this.href = href;
         this.documentref = documentref;
         this.origin = origin;
         this.refValue = refValue;
+        this.isDocNodeRef = isDocNodeRef;
     }
 
     public String getId() {
@@ -41,6 +43,8 @@ public class Ref {
     }
 
     public String getRefVal() { return  refValue; }
+
+    public boolean isDocNodeRef() {return this.isDocNodeRef; }
 
     @Override
     public boolean equals(Object o) {

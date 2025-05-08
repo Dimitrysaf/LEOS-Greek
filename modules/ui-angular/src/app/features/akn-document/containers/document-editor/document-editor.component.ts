@@ -862,9 +862,6 @@ export class DocumentEditorComponent
     this.documentTocComponent.messageFromValidation = null;
     this.tocService.displayOriginalToc();
     this.documentTocComponent.isDropValid = null;
-    this.documentTocComponent.isTreeValidationWarning = null;
-    this.documentTocComponent.isSelectionWarning = false;
-    this.documentTocComponent.showWarningIcon = false;
     this.tocService.setIsEditMode(false);
     this.documentTocComponent.resetTreeState();
     this.documentTocComponent.clearHighlightInvalidNodes();

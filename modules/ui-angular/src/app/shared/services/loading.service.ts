@@ -22,7 +22,7 @@ export class LoadingService {
       if (
         !this.tasksOngoing.some(
           (i) => i.name === taskName && i.key === key,
-        )
+        ) || taskName === 'post-processing'
       ) {
         this.tasksOngoing.push({
           name: taskName,
@@ -36,7 +36,7 @@ export class LoadingService {
     ) {
       this.tasksOngoing = this.tasksOngoing.filter(
         (item) =>
-          item.name !== taskName && item.key !== key,
+          item.name !== taskName || item.key !== key,
       );
     }
     let target = '';
@@ -54,19 +54,47 @@ export class LoadingService {
             ' '),
       );
     if (this.tasksOngoing.length > 0) {
+      if (target.trim() === this.translate.instant('task.post-processing.ongoing')) {
+        this.appShellService.growl({
+          severity: 'info',
+          summary: 'Tasks ongoing',
+          detail: target,
+          life: 3000,
+        });
+
+      } else {
+        this.appShellService.growl({
+          severity: 'info',
+          summary: 'Tasks ongoing',
+          detail: target,
+          sticky: true,
+        }, true);
+      }
+    } else if (taskName !== 'post-processing') {
+        this.appShellService.growl({
+          severity: 'info',
+          summary: 'Tasks over',
+          detail: target,
+          life: 1,
+        });
+    }
+    if (taskName === 'post-processing' && !ongoing) {
       this.appShellService.growl({
-        severity: 'info',
-        summary: 'Tasks ongoing',
-        detail: target,
-        sticky: true,
-      });
-    } else {
-      this.appShellService.growl({
-        severity: 'info',
+        severity: 'success',
         summary: 'Tasks over',
-        detail: target,
-        life: 1,
+        detail: this.translate.instant('task.' + taskName + '.done'),
+        life: 3000,
       });
+    }
+  }
+
+  reset(task: string) {
+    this.tasksOngoing = this.tasksOngoing.filter(
+      (item) =>
+        item.name !== task,
+    );
+    if (this.tasksOngoing.length === 0) {
+      this.appShellService.clearGrowl();
     }
   }
 

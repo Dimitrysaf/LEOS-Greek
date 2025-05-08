@@ -87,6 +87,9 @@ define(function leosCrossReferenceDialog(require) {
                                     if (tabRef && tabRef.lastIndexOf('.') > 0) {
                                         tabRef = tabRef.substring(0, tabRef.lastIndexOf('.'));
                                         this.getDialog().selectPage(tabRef);
+                                    } else if (tabRef && tabRef.startsWith('docNodeRef_')) {
+                                        tabRef =  tabRef.replace('docNodeRef_', '');
+                                        this.getDialog().selectPage(tabRef);
                                     }
 
                                     var brokenRef =  widget.element.getAttribute('leos:broken');
@@ -233,6 +236,7 @@ define(function leosCrossReferenceDialog(require) {
             this.articleHeadingAknName = 'data-akn-name';
             this.articleHeadingId = 'data-akn-heading-id';
             this.contentParagraphId = 'data-akn-mp-id';
+            this.docNodeRef = "";
 
             var that = this;
             editor.on("receiveElement", function(event) {
@@ -378,7 +382,9 @@ define(function leosCrossReferenceDialog(require) {
             this.setExistingValues(undefined);
         },
         checkIfValid: function checkIfValid() {
-            if(this.treePath.trim().length === 0) {
+            if (this.docNodeRef) {
+                return true;
+            } else if(this.treePath.trim().length === 0) {
                 this.showErrors("refElementRequired");
                 return false;
             } else if (this.getRefrenceText().trim().length === 0) {
@@ -427,6 +433,12 @@ define(function leosCrossReferenceDialog(require) {
         setRefrenceTextLabel: function setRefrenceTextLabel(label) {
             this.$refrenceTextLabel.val(this.parseRefLabel(label));
         },
+        setDocNodeRefTextLabel: function setDocNodeRefTextLabel(label) {
+            this.$refrenceTextLabel.val(this.setDocNodeReferenceText(label));
+        },
+        setDocNodeRef: function setDocNodeRef() {
+            this.docNodeRef = this.documentRef;
+        },
         parseRefLabel: function parseRefLabel(label) {
             var el = $('<div>');
             el.html(label);
@@ -437,6 +449,12 @@ define(function leosCrossReferenceDialog(require) {
                 this.refrenceText = "";
                 return "";
             }
+        },
+        setDocNodeReferenceText: function setDocNodeReferenceText(label) {
+            var el = $('<div>');
+            el.html(label);
+            this.refrenceText = '<ref href="' + 'docNodeRef_' + this.documentRef + '">' +label+ '</ref>';
+            return el.text();
         },
         setUpExisting: function setUpExisting(label) {
             this.setExistingValues(label);
@@ -584,7 +602,10 @@ define(function leosCrossReferenceDialog(require) {
             }
             var that = this;
             tocItems.forEach(function(item) {
-                if (selectedIds.indexOf(item.id) !== -1) {
+                if(selectedIds[0].startsWith('docNodeRef_') && item.tocItem.aknTag === 'DOC') {
+                    item.id = selectedIds[0]
+                    currentItem.push(item);
+                } else if (selectedIds.indexOf(item.id) !== -1) {
                     if (item.children.length > 0) {
                         var childCurrentItem = that._matchSelectedTreeItem(item.children, selectedIds.slice(1));
                         if (childCurrentItem && childCurrentItem.length > 0) {
@@ -607,25 +628,28 @@ define(function leosCrossReferenceDialog(require) {
                     var treeInstance = data.instance;
                     var selectedNodes = treeInstance.get_selected(true);
                     var firstSelectedNode = selectedNodes[0];
-                    var result = leosCrossReferenceRuleResolver.isSelectionAllowed(data.node, firstSelectedNode, true);
-                    
-                    if (result) {
-                        that.nodeContentHandler.setTreeNodeIds(selectedNodes);
-                        that.nodeContentHandler.setTreePath(that.calculateTreePath(selectedNodes));
-                        
-                        if(data.event && data.event.type === "click") {
-                            var treeNodeIds = that.nodeContentHandler.getTreeNodeIds();
-                            that.nodeContentHandler.requestRefLabel(treeNodeIds);
-                            that.NbrOfSelectedNodes = treeNodeIds.size;
-                            tabHandlers.resetOthers(that.documentRef);
-                        }
-
-                        that.populateContent(data.node, selectedNodes.length);
+                    var isDocNode = firstSelectedNode.original.tocItem.aknTag === 'DOC';
+                    if (isDocNode) {
+                        that.nodeContentHandler.setDocNodeRefTextLabel(firstSelectedNode.text);
+                        that.nodeContentHandler.setDocNodeRef();
+                        that.nodeContentHandler.$contentContainer.text(firstSelectedNode.text);
                     } else {
-                        treeInstance.deselect_node(data.node, true); // If not sibling de-select currently selected element
-                        that.nodeContentHandler.showWarnings("selectionNotAllowed");
+                        var result = leosCrossReferenceRuleResolver.isSelectionAllowed(data.node, firstSelectedNode, true);
+                        if (result) {
+                            that.nodeContentHandler.setTreeNodeIds(selectedNodes);
+                            that.nodeContentHandler.setTreePath(that.calculateTreePath(selectedNodes));
+                            if (data.event && data.event.type === "click") {
+                                var treeNodeIds = that.nodeContentHandler.getTreeNodeIds();
+                                that.nodeContentHandler.requestRefLabel(treeNodeIds);
+                                that.NbrOfSelectedNodes = treeNodeIds.size;
+                                tabHandlers.resetOthers(that.documentRef);
+                            }
+                            that.populateContent(data.node, selectedNodes.length);
+                        } else {
+                            treeInstance.deselect_node(data.node, true); // If not sibling de-select currently selected element
+                            that.nodeContentHandler.showWarnings("selectionNotAllowed");
+                        }
                     }
-
                     if (data.selected.length == 0) {
                         that.nodeContentHandler.reset(that.editor);
                     }

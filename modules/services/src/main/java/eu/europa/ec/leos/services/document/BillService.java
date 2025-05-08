@@ -45,11 +45,11 @@ public interface BillService {
     // FIXME temporary workaround
     Bill findBillByPackagePath(String path);
 
-    Bill updateBill(String id, byte[] updatedContent);
+    Bill updateBill(String id, byte[] updatedContent, boolean updateInternalRefs);
 
-    Bill updateBill(Bill bill, BillMetadata metadata, VersionType versionType, String actionMsg);
+    Bill updateBill(Bill bill, BillMetadata metadata, VersionType versionType, String actionMsg, boolean updateInternalRefs);
 
-    Bill updateBill(Bill bill, byte[] updatedBillContent, String comments);
+    Bill updateBill(Bill bill, byte[] updatedBillContent, String comments, boolean updateInternalRefs);
 
     Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest);
 

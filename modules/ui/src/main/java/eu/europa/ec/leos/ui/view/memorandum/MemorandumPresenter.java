@@ -170,7 +170,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -1002,7 +1001,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         byte[] xmlClonedContent = event.getMergeActionVOS().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, memorandum, xmlClonedContent);
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, memorandum, tocItemList, intRefMap);
-        xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
+        xmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
         updateMemorandumContent(memorandum, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"), mergeActionKey);
         if(event.isAllContributions()) {
             markRevisionAsProcessed(event.getMergeActionVOS().get(0).getContributionVO().getDocumentId(), "contribution.accept.all.notification.message");

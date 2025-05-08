@@ -25,6 +25,10 @@ Then(`dialog box body contains {string}`, (text) => {
     euiDialogBoxPage.elements.dialogBody().should('include.text', text);
 });
 
+Then(/^dialog box body doesn't contain "([^"]*)"$/, function (text) {
+    euiDialogBoxPage.elements.dialogBody().should('not.include.text', text);
+});
+
 When(`click on close button in dialog confirm box window`, () => {
     euiDialogBoxPage.clickAcceptBtn();
 });
@@ -81,5 +85,3 @@ When(/^drag row (\d+) and drop on row (\d+) in dialog box window$/, function (dr
 And(/^click on archive button$/, function () {
     euiDialogBoxPage.clickArchiveBtn();
 });
-
-

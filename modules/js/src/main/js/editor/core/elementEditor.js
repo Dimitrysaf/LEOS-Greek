@@ -197,6 +197,7 @@ define(function elementEditorModule(require) {
                 instanceType: params.instanceType,
                 user: user,
                 implicitSaveEnabled: connector.getState().isImplicitSaveEnabled,
+                elementId: params.elementId,
                 elementType: params.elementType,
                 spellCheckerName: connector.getState().spellCheckerName,
                 spellCheckerServiceUrl: connector.getState().spellCheckerServiceUrl,
@@ -514,7 +515,15 @@ define(function elementEditorModule(require) {
                 isSaveAndClose: !!event.data.isSaveAndClose ? true : false,
             };
             editor.LEOS.saveCmdExecuted = true;
-            connector.saveElement(data);
+            connector.saveElement(data)
+                .then((response) => {
+                    if (connector.editorChannel) {
+                        connector.editorChannel.publish('save.complete', response);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Save failed:", error);
+                });
             return true;
         }
         return false;
@@ -580,7 +589,7 @@ define(function elementEditorModule(require) {
         let isSiblingWithContent = false;
         var childNodes = $(element).parent()[0].childNodes;
         for(var child of childNodes){
-            if(element == child){
+            if(element == child || (child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '')){
                 continue;
             }
             if(!UTILS.isEmptyElement(child) ){
@@ -658,15 +667,31 @@ define(function elementEditorModule(require) {
 
 
         var isEmptyRefersToElement = false;
-        $("#" + elementId).find("ol[data-akn-name='aknOrderedList']").each(function() {
+        var aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknOrderedList']");
+        if(aknOrderedList.length == 0){
+            aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknAnnexOrderedList']");
+        }
+        aknOrderedList.each(function() {
             var refersToElement = this.firstChild, newRefersToElement = this.previousSibling;
             var containsRefersToElement = refersToElement && refersToElement.hasAttribute("refersto");
-            var containsNewRefersToElement = !containsRefersToElement && newRefersToElement && newRefersToElement.nodeType === Node.ELEMENT_NODE && newRefersToElement.tagName.toLowerCase() == "p";
+
+            var brElementIsFirstChild = false;
+            if(newRefersToElement
+                && newRefersToElement.nodeType === Node.ELEMENT_NODE
+                && newRefersToElement.tagName.toLowerCase() == "br" ){
+                var beforeBr = newRefersToElement.previousSibling;
+                brElementIsFirstChild = !beforeBr || (!!beforeBr && isEmpty(beforeBr));
+            }
+
+            var containsNewRefersToElement = !containsRefersToElement
+                && newRefersToElement
+                && newRefersToElement.nodeType === Node.ELEMENT_NODE
+                && (newRefersToElement.tagName.toLowerCase() == "p" || brElementIsFirstChild) ;
+
             if ((containsRefersToElement && isEmpty(refersToElement)) || (containsNewRefersToElement && isEmpty(newRefersToElement))) {
                 isEmptyRefersToElement = true;
             }
         });
-
 
         return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement;
     }

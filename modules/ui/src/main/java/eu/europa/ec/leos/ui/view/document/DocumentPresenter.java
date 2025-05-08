@@ -216,7 +216,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
@@ -625,7 +624,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
                         eventBus.post(new CloseElementEvent());
                     }
                 }
-                bill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
+                bill = billService.updateBill(bill, newXmlContent, checkinCommentJson, true);
                 if (splittedContent == null) {
                     String elementContent = elementProcessor.getElement(bill, elementTagName, elementId);
                     documentScreen.refreshElementEditor(elementId, elementTagName, elementContent);
@@ -768,7 +767,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             if (mergeOnElement != null) {
                 documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
                 byte[] newXmlContent = billProcessor.mergeElement(bill, elementContent, tagName, elementId);
-                bill = billService.updateBill(bill, newXmlContent, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)));
+                bill = billService.updateBill(bill, newXmlContent, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)), true);
                 if (bill != null) {
                     elementToEditAfterClose = mergeOnElement;
                     eventBus.post(new CloseElementEvent());
@@ -836,7 +835,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             }
         }
         // we are combining two operations (get toc + get selected element ancestors)
-        documentScreen.setTocAndAncestors(packageService.getTableOfContent(bill.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN), elementAncestorsIds);
+        documentScreen.setTocAndAncestors(packageService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN), elementAncestorsIds);
     }
 
     @Subscribe
@@ -867,13 +866,13 @@ class DocumentPresenter extends AbstractLeosPresenter {
     @Subscribe
     void mergeSuggestion(MergeSuggestionRequest event) {
         Bill bill = getDocument();
-        commonDelegate.mergeSuggestion(bill, event, elementProcessor, billService::updateBill);
+        commonDelegate.mergeSuggestion(bill, event, elementProcessor, (bill1, updatedBillContent, comments) -> billService.updateBill(bill1, updatedBillContent, comments, true));
     }
 
     @Subscribe
     void mergeBulkSuggestions(MergeSuggestionsRequest event) {
         Bill bill = getDocument();
-        commonDelegate.mergeSuggestions(bill, event, elementProcessor, billService::updateBill);
+        commonDelegate.mergeSuggestions(bill, event, elementProcessor, (bill1, updatedBillContent, comments) -> billService.updateBill(bill1, updatedBillContent, comments, true));
     }
 
     @Subscribe
@@ -1063,7 +1062,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     }
 
     private void updateBillContent(Bill bill, byte[] xmlContent, String operationMsg) {
-        bill = billService.updateBill(bill, xmlContent, operationMsg);
+        bill = billService.updateBill(bill, xmlContent, operationMsg, true);
         if (bill != null) {
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
@@ -1072,7 +1071,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     }
 
     private void updateBillContent(Bill bill, byte[] xmlContent, String operationMsg, String notificationMsg) {
-        bill = billService.updateBill(bill, xmlContent, operationMsg);
+        bill = billService.updateBill(bill, xmlContent, operationMsg, true);
         if (bill != null) {
             eventBus.post(new NotificationEvent(Type.INFO, notificationMsg));
             eventBus.post(new RefreshDocumentEvent());
@@ -1126,7 +1125,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         Bill billFromSession = getBillFromSession();
 
         bill = billService.updateBill(bill, billFromSession.getContent().get().getSource().getBytes(),
-                messageHelper.getMessage("operation.search.replace.updated"));
+                messageHelper.getMessage("operation.search.replace.updated"), true);
         if (bill != null) {
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
@@ -1144,7 +1143,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         Bill billFromSession = getBillFromSession();
 
         bill = billService.updateBill(bill, billFromSession.getContent().get().getSource().getBytes(),
-                messageHelper.getMessage("operation.search.replace.updated"));
+                messageHelper.getMessage("operation.search.replace.updated"), true);
         if (bill != null) {
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -1366,8 +1365,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
         documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         xmlContent = numberService.renumberArticles(xmlContent, true);
         xmlContent = numberService.renumberRecitals(xmlContent);
-        xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
-        bill = billService.updateBill(bill, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"));
+        xmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
+        bill = billService.updateBill(bill, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"), true);
         if (bill != null) {
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
@@ -1798,7 +1797,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
     private void doRestoreVersion(byte[] xmlContent, String versionLabel) {
         billService.updateBill(getDocument(), xmlContent, messageHelper.getMessage("operation.restore.version"
-                , versionLabel));
+                , versionLabel), true);
 
         List<Bill> documentVersions = billService.findVersions(documentId);
         documentScreen.updateTimeLineWindow(documentVersions);

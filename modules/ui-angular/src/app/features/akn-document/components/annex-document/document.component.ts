@@ -29,6 +29,8 @@ import { SecurityContext } from '@angular/core';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import {ContributionVO} from "@/shared/models/contribution-vo.model";
 import {MOVE_PREFIX, REVISION_PREFIX} from "@/shared/constants/fork-merge.constants";
+import {LoadingService} from "@/shared/services/loading.service";
+import {CoEditionUpdate} from "@/shared/models/coEditionVO.model";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -74,7 +76,8 @@ export class DocumentComponent
     private zoombarService: ZoombarService,
     private changeDetectorRef: ChangeDetectorRef,
     private milestoneService: ProposalMilestonesService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private loadingService: LoadingService,
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
 
@@ -99,6 +102,7 @@ export class DocumentComponent
   }
 
   ngOnDestroy(): void {
+    this.loadingService.reset('post-processing');
     this.documentService.setIsEditorOpen(false);
     this.bookmarkMutationObserver?.disconnect();
     if (!this.readonly) {
@@ -121,6 +125,7 @@ export class DocumentComponent
   }
 
   ngOnInit(): void {
+    this.loadingService.reset('post-processing');
     if (!this.readonly) {
       this.documentService.refreshView$
         .pipe(takeUntil(this.destroy$))
@@ -245,6 +250,15 @@ export class DocumentComponent
         .subscribe((coEdits) => {
           this.coEditionWSService.showElementsBeingEdited(coEdits);
         });
+      this.coEditionWSService
+        .getPostProcessingCoEditionInfo()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((coEditionUpdate) => {
+          if (!!coEditionUpdate && coEditionUpdate.documentId === this.documentService.documentRef) {
+            this.updateElementsInContent(coEditionUpdate);
+            this.loadingService.setTaskOver('post-processing', this.documentService.documentRef);
+          }
+        });
       this.initTrackChangesActions();
     }
   }
@@ -329,6 +343,26 @@ export class DocumentComponent
       akomantosoEl.id = akomantosoId;
     }
     return akomantosoEl.outerHTML;
+  }
+
+  private updateElementsInContent(coEditionUpdate: CoEditionUpdate) {
+    if (coEditionUpdate
+      && coEditionUpdate.updatedElements
+      && coEditionUpdate.updatedElements.length > 0
+      && coEditionUpdate.documentId === this.documentService.documentRef) {
+      for (let elt of coEditionUpdate.updatedElements) {
+        this.updateElementContent({
+          documentRef: this.documentService.documentRef,
+          elementId: elt.elementId,
+          elementType: elt.elementTagName,
+          elementFragment: elt.elementFragment,
+          presenterId: this.coEditionWSService.presenterId,
+          alternateElementId: null,
+          isClosing: false,
+          isSaved: false,
+        });
+      }
+    }
   }
 
   private reloadElements(data: {

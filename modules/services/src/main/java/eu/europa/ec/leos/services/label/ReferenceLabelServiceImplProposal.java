@@ -13,15 +13,29 @@
  */
 package eu.europa.ec.leos.services.label;
 
+import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.instance.Instance;
+import eu.europa.ec.leos.services.api.DocumentApiService;
+import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})
@@ -40,5 +54,25 @@ public class ReferenceLabelServiceImplProposal extends ReferenceLabelServiceImpl
             return super.generateSoftMoveLabel(ref, referenceLocation, sourceNode, direction, documentRefSource);
         }
         return new Result<String>("", null);
+    }
+
+    @Override
+    public Result<String> generateRefLabelForDocNode(Ref ref) {
+        final String docRef = ref.getHref().substring("docNodeRef_".length());
+        final XmlDocument targetDocument = workspaceService.findDocumentByRef(docRef, XmlDocument.class);
+        final LeosPackage targetPackage = packageService.findPackageByDocumentRef(targetDocument.getMetadata().get().getRef(), XmlDocument.class);
+        final List<XmlDocument> targetSiblings = packageService.findDocumentsByPackagePath(targetPackage.getPath(), XmlDocument.class, true);
+        Optional<Annex> annex = targetSiblings.stream()
+                .filter(doc -> LeosCategory.ANNEX.equals(doc.getCategory()) && doc.getName().replace(".xml","").equals(docRef))
+                .map(doc -> (Annex) doc)
+                .findFirst();
+        AnnexMetadata annexMetadata = annex.isPresent()  ? annex.get().getMetadata().get() : null;
+        if (annexMetadata == null || !annexMetadata.getCategory().equals(LeosCategory.ANNEX)) {
+            return new Result<>("", ErrorCode.DOCUMENT_ANNEX_INDEX_NOT_FOUND);
+        }
+        String[] refContent = annexMetadata.getNumber().split(" ");
+        String refLabel = refContent.length == 1 ? String.format("<ref href=\"%s\" xml:id=\"%s\">%s</ref>", ref.getHref(), ref.getId(), refContent[0])
+                : String.format("%s <ref href=\"%s\" xml:id=\"%s\">%s</ref>", refContent[0], ref.getHref(), ref.getId(), refContent[1]);
+        return new Result<>(refLabel, null);
     }
 }

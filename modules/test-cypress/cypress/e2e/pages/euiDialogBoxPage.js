@@ -2,7 +2,7 @@ class euiDialogBoxPage {
     elements = {
         dialogBox: () => cy.get("div[role='dialog']"),
         dialogHeader: () => cy.get("div[role='dialog'] .eui-dialog__header"),
-        deleteBtn: () => cy.get('button.eui-button.eui-button--danger'),
+        deleteBtn: () => cy.get('eui-dialog-footer button.eui-button.eui-button--danger'),
         acceptBtn: () => cy.get('button.eui-dialog__footer-accept-button'),
         cancelBtn: () => cy.get('button.eui-dialog__footer-dismiss-button'),
         dialogBody: () => cy.get('div.eui-dialog__body-content'),
@@ -12,7 +12,7 @@ class euiDialogBoxPage {
         confirmBtn: () => cy.get('eui-dialog-footer button').contains('Confirm '),
         input: () => cy.get('input.eui-input-text'),
         exampleBox: () => cy.get('div.example-box'),
-        exampleBoxNgContent: () => this.elements.exampleBox().find('div')
+        exampleBoxNgContent: () => this.elements.exampleBox().find('div'),
     }
     
     clickDangerButton(){

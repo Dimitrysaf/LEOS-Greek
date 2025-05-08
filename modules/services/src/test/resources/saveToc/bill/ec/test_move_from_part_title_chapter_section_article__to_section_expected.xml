@@ -143,7 +143,7 @@
             <section xml:id="section">
                 <num xml:id="akn_sxE0Ge">Section 1</num>
                 <heading xml:id="akn_j4xWfe">Section heading 1</heading>
-                <article leos:depth="5" xml:id="article_new">
+                <article xml:id="article_new">
                     <num leos:editable="false" xml:id="akn_article_LWA2WX_elGPD8">Article 3</num>
                     <heading xml:id="akn_article_LWA2WX_wFTNXS">Article heading...</heading>
                     <paragraph xml:id="akn_article_LWA2WX-par1">

@@ -126,8 +126,8 @@ define(function aknLevelPluginModule(require) {
     }
 
     function _renumberOnIndent(evt) {
-        const nextNum = (evt.data.prevLvlDepth === evt.data.currLvlDepth) ? _getNextIndentNum(evt.data.currLvlNum) :
-            _getNextNum(evt.data.currLvlDepth + 1, evt.data.prevLvlNum);
+        let nextNum = (evt.data.prevLvlDepth === evt.data.currLvlDepth)
+                ? _getNextIndentNum(evt.data.currLvlNum) : _getNextNum(evt.data.currLvlDepth + 1, evt.data.prevLvlNum);
         evt.data.nextNum = nextNum;
         return evt.data;
     }
@@ -154,6 +154,17 @@ define(function aknLevelPluginModule(require) {
         numArr[numArr.length - 1] = (lastNum > 1) ? (lastNum - 1).toString() : lastNum.toString();
         numArr.push("1.");
         return numArr.join(".");
+    }
+
+    function _getNextOutdentNum(listNum) {
+        const levels = listNum.split('.').map(Number);
+        levels.pop();
+        if (levels.length === 1) {
+            return `${levels[0] + 1}`;
+        }
+        levels.pop();
+        levels[levels.length - 1] += 1;
+        return levels.join('.').concat(".");
     }
 
     var getSelectedRange = function getSelectedRange(context) {

@@ -131,7 +131,7 @@
             </formula>
         </preamble>
         <body leos:origin="ec" xml:id="_body">
-            <article leos:deletable="true" leos:depth="1" leos:editable="true" leos:initial-num="Article 6" leos:listIdAttr="_akn_article_Rz6Oyf" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-02-14T16:12:39.546+01:00" leos:softmove_from="movedXimpXart_d1e29483_POeDCh" leos:softmove_label="MOVED from Article 6" leos:softuser="DOE Jane(DGT)" leos:title="DOE Jane : 2024-03-20T16:05:10.2+01:00" xml:id="impXart_d1e29483_POeDCh">
+            <article leos:deletable="true" leos:editable="true" leos:initial-num="Article 6" leos:listIdAttr="_akn_article_Rz6Oyf" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-02-14T16:12:39.546+01:00" leos:softmove_from="movedXimpXart_d1e29483_POeDCh" leos:softmove_label="MOVED from Article 6" leos:softuser="DOE Jane(DGT)" leos:title="DOE Jane : 2024-03-20T16:05:10.2+01:00" xml:id="impXart_d1e29483_POeDCh">
                 <num leos:action="insert" leos:title="DOE Jane : 2024-03-20T16:05:10.2+01:00" leos:uid="jane" xml:id="impXart_d1e29483_POeDCh_ZGVwps">
                     <del leos:title="DOE Jane : 2024-02-14T16:09:17.246+01:00" leos:uid="jane" xml:id="impXart_d1e29483_POeDCh_PP3hcA">Article 6</del>
                     <ins leos:title="DOE Jane : 2024-03-20T16:05:10.135+01:00" leos:uid="jane" xml:id="impXart_d1e29483_POeDCh_26FNYL">Article 1</ins>

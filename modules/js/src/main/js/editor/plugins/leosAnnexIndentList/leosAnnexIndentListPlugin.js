@@ -26,7 +26,6 @@ define(function leosAnnexIndentListPluginModule(require) {
     var DATA_AKN_NAME_ATTR = "data-akn-name";
     var DATA_AKN_NAME_ELEMENT = "data-akn-element";
     var NUM = "num";
-    var LEVEL = "level";
     var LEOS_ORIGINAL_DEPTH_ATTR = "leos:originaldepth";
     var DATA_AKN_ORIGIN_DEPTH_ATTR = "data-akn-origin-depth";
     var DATA_AKN_ORIGIN_NUM_ATTR = "data-akn-origin-num";
@@ -42,6 +41,7 @@ define(function leosAnnexIndentListPluginModule(require) {
     var SUBPARAGRAPH = "subparagraph";
 
     var originalDepth = 0;
+    var previousDepth = 0;
     var originalNum;
     var originalOrigin;
     var levelItemVo;
@@ -49,6 +49,7 @@ define(function leosAnnexIndentListPluginModule(require) {
     var pluginName = "leosAnnexIndentListPlugin";
     var LOCAL_MAX_LEVEL_LIST;
     var LOCAL_MAX_LEVEL_LIST_DEPTH;
+    const ORIENTATION = '.orientation';
     var indentationStatus = {
         original: {
             num: undefined,
@@ -438,6 +439,7 @@ define(function leosAnnexIndentListPluginModule(require) {
             originalDepth = levelItemVo.levelDepth;
             originalNum = levelItemVo.levelNum;
             originalOrigin = levelItemVo.origin;
+            previousDepth = originalDepth;
         }
     }
 
@@ -471,7 +473,10 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _getNextLevels(listNode) {
         if(listNode.$.parentNode) {
-            return $(listNode.$.parentNode).nextAll(LEVEL);
+            return $(listNode.$.parentNode)
+                .closest(ORIENTATION)
+                .nextAll(ORIENTATION)
+                .find(LEVEL);
         }
     }
 
@@ -482,13 +487,16 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _getPrevLevels(listNode) {
         if(listNode.$.parentNode) {
-            return $(listNode.$.parentNode).prevAll(LEVEL);
+            return $(listNode.$.parentNode)
+                .closest(ORIENTATION)
+                .prevAll(ORIENTATION)
+                .find(LEVEL);
         }
     }
 
     function _getPrevLevelNum(listNode) {
         const $prevLevels = _getPrevLevels(listNode);
-        return _getLevelNum($prevLevels, true);
+        return _getLevelNum($prevLevels, false);
     }
 
     function _getLevelNum($levels, asc) {
@@ -516,6 +524,7 @@ define(function leosAnnexIndentListPluginModule(require) {
         data.listItem.setAttribute("data-akn-num", indentData.nextNum);
         data.listItem.setAttribute(LEOS_ORIGINAL_DEPTH_ATTR, originalDepth);
         editor.fire("handleTcIndent", {data: data.listItem, previousNumber: data.currLvlNum});
+        previousDepth = levelItemVo.levelDepth;
         levelItemVo.levelDepth++;
         levelItemVo.levelNum = indentData.nextNum;
     }
@@ -528,6 +537,7 @@ define(function leosAnnexIndentListPluginModule(require) {
         data.listItem.setAttribute("data-akn-num", outdentData.nextNum);
         data.listItem.setAttribute(LEOS_ORIGINAL_DEPTH_ATTR, originalDepth);
         editor.fire("handleTcIndent", {data: data.listItem, previousNumber: data.currLvlNum});
+        previousDepth = levelItemVo.levelDepth;
         levelItemVo.levelDepth--;
         levelItemVo.levelNum = outdentData.nextNum;
     }
@@ -601,7 +611,10 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _getNextLevelsOnNumberIndentOutdent(numNode) {
         if(numNode.getAscendant(LEVEL)) {
-            return $(numNode.getAscendant(LEVEL).$).nextAll(LEVEL);
+            return $(numNode.getAscendant(LEVEL).$)
+                .closest(ORIENTATION)
+                .nextAll(ORIENTATION)
+                .find(LEVEL);
         }
     }
 
@@ -612,7 +625,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _getPrevLevelsOnNumberIndentOutdent(numNode) {
         if(numNode.getAscendant(leosPluginUtils.MAINBODY) && numNode.getAscendant(LEVEL)) {
-            let levels = Array.from(numNode.getAscendant(leosPluginUtils.MAINBODY).find(LEVEL).$);
+            let levels = Array.from(numNode.getAscendant(leosPluginUtils.MAINBODY).find(ORIENTATION).find(LEVEL).$);
             let indexOfLevel = levels.indexOf(numNode.getAscendant(LEVEL).$);
             if (indexOfLevel > -1) {
                 return $(levels.splice(0, indexOfLevel));
@@ -639,6 +652,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function setLevelNumData(listNode, data, command) {
         data.level.setAttribute(LEOS_ORIGINAL_DEPTH_ATTR, originalDepth);
+        previousDepth = levelItemVo.levelDepth;
         command > 0 ? levelItemVo.levelDepth++ : levelItemVo.levelDepth--;
         if (parseInt(data.originalECDepth) === levelItemVo.levelDepth) {
             listNode.setAttribute(DATA_NUM_ORIGIN, EC);
@@ -657,7 +671,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function aknindentList(editor) {
         var that = this, database = this.database, context = this.context, range;
-        editor.fire("beforeAknIndentList");
+        editor.fire("beforeAknIndentList", { isIndent: that.isIndent });
 
         function indent(listNode) {
             // Our starting and ending points of the range might be inside some blocks under a list item...
@@ -812,14 +826,14 @@ define(function leosAnnexIndentListPluginModule(require) {
                             pendingLis.push(child);
 
                         if((child = children.getItem(i)) && child.is && child.is('p')) {
-                            var indentOriginNumId = startItem.getAttribute("data-indent-origin-num-id");
-                            var indentOriginType = startItem.getAttribute("data-indent-origin-type");
-                            var indentOriginNumber = startItem.getAttribute("data-indent-origin-num");
-                            var indentOriginNumOrigin = startItem.getAttribute("data-indent-origin-num-origin");
-                            child.setAttribute("data-indent-origin-num-id", indentOriginNumId);
-                            child.setAttribute("data-indent-origin-type", indentOriginType);
-                            child.setAttribute("data-indent-origin-num", indentOriginNumber);
-                            child.setAttribute("data-indent-origin-num-origin", indentOriginNumOrigin);
+                            var indentOriginNumId = startItem.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER_ID);
+                            var indentOriginType = startItem.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_TYPE);
+                            var indentOriginNumber = startItem.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER);
+                            var indentOriginNumOrigin = startItem.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER_ORIGIN);
+                            child.setAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER_ID, indentOriginNumId);
+                            child.setAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_TYPE, indentOriginType);
+                            child.setAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER, indentOriginNumber);
+                            child.setAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER_ORIGIN, indentOriginNumOrigin);
                         }
                     }
                 }
@@ -1207,7 +1221,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _isLevelDepthMoreThanThreshold(levelItemVo, depth){
         if(levelItemVo && (depth < leosPluginUtils.MAX_LEVEL_DEPTH)) {
-            var changeInDepth = levelItemVo.levelDepth - originalDepth; //Need to keep account of outdent/indent of Level
+            var changeInDepth = levelItemVo.levelDepth - previousDepth; //Need to keep account of outdent/indent of Level
             return _isDownSideLevelDepthMoreThanThreshold(levelItemVo, changeInDepth);
         }
         return true;
@@ -1248,7 +1262,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _isDownSideLevelDepthMoreThanThreshold(item, changeInDepth) {
         var depth = item.levelDepth;
-        if(depth >= (leosPluginUtils.MAX_LEVEL_DEPTH - changeInDepth)) {
+        if(depth > (leosPluginUtils.MAX_LEVEL_DEPTH - changeInDepth)) {
             return true;
         } else {
             var children = item.children;
@@ -1292,7 +1306,11 @@ define(function leosAnnexIndentListPluginModule(require) {
      */
     function _isDownsideDepthMoreThanThreshold(element, stopLevel) {
         var level = 0;
-        var childList = element.getChildren();
+        if(!(element instanceof CKEDITOR.dom.element)){
+            return false;
+        }
+        var childList =  element.getChildren();
+
         for (var child_idx = 0; child_idx < childList.count(); child_idx++) {
             var child = childList.getItem(child_idx);
             var child_name = leosPluginUtils.getElementName(child);

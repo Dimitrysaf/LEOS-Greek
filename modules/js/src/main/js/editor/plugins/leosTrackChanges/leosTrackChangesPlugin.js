@@ -86,14 +86,22 @@ define(function leosTrackChangesPluginModule(require) {
                     canUndo: true,
                     editorFocus: false,
                     exec: function(editor, element) {
+                        if(element.getName() === 'tr') {
+                            actions.acceptRowChange(editor, element);
+                        } else {
                         actions.acceptChange(editor, element, numberModule);
+                    }
                     }
                 });
                 editor.addCommand("rejectElement", {
                     canUndo: true,
                     editorFocus: false,
                     exec: function(editor, element) {
+                        if(element.getName() === 'tr') {
+                            actions.rejectRowChange(editor, element, numberModule);
+                        } else {
                         actions.rejectChange(editor, element, numberModule);
+                    }
                     }
                 });
             }
@@ -178,7 +186,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.addCommand("rejectRowChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.rejectRowChange(editor, selectedElement);
+                        actions.rejectRowChange(editor, selectedElement, numberModule);
                     }
                 });
                 editor.contextMenu.addListener(function(element) {
@@ -189,6 +197,13 @@ define(function leosTrackChangesPluginModule(require) {
                         editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
                         if ((elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_NUM))
                             || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
+                        } else if (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER)
+                            && (elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUMBER)
+                                || elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER))){
                             return {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
@@ -285,6 +300,55 @@ define(function leosTrackChangesPluginModule(require) {
                         core.removeTrackChangesAttributesForAlternative(currentElement);
                     }
                     changeOption(newOption, callback);
+                }
+            });
+
+            editor.on("handleTcEnter", function(event) {
+                if(isTrackChangesEnabled) {
+                    var element = event.data.data;
+                    if (element.$.attributes && element.$.attributes[leosPluginUtils.DATA_REJECT_INSERTED_ENTER] && !element.$.attributes[leosPluginUtils.DATA_AKN_NUM]) {
+                        element.getChildren().toArray().forEach(function(child) {
+                            if (!child.getText().trim()) {
+                                child.remove();
+                            }
+                        });
+
+                        if(element.getChildCount() > 0) {
+                            var previousSibling = element.getPrevious();
+
+                            if (!previousSibling) {
+                                var parent = element.getParent();
+                                var prevParent = parent.getPrevious();
+
+                                if (prevParent) {
+                                    // Get the last child of the previous parent
+                                    previousSibling = prevParent.getLast();
+                                }
+                            }
+                            if(previousSibling) {
+                                element.moveChildren(previousSibling, false);
+                                var commonParent = element.getCommonAncestor( previousSibling ),
+                                    node = element,
+                                    removableParent = node;
+
+                                while ( ( node = node.getParent() ) && !commonParent.equals( node ) && node.getChildCount() == 1 )
+                                    removableParent = node;
+
+                                removableParent.remove();
+                            }
+                        }
+
+                        if (element && !element.getText().trim()) {
+                            element.remove();
+                        }
+
+                        leosPluginUtils.manageParagraphs(editor);
+                        leosPluginUtils.manageEmptyLists(editor);
+                        leosPluginUtils.managePoints(editor);
+                        leosPluginUtils.manageEmptySubparagraphs(editor);
+                        leosPluginUtils.manageCrossheadings(editor);
+                        leosPluginUtils.manageSiblingLists(editor);
+                    }
                 }
             });
 
@@ -957,16 +1021,22 @@ define(function leosTrackChangesPluginModule(require) {
     function  _checkEmptyOLAndRemove(elem, idToExit ){
         if (elem.childNodes.length === 0 ||
             (elem.childNodes.length === 1 && elem.childNodes[0].getAttribute("data-akn-element") !== "point")) {
-
-            if(elem.childNodes.length > 0) {
-                for (var i = 0; i < elem.childNodes[0].childNodes.length; i++) {
-                    elem.parentNode.appendChild(elem.childNodes[0].childNodes[i]);
-                }
-            }
             var parent = elem.parentNode;
-            elem.remove();
             if(parent.getAttribute('id') === idToExit){
                 return;
+            }
+            var doRemove = true;
+            if(elem.childNodes.length > 0 ) {
+                if(parent.tagName !== 'OL' && elem.tagName !== 'LI') {
+                    for (var i = 0; i < elem.childNodes[0].childNodes.length; i++) {
+                        parent.appendChild(elem.childNodes[0].childNodes[i]);
+                    }
+                }else{
+                    doRemove = false;
+                }
+            }
+            if(doRemove) {
+                elem.remove();
             }
             _checkEmptyOLAndRemove(parent, idToExit );
         }

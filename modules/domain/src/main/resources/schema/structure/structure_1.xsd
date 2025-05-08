@@ -57,6 +57,7 @@
             <xs:element name="maxDepth" type="xs:string" minOccurs="0"/>
             <xs:element name="actionsPosition" type="actionPositions" default="RIGHT" minOccurs="0"/>
             <xs:element name="dapInfos" type="dapInfos" minOccurs="0"/>
+            <xs:element name="depthEnabled" type="xs:boolean" minOccurs="0" default="false"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -307,6 +308,7 @@
             <xs:documentation>All toc tags</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
+            <xs:enumeration value="doc"/>
             <xs:enumeration value="preface"/>
             <xs:enumeration value="docstage"/>
             <xs:enumeration value="doctype"/>

@@ -34,7 +34,6 @@ import org.w3c.dom.Node;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFragment;
@@ -42,14 +41,10 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
-import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.HIGHER_ELEMENTS;
 import static eu.europa.ec.leos.services.support.XmlHelper.OJ_IMPORT_ELEMENTS;
-import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
-import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
-import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 
 @Service
@@ -156,7 +151,7 @@ public class ImportServiceImpl implements ImportService {
         long numberingTime = endTime - startTime;
         startTime = System.currentTimeMillis();
 
-        documentContent = xmlContentProcessor.doXMLPostProcessing(documentContent);
+        documentContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(documentContent);
         endTime = System.currentTimeMillis();
         long postProcessingTime = endTime - startTime;
 

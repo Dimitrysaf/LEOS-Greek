@@ -330,37 +330,50 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
 
   // leosEditorExtension > elementEditor
   // checkboxesExtension (FinancialStatement screen)
-  saveElement(elemData: SaveElementAction) {
-    this.isSaveAndClose = elemData.isSaveAndClose;
-    this.documentService.setDidDocumentLoadAndRender(false);
-    this.isElementSaved = true;
-    if (!elemData.isSplit) {
-      this.refreshElement(
+  saveElement(elemData: SaveElementAction): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.isSaveAndClose = elemData.isSaveAndClose;
+      this.documentService.setDidDocumentLoadAndRender(false);
+      this.isElementSaved = true;
+
+      if (!elemData.isSplit) {
+        this.refreshElement(
+          elemData.elementId,
+          elemData.elementType,
+          elemData.elementFragment,
+        );
+      }
+
+      const milliseconds = new Date().getTime();
+      this.loadingService.setTaskOngoing('saving', String(milliseconds));
+      this.loadingService.setTaskOngoing('post-processing', this.documentService.documentRef);
+
+      if (this.isSaveAndClose) {
+        localStorage.setItem(elemData.elementId, elemData.elementFragment);
+      }
+
+      this.saveDocumentElement(
+        this.documentService.documentRef,
         elemData.elementId,
+        elemData.alternateElementId,
         elemData.elementType,
         elemData.elementFragment,
-      );
-    }
-    const milliseconds = new Date().getTime();
-    this.loadingService.setTaskOngoing('saving', String(milliseconds));
-    if (this.isSaveAndClose) {
-      localStorage.setItem(elemData.elementId, elemData.elementFragment);
-    }
-    this.saveDocumentElement(
-      this.documentService.documentRef,
-      elemData.elementId,
-      elemData.alternateElementId,
-      elemData.elementType,
-      elemData.elementFragment,
-      elemData.isSplit,
-      this.documentService.documentType,
-      this.coEditionService.presenterId,
-    ).subscribe((response) => {
-      this.documentService.isReloadRequired = false;
-      if (!this.isSaveAndClose) {
-        localStorage.setItem(elemData.elementId, response.elementFragment);
-      }
-      this.handleActionsAfterSave(response, elemData, String(milliseconds));
+        elemData.isSplit,
+        this.documentService.documentType,
+        this.coEditionService.presenterId,
+      ).subscribe({
+        next: (response) => {
+          this.documentService.isReloadRequired = false;
+          if (!this.isSaveAndClose) {
+            localStorage.setItem(elemData.elementId, response.elementFragment);
+          }
+          this.handleActionsAfterSave(response, elemData, String(milliseconds));
+          resolve(response);
+        },
+        error: (error) => {
+          reject(error);
+        }
+      });
     });
   }
 
@@ -460,7 +473,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     const confirmDeletion = () => {
       const documentRef = this.documentService.documentRef;
       const documentType = this.documentService.documentType;
-
+      this.loadingService.setTaskOngoing('post-processing', documentRef);
       this.deleteDocumentElement(
         documentRef,
         elementType.toLowerCase(),
@@ -544,6 +557,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }) {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
+    this.loadingService.setTaskOngoing('post-processing', documentRef);
     this.insertGroup(elementData.elementType.toLowerCase(), elementData.elementId, elementData.position)
       .pipe(distinctUntilChanged())
       .subscribe((response) => {
@@ -561,25 +575,34 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementId: string;
     elementType: string;
     position: string;
-  }) {
+  }): Promise<any> {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.insertDocumentElement(
-      documentRef,
-      elementData.elementType.toLowerCase(),
-      elementData.elementId,
-      documentType,
-      elementData.position,
-    )
-      .pipe(distinctUntilChanged())
-      .subscribe((response) => {
-        this.documentService.setDocumentRefAndCategory(
-          documentRef,
-          documentType,
-        );
-        this.coEditionService.sendUpdateDocumentEvent(documentRef);
-      });
+    this.loadingService.setTaskOngoing('post-processing', documentRef);
+
+    return new Promise((resolve, reject) => {
+      this.insertDocumentElement(
+        documentRef,
+        elementData.elementType.toLowerCase(),
+        elementData.elementId,
+        documentType,
+        elementData.position,
+      )
+        .pipe(distinctUntilChanged())
+        .subscribe({
+          next: (response) => {
+            this.documentService.setDocumentRefAndCategory(documentRef, documentType);
+            this.coEditionService.sendUpdateDocumentEvent(documentRef);
+            resolve(response);
+          },
+          error: (error) => {
+            console.error('Insert element failed', error);
+            reject(error);
+          }
+        });
+    });
   }
+
 
   // leosEditorExtension > elementEditor
   private mergeElement(elementData: {
@@ -589,6 +612,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }) {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
+    this.loadingService.setTaskOngoing('post-processing', documentRef);
     this.mergeDocumentElement(
       documentRef,
       documentType,
@@ -603,10 +627,12 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }
 
   private requestTocAndAncestors(elementdIds, documentRef) {
+    this.loadingService.setLoading(true);
     this.documentService
       .fetchTocAndAncestors(elementdIds, documentRef)
       .pipe(take(1))
       .subscribe((response) => {
+        this.loadingService.setLoading(false);
         // pass also the document reference associated with the request
         response["documentRef"] = documentRef;
         this.receiveToc(JSON.stringify(response));

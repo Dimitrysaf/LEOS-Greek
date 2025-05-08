@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.store;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CollaboratorVO;
@@ -53,7 +54,7 @@ public interface PackageService {
     
     <T extends LeosDocument> List<T> findDocumentsByUserId(String userId, Class<T> filterType, String leosAuthority);
 
-    Map<String, List<TableOfContentItemVO>> getTableOfContent(String documentId, TocMode mode);
+    Map<String, List<TableOfContentItemVO>> getTableOfContent(XmlDocument xmlDocument, TocMode mode);
 
     List<LeosMetadata> getDocumentsMetadata(String documentId);
 

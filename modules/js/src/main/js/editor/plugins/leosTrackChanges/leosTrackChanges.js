@@ -25,9 +25,9 @@ define(function leosTrackChangesModule(require) {
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
         SOFT_ACTION_ATTR: "data-akn-attr-softaction", LEOS_SOFT_ACTION_ATTR: "leos:softaction", LEOS_SOFT_ACTION_MOVE_FROM_VALUE: "move_from",
         LEOS_ACTION_ATTR: "leos:action", ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article",
+        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", ID: "id",
 
-        DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
+        DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_TC_ORIGINAL_INDENT_ACTION: "data-akn-tc-original-indent-action", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
         DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
@@ -179,7 +179,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "NEW"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-tc-original-indent-action", "NEW"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -276,7 +276,6 @@ define(function leosTrackChangesModule(require) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
             var range = editor.getSelection().getRanges()[0];
-
             if(selectedElement.getName() === 'div') {
                 let lastEditable = this.findLastEditable(selectedElement);
                 if (lastEditable) {
@@ -309,30 +308,40 @@ define(function leosTrackChangesModule(require) {
             return tcElement;
         },
 
-        findLastEditable(selectedElement) {
-            let result = this.findLastByTag(selectedElement, 'p');
-            if (!result) {
-                result = this.findLastByTag(selectedElement, 'li');
-            }
-            return result;
-        },
+        findLastEditable(element) {
+            let result = null;
 
-        findLastByTag(element, tagName){
-            let lastChild = element.getLast();
-            while (lastChild) {
-                // If the last child is an <tagName>, return it
-                if (lastChild.getName && lastChild.getName() === tagName) {
-                    return lastChild;
+            function search(node) {
+                if (!node) return;
+
+                // If node is <p> or <li>, remember it
+                if (node.getName && (node.getName() === 'p' || node.getName() === 'li')) {
+                    result = node;
                 }
-                // If the last child is a container (like <ul> or <ol>), recurse into it
-                if (lastChild.getChildren && lastChild.getChildren().count() > 0) {
-                    let found = this.findLastByTag(lastChild, tagName);
-                    if (found) return found;
+
+                // If node is <li> and contains <ul> or <ol>, search deeply inside
+                if (node.getName && node.getName() === 'li' && node.getChildren) {
+                    const children = node.getChildren();
+                    for (let i = 0; i < children.count(); i++) {
+                        const child = children.getItem(i);
+                        if (child.getName && (child.getName() === 'ul' || child.getName() === 'ol')) {
+                            search(child); // Dive into nested lists inside <li>
+                        }
+                    }
                 }
-                // Move to the previous sibling if no <tagName> found in current branch
-                lastChild = lastChild.getPrevious();
+
+                // Always search normal children (outside <li> context too)
+                if (node.getChildren) {
+                    const children = node.getChildren();
+                    for (let i = 0; i < children.count(); i++) {
+                        search(children.getItem(i));
+                    }
+                }
             }
-            return null;
+
+            search(element);
+
+            return result;
         },
 
         toArray: function(list) {
@@ -566,27 +575,33 @@ define(function leosTrackChangesModule(require) {
             return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
         },
 
-        getLastTCElement: function(element) {
+        hasTrackChanges: function(elementId, editor) {
+            var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
+            return element && (element.hasAttribute(this.ACTION_ATTR) || element.hasAttribute(this.DATA_AKN_ACTION_NUMBER) || element.hasAttribute(this.DATA_AKN_ACTION_ENTER));
+        },
+
+        getLastTCElement: function(elementId, editor, processedElements) {
+            var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
+            if(element) {
             for (var i = element.getChildCount()-1; i >= 0; i--) {
                 var childElement = element.getChild(i);
-                if(!childElement || childElement.type === CKEDITOR.NODE_TEXT) {
+                    if (!childElement || childElement.type === CKEDITOR.NODE_TEXT || (processedElements && processedElements.includes(childElement.getAttribute(this.ID)))) {
                     continue;
                 }
                 if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
-                    var lastTCElement = this.getLastTCElement(childElement);
+                        var lastTCElement = this.getLastTCElement(childElement.getAttribute(this.ID), editor, processedElements);
                     if(lastTCElement) {
                         return lastTCElement;
                     }
                 }
-                if(childElement.hasAttribute(core.ACTION_ATTR) || childElement.hasAttribute(core.DATA_AKN_ACTION_NUMBER) || childElement.hasAttribute(core.DATA_AKN_ACTION_ENTER)) {
-                    if(childElement.hasAttribute(core.DATA_AKN_ACTION_NUMBER)
-                        && childElement.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION
-                        && childElement.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW) {
-                        continue;
-                    }
+                    if (this.hasTrackChanges(childElement.getAttribute(this.ID), editor)) {
                     return childElement;
                 }
             }
+                if (this.hasTrackChanges(element.getAttribute(this.ID), editor)) {
+                return element;
+            }
+        }
         }
     };
 
@@ -697,20 +712,122 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
+        isElementPresentInEditor(editor, element) {
+            return !!editor.document.find('.leos-placeholder').getItem(0).find(`#${element.getAttribute(core.ID)}`).getItem(0);
+        },
+
         acceptAllChanges: function(editor) {
-            var lastTCElement = core.getLastTCElement(editor.document.find('.leos-placeholder').getItem(0));
-            if(lastTCElement) {
-                editor.execCommand('acceptElement', lastTCElement);
-                this.acceptAllChanges(editor);
-            }
+            this.processAllChanges(editor, 'acceptElement');
         },
 
         rejectAllChanges: function(editor) {
-            var lastTCElement = core.getLastTCElement(editor.document.find('.leos-placeholder').getItem(0));
-            if(lastTCElement) {
-                editor.execCommand('rejectElement', lastTCElement);
-                this.rejectAllChanges(editor);
+            this.processAllChanges(editor, 'rejectElement');
+        },
+
+        processAllChanges: function (editor, actionName) {
+            var isElementDeleted = false;
+            var element = editor.document.find('.leos-placeholder').getItem(0);
+            var maxDepth = this.findMaximusDepth(element);
+            for (var i = maxDepth; i > 0; i--) {
+                var olElements = this.findOlElementsByDepth(element, i);
+                for (var j = olElements.length - 1; j >= 0; j--) {
+                    var olElementToProcess = olElements[j];
+                var processedElements = [];
+                    isElementDeleted = this.processOlElement(editor, olElementToProcess, processedElements, actionName);
+                    if (isElementDeleted) {
+                        break;
+                    }
+                }
+                if (isElementDeleted) {
+                    break;
+                }
+                }
+            if (isElementDeleted) {
+                this.processAllChanges(editor, actionName);
             }
+        },
+
+        processOlElement: function (editor, olElementToProcess, processedElements, actionName) {
+            // Process table rows
+            var rowElements = olElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
+            for (var i = rowElements.count() - 1; i >= 0; i--) {
+                var rowElementToProcess = rowElements.getItem(i);
+                this.processElement(editor, rowElementToProcess, processedElements, actionName);
+            }
+
+            // Process Soft Enter Inserts
+            var softEnterElements = olElementToProcess.find(`p[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_ENTER}]`);
+            for (var j = softEnterElements.count() - 1; j >= 0; j--) {
+                var softEnterElementToProcess = softEnterElements.getItem(j);
+                if (!softEnterElementToProcess.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                    this.processElement(editor, softEnterElementToProcess, processedElements, actionName);
+                }
+            }
+
+            this.processElement(editor, olElementToProcess, processedElements, actionName);
+
+            return !this.isElementPresentInEditor(editor, olElementToProcess);
+        },
+
+        processElement: function (editor, element, processedElements, actionName) {
+            if (this.isElementPresentInEditor(editor, element)) {
+                var lastTCElement = core.getLastTCElement(element.getAttribute(core.ID), editor, processedElements);
+                if(lastTCElement) {
+                    editor.execCommand(actionName, lastTCElement);
+                    if (lastTCElement.hasAttribute(core.ID)) {
+                        processedElements.push(lastTCElement.getAttribute(core.ID));
+                    }
+                        this.processElement(editor, element, processedElements, actionName);
+                    }
+                }
+        },
+
+        findOlElementsByDepth: function (root, targetDepth) {
+            const result = [];
+
+            function traverse(node, currentDepth) {
+                if (node.getName && node.getName().toLowerCase() === 'ol') {
+                    currentDepth++; // Entering a deeper ol
+                    if (currentDepth === targetDepth) {
+                        result.push(node);
+                    }
+                }
+
+                if (node.getChildCount) {
+                    for (var i = node.getChildCount() - 1; i >= 0; i--) {
+                        var child = node.getChild(i);
+                        traverse(child, currentDepth);
+                    }
+                }
+            }
+
+            traverse(root, 0);
+
+            return result;
+        },
+
+        findMaximusDepth: function (root) {
+            let maxDepth = 0;
+
+            function traverse(node, depth) {
+                if (node.getName && node.getName().toLowerCase() === 'ol') {
+                    depth++; // Increase depth when encountering an <ol>
+                    if (depth > maxDepth) {
+                        maxDepth = depth;
+                    }
+                }
+
+                if (node.getChildCount) {
+                    for (var i = node.getChildCount() - 1; i >= 0; i--) {
+                        var child = node.getChild(i);
+                        traverse(child, depth);
+                    }
+            }
+            }
+
+            traverse(root, 0);
+
+            return maxDepth;
         },
 
         acceptChange: function(editor, element, numberModule) {
@@ -811,6 +928,12 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeEmptyElement: function (liParentElement, numberModule, editor) {
+            liParentElement.getChildren().toArray().forEach(function(child) {
+                if (!child.getText().trim()) {
+                    child.remove();
+                }
+            });
+
             var liParentElementToCheckNumber = liParentElement;
             while (liParentElementToCheckNumber
             && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
@@ -851,10 +974,41 @@ define(function leosTrackChangesModule(require) {
                 })
             );
             element.setAttribute(leosPluginUtils.DATA_REJECT_INSERTED_ENTER, 'true');
+
+            if(element.hasAttribute(core.DATA_AKN_ACTION_ENTER) && !element.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                editor.fire('handleTcEnter', {data: element});
+            } else {
             if(element.getParent()) {
                 core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
             }
             editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
+            }
+        },
+
+        removeEnterInsert: function(element, editor, numberModule) {
+            if(this.checkIfEmptyListElement(element)) {
+                this.removeEmptyElement(element, numberModule, editor);
+            } else {
+                this.removeEnterAndJoinLines(element, editor);
+            }
+        },
+
+        indentList: function(element, editor, isIndent) {
+            var keyCodeToUse = isIndent ? 9 : CKEDITOR.SHIFT + 9;
+            var ckEditorEvent = new CKEDITOR.dom.event(
+                new KeyboardEvent('key', {
+                    keyCode: 9,
+                    ctrlKey: false,
+                    shiftKey: true,
+                    getKey: function () {
+                        return keyCode;
+                    }
+                })
+            );
+            if(element.getParent()) {
+                core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
+            }
+            editor.fire('key', {keyCode: keyCodeToUse, domEvent: ckEditorEvent});
         },
 
         rejectChange: function(editor, element, numberModule) {
@@ -868,37 +1022,45 @@ define(function leosTrackChangesModule(require) {
                     element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                 }
                 element.remove();
-            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION
-                || (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW
-                    && element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION)) {
-                if(this.checkIfEmptyListElement(element)) {
-                    this.removeEmptyElement(element, numberModule, editor);
-                } else {
-                this.removeEnterAndJoinLines(element, editor);
-                }
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION) {
+               this.removeEnterInsert(element, editor, numberModule);
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributesForEnter(element);
+            } else if(element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
+                if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
+                    this.removeEnterInsert(element, editor, numberModule);
+                } else if(element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) && element.hasAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
+                    if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION).toLowerCase() === 'indent') {
+                        this.indentList(element, editor, false);
+                    } else {
+                        this.indentList(element, editor, true);
+                    }
+                }
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
-                element.remove();
+                if(element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) && element.hasAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
+                    if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION).toLowerCase() === 'indent') {
+                        this.indentList(element, editor, false);
+                    } else {
+                        this.indentList(element, editor, true);
+                    }
+                }else{
+                    element.remove();
+                }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 if(parentElem && parentElem.getAttribute('data-akn-name') === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
                 } else {
                     var liParentElement = element.getAscendant("li");
                     var pParentElement = element.getAscendant("p");
-                    var parent = element.getParent();
                     element.remove();
-                    if(leosPluginUtils.isSubparagraph(parent) && parent.getText().trim() === '') {
-                        parent.remove();
+                    if (pParentElement && !pParentElement.getText().trim()) {
+                        pParentElement.remove();
                     }
                     if(liParentElement) {
                         editor.getSelection().fake(liParentElement);
                         if (this.checkIfEmptyListElement(liParentElement)) {
                             this.removeEmptyElement(liParentElement, numberModule, editor);
                         }
-                    }
-                    if (pParentElement && !pParentElement.getText().trim()) {
-                        pParentElement.remove();
                     }
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
@@ -965,13 +1127,24 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        rejectRowChange: function(editor, element) {
+        rejectRowChange: function(editor, element, numberModule) {
             if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                var liParentElement = element.getAscendant("li");
+                var pParentElement = element.getAscendant("p");
                 var table = element.getAscendant("table");
                 if (table.$.rows.length == 1) {
                     table.remove();
                 } else {
                     element.remove();
+                }
+                if (pParentElement && !pParentElement.getText().trim()) {
+                    pParentElement.remove();
+                }
+                if(liParentElement) {
+                    editor.getSelection().fake(liParentElement);
+                    if (this.checkIfEmptyListElement(liParentElement)) {
+                        this.removeEmptyElement(liParentElement, numberModule, editor);
+                    }
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributes(element);

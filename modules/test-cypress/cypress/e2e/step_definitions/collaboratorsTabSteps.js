@@ -36,3 +36,15 @@ When(/^type "([^"]*)" in search filter input in collaborators tab$/, function (k
 Then(/^total number of row is (\d+) in collaborators tab$/, function (count) {
     collaboratorsTab.elements.collaboratorsRow().should('have.length', count);
 });
+
+When(/^click on three vertical dots in column action of row (\d+) of collaborators tab$/, function (row) {
+    collaboratorsTab.clickThreeVerticalDotsInActionColumn(row);
+});
+
+When(/^click on edit role button$/, function () {
+    collaboratorsTab.clickEditRoleBtn();
+});
+
+When(/^select role with value "([^"]*)" in column action of row (\d+) of collaborators tab$/, function (role, row) {
+    collaboratorsTab.selectRoleFromRow(role, row);
+});

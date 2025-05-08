@@ -117,6 +117,7 @@ public class ProposalConverterServiceImpl implements ProposalConverterService {
             }
         } catch (Exception e) {
             LOG.error("Error generating the map of the document: {}", e);
+            throw new RuntimeException("Error generating the map of the document: {}", e);
         }
         return proposal;
     }
@@ -127,6 +128,7 @@ public class ProposalConverterServiceImpl implements ProposalConverterService {
             fos.write(proposal);
         } catch (IOException e) {
             LOG.error("Error in converting the proposal to a file: {}", e);
+            throw new RuntimeException("Error in converting the proposal to a file: {}", e);
         }
         return file;
     }

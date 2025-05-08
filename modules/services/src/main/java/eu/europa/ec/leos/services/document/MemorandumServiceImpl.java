@@ -208,7 +208,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     protected byte[] updateDataInXml(final byte[] content, MemorandumMetadata dataObject) {
         documentLanguageContext.setDocumentLanguage(dataObject.getLanguage());
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
-        return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
     }
 
     @Override

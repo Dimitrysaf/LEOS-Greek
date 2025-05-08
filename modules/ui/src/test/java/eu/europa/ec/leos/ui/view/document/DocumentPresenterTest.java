@@ -284,7 +284,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(userHelper.getUser("login")).thenReturn(user);
         when(securityContext.getPermissions(document)).thenReturn(permissions);
         when(messageHelper.getMessage("operation.metadata.updated")).thenReturn("Metadata updated");
-        when(billService.updateBill(document, byteContent, messageHelper.getMessage("operation.metadata.updated"))).thenReturn(document);
+        when(billService.updateBill(document, byteContent, messageHelper.getMessage("operation.metadata.updated"), true)).thenReturn(document);
         when(documentContentService.isCoverPageExists(leosProposal.getContent().get().getSource().getBytes())).
                 thenReturn(false);
         when(documentContentService.getCoverPageContent(leosProposal.getContent().get().getSource().getBytes())).
@@ -379,7 +379,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(userHelper.getUser("login")).thenReturn(user);
         when(securityContext.getPermissions(document)).thenReturn(permissions);
         when(messageHelper.getMessage("operation.metadata.updated")).thenReturn("Metadata updated");
-        when(billService.updateBill(document, byteContent, messageHelper.getMessage("operation.metadata.updated"))).
+        when(billService.updateBill(document, byteContent, messageHelper.getMessage("operation.metadata.updated"), true)).
                 thenReturn(document);
         when(documentContentService.isCoverPageExists(leosProposal.getContent().get().getSource().getBytes())).
                 thenReturn(false);
@@ -461,14 +461,14 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(document);
         when(packageService.findPackageByDocumentId(document.getId())).thenReturn(leosPackage);
-        when(packageService.getTableOfContent(docRef, TocMode.SIMPLIFIED_CLEAN)).thenReturn(tableOfContentItemVoMap);
+        when(packageService.getTableOfContent(document, TocMode.SIMPLIFIED_CLEAN)).thenReturn(tableOfContentItemVoMap);
         when(billService.getAncestorsIdsForElementId(document, selectedNodeId)).thenReturn(ancestorsIds);
 
         // DO THE ACTUAL CALL
         documentPresenter.fetchTocAndAncestors(new FetchCrossRefTocRequestEvent(selectedNodeId));
 
         verify(billService).findBillByRef(docRef);
-        verify(packageService).getTableOfContent(docRef, TocMode.SIMPLIFIED_CLEAN);
+        verify(packageService).getTableOfContent(document, TocMode.SIMPLIFIED_CLEAN);
         verify(billService).getAncestorsIdsForElementId(document, selectedNodeId);
         verify(documentScreen).setTocAndAncestors(argThat(sameInstance(tableOfContentItemVoMap)), argThat(sameInstance(ancestorsIds)));
         verifyNoMoreInteractions(billService, documentScreen);
@@ -686,7 +686,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(billProcessor.updateElement(originalDocument, ARTICLE_TAG, articleId, newArticleText)).thenReturn(updatedDocumentContent);
-        when(billService.updateBill(originalDocument, updatedDocumentContent, checkinComment)).thenReturn(savedDocument);
+        when(billService.updateBill(originalDocument, updatedDocumentContent, checkinComment, true)).thenReturn(savedDocument);
         when(messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(ARTICLE_TAG))).thenReturn("Article updated");
         when(messageHelper.getMessage("operation.checkin.minor")).thenReturn("Minor version");
         when(referenceLabelService.generateLabelStringRef(Arrays.asList(articleId), savedDocument.getMetadata().get().getRef(), updatedDocumentContent))
@@ -696,7 +696,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         documentPresenter.saveElement(new SaveElementRequestEvent(articleId, ARTICLE_TAG, newArticleText, false));
 
         verify(billProcessor).updateElement(originalDocument, ARTICLE_TAG, articleId, newArticleText);
-        verify(billService).updateBill(originalDocument, updatedDocumentContent, checkinComment);
+        verify(billService).updateBill(originalDocument, updatedDocumentContent, checkinComment, true);
         verify(billService).findBillByRef(docRef);
         verifyNoMoreInteractions(billService);
     }
@@ -727,7 +727,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(billProcessor.deleteElement(originalDocument, articleId, articleTag, user)).thenReturn(updatedDocumentContent);
-        when(billService.updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("document." + ARTICLE_TAG + ".deleted"))).thenReturn(savedDocument);
+        when(billService.updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("document." + ARTICLE_TAG + ".deleted"), true)).thenReturn(savedDocument);
         when(referenceLabelService.generateLabelStringRef(Arrays.asList(articleId), savedDocument.getMetadata().get().getRef(), updatedDocumentContent))
                     .thenReturn(new Result<>("deleted", null));
 
@@ -736,7 +736,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
 
         verify(billProcessor).deleteElement(originalDocument, articleId, articleTag, user);
         verify(billService).findBillByRef(docRef);
-        verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("document." + ARTICLE_TAG + ".deleted"));
+        verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("document." + ARTICLE_TAG + ".deleted"), true);
         verifyNoMoreInteractions(billService, elementProcessor);
     }
 
@@ -769,7 +769,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(billProcessor.deleteElement(originalDocument, articleId, articleTag, user)).thenReturn(updatedDocumentContent);
-        when(billService.updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("document." + ARTICLE_TAG + ".deleted"))).thenReturn(savedDocument);
+        when(billService.updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("document." + ARTICLE_TAG + ".deleted"), true)).thenReturn(savedDocument);
         when(referenceLabelService.generateLabelStringRef(Arrays.asList(articleId), savedDocument.getMetadata().get().getRef(), updatedDocumentContent))
                         .thenReturn(new Result<>("citations updated", null));
         // DO THE ACTUAL CALL
@@ -777,7 +777,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
 
         verify(billProcessor).deleteElement(originalDocument, articleId, articleTag, user);
         verify(billService).findBillByRef(docRef);
-        verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("document." + ARTICLE_TAG + ".deleted"));
+        verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("document." + ARTICLE_TAG + ".deleted"), true);
         verifyNoMoreInteractions(billService, elementProcessor);
     }
 
@@ -807,7 +807,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(billProcessor.insertNewElement(originalDocument, articleId, before, ARTICLE_TAG)).thenReturn(updatedDocumentContent);
-        when(billService.updateBill(originalDocument, updatedDocumentContent, checkinComment)).thenReturn(savedDocument);
+        when(billService.updateBill(originalDocument, updatedDocumentContent, checkinComment, true)).thenReturn(savedDocument);
         when(messageHelper.getMessage("operation.element.inserted", StringUtils.capitalize(ARTICLE_TAG))).thenReturn("Article inserted");
         when(messageHelper.getMessage("operation.checkin.minor")).thenReturn("Minor version");
         when(referenceLabelService.generateLabel((List<Ref>) argThat(containsInAnyOrder(new Ref("", articleId, "", null))), argThat(Matchers.any(Document.class))))
@@ -818,7 +818,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
 
         verify(billProcessor).insertNewElement(originalDocument, articleId, before, ARTICLE_TAG);
         verify(billService).findBillByRef(docRef);
-        verify(billService).updateBill(originalDocument, updatedDocumentContent, checkinComment);
+        verify(billService).updateBill(originalDocument, updatedDocumentContent, checkinComment, true);
 
         verifyNoMoreInteractions(billService);
     }
@@ -942,7 +942,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(billProcessor.updateElement(originalDocument, CITATIONS_TAG, citationsId, newCitationsContent)).thenReturn(updatedDocumentContent);
-        when(billService.updateBill(originalDocument, updatedDocumentContent, checkinComment)).thenReturn(savedDocument);
+        when(billService.updateBill(originalDocument, updatedDocumentContent, checkinComment, true)).thenReturn(savedDocument);
         when(elementProcessor.getElement(savedDocument, CITATIONS_TAG, citationsId)).thenReturn(newCitationsContent);
         when(messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(CITATIONS_TAG))).thenReturn("Citations updated");
         when(messageHelper.getMessage("operation.checkin.minor")).thenReturn("Minor version");
@@ -954,7 +954,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
 
         verify(billProcessor).updateElement(originalDocument, CITATIONS_TAG, citationsId, newCitationsContent);
         verify(billService).findBillByRef(docRef);
-        verify(billService).updateBill(originalDocument, updatedDocumentContent, checkinComment);
+        verify(billService).updateBill(originalDocument, updatedDocumentContent, checkinComment, true);
         verify(documentScreen).refreshElementEditor(citationsId, CITATIONS_TAG, newCitationsContent);
 
         verifyNoMoreInteractions(billService);
@@ -1080,7 +1080,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(document);
         when(billProcessor.updateElement(document, RECITALS_TAG, recitalsId, newRecitalsContent)).thenReturn(updatedDocumentContent);
-        when(billService.updateBill(document, updatedDocumentContent, checkinComment)).thenReturn(savedDocument);
+        when(billService.updateBill(document, updatedDocumentContent, checkinComment, true)).thenReturn(savedDocument);
         when(elementProcessor.getElement(savedDocument, RECITALS_TAG, recitalsId)).thenReturn(newRecitalsContent);
         when(messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(RECITALS_TAG))).thenReturn("Recitals updated");
         when(messageHelper.getMessage("operation.checkin.minor")).thenReturn("Minor version");
@@ -1091,7 +1091,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
 
         verify(billProcessor).updateElement(document, RECITALS_TAG, recitalsId, newRecitalsContent);
         verify(billService).findBillByRef(docRef);
-        verify(billService).updateBill(document, updatedDocumentContent, checkinComment);
+        verify(billService).updateBill(document, updatedDocumentContent, checkinComment, true);
         verify(documentScreen).refreshElementEditor(recitalsId, RECITALS_TAG, newRecitalsContent);
 
         verifyNoMoreInteractions(billService);
@@ -1177,7 +1177,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(importService.getAknDocument("reg", 2015, 25)).thenReturn(aknDocument);
         when(importService.insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList, tocList)).thenReturn(updatedDocumentContent);
-        when(billService.updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"))).thenReturn(savedDocument);
+        when(billService.updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"), true)).thenReturn(savedDocument);
 
         // DO THE ACTUAL CALL
         documentPresenter.importElements(new ImportElementRequestEvent(searchCriteria, elementIdList));
@@ -1186,7 +1186,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(importService).insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList, tocList);
         verify(billService).findBillByRef(docRef);
         verify(billService).getTableOfContent(originalDocument, TocMode.NOT_SIMPLIFIED, null);
-        verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"));
+        verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"), true);
 
         verifyNoMoreInteractions(importService);
         verifyNoMoreInteractions(billService);

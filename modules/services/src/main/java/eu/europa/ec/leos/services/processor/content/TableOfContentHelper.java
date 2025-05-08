@@ -70,6 +70,7 @@ public class TableOfContentHelper {
     public static final List<String> ELEMENTS_WITH_ONLY_TEXT = Collections.unmodifiableList(Arrays.asList(ROLE, PERSON, ORGANIZATION));
     private static final String MOVE_LABEL_SPAN_START_TAG = "<span class=\"leos-soft-move-label\">";
     private static final String MOVED_TITLE_SPAN_START_TAG = "<span class=\"leos-soft-move-title\">";
+    private static final String MOVED_CONTENT_SPAN_START_TAG = "<span class=\"leos-soft-movedto\">";
     private static final String SPAN_END_TAG = "</span>";
     private static final String SPACE = " ";
     private static final int MOVED_LABEL_SIZE = MOVED_TITLE_SPAN_START_TAG.length() + SPACE.length() + MOVE_LABEL_SPAN_START_TAG.length() + 2 * SPAN_END_TAG.length();
@@ -93,7 +94,12 @@ public class TableOfContentHelper {
                 : new StringBuilder();
 
         if (shoudlAddMovedLabel) {
-            itemDescription.insert(0, MOVED_TITLE_SPAN_START_TAG + SPACE);
+            if (tocItem.getSoftMoveFrom() != null) {
+                itemDescription.insert(0, MOVED_TITLE_SPAN_START_TAG + SPACE);
+            }
+            else{
+                itemDescription.insert(0, MOVED_CONTENT_SPAN_START_TAG + SPACE);
+            }
         }
 
         if (!StringUtils.isEmpty(tocItem.getNumber()) && !StringUtils.isEmpty(tocItem.getHeading())) {
@@ -146,7 +152,12 @@ public class TableOfContentHelper {
         }
 
         if (tocItem.getTocItem().isContentDisplayed()) {
-            itemDescription.append(itemDescription.length() > 0 ? StructureConfigUtils.CONTENT_SEPARATOR : "").append(removeTag(tocItem.getContent()));
+            if (tocItem.getSoftMoveTo() != null){
+                itemDescription.append(itemDescription.length() > 0 ? StructureConfigUtils.CONTENT_SEPARATOR : "").append(MOVED_CONTENT_SPAN_START_TAG).append(removeTag(tocItem.getContent())).append(SPAN_END_TAG);
+            }
+            else{
+                itemDescription.append(itemDescription.length() > 0 ? StructureConfigUtils.CONTENT_SEPARATOR : "").append(removeTag(tocItem.getContent()));
+            }
         }
 
         // contains mathJax ?

@@ -1115,6 +1115,20 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    public void addPackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators, String userId) {
+        logger.trace("Add package collaborators for package id: "+packageId);
+        repository.addPackageCollaborators(packageId, collaborators, userId);
+    }
+
+    @Override
+    @PerformanceLogger
+    public void deletePackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators) {
+        logger.trace("Delete package collaborators for package id: "+packageId);
+        repository.deletePackageCollaborators(packageId, collaborators);
+    }
+
+    @Override
+    @PerformanceLogger
     public void archiveDocumentVersion(String docRef, String version) {
         logger.trace("Archiving document {} version {}", docRef, version);
         repository.archiveDocumentVersion(docRef, version);

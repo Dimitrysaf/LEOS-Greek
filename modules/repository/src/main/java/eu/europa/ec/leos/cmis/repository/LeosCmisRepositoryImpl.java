@@ -927,6 +927,12 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     public FavouritePackageResponse toggleFavouritePackage(String ref, String userId) {
         return null;
     }
+    @Override
+    public void addPackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators, String userId) {
+    }
+    @Override
+    public void deletePackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators) {
+    }
 
     public Object configNotificationsUpload(String content) { return ResponseEntity.ok().build();}
     public String configNotificationsFetch() {return null; }

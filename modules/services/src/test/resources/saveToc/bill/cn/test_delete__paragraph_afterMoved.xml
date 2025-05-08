@@ -80,7 +80,7 @@
                         </point>
                     </list>
                 </paragraph>
-                <paragraph leos:depth="1" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
+                <paragraph leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
                            leos:softdate="2022-05-31T16:11:07.952+02:00"
                            leos:softmove_from="movedXpar3"
                            leos:softmove_label="MOVED from Article 3(3)" leos:softuser="jane(DIGIT)"

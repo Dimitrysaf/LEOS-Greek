@@ -14,10 +14,10 @@
                     <p leos:origin="ec" xml:id="deletedX_body_level_2_content_p">Text...</p>
                 </content>
             </level>
-            <chapter leos:depth="1" leos:origin="ec" xml:id="__akn_chapter_29xZII">
+            <chapter leos:origin="ec" xml:id="__akn_chapter_29xZII">
                 <num leos:origin="ec" xml:id="_akn_s16OoV">Chapter #</num>
                 <heading leos:origin="ec" xml:id="_akn_1YleOH">Chapter heading...</heading>
-                <section leos:depth="1" leos:origin="ec" xml:id="__akn_section_zF5KsW">
+                <section leos:origin="ec" xml:id="__akn_section_zF5KsW">
                     <num leos:origin="ec" xml:id="_akn_hsU9qn">Section #</num>
                     <heading leos:origin="ec" xml:id="_akn_pUpW97">Section heading...</heading>
                     <level leos:depth="1" leos:origin="ec" xml:id="_akn_level_YuxqgR">
@@ -29,7 +29,7 @@
                 </section>
             </chapter>
 
-            <paragraph leos:depth="3" leos:origin="ec" xml:id="akn_paragraph_6y0dox">
+            <paragraph leos:origin="ec" xml:id="akn_paragraph_6y0dox">
                 <content leos:origin="ec" xml:id="deletedX_akn_reG1Sr">
                     <p leos:origin="ec" xml:id="deletedX_akn_OWRyQx">
                         Text...

@@ -135,25 +135,21 @@ class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    public Map<String, List<TableOfContentItemVO>> getTableOfContent(String documentRef, TocMode mode) {
-        LeosPackage leosPackage = findPackageByDocumentRef(documentRef, XmlDocument.class);
-        List<XmlDocument> documents = findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, true);
+    public Map<String, List<TableOfContentItemVO>> getTableOfContent(XmlDocument document, TocMode mode) {
         Map<String, List<TableOfContentItemVO>> tocItemsMap = new HashMap<>();
-        for (XmlDocument document : documents) {
-            final String startingNode;
-            if (document instanceof Bill) {
-                startingNode = BILL;
-                structureContextProvider.get().useDocumentTemplate(document.getMetadata().get().getDocTemplate());
-            } else if (document instanceof Annex || document instanceof Memorandum) {
-                startingNode = DOC;
-                structureContextProvider.get().useDocumentTemplate(document.getMetadata().get().getDocTemplate());
-            } else {
-                continue;  //skip proposal
-            }
-
-            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(startingNode, document.getContent().get().getSource().getBytes(), mode);
-            tocItemsMap.put(document.getMetadata().get().getRef(), toc);
+        final String startingNode;
+        if (document instanceof Bill) {
+            startingNode = BILL;
+            structureContextProvider.get().useDocumentTemplate(document.getMetadata().get().getDocTemplate());
+        } else if (document instanceof Annex || document instanceof Memorandum) {
+            startingNode = DOC;
+            structureContextProvider.get().useDocumentTemplate(document.getMetadata().get().getDocTemplate());
+        } else {
+            return tocItemsMap;
         }
+
+        List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(startingNode, document.getContent().get().getSource().getBytes(), mode);
+        tocItemsMap.put(document.getMetadata().get().getRef(), toc);
         return tocItemsMap;
     }
 

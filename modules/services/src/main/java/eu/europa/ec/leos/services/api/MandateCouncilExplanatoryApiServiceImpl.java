@@ -169,6 +169,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(
                 explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        elementFragment = elementProcessor.updateReferences(elementFragment, explanatory);
         byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName,
                 elementFragment);
 
@@ -194,6 +195,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR,
                 checkinCommentJson);
         String newContent = elementProcessor.getElement(explanatory, elementName, elementId);
+
         if (splittedContent == null) {
             splittedContentIsEmpty = true;
         }
@@ -532,7 +534,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         }
         // we are combining two operations (get toc + get selected element ancestors)
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
-                explanatory.getMetadata().get().getRef(),
+                explanatory,
                 TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, ctxt.getNumberingConfigs(),
                 explanatory.getMetadata().get().getLanguage());
