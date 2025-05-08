@@ -55,7 +55,9 @@ class tableOfContent {
         moveOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Move']"),
         placeBeforeOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place before']"),
         deleteOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Delete']"),
-        euiCardHeaderTitle: () => cy.get('eui-card-header-title.eui-card-header__title-container-title')
+        euiCardHeaderTitle: () => cy.get('eui-card-header-title.eui-card-header__title-container-title'),
+        totalRecitals:()=>cy.get('.mat-tree-node > div').contains('Recital')
+
     }
 
     clickContributionsPaneButton() {

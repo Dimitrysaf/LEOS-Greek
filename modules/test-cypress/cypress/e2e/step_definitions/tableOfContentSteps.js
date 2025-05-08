@@ -359,6 +359,14 @@ When(/^minimize preamble link$/, function () {
     tableOfContent.minimizePreambleLink();
 });
 
+Then('the toc contains {int} recitals',function(){
+    tableOfContent.elements.totalRecitals().should('have.length','2')
+});
+
+Then(/^recital section contains recital having text "(.*)" in toc$/, function (label) {
+    tableOfContent.elements.nodeLabel().contains(label).should("have.text", label)
+});
+
 Then(/^below warning message is displayed in navigation pane$/, function (datatable) {
     const givenWarningList = [];
     datatable.hashes().forEach((warning) => {
