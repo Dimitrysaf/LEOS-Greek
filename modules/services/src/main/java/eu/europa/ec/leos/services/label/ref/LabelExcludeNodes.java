@@ -13,7 +13,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 @Component
 public class LabelExcludeNodes extends LabelHandler {
     
-    private static final List<String> NODES_TO_CONSIDER = Arrays.asList(AKOMANTOSO, CITATIONS, RECITALS);
+    private static final List<String> NODES_TO_CONSIDER = Arrays.asList(AKOMANTOSO, CITATIONS);
     
     @Override
     public boolean canProcess(List<TreeNode> refs) {
