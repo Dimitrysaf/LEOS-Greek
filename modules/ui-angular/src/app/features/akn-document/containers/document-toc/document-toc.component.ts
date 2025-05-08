@@ -446,6 +446,7 @@ export class DocumentTocComponent
   //1) the ToC itself
   //2) the drag elements found on the left
   onDrop(event: CdkDragDrop<TableOfContentItemVO[]>) {
+    console.log('ondrop');
     if (this.dragAction.targetId === null) {
       this.cancelDrop();
       return;
@@ -457,7 +458,13 @@ export class DocumentTocComponent
     );
 
     const nodesDragged = event.item.data instanceof Array ? event.item.data : [event.item.data];
-    const nodesDraggedOrdered = this.reorderIdsByTreeTraversal(this.treeControl.dataNodes, nodesDragged);
+    let nodesDraggedOrdered = this.reorderIdsByTreeTraversal(this.treeControl.dataNodes, nodesDragged);
+
+    //In case we are dragging a new element
+    if (nodesDraggedOrdered.length !== nodesDragged.length){
+      nodesDraggedOrdered = nodesDragged;
+    }
+
     //TODO : Fix this => this is a hack for allowing the root to go for validation otherwise it will fail to find the nodeParent and will not send it for validaiton
     if (nodeTarget.tocItem.root) {
       nodeTarget.parentItem = nodeTarget.id;
