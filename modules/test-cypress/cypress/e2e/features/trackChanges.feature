@@ -1749,3 +1749,79 @@ Feature: Track Changes Feature
     And  chapter 1 contains attribute "leos:softaction" with value "add"
     And  article 1 doesn't contain attribute "leos:action"
     And  article 1 contains attribute "leos:softmove_label" with value "MOVED from Article 1"
+
+  @soleRecital @local
+  Scenario: Verify numbering remains correct when last recital is deleted
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Sole Recital Testing" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And  all recitals has "num" tag
+    When mouseover on recital 2
+    When click on delete icon of recital 2
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then sole recital doesn't contain num tag
+    And  recital 1 contains "Recital..."
+    When click on insert before icon of recital 1
+    Then the total number of recital is 2
+    And  all recitals has "num" tag
+    When mouseover on recital 2
+    When click on delete icon of recital 2
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    And  recital 1 contains "Recital..."
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When click on right angle icon of preamble link
+    When drag element "Recital" from element tree list and drop after node label "Recital" in navigation pane
+    When click on save and close button in navigation pane
+    Then recital section contains recital having text "(1) Recital..." in toc
+    And  recital section contains recital having text "(2) Recital..." in toc
+    When click on toc edit button
+    And  click on three vertical dots for the element contains text "Recital..." in toc
+    And  click on delete option from eui dropdown content
+    When click on confirm button in dialog box window
+    When click on save and close button in navigation pane
+    Then recital section contains recital having text "Recital..." in toc
+    And  sole recital doesn't contain num tag
+    And  recital 1 contains "Recital..."
+    When click on toc edit button
+    When drag element "Recital" from element tree list and drop after node label "Recital" in navigation pane
+    When click on save and close button in navigation pane
+    And  recital section contains recital having text "(1) Recital..." in toc
+    And  recital section contains recital having text "(2) Recital..." in toc
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    And  all recitals has "num" tag
+    When click on delete icon of recital 2
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then recital 2 contains attribute "leos:action" with value "delete"
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 1 contains value "(1)"
+    When right click on recital 2
+    And  click on accept this change option under track changes action
+    Then sole recital doesn't contain num tag
+    And  recital 1 contains "Recital..."
+    When click on insert after icon of recital 1
+    Then recital 2 contains attribute "leos:action" with value "insert"
+    And  all recitals has "num" tag
+    When mouseover on recital 2
+    When click on delete icon of recital 2
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then recital 1 contains "Recital..."
+    Then recital 2 contains attribute "leos:action" with value "delete"
+    When right click on recital 2
+    And  click on accept this change option under track changes action
+    Then sole recital doesn't contain num tag
+    And  recital 1 contains "Recital..."

@@ -314,6 +314,10 @@ When('click on insert before icon of recital {int}', function (recitalNumber) {
     legalActPage.clickInsertBeforeIconOfRecital(recitalNumber);
 });
 
+When('click on insert after icon of recital {int}', function (recitalNumber) {
+    legalActPage.clickInsertAfterIconOfRecital(recitalNumber);
+});
+
 Then(`{string} is added as internal reference {int} of citation {int}`, (text, mReferenceNumber, citationNumber) => {
     legalActPage.getMRefTextFromCitation(mReferenceNumber, citationNumber).should('have.text', text);
 });
@@ -606,10 +610,44 @@ When(/^click on delete icon of article (\d+)$/, function (articleNumber) {
     legalActPage.clickDeleteIconOfArticle(articleNumber);
 });
 
+And('all recitals has {string} tag', (tagName) => {
+    legalActPage.elements.recital().find(tagName).should('exist');
+    legalActPage.elements.recital().children().first().each((el, i) => {
+        cy.wrap(el).invoke('text')
+            .should('match', new RegExp(`\\s*\\(${i + 1}\\)`));
+    });
+});
+
+Then ('the total number of recital is {int}',function (expectedCount){
+    legalActPage.elements.recital().should('have.length',expectedCount)
+});
+
+Then('the document contains {int} recital which does not contain the {string} tag', (expectedCount, tagName) => {
+    legalActPage.elements.recital().filter((i, el) => !el.innerText.includes(tagName)).should('have.length', expectedCount);
+});
+
+Then(/^sole recital doesn't contain num tag$/, function () {
+    legalActPage.elements.recital()
+        .filter((i, el) => !el.innerText.includes("num"))
+        .should('have.length', 1);
+});
+
+When('mouseover on recital {int}', (recitalNumber) => {
+    legalActPage.mouseHoverOnRecital(recitalNumber);
+})
+
+When(/^click on delete icon of recital (\d+)$/, function (recitalNumber) {
+    legalActPage.clickDeleteIconOfRecital(recitalNumber);
+});
+
 Then(/^chapter (\d+) contains attribute "([^"]*)" with value "([^"]*)"$/, function (chapterNumber, attributeName, attributeValue) {
     legalActPage.getChapter(chapterNumber).should('have.attr', attributeName).and('equal', attributeValue);
 });
 
 Then(/^article (\d+) doesn't contain attribute "([^"]*)"$/, function (articleNumber, attributeName) {
     legalActPage.getArticle(articleNumber).should('not.have.attr', attributeName);
+});
+
+Then ('the document does not contain recital {int}',function (recitalNumber){
+    legalActPage.getRecital(recitalNumber).should('not.exist');
 });

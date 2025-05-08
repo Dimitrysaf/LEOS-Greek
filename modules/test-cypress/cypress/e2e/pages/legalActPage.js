@@ -287,6 +287,10 @@ class legalActPage {
         this.getRecital(recitalNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.before']").click({ force: true }));
     }
 
+    clickInsertAfterIconOfRecital(recitalNumber) {
+        this.getRecital(recitalNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }));
+    }
+
     getLeosActionsIconOfCitation(citationNumber){
         return this.getCitation(citationNumber).siblings('.leos-actions.Vaadin-Icons .leos-actions-icon');
     }
@@ -301,6 +305,14 @@ class legalActPage {
 
     getTagFromNumTagOfParagraphFromArticle(paragraphNumber, articleNumber, tagName) {
         return this.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).children(tagName);
+    }
+
+    mouseHoverOnRecital(recitalNumber) {
+        this.getRecital(recitalNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }));
+    }
+
+    clickDeleteIconOfRecital(recitalNumber) {
+        this.getRecital(recitalNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='delete']").click({ force: true }));
     }
 }
 export default new legalActPage();
