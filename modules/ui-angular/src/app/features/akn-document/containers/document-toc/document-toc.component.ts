@@ -446,7 +446,6 @@ export class DocumentTocComponent
   //1) the ToC itself
   //2) the drag elements found on the left
   onDrop(event: CdkDragDrop<TableOfContentItemVO[]>) {
-    console.log('ondrop');
     if (this.dragAction.targetId === null) {
       this.cancelDrop();
       return;
