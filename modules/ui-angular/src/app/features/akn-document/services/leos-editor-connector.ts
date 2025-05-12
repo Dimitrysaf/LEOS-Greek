@@ -393,6 +393,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.updateTitleWithResponse(response);
     this.coEditionService.setShouldReloadAfterUpdate();
     this.loadingService.setTaskOver('saving', taskId);
+    this.documentService.setBlockReloadOfToc();
+    this.documentService.showRefreshWarning();
     this.refreshAnnotate();
   }
 
@@ -480,6 +482,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         elementId,
         documentType,
       ).subscribe((response) => {
+        this.documentService.setBlockReloadOfToc();
+        this.documentService.showRefreshWarning();
         this.documentService.setDocumentRefAndCategory(
           documentRef,
           documentType,
@@ -591,6 +595,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         .pipe(distinctUntilChanged())
         .subscribe({
           next: (response) => {
+            this.documentService.setBlockReloadOfToc();
+            this.documentService.showRefreshWarning();
             this.documentService.setDocumentRefAndCategory(documentRef, documentType);
             this.coEditionService.sendUpdateDocumentEvent(documentRef);
             resolve(response);
@@ -621,6 +627,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       elementData.elementFragment,
     ).subscribe((response) => {
       this.closeElement();
+      this.documentService.setBlockReloadOfToc();
       this.documentService.refreshView(response);
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
     });

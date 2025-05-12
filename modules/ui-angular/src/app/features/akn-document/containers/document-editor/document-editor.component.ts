@@ -296,6 +296,9 @@ export class DocumentEditorComponent
         this.documentService.setDidDocumentLoadAndRender(true);
         this.loadDocument = true;
         this.proposalRef = documentView.proposalRef;
+        if(this.tocService.refreshWarning) {
+          this.documentTocComponent.refreshWarningIcon = true;
+        }
       });
 
     this.documentService.hasUpdatePermission().subscribe(value => this.hasUpdatePermission = value);
@@ -477,6 +480,13 @@ export class DocumentEditorComponent
     return false;
   }
 
+  showRefreshWarningIcon() {
+    if(this.documentTocComponent) {
+      return this.documentTocComponent.refreshWarningIcon;
+    }
+    return false;
+  }
+
   getWarningMessages() {
     if(this.documentTocComponent) {
       return this.documentTocComponent.warningMessagesFromValidation;
@@ -498,6 +508,17 @@ export class DocumentEditorComponent
     }
   }
 
+  showRefreshWarning() {
+    if(this.documentTocComponent && !this.isEditMode) {
+      return this.translateService.instant('toc.refresh.generic.warning.message');
+    }
+  }
+
+  refreshToc() {
+      this.tocService.reloadToc();
+      this.documentTocComponent.refreshWarningIcon = false;
+      this.tocService.refreshWarning = false;
+  }
 
   handleListItemDragged(event, isAdd) {
     this.documentTocComponent.dragMoved(event, isAdd);
@@ -561,6 +582,9 @@ export class DocumentEditorComponent
     //set the styling for the toc
     this.documentService.setAnnotationMode('READ_ONLY');
     this.coEditionWSService.sendTocInlineEdit(this.documentRef);
+    if(this.tocService.refreshWarning) {
+      this.refreshToc();
+    }
   }
 
   handleUndo() {

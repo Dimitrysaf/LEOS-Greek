@@ -1478,14 +1478,11 @@ Feature: Track Changes Feature
     When click on insert after icon of citation 4
     Then citation 5 contains attribute "leos:action" with value "insert"
     And  total citation count is 7
-    When click on right angle icon of preamble link
-    Then citations section contains new element in navigation pane
     When click on insert before icon of recital 2
     Then recital 2 contains attribute "leos:action" with value "insert"
     And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 3 contains value "(2)"
     And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of recital 3 contains value "(3)"
     And  total recital count is 3
-    And  recitals section contains new element in navigation pane
     When click on insert after icon of article 1
     Then article 2 contains attribute "leos:action" with value "insert"
     And  del tag of num tag of article 3 contains value "Article 2"
@@ -1493,19 +1490,15 @@ Feature: Track Changes Feature
     And  del tag of num tag of article 4 contains value "Article 3"
     And  ins tag of num tag of article 4 contains value "Article 4"
     And  total article count is 11
-    And  enacting terms contains new element in navigation pane
     When right click on citation 5
     And  click on reject this change option under track changes action
     Then total citation count is 6
-    And  citations section doesn't contain new element in navigation pane
     When right click on recital 2
     And  click on reject this change option under track changes action
     Then total recital count is 2
-    And  recitals section doesn't contain new element in navigation pane
     When right click on article 2
     And  click on reject this change option under track changes action
     Then total article count is 10
-    And  enacting terms doesn't contain new element in navigation pane
     When click on close button present in legal act page
     Then user is on act viewer page
     When click on add button in annexes section

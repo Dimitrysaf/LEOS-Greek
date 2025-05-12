@@ -113,6 +113,7 @@ export class DocumentTocComponent
   isTreeValidationWarning: boolean;
   isSelectionWarning: boolean;
   showWarningIcon: boolean;
+  refreshWarningIcon: boolean;
   dragAction: DragAction;
   expandedNodeIds = new Set<string>();
   invalidNodes: Set<TableOfContentItemVO>;

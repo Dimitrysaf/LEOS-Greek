@@ -600,6 +600,7 @@
   "toc.higher.division.empty.validation.warning.message": "Une division supérieure doit contenir au moins un sous-élément",
   "toc.higher.division.hierarchy.validation.warning.message": "Les divisions supérieures ont une hiérarchie et il est interdit de placer deux éléments hiérarchiquement différents au même niveau",
   "toc.higher.division.generic.warning.message": "Il existe des erreurs de validation dans la table des matières:",
+  "toc.refresh.generic.warning.message": "<b>La table des matières n'est pas synchronisée avec le document. Veuillez cliquer sur ce bouton pour le mettre à jour</b>",
   "toc.edit.window.item.selected": "Element sélectionné",
   "toc.edit.window.item.number.error": "Ce n'est pas un nombre valide",
   "toc.edit.window.item.selected.number.error.message": "Le format sous forme de nombre est obligatoire",
