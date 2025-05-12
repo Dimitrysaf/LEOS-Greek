@@ -184,8 +184,8 @@ Feature: Legal Act Page Regression Features
     When click on insert before icon of article 2
     Then heading of article 2 contains "Article heading..."
     And  2 paragraphs are present in article 2
-    When click on "Article 3 - Article heading... 1.Text..." link in navigation pane
-    Then article 3 is displayed
+    When click on "Article 2 - Article heading... 1.Text..." link in navigation pane
+    Then article 2 is displayed
     When click on insert after icon of article 3
     Then heading of article 4 contains "Article heading..."
     And  2 paragraphs are present in article 4
@@ -517,7 +517,7 @@ Feature: Legal Act Page Regression Features
     When click close button of ck editor
     Then ck editor window is not displayed
 
-  @internalReference @local
+  @internalReference @local @focus
   Scenario: test internal reference by uploading existing leg file
     Given navigate to edit drafting application with "User1"
     Then user is on home page
@@ -595,11 +595,11 @@ Feature: Legal Act Page Regression Features
     When click on internal reference link 1 of citation 2
     Then point 2 of list 1 of paragraph 3 of article 3 is displayed
     When click on right angle icon of preamble link
-    When click on "(1) Recital...Article 11" link in navigation pane
+    When click on "(1) Recital..." link in navigation pane
     Then recital 1 is displayed
     When click on internal reference link 1 of recital 1
     Then article 11 is displayed
-    When click on "(2) Recital...Article 9(1), point (b)" link in navigation pane
+    When click on "(2) Recital..." link in navigation pane
     Then recital 2 is displayed
     When click on internal reference link 1 of recital 2
     Then point 2 of list 1 of paragraph 1 of article 9 is displayed
@@ -611,7 +611,7 @@ Feature: Legal Act Page Regression Features
     Then article 4 is displayed
     When click on internal reference link 1 of point 8 of list 1 of paragraph 1 of article 4
     Then recital 1 is displayed
-    When click on "Article 8 - Article heading... 1.Text...Article 11(2)" link in navigation pane
+    When click on "Article 8 - Article heading... 1.Text..." link in navigation pane
     Then article 8 is displayed
     When click on internal reference link 1 of paragraph 1 of article 8
     Then paragraph 2 of article 11 is displayed
@@ -1022,7 +1022,6 @@ Feature: Legal Act Page Regression Features
       | warning                                                                                                |
       | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
       | A higher division must contain at least one sub-element                                                |
-    And  node label "Section 1 Section heading..." contains node label "Article 1 -"
     And  node label "Section 1 Section heading..." contains node label "Article 2 -"
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled

@@ -268,7 +268,6 @@ export class DocumentService {
       .pipe(
         filter(Boolean),
         tap((res) => {
-          this.tocService.reload();
           this.getRecentChanges(res.category, res.ref, 0, 1);
           this.getDocumentConfig(res.ref, res.category);
         }),
@@ -665,6 +664,14 @@ export class DocumentService {
 
   resetDocument() {
     this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
+  }
+
+  setBlockReloadOfToc() {
+    this.tocService.setBlockReloadOfToc();
+  }
+
+  showRefreshWarning() {
+    this.tocService.showRefreshWarning();
   }
 
   reloadConnectors(

@@ -52,6 +52,7 @@ export class TableOfContentService {
   private isTocLoadingBS = new BehaviorSubject<boolean>(false);
 
   private blockReloadOfToc = false;
+  refreshWarning = false;
 
   constructor(
     private http: HttpClient,
@@ -148,11 +149,13 @@ export class TableOfContentService {
         this.originalValidationResult = validationResult;
         this.tocValidationBS.next(validationResult); // Update validation
       });
+    this.refreshWarning = false;
   }
 
   reloadToc() {
     const ref = this.documentRefAndCategoryBS.value.ref;
     const category = this.documentRefAndCategoryBS.value.category;
+    this.refreshWarning = false;
     this.getToc(ref, category)
       .pipe(
         take(1),
@@ -172,8 +175,9 @@ export class TableOfContentService {
               ])
             ))
         )).subscribe(([toc, validationResult]) => {
-      this.tocBS.next(toc); // Update toc
-      this.tocValidationBS.next(validationResult); // Update validation result
+          this.originalToc = toc;
+          this.tocBS.next(toc); // Update toc
+          this.tocValidationBS.next(validationResult); // Update validation result
     });
   }
 
@@ -206,6 +210,7 @@ export class TableOfContentService {
     toc: TableOfContentItemVO[],
   ) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
+    this.refreshWarning = false;
     return this.http
       .post<TableOfContentItemVO[]>(
         `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
@@ -217,6 +222,10 @@ export class TableOfContentService {
 
   setBlockReloadOfToc() {
     this.blockReloadOfToc = true;
+  }
+
+  showRefreshWarning() {
+    this.refreshWarning = true;
   }
 
   getCurrentToc() {
