@@ -114,7 +114,6 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
             validateDocumentXmlFiles(documentXmlFiles);
             ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles);
-            XmlFile xmlResponse = getResponseConverter().applayMetadataResponseToXmlFile(response); // TODO: check: it's unused - required?
             return buildResponse(response, documentXmlFiles, documentFurtherContent);
         }
         catch(XmlValidationException ex) {

@@ -130,8 +130,14 @@ public class MetadataServiceImpl implements MetadataService {
         final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.DATE);
         if (dateNode == null) return;
 
-        String displayValue = this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
-        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.DATE, displayValue);
+
+        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.DATE, fieldInfo.getId());
+        final String displayValue = this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
+        dateNode.setTextContent(displayValue);
+    }
+
+    private String readAdoptionDateDisplayValue(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        return this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
     }
 
     private ReferenceFieldInfo adaptLocationToLanguage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
