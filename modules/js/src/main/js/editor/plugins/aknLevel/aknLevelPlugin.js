@@ -20,7 +20,6 @@ define(function aknLevelPluginModule(require) {
     var leosHierarchicalElementTransformerStamp = require("plugins/leosHierarchicalElementTransformer/hierarchicalElementTransformer");
     var pluginName = "aknLevel";
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
-    var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
 
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
@@ -32,7 +31,7 @@ define(function aknLevelPluginModule(require) {
         init : function init(editor) {
             editor.on("toHtml", removeInitialSnapshot, null, null, 100);
             editor.on("toHtml", _wrapContentWithSubparagraph, null, null, 5);
-            editor.on("toDataFormat", _toDataFormat, null, null, 15);
+            editor.on("toDataFormat", _formatLevel, null, null, 15);
             editor.on("levelIndent", _renumberOnIndent);
             editor.on("levelOutdent", _renumberOnOutdent);
             $(editor.element.$).on("keydown", null, [editor], _checkAndBlockCustom);
@@ -120,7 +119,7 @@ define(function aknLevelPluginModule(require) {
     }
 
 
-    function _toDataFormat(event) {
+    function _formatLevel(event) {
         if (!event.data.dataValue.includes("</list>") && (event.data.dataValue.match(new RegExp("<subparagraph", "g")) || []).length === 1) {
             event.data.dataValue = event.data.dataValue.replace(/<subparagraph.*><content/, "<content").replace("<\/subparagraph>", "");
         }
