@@ -666,6 +666,8 @@
   "editor.annex-structure-change-title": "Changer la structure de l'annexe",
   "editor-switch-annex-structure-to-article-content": "Vous êtes sur le point de changer la structure de l'annexe en une basée sur les articles. <br> <span style=\"color: red;\"> Cette action supprimera tout le contenu qui peut déjà exister dans l'annexe </span> <br> Êtes-vous sûr de vouloir passer à la structure actuelle de type Article ?",
   "editor-switch-annex-structure-to-level-content": "Vous êtes sur le point de changer la structure de l'annexe en une basée sur les niveaux. <br> <span style=\"color: red;\"> Cette action supprimera tout le contenu qui peut déjà exister dans l'annexe </span> <br> Êtes-vous sûr de vouloir passer à la structure actuelle de type Niveau ?",
+  "task.ongoing": "Tâches en cours",
+  "task.over": "Tâches finies",
   "task.saving.ongoing": "Sauvegarde du document en cours...",
   "task.refresh.ongoing": "Mise à jour du document en cours...",
   "task.post-processing.ongoing": "La mise à jour des références internes est en cours.",
