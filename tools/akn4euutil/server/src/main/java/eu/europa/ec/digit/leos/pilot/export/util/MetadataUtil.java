@@ -29,7 +29,7 @@ public class MetadataUtil {
     private static final String INSERT_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     private static final String INTERINSTITUTIONAL_COTE_PARSE_PATTERN = "([0-9]{4})/([0-9]+) \\(([A-Za-z0-9]+)\\)";
     private static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "procedure_%s_%s";
-    private static final String INTERINSTITUTIONAL_COTE_HREF_PATTERN = "http://eur-lex.europa.eu/procedure/EN/%s_%s";
+    private static final String INTERINSTITUTIONAL_COTE_HREF_PATTERN = "http://eur-lex.europa.eu/procedure/__LANG__/%s_%s";
     private static final String INTERINSTITUTIONAL_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     private static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
     private static final String LINKED_DOCUMENT_PARSE_PATTERN = "([A-Za-z0-9]+)\\((\\d{4})\\)(\\s?)(\\d+)(\\s?)([A-Za-z0-9]*)";
@@ -67,8 +67,12 @@ public class MetadataUtil {
     private static final String VALUE="value";
     private static final String CLASS="class";
     private static final String FRBRWORK="FRBRWork";
+    private static final String FRBRLANGUAGE="FRBRlanguage";
     private static final String TLCREFERENCE = "TLCReference";
     private static final String PRESERVATION="preservation";
+    private static final String LANGUAGE="language";
+    private static final String LANGUAGE_EN="EN";
+    private static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
 
     private static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
@@ -518,7 +522,7 @@ public class MetadataUtil {
     }
 
     public static MetadataFieldInfo parseInterinstitutionalCote(String fieldValue) throws MetadataUtilsException {
-        if (!fieldValue.matches(INTERINSTITUTIONAL_COTE_PARSE_PATTERN)){
+        if (!fieldValue.matches(INTERINSTITUTIONAL_COTE_PARSE_PATTERN)) {
             throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
         }
 
@@ -1000,9 +1004,11 @@ public class MetadataUtil {
     }
 
     public static void processInterinstitutionalCote(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        MetadataUtil.addInterinstitutionalCoteToMetaReference(fieldInfo, xmlFile);
-        MetadataUtil.addInterinstitutionalCoteToCoverPage(fieldInfo, xmlFile);
-        MetadataUtil.addInterinstitutionalCoteToPreface(fieldInfo, xmlFile);
+        final String langValue = MetadataUtil.readLanguageValue(xmlFile);
+        ReferenceFieldInfo langFieldInfo = fieldInfo.withHref(fieldInfo.getHref().replace(INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER, langValue));
+        MetadataUtil.addInterinstitutionalCoteToMetaReference(langFieldInfo, xmlFile);
+        MetadataUtil.addInterinstitutionalCoteToCoverPage(langFieldInfo, xmlFile);
+        MetadataUtil.addInterinstitutionalCoteToPreface(langFieldInfo, xmlFile);
     }
 
     private static void addInterinstitutionalCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
@@ -1151,6 +1157,19 @@ public class MetadataUtil {
                 && XmlUtil.parentNodeNameEquals(xmlNode.getParentNode(), "meta");
     }
 
+    private static String readLanguageValue(XmlUtil.XmlFile xmlFile) {
+        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.FRBRLANGUAGE);
+        if (frbrLanguage == null) {
+            return MetadataUtil.LANGUAGE_EN;
+        }
+
+        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.LANGUAGE);
+        if (!StringUtils.hasLength(value)) {
+            return MetadataUtil.LANGUAGE_EN;
+        }
+        return value.toUpperCase();
+    }
+
     public static String buildPrefinalizationLegName(ApplyMetadataRequest request) {
         final String documentFilename = request.getDocument().getFilename();
         Optional<ApplyMetadataRequest.TaskNode> task = request.getTasks().stream().findFirst();
@@ -1196,7 +1215,7 @@ public class MetadataUtil {
     private static Node getAkomaNtosoNode(XmlFile xmlFile) {
         return xmlFile.getElementByName("akomaNtoso");
     }
-    
+
     private static void removeClassAttribute(Node xmlNode) {
         XmlUtil.removeNodeAttributeValue(xmlNode, CLASS);
     }
