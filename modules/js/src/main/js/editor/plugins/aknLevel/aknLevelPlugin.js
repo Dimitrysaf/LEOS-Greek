@@ -20,6 +20,7 @@ define(function aknLevelPluginModule(require) {
     var leosHierarchicalElementTransformerStamp = require("plugins/leosHierarchicalElementTransformer/hierarchicalElementTransformer");
     var pluginName = "aknLevel";
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
+    var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
 
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
@@ -31,7 +32,7 @@ define(function aknLevelPluginModule(require) {
         init : function init(editor) {
             editor.on("toHtml", removeInitialSnapshot, null, null, 100);
             editor.on("toHtml", _wrapContentWithSubparagraph, null, null, 5);
-            editor.on("toDataFormat", _unWrapContentFromSubparagraph, null, null, 15);
+            editor.on("toDataFormat", _toDataFormat, null, null, 15);
             editor.on("levelIndent", _renumberOnIndent);
             editor.on("levelOutdent", _renumberOnOutdent);
             $(editor.element.$).on("keydown", null, [editor], _checkAndBlockCustom);
@@ -119,10 +120,44 @@ define(function aknLevelPluginModule(require) {
     }
 
 
-    function _unWrapContentFromSubparagraph(event) {
+    function _toDataFormat(event) {
         if (!event.data.dataValue.includes("</list>") && (event.data.dataValue.match(new RegExp("<subparagraph", "g")) || []).length === 1) {
             event.data.dataValue = event.data.dataValue.replace(/<subparagraph.*><content/, "<content").replace("<\/subparagraph>", "");
         }
+
+        const parser = new DOMParser();
+        let xmlString = event.data.dataValue;
+
+        xmlString = xmlString.replace('<level', '<level xmlns:leos="leos"');
+
+        const doc = parser.parseFromString(xmlString, 'text/xml');
+        const levelTag = doc.querySelector('level');
+        const numTag = doc.querySelector('num');
+
+        if (levelTag && numTag) {
+            const children = Array.from(numTag.children);
+
+            const textContents = children
+                .filter(el => ['ins', 'del'].includes(el.tagName))
+                .map(el => el.textContent.trim())
+                .filter(text => text.length > 0);
+
+            if (textContents.length === 1) {
+                const xmlId = numTag.getAttribute('xml:id');
+                const value = textContents[0];
+
+                const newNum = doc.createElement('num');
+                if (xmlId) {
+                    newNum.setAttribute('id', xmlId);
+                }
+                newNum.setAttribute('leos:editable', 'false');
+                newNum.textContent = value;
+
+                numTag.parentNode.replaceChild(newNum, numTag);
+            }
+        }
+
+        event.data.dataValue = levelTag.outerHTML.replace('xmlns:leos="leos"', '');
     }
 
     function _renumberOnIndent(evt) {
