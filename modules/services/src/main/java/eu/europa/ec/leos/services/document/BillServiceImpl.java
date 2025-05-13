@@ -343,7 +343,7 @@ public abstract class BillServiceImpl implements BillService {
         newXmlContent = numberService.renumberArticles(newXmlContent, true);
         newXmlContent = numberService.renumberRecitals(newXmlContent);
         newXmlContent = numberService.renumberHigherSubDivisions(newXmlContent, tocList);
-        newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
+        newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         return updateBill(bill, newXmlContent, actionMsg, true);
     }

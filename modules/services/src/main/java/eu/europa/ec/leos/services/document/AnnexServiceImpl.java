@@ -260,7 +260,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
                 break;
         }
         newXmlContent = numberService.renumberHigherSubDivisions(newXmlContent, tocList);
-        newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
+        newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         return updateAnnex(annex, newXmlContent, VersionType.MINOR, actionMsg);
     }
