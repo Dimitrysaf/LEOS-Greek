@@ -71,6 +71,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   receiveToc?: (tocWrapper: any) => void;
   receiveRefLabel?: (references: any, documentRef: any) => void;
   closeElement?: () => void;
+  saveElementWithConfirmation?: () => void;
 
   public isCNInstance;
 
