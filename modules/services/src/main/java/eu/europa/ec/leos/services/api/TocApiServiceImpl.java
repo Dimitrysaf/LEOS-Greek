@@ -577,8 +577,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
             if (tableOfContentItemVO.getChildItems() != null
                     && (tableOfContentItemVO.getChildItems().isEmpty()
                         || tableOfContentItemVO.getChildItems().stream()
-                                .filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)
-                    && tableOfContentItemVO.getSoftActionAttr() == null) {
+                                .filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)) {
                 return true;
             }
         }
