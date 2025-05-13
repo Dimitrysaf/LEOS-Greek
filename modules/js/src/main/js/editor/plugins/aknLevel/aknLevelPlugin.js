@@ -136,24 +136,14 @@ define(function aknLevelPluginModule(require) {
         if (levelTag && numTag) {
             const children = Array.from(numTag.children);
 
-            const textContents = children
-                .filter(el => ['ins', 'del'].includes(el.tagName))
-                .map(el => el.textContent.trim())
-                .filter(text => text.length > 0);
-
-            if (textContents.length === 1) {
-                const xmlId = numTag.getAttribute('xml:id');
-                const value = textContents[0];
-
-                const newNum = doc.createElement('num');
-                if (xmlId) {
-                    newNum.setAttribute('id', xmlId);
+            children.forEach(el => {
+                if (['ins', 'del'].includes(el.tagName)) {
+                    const isEmpty = el.textContent.trim().length === 0;
+                    if (isEmpty) {
+                        numTag.removeChild(el);
+                    }
                 }
-                newNum.setAttribute('leos:editable', 'false');
-                newNum.textContent = value;
-
-                numTag.parentNode.replaceChild(newNum, numTag);
-            }
+            });
         }
 
         event.data.dataValue = levelTag.outerHTML.replace('xmlns:leos="leos"', '');
