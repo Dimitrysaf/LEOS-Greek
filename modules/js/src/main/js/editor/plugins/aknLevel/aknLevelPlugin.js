@@ -24,6 +24,7 @@ define(function aknLevelPluginModule(require) {
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var UNDERLINE = CKEDITOR.CTRL + 85;
+    var WHITE_SPACE = '\u00A0';
     var BACKSPACE =  8;
     var DELETE = 46;
     var pluginDefinition = {
@@ -128,6 +129,11 @@ define(function aknLevelPluginModule(require) {
         let xmlString = event.data.dataValue;
 
         xmlString = xmlString.replace('<level', '<level xmlns:leos="leos"');
+        xmlString = xmlString.replace(/&amp;nbsp;/g, WHITE_SPACE)
+            .replace(/&nbsp;/g, WHITE_SPACE)
+            .replace(/&#xa0;/g, WHITE_SPACE)
+            .replace(/&#160;/g, WHITE_SPACE)
+            .replace(/&amp;#xa0;/g, WHITE_SPACE);
 
         const doc = parser.parseFromString(xmlString, 'text/xml');
         const levelTag = doc.querySelector('level');
