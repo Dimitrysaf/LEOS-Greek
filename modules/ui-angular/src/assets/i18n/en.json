@@ -501,7 +501,7 @@
   "page.editor.co-edition-update.co-edition-stopped": "stopped editing the document",
   "page.editor.bookmark-text": "Go back to text under edition",
   "page.editor.open.editor.dialog.title": "Open Editor Detected",
-  "page.editor.open.editor.dialog.body": "Unsaved changes will be lost. If you want to continue, press Confirm.",
+  "page.editor.open.editor.dialog.body": "All pending changes will be saved. If you want to continue, press Confirm.",
   "page.editor.open.editor.not.allowed.dialog.title": "Alert!",
   "page.editor.open.editor.not.allowed.dialog.body": "Not allowed to edit with roles {{ userRoles }}",
   "page.editor.last-element-delete-confirmation.title": "Last element detected",

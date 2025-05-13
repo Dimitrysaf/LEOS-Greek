@@ -136,6 +136,10 @@ export class CKEditorService {
     });
   }
 
+  saveWithConfirmation(){
+    this.leosEditorConnector?.saveElementWithConfirmation();
+  }
+
   refreshStateAllAvailableConnectors() {
     this.leosEditorConnector?.$triggerStateChange();
     this.actionManagerConnector?.$triggerStateChange();
