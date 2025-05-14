@@ -266,7 +266,7 @@ Feature: CK Editor Regression Features
         When click save and close button of ck editor
         Then level 2 contains image
 
-    @ckEditorTablePlugin @local @focus
+    @ckEditorTablePlugin @local
     Scenario: Basic test to create a table inside another table
         Given navigate to edit drafting application with "User1"
         Then user is on home page
