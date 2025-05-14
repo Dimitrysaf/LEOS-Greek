@@ -52,7 +52,7 @@
     white-space: break-spaces;
   }
 
-  ins, [leos\:action="insert"] {
+  ins, [leos\:action="insert"]:not(recitals), recitals[leos\:action="insert"] num, recitals[leos\:action="insert"] heading {
     text-decoration: underline;
     white-space: break-spaces;
     mref, authorialnote, span.MathJax_CHTML {
@@ -75,7 +75,11 @@
       display: inline-block;
       width: 100%;
     }
+  }
 
+  recital:not([leos\:action="insert"]) aknp, recital:not([leos\:action="insert"]) num {
+    text-decoration: none !important;
+    color: black !important;
   }
 
   del, [leos\:action="delete"], [leos\:action="delete"] num {
