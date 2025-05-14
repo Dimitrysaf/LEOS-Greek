@@ -500,7 +500,7 @@
   "page.editor.co-edition-update.co-edition-stopped": "Arrêter l'édition du document",
   "page.editor.bookmark-text": "Revenir au texte en cours d'édition",
   "page.editor.open.editor.dialog.title": "Éditeur ouvert détecté",
-  "page.editor.open.editor.dialog.body": "Toutes les modifications en attente seront enregistrées. Si vous voulez continuer, appuyez sur Confirmer.",
+  "page.editor.open.editor.dialog.body": "Toutes les modifications en attente seront enregistrées. Si vous souhaitez continuer, appuyez sur Confirmer.",
   "page.editor.open.editor.not.allowed.dialog.title": "Alerte!",
   "page.editor.open.editor.not.allowed.dialog.body": "Non autorisé à modifier avec les rôles {{ userRoles }}",
   "page.editor.last-element-delete-confirmation.title": "Dernier élément détecté",
