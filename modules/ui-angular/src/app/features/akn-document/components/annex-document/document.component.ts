@@ -60,9 +60,11 @@ export class DocumentComponent
 
   paddingLeft: string;
   zoomLevel: number;
+  docUpdating = false;
   private bookmarkMutationObserver?: MutationObserver;
   private destroy$: Subject<any> = new Subject();
   private isCNInstance = false;
+  private waitUntil;
 
   constructor(
     private ckeditorService: CKEditorService,
@@ -79,6 +81,24 @@ export class DocumentComponent
     private domSanitizer: DomSanitizer,
     private loadingService: LoadingService,
   ) {
+    this.waitUntil = (condition) => {
+      return new Promise<void>((resolve, reject) => {
+        const interval = setInterval(() => {
+          if (!condition()) {
+            return;
+          }
+
+          clearInterval(interval);
+          resolve();
+        }, 1000);
+
+        setTimeout(() => {
+          clearInterval(interval);
+          reject('Timeout waiting for update');
+        }, 60000);
+      });
+    };
+
     this.isCNInstance = this.environmentService.isCouncil();
 
     this.milestoneService.requestStoredDocumentAnnotations$.pipe(takeUntil(this.destroy$)).subscribe((request) => {
@@ -173,6 +193,9 @@ export class DocumentComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe((coEditionUpdate) => {
           if (coEditionUpdate) {
+            if (coEditionUpdate.infoType === 'DOCUMENT_UPDATED') {
+              this.docUpdating = true;
+            }
             if (
               coEditionUpdate.updatedElements &&
               coEditionUpdate.updatedElements.length > 0
@@ -253,8 +276,14 @@ export class DocumentComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe((coEditionUpdate) => {
           if (!!coEditionUpdate && coEditionUpdate.documentId === this.documentService.documentRef) {
-            this.updateElementsInContent(coEditionUpdate);
-            this.loadingService.showPostProcessingEnded();
+            this.waitUntil(() => !this.docUpdating)
+              .then(() => {
+                this.updateElementsInContent(coEditionUpdate);
+                this.loadingService.showPostProcessingEnded();
+              })
+              .catch((error) => {
+                this.docUpdating = false;
+              })
           }
         });
       this.initTrackChangesActions();
@@ -306,6 +335,7 @@ export class DocumentComponent
     this.documentService.clearPendingSavingElements();
     this.xml = this.cleanupAndSerializeXML(xml);
     this.containerElRef.nativeElement.innerHTML = this.xml;
+    this.docUpdating = false;
     if (!this.isCNInstance) {
       this.documentService.setDidDocumentLoadAndRender(true);
     }
