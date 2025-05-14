@@ -1350,7 +1350,7 @@
 
     <documentRules>
         <rule>
-            <description>Signature validation rule</description>
+            <description>Only one occurence validation rule</description>
             <type>onlyOneOccurenceElement</type>
             <tocItem>signature</tocItem>
             <scope>drop</scope>
