@@ -29,7 +29,7 @@ public class ExternalSystemACLServiceImpl implements ExternalSystemACLService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${leos.content.script.security.policy}")
+    @Value("${leos.external.acl.domain.whitelist}")
     private String allowedDomains;
     private Pattern allowedDomainsPattern;
 
