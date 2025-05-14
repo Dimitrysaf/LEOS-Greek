@@ -24,6 +24,7 @@ define(function aknLevelPluginModule(require) {
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var UNDERLINE = CKEDITOR.CTRL + 85;
+    var WHITE_SPACE = '\u00A0';
     var BACKSPACE =  8;
     var DELETE = 46;
     var pluginDefinition = {
@@ -31,7 +32,7 @@ define(function aknLevelPluginModule(require) {
         init : function init(editor) {
             editor.on("toHtml", removeInitialSnapshot, null, null, 100);
             editor.on("toHtml", _wrapContentWithSubparagraph, null, null, 5);
-            editor.on("toDataFormat", _unWrapContentFromSubparagraph, null, null, 15);
+            editor.on("toDataFormat", _formatLevel, null, null, 15);
             editor.on("levelIndent", _renumberOnIndent);
             editor.on("levelOutdent", _renumberOnOutdent);
             $(editor.element.$).on("keydown", null, [editor], _checkAndBlockCustom);
@@ -119,10 +120,39 @@ define(function aknLevelPluginModule(require) {
     }
 
 
-    function _unWrapContentFromSubparagraph(event) {
+    function _formatLevel(event) {
         if (!event.data.dataValue.includes("</list>") && (event.data.dataValue.match(new RegExp("<subparagraph", "g")) || []).length === 1) {
             event.data.dataValue = event.data.dataValue.replace(/<subparagraph.*><content/, "<content").replace("<\/subparagraph>", "");
         }
+
+        const parser = new DOMParser();
+        let xmlString = event.data.dataValue;
+
+        xmlString = xmlString.replace('<level', '<level xmlns:leos="leos"');
+        xmlString = xmlString.replace(/&amp;nbsp;/g, WHITE_SPACE)
+            .replace(/&nbsp;/g, WHITE_SPACE)
+            .replace(/&#xa0;/g, WHITE_SPACE)
+            .replace(/&#160;/g, WHITE_SPACE)
+            .replace(/&amp;#xa0;/g, WHITE_SPACE);
+
+        const doc = parser.parseFromString(xmlString, 'text/xml');
+        const levelTag = doc.querySelector('level');
+        const numTag = doc.querySelector('num');
+
+        if (levelTag && numTag) {
+            const children = Array.from(numTag.children);
+
+            children.forEach(el => {
+                if (['ins', 'del'].includes(el.tagName)) {
+                    const isEmpty = el.textContent.trim().length === 0;
+                    if (isEmpty) {
+                        numTag.removeChild(el);
+                    }
+                }
+            });
+        }
+
+        event.data.dataValue = levelTag.outerHTML.replace('xmlns:leos="leos"', '');
     }
 
     function _renumberOnIndent(evt) {
