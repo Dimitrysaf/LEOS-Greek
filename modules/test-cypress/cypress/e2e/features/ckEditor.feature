@@ -357,7 +357,7 @@ Feature: CK Editor Regression Features
         And table icon is enabled in ck editor
         When click close button of ck editor
 
-    @ckEditorOpen @local
+    @ckEditorOpen @local @focus
     Scenario: preventing actions when ckEditor is open
         Given navigate to edit drafting application with "User1"
         Then user is on home page
@@ -404,24 +404,30 @@ Feature: CK Editor Regression Features
         Then "Save this version" dialog box window is displayed
         When click on cancel button in dialog box window
         Then no dialog box window present
-        And ck editor window is displayed
+        And ck editor window is not displayed
 
         ##### Import from OJ button #####
+        When mouseover and click on article 1
+        Then ck editor window is displayed
         When click on import from oj button in ribbon toolbar
         Then "Open Editor Detected" dialog box window is displayed
         When click on cancel button in dialog box window
         Then no dialog box window present
         And ck editor window is displayed
 
+        When mouseover and click on article 1
+        Then ck editor window is displayed
         When click on import from oj button in ribbon toolbar
         Then "Open Editor Detected" dialog box window is displayed
         When click on confirm button in dialog box window
         Then "Import from the Official Journal of the European Union" dialog box window is displayed
         When click on cancel button in dialog box window
         Then no dialog box window present
-        And ck editor window is displayed
+        And ck editor window is not displayed
 
         ##### Edit TOC #####
+        When mouseover and click on article 1
+        Then ck editor window is displayed
         When click on toc edit button
         Then "Open Editor Detected" dialog box window is displayed
         When click on cancel button in dialog box window
@@ -429,6 +435,8 @@ Feature: CK Editor Regression Features
         And elements list is not displayed in navigation pane
         And ck editor window is displayed
 
+        When mouseover and click on article 1
+        Then ck editor window is displayed
         When click on toc edit button
         Then "Open Editor Detected" dialog box window is displayed
         When click on confirm button in dialog box window
@@ -436,9 +444,11 @@ Feature: CK Editor Regression Features
         When click on cancel button in navigation pane
         Then no dialog box window present
         And elements list is not displayed in navigation pane
-        And ck editor window is displayed
+        And ck editor window is not displayed
 
         ##### Revert to previous version #####
+        When mouseover and click on article 1
+        Then ck editor window is displayed
         When click on versions pane accordion
         Then search button is displayed in versions pane section
         When click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
@@ -448,6 +458,8 @@ Feature: CK Editor Regression Features
         Then no dialog box window present
         And ck editor window is displayed
 
+        When mouseover and click on article 1
+        Then ck editor window is displayed
         When click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
         And click on revert to this version
         Then "Open Editor Detected" dialog box window is displayed
@@ -455,15 +467,19 @@ Feature: CK Editor Regression Features
         Then "Restore Version" dialog box window is displayed
         When click on cancel button in dialog box window
         Then no dialog box window present
-        And ck editor window is displayed
+        And ck editor window is not displayed
 
         ##### Close button #####
+        When mouseover and click on article 1
+        Then ck editor window is displayed
         When click on close button present in legal act page
         Then "Open Editor Detected" dialog box window is displayed
         When click on cancel button in dialog box window
         Then no dialog box window present
         And ck editor window is displayed
 
+        When mouseover and click on article 1
+        Then ck editor window is displayed
         When click on close button present in legal act page
         Then "Open Editor Detected" dialog box window is displayed
         When click on confirm button in dialog box window
