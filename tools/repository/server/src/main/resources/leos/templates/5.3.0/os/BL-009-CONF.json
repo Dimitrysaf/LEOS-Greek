@@ -21,7 +21,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//article[2]",
+          "destinationPath": "(//article)[2]",
           "position": "BEFORE-WRAPPER"
         }
       ],
@@ -56,35 +56,35 @@
       "list": [
         {
           "index": "1",
-          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
         },
         {
           "index": "2",
-          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Executive Vice-Presiden</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Executive Vice-Presiden</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
         },
         {
           "index": "3",
-          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Vice-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Vice-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
         },
         {
           "index": "4",
-          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Member of the Commission</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Member of the Commission</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
         },
         {
           "index": "5",
-          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director-General</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director-General</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
         },
         {
           "index": "6",
-          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
         },
         {
           "index": "7",
-          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of unit</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of unit</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
         },
         {
           "index": "8",
-          "content": "<organization refersTo=\"_COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of service </role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of service </role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
         }
       ]
     }

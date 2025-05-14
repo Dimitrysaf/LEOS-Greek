@@ -1,0 +1,67 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//citations/citation[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-citation-3\" class=\"guidance-green-block\"><span id=\"clause-citation-3\">[for acts adopted after consultation of a committee under the advisory procedure]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/recital[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-recital-3\" class=\"guidance-green-block\"><span id=\"clause-recital-3\">[for acts adopted after consultation of a committee under the examination procedure]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//conclusions[1]/aknp[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose the right option, depending on Procedure and the person who signs]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "2",
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">On behalf of the President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "3",
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director-General</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "4",
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "5",
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of unit</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        },
+        {
+          "index": "6",
+          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of service </role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "name": "structure_08"
+    }
+  ]
+}

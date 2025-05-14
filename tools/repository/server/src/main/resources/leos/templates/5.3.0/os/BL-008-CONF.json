@@ -30,7 +30,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//article[2]/paragraph[1]/subparagraph[1]",
+          "destinationPath": "(//article)[2]/paragraph[1]/subparagraph[1]",
           "position": "AFTER-WRAPPER"
         }
       ],
