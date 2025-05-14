@@ -66,13 +66,13 @@
                 </block>
                 <block name="reference" class="template">
                     <docNumber class="template"/>
-                </block>  
+                </block>
             </container>
             <container name="procedureIdentifier" class="template" >
                 <p>
                     <docketNumber class="template" />
                 </p>
-            </container> 
+            </container>
             <longTitle>
                 <p>
                     <docType refersTo="~DEC_IMPL">COMMISSION IMPLEMENTING DECISION</docType> of <date date="2999-01-01">XXX</date>

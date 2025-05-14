@@ -55,7 +55,7 @@
                 <p>
                     <docketNumber class="template" />
                 </p>
-            </container>  
+            </container>
             <longTitle>
                 <p>
                     <docType refersTo="~REG_IMPL">COMMISSION IMPLEMENTING REGULATION (EU) .../...</docType> of <date date="2999-01-01">XXX</date>
