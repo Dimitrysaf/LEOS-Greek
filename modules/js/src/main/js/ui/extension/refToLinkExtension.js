@@ -30,15 +30,16 @@ define(function refToLinkExtensionModule(require) {
         target = UTILS.getParentElement(connector);
         otherTargets = connector.otherTargets;
 
+        let R2L = window['R2L'];
         // configure ref2Link
         // See https://webgate.ec.europa.eu/fpfis/wikis/spaces/Ref2Link/pages/800752769/Ref2Link+Javascript+API+advanced+v1.3 for available options
-        $.fn.ref2link.setOptions({
-            //tooltipTrigger: 'notooltip',  //Disabling the tooltip 
+        R2L.setOptions({
+            tooltipTrigger: 'notooltip',  //Disabling the tooltip 
             worker: true,  // use a web worker for a smoother UX
             linkeddata: true // enable linked data
         });
          
-        $.fn.ref2link.setFilter('environments', ['EC-PRD']);// enable sets of rules
+        R2L.setFilter('environments', ['EC-PRD']);// enable sets of rules
 
         log.debug("Registering refToLink extension unregistration listener...");
         connector.onUnregister = _connectorUnregistrationListener;
@@ -50,7 +51,7 @@ define(function refToLinkExtensionModule(require) {
     // handle connector unregistration on client-side
     function _connectorUnregistrationListener() {
         log.debug("Unregistering refToLink extension...");
-        $.fn.ref2link.clearCache();
+        R2L.clearCache();
         referencesCache.clear();
     }
 
