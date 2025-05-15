@@ -134,6 +134,16 @@ define(function leosTablePluginModule(require) {
                         newElement.insertAfter(parentElem);
                         setToPosition(editor, newElement, CKEDITOR.POSITION_AFTER_START);
                     }
+                } else if (leosPluginUtils.isRecitalAA(parentElem)) {
+                    if (parentElem.getName() === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                        parentElem = parentElem.getLast().getLast();
+                    }
+                    var newBlock = new CKEDITOR.dom.element("div");
+                    newBlock.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
+                    newBlock.setAttribute('data-akn-hcontainer', 'BLOCK_TAB');
+                    newBlock.setAttribute('data-akn-sub-hcontainer', 'TAB');
+                    newBlock.insertAfter(parentElem);
+                    setToPosition(editor, newBlock, CKEDITOR.POSITION_AFTER_START);
                 }
             }
         }

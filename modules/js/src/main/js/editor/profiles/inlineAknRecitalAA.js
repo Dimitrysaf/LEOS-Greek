@@ -56,6 +56,9 @@ define(function aknRecitalAAProfileModule(require) {
     plugins.push(require("plugins/aknHtmlImage/aknHtmlImagePlugin"));
     plugins.push(require("plugins/leosBase64Image/leosBase64ImagePlugin"));
     plugins.push(require("plugins/leosImageResize/leosImageResizePlugin"));
+    plugins.push(require("plugins/leosTable/leosTablePlugin"));
+    plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
+    plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandler/leosHierarchicalElementShiftEnterHandler"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -81,7 +84,7 @@ define(function aknRecitalAAProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath," +
                  "clipboard,undo,pastefromword,basicstyles,enterkey," +
-                 "specialchar,button,dialog,dialogui,contextmenu,menubutton,widget,colorbutton",
+                 "specialchar,table,tableresize,tabletools,tableselection,button,dialog,dialogui,contextmenu,menubutton,widget,colorbutton",
         // comma-separated list of toolbar button names that must not be rendered
         removeButtons: "Bold,Underline,Strike,TextColor,PasteFromWord",
         // comma-separated list of additional plugins to be loaded
@@ -116,6 +119,8 @@ define(function aknRecitalAAProfileModule(require) {
         }, {
             name : "basicstyles",
             groups : [ "basicstyles", "cleanup" ]
+        }, {
+            name : "shiftenter"
         }, {
             name : "paragraph"
         }, {

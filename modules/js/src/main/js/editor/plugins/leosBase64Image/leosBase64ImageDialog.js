@@ -176,12 +176,12 @@ define(function leosBase64ImageDialog(require) {
 
         function insertImgInNewP(selection, selectedElement, img) {
             let range = selection.getRanges()[0];
-            while (leosPluginUtils.getElementName(selectedElement) !== "p") {
-                selectedElement = selectedElement.getLast();
+            if (leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                selectedElement = selectedElement.getLast().getLast();
             }
             img.insertAfter(selectedElement);
             range.setStartAfter(selectedElement);
-            range.fixBlock(true, 'p');
+            range.fixBlock(true, 'div');
             range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
             range.startContainer.setAttribute('data-akn-hcontainer', 'FGR');
             range.startContainer.setAttribute('data-akn-sub-hcontainer', 'IMG');
@@ -316,7 +316,7 @@ define(function leosBase64ImageDialog(require) {
                 if (!selectedImg) {
                     var selection = editor.getSelection();
                     var selectedElement = leosKeyHandler.getSelectedElement(selection);
-                    if (leosPluginUtils.isRecital(selectedElement)) {
+                    if (leosPluginUtils.isRecitalAA(selectedElement)) {
                         insertImgInNewP(selection, selectedElement, newImg);
                     } else {
                         editor.insertElement(newImg);

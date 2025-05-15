@@ -83,13 +83,31 @@ $RECITAL_SPACING: 32px;
             float: left;
         }
     }
+    ol[data-akn-name="recital"] > li {
+        & > div:first-child {
+            padding-top: 0;
+        }
+        & > div {
+            @extend %paddedText;
+        }
+        & > div:last-child {
+            padding-bottom: 0;
+        }
+        & > div.selectedMovedElement {
+            @extend %moveSubElement;
+        }
+    }
 }
 
 //------------------------------- Showblock Styles --------------------------//
 %showblockRecital {
-    div[data-akn-name=recitals] {
         p[data-akn-name="recital"], li[data-akn-name="recital"] {
             @include blockOutline("RECITAL", $RECITAL_SPACING);
+            & > div:not([data-akn-name="structuredContent"]) {
+                @include blockOutline("SUBPARAGRAPH");
+            }
+            & > div[data-akn-name="structuredContent"] {
+                @include blockOutline("SUBFLOW");
+            }
         }
-    }
 }

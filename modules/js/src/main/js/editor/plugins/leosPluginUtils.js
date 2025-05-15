@@ -40,6 +40,7 @@ define(function leosPluginUtilsModule(require) {
     var AKN_NUMBERED_PARAGRAPH = "aknNumberedParagraph";
     var INDENT_LEVEL_ATTR = "--indent-level"
     var INLINE_NUM_ATTR = "--inline-num"
+    var DIV = "div";
     var ORDER_LIST_ELEMENT = "ol";
     var LIST_ELEMENT= "li";
     var HTML_POINT = "li";
@@ -193,7 +194,7 @@ define(function leosPluginUtilsModule(require) {
         return !!element && AKN_ORDERED_LIST === element.getAttribute(DATA_AKN_NAME);
     }
 
-    function _isRecital(element) {
+    function _isRecitalAA(element) {
         return !!element && element.getAscendant('ol', true)?.getAttribute(DATA_AKN_NAME) === RECITAL;
     }
 
@@ -1370,7 +1371,7 @@ define(function leosPluginUtilsModule(require) {
         return _isDefinitionArticle(editor) ? MAX_LEVEL_LIST_DEPTH_DEF : MAX_LEVEL_LIST_DEPTH;
     }
 
-    function _selectLastEditableElement(selection) {
+    function _selectLastEditableElement(selection, selector) {
         /*
          * This method was created to solve a conflict in CKEditor when
          * we use contenteditable attribute in some elements.
@@ -1381,7 +1382,7 @@ define(function leosPluginUtilsModule(require) {
          * It was affecting the ENTER and also the indent and outdent.
          *
          */
-        var listOfElementToSelect = selection.getStartElement().find('p, li');
+        var listOfElementToSelect = selection.getStartElement().find(selector);
         var elementToSelect = listOfElementToSelect.getItem(listOfElementToSelect.count()-1);
         return _selectNewElement(elementToSelect, selection);
     }
@@ -1652,7 +1653,7 @@ define(function leosPluginUtilsModule(require) {
         isAnnexList: _isAnnexList,
         isOrderedAnnexList: _isOrderedAnnexList,
         isOrderedList: _isOrderedList,
-        isRecital: _isRecital,
+        isRecitalAA: _isRecitalAA,
 		isUnnumberedCNParagraph: _isUnnumberedCNParagraph,
 		isAnnexUnnumberedCNParagraph: _isAnnexUnnumberedCNParagraph,
 		isAnnexSubparagraphElement: _isAnnexSubparagraphElement,
@@ -1729,9 +1730,11 @@ define(function leosPluginUtilsModule(require) {
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
         MAX_LIST_LEVEL_DEF: MAX_LIST_LEVEL_DEF,
         MAX_LEVEL_LIST_DEPTH_DEF: MAX_LEVEL_LIST_DEPTH_DEF,
+        DIV: DIV,
         HTML_POINT: HTML_POINT,
         HTML_SUB_POINT: HTML_SUB_POINT,
         DATA_ORIGIN: DATA_ORIGIN,
+        RECITAL: RECITAL,
         MAINBODY: MAINBODY,
         ARTICLE: ARTICLE,
         POINT: POINT,
