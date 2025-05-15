@@ -24,18 +24,6 @@ define(function refToLinkExtensionModule(require) {
     var target;
     var otherTargets;
 
-    var regExpEscape = function (pattern) {
-        return pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    };
-
-    function replaceNbsps(str) {
-        return str.replace(/&nbsp;/gi, String.fromCharCode(160));
-    }
-
-    function replaceNbspsBySpaces(str) {
-        return str.replace(/&nbsp;/gi, " ");
-    }
-
     function _initRefToLink(connector) {
         log.debug("Initializing refToLink extension...");
 
@@ -43,7 +31,12 @@ define(function refToLinkExtensionModule(require) {
         otherTargets = connector.otherTargets;
 
         // configure ref2Link
-        $.fn.ref2link.options = {tooltipTrigger: 'notooltip'}; //Disabling the tooltip 
+        $.fn.ref2link.setOptions({
+            tooltipTrigger: 'notooltip',  //Disabling the tooltip 
+            worker: true,  // use a web worker for a smoother UX
+            linkeddata: true // enable linked data
+        });
+         
         $.fn.ref2link.setFilter('environments', ['EC-PRD']);// enable sets of rules
 
         log.debug("Registering refToLink extension unregistration listener...");
@@ -99,108 +92,7 @@ define(function refToLinkExtensionModule(require) {
     }
 
     function _renderLinks(el) {
-        log.debug("Rendering links...");
-        var textNodes = _textNodesUnder(el),
-            references = _getReferences(el);
-
-        //1. check for all references in text nodes
-        //2. check the reference with Longest match first and if found, store a placeholder
-        //3. if cache has something replace placeholders with values
-        var cache = {}; //placeholder-reference cache. 
-        textNodes.forEach(function (textNode, txtIndex) {
-            var newVal = textNode.nodeValue;
-            references.forEach(function (ref, refIndex) {
-                // Check first that ref context is included in text node
-                var refToFind = replaceNbsps(ref.match);
-                var originalText = textNode.nodeValue;
-                if (originalText.indexOf(replaceNbspsBySpaces(ref.context)) > -1
-                    || originalText.indexOf(replaceNbsps(ref.context)) > -1) {
-                    // Done like that to avoid too many matches if ref match is only one digit
-                    if ((refToFind.split(new RegExp('\\b')).length > 1 && newVal.indexOf(refToFind) > -1)
-                        || (newVal.search(new RegExp('\\b' + regExpEscape(refToFind) + '\\b')) > -1)) {
-                        newVal = _injectPlaceholders(newVal, '##R' + refIndex + '##', ref, cache);
-                    }
-                } else if (refToFind.split(new RegExp(' ')).length > 1
-                    && refToFind.includes("/")
-                    && newVal.indexOf(refToFind) > -1) {
-                    // Case for LEOS-5351 where ref context is not present in the node but ref contains a ref to OJ
-                    newVal = _injectPlaceholders(newVal, '##R' + refIndex + '##', ref, cache);
-                }
-            });
-
-            if (Object.keys(cache).length > 0) {
-                newVal = _ejectPlaceholders(newVal, cache);
-                $(textNode).replaceWith(newVal); //inject in DOM
-            }
-        });
-        
-        //helper functions
-        function _getReferences(el) {
-            let references, referenceKey = el.id + '_' + _getHash(el.innerText);
-            if (!referencesCache.has(referenceKey)) {
-                references = $(el).clone().getReferences();
-                //Sort to handle case where two references are in same line Example art 2 directive 2017/11/EC and directive 2017/11/EC
-                references.sort(function (left, right) {
-                    return replaceNbsps(right.match).length - replaceNbsps(left.match).length;
-                });
-                referencesCache.set(referenceKey, references);
-            } else {
-                references = referencesCache.get(referenceKey);
-            }
-            return references;
-        }
-
-        function _getHash(text) {
-            let hash = 0;
-            for (let i = 0; i < text.length; i++) {
-                const char = text.charCodeAt(i);
-                hash = (hash << 5) - hash + char;
-                hash &= hash; // Convert to 32bit integer
-            }
-            return new Uint32Array([hash])[0].toString(36);
-        }
-
-        function _injectPlaceholders(text, placeholder, ref, cache) {
-            cache[placeholder] = ref;
-            var refToFind = replaceNbsps(ref.match);
-            if (refToFind.split(new RegExp('\\b')).length > 1) {
-                return text.replace(new RegExp(regExpEscape(refToFind), 'g'), placeholder);
-            } else {
-                return text.replace(new RegExp('\\b' + regExpEscape(refToFind) + '\\b', 'g'), placeholder);
-            }
-        }
-
-        function _ejectPlaceholders(text, cache) {
-            Object.keys(cache).forEach(function (placeholder) {
-                // the new value to replace is coming as an attribute of the array cache[placeholder].views
-                var arrViews = cache[placeholder].views;
-                Object.keys(arrViews).forEach(function (key) {
-                    text = text.replace(new RegExp(placeholder, 'g'), arrViews[key].trim());
-                });
-            });
-            return text;
-        }
-    }
-
-    function _textNodesUnder(el) {
-        var node, result = [],
-            walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT,
-                {
-                    acceptNode: function (node) {
-                        return /^(\s*)(\S+)/.test(node.nodeValue)
-                            ? NodeFilter.FILTER_ACCEPT
-                            : NodeFilter.FILTER_REJECT;
-                    }
-                }, false);
-
-        //walk
-        var editedElement = el.querySelector('div.leos-placeholder'); // Skip text nodes inside CKEditor
-        while (node = walker.nextNode()) {
-            if ((editedElement == null) || ((editedElement != null) && (!editedElement.contains(node)))) {
-                result.push(node);
-            }
-        }
-        return result;
+        $(el).parseDeferred();
     }
 
     return {
