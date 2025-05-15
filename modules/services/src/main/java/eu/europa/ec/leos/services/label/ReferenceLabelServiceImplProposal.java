@@ -59,7 +59,12 @@ public class ReferenceLabelServiceImplProposal extends ReferenceLabelServiceImpl
     @Override
     public Result<String> generateRefLabelForDocNode(Ref ref) {
         final String docRef = ref.getHref().substring("docNodeRef_".length());
-        final XmlDocument targetDocument = workspaceService.findDocumentByRef(docRef, XmlDocument.class);
+        final XmlDocument targetDocument;
+        try {
+            targetDocument = workspaceService.findDocumentByRef(docRef, XmlDocument.class);
+        } catch (Exception e) {
+            return new Result<>("", ErrorCode.DOCUMENT_ANNEX_INDEX_NOT_FOUND);
+        }
         final LeosPackage targetPackage = packageService.findPackageByDocumentRef(targetDocument.getMetadata().get().getRef(), XmlDocument.class);
         final List<XmlDocument> targetSiblings = packageService.findDocumentsByPackagePath(targetPackage.getPath(), XmlDocument.class, true);
         Optional<Annex> annex = targetSiblings.stream()
