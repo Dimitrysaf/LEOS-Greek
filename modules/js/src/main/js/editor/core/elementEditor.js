@@ -378,9 +378,24 @@ define(function elementEditorModule(require) {
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
             var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
             dialogCommand.exec();
+            _selectRangeForElementId(elementId, editor);
             return true;
         }
         return false;
+    }
+
+    function _selectRangeForElementId(elementId, editor){
+        var nativeEditable = editor.editable().$;
+        var el = nativeEditable.querySelector('#' + elementId);
+        if (el) {
+            var element = new CKEDITOR.dom.element(el);
+            var lastEditable = leosPluginUtils.findLastEditable(element);
+            if (lastEditable) {
+                var range = editor.createRange();
+                range.selectNodeContents(lastEditable);
+                editor.getSelection().selectRanges([range]);
+            }
+        }
     }
 
     function _createEditorPlaceholder(rootElement, elementId) {
