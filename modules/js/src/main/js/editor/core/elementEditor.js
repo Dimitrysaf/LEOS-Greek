@@ -514,10 +514,6 @@ define(function elementEditorModule(require) {
         log.debug("Saving element...");
         var editor = event.editor;
         // LEOS-3418 : to save modification in the Alternatives clause.
-        console.log('SAVING ELEMENT');
-        console.log('SAVING ELEMENT');
-        console.log(editor.readOnly);
-        console.log(editor.config.isClause);
         if (!editor.readOnly || editor.config.isClause) {
             console.log('SAVING ELEMENT 1 ');
             var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
