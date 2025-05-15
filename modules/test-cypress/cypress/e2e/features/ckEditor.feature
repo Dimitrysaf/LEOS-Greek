@@ -357,7 +357,7 @@ Feature: CK Editor Regression Features
         And table icon is enabled in ck editor
         When click close button of ck editor
 
-    @ckEditorOpen @local @focus
+    @ckEditorOpen @local
     Scenario: preventing actions when ckEditor is open
         Given navigate to edit drafting application with "User1"
         Then user is on home page
