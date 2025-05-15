@@ -269,6 +269,7 @@ public abstract class BillServiceImpl implements BillService {
 
         LOG.trace("Update attachments in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        updateInternalReferencesAsync(bill);
         return bill;
     }
     

@@ -1081,7 +1081,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
         AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
-        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false);
         documentViewService.updateDocumentView(annex);
     }
 

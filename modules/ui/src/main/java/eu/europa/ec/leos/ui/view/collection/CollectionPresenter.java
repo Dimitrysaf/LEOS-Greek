@@ -839,7 +839,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 .build();
 
         // 2. save metadata
-        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"), false);
         eventBus.post(new DocumentUpdatedEvent());
         // 3.update ui
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "collection.block.annex.metadata.updated"));

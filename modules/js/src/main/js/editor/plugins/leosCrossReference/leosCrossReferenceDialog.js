@@ -86,10 +86,18 @@ define(function leosCrossReferenceDialog(require) {
                                     let tabRef = widget?.element?.find('ref')?.getItem(0)?.getAttribute('href');
                                     if (tabRef && tabRef.lastIndexOf('.') > 0) {
                                         tabRef = tabRef.substring(0, tabRef.lastIndexOf('.'));
-                                        this.getDialog().selectPage(tabRef);
+                                        try {
+                                            this.getDialog().selectPage(tabRef);
+                                        } catch (error) {
+                                            this.getDialog().selectPage(editor.LEOS.documentRef);
+                                        }
                                     } else if (tabRef && tabRef.startsWith('docNodeRef_')) {
                                         tabRef =  tabRef.replace('docNodeRef_', '');
-                                        this.getDialog().selectPage(tabRef);
+                                        try {
+                                            this.getDialog().selectPage(tabRef);
+                                        } catch (error) {
+                                            this.getDialog().selectPage(editor.LEOS.documentRef);
+                                        }
                                     }
 
                                     var brokenRef =  widget.element.getAttribute('leos:broken');
