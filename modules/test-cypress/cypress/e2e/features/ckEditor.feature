@@ -357,7 +357,7 @@ Feature: CK Editor Regression Features
         And table icon is enabled in ck editor
         When click close button of ck editor
 
-    @ckEditorOpen @local
+    @ckEditorOpen @local @focus
     Scenario: preventing actions when ckEditor is open
         Given navigate to edit drafting application with "User1"
         Then user is on home page
@@ -518,7 +518,7 @@ Feature: CK Editor Regression Features
         ## from financial statement ##
         When click on financial statement link present in act viewer page
         Then user is on financial statement page
-        When mouseover and click on level 2 in financial statement page
+        When click on edit icon of level 2 in financial statement page
         Then ck editor window is displayed
 
         When click on act view link in breadcrumb item
