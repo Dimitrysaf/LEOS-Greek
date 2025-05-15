@@ -331,7 +331,7 @@ Feature: CK Editor Regression Features
         Then success message "Paragraph has been added successfully!" is displayed in navigation pane
         When click on save and close button in navigation pane
         Then toc editing button is displayed and enabled
-        When mouseover and click on paragraph 1
+        When click on edit icon of paragraph 1
         Then ck editor window is displayed
         And  table icon is enabled in ck editor
         When click on table icon present in ck editor panel

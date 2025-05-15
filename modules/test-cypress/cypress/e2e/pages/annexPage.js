@@ -33,7 +33,6 @@ class annexPage {
     }
 
     mouseHoverAndClickOnParagraph(paragraphNumber) {
-        cy.wait(500);
         cy.xpath("(//div[@class='orientation']//paragraph)[" + paragraphNumber + "]").realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).click({ force: true }));
     }
 
