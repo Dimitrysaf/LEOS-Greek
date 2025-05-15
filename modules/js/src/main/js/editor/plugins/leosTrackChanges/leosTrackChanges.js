@@ -32,6 +32,7 @@ define(function leosTrackChangesModule(require) {
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
         DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
         ACCEPT: "accept", REJECT: "reject", TRACKCHANGES_NUMBER_ELEMENT_SELECTOR: "li[data-akn-action-number]",
+        DATA_AKN_NAME: "data-akn-name",
 
         DATA_AKN_SOFTACTION: "data-akn-attr-softaction", DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
         SOFTACTION_MOVE_FROM: "move_from", SOFTACTION_MOVE_TO: "move_to",
@@ -300,6 +301,15 @@ define(function leosTrackChangesModule(require) {
             } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
                 tcElement.insertAfter(selectedElement);
             } else {
+                // if selectedElement is div, wrap tcElement in a <p> tag
+                if(selectedElement.getName() === 'div' && !!selectedElement.getAttribute(core.DATA_AKN_NAME)
+                    && selectedElement.getAttribute(core.DATA_AKN_NAME).toLowerCase() === UTILS.BLOCKCONTAINER ){
+                    var paragraphElement = new CKEDITOR.dom.element(leosPluginUtils.HTML_SUB_POINT);
+                    paragraphElement.setAttribute(leosPluginUtils.DATA_AKN_NAME, 'aknParagraph');
+                    paragraphElement.append(tcElement);
+                    tcElement = paragraphElement;
+                }
+
                 editor.editable().insertElementIntoRange(tcElement, range);
             }
 
@@ -315,7 +325,9 @@ define(function leosTrackChangesModule(require) {
                 if (!node) return;
 
                 // If node is <p> or <li>, remember it
-                if (node.getName && (node.getName() === 'p' || node.getName() === 'li')) {
+                if (node.getName && (node.getName() === 'p' || node.getName() === 'li'
+                    || (node.getName() === 'div' && !!node.getAttribute(core.DATA_AKN_NAME)
+                        && node.getAttribute(core.DATA_AKN_NAME).toLowerCase() === UTILS.BLOCKCONTAINER ))) {
                     result = node;
                 }
 
@@ -1047,14 +1059,17 @@ define(function leosTrackChangesModule(require) {
                     element.remove();
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
-                if(parentElem && parentElem.getAttribute('data-akn-name') === core.ARTICLE && element.getAscendant("li")) {
+                if(parentElem && parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
                 } else {
                     var liParentElement = element.getAscendant("li");
                     var pParentElement = element.getAscendant("p");
                     element.remove();
                     if (pParentElement && !pParentElement.getText().trim()) {
-                        pParentElement.remove();
+                        let lastEditable = core.findLastEditable(pParentElement.getAscendant("div"));
+                        if(!lastEditable || lastEditable.getId() !== pParentElement.getId()){
+                            pParentElement.remove();
+                        }
                     }
                     if(liParentElement) {
                         editor.getSelection().fake(liParentElement);
@@ -1066,7 +1081,7 @@ define(function leosTrackChangesModule(require) {
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 if(parentElem) {
                     editor.fire('updateAlternateToolbarState', {index: parentElem.getAttribute("data-akn-original-option")})
-                    if(parentElem.getAttribute('data-akn-name') === core.ARTICLE) {
+                    if(parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE) {
                         core.removeTrackChangesAttributesForNumbering(element.getAscendant("li"));
                         core.addTrackChangesAttributes(editor, element, core.INSERT_ACTION);
                     } else {
