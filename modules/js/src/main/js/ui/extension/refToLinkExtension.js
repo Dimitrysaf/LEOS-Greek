@@ -31,8 +31,9 @@ define(function refToLinkExtensionModule(require) {
         otherTargets = connector.otherTargets;
 
         // configure ref2Link
+        // See https://webgate.ec.europa.eu/fpfis/wikis/spaces/Ref2Link/pages/800752769/Ref2Link+Javascript+API+advanced+v1.3 for available options
         $.fn.ref2link.setOptions({
-            tooltipTrigger: 'notooltip',  //Disabling the tooltip 
+            //tooltipTrigger: 'notooltip',  //Disabling the tooltip 
             worker: true,  // use a web worker for a smoother UX
             linkeddata: true // enable linked data
         });
