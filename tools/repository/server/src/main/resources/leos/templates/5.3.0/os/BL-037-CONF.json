@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//article[2])",
+          "destinationPath": "(//article)[2]",
           "position": "BEFORE-WRAPPER"
         }
       ],
