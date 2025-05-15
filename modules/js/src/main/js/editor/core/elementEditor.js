@@ -49,6 +49,7 @@ define(function elementEditorModule(require) {
     function _saveElementWithConfirmation() {
         const editor = _getEditor();
         if (editor.fire("canBeSaved")) {
+            editor.readOnly = false;
             editor.fire("save", {
                 data: editor.getData(),
                 isSaveAndClose: true
@@ -513,7 +514,12 @@ define(function elementEditorModule(require) {
         log.debug("Saving element...");
         var editor = event.editor;
         // LEOS-3418 : to save modification in the Alternatives clause.
+        console.log('SAVING ELEMENT');
+        console.log('SAVING ELEMENT');
+        console.log(editor.readOnly);
+        console.log(editor.config.isClause);
         if (!editor.readOnly || editor.config.isClause) {
+            console.log('SAVING ELEMENT 1 ');
             var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
             // set read-only to prevent changes
             editor.setReadOnly(true);
