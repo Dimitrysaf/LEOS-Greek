@@ -67,6 +67,7 @@ public class MetadataUtil {
     private static final String VALUE="value";
     private static final String CLASS="class";
     private static final String FRBRWORK="FRBRWork";
+    private static final String TLCREFERENCE = "TLCReference";
     private static final String PRESERVATION="preservation";
 
     private static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
@@ -1015,13 +1016,21 @@ public class MetadataUtil {
         if (references == null)
             return;
 
-        final Element tlcReference = xmlFile.newElement("TLCReference");
+        Node tlcReference = XmlUtil.getChildNodeWithName(references, name);
+        final boolean isTlcReferenceFound = (tlcReference != null);
+        if (!isTlcReferenceFound) {
+            tlcReference = xmlFile.newElement(TLCREFERENCE);
+        }
+
         XmlUtil.setNodeAttributeValue(tlcReference, NAME, name);
         XmlUtil.setNodeAttributeValue(tlcReference, XMLID, fieldInfo.getId());
         XmlUtil.setNodeAttributeValue(tlcReference, HREF, fieldInfo.getHref());
         XmlUtil.setNodeAttributeValue(tlcReference, SHOWAS, fieldInfo.getDisplayValue());
         XmlUtil.setNodeAttributeValue(tlcReference, SHORTFORM, fieldInfo.getShortValue());
-        references.appendChild(tlcReference);
+
+        if (!isTlcReferenceFound) {
+            references.appendChild(tlcReference);
+        }
     }
 
     private static void addInterinstitutionalCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
