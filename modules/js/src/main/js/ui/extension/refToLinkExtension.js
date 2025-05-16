@@ -20,7 +20,6 @@ define(function refToLinkExtensionModule(require) {
     var $ = require("jquery");
     var refToLink = require("refToLink");
     var UTILS = require("core/leosUtils");
-    var referencesCache = new Map();
     var target;
     var otherTargets;
 
@@ -34,7 +33,7 @@ define(function refToLinkExtensionModule(require) {
         // configure ref2Link
         // See https://webgate.ec.europa.eu/fpfis/wikis/spaces/Ref2Link/pages/800752769/Ref2Link+Javascript+API+advanced+v1.3 for available options
         R2L.setOptions({
-            tooltipTrigger: 'notooltip',  //Disabling the tooltip 
+            //tooltipTrigger: 'notooltip',  //Disabling the tooltip
             worker: true,  // use a web worker for a smoother UX
             linkeddata: true // enable linked data
         });
@@ -52,7 +51,6 @@ define(function refToLinkExtensionModule(require) {
     function _connectorUnregistrationListener() {
         log.debug("Unregistering refToLink extension...");
         R2L.clearCache();
-        referencesCache.clear();
     }
 
     // handle connector state change on client-side

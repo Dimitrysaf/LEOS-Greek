@@ -49,5 +49,18 @@ body {
 }
 
 .ref2link-generated:hover {
-    color: blue;
+    color: #004494;
+}
+
+.ref2link-tooltip {
+    max-width: initial !important;
+    min-width: 25rem;
+}
+
+.ref2link-tooltip .label {
+    color: #333;
+}
+
+.ref2link-tooltip table {
+    max-width: 42rem;
 }

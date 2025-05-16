@@ -3,17 +3,12 @@
 
 <head>
     <title>Ref2link demo page</title>
-    <script type="text/javascript" src="assets/es6-shim.min.js"></script>
-    <script type="text/javascript" src="assets/es7-object-polyfill.browser.js"></script>
-    <script type="text/javascript" src="assets/jquery.min.js"></script>
-    <!-- ref2link mandatory dependency -->
-    <script type="text/javascript" src="assets/bootstrap.min.js"></script>
-    <!-- mandatory for tooltips -->
-    <link rel="stylesheet" href="assets/bootstrap.min.css" type="text/css">
-    <!-- mandatory for tooltips -->
+    <script type="text/javascript" src="assets/es6-shim.min.js"></script><!-- polyfill -->
+    <script type="text/javascript" src="assets/es7-object-polyfill.browser.js"></script><!-- polyfill -->
+    <script type="text/javascript" src="assets/jquery.min.js"></script><!-- mandatory JQuery dependency-->
+    <link rel="stylesheet" href="assets/bootstrap.min.css" type="text/css"><!-- tooltip styling -->
     <link rel="stylesheet" href="assets/sample.css" type="text/css">
-    <!-- mandatory for tooltips -->
-    <script type="text/javascript" src="assets/ref2link.bundle.js"></script>
+    <script type="text/javascript" src="assets/ref2link.bundle.js"></script><!-- ref2link dependency -->
 </head>
 
 <body>
@@ -36,8 +31,10 @@
         </div>
         <div class="row">
             <div class="col-xs-6">
-                <textarea class="ref2link-source" placeholder="Type or paste your multilingual EU legal references here...">
+                <textarea class="ref2link-source"
+                    placeholder="Type or paste your multilingual EU legal references here...">
 #EU law
+
 (BG) членове 14, 15 и 16 от Регламент (ЕС) 2018/1725 
 (ES) directiva (UE) 2015/2366 
 (CS) nařízení (EU, Euratom) 2018/1046 a rozhodnutí č. 1082/2013/EU 
@@ -61,7 +58,9 @@
 (SK) článku 22 ods. 1 vykonávacieho nariadenia (EÚ) č. 809/2014
 (SL) UL L 292, 10.11.2009, str. 5.
 (FI) Direktiivit 2002/65/EY, 2009/110/EY ja 2013/36/EU sekä asetus (EU) N:o 1093/2010
-(SV) artikel 14, 15 og 16 i forordning (EU) 2018/1725
+(SV) bilagorna II och III till Europaparlamentets och rådets förordning (EG) nr 396/2005
+
+# CELEX id
 62003CV0001
 
 #EU case
@@ -81,6 +80,7 @@ ECLI:FI:KKO:2016:1
 ECLI:NL:HR:2016:764
 ECLI:PT:TRE:2018:3996.16.7T8STB.E1.FE
 ECLI:SI:UPRS:2018:I.U.2437.2017.6
+62003CV0001
 
 #ELI MS law
 (ES) Ley 39/2015, de 1 de octubre
@@ -88,19 +88,10 @@ ECLI:SI:UPRS:2018:I.U.2437.2017.6
 (FR) LOI n° 2017-257 du 28 février 2017
 (DK) LBK nr 23 af 04/01/2017
 (IE) Act 2014 (No. 38)
+(PL) Dz. U. z 2019 r. poz. 1461
+(PT) Decreto-Lei n.º 111/2017, de 31 de agosto
 
-#State aid
-SA.24221
-
-#EU Council
-ST 15018/11
-
-#EU Council
-COM(2012)10
-
-#EU Press release
-IP/18/2563
-</textarea>
+            </textarea>
             </div>
             <div class="col-xs-6">
                 <div class="ref2link-target"></div>
@@ -111,10 +102,12 @@ IP/18/2563
         function parse() {
             $('.ref2link-target').html($('.ref2link-source').val()).parseDeferred(); // call ref2link async parsing method
         }
+
         function clear() {
             $('.ref2link-source').val('');
             $('.ref2link-target').html('');
         }
+
         (function ($) {
             $(".btn-parse").click(function (e) {
                 parse();
@@ -123,10 +116,10 @@ IP/18/2563
                 clear();
             });
 
-            R2L.setFilter('environments', ['BE', 'BG', 'DE', 'DK', 'ES', "FI", "FR", "IE", "NL", "PT" ]);
+            R2L.setFilter('environments', ['ES', 'FI', 'FR', 'IE', 'DK', 'PL', 'PT']);
+            R2L.setOptions({ linkeddata: false });
             parse();
         })(jQuery);
-
     </script>
 </body>
 
