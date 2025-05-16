@@ -16,6 +16,10 @@ class annexPage {
         cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({force: true}));
     }
 
+    mouseHoverAndRealClickOnLevel(levelNumber) {
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().realClick());
+    }
+
     clickEditIconOfLevel(levelNumber) {
         cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
     }
