@@ -13,7 +13,11 @@ class annexPage {
     }
 
     mouseHoverAndClickOnLevel(levelNumber) {
-        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({force: true}));
+    }
+
+    mouseHoverAndRealClickOnLevel(levelNumber) {
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().realClick());
     }
 
     clickEditIconOfLevel(levelNumber) {

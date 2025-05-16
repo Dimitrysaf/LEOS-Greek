@@ -49,6 +49,7 @@ define(function elementEditorModule(require) {
     function _saveElementWithConfirmation() {
         const editor = _getEditor();
         if (editor.fire("canBeSaved")) {
+            editor.readOnly = false;
             editor.fire("save", {
                 data: editor.getData(),
                 isSaveAndClose: true
@@ -239,7 +240,6 @@ define(function elementEditorModule(require) {
             editor.on("selectionChange", _checkSelection.bind(undefined, connector, params.elementId, params.elementType))
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));
             editor.on("save", _saveElement.bind(undefined, connector, params.elementId, params.elementType));
-            editor.on("elementReadyToSave", _elementReadyToSave.bind(undefined, connector, params.elementId, params.elementType));
             editor.on("requestElement", _requestElement.bind(undefined, connector));
             editor.on("requestToc", _requestToc.bind(undefined, connector));
             editor.on("requestRefLabel", _requestRefLabel.bind(undefined, connector));
@@ -525,40 +525,6 @@ define(function elementEditorModule(require) {
     }
 
     function _saveElement(connector, elementId, elementType, event) {
-        log.debug("Saving element...");
-        var editor = event.editor;
-        // LEOS-3418 : to save modification in the Alternatives clause.
-        if (!editor.readOnly || editor.config.isClause) {
-            var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
-            // set read-only to prevent changes
-            editor.setReadOnly(true);
-            const alternateElementId = editor.config.isAlternativeArticle ? editor.element.getFirst().getId() : null;
-
-            // save the element being edited
-            var data = {
-                elementId: elementId,
-                alternateElementId: alternateElementId,
-                elementType: elementType,
-                elementFragment: eventData,
-                isSplit: event.data.origin === "split" ? true : false,
-                isSaveAndClose: !!event.data.isSaveAndClose ? true : false,
-            };
-            editor.LEOS.saveCmdExecuted = true;
-            connector.saveElement(data)
-                .then((response) => {
-                    if (connector.editorChannel) {
-                        connector.editorChannel.publish('save.complete', response);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Save failed:", error);
-                });
-            return true;
-        }
-        return false;
-    }
-
-    function _elementReadyToSave(connector, elementId, elementType, event) {
         log.debug("Saving element...");
         var editor = event.editor;
         // LEOS-3418 : to save modification in the Alternatives clause.

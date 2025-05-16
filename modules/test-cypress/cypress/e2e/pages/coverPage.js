@@ -7,7 +7,7 @@ class coverPage {
     }
 
     clickDocPurpose(){
-        this.elements.docPurpose().click();
+        this.elements.docPurpose().realClick();
     }
 
     clickCloseBtn(){

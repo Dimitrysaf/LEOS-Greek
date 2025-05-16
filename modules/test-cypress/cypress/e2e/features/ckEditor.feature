@@ -518,7 +518,7 @@ Feature: CK Editor Regression Features
         ## from financial statement ##
         When click on financial statement link present in act viewer page
         Then user is on financial statement page
-        When mouseover and click on level 2 in financial statement page
+        When click on edit icon of level 2 in financial statement page
         Then ck editor window is displayed
 
         When click on act view link in breadcrumb item
@@ -554,7 +554,7 @@ Feature: CK Editor Regression Features
         Then total number of annexes present in act viewer page is 1
         When click on annex 1 link
         Then user is on annex page
-        When mouseover and click on level 1
+        When mouseover and real click on level 1
         Then ck editor window is displayed
 
         When click on act view link in breadcrumb item
