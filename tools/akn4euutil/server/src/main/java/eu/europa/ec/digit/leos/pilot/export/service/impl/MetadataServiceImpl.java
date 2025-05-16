@@ -499,7 +499,7 @@ public class MetadataServiceImpl implements MetadataService {
         final String b64Stamp = this.getLanguageStampAsBase64(language);
 
         final Node imgNode = xmlFile.newElement("img");
-        XmlUtil.setNodeAttributeValue(blockNode, "src", "data:image/gif;base64," + b64Stamp);
+        XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
         blockNode.appendChild(imgNode);
         conclusions.appendChild(blockNode);
     }
