@@ -97,7 +97,7 @@ define(function leosPluginUtilsModule(require) {
     var DELETED = "deletedX";
     var MOVED = "movedX";
     var DATA_AKN_ACTION = 'data-akn-action';
-
+    var BLOCKCONTAINER = 'blockcontainer';
     var REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX = /\u200B/g;
 
     var COUNCIL_INSTANCE = "COUNCIL";
@@ -1631,6 +1631,44 @@ define(function leosPluginUtilsModule(require) {
     }
 
 
+    function _findLastEditable(element) {
+        let result = null;
+
+        function search(node) {
+            if (!node) return;
+
+            // If node is <p> or <li>, remember it
+            if (node.getName && (node.getName() === 'p' || node.getName() === 'li'
+                || (node.getName() === 'div' && !!node.getAttribute(DATA_AKN_NAME)
+                    && node.getAttribute(DATA_AKN_NAME).toLowerCase() === BLOCKCONTAINER ))) {
+                result = node;
+            }
+
+            // If node is <li> and contains <ul> or <ol>, search deeply inside
+            if (node.getName && node.getName() === 'li' && node.getChildren) {
+                const children = node.getChildren();
+                for (let i = 0; i < children.count(); i++) {
+                    const child = children.getItem(i);
+                    if (child.getName && (child.getName() === 'ul' || child.getName() === 'ol')) {
+                        search(child); // Dive into nested lists inside <li>
+                    }
+                }
+            }
+
+            // Always search normal children (outside <li> context too)
+            if (node.getChildren) {
+                const children = node.getChildren();
+                for (let i = 0; i < children.count(); i++) {
+                    search(children.getItem(i));
+                }
+            }
+        }
+
+        search(element);
+
+        return result;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1711,6 +1749,7 @@ define(function leosPluginUtilsModule(require) {
         getRefConfig: _getRefConfig,
         isEmpty: _isEmpty,
         isInsideTable: _isInsideTable,
+        findLastEditable: _findLastEditable,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,

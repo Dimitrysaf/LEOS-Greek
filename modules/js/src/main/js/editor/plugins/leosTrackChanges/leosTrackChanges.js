@@ -278,7 +278,7 @@ define(function leosTrackChangesModule(require) {
             var selectedElement = editor.getSelection().getStartElement();
             var range = editor.getSelection().getRanges()[0];
             if(selectedElement.getName() === 'div') {
-                let lastEditable = this.findLastEditable(selectedElement);
+                let lastEditable = leosPluginUtils.findLastEditable(selectedElement);
                 if (lastEditable) {
                     // Create a range for the last <li> or <p>
                     range = editor.createRange();
@@ -316,44 +316,6 @@ define(function leosTrackChangesModule(require) {
             this.setToEditablePosition(editor, tcElement, toEnd);
             editor.fire('unlockSnapshot');
             return tcElement;
-        },
-
-        findLastEditable(element) {
-            let result = null;
-
-            function search(node) {
-                if (!node) return;
-
-                // If node is <p> or <li>, remember it
-                if (node.getName && (node.getName() === 'p' || node.getName() === 'li'
-                    || (node.getName() === 'div' && !!node.getAttribute(core.DATA_AKN_NAME)
-                        && node.getAttribute(core.DATA_AKN_NAME).toLowerCase() === UTILS.BLOCKCONTAINER ))) {
-                    result = node;
-                }
-
-                // If node is <li> and contains <ul> or <ol>, search deeply inside
-                if (node.getName && node.getName() === 'li' && node.getChildren) {
-                    const children = node.getChildren();
-                    for (let i = 0; i < children.count(); i++) {
-                        const child = children.getItem(i);
-                        if (child.getName && (child.getName() === 'ul' || child.getName() === 'ol')) {
-                            search(child); // Dive into nested lists inside <li>
-                        }
-                    }
-                }
-
-                // Always search normal children (outside <li> context too)
-                if (node.getChildren) {
-                    const children = node.getChildren();
-                    for (let i = 0; i < children.count(); i++) {
-                        search(children.getItem(i));
-                    }
-                }
-            }
-
-            search(element);
-
-            return result;
         },
 
         toArray: function(list) {
@@ -1066,9 +1028,13 @@ define(function leosTrackChangesModule(require) {
                     var pParentElement = element.getAscendant("p");
                     element.remove();
                     if (pParentElement && !pParentElement.getText().trim()) {
-                        let lastEditable = core.findLastEditable(pParentElement.getAscendant("div"));
+                        let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
                         if(!lastEditable || lastEditable.getId() !== pParentElement.getId()){
                             pParentElement.remove();
+                        }else if(!!lastEditable){
+                            var range = editor.createRange();
+                            range.selectNodeContents(lastEditable);
+                            editor.getSelection().selectRanges([range]);
                         }
                     }
                     if(liParentElement) {
