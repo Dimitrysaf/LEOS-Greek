@@ -36,6 +36,7 @@ define(function leosUtilsModule(require) {
     var EMPHATIZED_TEXT_TAG = "EM";
     var SUB_TEXT_TAG = "SUB";
     var SUP_TEXT_TAG = "SUP";
+    var SPAN_TAG = "SPAN";
     var HEADING_TAG = "H2";
     var HEADING = "heading";
     var NUM = "num";
@@ -118,7 +119,7 @@ define(function leosUtilsModule(require) {
                 return false;
             }
         }
-        var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG];
+        var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG, SPAN_TAG];
         var elementsToBeChecked = [PARAGRAPH_POINT_TAG, SUBPARAGRAPH_SUBPOINT_TAG];
         if (el.tagName === HEADING_TAG && CKEDITOR.currentInstance) {
             var tocItem = _getParentTocItem(el, CKEDITOR.currentInstance.LEOS.tocItemsList);
