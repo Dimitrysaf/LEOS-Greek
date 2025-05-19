@@ -24,6 +24,7 @@ define(function refToLinkExtensionModule(require) {
     var otherTargets;
     var refLinkExecuted = false;
 
+
     function _initRefToLink(connector) {
         log.debug("Initializing refToLink extension...");
 
