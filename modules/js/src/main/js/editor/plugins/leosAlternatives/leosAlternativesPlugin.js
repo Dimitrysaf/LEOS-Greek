@@ -59,7 +59,7 @@ define(function leosAlternativesPluginModule(require) {
         var currentAltConfig = {};
         var element = editor.element.$.firstChild;
         if (element && element.firstChild && element.firstChild.id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
-            element = editor.element.$.childrenNodes[1];
+            element = editor.element.$.childNodes[1];
         }
         if (element.attributes["leos:optionlist"]) {
             currentAltConfig.optionListName = element.attributes["leos:optionlist"].value;
