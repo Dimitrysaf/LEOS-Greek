@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,7 @@ import java.util.Set;
 public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceImpl.class);
     private static final int MAX_RESULT_DEFAULT = 100;
+    private static final int MAX_RETRIES = 5;
     private static final String XML_DOC_EXT = ".xml";
 
     private final DocumentRepository documentRepository;
@@ -234,14 +236,30 @@ public class DocumentServiceImpl implements DocumentService {
                 Document doc = documentRepository.findDocumentByRef(docView.get().getRef()).orElseThrow(() ->
                         new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
 
-                Optional<DocumentVersion> latestVersion = documentVersionRepository.findLastVersionByDocumentId(doc.getId());
-                String labelVersion = getNextVersionLabel(versionType, latestVersion.get().getVersionLabel());
+                int retries = 0;
+                boolean goon = false;
+                Optional<DocumentVersion> latestVersion = Optional.empty();
+                Map<DocumentContent, DocumentVersion> docs = Collections.emptyMap();
                 Optional<DocumentVersion> latestMajorVersion = Optional.empty();
-                if (isMajor) {
-                    latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
-                }
+                do {
+                    goon = false;
+                    latestVersion = documentVersionRepository.findLastVersionByDocumentId(doc.getId());
+                    String labelVersion = getNextVersionLabel(versionType, latestVersion.get().getVersionLabel());
 
-                Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
+                    if (isMajor) {
+                        latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
+                    }
+
+                    try {
+                        docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
+                    } catch (RepositoryException e) {
+                        goon = true;
+                    }
+                } while (retries++ < MAX_RETRIES && goon);
+
+                if (goon) {
+                    throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Constraint violation");
+                }
                 doc = updateDocumentMetadata(doc, docs.values().stream().findFirst().get(), (Map<String, Object>) metadata, userId);
 
                 if (latestVersion.isPresent()) {
@@ -1041,12 +1059,15 @@ public class DocumentServiceImpl implements DocumentService {
         docVersion.setIsVersionSeriesCheckedOut(false);
         docVersion.setVersionSeriesId(labelVersion);
         docVersion.setVersionArchived(false);
-
-        return documentVersionRepository.save(docVersion);
+        try {
+            return documentVersionRepository.save(docVersion);
+        } catch (ConstraintViolationException e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Constraint Exception");
+        }
     }
 
     private DocumentContent updateDocumentContent(DocumentVersion docVersion, final DocumentV prevVersion, String userId,
-            String contentString, Map<String, ?> metadata) {
+            String contentString, Map<String, ?> metadata) throws RepositoryException {
         DocumentContent content = new DocumentContent();
         content.setContent(contentString);
         content.setCreatedBy(userId);
@@ -1090,7 +1111,12 @@ public class DocumentServiceImpl implements DocumentService {
         } else if (prevVersion != null) {
             content.setCategoryCode(prevVersion.getCategoryCode());
         }
-        return documentContentRepository.save(content);
+
+        try {
+            return documentContentRepository.save(content);
+        } catch (ConstraintViolationException e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Constraint Exception");
+        }
     }
 
     private void checkMetadata(Map<String, ?> metadata)

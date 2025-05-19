@@ -282,7 +282,7 @@ public class AnnexContextService {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .build();
-        annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), true);
+        annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
     }
 
     public void executeUpdateAnnexIndex() {
@@ -300,7 +300,7 @@ public class AnnexContextService {
                 .withIndex(index)
                 .withNumber(annexNumber)
                 .build();
-        annex = annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), true);
+        annex = annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), false);
     }
 
     public void executeUpdateAnnexStructure() {
