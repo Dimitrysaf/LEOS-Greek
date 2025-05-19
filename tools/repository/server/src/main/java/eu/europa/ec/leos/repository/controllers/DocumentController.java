@@ -118,7 +118,7 @@ public class DocumentController {
     public ResponseEntity<Object> updateDocument(@PathVariable("versionId") BigDecimal versionId,
                                                  @Validated(OnUpdateWithContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest)
             throws Exception {
-        LeosDocument xmlDoc = documentService.updateDocument(versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(),
+        LeosDocument xmlDoc = documentService.updateDocumentWithRetries(versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(),
                 updateDocumentRequest.getCategory(), updateDocumentRequest.getContent(), updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }

@@ -31,6 +31,9 @@ public interface DocumentService {
     LeosDocument createDocumentFromSource(final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
                                         final String labelVersion, int versionType, String comments, String userId) throws RepositoryException;
 
+    LeosDocument updateDocumentWithRetries(final BigDecimal versionId, Map<String, ?> properties,
+                                VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception;
+
     LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> properties,
                                 VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception;
 
