@@ -338,7 +338,7 @@ public class DocumentIntegrationTests {
         updateDocumentRequest.setContent(DOC_CONTENT.getBytes(StandardCharsets.UTF_8));
         String json = mapper.writeValueAsString(updateDocumentRequest);
         String docSource = mapper.writeValueAsString(DOC_CONTENT.getBytes(StandardCharsets.UTF_8)).replace("\"", "");
-        when(documentService.updateDocument(ArgumentMatchers.eq(xmlDoc.getVersionId()),
+        when(documentService.updateDocumentWithRetries(ArgumentMatchers.eq(xmlDoc.getVersionId()),
                 anyMap(),
                 ArgumentMatchers.eq(updateDocumentRequest.getVersionType()),
                 ArgumentMatchers.eq(updateDocumentRequest.getCategory()), ArgumentMatchers.eq(updateDocumentRequest.getContent()),
