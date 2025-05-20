@@ -228,12 +228,12 @@ public class DocumentServiceImpl implements DocumentService {
             try {
                 doc = updateDocument(versionId, metadata,
                         versionType, category, contentBytes, comments, userId);
-            } catch (DataIntegrityViolationException e) {
-                goon = true;
-                LOG.trace("Error while updating document, trying again...");
             } catch (Exception e) {
+                goon = true;
+                LOG.info("Error while updating document, trying again...");
+            }/* catch (Exception e) {
                 throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
-            }
+            }*/
         } while (retries++ < MAX_RETRIES && goon);
 
         if (goon) {
