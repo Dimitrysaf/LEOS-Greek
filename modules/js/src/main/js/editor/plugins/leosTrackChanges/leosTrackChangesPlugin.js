@@ -722,14 +722,23 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("afterCommandExec", function(event) {
                 if (event.data.name === "enter") {
                     var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
+                    var newParagraph = null;
                     if (!elementToRemoveAttribute) {
                         elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("p");
+                        if(elementToRemoveAttribute) {
+                            newParagraph = $(elementToRemoveAttribute).prev('p[new]:not([data-akn-action-number])').filter(function() {
+                                return $(this).text().trim() === '';
+                            })[0];
+                        }
                     }
                     if (elementToRemoveAttribute) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
                         elementToRemoveAttribute.removeAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUM_ID);
                         event.editor.fire("handleTcIndent", { data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
+                        if(newParagraph) {
+                            event.editor.fire("handleTcIndent", { data: newParagraph, previousNumber: newParagraph.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
+                        }
                     }
                 }
             }, null, null, 15);
