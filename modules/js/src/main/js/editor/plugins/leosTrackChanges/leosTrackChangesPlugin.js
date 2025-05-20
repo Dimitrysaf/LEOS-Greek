@@ -572,10 +572,16 @@ define(function leosTrackChangesPluginModule(require) {
                                     if(!rangeWasCollapsed){
                                         // insert here code to delete the empty elements
                                         _removeEmptyElements(initialCommonAncestor);
+                                        let lastEditable = leosPluginUtils.findLastEditable(initialCommonAncestor);
+                                        if(lastEditable){
+                                            range = editor.createRange();
+                                            range.selectNodeContents(lastEditable);
+                                            editor.getSelection().selectRanges([ range ]);
+                                        }
                                     }
                                     editor.fire("saveSnapshot");
                                     range = editor.getSelection().getRanges()[0];
-                                    range.collapse(!deleteKey);
+                                    range.collapse(!rangeWasCollapsed);
                                     range.select();
 
                                     editor.fire("change");
@@ -1003,7 +1009,7 @@ define(function leosTrackChangesPluginModule(require) {
     function _cleanElements(data) {
         var eventDataAsObject = $(data);
         var elementsToRemove = eventDataAsObject
-            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph']")
+            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph'], p[data-akn-name='aknParagraph']")
             .find("*").addBack().filter(function () {
                 return UTILS.isEmptyElement(this);
             });
