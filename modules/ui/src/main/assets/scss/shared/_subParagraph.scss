@@ -78,7 +78,7 @@ $LIST_SPACING: 40px;
       @extend %moveSubElement;
     }
   }
-  ol > li[data-akn-name="aknNumberedParagraph"][data-akn-num], ol[data-akn-name="aknAnnexList"] > li[data-akn-num], ol[data-akn-name="recital"] > li {
+  ol > li[data-akn-name="aknNumberedParagraph"][data-akn-num], ol[data-akn-name="aknAnnexList"] > li[data-akn-num] {
     & > p:first-child {
       padding-top: 0;
     }
