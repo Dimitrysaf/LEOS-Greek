@@ -22,6 +22,7 @@ define(function refToLinkExtensionModule(require) {
     var UTILS = require("core/leosUtils");
     var target;
     var otherTargets;
+    var refLinkExecuted = false;
 
     function _initRefToLink(connector) {
         log.debug("Initializing refToLink extension...");
@@ -40,11 +41,34 @@ define(function refToLinkExtensionModule(require) {
 
         R2L.setFilter('environments', ['EC-PRD']);// enable sets of rules
 
-        log.debug("Registering refToLink extension unregistration listener...");
-        connector.onUnregister = _connectorUnregistrationListener;
+        let elementsMetadata = JSON.parse(connector.getState().documentsMetadataJsonArray);
 
-        log.debug("Registering refToLink extension state change listener...");
-        connector.onStateChange = _connectorStateChangeListener;
+        if (Array.isArray(elementsMetadata) && elementsMetadata.length > 0 && elementsMetadata[0]?.language) {
+            let lang = elementsMetadata[0].language.toUpperCase();
+            require(['text!lib/ref2Link_1.3.29/data/rules.' + lang + '.json'], function (rulesJson) {
+                const rules = JSON.parse(rulesJson);
+                R2L.importRules(rules);
+
+                log.debug("Registering refToLink extension unregistration listener...");
+                connector.onUnregister = _connectorUnregistrationListener;
+
+                log.debug("Registering refToLink extension state change listener...");
+                connector.onStateChange = _connectorStateChangeListener;
+
+                if (!refLinkExecuted){
+                    _connectorStateChangeListener();
+                }
+
+            });
+        } else {
+            console.warn('No valid document or language found.');
+
+            log.debug("Registering refToLink extension unregistration listener...");
+            connector.onUnregister = _connectorUnregistrationListener;
+
+            log.debug("Registering refToLink extension state change listener...");
+            connector.onStateChange = _connectorStateChangeListener;
+        }
     }
 
     // handle connector unregistration on client-side
@@ -56,6 +80,7 @@ define(function refToLinkExtensionModule(require) {
     // handle connector state change on client-side
     function _connectorStateChangeListener() {
         log.debug("refToLink extension state changed...");
+        refLinkExecuted = true;
         // KLUGE delay execution due to sync issues with target update
         setTimeout(_registerObservers, 500);
     }
