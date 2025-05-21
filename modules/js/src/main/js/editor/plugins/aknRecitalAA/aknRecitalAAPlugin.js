@@ -53,16 +53,12 @@ define(function aknRecitalAAPluginModule(require) {
 
             editor.on("contentDom", function() {
                 editor.document.$.onselectionchange = () => {
-                    let selection = editor.getSelection();
-                    if (selection) {
-                        if (editor.getSelection().getSelectedText() !== "") {
-                            leosCommandStateHandler.changeCommandState(editor, 'leosBase64ImageDialog', changeStateElements, true);
-                        } else {
-                            leosCommandStateHandler.changeCommandState(editor, 'leosBase64ImageDialog', null, true);
-                        }
-                    }
+                    _onSelectionChange({ editor: editor });
                 };
             });
+
+            editor.on('selectionChange', _onSelectionChange, null, null, 11);
+            editor.on('insertElement', _onInsertTable, this, null, 99 );
             $(editor.element.$).on("keydown", null, [editor], _preventTextInputInSubflow);
             $(editor.element.$).on("keyup", null, [editor], _handleKeyUpEvent);
 
@@ -146,16 +142,26 @@ define(function aknRecitalAAPluginModule(require) {
         context.event.cancel();
     }
 
-    function unselectEndBreakLine(range) {
-        if (!range.startContainer.equals(range.endContainer) && range.endOffset === 0) {
-            range.setEndAt(range.endContainer.getPrevious(), CKEDITOR.POSITION_BEFORE_END);
-            range.optimize();
-            range.select();
-        }
-    }
-
     function preventBlockMerge(context) {
         var selection = context.editor.getSelection();
+
+        function unselectEndBreakLine() {
+            if (!range.startContainer.equals(range.endContainer) && range.endOffset === 0) {
+                range.setEndAt(range.endContainer.getPrevious(), CKEDITOR.POSITION_BEFORE_END);
+                range.optimize();
+                range.select();
+            }
+        }
+
+        function isAllTextInDivSelected() {
+            var startElement = range.startContainer,
+                endElement = range.endContainer;
+            return startElement.type === CKEDITOR.NODE_ELEMENT && startElement.getId() === endElement.getId() &&
+                    startElement.getName() === leosPluginUtils.DIV &&
+                    startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) !== leosPluginUtils.SUBFLOW_NAME &&
+                    range.startOffset === 0 && range.endOffset === startElement.getChildCount();
+        }
+
         if (selection) {
             var range = selection.getRanges()[0];
             if (range.collapsed) {
@@ -164,14 +170,20 @@ define(function aknRecitalAAPluginModule(require) {
                     context.event.cancel();
                 }
             } else {
-                unselectEndBreakLine(range, context);
+                unselectEndBreakLine();
                 if (range.collapsed || leosPluginUtils.isEmptyWithBogus(range.startContainer.$) && leosPluginUtils.isEmptyWithBogus(range.endContainer.$)) {
                     context.event.cancel();
-                } else if (!context.editor.LEOS.isTrackChangesEnabled && leosPluginUtils.mergeBlocksNonCollapsedSelection(context.editor, range, range.startPath())){
-                    // Scroll to the new position of the caret (https://dev.ckeditor.com/ticket/11960).
-                    selection.scrollIntoView();
-                    context.editor.fire( 'saveSnapshot' );
-                    context.event.cancel();
+                } else if (!context.editor.LEOS.isTrackChangesEnabled) {
+                    if (isAllTextInDivSelected()) {
+                        range.deleteContents();
+                        range.startContainer.appendBogus();
+                        context.event.cancel();
+                    } else if (leosPluginUtils.mergeBlocksNonCollapsedSelection(context.editor, range, range.startPath())) {
+                        // Scroll to the new position of the caret (https://dev.ckeditor.com/ticket/11960).
+                        selection.scrollIntoView();
+                        context.editor.fire('saveSnapshot');
+                        context.event.cancel();
+                    }
                 }
             }
         }
@@ -188,8 +200,8 @@ define(function aknRecitalAAPluginModule(require) {
     function _preventTextInputInSubflow(e) {
         var selection = e.data[0].getSelection();
         var startElement = leosKeyHandler.getSelectedElement(selection);
-        while (startElement && leosPluginUtils.getElementName(startElement) !== "p") {
-            startElement = startElement.getLast();
+        if (startElement && leosPluginUtils.getElementName(startElement) === leosPluginUtils.ORDER_LIST_ELEMENT) {
+            startElement = startElement.getLast().getLast();
         }
         if (startElement?.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME &&
                 !ARROW_KEYS.includes(e.keyCode) && e.keyCode !== BACKSPACE && e.keyCode !== DELETE) {
@@ -199,31 +211,67 @@ define(function aknRecitalAAPluginModule(require) {
         }
     }
 
-    function _handleKeyUpEvent(event) {
-        function checkAndRemoveEmptySubflow() {
-            var startElement = leosKeyHandler.getSelectedElement(selection);
-            if ((event.originalEvent.keyCode === BACKSPACE || event.originalEvent.keyCode === DELETE) &&
-                    startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME &&
-                    startElement.getChildren().count() === 1 && startElement.getChildren().getItem(0).getName() === leosPluginUtils.BOGUS) {
-                editor.fire( 'lockSnapshot' );
-                var nextElement = startElement.getNext();
-                if (nextElement != null) {
-                    range.moveToElementEditStart(nextElement);
+    function _onSelectionChange(event) {
+        var editor = event.editor;
+        var selection = editor.getSelection();
+        if (selection) {
+            if (selection.getStartElement().getName() === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                selection = leosPluginUtils.selectLastEditableElement(selection, leosPluginUtils.DIV);
+            }
+            if (selection.getSelectedText() !== "" || leosPluginUtils.isInsideTable(selection.getStartElement())) {
+                leosCommandStateHandler.changeCommandState(editor, 'leosBase64ImageDialog', changeStateElements, true);
+                leosCommandStateHandler.changeCommandState(editor, 'table', changeStateElements, true);
+            } else {
+                leosCommandStateHandler.changeCommandState(editor, 'leosBase64ImageDialog', null, true);
+                if (selection.getSelectedElement()?.getName() === "img") {
+                    leosCommandStateHandler.changeCommandState(editor, 'table', changeStateElements, true);
                 } else {
-                    range.moveToElementEditEnd(startElement.getPrevious());
+                    leosCommandStateHandler.changeCommandState(editor, 'table', null, true);
                 }
-                range.select();
-                startElement.remove();
-                editor.fire( 'unlockSnapshot' );
             }
         }
+    }
 
+    function checkAndRemoveEmptyElement(element, editor, range) {
+        editor.fire('lockSnapshot');
+        element.getChildren().toArray().forEach(function (el) {
+            if (el.getName && el.getName() === leosPluginUtils.BOGUS) {
+                el.remove();
+            }
+        });
+        if (element.getChildCount() === 0) {
+            var nextElement = element.getNext();
+            if (nextElement != null) {
+                range.moveToElementEditStart(nextElement);
+            } else {
+                range.moveToElementEditEnd(element.getPrevious());
+            }
+            range.select();
+            element.remove();
+        }
+        editor.fire('unlockSnapshot');
+    }
+
+    function _onInsertTable(event) {
+        var editor = event.editor;
+        var selection =  editor.getSelection();
+        var range = selection.getRanges()[0];
+        var selectedElement = leosKeyHandler.getSelectedElement(selection);
+        checkAndRemoveEmptyElement(selectedElement, editor, range);
+    }
+
+    function _handleKeyUpEvent(event) {
         var editor = event.data[0];
         var selection =  editor.getSelection();
         if (selection) {
             var range = selection.getRanges()[0];
             if (range.collapsed) {
-                checkAndRemoveEmptySubflow();
+                var startElement = leosKeyHandler.getSelectedElement(selection);
+                if ((event.originalEvent.keyCode === BACKSPACE || event.originalEvent.keyCode === DELETE) &&
+                        (startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME ||
+                        startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.RECITAL)) {
+                        checkAndRemoveEmptyElement(startElement, editor, range);
+                }
                 range.checkEndOfBlock();
             }
         }

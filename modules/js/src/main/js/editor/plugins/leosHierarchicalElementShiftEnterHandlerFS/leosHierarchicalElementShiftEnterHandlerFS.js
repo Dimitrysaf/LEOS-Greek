@@ -112,7 +112,7 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
         var elementType = context.editor.LEOS.elementType;
         var selection = context.editor.getSelection();
         if (selection.getStartElement().getName() === 'ol') {
-            selection = leosPluginUtils.selectLastEditableElement(selection);
+            selection = leosPluginUtils.selectLastEditableElement(selection, 'p, li');
         }
         if (leosPluginUtils.isInsideTable(selection.getStartElement())) {
             context.event.cancel();

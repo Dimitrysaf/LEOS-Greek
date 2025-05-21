@@ -28,6 +28,7 @@ define(function leosUtilsModule(require) {
 
     var PARAGRAPH_POINT_TAG = "LI";
     var SUBPARAGRAPH_SUBPOINT_TAG = "P";
+    var DIV_TAG = "DIV";
     var TABLE_TAG = "TABLE";
     var TABLE_CELL_TAG = "TD";
     var TABLE_CELL_HEADER_TAG = "TH";
@@ -125,6 +126,8 @@ define(function leosUtilsModule(require) {
             if (tocItem && tocItem.itemHeading === "MANDATORY") {
                 elementsToBeChecked.push(HEADING_TAG);
             }
+        } else if (el.tagName === DIV_TAG && el.parentElement?.getAttribute("data-akn-name") === "recital") {
+            elementsToBeChecked.push(DIV_TAG);
         }
         if (elementsToBeChecked.includes(el.tagName)) {
             if (!$.trim(el.innerText)) {

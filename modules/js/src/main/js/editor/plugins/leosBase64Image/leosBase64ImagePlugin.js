@@ -25,16 +25,6 @@ define(function leosBase64ImagePluginModule(require) {
             selector: '[data-akn-name=crossHeading]'
         }
     };
-    var changeStateElementsWithRecitalAA = {
-        crossHeading: {
-            elementName: 'p',
-            selector: '[data-akn-name=crossHeading]'
-        },
-        recitalAA: {
-            elementName: 'li',
-            selector: '[data-akn-name=recital]'
-        }
-    };
     var dialogDefinition = require("./leosBase64ImageDialog");
     
     var pluginDefinition = {
@@ -96,11 +86,7 @@ define(function leosBase64ImagePluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        if (event.editor.getSelection().getSelectedText() === "") {
-            leosCommandStateHandler.changeCommandState(event.editor, 'leosBase64ImageDialog', changeStateElements, true);
-        } else {
-            leosCommandStateHandler.changeCommandState(event.editor, 'leosBase64ImageDialog', changeStateElementsWithRecitalAA, true);
-        }
+        leosCommandStateHandler.changeCommandState(event.editor, 'leosBase64ImageDialog', changeStateElements, true);
     }
     
     pluginTools.addPlugin(pluginName, pluginDefinition);
