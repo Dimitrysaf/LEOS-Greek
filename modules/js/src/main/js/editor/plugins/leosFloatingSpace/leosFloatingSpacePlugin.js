@@ -28,6 +28,7 @@ define(function floatingSpacePluginModule(require) {
     var pluginName = "leosFloatingSpace";
 
     var win = CKEDITOR.document.getWindow(), pixelate = CKEDITOR.tools.cssLength;
+    const FULL_VIEWPORT_HEIGHT = window.visualViewport?.height || window.innerHeight;
 
     var pluginDefinition = {
         init: function(editor) {
@@ -36,8 +37,54 @@ define(function floatingSpacePluginModule(require) {
             editor.on('loaded', function() {
                 attach(this);
             }, null, null, 20);
+
+            let stopWatching = null;
+
+            if (isMobileDevice) {
+                editor.on('contentDom', function () {
+                    const editable = editor.editable();
+
+                    editable.on('focus', function () {
+                        stopWatching = monitorViewportHeight(() => {
+                            setTimeout(() => {
+                                editor.fire('reposition');
+                            }, 300);
+                        });
+                    });
+
+                    editable.on('blur', function () {
+                        if (stopWatching) {
+                            clearInterval(stopWatching);
+                            stopWatching = null;
+                        }
+                    });
+                });
+            }
         }
     };
+
+    function isMobileDevice() {
+        return (
+            typeof window.orientation !== "undefined" || // Classic iOS/Android
+            navigator.userAgent.includes("Mobi") || // Most mobile browsers include "Mobi"
+            (navigator.maxTouchPoints > 1 && /MacIntel/.test(navigator.platform)) // iPadOS in desktop mode
+        );
+    }
+
+    function monitorViewportHeight(onChange, threshold = 100) {
+        let lastHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+        return setInterval(() => {
+            const currentHeight = window.visualViewport
+                ? window.visualViewport.height
+                : window.innerHeight;
+
+            if (Math.abs(currentHeight - lastHeight) > threshold) {
+                lastHeight = currentHeight;
+                onChange(currentHeight);
+            }
+        }, 500);
+    }
 
     function scrollOffset(side) {
         var pageOffset = side == 'left' ? 'pageXOffset' : 'pageYOffset',
@@ -73,6 +120,28 @@ define(function floatingSpacePluginModule(require) {
             function changeMode(newMode) {
                 var holder = document.getElementsByClassName('leos-editing-pane')[0] || document.body;
                 var editorOffset = holder.getBoundingClientRect().top;
+
+                const vv = window.visualViewport;
+                const visibleHeight = Math.round(vv?.height || window.innerHeight);
+
+                // Use full height only once (so it's stable across resizes)
+                const isKeyboardOpen = visibleHeight < FULL_VIEWPORT_HEIGHT - 150;
+                const keyboardHeight = (FULL_VIEWPORT_HEIGHT - visibleHeight);
+
+                if (isKeyboardOpen) {
+                    if ((editorRect.top - spaceHeight) > editorOffset) {
+                        //To handle tablets with low resolution that cannot hold the entire page when the keyboard is up.
+                        window.scrollTo({
+                            top: document.body.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                        updatePos('fixed', 'top', editorRect.top - spaceHeight - dockedOffsetY + keyboardHeight);
+                    } else {
+                        updatePos('fixed', 'top', editorOffset);
+                    }
+                    mode = newMode;
+                    return;
+                }
 
                 //Adjust the position due to change in parent element (LEOS-1990)
                 switch (newMode) {
