@@ -453,11 +453,11 @@ public class MetadataUtil {
                 case INTERINSTITUTIONAL_COTE:
                     return parseInterinstitutionalCote(fieldValue);
                 case COTE:
-                    return parseCote(fieldValue);
+                    return parseCote(fieldValue, MetadataFieldType.COTE);
                 case LINKED_DOCUMENTS:
                     return parseLinkedDocuments(fieldValue);
-                case DOCUMENT_FINAL:
-                    return parseDocumentFinal(fieldValue);
+                case FINAL_COTE:
+                    return parseCote(fieldValue, MetadataFieldType.FINAL_COTE);
                 default:
                     throw new MetadataUtilsException(FIELD_NOT_SUPPORTED_MESSAGE);
             }
@@ -467,13 +467,6 @@ public class MetadataUtil {
             throw mue;
         }
     }
-
-    private static MetadataFieldInfo parseDocumentFinal(String fieldValue)
-    {
-        if (fieldValue.equals("1")) {
-            return new ReferenceFieldInfo("", "", "final", "final", MetadataFieldType.DOCUMENT_FINAL);
-        }
-        return new ReferenceFieldInfo("", "", "", "", MetadataFieldType.DOCUMENT_FINAL);}
 
     public static MetadataFieldInfo parseAdoptionLocation(String fieldValue) throws MetadataUtilsException {
         try {
@@ -539,7 +532,7 @@ public class MetadataUtil {
         return value;
     }
 
-    public static MetadataFieldInfo parseCote(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseCote(String fieldValue, MetadataFieldType coteType) throws MetadataUtilsException {
         if (!fieldValue.matches(INSERT_COTE_PARSE_PATTERN)){
             throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
         }
@@ -553,8 +546,7 @@ public class MetadataUtil {
 
         String id = IdGenerator.generateId();
         String shortValue = String.format(INSERT_COTE_SHORT_VALUE_PATTERN, type, year, number);
-
-        return new ReferenceFieldInfo(id, INSERT_COTE_HREF, fieldValue, shortValue, MetadataFieldType.COTE);
+        return new ReferenceFieldInfo(id, INSERT_COTE_HREF, fieldValue, shortValue, coteType);
     }
 
     private static String readCoteNumber(String value, int startIndex) {
@@ -944,13 +936,13 @@ public class MetadataUtil {
         xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
     }
 
-    public static void processDocumentFinal(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
+    public static void processFinalCote(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
     {
-        if (fieldInfo.getDisplayValue().equals("final")) {
-            MetadataUtil.addFinalToCoverPage(fieldInfo, xmlFile);
-            MetadataUtil.addFinalToIdentification(fieldInfo, xmlFile);
-            MetadataUtil.addFinalToFilename(fieldInfo, xmlFile);
-        }
+        processCote(fieldInfo, xmlFile);
+        final ReferenceFieldInfo finalFieldInfo = new ReferenceFieldInfo("", "", "final", "final", MetadataFieldType.FINAL_COTE);
+        MetadataUtil.addFinalToCoverPage(finalFieldInfo, xmlFile);
+        MetadataUtil.addFinalToIdentification(finalFieldInfo, xmlFile);
+        MetadataUtil.addFinalToFilename(finalFieldInfo, xmlFile);
     }
 
     private static void addFinalToFilename(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
@@ -1176,14 +1168,16 @@ public class MetadataUtil {
             return documentFilename;
         }
 
-        Optional<ApplyMetadataRequest.FieldNode> isFinalNode = action.get().getFieldWithKey(MetadataFieldType.DOCUMENT_FINAL.toString());
         Optional<ApplyMetadataRequest.FieldNode> coteField = action.get().getFieldWithKey(MetadataFieldType.COTE.toString());
-        if (!coteField.isPresent()) {
+        Optional<ApplyMetadataRequest.FieldNode> finalCote = action.get().getFieldWithKey(MetadataFieldType.FINAL_COTE.toString());
+        if (!coteField.isPresent() && !finalCote.isPresent()) {
             return documentFilename;
         }
+        if (finalCote.isPresent()) {
+            coteField = finalCote;
+        }
 
-        final String coteValue = coteField.get().getValue()
-                .replace(" ", "_");
+        final String coteValue = coteField.get().getValue().replace(" ", "_");
         String prefinalisationName = "";
         int pos = documentFilename.indexOf("-");
         if (pos == -1) {
@@ -1191,7 +1185,7 @@ public class MetadataUtil {
         }
 
         prefinalisationName = documentFilename.substring(0, pos+1) + coteValue;
-        if (isFinalNode.isPresent() && isFinalNode.get().getValue().equals("1")) {
+        if (finalCote.isPresent()) {
             prefinalisationName = prefinalisationName + "-final";
         }
 
