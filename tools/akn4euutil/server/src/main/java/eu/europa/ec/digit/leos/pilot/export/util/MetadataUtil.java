@@ -172,7 +172,7 @@ public class MetadataUtil {
     }
 
     private static Element createApplyMetadataResponseXmlRootElement(XmlFile xmlFile, ApplyMetadataResponse response) {
-        Element rootElement = xmlFile.createRoot("akn4euResponse");
+        Element rootElement = xmlFile.createRoot("legisWriteResponse");
         rootElement.setAttribute("responseId", response.getResponseId());
         rootElement.setAttribute(VERSION, response.getVersion());
         rootElement.setAttribute("xmlns", response.getXmlns());
@@ -250,7 +250,7 @@ public class MetadataUtil {
     }
 
     public static ApplyMetadataRequest xmlFileToApplyMetadataRequest(XmlFile xmlFile) {
-        final Node nodeRequest = xmlFile.getElementByName("akn4euRequest");
+        final Node nodeRequest = xmlFile.getElementByName("legisWriteRequest");
         return processApplyMetadataRequestNode(nodeRequest);
     }
 
