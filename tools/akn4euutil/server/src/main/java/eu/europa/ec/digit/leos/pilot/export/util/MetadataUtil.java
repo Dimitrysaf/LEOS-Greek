@@ -41,7 +41,7 @@ public class MetadataUtil {
     private static final String KEY="key";
     private static final String DOCUMENT="document";
     private static final String TASK="task";
-    private static final String TASKID="taskID";
+    private static final String TASKID="taskId";
     private static final String NAME="name";
     private static final String CLEANUP="cleanup";
     private static final String FIELD="field";
@@ -158,7 +158,6 @@ public class MetadataUtil {
             xmlFile.setName("content.xml");
             Element rootElement = createApplyMetadataResponseXmlRootElement(xmlFile, response);
             rootElement.appendChild(createApplyMetadataResponseXmlStatusNode(xmlFile, response.getStatus()));
-            rootElement.appendChild(createApplyMetadataResponseXmlDocumentNode(xmlFile, response.getDocument()));
 
             if (response.getTasks() != null){
                 for (ApplyMetadataResponse.TaskNode task : response.getTasks()) {
@@ -209,6 +208,7 @@ public class MetadataUtil {
         taskNode.setAttribute(TASKID, task.getTaskId());
         taskNode.setAttribute(STATUS_CODE, task.getStatusCode());
         taskNode.appendChild(createApplyMetadataResponseXmlValidationResultNode(xmlFile, task.getValidationResult()));
+        taskNode.appendChild(createApplyMetadataResponseXmlDocumentNode(xmlFile, task.getDocument()));
 
         if (task.getActions() != null){
             for (ApplyMetadataResponse.ActionNode action : task.getActions()){
@@ -256,15 +256,10 @@ public class MetadataUtil {
 
     public static ApplyMetadataRequest processApplyMetadataRequestNode(Node nodeRequest) {
         if (nodeRequest != null){
-            Node nodeDocument = XmlUtil.getChildNodeWithName(nodeRequest, DOCUMENT);
-            ApplyMetadataRequest.DocumentNode requestDocument = parseApplyMetadataRequestDocumentNode(nodeDocument);
-
             List<Node> taskNodes = XmlUtil.getChildNodesWithName(nodeRequest, TASK);
             List<ApplyMetadataRequest.TaskNode> requestTasks = processApplyMetadataRequestTaskNodes(taskNodes);
-
-            ApplyMetadataRequest applyMetadataRequest = parseApplyMetadataRequestNode(nodeRequest);
-            applyMetadataRequest.setDocument(requestDocument);
-            applyMetadataRequest.setTasks(requestTasks);
+            ApplyMetadataRequest applyMetadataRequest = parseApplyMetadataRequestNode(nodeRequest)
+                    .setTasks(requestTasks);
             return applyMetadataRequest;
         }
         return null;
@@ -285,9 +280,12 @@ public class MetadataUtil {
             List<ApplyMetadataRequest.TaskNode> tasks = new ArrayList<>();
             for (int i = 0; i < taskNodes.size(); i++){
                 Node nodeTask = taskNodes.get(i);
-                ApplyMetadataRequest.TaskNode akn4euTask = parseApplyMetadataRequestTaskNode(nodeTask);
-                akn4euTask.setActions(processApplyMetadataRequestTaskNode(nodeTask));
-                tasks.add(akn4euTask);
+                Node nodeDocument = XmlUtil.getChildNodeWithName(nodeTask, DOCUMENT);
+                ApplyMetadataRequest.DocumentNode requestDocument = parseApplyMetadataRequestDocumentNode(nodeDocument);
+                ApplyMetadataRequest.TaskNode task = parseApplyMetadataRequestTaskNode(nodeTask)
+                        .setDocument(requestDocument)
+                        .setActions(processApplyMetadataRequestTaskNode(nodeTask));
+                tasks.add(task);
             }
             return tasks;
         }
@@ -307,8 +305,8 @@ public class MetadataUtil {
             List<Node> actionNodes = XmlUtil.getChildNodesWithName(nodeTask, ACTION);
             for (int i = 0; i < actionNodes.size(); i++){
                 Node nodeAction = actionNodes.get(i);
-                ApplyMetadataRequest.ActionNode akn4euAction = parseApplyMetadataRequestActionNode(nodeAction);
-                akn4euAction.setFields(processApplyMetadataRequestActionNode(nodeAction));
+                ApplyMetadataRequest.ActionNode akn4euAction = parseApplyMetadataRequestActionNode(nodeAction)
+                        .setFields(processApplyMetadataRequestActionNode(nodeAction));
                 actions.add(akn4euAction);
             }
             return actions;
@@ -357,10 +355,7 @@ public class MetadataUtil {
     }
 
     public static ApplyMetadataResponse getApplyMetadataResponseWithErrorStatus(ApplyMetadataRequest request) {
-        return new ApplyMetadataResponse(
-                request != null ? request.getRequestId() : "",
-                request != null ? applyMetadataRequestDocumentToResultDocument(request.getDocument()) : null,
-                null, getErrorStatusResult());
+        return new ApplyMetadataResponse(request != null ? request.getRequestId() : "", null, getErrorStatusResult());
     }
 
     public static ApplyMetadataResponse getApplyMetadataResponseWithXmlValidationError(ApplyMetadataRequest request) {
@@ -369,11 +364,7 @@ public class MetadataUtil {
             for (ApplyMetadataRequest.TaskNode task : request.getTasks()) {
                 responseTasks.add(getApplyMetadataResponseTaskWithXmlValidationError(task));
             }
-
-            return new ApplyMetadataResponse(
-                    request != null ? request.getRequestId() : "",
-                    request != null ? applyMetadataRequestDocumentToResultDocument(request.getDocument()) : null,
-                    responseTasks, getErrorStatusResult());
+            return new ApplyMetadataResponse(request != null ? request.getRequestId() : "", responseTasks, getErrorStatusResult());
         }
         return getApplyMetadataResponseWithErrorStatus(request);
     }
@@ -402,6 +393,7 @@ public class MetadataUtil {
         }
 
         return new ApplyMetadataResponse.TaskNode(taskId, ONE, responseTaskActions,
+                applyMetadataRequestDocumentToResultDocument(requestTask.getDocument()),
                 getValidationErrorResult(MetadataValidationResultKey.XML_VALIDATION_CHECK.getKey()));
     }
 
@@ -1171,13 +1163,16 @@ public class MetadataUtil {
     }
 
     public static String buildPrefinalizationLegName(ApplyMetadataRequest request) {
-        final String documentFilename = request.getDocument().getFilename();
-        Optional<ApplyMetadataRequest.TaskNode> task = request.getTasks().stream().findFirst();
-        if (!task.isPresent()) {
-            return documentFilename;
+        Optional<ApplyMetadataRequest.TaskNode> firstTask = request.getTasks().stream().findFirst();
+        if (!firstTask.isPresent()) {
+            return "prefinalized";
         }
+        return buildPrefinalizationLegName(firstTask.get());
+    }
 
-        Optional<ApplyMetadataRequest.ActionNode> action = task.get().getActions().stream().findFirst();
+    public static String buildPrefinalizationLegName(ApplyMetadataRequest.TaskNode task) {
+        final String documentFilename = task.getDocument().getFilename();
+        Optional<ApplyMetadataRequest.ActionNode> action = task.getActions().stream().findFirst();
         if (!action.isPresent()) {
             return documentFilename;
         }

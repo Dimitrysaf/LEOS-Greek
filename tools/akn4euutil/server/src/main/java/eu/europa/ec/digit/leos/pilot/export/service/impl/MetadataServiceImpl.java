@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -55,7 +56,7 @@ class MetadataServiceImpl implements MetadataService {
             Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
             request = readContentXml(zipContent);
 
-            Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, request.getDocument());
+            Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, getFirstTaskDocument(request));
             List<XmlFile> documentXmlFiles = readDocumentXmlFiles(documentZipContent);
             Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
 
@@ -183,9 +184,7 @@ class MetadataServiceImpl implements MetadataService {
 
         final ApplyMetadataResponse.StatusNode successResult = isContainsTaskResponseWithErrors(taskResponses)
                 ? MetadataUtil.getErrorStatusResult() : MetadataUtil.getSuccessStatusResult();
-        return new ApplyMetadataResponse(request.getRequestId(),
-                MetadataUtil.applyMetadataRequestDocumentToResultDocument(request.getDocument(), MetadataUtil.buildPrefinalizationLegName(request)),
-                taskResponses, successResult);
+        return new ApplyMetadataResponse(request.getRequestId(), taskResponses, successResult);
     }
 
     private ApplyMetadataResponse.TaskNode processApplyMetadataRequestTask(ApplyMetadataRequest.TaskNode task, List<XmlFile> documentXmlFiles) {
@@ -196,6 +195,7 @@ class MetadataServiceImpl implements MetadataService {
 
         final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
         return new ApplyMetadataResponse.TaskNode(task.getTaskId(), statusCode, actionResponses,
+                MetadataUtil.applyMetadataRequestDocumentToResultDocument(task.getDocument(), MetadataUtil.buildPrefinalizationLegName(task)),
                 MetadataUtil.getValidationSuccessResult("XMLValidationCheck"));
     }
 
@@ -271,7 +271,7 @@ class MetadataServiceImpl implements MetadataService {
             Map<String, Object> responseContent = new HashMap<>();
             XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response);
             responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
-            responseContent.put(response.getDocument().getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
+            responseContent.put(getFirstTaskDocument(response).getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
             return ZipUtil.zipByteArray(responseContent);
         } catch(Exception e) {
             LOG.error("Error building response {}", e);
@@ -339,6 +339,23 @@ class MetadataServiceImpl implements MetadataService {
         }
         return null;
     }
+
+    private ApplyMetadataRequest.DocumentNode getFirstTaskDocument(ApplyMetadataRequest request) {
+        return request.getTasks()
+                .stream()
+                .findFirst()
+                .map((task) -> task.getDocument())
+                .orElseGet(null);
+    }
+
+    private ApplyMetadataResponse.DocumentNode getFirstTaskDocument(ApplyMetadataResponse response) {
+        return response.getTasks()
+                .stream()
+                .findFirst()
+                .map((task) -> task.getDocument())
+                .orElseGet(null);
+    }
+
 
     public static class ApplyMetadataRunnable implements Runnable {
         private final MetadataService metadataService;
