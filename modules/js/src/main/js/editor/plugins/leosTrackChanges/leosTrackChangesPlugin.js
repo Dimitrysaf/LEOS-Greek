@@ -581,7 +581,7 @@ define(function leosTrackChangesPluginModule(require) {
                                     }
                                     editor.fire("saveSnapshot");
                                     range = editor.getSelection().getRanges()[0];
-                                    range.collapse(!rangeWasCollapsed);
+                                    range.collapse(!deleteKey);
                                     range.select();
 
                                     editor.fire("change");
