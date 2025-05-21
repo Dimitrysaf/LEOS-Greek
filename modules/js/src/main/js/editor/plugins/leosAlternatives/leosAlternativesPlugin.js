@@ -185,6 +185,9 @@ define(function leosAlternativesPluginModule(require) {
     function _updateRootEltAttributes(editor, index) {
         var currentConfig = _getCurrentAltConfigFromAttributes(editor);
         var rootElt = editor.element.getChild(0);
+        if (editor.element && editor.element.getChild(0) && editor.element.getChild(0).id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
+            rootElt = editor.element.$.childNodes[1];
+        }
         if (!rootElt.hasAttribute("id")) {
             rootElt.setAttribute("id", currentConfig.rootEltId);
         }

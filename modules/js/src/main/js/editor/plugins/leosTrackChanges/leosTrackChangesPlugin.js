@@ -291,6 +291,9 @@ define(function leosTrackChangesPluginModule(require) {
                     var newOption = optionList.list.find(listOfOption => listOfOption.index == newIndex);
 
                     var currentElement = ckeditor.element.$.firstChild;
+                    if (editor.element && ckeditor.element.$.firstChild && ckeditor.element.$.firstChild.id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
+                        currentElement = editor.element.$.childNodes[1];
+                    }
                     var currentIndex = currentElement.getAttribute("leos:selectedoption");
                     var trackChangeElements = $(currentElement).find("[data-akn-action]");
                     if(trackChangeElements.length > 0) {
