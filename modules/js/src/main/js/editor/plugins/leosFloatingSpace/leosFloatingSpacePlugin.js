@@ -128,7 +128,7 @@ define(function floatingSpacePluginModule(require) {
                 const isKeyboardOpen = visibleHeight < FULL_VIEWPORT_HEIGHT - 150;
                 const keyboardHeight = (FULL_VIEWPORT_HEIGHT - visibleHeight);
 
-                if (isKeyboardOpen) {
+                if (isMobileDevice() && isKeyboardOpen) {
                     if ((editorRect.top - spaceHeight) > editorOffset) {
                         //To handle tablets with low resolution that cannot hold the entire page when the keyboard is up.
                         window.scrollTo({
