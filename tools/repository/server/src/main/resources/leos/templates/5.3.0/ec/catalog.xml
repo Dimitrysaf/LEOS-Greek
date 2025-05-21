@@ -962,6 +962,82 @@
                 <name lang="EN">Other Autonomous Acts</name>
                 <name lang="FR">Autres Actes Autonomes</name>
             </names>
+            <item type="TEMPLATE" enabled="true" key="SJ-002">
+                <names>
+                    <name lang="EN">SJ-002 - Commission Regulation (EU)  .../...</name>
+                    <name lang="FR">SJ-002 - Règlement (UE)  .../... de la Commission</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Template 02 of the LS: Commission regulations take effect upon their publication in the Official Journal of the European Union. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
+                    <description lang="FR">Template 02 du SJ: Les règlements de la Commission entrent en vigueur par leur publication au Journal officiel de l'Union européenne. N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
+                </descriptions>
+                <languages>
+                    <language lang="EN">English</language>
+                    <!--<language lang="FR">Français</language>-->
+                </languages>
+                <item type="TEMPLATE" id="PR-002" enabled="true" mandatory="true">
+                    <names>
+                        <name lang="EN">PR-002 - ....</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">...</description>
+                    </descriptions>
+                    <item type="DOCUMENT" id="BL-002" enabled="true" mandatory="true" default="true">
+                        <names>
+                            <name lang="EN">BL-002 - ....</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">...</description>
+                        </descriptions>
+                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <names>
+                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                            </descriptions>
+                        </item>
+                    </item>
+                </item>
+            </item>
+            <item type="TEMPLATE" enabled="true" key="SJ-006">
+                <names>
+                    <name lang="EN">SJ-006 - Commission Directive (EU) .../...</name>
+                    <name lang="FR">SJ-006 - Directive (UE) .../... de la Commission</name>
+                </names>
+                <descriptions>
+                    <description lang="EN">Template 06 of the LS: Commission directives take effect either upon their publication in the Official Journal of the European Union or upon notification. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
+                    <description lang="FR">Template 06 du SJ: Les directives de la Commission entrent en vigueur soit par leur publication au Journal officiel de l'Union européenne soit par leur notification.N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
+                </descriptions>
+                <languages>
+                    <language lang="EN">English</language>
+                    <!--<language lang="FR">Français</language>-->
+                </languages>
+                <item type="TEMPLATE" id="PR-006" enabled="true" mandatory="true">
+                    <names>
+                        <name lang="EN">PR-006 - ....</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">...</description>
+                    </descriptions>
+                    <item type="DOCUMENT" id="BL-006" enabled="true" mandatory="true" default="true">
+                        <names>
+                            <name lang="EN">BL-006 - ....</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">...</description>
+                        </descriptions>
+                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <names>
+                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                            </descriptions>
+                        </item>
+                    </item>
+                </item>
+            </item>
             <item type="CATEGORY" id="c2.3.1" enabled="true" key="OTHER_COMMISSION_DECISION">
                 <names>
                     <name lang="EN">Commission Decision</name>
@@ -971,6 +1047,154 @@
                     <description lang="EN">Decisions take effect either upon their publication in the Official Journal of the European Union or upon notification to their destinataries (the last article in the text of the decision clearly specifies which of the two applies). Internal decisions are neither to be notified nor to be published (except for information purposes in some cases), they take effect upon their adoption. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
                     <description lang="FR">Les décisions entrent en vigueur soit par leur publication au Journal officiel de l'Union européenne  soit par leur notification aux destinataires (Le dernier article du texte de la décision vous indique clairement le choix à prendre).  Les décisions internes ne sont ni à notifier ni à publier (sauf pour information en certains cas), et entrent en vigueur par leur adoption  N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
                 </descriptions>
+                <item type="TEMPLATE" enabled="true" key="SJ-011">
+                    <names>
+                        <name lang="EN">SJ-011 - Commission Decision (entry into force by its notification)</name>
+                        <name lang="FR">SJ-011 - Décision de la Commission (entre en vigueur par sa notification)</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">Template 11 of the LS: Commission DECISION (entry into force by their notification)</description>
+                        <description lang="FR">Template 11 du SJ: Décision de la Commission (entre en vigueur par sa notification)</description>
+                    </descriptions>
+                    <languages>
+                        <language lang="EN">English</language>
+                        <!--<language lang="FR">Français</language>-->
+                    </languages>
+                    <item type="TEMPLATE" id="PR-011" enabled="true" mandatory="true">
+                        <names>
+                            <name lang="EN">PR-011 - ....</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">...</description>
+                        </descriptions>
+                        <item type="DOCUMENT" id="BL-011" enabled="true" mandatory="true" default="true">
+                            <names>
+                                <name lang="EN">BL-011 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <names>
+                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+                <item type="TEMPLATE" enabled="true" key="SJ-013">
+                    <names>
+                        <name lang="EN">SJ-013 - Commission Decision (EU) .../... (entry into force by its publication)</name>
+                        <name lang="FR">SJ-013 - Décision de la Commission (UE) .../... (entre en vigueur par sa publication)</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">Template 13 du SJ:Décision de la Commission (entre en vigueur par sa publication)</description>
+                        <description lang="FR">Template 13 of the LS: Commission DECISION (entry into force by their publication)</description>
+                    </descriptions>
+                    <languages>
+                        <language lang="EN">English</language>
+                        <!--<language lang="FR">Français</language>-->
+                    </languages>
+                    <item type="TEMPLATE" id="PR-013" enabled="true" mandatory="true">
+                        <names>
+                            <name lang="EN">PR-013 - ....</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">...</description>
+                        </descriptions>
+                        <item type="DOCUMENT" id="BL-013" enabled="true" mandatory="true" default="true">
+                            <names>
+                                <name lang="EN">BL-013 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <names>
+                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+                <item type="TEMPLATE" enabled="true" key="SJ-030">
+                    <names>
+                        <name lang="EN">SJ-030 - Commission Decision (internal)</name>
+                        <name lang="FR">SJ-030 - Décision de la Commission (interne)</name>
+                    </names>
+                    <descriptions>
+                        <description lang="EN">If the decision is about non binding instruments, please consult GoPro to fin all useful information and also the dedicated template to be used.<a href="https://webgate.ec.europa.eu/fpfis/wikis/display/REGISTRY/Non-binding+instruments">https://webgate.ec.europa.eu/fpfis/wikis/display/REGISTRY/Non-binding+instruments</a></description>
+                        <description lang="FR">Si la décision porte sur un instrument non contraignant, veuillez consulter GoPro. Vous y trouverez toutes les informations utiles et le template spécifique à utiliser <a href="https://webgate.ec.europa.eu/fpfis/wikis/display/Greffe/Instruments+non+contraignants">https://webgate.ec.europa.eu/fpfis/wikis/display/Greffe/Instruments+non+contraignants</a></description>
+                    </descriptions>
+                    <languages>
+                        <language lang="EN">English</language>
+                        <!--<language lang="FR">Français</language>-->
+                    </languages>
+                    <item type="TEMPLATE" id="PR-030" enabled="true" mandatory="true">
+                        <names>
+                            <name lang="EN">PR-030 - ....</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">...</description>
+                        </descriptions>
+                        <item type="DOCUMENT" id="BL-030" enabled="true" mandatory="true" default="true">
+                            <names>
+                                <name lang="EN">BL-030 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <names>
+                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+                <item type="TEMPLATE" enabled="true" key="SJ-037">
+                    <names>
+                        <name lang="EN">SJ-037 - Commission decision  (State aid - entry force by its notification)</name>
+                        <name lang="FR">SJ-037 - Décision de la Commission (Aide d'état - entrée en vigueur par sa notification)</name>
+                    </names>
+                    <languages>
+                        <language lang="EN">English</language>
+                        <!--<language lang="FR">Français</language>-->
+                    </languages>
+                    <item type="TEMPLATE" id="PR-037" enabled="true" mandatory="true">
+                        <names>
+                            <name lang="EN">PR-037 - ....</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">...</description>
+                        </descriptions>
+                        <item type="DOCUMENT" id="BL-037" enabled="true" mandatory="true" default="true">
+                            <names>
+                                <name lang="EN">BL-037 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <names>
+                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                </descriptions>
+                            </item>
+                        </item>
+                    </item>
+                </item>
             </item>
             <item type="CATEGORY" id="c2.3.2" enabled="true" key="CORRIGENDA">
                 <names>
