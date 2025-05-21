@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -240,8 +239,8 @@ class MetadataServiceImpl implements MetadataService {
                 case INTERINSTITUTIONAL_COTE:
                     MetadataUtil.processInterinstitutionalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
-                case INSERT_COTE:
-                    MetadataUtil.processInsertCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                case COTE:
+                    MetadataUtil.processCote((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
                 case LINKED_DOCUMENTS:
                     MetadataUtil.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);

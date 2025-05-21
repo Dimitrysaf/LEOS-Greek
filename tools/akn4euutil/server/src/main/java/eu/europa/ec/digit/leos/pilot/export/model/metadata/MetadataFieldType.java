@@ -6,7 +6,8 @@ public enum MetadataFieldType {
     ADOPTION_LOCATION("adoptionLocation"),
     EMISSION_DATE("emissionDate"),
     INTERINSTITUTIONAL_COTE("interinstitutionalCote"),
-    INSERT_COTE("insertCote"),
+    COTE("cote"),
+    FINAL_COTE("finalCote"),
     LINKED_DOCUMENTS("linkedDocuments"),
     DOCUMENT_FINAL("isFinal");
 
@@ -35,8 +36,8 @@ public enum MetadataFieldType {
         if (MetadataFieldType.INTERINSTITUTIONAL_COTE.getTypeName().equals(typeName)){
             return MetadataFieldType.INTERINSTITUTIONAL_COTE;
         }
-        if (MetadataFieldType.INSERT_COTE.getTypeName().equals(typeName)){
-            return MetadataFieldType.INSERT_COTE;
+        if (MetadataFieldType.COTE.getTypeName().equals(typeName)){
+            return MetadataFieldType.COTE;
         }
         if (MetadataFieldType.LINKED_DOCUMENTS.getTypeName().equals(typeName)){
             return MetadataFieldType.LINKED_DOCUMENTS;
