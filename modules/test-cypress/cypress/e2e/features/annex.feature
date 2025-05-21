@@ -8,7 +8,7 @@ Feature: Annex Page Regression Features
         Given navigate to edit drafting application with "User1"
         Then user is on home page
 
-    @annexOperations @local @focus
+    @annexOperations @local
     Scenario: create, delete of annexes and edit of text inside annex
         When click on Create act button
         Then user is on create new legislative document window
