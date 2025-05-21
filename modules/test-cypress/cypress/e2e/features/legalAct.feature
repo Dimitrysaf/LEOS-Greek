@@ -517,7 +517,7 @@ Feature: Legal Act Page Regression Features
     When click close button of ck editor
     Then ck editor window is not displayed
 
-  @internalReference @local @focus
+  @internalReference @local
   Scenario: test internal reference by uploading existing leg file
     Given navigate to edit drafting application with "User1"
     Then user is on home page
