@@ -207,7 +207,6 @@ public class MetadataUtil {
         taskNode.setAttribute(TASKID, task.getTaskId());
         taskNode.setAttribute(STATUS_CODE, task.getStatusCode());
         taskNode.appendChild(createApplyMetadataResponseXmlValidationResultNode(xmlFile, task.getValidationResult()));
-        taskNode.appendChild(createApplyMetadataResponseXmlDocumentNode(xmlFile, task.getDocument()));
 
         if (task.getActions() != null){
             for (ApplyMetadataResponse.ActionNode action : task.getActions()){
@@ -215,6 +214,7 @@ public class MetadataUtil {
             }
         }
 
+        taskNode.appendChild(createApplyMetadataResponseXmlDocumentNode(xmlFile, task.getDocument()));
         return taskNode;
     }
 
