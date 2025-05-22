@@ -17,7 +17,7 @@ class annexPage {
     }
 
     mouseHoverAndRealClickOnLevel(levelNumber) {
-        cy.xpath("(//div[contains(@class, 'orientation']//level)[" + levelNumber + "]").realHover({ position: "center" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }).realClick({ position: "topLeft" }));
+        cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]").realHover({ position: "center" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }).realClick({ position: "topLeft" }));
     }
 
     clickEditIconOfLevel(levelNumber) {
