@@ -42,7 +42,11 @@ define(function refToLinkExtensionModule(require) {
 
         R2L.setFilter('environments', ['EC-PRD']);// enable sets of rules
 
-        let elementsMetadata = JSON.parse(connector.getState().documentsMetadataJsonArray);
+        let elementsMetadata;
+
+        if (connector.getState().documentsMetadataJsonArray) {
+            elementsMetadata = JSON.parse(connector.getState().documentsMetadataJsonArray);
+        }
 
         if (Array.isArray(elementsMetadata) && elementsMetadata.length > 0 && elementsMetadata[0]?.language) {
             let lang = elementsMetadata[0].language.toUpperCase();
