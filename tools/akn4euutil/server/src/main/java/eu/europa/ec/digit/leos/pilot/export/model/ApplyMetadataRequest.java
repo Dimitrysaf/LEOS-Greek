@@ -8,7 +8,6 @@ public class ApplyMetadataRequest {
     private final String version;
     private final String date;
     private final String requestId;
-    private DocumentNode document;
     private List<TaskNode> tasks;
 
     public static class DocumentNode {
@@ -25,6 +24,13 @@ public class ApplyMetadataRequest {
             this.filename = filename;
             this.mimeType = mimeType;
             this.documentId = documentId;
+        }
+
+        public static DocumentNode newInstance(String sourceURL,
+                                               String filename,
+                                               String mimeType,
+                                               String documentId) {
+            return new DocumentNode(sourceURL, filename, mimeType, documentId);
         }
 
         public String getSourceURL() {
@@ -57,10 +63,13 @@ public class ApplyMetadataRequest {
         private final String key;
         private final String value;
 
-        public FieldNode(String key,
-                         String value){
+        public FieldNode(String key, String value){
             this.key = key;
             this.value = value;
+        }
+
+        public static FieldNode newInstance(String key, String value) {
+            return new FieldNode(key, value);
         }
 
         public String getKey() {
@@ -81,11 +90,14 @@ public class ApplyMetadataRequest {
         private final String cleanUp;
         private List<FieldNode> fields;
 
-        public ActionNode(String name,
-                          String cleanUp) {
+        public ActionNode(String name, String cleanUp) {
             this.name = name;
             this.cleanUp = cleanUp;
             this.fields = null;
+        }
+
+        public static ActionNode newInstance(String name, String cleanUp) {
+            return new ActionNode(name, cleanUp);
         }
 
         public String getName() {
@@ -114,8 +126,9 @@ public class ApplyMetadataRequest {
             }
         }
 
-        public void setFields(List<FieldNode> fields) {
+        public ActionNode setFields(List<FieldNode> fields) {
             this.fields = fields;
+            return this;
         }
 
         public String toString(){
@@ -131,10 +144,16 @@ public class ApplyMetadataRequest {
     public static class TaskNode {
         private final String taskId;
         private List<ActionNode> actions;
+        private DocumentNode document;
 
         public TaskNode(String taskId){
             this.taskId = taskId;
             this.actions = null;
+            this.document = null;
+        }
+
+        public static TaskNode newInstance(String taskId) {
+            return new TaskNode(taskId);
         }
 
         public String getTaskId() {
@@ -149,13 +168,26 @@ public class ApplyMetadataRequest {
             return actions;
         }
 
-        public void setActions(List<ActionNode> actions){
+        public TaskNode setActions(List<ActionNode> actions){
             this.actions = actions;
+            return this;
+        }
+
+        public DocumentNode getDocument() {
+            return this.document;
+        }
+
+        public TaskNode setDocument(DocumentNode document){
+            this.document = document;
+            return this;
         }
 
         public String toString(){
             String result = String.format("Task(taskId: %s / Action count: %s)\n",
                     taskId, (actions != null) ? actions.size() : 0);
+            if (document != null){
+                result += document.toString() + "\n";
+            }
             if (actions != null){
                 for (ActionNode action : actions){ result += action.toString() + "\n"; }
             }
@@ -163,16 +195,16 @@ public class ApplyMetadataRequest {
         }
     }
 
-    public ApplyMetadataRequest(String xmlns,
-                         String version,
-                         String date,
-                         String requestId){
+    public ApplyMetadataRequest(String xmlns, String version, String date, String requestId){
         this.xmlns = xmlns;
         this.version = version;
         this.date = date;
         this.requestId = requestId;
-        this.document = null;
         this.tasks = null;
+    }
+
+    public static ApplyMetadataRequest newInstance(String xmlns, String version, String date, String requestId) {
+        return new ApplyMetadataRequest(xmlns, version, date, requestId);
     }
 
     public String getRequestId() {
@@ -199,28 +231,18 @@ public class ApplyMetadataRequest {
         return xmlns;
     }
 
-    public DocumentNode getDocument() {
-        return document;
-    }
-
     public List<TaskNode> getTasks() {
         return tasks;
     }
 
-    public void setDocument(DocumentNode document){
-        this.document = document;
-    }
-
-    public void setTasks(List<TaskNode> tasks){
+    public ApplyMetadataRequest setTasks(List<TaskNode> tasks){
         this.tasks = tasks;
+        return this;
     }
 
     public String toString(){
         String result = String.format("ApplyMetadataRequest(xmlns: %s / version: %s / date: %s / requestId: %s / Task count: %s)\n",
                 xmlns, version, date, requestId, (tasks != null) ? tasks.size() : 0);
-        if (document != null){
-            result += document.toString() + "\n";
-        }
         if (tasks != null){
             for (TaskNode task : tasks){ result += (task.toString()) + "\n"; }
         }

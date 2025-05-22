@@ -6,26 +6,17 @@ public class ApplyMetadataResponse {
     public final String responseId;
     public final String version = "1.0";
     public final String xmlns = "http://ec.europa.eu/sg/egreffe/legiswrite/v1/types";
-    private final DocumentNode document;
     private final List<TaskNode> tasks;
     private final StatusNode status;
 
-    public ApplyMetadataResponse(String responseId,
-                          DocumentNode document,
-                          List<TaskNode> tasks,
-                          StatusNode status){
+    public ApplyMetadataResponse(String responseId, List<TaskNode> tasks, StatusNode status){
         this.responseId = responseId;
         this.status = status;
         this.tasks = tasks;
-        this.document = document;
     }
 
     public String getXmlns() {
         return xmlns;
-    }
-
-    public DocumentNode getDocument() {
-        return document;
     }
 
     public List<TaskNode> getTasks() {
@@ -47,9 +38,6 @@ public class ApplyMetadataResponse {
     public String toString(){
         String result = String.format("ApplyMetadataRequest(xmlns: %s / version: %s / responseId: %s / Task count: %s)\n",
                 xmlns, version, responseId, (tasks != null) ? tasks.size() : 0);
-        if (document != null){
-            result += document.toString() + "\n";
-        }
         if (status != null){
             result += status.toString() + "\n";
         }
@@ -182,15 +170,22 @@ public class ApplyMetadataResponse {
         private final String statusCode;
         private final ValidationResultNode validationResult;
         private final List<ActionNode> actions;
+        private final DocumentNode document;
 
         public TaskNode(String taskId,
                         String statusCode,
                         List<ActionNode> actions,
+                        DocumentNode document,
                         ValidationResultNode validationResult){
             this.taskId = taskId;
             this.statusCode = statusCode;
             this.actions = actions;
             this.validationResult = validationResult;
+            this.document = document;
+        }
+
+        public DocumentNode getDocument() {
+            return document;
         }
 
         public String getTaskId() {
@@ -212,6 +207,9 @@ public class ApplyMetadataResponse {
         public String toString(){
             String result = String.format("Task(taskId: %s / statusCode: %s / Action count: %s)\n",
                     taskId, statusCode, (actions != null) ? actions.size() : 0);
+            if (document != null){
+                result += document.toString() + "\n";
+            }
             if (actions != null){
                 for (ActionNode action : actions){ result += action.toString() + "\n"; }
             }

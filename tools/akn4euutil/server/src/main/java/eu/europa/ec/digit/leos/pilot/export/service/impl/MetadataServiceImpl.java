@@ -55,7 +55,7 @@ class MetadataServiceImpl implements MetadataService {
             Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
             request = readContentXml(zipContent);
 
-            Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, request.getDocument());
+            Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, getFirstTaskDocument(request));
             List<XmlFile> documentXmlFiles = readDocumentXmlFiles(documentZipContent);
             Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
 
@@ -183,9 +183,7 @@ class MetadataServiceImpl implements MetadataService {
 
         final ApplyMetadataResponse.StatusNode successResult = isContainsTaskResponseWithErrors(taskResponses)
                 ? MetadataUtil.getErrorStatusResult() : MetadataUtil.getSuccessStatusResult();
-        return new ApplyMetadataResponse(request.getRequestId(),
-                MetadataUtil.applyMetadataRequestDocumentToResultDocument(request.getDocument(), MetadataUtil.buildPrefinalizationLegName(request)),
-                taskResponses, successResult);
+        return new ApplyMetadataResponse(request.getRequestId(), taskResponses, successResult);
     }
 
     private ApplyMetadataResponse.TaskNode processApplyMetadataRequestTask(ApplyMetadataRequest.TaskNode task, List<XmlFile> documentXmlFiles) {
@@ -196,6 +194,7 @@ class MetadataServiceImpl implements MetadataService {
 
         final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
         return new ApplyMetadataResponse.TaskNode(task.getTaskId(), statusCode, actionResponses,
+                MetadataUtil.applyMetadataRequestDocumentToResultDocument(task.getDocument(), MetadataUtil.buildPrefinalizationLegName(task)),
                 MetadataUtil.getValidationSuccessResult("XMLValidationCheck"));
     }
 
@@ -240,14 +239,14 @@ class MetadataServiceImpl implements MetadataService {
                 case INTERINSTITUTIONAL_COTE:
                     MetadataUtil.processInterinstitutionalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
-                case INSERT_COTE:
-                    MetadataUtil.processInsertCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                case COTE:
+                    MetadataUtil.processCote((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
                 case LINKED_DOCUMENTS:
                     MetadataUtil.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);
                     break;
-                case DOCUMENT_FINAL:
-                    MetadataUtil.processDocumentFinal((ReferenceFieldInfo)fieldInfo, xmlFile);
+                case FINAL_COTE:
+                    MetadataUtil.processFinalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
             }
         }
@@ -271,7 +270,7 @@ class MetadataServiceImpl implements MetadataService {
             Map<String, Object> responseContent = new HashMap<>();
             XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response);
             responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
-            responseContent.put(response.getDocument().getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
+            responseContent.put(getFirstTaskDocument(response).getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
             return ZipUtil.zipByteArray(responseContent);
         } catch(Exception e) {
             LOG.error("Error building response {}", e);
@@ -339,6 +338,23 @@ class MetadataServiceImpl implements MetadataService {
         }
         return null;
     }
+
+    private ApplyMetadataRequest.DocumentNode getFirstTaskDocument(ApplyMetadataRequest request) {
+        return request.getTasks()
+                .stream()
+                .findFirst()
+                .map((task) -> task.getDocument())
+                .orElseGet(null);
+    }
+
+    private ApplyMetadataResponse.DocumentNode getFirstTaskDocument(ApplyMetadataResponse response) {
+        return response.getTasks()
+                .stream()
+                .findFirst()
+                .map((task) -> task.getDocument())
+                .orElseGet(null);
+    }
+
 
     public static class ApplyMetadataRunnable implements Runnable {
         private final MetadataService metadataService;
