@@ -45,7 +45,6 @@ import org.apache.tika.io.TikaInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -74,7 +73,6 @@ public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceImpl.class);
     private static final int MAX_RESULT_DEFAULT = 100;
     private static final String XML_DOC_EXT = ".xml";
-    private static final int MAX_RETRIES = 5;
 
     private final DocumentRepository documentRepository;
     private final DocumentVRepository documentVRepository;
@@ -217,31 +215,6 @@ public class DocumentServiceImpl implements DocumentService {
         templateMetadata.putAll(metadata);
         return templateMetadata;
     }
-
-    public LeosDocument updateDocumentWithRetries(final BigDecimal versionId, Map<String, ?> metadata,
-                                       VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws RepositoryException {
-        LeosDocument doc = null;
-        boolean goon;
-        int retries = 0;
-        do {
-            goon = false;
-            try {
-                doc = updateDocument(versionId, metadata,
-                        versionType, category, contentBytes, comments, userId);
-            } catch (Exception e) {
-                goon = true;
-                LOG.info("Error while updating document, trying again...");
-            }/* catch (Exception e) {
-                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
-            }*/
-        } while (retries++ < MAX_RETRIES && goon);
-
-        if (goon) {
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Constraint violation");
-        }
-        return doc;
-    }
-
 
     @Transactional(rollbackFor = Exception.class)
     public LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> metadata,

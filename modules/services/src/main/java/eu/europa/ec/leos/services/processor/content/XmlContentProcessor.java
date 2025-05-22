@@ -89,6 +89,8 @@ public interface XmlContentProcessor {
 
     byte[] doXMLPostProcessingWithInternalRefs(byte[] xmlContent);
 
+    byte[] doXMLPostProcessingWithExternalRefs(byte[] xmlContent);
+
     Document doXMLPostProcessingOnDocumentWithInternalRefs(byte[] xmlContent);
 
     byte[] doXMLPostProcessing(byte[] xmlContent);
@@ -106,6 +108,8 @@ public interface XmlContentProcessor {
     String updateReferences(String content, XmlDocument xmlDocument) throws Exception;
 
     Pair<byte[], List<Element>> updateReferences(byte[] xmlContent) throws Exception;
+
+    Pair<byte[], List<Element>> updateExternalReferences(byte[] xmlContent) throws Exception;
 
     Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent);
 

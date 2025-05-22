@@ -1081,6 +1081,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return nodeToByteArray(document);
     }
 
+    @Override
+    public byte[] doXMLPostProcessingWithExternalRefs(byte[] xmlContent) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Document document = doXmlPostProcessingCommonWithExternalRefs(xmlContent);
+
+        specificInstanceXMLPostProcessing(document);
+        updatePointStructure(document);
+        updateParagraphStructure(document);
+        long postProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.trace("Finished XML post processing: doXMLPostProcessing at {}ms", (System.currentTimeMillis() - postProcessingTime));
+        return nodeToByteArray(document);
+    }
+
     private void doXMLPostProcessing(Document document) {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
@@ -1118,6 +1132,41 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         // update refs
         updateReferences(document);
+        long mrefUpdateTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // Convert alineas to subparagraphs
+        convertAlineasToSubparagraphs(document);
+        long convertAlineasToSubparagraphsTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // Move subparagraphs as intro and conclusion
+        moveSubparagraphsInList(document);
+        updateMetaReferences(document.getFirstChild());
+        long moveSubparagraphsInListTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.info("Finished doXMLPostProcessing: Ids Injected at {}ms, authNote Renumbering at {}ms, refs at {}ms, convert alineas to subparagraphs " +
+                        "at {}ms, move subparagraphs as intro and conclusion at {}ms, Total time " +
+                        "elapsed {}ms",
+                injectIdTime, authNoteTime, mrefUpdateTime, convertAlineasToSubparagraphsTime, moveSubparagraphsInListTime,
+                (System.currentTimeMillis() - startTime));
+        return document;
+    }
+
+
+    private Document doXmlPostProcessingCommonWithExternalRefs(byte[] xmlContent) {
+        long startTime = System.currentTimeMillis();
+        Document document = createXercesDocument(xmlContent);
+
+        // Inject Ids
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        injectTagIdsInNode(document.getDocumentElement());
+        long injectIdTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // modify Authnote markers
+        modifyAuthorialNoteMarkers(document, 1);
+        long authNoteTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // update refs
+        updateExternalReferences(document);
         long mrefUpdateTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
         // Convert alineas to subparagraphs
@@ -1412,6 +1461,17 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
+    public Pair<byte[], List<Element>> updateExternalReferences(byte[] xmlContent) {
+        Document document = createXercesDocument(xmlContent);
+        List<Element> updatedMrefs = updateExternalReferences(document);
+        if (!updatedMrefs.isEmpty()) {
+            return new Pair<>(nodeToByteArray(document), updatedMrefs);
+        } else {
+            return new Pair<>(xmlContent, updatedMrefs);
+        }
+    }
+
+    @Override
     public String updateReferences(String content, XmlDocument xmlDocument) {
         String wrappedContentXml = LeosDomainUtil.wrapXmlFragment(content);
         byte[] xmlContent = wrappedContentXml.getBytes(StandardCharsets.UTF_8);
@@ -1476,12 +1536,87 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                             mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
                             updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
                         }
+                        if (XercesUtils.hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true")) {
+                            updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
+                        }
                         XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
                     } else if (!XercesUtils.hasAttribute(mref, LEOS_REF_BROKEN_ATTR)
                             || !XercesUtils.getAttributeValue(mref, LEOS_REF_BROKEN_ATTR).equals("true")) {
                         XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
                         updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
                     }
+                }
+            }
+        }
+        return updatedMrefs;
+    }
+
+    private List<Node> getExternalReferences(Document document) {
+        List<Node> externalReferences = new ArrayList<>();
+        NodeList refList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathExternalReferences());
+        for (int i = 0; i < refList.getLength(); i++) {
+            externalReferences.add(refList.item(i).getParentNode());
+        }
+        return externalReferences.stream().distinct().collect(Collectors.toList());
+    }
+
+    private List<Element> updateExternalReferences(Document document) {
+        List<Element> updatedMrefs = new ArrayList<>();
+        String sourceRef = getContentByTagName(document, LEOS_REF);
+        List<Node> refList = getExternalReferences(document);
+
+        HashMap<String, String> parentStatementsOfReferences = new HashMap<>();
+        for (Node mref : refList) {
+            List<Ref> refs = findReferences(mref, sourceRef);
+            if (!refs.isEmpty()) {
+                boolean capital = false;
+                String id = getAttributeValue(mref.getParentNode(), XMLID);
+                String completeStatement = "";
+                if (parentStatementsOfReferences.get(id) == null) {
+                    completeStatement = mref.getParentNode().getTextContent();
+                    parentStatementsOfReferences.put(id, completeStatement);
+                } else {
+                    completeStatement = parentStatementsOfReferences.get(id);
+                }
+                String pieceForCrossReference = mref.getTextContent();
+                int positionOfCrossReference = completeStatement.indexOf(pieceForCrossReference);
+                if (positionOfCrossReference <= 0) {
+                    capital = true;
+                } else {
+                    int indexPositionBefore = positionOfCrossReference - 1;
+                    int charPositionBefore = completeStatement.charAt(indexPositionBefore);
+                    while ((charPositionBefore == 32 || charPositionBefore == 160) && indexPositionBefore > 0) {
+                        indexPositionBefore--;
+                        charPositionBefore = completeStatement.charAt(indexPositionBefore);
+                    }
+                    if (charPositionBefore == 32 || charPositionBefore == 160 || charPositionBefore == '.') {
+                        capital = true;
+                    }
+                }
+                completeStatement = StringUtils.replaceOnce(completeStatement, pieceForCrossReference, StringUtils.repeat("-", pieceForCrossReference.length()));
+                parentStatementsOfReferences.put(id, completeStatement);
+
+                Result<String> labelResult;
+                if (refs.size() == 1 && refs.get(0).isDocNodeRef()) {
+                    labelResult = referenceLabelService.generateRefLabelForDocNode(refs.get(0));
+                } else {
+                    labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
+                }
+                if (labelResult.isOk()) {
+                    String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
+                    String updatedMrefContent = labelResult.get();
+                    if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
+                        mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
+                        updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
+                    }
+                    if (XercesUtils.hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true")) {
+                        updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
+                    }
+                    XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
+                } else if (!XercesUtils.hasAttribute(mref, LEOS_REF_BROKEN_ATTR)
+                        || !XercesUtils.getAttributeValue(mref, LEOS_REF_BROKEN_ATTR).equals("true")) {
+                    XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
+                    updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
                 }
             }
         }
@@ -1539,7 +1674,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
                             mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
                             updated = true;
-                        } else {
+                        } else if (!updated) {
                             updated = hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true");
                         }
                         removeAttribute(mref, LEOS_REF_BROKEN_ATTR);

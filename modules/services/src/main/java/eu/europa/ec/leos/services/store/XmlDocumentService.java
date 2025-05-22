@@ -4,4 +4,6 @@ import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 
 public interface XmlDocumentService {
     void updateInternalReferencesAsync(UpdateInternalReferencesMessage message) throws Exception;
+
+    void updateExternalReferencesAsync(UpdateInternalReferencesMessage message) throws Exception;
 }

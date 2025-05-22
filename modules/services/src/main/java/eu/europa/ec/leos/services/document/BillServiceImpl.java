@@ -17,6 +17,7 @@ import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
@@ -187,6 +188,18 @@ public abstract class BillServiceImpl implements BillService {
         return bill;
     }
 
+    @Override
+    public void updateExternalReferencesAsync(LeosPackage leosPackage) {
+        try {
+            Bill bill = findBillByPackagePath(leosPackage.getPath());
+            xmlDocumentService.updateExternalReferencesAsync(new UpdateInternalReferencesMessage(bill.getId(),
+                    bill.getMetadata().get().getRef()));
+            LOG.debug("updateExternalReferences processed for {}: ", bill.getMetadata().get().getRef());
+        } catch (Exception e) {
+            LOG.error("Error while updating external references", e);
+        }
+    }
+
     private void updateInternalReferencesAsync(Bill bill) {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(bill.getId(),
@@ -269,10 +282,9 @@ public abstract class BillServiceImpl implements BillService {
 
         LOG.trace("Update attachments in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
-        updateInternalReferencesAsync(bill);
         return bill;
     }
-    
+
     @Override
     public Bill createVersion(String id, VersionType versionType, String comment) {
         LOG.trace("Creating Bill version... [id={}, versionType={}, comment={}]", id, versionType, comment);

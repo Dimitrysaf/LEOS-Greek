@@ -678,6 +678,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                     LOG.error("Error while using archive service {}", e.getMessage());
                 }
                 billContext.executeRemoveBillAnnex();
+                billService.updateExternalReferencesAsync(leosPackage);
             }
             documentViewService.contextExecuteUpdateProposalAsync(proposal);
         } else if (category.equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
