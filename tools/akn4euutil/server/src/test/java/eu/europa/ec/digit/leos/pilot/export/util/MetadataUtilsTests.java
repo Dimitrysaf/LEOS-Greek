@@ -101,7 +101,7 @@ public class MetadataUtilsTests {
     @Test
     public void testParseCote_spaceLeft() throws MetadataUtilsException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013) 2456");
+        final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013) 2456", MetadataFieldType.COTE);
 
         Assertions.assertNotNull(actual);
 
@@ -112,7 +112,7 @@ public class MetadataUtilsTests {
     @Test
     public void testParseCote_noSpaceLeft() throws MetadataUtilsException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013)2456");
+        final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013)2456", MetadataFieldType.COTE);
 
         Assertions.assertNotNull(actual);
 
@@ -123,7 +123,7 @@ public class MetadataUtilsTests {
     @Test
     public void testParseCote_spaceLeftWithSuffix() throws MetadataUtilsException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013) 2456 final");
+        final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013) 2456 final", MetadataFieldType.FINAL_COTE);
 
         Assertions.assertNotNull(actual);
 
@@ -134,7 +134,7 @@ public class MetadataUtilsTests {
     @Test
     public void testParseCote_noSpaceLeftWithSuffix() throws MetadataUtilsException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013)2456 final");
+        final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013)2456 final", MetadataFieldType.FINAL_COTE);
 
         Assertions.assertNotNull(actual);
 
@@ -143,10 +143,10 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testAddInsertCoteToCuidInMainXml() throws XmlUtilException, MetadataUtilsException {
+    public void testAddCoteToCuidInMainXml() throws XmlUtilException, MetadataUtilsException {
         XmlFile xmlFile = createCuidXmlFile("main-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
-        ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
-        MetadataUtil.processInsertCote(insertCoteFieldInfo, xmlFile);
+        ReferenceFieldInfo coteFieldInfo = createCoteFieldInfo("COM(2024) 1811");
+        MetadataUtil.processCote(coteFieldInfo, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
         Assertions.assertNull(fileCuidNode);
@@ -156,10 +156,10 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testAddInsertCoteToCuidInNotMainXml() throws XmlUtilException, MetadataUtilsException {
+    public void testAddCoteToCuidInNotMainXml() throws XmlUtilException, MetadataUtilsException {
         XmlFile xmlFile = createCuidXmlFile("notMain-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
-        ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
-        MetadataUtil.processInsertCote(insertCoteFieldInfo, xmlFile);
+        ReferenceFieldInfo coteFieldInfo = createCoteFieldInfo("COM(2024) 1811");
+        MetadataUtil.processCote(coteFieldInfo, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
         Assertions.assertNotNull(fileCuidNode);
@@ -250,38 +250,38 @@ public class MetadataUtilsTests {
         return xmlFile;
     }
 
-    private ReferenceFieldInfo createInsertCoteFieldInfo(String fieldValue) throws MetadataUtilsException {
-        return (ReferenceFieldInfo)MetadataUtil.parseInsertCote(fieldValue);
+    private ReferenceFieldInfo createCoteFieldInfo(String fieldValue) throws MetadataUtilsException {
+        return (ReferenceFieldInfo)MetadataUtil.parseCote(fieldValue, MetadataFieldType.COTE);
     }
 
     @Test
     public void testPreFinalizationLegNameWithoutInstitutionalReference() {
         ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
-        actionNode.setFields(Collections.singletonList(createIsFinalNode("true")));
+        actionNode.setFields(Collections.singletonList(createFinalCoteNode("COM(2022) 666")));
 
         ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
         taskNode.setActions(Collections.singletonList(actionNode));
         ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+        taskNode.setDocument(documentNode);
 
         ApplyMetadataRequest request = getDummyMetadataRequest();
-        request.setDocument(documentNode);
         request.setTasks(Collections.singletonList(taskNode));
 
         String legName = MetadataUtil.buildPrefinalizationLegName(request);
-        Assertions.assertEquals(documentNode.getFilename(), legName);
+        Assertions.assertEquals("PROP_ACT-COM(2022)_666-final-en.leg", legName);
     }
 
     @Test
     public void testPreFinalizationLegNameWithInstitutionalReference() {
         ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
-        actionNode.setFields(Arrays.asList(createInsertCoteNode("COM(2022) 666"), createIsFinalNode("0")));
+        actionNode.setFields(Collections.singletonList(createCoteNode("COM(2022) 666")));
 
         ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
         taskNode.setActions(Collections.singletonList(actionNode));
         ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+        taskNode.setDocument(documentNode);
 
         ApplyMetadataRequest request = getDummyMetadataRequest();
-        request.setDocument(documentNode);
         request.setTasks(Collections.singletonList(taskNode));
 
         String legName = MetadataUtil.buildPrefinalizationLegName(request);
@@ -289,16 +289,16 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testPreFinalizationLegNameWithInstitutionalReferenceAndIsFinal() {
+    public void testPreFinalizationLegNameWithInstitutionalReferenceAndFinalCote() {
         ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
-        actionNode.setFields(Arrays.asList(createInsertCoteNode("COM(2022) 666"), createIsFinalNode("1")));
+        actionNode.setFields(Collections.singletonList(createFinalCoteNode("COM(2022) 666")));
 
         ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
         taskNode.setActions(Collections.singletonList(actionNode));
         ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+        taskNode.setDocument(documentNode);
 
         ApplyMetadataRequest request = getDummyMetadataRequest();
-        request.setDocument(documentNode);
         request.setTasks(Collections.singletonList(taskNode));
 
         String legName = MetadataUtil.buildPrefinalizationLegName(request);
@@ -402,11 +402,11 @@ public class MetadataUtilsTests {
         return new ApplyMetadataRequest.ActionNode("InsertData", "true");
     }
 
-    private ApplyMetadataRequest.FieldNode createInsertCoteNode(final String value) {
-        return new ApplyMetadataRequest.FieldNode("insertCote", value);
+    private ApplyMetadataRequest.FieldNode createCoteNode(final String value) {
+        return new ApplyMetadataRequest.FieldNode("cote", value);
     }
 
-    private ApplyMetadataRequest.FieldNode createIsFinalNode(final String value) {
-        return new ApplyMetadataRequest.FieldNode("isFinal", value);
+    private ApplyMetadataRequest.FieldNode createFinalCoteNode(final String value) {
+        return new ApplyMetadataRequest.FieldNode("finalCote", value);
     }
 }
