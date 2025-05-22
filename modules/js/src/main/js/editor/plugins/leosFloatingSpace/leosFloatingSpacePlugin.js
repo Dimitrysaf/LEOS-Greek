@@ -40,7 +40,7 @@ define(function floatingSpacePluginModule(require) {
 
             let stopWatching = null;
 
-            if (isMobileDevice) {
+            if (isMobileDevice()) {
                 editor.on('contentDom', function () {
                     const editable = editor.editable();
 
