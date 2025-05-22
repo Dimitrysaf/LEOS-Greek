@@ -1057,6 +1057,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 LOG.error("Error while using archive service {}", e.getMessage());
             }
             billContext.executeRemoveBillAnnex();
+            billService.updateExternalReferencesAsync(leosPackage);
         }
     }
 
@@ -1064,8 +1065,8 @@ public abstract class ApiServiceImpl implements ApiService {
     public void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection, Integer timesToMove) {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
             for (int i = 0; i < timesToMove; i++) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
                 BillContextService billContext = billContextProvider.get();
                 billContext.useAnnexwithRef(annexRef);
                 billContext.usePackage(leosPackage);
@@ -1073,6 +1074,22 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
                 billContext.executeMoveAnnex();
             }
+            this.billService.updateExternalReferencesAsync(leosPackage);
+        }
+    }
+
+    @Override
+    public void updateAnnexPosition(String proposalRef, Integer previousIndex, Integer nextIndex) {
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        if (proposal != null) {
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+            BillContextService billContext = billContextProvider.get();
+            billContext.useAnnexPreviousIndex(previousIndex);
+            billContext.useAnnexNextIndex(nextIndex);
+            billContext.usePackage(leosPackage);
+            billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
+            billContext.executeChangePositionAnnex();
+            this.billService.updateExternalReferencesAsync(leosPackage);
         }
     }
 

@@ -955,6 +955,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         billContext.useActionMessage(ContextAction.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
         archiveService.archiveDocument(event.getAnnex(), Annex.class, leosPackage.getPath());
         billContext.executeRemoveBillAnnex();
+        billService.updateExternalReferencesAsync(leosPackage);
         eventBus.post(new DocumentUpdatedEvent());
         // 2. update ui
         populateData();

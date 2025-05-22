@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.document;
 
 import com.sun.istack.NotNull;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
@@ -25,6 +26,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.light.Profile;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import io.atlassian.fugue.Pair;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +64,8 @@ public interface BillService {
     Bill removeAttachment(Bill bill, String href, String actionMsg);
 
     Bill updateAttachments(Bill bill, HashMap<String, String> attachmentsElements, String actionMsg);
+
+    void updateExternalReferencesAsync(LeosPackage leosPackage);
 
     Bill createVersion(String id, VersionType versionType, String comment);
 

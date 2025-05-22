@@ -139,7 +139,6 @@ export class ProposalDetailsService implements OnDestroy {
       )
       .subscribe((val) => {
         this.setProposalRef(this.proposalRef);
-        this.loadingService.setLoading(false);
       });
   }
 
@@ -183,18 +182,16 @@ export class ProposalDetailsService implements OnDestroy {
   }
 
   updateAnnexOrder(
-    annexRef: string,
-    moveDirection: string,
-    timesToMove: number,
+    previousIndex: number,
+    nextIndex: number,
   ) {
     this.loadingService.setLoading(true);
     this.http
       .post<any>(
-        `${apiBaseUrl}/secured/updateAnnexOrder/${this.proposalRef}/annex/${annexRef}?moveDirection=${moveDirection}&timesToMove=${timesToMove}`,
+        `${apiBaseUrl}/secured/updateAnnexPosition/${this.proposalRef}/annex?previousIndex=${previousIndex}&nextIndex=${nextIndex}`,
         {},
       )
       .subscribe(() => {
-        this.loadingService.setLoading(false);
         this.setProposalRef(this.proposalRef);
       });
   }

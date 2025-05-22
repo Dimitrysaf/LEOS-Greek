@@ -91,6 +91,8 @@ public interface ApiService {
 
     void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection, Integer timesToMove);
 
+    void updateAnnexPosition(String proposalRef, Integer previousIndex, Integer nextIndex);
+
     void updateAnnexTitle(String proposalRef, String annexId, String annexTitle);
 
     void updateExplanatoryTitle(String proposalRef, String docId, String title);
