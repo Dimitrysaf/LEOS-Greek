@@ -58,6 +58,7 @@ public class RestRepository extends AbstractRestClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestRepository.class);
     public static final String CLIENT_NAME = "clientName";
+    public static final String TECHNICAL_USER = "technicalUser";
 
     @Value("${leos.rest.repository.url}")
     private String leosRestRepositoryURL;
@@ -573,6 +574,18 @@ public class RestRepository extends AbstractRestClient {
                 .encode()
                 .toUriString();
         final LeosClientResponse entity = getEntity(urlTemplate, LeosClientResponse.class, clientName);
+        return Optional.ofNullable(entity);
+    }
+
+    Optional<LeosClientResponse> getLeosClient(String clientName, String technicalUser) {
+        LOGGER.trace("getLeosClient ... [ clientId = {}, technicalUser = {}]", clientName, technicalUser);
+        String url = getUrl(leosRestRepositoryLeosClient);
+        String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam(CLIENT_NAME, "{clientName}")
+                .queryParam(TECHNICAL_USER, "{technicalUser}")
+                .encode()
+                .toUriString();
+        final LeosClientResponse entity = getEntity(urlTemplate, LeosClientResponse.class, clientName, technicalUser);
         return Optional.ofNullable(entity);
     }
 

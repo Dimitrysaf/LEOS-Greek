@@ -117,6 +117,16 @@
         <default-doc-creation-role>false</default-doc-creation-role>
         <message-key>leos.doc.application.role.type2</message-key>
     </role>
+    <role name="EXTERNAL_SYSTEM">
+        <permissions>
+            <permission>CAN_READ</permission>
+            <permission>CAN_ADD_REMOVE_COLLABORATOR</permission>
+        </permissions>
+        <application-role>true</application-role>
+        <collaborator>true</collaborator>
+        <default-doc-creation-role>false</default-doc-creation-role>
+        <message-key>leos.doc.application.role.type3</message-key>
+    </role>
     <role name="USER">
         <permissions>
         </permissions>

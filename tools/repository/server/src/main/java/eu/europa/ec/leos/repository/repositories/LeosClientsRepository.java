@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface LeosClientsRepository extends JpaRepository<LeosClients, BigDecimal> {
     Optional<LeosClients> findByName(String name);
+    Optional<LeosClients> findByNameAndTechnicalUser(String name, String technicalUser);
 }
