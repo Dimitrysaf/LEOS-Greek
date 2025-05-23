@@ -2,7 +2,6 @@ package eu.europa.ec.leos.services.toc;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
@@ -35,7 +34,6 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
 import io.atlassian.fugue.Option;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -148,7 +146,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
         request.setParentNodeTagName("BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -173,7 +171,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
         request.setParentNodeTagName("BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -198,7 +196,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
         request.setParentNodeTagName("BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);

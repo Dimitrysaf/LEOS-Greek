@@ -25,6 +25,10 @@ When('mouseover and click on level {int}', levelNumber => {
     annexPage.mouseHoverAndClickOnLevel(levelNumber);
 })
 
+When('mouseover and real click on level {int}', levelNumber => {
+    annexPage.mouseHoverAndRealClickOnLevel(levelNumber);
+})
+
 When('mouseover and click on paragraph {int}', function (paragraphNumber) {
     annexPage.mouseHoverAndClickOnParagraph(paragraphNumber);
 });

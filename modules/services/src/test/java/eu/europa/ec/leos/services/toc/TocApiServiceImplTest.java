@@ -2,7 +2,6 @@ package eu.europa.ec.leos.services.toc;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
@@ -150,7 +149,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.BEFORE);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -174,7 +173,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.BEFORE);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -198,7 +197,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -222,7 +221,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -246,7 +245,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.BEFORE);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -270,7 +269,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.BEFORE);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -294,7 +293,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -318,7 +317,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -342,7 +341,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -366,7 +365,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.BEFORE);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
@@ -390,7 +389,7 @@ public class TocApiServiceImplTest extends LeosTest {
         request.setParentNodeTagName("MAIN_BODY");
         request.setPosition(TocItemPosition.AFTER);
 
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED, true);
         request.setTableOfContentItemVOs(tocList);
 
         NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);

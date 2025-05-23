@@ -1,8 +1,8 @@
 import {AutoNumbering, NumberingType} from './document.model';
 
 export class TableOfContentItemVO {
-  tocItem: TocItem;
   id: string;
+  tagName: AknTag;
   originAttr: string;
   number: string;
   initialNum: string;
@@ -12,13 +12,14 @@ export class TableOfContentItemVO {
   originalTocItemType: string;
   originHeadingAttr: string;
   content: string;
-  node: Node;
-  list: string;
+  list: string; // not used
   movedOnEmptyParent: boolean;
   numSoftActionAttr: string;
   numberingToggled: boolean;
   undeleted: boolean;
   isBlock: boolean;
+  blockSignature: boolean;
+  newNode: boolean;
   isCrossHeading: boolean;
   isCrossHeadingInList: boolean;
   tocItemType: string;
@@ -32,26 +33,26 @@ export class TableOfContentItemVO {
   softTransFrom: string;
   softUserAttr: string;
   softDateAttr: number;
-  restored: boolean;
+  restored: boolean; // not used
   itemDepth: number;
   originalDepthLevel: number;
-  originalIndentLevel: number;
+  originalIndentLevel: number; // not used
   indentLevel: number;
   elementNumberId: number;
   indentOriginType: string = null;
   indentOriginIndentLevel = '-1';
-  indentOriginNumId: string = null;
+  indentOriginNumId: string = null; // not used
   indentOriginNumValue: string = null;
-  indentOriginNumOrigin: string = null;
+  indentOriginNumOrigin: string = null; // not used
   style: string;
   autoNumOverwritten = false;
-  moved: boolean;
+  moved: boolean; // not used
   isAffected: boolean;
   expanded: boolean;
   label?: string;
   soleNumbered: boolean;
   shouldRenderNode?: boolean;
-  itemDescription?: string;
+  itemDescription?: string; // not used
   tocStyling?: string;
   trackChangeAction: string;
   numberingType: NumberingType;
@@ -122,10 +123,8 @@ export class TocItem {
   sameParentAsChild: boolean;
   tocItemTypes: any;
   parentNameNumberingTypeDependency: any;
-  profiles: any;
   editable: boolean;
   addSoftAttr: boolean;
-  template: string;
   maxDepth: string;
   actionsPosition: any;
 }

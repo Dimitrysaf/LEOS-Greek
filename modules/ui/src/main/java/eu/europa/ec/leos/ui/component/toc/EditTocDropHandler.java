@@ -95,7 +95,7 @@ public class EditTocDropHandler implements TreeGridDropListener<TableOfContentIt
                 
                 droppedItems.stream().forEach(tocItem -> {
                     ActionType actionType = isAdd ? ActionType.INSERTED : ActionType.MOVED;
-                    checkinElements.add(new CheckinElement(actionType, tocItem.getId(), tocItem.getTocItem().getAknTag().name()));
+                    checkinElements.add(new CheckinElement(actionType, tocItem.getId(), tocItem.getTagName().value()));
                 });
             }
             
@@ -110,7 +110,8 @@ public class EditTocDropHandler implements TreeGridDropListener<TableOfContentIt
         if (getTagValueFromTocItemVo(tocItem).equals(POINT)) {
             TableOfContentItemVO article = getFirstAscendant(targetItem, Arrays.asList(ARTICLE));
             if (article != null) {
-                NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem.getTocItem(), "EN");
+                NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.tocItems,
+                        tocItem.getTagName()), "EN");
                 if (!numberingType.equals(StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems,
                         article.getTocItemType(), POINT, "en"))) {
                     TocItem newTocItem = StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, article.getTocItemType(), POINT, "EN");
@@ -136,9 +137,11 @@ public class EditTocDropHandler implements TreeGridDropListener<TableOfContentIt
 
     private void fireTocChange(TocDropResult tocDropResult, List<CheckinElement> checkinElements) {
         final TableOfContentItemVO sourceItem = tocDropResult.getSourceItem();
-        final String srcItemType = TableOfContentHelper.getDisplayableTocItem(sourceItem.getTocItem(), null, messageHelper);
+        final String srcItemType = TableOfContentHelper.getDisplayableTocItem(StructureConfigUtils.getTocItemByName(this.tocItems,
+                sourceItem.getTagName()), null, messageHelper);
         if (tocDropResult.getTargetItem() != null) {
-            final String targetItemType = TableOfContentHelper.getDisplayableTocItem(tocDropResult.getTargetItem().getTocItem(), null, messageHelper);
+            final String targetItemType = TableOfContentHelper.getDisplayableTocItem(StructureConfigUtils.getTocItemByName(this.tocItems,
+                    tocDropResult.getTargetItem().getTagName()), null, messageHelper);
             final TocChangedEvent.Result result = tocDropResult.isSuccess() ? TocChangedEvent.Result.SUCCESSFUL : TocChangedEvent.Result.ERROR;
             final String message = messageHelper.getMessage(tocDropResult.getMessageKey(), srcItemType, targetItemType);
             eventBus.post(new TocChangedEvent(message, result, checkinElements));

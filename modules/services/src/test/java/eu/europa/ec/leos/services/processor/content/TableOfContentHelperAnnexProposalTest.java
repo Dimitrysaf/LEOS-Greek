@@ -2,7 +2,7 @@ package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.util.TestUtils;
-import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemVOBuilder;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class TableOfContentHelperAnnexProposalTest extends TableOfXmlContentProc
     @Test
     public void test_numbering_level_wrongDepthStructure() {
         final byte[] xmlInput = TestUtils.getFileContent("/numbering/annex/", "test_numbering_level_wrongDepthStructure_fromToc.xml");
-        TableOfContentItemVO mainBody = tableOfContentProcessor.buildTableOfContent(DOC, xmlInput, TocMode.SIMPLIFIED).get(0);
+        TableOfContentItemVO mainBody = tableOfContentProcessor.buildTableOfContent(DOC, xmlInput, TocMode.SIMPLIFIED, true).get(0);
         List<TableOfContentItemVO> mainBodyChildren = mainBody.getChildItems();
         assertEquals(5, mainBodyChildren.get(1).getChildItems().get(1).getChildItems().get(0).getItemDepth());//mainBody/chapter/section/level
         updateDepthOfTocItems(mainBodyChildren);
@@ -44,7 +44,7 @@ public class TableOfContentHelperAnnexProposalTest extends TableOfXmlContentProc
     public void test_buildTableOfContent() {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/annex_basic.xml");
 
-        List<TableOfContentItemVO> xercesTOC = tableOfContentProcessor.buildTableOfContent(DOC, fileContent, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> xercesTOC = tableOfContentProcessor.buildTableOfContent(DOC, fileContent, TocMode.NOT_SIMPLIFIED, true);
         assertThat(xercesTOC, is(notNullValue()));
         assertThat(xercesTOC.size(), is(2));
 
@@ -54,22 +54,18 @@ public class TableOfContentHelperAnnexProposalTest extends TableOfXmlContentProc
     }
 
     private List<TableOfContentItemVO> buildTOCProgrammatically() {
-        TableOfContentItemVO preface = buildSingleTOCVo("preface", PREFACE, null, null, null, null, 0, null, "");
+        TableOfContentItemVO preface = buildSingleTOCVo("preface", AknTag.PREFACE, null, null, null, null, 0, null, "");
         TableOfContentItemVO mainBody = TocItemVOBuilder.getBuilder()
                 .withId("mainBody")
                 .withContent("")
-                .withTocItem(
-                        StructureConfigUtils.getTocItemByName(tocItems, MAIN_BODY)
-                )
+                .withTocItem(AknTag.MAIN_BODY)
                 .withChild(
-                        buildSingleTOCVo("level_1", LEVEL, null, "1.", "level_1_num", null, 1, null, "Without heading - only short content")
+                        buildSingleTOCVo("level_1", AknTag.LEVEL, null, "1.", "level_1_num", null, 1, null, "Without heading - only short content")
                 )
                 .withChild(
                         TocItemVOBuilder.getBuilder()
                                 .withId("level_2")
-                                .withTocItem(
-                                        StructureConfigUtils.getTocItemByName(tocItems, LEVEL)
-                                )
+                                .withTocItem(AknTag.LEVEL)
                                 .withHeading("Level with List")
                                 .withNumber("2.")
                                 .withElementNumberId("level_2_num")
@@ -81,9 +77,7 @@ public class TableOfContentHelperAnnexProposalTest extends TableOfXmlContentProc
                 )
                 .withChild(
                         TocItemVOBuilder.getBuilder()
-                                .withTocItem(
-                                        StructureConfigUtils.getTocItemByName(tocItems, PART)
-                                )
+                                .withTocItem(AknTag.PART)
                                 .withId("part_1")
                                 .withHeading("Part heading.")
                                 .withNumber("I")
@@ -91,19 +85,19 @@ public class TableOfContentHelperAnnexProposalTest extends TableOfXmlContentProc
                                 .withContent("Paragraph1, sub1 content Paragraph1, sub2 content (a) Point (a) content (i) Point (i) content")
                                 .withItemDepth(1)
                                 .withChild(
-                                        buildSingleTOCVo("par_1", PARAGRAPH, null, null, null, null, 0, "Paragraph1, sub2 content (a) Point (a) content (i) Point (i) content", "Paragraph1, sub1 content")
+                                        buildSingleTOCVo("par_1",  AknTag.PARAGRAPH, null, null, null, null, 0, "Paragraph1, sub2 content (a) Point (a) content (i) Point (i) content", "Paragraph1, sub1 content")
                                 )
                                 .withChild(
-                                        buildSingleTOCVo("level_3", LEVEL, "Heading for 3.", "3.", "level_3_num", null, 1, null, "Content for 3.")
+                                        buildSingleTOCVo("level_3",  AknTag.LEVEL, "Heading for 3.", "3.", "level_3_num", null, 1, null, "Content for 3.")
                                 )
                                 .withChild(
-                                        buildSingleTOCVo("level_3_1", LEVEL, null, "3.1.", "level_3_1_num", null, 2, null, "Content for 3.1")
+                                        buildSingleTOCVo("level_3_1",  AknTag.LEVEL, null, "3.1.", "level_3_1_num", null, 2, null, "Content for 3.1")
                                 )
                                 .withChild(
-                                        buildSingleTOCVo("level_3_1_1", LEVEL, null, "3.1.1.", "level_3_1_1_num", null, 3, null, "Content for 3.1.1")
+                                        buildSingleTOCVo("level_3_1_1",  AknTag.LEVEL, null, "3.1.1.", "level_3_1_1_num", null, 3, null, "Content for 3.1.1")
                                 )
                                 .withChild(
-                                        buildSingleTOCVo("level_3_1_2", LEVEL, null, "3.1.2.", "level_3_1_2_num", null, 3, null, "Content for 3.1.2")
+                                        buildSingleTOCVo("level_3_1_2", AknTag.LEVEL, null, "3.1.2.", "level_3_1_2_num", null, 3, null, "Content for 3.1.2")
                                 )
 
                                 .build()
@@ -113,12 +107,11 @@ public class TableOfContentHelperAnnexProposalTest extends TableOfXmlContentProc
         return Arrays.asList(preface, mainBody);
     }
 
-    private TableOfContentItemVO buildSingleTOCVo(String id, String aknTag, String heading, String number, String numberId, String origin, int depth, String list, String content) {
+    private TableOfContentItemVO buildSingleTOCVo(String id, AknTag aknTag, String heading, String number, String numberId, String origin, int depth,
+                                                  String list, String content) {
         return TocItemVOBuilder.getBuilder()
                 .withId(id)
-                .withTocItem(
-                        StructureConfigUtils.getTocItemByName(tocItems, aknTag)
-                )
+                .withTocItem(aknTag)
                 .withContent(content)
                 .withHeading(heading)
                 .withNumber(number)

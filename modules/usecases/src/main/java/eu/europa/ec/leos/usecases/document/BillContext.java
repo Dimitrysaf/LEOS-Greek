@@ -577,14 +577,13 @@ public class BillContext {
     }
 
     private Annex findAffectedAnnex(boolean before, int index) {
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, "Bill Package is required");
         // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         int targetIndex = index + (before ? -1 : 1); //index start with 0
         if (targetIndex < 0 || targetIndex > annexes.size()) {
             throw new UnsupportedOperationException("Invalid index requested");
         }
-
         for (Annex annex : annexes) {//assuming unsorted annex list
             annex = annexService.findAnnex(annex.getId(), true);
             if (annex.getMetadata().get().getIndex() == targetIndex) {
@@ -593,7 +592,6 @@ public class BillContext {
         }
         throw new UnsupportedOperationException("Invalid index for annex");
     }
-
 
     /**
      * @param annexes list of Annexes currently added

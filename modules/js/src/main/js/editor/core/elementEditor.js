@@ -42,6 +42,20 @@ define(function elementEditorModule(require) {
         connector.receiveToc = _receiveToc;
         connector.receiveRefLabel = _receiveRefLabel;
         connector.closeElement = _closeElement;
+        connector.saveElementWithConfirmation = _saveElementWithConfirmation;
+    }
+
+
+    function _saveElementWithConfirmation() {
+        const editor = _getEditor();
+        if (editor.fire("canBeSaved")) {
+            editor.readOnly = false;
+            editor.fire("save", {
+                data: editor.getData(),
+                isSaveAndClose: true
+            });
+            editor.fire("close");
+        }
     }
 
     function _editElement(elementId, elementType, elementFragment, docType, instanceType, alternatives, levelItemVo,
@@ -113,7 +127,7 @@ define(function elementEditorModule(require) {
             }).profile;
         } else {
             tocItemsList.forEach(function (e) {
-                if (elementType.toLowerCase() === e.aknTag.toLowerCase()) {
+                if (_.camelCase(elementType).toLowerCase() === _.camelCase(e.aknTag).toLowerCase()) {
                     e.profiles["profiles"].forEach(function (profile) {
                         if (!profile.elementSelector || $(element).is(profile.elementSelector)) {
                             selectedProfile = profile.profileName;
@@ -364,9 +378,24 @@ define(function elementEditorModule(require) {
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
             var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
             dialogCommand.exec();
+            _selectRangeForElementId(elementId, editor);
             return true;
         }
         return false;
+    }
+
+    function _selectRangeForElementId(elementId, editor){
+        var nativeEditable = editor.editable().$;
+        var el = nativeEditable.querySelector('#' + elementId);
+        if (el) {
+            var element = new CKEDITOR.dom.element(el);
+            var lastEditable = leosPluginUtils.findLastEditable(element);
+            if (lastEditable) {
+                var range = editor.createRange();
+                range.selectNodeContents(lastEditable);
+                editor.getSelection().selectRanges([range]);
+            }
+        }
     }
 
     function _createEditorPlaceholder(rootElement, elementId) {

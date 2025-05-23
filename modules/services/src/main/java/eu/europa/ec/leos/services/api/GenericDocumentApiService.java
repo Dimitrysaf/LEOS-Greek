@@ -713,7 +713,7 @@ public class GenericDocumentApiService {
         // we are combining two operations (get toc + get selected element ancestors)
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
                 xmlDocument, TocMode.SIMPLIFIED_CLEAN);
-        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
+        return new TocAndAncestorsResponse(tocItemList, this.structureContextProvider.get().getTocItems(), elementAncestorsIds, messageHelper,
                 context.getNumberingConfigs(), xmlDocument.getMetadata().get().getLanguage());
     }
 

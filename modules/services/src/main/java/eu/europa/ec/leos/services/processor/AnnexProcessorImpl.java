@@ -228,7 +228,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         documentLanguageContext.setDocumentLanguage(language);
         if (xmlContentProcessor.needsToBeIndented(elementFragment)) {
             byte[] contentBytes = getContent(annex);
-            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW);
+            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW, true);
             updatedContent = xmlContentProcessor.indentElement(contentBytes, tagName, elementId, elementFragment, toc);
         } else {
             updatedContent = elementProcessor.updateElement(annex, elementFragment, tagName, elementId, false);

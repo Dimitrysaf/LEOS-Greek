@@ -18,7 +18,7 @@
                         </paragraph>
                     </article>
                     <section xml:id="akn_section_dxjGsc">
-                        <num xml:id="akn_kkKBST">#</num>
+                        <num xml:id="akn_kkKBST">Section #</num>
                         <heading xml:id="akn_65WHvP">Section heading...</heading>
                         <article xml:id="new_art_1">
                             <num leos:editable="false" xml:id="new_art_1_eKam21">Article 2</num>
@@ -27,6 +27,12 @@
                                 <num xml:id="new_art_1_QbZpeS">1.</num>
                                 <content xml:id="new_art_1_3VsECX">
                                     <p xml:id="new_art_1_COLMH3">Text...</p>
+                                </content>
+                            </paragraph>
+                            <paragraph xml:id="new_art_1-par2">
+                                <num xml:id="new_art_1_QbZpeZ">2.</num>
+                                <content xml:id="new_art_1_3VsECH">
+                                    <p xml:id="new_art_1_COLMH4">Text...</p>
                                 </content>
                             </paragraph>
                         </article>

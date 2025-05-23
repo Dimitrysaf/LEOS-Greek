@@ -92,6 +92,8 @@ public class BillContextService {
     private String milestoneComment;
     private String purpose = null;
     private String moveDirection = null;
+    private Integer annexPreviousIndex = 0;
+    private Integer annexNextIndex = 0;
     private String annexId;
     private String annexRef;
     private boolean cloneProposal;
@@ -179,6 +181,18 @@ public class BillContextService {
         Validate.notNull(moveDirection, "Bill 'moveDirection' is required!");
         LOG.trace("Using Bill 'move direction'... [moveDirection={}]", moveDirection);
         this.moveDirection = moveDirection;
+    }
+
+    public void useAnnexPreviousIndex(Integer previousIndex) {
+        Validate.notNull(previousIndex, "Bill 'previousIndex' is required!");
+        LOG.trace("Using Bill 'previous index'... [annexPreviousIndex={}]", previousIndex);
+        this.annexPreviousIndex = previousIndex;
+    }
+
+    public void useAnnexNextIndex(Integer nextIndex) {
+        Validate.notNull(nextIndex, "Bill 'nextIndex' is required!");
+        LOG.trace("Using Bill 'next index'... [annexNextIndex={}]", nextIndex);
+        this.annexNextIndex = nextIndex;
     }
 
     public void useAnnex(String annexId) {
@@ -611,8 +625,8 @@ public class BillContextService {
 
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
         Validate.notNull(moveDirection, "Bill moveDirection is required");
-        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
-        Annex operatedAnnex = annexService.findAnnex(annexRef, true);
+        Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+        Annex operatedAnnex = annexService.findAnnex(annexId, true);
         int currentIndex = operatedAnnex.getMetadata().get().getIndex();
         Annex affectedAnnex = findAffectedAnnex(moveDirection.equalsIgnoreCase("UP"), currentIndex);
 
@@ -637,6 +651,58 @@ public class BillContextService {
         attachments.put(operatedAnnex.getName(), operatedAnnexNumber);
         attachments.put(affectedAnnex.getName(), affectedAnnexNumber);
 
+        billService.updateAttachments(bill, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
+    }
+
+    public void executeChangePositionAnnex() {
+        LOG.trace("Executing 'Update Bill Change Position Annex' use case...");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+        Validate.notNull(annexPreviousIndex, "Bill annexPreviousIndex is required");
+        Validate.notNull(annexNextIndex, "Bill annexNextIndex is required");
+
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
+        List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+        Annex operatedAnnex = findAnnexFromIndex(annexes, annexPreviousIndex);
+        String operatedAnnexNumber  = AnnexNumberGenerator.getAnnexNumber(annexNextIndex);
+
+        moveDirection = annexPreviousIndex < annexNextIndex ? "UP" : "DOWN";
+        HashMap<String, String> attachments = new HashMap<>();
+        if (moveDirection.equalsIgnoreCase("UP")) {
+            // Updating annexes between previous position and next position => Decrease them by one
+            for (int i = annexPreviousIndex + 1 ; i <= annexNextIndex; i++) {
+                Annex affectedAnnex = findAnnexFromIndex(annexes, i);
+                String affectedAnnexNewNumber  = AnnexNumberGenerator.getAnnexNumber(i-1);
+                AnnexContextService affectedAnnexContext = annexContextProvider.get();
+                affectedAnnexContext.useAnnexId(affectedAnnex.getId());
+                affectedAnnexContext.useIndex(i-1);
+                affectedAnnexContext.useActionMessageMap(actionMsgMap);
+                affectedAnnexContext.useAnnexNumber(affectedAnnexNewNumber);
+                affectedAnnexContext.executeUpdateAnnexIndex();
+                attachments.put(affectedAnnex.getName(), affectedAnnexNewNumber);
+            }
+        } else {
+            // Updating annexes between next position and previous position => Increase them by one
+            for (int i = annexPreviousIndex - 1; i >= annexNextIndex; i--) {
+                Annex affectedAnnex = findAnnexFromIndex(annexes, i);
+                String affectedAnnexNewNumber  = AnnexNumberGenerator.getAnnexNumber(i+1);
+                AnnexContextService affectedAnnexContext = annexContextProvider.get();
+                affectedAnnexContext.useAnnexId(affectedAnnex.getId());
+                affectedAnnexContext.useIndex(i+1);
+                affectedAnnexContext.useActionMessageMap(actionMsgMap);
+                affectedAnnexContext.useAnnexNumber(affectedAnnexNewNumber);
+                affectedAnnexContext.executeUpdateAnnexIndex();
+                attachments.put(affectedAnnex.getName(), affectedAnnexNewNumber);
+            }
+        }
+
+        AnnexContextService operatedAnnexContext = annexContextProvider.get();
+        operatedAnnexContext.useAnnexId(operatedAnnex.getId());
+        operatedAnnexContext.useIndex(annexNextIndex);
+        operatedAnnexContext.useActionMessageMap(actionMsgMap);
+        operatedAnnexContext.useAnnexNumber(operatedAnnexNumber);
+        operatedAnnexContext.executeUpdateAnnexIndex();
+        attachments.put(operatedAnnex.getName(), operatedAnnexNumber);
+
         billService.updateAttachments(billByPackagePath, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
     }
 
@@ -645,10 +711,9 @@ public class BillContextService {
         // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         int targetIndex = index + (before ? -1 : 1); //index start with 0
-        if (targetIndex < 0 || targetIndex > annexes.size()) {
+        if (targetIndex < 1 || targetIndex > annexes.size()) {
             throw new UnsupportedOperationException("Invalid index requested");
         }
-
         for (Annex annex : annexes) {//assuming unsorted annex list
             annex = annexService.findAnnex(annex.getId(), true);
             if (annex.getMetadata().get().getIndex() == targetIndex) {
@@ -658,6 +723,19 @@ public class BillContextService {
         throw new UnsupportedOperationException("Invalid index for annex");
     }
 
+    private Annex findAnnexFromIndex(List<Annex> annexes, int index) {
+        if (index < 1 || index > annexes.size()) {
+            throw new UnsupportedOperationException("Invalid index requested");
+        }
+
+        for (Annex annex : annexes) {//assuming unsorted annex list
+            annex = annexService.findAnnex(annex.getId(), true);
+            if (annex.getMetadata().get().getIndex() == index) {
+                return annex;
+            }
+        }
+        throw new UnsupportedOperationException("Invalid index for annex");
+    }
 
     /**
      * @param annexes list of Annexes currently added

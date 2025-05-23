@@ -185,17 +185,9 @@ export class ProposalDraftsComponent
     const annexRef = this.annexes[event.currentIndex].id;
     //if dropped in the same position do nothing
     if (event.currentIndex === event.previousIndex) return;
-    //get whether the droped element went up or down to decide the moveDirection
-    let moveDirection = 'UP';
-    if (event.currentIndex > event.previousIndex) {
-      moveDirection = 'DOWN';
-    }
-    //because the backend works only for one up or one down we calculate how many times we have to repeat the function
-    const timesToMove = Math.abs(event.currentIndex - event.previousIndex);
     this.proposalDetailsService.updateAnnexOrder(
-      annexRef,
-      moveDirection,
-      timesToMove,
+      ++event.previousIndex,
+      ++event.currentIndex,
     );
   }
 

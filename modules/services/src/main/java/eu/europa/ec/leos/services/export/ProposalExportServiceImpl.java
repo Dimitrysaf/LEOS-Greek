@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.Validate;
@@ -42,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -75,8 +77,8 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
                               SecurityContext securityContext, ExportHelper exportHelper, BillService billService,
                               AnnexService annexService, TransformationService transformationService, NotificationService notificationService,
                               AKN4EUService akn4euService, CloneContext cloneContext, WorkspaceRepository workspaceRepository,
-                              LeosLightXmlDocumentService leosLightXmlDocumentService) {
-        super(legService, packageService, securityContext, exportHelper, billService, annexService, transformationService);
+                              LeosLightXmlDocumentService leosLightXmlDocumentService, Provider<StructureContext> structureContextProvider) {
+        super(legService, packageService, securityContext, exportHelper, billService, annexService, transformationService, structureContextProvider);
         toolBoxServiceO.ifPresent(service -> this.toolBoxService = service);
         this.notificationService = notificationService;
         this.akn4euService = akn4euService;
@@ -357,7 +359,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         contentToZip.put(docName, docContent);
         //2. HTML rendition
         String cssFileName = document.getCategory().name().toLowerCase(Locale.ROOT) + ".css";
-        leosLightXmlDocumentService.addDocumentHtmlRendition(contentToZip, docName, docContent, cssFileName);
+        leosLightXmlDocumentService.addDocumentHtmlRendition(this.structureContextProvider, contentToZip, docName, docContent, cssFileName);
         //3.process annotation and add document conversion
         contentToZip.put("exports.zip", leosLightXmlDocumentService.convert(docContent, docName, exportOptions));
         //4.final packaging

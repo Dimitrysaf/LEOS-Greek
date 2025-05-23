@@ -12,19 +12,19 @@
                 </paragraph>
             </article>
             <part leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:17:21.468+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_part_vVo2pU">
-                <num leos:origin="cn">#</num>
+                <num leos:origin="cn">Part #</num>
                 <heading>Part heading...</heading>
                 <title leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:17:21.467+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_title_8E16J7">
-                    <num leos:origin="cn">#</num>
+                    <num leos:origin="cn">Title #</num>
                     <heading>Title heading...</heading>
                     <chapter leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:17:21.466+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_chapter_n6JpAm">
-                        <num leos:origin="cn">#</num>
+                        <num leos:origin="cn">Chapter #</num>
                         <heading>Chapter heading...</heading>
                         <section leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:17:21.465+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_section_OUDwXX">
-                            <num leos:origin="cn">#</num>
+                            <num leos:origin="cn">Section #</num>
                             <heading>Section heading...</heading>
                             <article leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:17:21.464+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_article_Hh3M7Z">
-                                <num leos:editable="false" leos:origin="cn">#</num>
+                                <num leos:editable="false" leos:origin="cn">Article #</num>
                                 <heading>Article heading...</heading>
                                 <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:17:21.463+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_paragraph_gH9cQh">
                                     <num leos:editable="false" leos:origin="cn">#</num>

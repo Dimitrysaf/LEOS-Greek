@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.vo.toc;
 
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import org.w3c.dom.Node;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class TocItemVOBuilder {
 
-    private TocItem tocItem;
+    private AknTag tocItem;
     private String id;
     private String originAttr;
     private String number;
@@ -32,6 +33,7 @@ public class TocItemVOBuilder {
     private String softMoveTo;
     private boolean affected;
     private String list;
+    private boolean newNode;
 
     private TocItemVOBuilder() {
     }
@@ -51,6 +53,11 @@ public class TocItemVOBuilder {
     }
 
     public TocItemVOBuilder withTocItem(TocItem tocItem) {
+        this.tocItem = tocItem.getAknTag();
+        return this;
+    }
+
+    public TocItemVOBuilder withTocItem(AknTag tocItem) {
         this.tocItem = tocItem;
         return this;
     }
@@ -155,6 +162,11 @@ public class TocItemVOBuilder {
         return this;
     }
 
+    public TocItemVOBuilder withNewNode(boolean newNode) {
+        this.newNode = newNode;
+        return this;
+    }
+
     public TableOfContentItemVO build() {
         TableOfContentItemVO tocVO = new TableOfContentItemVO(tocItem, id, originAttr, number, originNumAttr,
                 heading, originalHeading, originalTocItemType, node, content);
@@ -170,6 +182,7 @@ public class TocItemVOBuilder {
         tocVO.setParentItem(parentItem);
         tocVO.setAffected(affected);
         tocVO.setList(list);
+        tocVO.setNewNode(newNode);
         return tocVO;
     }
 }

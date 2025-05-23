@@ -332,7 +332,7 @@ public class BillProcessorImpl implements BillProcessor {
 
         if (xmlContentProcessor.needsToBeIndented(elementContent)) {
             byte[] contentBytes = getContent(document);
-            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(BILL, contentBytes, TocMode.RAW);
+            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(BILL, contentBytes, TocMode.RAW, true);
             updatedContent = xmlContentProcessor.indentElement(contentBytes, elementName, elementId, elementContent, toc);
             if (updatedContent != null) {
                 updatedContent = numberService.renumberRecitals(updatedContent);

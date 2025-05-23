@@ -984,7 +984,10 @@ export abstract class DocumentActionsService {
         title: this.translateService.instant('page.editor.open.editor.dialog.title'),
         content: this.translateService.instant('page.editor.open.editor.dialog.body'),
         acceptLabel: this.translateService.instant('global.actions.confirm'),
-        accept: () => { performAction.next(true); },
+        accept: () => {
+          this.ckEditorService.saveWithConfirmation();
+          performAction.next(true);
+        },
         dismiss: () => { performAction.next(false); },
         close: () => { performAction.next(false); }
       });

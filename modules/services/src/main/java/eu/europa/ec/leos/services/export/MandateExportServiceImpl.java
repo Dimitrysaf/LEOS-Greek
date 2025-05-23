@@ -24,6 +24,7 @@ import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Provider;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +50,8 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
     @Autowired
     MandateExportServiceImpl(LegService legService, PackageService packageService, SecurityContext securityContext,
                              ExportHelper exportHelper, DocuWriteService docuwriteService, BillService billService, AnnexService annexService,
-                             TransformationService transformationService, ExportPackageService exportPackageService) {
-        super(legService, packageService, securityContext, exportHelper, billService, annexService, transformationService);
+                             TransformationService transformationService, ExportPackageService exportPackageService, Provider<StructureContext> structureContextProvider) {
+        super(legService, packageService, securityContext, exportHelper, billService, annexService, transformationService, structureContextProvider);
         this.docuwriteService = docuwriteService;
         this.exportPackageService = exportPackageService;
     }

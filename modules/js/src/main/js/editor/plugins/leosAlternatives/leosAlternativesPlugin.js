@@ -58,6 +58,9 @@ define(function leosAlternativesPluginModule(require) {
     function _getCurrentAltConfigFromAttributes(editor) {
         var currentAltConfig = {};
         var element = editor.element.$.firstChild;
+        if (element && element.firstChild && element.firstChild.id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
+            element = editor.element.$.childNodes[1];
+        }
         if (element.attributes["leos:optionlist"]) {
             currentAltConfig.optionListName = element.attributes["leos:optionlist"].value;
             currentAltConfig.selectOptionIndex = element.attributes["leos:selectedoption"].value;
@@ -182,6 +185,9 @@ define(function leosAlternativesPluginModule(require) {
     function _updateRootEltAttributes(editor, index) {
         var currentConfig = _getCurrentAltConfigFromAttributes(editor);
         var rootElt = editor.element.getChild(0);
+        if (editor.element && editor.element.getChild(0) && editor.element.getChild(0).id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
+            rootElt = editor.element.$.childNodes[1];
+        }
         if (!rootElt.hasAttribute("id")) {
             rootElt.setAttribute("id", currentConfig.rootEltId);
         }

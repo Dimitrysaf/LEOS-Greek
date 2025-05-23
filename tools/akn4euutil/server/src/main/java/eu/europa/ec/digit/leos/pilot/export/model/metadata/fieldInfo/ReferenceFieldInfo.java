@@ -24,6 +24,10 @@ public class ReferenceFieldInfo extends MetadataFieldInfo {
 
     public String getHref(){ return this.href; }
 
+    public ReferenceFieldInfo withHref(final String href) {
+        return new ReferenceFieldInfo(this.id, href, this.displayValue, this.shortValue, this.fieldType);
+    }
+
     public String getDisplayValue(){ return this.displayValue; }
 
     public String getShortValue(){ return this.shortValue; }

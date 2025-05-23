@@ -116,6 +116,7 @@ mat-nested-tree-node {
   display: flex;
   flex-direction: column;
   max-width: inherit;
+  cursor: pointer;
 }
 
 mat-nested-tree-node.cdk-drag-preview .mat-tree-node {

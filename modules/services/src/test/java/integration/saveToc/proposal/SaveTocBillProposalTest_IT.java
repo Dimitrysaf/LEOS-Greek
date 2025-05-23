@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 public abstract class SaveTocBillProposalTest_IT extends SaveTocProposalTest_IT {
 
     protected List<TableOfContentItemVO> buildTableOfContentBill(byte[] xmlInput) {
-        return tableOfContentProcessor.buildTableOfContent(BILL, xmlInput, TocMode.NOT_SIMPLIFIED);
+        return tableOfContentProcessor.buildTableOfContent(BILL, xmlInput, TocMode.NOT_SIMPLIFIED, true);
     }
 
     protected void getStructureFile() {

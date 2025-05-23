@@ -13,7 +13,9 @@ package eu.europa.ec.leos.services.utils;
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.AutoNumbering;
 import eu.europa.ec.leos.vo.structure.LangNumConfig;
@@ -27,6 +29,7 @@ import eu.europa.ec.leos.vo.structure.TocItemType;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -169,16 +172,39 @@ public class StructureConfigUtils {
         return tocItemType;
     }
 
+    public static TocItem getTocItemByName(Provider<StructureContext> structureContextProvider, AknTag aknTag) {
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
+        return tocItems.stream()
+                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(aknTag.value()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static TocItem getTocItemByName(Provider<StructureContext> structureContextProvider, String tagName) {
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
+        return tocItems.stream()
+                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(tagName) || tocItem.getAknTag().name().equalsIgnoreCase(tagName))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static TocItem getTocItemByName(List<TocItem> tocItems, AknTag aknTag) {
+        return tocItems.stream()
+                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(aknTag.value()) || tocItem.getAknTag().value().equalsIgnoreCase(aknTag.name()))
+                .findFirst()
+                .orElse(null);
+    }
+
     public static TocItem getTocItemByName(List<TocItem> tocItems, String tagName) {
         return tocItems.stream()
-                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(tagName))
+                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(tagName) || tocItem.getAknTag().name().equalsIgnoreCase(tagName))
                 .findFirst()
                 .orElse(null);
     }
 
     public static TocItem getTocItemByNameOrThrow(List<TocItem> tocItems, String tagName) {
         return tocItems.stream()
-                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(tagName))
+                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(tagName) ||  tocItem.getAknTag().name().equalsIgnoreCase(tagName))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("TocItem '" + tagName + "' not present in the list of Items [" + getTocItemNamesAsList(tocItems) + "]"));
     }
@@ -191,13 +217,13 @@ public class StructureConfigUtils {
 
     public static List<TocItem> getTocItemsByName(List<TocItem> tocItems, String tagName) {
         return tocItems.stream()
-                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(tagName))
+                .filter(tocItem -> tocItem.getAknTag().value().equalsIgnoreCase(tagName) || tocItem.getAknTag().name().equalsIgnoreCase(tagName))
                 .collect(Collectors.toList());
     }
 
     public static TocItem getTocItemByNumberingType(List<TocItem> tocItems, NumberingType numType, String tagName, String language) {
         return tocItems.stream()
-                .filter(tocItem -> tocItem.getAknTag().name().equalsIgnoreCase(tagName) && getNumberingTypeByLanguage(tocItem, language).equals(numType)).findFirst()
+                .filter(tocItem -> (tocItem.getAknTag().name().equalsIgnoreCase(tagName) || tocItem.getAknTag().value().equalsIgnoreCase(tagName)) && getNumberingTypeByLanguage(tocItem, language).equals(numType)).findFirst()
                 .orElseThrow(() -> new IllegalStateException(NUMBERING_TYPE + numType + "' not present in the list of TocItems [" + tocItems + "]"));
     }
 
@@ -354,9 +380,22 @@ public class StructureConfigUtils {
 
     public static NumberingType getNumberingTypeByLanguage(TocItem tocItem, String language) {
         NumberingType numberingType = NumberingType.NONE;
-        if(tocItem.getAutoNumbering() != null) {
+        if(tocItem != null && tocItem.getAutoNumbering() != null) {
             String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), language);
             Optional<LangNumConfig> langNumConfig = tocItem.getAutoNumbering().getLangNumConfigs().stream().filter(config ->
+                    config.getLangGroup().equalsIgnoreCase(group)).findFirst();
+            if (langNumConfig.isPresent()) {
+                numberingType = langNumConfig.get().getNumberingTypes().get(0);
+            }
+        }
+        return numberingType;
+    }
+
+    public static NumberingType getNumberingTypeByLanguage(AutoNumbering autoNumbering, String language) {
+        NumberingType numberingType = NumberingType.NONE;
+        if(autoNumbering != null) {
+            String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), language);
+            Optional<LangNumConfig> langNumConfig = autoNumbering.getLangNumConfigs().stream().filter(config ->
                     config.getLangGroup().equalsIgnoreCase(group)).findFirst();
             if (langNumConfig.isPresent()) {
                 numberingType = langNumConfig.get().getNumberingTypes().get(0);
