@@ -308,7 +308,9 @@ export abstract class DocumentActionsService {
           actionFn: () => this.handleOpenEditor(() => { this.openSaveDocumentVersionDialog() }),
           euiStyle: 'secondary',
           euiSize: 's',
-          label: 'Save',
+          label: this.translateService.instant(
+            'page.editor.actions-dropdown.save',
+          ),
           icon: 'save',
           svgType: 'default',
           type: IRibbonToolbarType.BUTTON,
