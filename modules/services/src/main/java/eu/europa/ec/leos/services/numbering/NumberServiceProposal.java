@@ -265,7 +265,7 @@ public class NumberServiceProposal implements NumberService {
                 flatList.addAll(searchInFlatList(item.getChildItems(), elementName));
             }
         }
-        flatList = flatList.stream().filter(tocVO -> tocVO.getTocItem().getAknTag().value().equalsIgnoreCase(elementName))
+        flatList = flatList.stream().filter(tocVO -> tocVO.getTagName().value().equalsIgnoreCase(elementName))
                 .collect(Collectors.toList());
         return flatList;
     }

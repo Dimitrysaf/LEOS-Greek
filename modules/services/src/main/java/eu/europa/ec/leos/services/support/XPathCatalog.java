@@ -2,6 +2,10 @@ package eu.europa.ec.leos.services.support;
 
 import org.springframework.stereotype.Component;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_DIGIT_FINANC_LEGIS;
+
 @Component
 public class XPathCatalog {
 
@@ -60,6 +64,10 @@ public class XPathCatalog {
 
     public String getXPathDocumentRefByHrefAttr(String elementRef) {
         return String.format("//akn:attachments/akn:attachment/akn:documentRef[@href=\"%s\"]", elementRef);
+    }
+
+    public String getXPathDocumentRefByShowAsAttr(String showAs) {
+        return String.format("//akn:attachments/akn:attachment/akn:documentRef[@showAs=\"%s\"]", showAs);
     }
 
     public String getXPathObjectId() {
@@ -191,13 +199,18 @@ public class XPathCatalog {
     }
 
     public static String getXPathFinancialStatement() {
-        return "//akn:doc[@name=\"STAT_DIGIT_FINANC_LEGIS\"]";
+        return "//akn:doc[@name=\"" + STAT_DIGIT_FINANC_LEGIS + "\"]";
     }
 
     public static String getXPathExplanatoryMemorandum() {
-        return "/akn:akomaNtoso/akn:doc[@name=\"EXPL_MEMORANDUM\"]";
+        return "/akn:akomaNtoso/akn:doc[@name=\"" + MEMORANDUM_FILE_PREFIX + "\"]";
     }
+
+    public static String getXPathExternalReferences() {
+        return "//akn:ref[(contains(@href,\"docNodeRef_\") or contains(@href,\".xml\")) and contains(@href,\"" + ANNEX_FILE_PREFIX + "\")]";
+    }
+
     public static String getXPathAnnex() {
-        return "/akn:akomaNtoso/akn:doc[@name=\"ANNEX\"]";
+        return "/akn:akomaNtoso/akn:doc[@name=\"" + ANNEX_FILE_PREFIX + "\"]";
     }
 }

@@ -366,7 +366,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         Validate.notNull(financialStatement, "financialStatement is required");
         final Content content = financialStatement.getContent().getOrError(() -> "financialStatement content is required!");
         final byte[] financialStatementContent = content.getSource().getBytes();
-        return tableOfContentProcessor.buildTableOfContent(DOC, financialStatementContent, mode);
+        return tableOfContentProcessor.buildTableOfContent(DOC, financialStatementContent, mode, true);
     }
 
     @Override

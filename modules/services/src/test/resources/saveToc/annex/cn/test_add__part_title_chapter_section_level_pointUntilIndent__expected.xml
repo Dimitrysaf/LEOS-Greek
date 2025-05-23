@@ -8,18 +8,19 @@
                 </content>
             </level>
             <part leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_part_dju6tn">
-                <num leos:origin="cn">#</num>
+                <num leos:origin="cn">Part #</num>
                 <heading>Part heading...</heading>
                 <title leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_title_OQ9ZEE">
-                    <num leos:origin="cn">#</num>
+                    <num leos:origin="cn">Title #</num>
                     <heading>Title heading...</heading>
                     <chapter leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_chapter_DYLh7V">
-                        <num leos:origin="cn">#</num>
+                        <num leos:origin="cn">Chapter #</num>
                         <heading>Chapter heading...</heading>
                         <section leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_section_d730Gv">
-                            <num leos:origin="cn">#</num>
+                            <num leos:origin="cn">Section #</num>
                             <heading>Section heading...</heading>
-                            <level leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_level_4Vw9Hz">
+                            <level leos:origin="cn" leos:depth="5" leos:softaction="add" leos:softactionroot="true"
+                            leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_level_4Vw9Hz">
                                 <num leos:editable="false" leos:origin="cn">#</num>
                                 <subparagraph leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_subparagraph_489CXK">
                                     <content>

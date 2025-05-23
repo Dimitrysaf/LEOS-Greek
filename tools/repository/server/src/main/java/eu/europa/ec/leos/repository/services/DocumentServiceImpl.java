@@ -257,7 +257,6 @@ public class DocumentServiceImpl implements DocumentService {
                 return ConversionUtils.buildXmlDocument(doc, docs.values().stream().findFirst().get(),
                         docs.keySet().stream().findFirst().get(), collaboratorsService, documentPropertyValuesRepository);
         }
-
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.document;
 
 import com.sun.istack.NotNull;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
@@ -25,6 +26,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.light.Profile;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import io.atlassian.fugue.Pair;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,13 +65,15 @@ public interface BillService {
 
     Bill updateAttachments(Bill bill, HashMap<String, String> attachmentsElements, String actionMsg);
 
+    void updateExternalReferencesAsync(LeosPackage leosPackage);
+
     Bill createVersion(String id, VersionType versionType, String comment);
 
     List<Bill> findVersions(String id);
     
     List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize);
 
-    List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems);
+    List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems, boolean withNode);
 
     Bill saveTableOfContent(Bill bill, List<TableOfContentItemVO> tocList, String actionMsg, User user);
 

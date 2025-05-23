@@ -71,6 +71,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   receiveToc?: (tocWrapper: any) => void;
   receiveRefLabel?: (references: any, documentRef: any) => void;
   closeElement?: () => void;
+  saveElementWithConfirmation?: () => void;
 
   public isCNInstance;
 
@@ -346,7 +347,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
 
       const milliseconds = new Date().getTime();
       this.loadingService.setTaskOngoing('saving', String(milliseconds));
-      this.loadingService.setTaskOngoing('post-processing', this.documentService.documentRef);
+      this.loadingService.showPostProcessingStarted();
 
       if (this.isSaveAndClose) {
         localStorage.setItem(elemData.elementId, elemData.elementFragment);
@@ -393,6 +394,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.updateTitleWithResponse(response);
     this.coEditionService.setShouldReloadAfterUpdate();
     this.loadingService.setTaskOver('saving', taskId);
+    this.documentService.setBlockReloadOfToc();
+    this.documentService.showRefreshWarning();
     this.refreshAnnotate();
   }
 
@@ -473,13 +476,15 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     const confirmDeletion = () => {
       const documentRef = this.documentService.documentRef;
       const documentType = this.documentService.documentType;
-      this.loadingService.setTaskOngoing('post-processing', documentRef);
+      this.loadingService.showPostProcessingStarted();
       this.deleteDocumentElement(
         documentRef,
         elementType.toLowerCase(),
         elementId,
         documentType,
       ).subscribe((response) => {
+        this.documentService.setBlockReloadOfToc();
+        this.documentService.showRefreshWarning();
         this.documentService.setDocumentRefAndCategory(
           documentRef,
           documentType,
@@ -557,7 +562,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }) {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.loadingService.setTaskOngoing('post-processing', documentRef);
+    this.loadingService.showPostProcessingStarted();
     this.insertGroup(elementData.elementType.toLowerCase(), elementData.elementId, elementData.position)
       .pipe(distinctUntilChanged())
       .subscribe((response) => {
@@ -578,7 +583,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }): Promise<any> {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.loadingService.setTaskOngoing('post-processing', documentRef);
+    this.loadingService.showPostProcessingStarted();
 
     return new Promise((resolve, reject) => {
       this.insertDocumentElement(
@@ -591,6 +596,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         .pipe(distinctUntilChanged())
         .subscribe({
           next: (response) => {
+            this.documentService.setBlockReloadOfToc();
+            this.documentService.showRefreshWarning();
             this.documentService.setDocumentRefAndCategory(documentRef, documentType);
             this.coEditionService.sendUpdateDocumentEvent(documentRef);
             resolve(response);
@@ -612,7 +619,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }) {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.loadingService.setTaskOngoing('post-processing', documentRef);
+    this.loadingService.showPostProcessingStarted();
     this.mergeDocumentElement(
       documentRef,
       documentType,
@@ -621,6 +628,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       elementData.elementFragment,
     ).subscribe((response) => {
       this.closeElement();
+      this.documentService.setBlockReloadOfToc();
       this.documentService.refreshView(response);
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
     });

@@ -99,7 +99,7 @@
               >
                 <eui-icon-svg size="s" set="" icon="eui-ecl-edit"></eui-icon-svg>
               </button>
-              <!-- Warning icon -->
+              <!-- Toc Warning icon -->
               <span *ngIf="!isEditMode && showWarningIcon()">
                 <button
                   euiButton
@@ -111,6 +111,22 @@
                   [euiAccent]="true"
                 >
                   <eui-icon-svg icon="eui-ecl-warning" set="eui" size="s" class="eui-u-color-accent-75"></eui-icon-svg>
+                </button>
+              </span>
+              <!-- Toc Refresh Warning icon -->
+              <span *ngIf="!isEditMode && showRefreshWarningIcon()">
+                <button
+                  euiButton
+                  euiBasicButton
+                  class="eui-u-p-none"
+                  euiSizeS
+                  [euiTooltip]="showRefreshWarning()"
+                  (click)="refreshToc()"
+                  contentAlignment="left"
+                  [euiAccent]="true"
+                >
+                  <eui-icon-svg set="eui" icon="eui-exclamation" size="s" class="eui-u-color-danger-75"
+                                style="background-color: #ffd740; border-radius: 50%;"></eui-icon-svg>
                 </button>
               </span>
               <!-- Actions menu-->
@@ -133,7 +149,6 @@
             </div>
             <app-document-toc
               [isEditMode]="isEditMode"
-              [tocItems]="tocItems"
               [documentType]="documentType"
               [documentRef]="documentRef"
               (reBuildTocItems)="onRebuildTocItems($event)"
@@ -323,7 +338,7 @@
                 </eui-card-content>
               </eui-card>
             </div>
-            <app-versions-pane
+            <app-versions-pane *ngIf="isVersionsPaneInit"
               (exploreMilestone)="exploreMilestone($event)"
             ></app-versions-pane>
           </eui-fieldset>
@@ -407,14 +422,14 @@
                 (cdkDragMoved)="handleListItemDragged($event, true)"
                 *ngFor="let item of dragItems"
               >
-                <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
+                <span>{{ getTocItemDisplayTitle(item) }}</span>
                 <div
                   *cdkDragPlaceholder
                   euiListItem
                   euiPrimary
                   class="drag-preview"
                 >
-                  <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
+                  <span>{{ getTocItemDisplayTitle(item) }}</span>
                 </div>
               </li>
             </ul>

@@ -18,6 +18,7 @@ define(function listItemNumberModule(require) {
     var UTILS = require("core/leosUtils");
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
+    var lodash = require('lodash');
     var ckEditor;
     var defaultList = [];
     var listNumberConfig;
@@ -144,7 +145,7 @@ define(function listItemNumberModule(require) {
 
     function getNumberingTypeByLang(elementName) {
         var tocItem = ckEditor.LEOS.tocItemsList.find(function (e) {
-            return e.aknTag === elementName
+            return lodash.camelCase(e.aknTag).toLowerCase() === lodash.camelCase(elementName).toLowerCase()
         });
         return tocItem.autoNumbering.langNumConfigs
             .find(config => config.langGroup.toLowerCase() === ckEditor.LEOS.langGroup.toLowerCase())

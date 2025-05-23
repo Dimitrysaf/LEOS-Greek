@@ -42,9 +42,16 @@ define(function refToLinkExtensionModule(require) {
         target = UTILS.getParentElement(connector);
         otherTargets = connector.otherTargets;
 
+        let R2L = window['R2L'];
         // configure ref2Link
-        $.fn.ref2link.options = {tooltipTrigger: 'notooltip'}; //Disabling the tooltip 
-        $.fn.ref2link.setFilter('environments', ['EC-PRD']);// enable sets of rules
+        // See https://webgate.ec.europa.eu/fpfis/wikis/spaces/Ref2Link/pages/800752769/Ref2Link+Javascript+API+advanced+v1.3 for available options
+        R2L.setOptions({
+            tooltipTrigger: 'notooltip', //Disabling the tooltip
+            worker: true,  // use a web worker for a smoother UX
+            linkeddata: true // enable linked data
+        });
+         
+        R2L.setFilter('environments', ['EC-PRD']);// enable sets of rules
 
         log.debug("Registering refToLink extension unregistration listener...");
         connector.onUnregister = _connectorUnregistrationListener;
@@ -56,7 +63,7 @@ define(function refToLinkExtensionModule(require) {
     // handle connector unregistration on client-side
     function _connectorUnregistrationListener() {
         log.debug("Unregistering refToLink extension...");
-        $.fn.ref2link.clearCache();
+        R2L.clearCache();
         referencesCache.clear();
     }
 
@@ -99,55 +106,73 @@ define(function refToLinkExtensionModule(require) {
     }
 
     function _renderLinks(el) {
+
         log.debug("Rendering links...");
-        var textNodes = _textNodesUnder(el),
-            references = _getReferences(el);
+        var textNodes = _textNodesUnder(el);
 
-        //1. check for all references in text nodes
-        //2. check the reference with Longest match first and if found, store a placeholder
-        //3. if cache has something replace placeholders with values
-        var cache = {}; //placeholder-reference cache. 
-        textNodes.forEach(function (textNode, txtIndex) {
-            var newVal = textNode.nodeValue;
-            references.forEach(function (ref, refIndex) {
-                // Check first that ref context is included in text node
-                var refToFind = replaceNbsps(ref.match);
-                var originalText = textNode.nodeValue;
-                if (originalText.indexOf(replaceNbspsBySpaces(ref.context)) > -1
-                    || originalText.indexOf(replaceNbsps(ref.context)) > -1) {
-                    // Done like that to avoid too many matches if ref match is only one digit
-                    if ((refToFind.split(new RegExp('\\b')).length > 1 && newVal.indexOf(refToFind) > -1)
-                        || (newVal.search(new RegExp('\\b' + regExpEscape(refToFind) + '\\b')) > -1)) {
-                        newVal = _injectPlaceholders(newVal, '##R' + refIndex + '##', ref, cache);
+        _getReferences(el).subscribe({
+            next: (references) => {
+
+                //1. check for all references in text nodes
+                //2. check the reference with Longest match first and if found, store a placeholder
+                //3. if cache has something replace placeholders with values
+                var cache = {}; //placeholder-reference cache. 
+                textNodes.forEach(function (textNode, txtIndex) {
+                    var newVal = textNode.nodeValue;
+                    references.forEach(function (ref, refIndex) {
+                        // Check first that ref context is included in text node
+                        var refToFind = replaceNbsps(ref.match);
+                        var originalText = textNode.nodeValue;
+                        if (originalText.indexOf(replaceNbspsBySpaces(ref.context)) > -1
+                            || originalText.indexOf(replaceNbsps(ref.context)) > -1) {
+                            // Done like that to avoid too many matches if ref match is only one digit
+                            if ((refToFind.split(new RegExp('\\b')).length > 1 && newVal.indexOf(refToFind) > -1)
+                                || (newVal.search(new RegExp('\\b' + regExpEscape(refToFind) + '\\b')) > -1)) {
+                                newVal = _injectPlaceholders(newVal, '##R' + refIndex + '##', ref, cache);
+                            }
+                        } else if (refToFind.split(new RegExp(' ')).length > 1
+                            && refToFind.includes("/")
+                            && newVal.indexOf(refToFind) > -1) {
+                            // Case for LEOS-5351 where ref context is not present in the node but ref contains a ref to OJ
+                            newVal = _injectPlaceholders(newVal, '##R' + refIndex + '##', ref, cache);
+                        }
+                    });
+
+                    if (Object.keys(cache).length > 0) {
+                        newVal = _ejectPlaceholders(newVal, cache);
+                        $(textNode).replaceWith(newVal); //inject in DOM
                     }
-                } else if (refToFind.split(new RegExp(' ')).length > 1
-                    && refToFind.includes("/")
-                    && newVal.indexOf(refToFind) > -1) {
-                    // Case for LEOS-5351 where ref context is not present in the node but ref contains a ref to OJ
-                    newVal = _injectPlaceholders(newVal, '##R' + refIndex + '##', ref, cache);
-                }
-            });
-
-            if (Object.keys(cache).length > 0) {
-                newVal = _ejectPlaceholders(newVal, cache);
-                $(textNode).replaceWith(newVal); //inject in DOM
-            }
+                });
+            },
+            error: err => console.error('Error:', err),
+            complete: () => console.log('Done el Ref2Link processing')
         });
         
         //helper functions
         function _getReferences(el) {
-            let references, referenceKey = el.id + '_' + _getHash(el.innerText);
-            if (!referencesCache.has(referenceKey)) {
-                references = $(el).clone().getReferences();
-                //Sort to handle case where two references are in same line Example art 2 directive 2017/11/EC and directive 2017/11/EC
-                references.sort(function (left, right) {
-                    return replaceNbsps(right.match).length - replaceNbsps(left.match).length;
-                });
-                referencesCache.set(referenceKey, references);
-            } else {
-                references = referencesCache.get(referenceKey);
-            }
-            return references;
+            return new Observable((observer) => {
+                let references, referenceKey = el.id + '_' + _getHash(el.innerText);
+                if (!referencesCache.has(referenceKey)) {
+                    let $el = $(el).clone();
+                    $el.parseDeferred()[0].then(res => {
+                        references = $el.getReferences();
+                        //Sort to handle case where two references are in same line Example art 2 directive 2017/11/EC and directive 2017/11/EC
+                        references.sort(function (left, right) {
+                            return replaceNbsps(right.match).length - replaceNbsps(left.match).length;
+                        });
+                        referencesCache.set(referenceKey, references);
+                        observer.next(references);
+                        observer.complete();
+                    }).catch(err => {
+                        observer.next([]);
+                        observer.complete();
+                    });
+                } else {
+                    references = referencesCache.get(referenceKey);
+                    observer.next(references);
+                    observer.complete();
+                }
+            });
         }
 
         function _getHash(text) {

@@ -28,6 +28,7 @@ import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.LangNumConfig;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -131,6 +132,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemByName;
 import static eu.europa.ec.leos.util.LeosDomainUtil.unWrapXmlFragment;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
 
@@ -154,7 +156,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
         // 1. Get the corresponding node from the XML, or create a new one using the template
         Node node = getNode(document, tocVo);
-        LOG.debug("buildTocItemContent for tocItemName '{}', tocItemId '{}', nodeName '{}', nodeId '{}', children {}", tocVo.getTocItem().getAknTag().value(), tocVo.getId(), node.getNodeName(), getId(node), tocVo.getChildItemsView().size());
+        LOG.debug("buildTocItemContent for tocItemName '{}', tocItemId '{}', nodeName '{}', nodeId '{}', children {}", tocVo.getTagName(), tocVo.getId(), node.getNodeName(), getId(node), tocVo.getChildItemsView().size());
 
         // 2. Store the node details in temp variables
         Node numNode = buildNumNode(node, tocVo);
@@ -162,14 +164,14 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         Node introNode = getFirstChild(node, INTRO);  //recitals intro
         Node signatureLocationNode = null;
         List<Node> childrenNode = new ArrayList<>();
-        if (getTagValueFromTocItemVo(tocVo).equalsIgnoreCase(CONCLUSIONS) && tocItems.stream().filter(t ->
+        if (getTagValueFromTocItemVo(tocVo).equalsIgnoreCase(CONCLUSIONS) && tocItems.stream().anyMatch(t ->
                 (t.getAknTag().value().equalsIgnoreCase(PERSON)
-                || t.getAknTag().value().equalsIgnoreCase(ROLE))).findAny().isPresent()) {
+                || t.getAknTag().value().equalsIgnoreCase(ROLE)))) {
             signatureLocationNode = getFirstChild(node, P);  //Conclusions location paragraph
-        } else if (getChildren(node).size() > 0) {
-            childrenNode = ELEMENTS_WITH_ONLY_TEXT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) ?
-                    XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node) :
-                    XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node);
+        } else {
+            childrenNode = ELEMENTS_WITH_ONLY_TEXT.contains(tocVo.getTagName().value().toLowerCase()) ?
+                    XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node, tocVo) :
+                    XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
         }
         // 3. clean the node and build it again.
         node.setTextContent(EMPTY_STRING);
@@ -177,7 +179,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         addTrackChangeAttributes(tocVo, node, numNode, isTrackChangesEnabled);
         appendChildIfNotNull(numNode, node);
 
-        if (!(ELEMENTS_WITHOUT_CONTENT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) &&
+        if (!(ELEMENTS_WITHOUT_CONTENT.contains(tocVo.getTagName().value().toLowerCase()) &&
                 TableOfContentHelper.hasTocItemTrackChangeAction(tocVo, TrackChangeActionType.DELETE) &&
                 tocVo.getId().startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX))) {
             appendChildIfNotNull(headingNode, node);
@@ -192,7 +194,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             }
             appendChildrenIfNotNull(childrenNode, node); // only for part of the body which is not configured in structure.xml, like CLAUSE tag
         }
-        String tagName = tocVo.getTocItem().getAknTag().value();
+        String tagName = tocVo.getTagName().value();
 
         if (isTrackChangesEnabled()) {
             if (SoftActionType.MOVE_TO.equals(tocVo.getSoftActionAttr())) {
@@ -265,8 +267,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     }
 
     private void updateDepthAttribute(TableOfContentItemVO tocVo, Node node) {
-        if (tocVo.getItemDepth() > 0
-                && Boolean.TRUE.equals(tocVo.getTocItem().isDepthEnabled())) {
+        TocItem tocItem = getTocItemByName(structureContextProvider.get().getTocItems(), tocVo.getTagName());
+        if (tocVo.getItemDepth() > 0 && Boolean.TRUE.equals(tocItem.isDepthEnabled())) {
             addAttribute(node, LEOS_DEPTH_ATTR, String.valueOf(tocVo.getItemDepth()));
         }
     }
@@ -839,7 +841,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     }
 
     private Node buildNumNode(Node node, TableOfContentItemVO tocVo) {
-        Node numNode = XmlContentProcessorHelper.extractOrBuildNumElement(node, tocVo);
+        Node numNode = XmlContentProcessorHelper.extractOrBuildNumElement(structureContextProvider, node, tocVo);
         if (!isTrackChangesEnabled() && XercesUtils.containsAttributeWithValue(numNode, LEOS_ORIGIN_ATTR, LS)) {
             // On TOC drag & drop there´s no clone context (request scope) and then items are added with
             // soft action ADD and origin LS on no cloned proposals.

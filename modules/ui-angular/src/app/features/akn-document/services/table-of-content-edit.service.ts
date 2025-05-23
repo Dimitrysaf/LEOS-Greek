@@ -27,7 +27,7 @@ import {
   copyDeletedItemToTempForUndelete,
   findNodeById,
   getItemIndentLevel,
-  getNumberingTypeByLanguage,
+  getNumberingTypeByLanguage, getNumberingTypeByLanguageFromTocItem, getTocItemByAknTag, indexOfChild,
   isNumSoftDeleted,
 } from '@/shared/utils/toc.utils';
 
@@ -115,7 +115,7 @@ export abstract class TableOfContentEditService {
     tocTree: TableOfContentItemVO[],
   ) {
     const originalParent = findNodeById(tocTree, originalNode.parentItem);
-    const indexOfOriginalNode = originalParent.childItems.indexOf(originalNode);
+    const indexOfOriginalNode = indexOfChild(originalParent, originalNode.id);
     if (indexOfOriginalNode !== -1) {
       originalParent.childItems.splice(indexOfOriginalNode, 0, nodeToAdd);
     }
@@ -216,17 +216,18 @@ export abstract class TableOfContentEditService {
     position: string,
     isTocItemSibling: boolean,
   ) => {
+    const targetTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), targetItem.tagName);
     switch (position) {
       case 'AS_CHILDREN':
         if (
           (isTocItemSibling &&
             parentItem != null &&
-            !targetItem.tocItem.sameParentAsChild &&
+            !targetTocItem.sameParentAsChild &&
             !this.isCrossheading(sourceItem)) ||
-          (targetItem.tocItem.sameParentAsChild &&
+          (targetTocItem.sameParentAsChild &&
             this.containsItem(targetItem, LIST)) ||
           targetItem.id === SOFT_MOVE_PLACEHOLDER_ID_PREFIX + sourceItem.id ||
-          (targetItem.tocItem.aknTag === SUBPARAGRAPH &&
+          (targetItem.tagName === SUBPARAGRAPH &&
             this.isCrossheading(sourceItem))
         ) {
           return parentItem;
@@ -280,8 +281,9 @@ export abstract class TableOfContentEditService {
     sourceItem: TableOfContentItemVO,
     targetItem: TableOfContentItemVO,
   ) => {
-    if (targetItem.tocItem.maxDepth != null) {
-      const maxDepthRule = parseInt(targetItem.tocItem.maxDepth, 10);
+    const targetTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), targetItem.tagName);
+    if (targetTocItem.maxDepth != null) {
+      const maxDepthRule = parseInt(targetTocItem.maxDepth, 10);
       if (maxDepthRule > 0 && targetItem.itemDepth >= maxDepthRule) {
         validationResult.success = false;
         validationResult.messageKey =
@@ -313,30 +315,31 @@ export abstract class TableOfContentEditService {
 
     if (actualTargetItem) {
       sourceItem.parentItem = actualTargetItem.id;
-      const numType = getNumberingTypeByLanguage(targetItem.tocItem, this.documentConfig.langGroup);
+      const numType = getNumberingTypeByLanguage(this.tocService.getCurrentTocItems(), targetItem.tagName, this.documentConfig.langGroup);
       const targetRules = [
-        targetItem.tocItem.aknTag.toUpperCase(),
+        targetItem.tagName.toUpperCase(),
         numType.toUpperCase()
       ].join('_');
       const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
       if (
-        actualTargetItem.tocItem.aknTag !== targetItem.tocItem.aknTag &&
+        actualTargetItem.tagName !== targetItem.tagName &&
         position === 'AS_CHILDREN' &&
         !(
           targetTocAllowedItems != null &&
           targetTocAllowedItems.find(
-            (i) => i.aknTag === sourceItem.tocItem.aknTag,
+            (i) => i.aknTag === sourceItem.tagName,
           )
         )
       ) {
         position = 'AFTER';
       }
+      const sourceTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), sourceItem.tagName);
       if (
-        LEVEL === targetItem.tocItem.aknTag &&
-        LEVEL !== sourceItem.tocItem.aknTag &&
+        LEVEL === targetItem.tagName &&
+        LEVEL !== sourceItem.tagName &&
         targetTocAllowedItems != null &&
         targetTocAllowedItems.length > 0 &&
-        targetTocAllowedItems.includes(sourceItem.tocItem)
+        this.isIncluded(targetTocAllowedItems, sourceTocItem)
       ) {
         /*
          * This if is when we add level as child or after a Part, Title, Chapter or Section,
@@ -348,8 +351,8 @@ export abstract class TableOfContentEditService {
         return;
       } else if (
         position === 'AFTER' &&
-        [SUBPARAGRAPH, POINT].includes(sourceItem.tocItem.aknTag) &&
-        targetItem.tocItem.aknTag === PARAGRAPH
+        [SUBPARAGRAPH, POINT].includes(sourceItem.tagName) &&
+        targetItem.tagName === PARAGRAPH
       ) {
         sourceItem.parentItem = targetItem.id;
         targetItem.childItems.push(sourceItem);
@@ -366,6 +369,10 @@ export abstract class TableOfContentEditService {
     this.setItemLevel(tocTree, sourceItem, targetItem, position);
   }
 
+  private isIncluded(tocItems: TocItem[], tocItem: TocItem): boolean {
+    return tocItems.filter(item => item.aknTag.toString().toLowerCase() === tocItem.aknTag.toString().toLowerCase()).length > 0;
+  }
+
   public performAddOrMoveAction(
     isAdd: boolean,
     tocTree: TableOfContentItemVO[],
@@ -374,22 +381,23 @@ export abstract class TableOfContentEditService {
     parentItem: TableOfContentItemVO,
     position: string,
   ) {
-    if (targetItem.tocItem.childrenAllowed) {
-      const targetTocItem: TocItem = targetItem.tocItem;
+    const targetTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), targetItem.tagName);
+    if (targetTocItem.childrenAllowed) {
+      const sourceTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), sourceItem.tagName);
       const targetRules = [
         targetTocItem.aknTag.toUpperCase(),
-        getNumberingTypeByLanguage(targetTocItem, this.documentConfig.langGroup).toUpperCase(),
+        getNumberingTypeByLanguageFromTocItem(targetTocItem, this.documentConfig.langGroup).toUpperCase(),
       ].join('_');
       const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
       if (
         this.isSourceDivision(sourceItem) ||
         this.isCrossheading(sourceItem) ||
         this.isDroppedOnPointOrIndent(sourceItem, targetItem) ||
-        sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag ||
+        sourceItem.tagName === targetItem.tagName ||
         !(
           targetTocAllowedItems != null &&
           targetTocAllowedItems.length > 0 &&
-          targetTocAllowedItems.includes(sourceItem.tocItem)
+          this.isIncluded(targetTocAllowedItems, sourceTocItem)
         )
       ) {
         // If items have the same type or if child elements are not allowed in target add it to its parent
@@ -428,7 +436,7 @@ export abstract class TableOfContentEditService {
         if (this.containsItem(targetItem, 'CLAUSE')) {
           const clauseItem: TableOfContentItemVO =
             targetItem.childItems.filter(
-              (x) => x.tocItem.aknTag === 'CLAUSE',
+              (x) => x.tagName === 'CLAUSE',
             )[0] ?? null;
           if (clauseItem != null) {
             const parent = findNodeById(tocTree, clauseItem.parentItem);
@@ -483,15 +491,15 @@ export abstract class TableOfContentEditService {
     targetItem: TableOfContentItemVO,
   ) => {
     if (
-      sourceItem.tocItem.aknTag === LEVEL &&
-      targetItem.tocItem.aknTag === LEVEL
+      sourceItem.tagName === LEVEL &&
+      targetItem.tagName === LEVEL
     )
       sourceItem.itemDepth = targetItem.itemDepth;
   };
 
-  protected containsItem = (node: TableOfContentItemVO, aknTag: AknTag) => {
+  protected containsItem = (node: TableOfContentItemVO, aknTag: string) => {
     for (const child of node.childItems) {
-      if (child.tocItem.aknTag === aknTag) {
+      if (child.tagName === aknTag) {
         return true;
       }
     }
@@ -503,8 +511,9 @@ export abstract class TableOfContentEditService {
     droppedElement: TableOfContentItemVO,
     targetElement: TableOfContentItemVO,
   ) => {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), droppedElement.tagName);
     if (this.isNumbered(newTree, droppedElement, targetElement)) {
-      if (!droppedElement.tocItem.autoNumbering) {
+      if (!tocItem.autoNumbering) {
         droppedElement.number = HASH_NUM_VALUE;
       }
       if (isNumSoftDeleted(droppedElement.numSoftActionAttr)) {
@@ -558,9 +567,9 @@ export abstract class TableOfContentEditService {
   ) {
     if (
       targetItemVO != null &&
-      targetItemVO.tocItem.aknTag === movedOntoType &&
+      targetItemVO.tagName === movedOntoType &&
       dropData != null &&
-      dropData.tocItem.aknTag === movedElementType &&
+      dropData.tagName === movedElementType &&
       !this.containsMovedElement(targetItemVO.childItems, movedElementType)
     ) {
       dropData.movedOnEmptyParent = true;
@@ -571,7 +580,7 @@ export abstract class TableOfContentEditService {
     const tocItems = list
       .flatMap((l) => this.flattened(l))
       .filter(
-        (tocItemVO: TableOfContentItemVO) => tocItemVO.tocItem.aknTag === LEVEL,
+        (tocItemVO: TableOfContentItemVO) => tocItemVO.tagName === LEVEL,
       );
 
     for (let index = 0; index < tocItems.length; index++) {
@@ -657,7 +666,7 @@ export abstract class TableOfContentEditService {
     movedElementType: string,
   ) {
     for (const child of childItems) {
-      if (child.tocItem.aknTag === movedElementType && child.node != null) {
+      if (child.tagName === movedElementType && !child.newNode) {
         return true;
       }
     }
@@ -682,11 +691,12 @@ export abstract class TableOfContentEditService {
     droppedElement: TableOfContentItemVO,
     targetElement: TableOfContentItemVO,
   ): boolean => {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), droppedElement.tagName);
     let numbered = true;
-    if (droppedElement.tocItem.itemNumber === 'NONE') {
+    if (tocItem.itemNumber === 'NONE') {
       numbered = false;
-    } else if (droppedElement.tocItem.itemNumber === 'OPTIONAL') {
-      if (targetElement.tocItem.aknTag === droppedElement.tocItem.aknTag) {
+    } else if (tocItem.itemNumber === 'OPTIONAL') {
+      if (targetElement.tagName === droppedElement.tagName) {
         if (
           targetElement.number === '' ||
           targetElement.number === null ||
@@ -699,7 +709,7 @@ export abstract class TableOfContentEditService {
         targetElement.childItems.length > 0
       ) {
         for (const itemVO of targetElement.childItems) {
-          if (itemVO.tocItem.aknTag === droppedElement.tocItem.aknTag) {
+          if (itemVO.tagName === droppedElement.tagName) {
             if (itemVO.number === '' || itemVO.numSoftActionAttr === 'DELETE') {
               numbered = false;
               break;
@@ -711,7 +721,7 @@ export abstract class TableOfContentEditService {
     const droppedElementParent = findNodeById(toc, droppedElement.parentItem);
     if (
       numbered &&
-      droppedElement.tocItem.aknTag === PARAGRAPH &&
+      droppedElement.tagName === PARAGRAPH &&
       droppedElementParent &&
       droppedElementParent.numberingToggled &&
       droppedElement.numberingToggled === false
@@ -720,7 +730,7 @@ export abstract class TableOfContentEditService {
     }
     if (
       !numbered &&
-      droppedElement.tocItem.aknTag === PARAGRAPH &&
+      droppedElement.tagName === PARAGRAPH &&
       droppedElementParent &&
       droppedElementParent.numberingToggled &&
       droppedElement.numberingToggled === false
@@ -735,12 +745,14 @@ export abstract class TableOfContentEditService {
     targetItem: TableOfContentItemVO,
     position: string,
   ) => {
-    if (sourceItem.tocItem.higherElement || targetItem.tocItem.higherElement) {
+    const sourceTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), sourceItem.tagName);
+    const targetTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), targetItem.tagName);
+    if (sourceTocItem.higherElement || targetTocItem.higherElement) {
       this.setItemDepthInHigherElements(sourceItem, targetItem);
     } else {
       switch (position) {
         case 'AFTER':
-          if (targetItem.tocItem.root) {
+          if (targetTocItem.root) {
             sourceItem.itemDepth = 1;
           } else
             sourceItem.itemDepth =
@@ -772,8 +784,8 @@ export abstract class TableOfContentEditService {
     sourceItem: TableOfContentItemVO,
     targetItem: TableOfContentItemVO,
   ) => {
-    const sourceTagValue: string = sourceItem.tocItem.aknTag;
-    const targetTagValue: string = targetItem.tocItem.aknTag;
+    const sourceTagValue: string = sourceItem.tagName;
+    const targetTagValue: string = targetItem.tagName;
     return (
       (sourceTagValue === CROSSHEADING ||
         sourceTagValue === POINT ||
@@ -783,10 +795,10 @@ export abstract class TableOfContentEditService {
   };
 
   private isSourceDivision = (sourceItem: TableOfContentItemVO) =>
-    sourceItem.tocItem.aknTag === DIVISION;
+    sourceItem.tagName === DIVISION;
 
   private isCrossheading = (sourceItem: TableOfContentItemVO) => {
-    const sourceTagValue = sourceItem.tocItem.aknTag;
+    const sourceTagValue = sourceItem.tagName;
     return sourceTagValue === CROSSHEADING;
   };
 
@@ -797,20 +809,21 @@ export abstract class TableOfContentEditService {
     position: string,
   ) => {
     const targetItemLevel = 0;
-    getItemIndentLevel(toc, targetItem, targetItemLevel, [
+    getItemIndentLevel(this.tocService.getCurrentTocItems(), toc, targetItem, targetItemLevel, [
       LEVEL,
       PARAGRAPH,
       INDENT,
       POINT,
     ]);
 
+    const targetTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), targetItem.tagName);
     switch (position) {
       case 'AS_CHILDREN':
-        if (targetItem.tocItem.root) {
+        if (targetTocItem.root) {
           sourceItem.indentLevel = 0;
         } else if (
           [LEVEL, PARAGRAPH, 'INDENT', POINT].includes(
-            targetItem.tocItem.aknTag,
+            targetItem.tagName,
           )
         ) {
           sourceItem.indentLevel = targetItemLevel + 1;
@@ -822,7 +835,7 @@ export abstract class TableOfContentEditService {
         sourceItem.indentLevel = targetItemLevel;
         break;
       case 'AFTER':
-        if (targetItem.tocItem.root) {
+        if (targetTocItem.root) {
           sourceItem.indentLevel = 0;
         } else {
           sourceItem.indentLevel = targetItemLevel;

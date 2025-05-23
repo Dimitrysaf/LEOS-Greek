@@ -149,7 +149,7 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
         documentLanguageContext.setDocumentLanguage(language);
         if (xmlContentProcessor.needsToBeIndented(elementFragment)) {
             byte[] contentBytes = getContent(document);
-            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW);
+            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW, true);
             updatedContent = xmlContentProcessor.indentElement(contentBytes, tagName, elementId, elementFragment, toc);
         } else {
             updatedContent = elementProcessor.updateElement(document, elementFragment, tagName, elementId, false);

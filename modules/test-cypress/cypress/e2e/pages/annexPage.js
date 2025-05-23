@@ -13,7 +13,11 @@ class annexPage {
     }
 
     mouseHoverAndClickOnLevel(levelNumber) {
-        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({force: true}));
+    }
+
+    mouseHoverAndRealClickOnLevel(levelNumber) {
+        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover({ position: "center" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }).realClick({ position: "topLeft" }));
     }
 
     clickEditIconOfLevel(levelNumber) {
@@ -33,7 +37,7 @@ class annexPage {
     }
 
     mouseHoverAndClickOnParagraph(paragraphNumber) {
-        cy.xpath("(//div[@class='orientation']//paragraph)[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+        cy.xpath("(//div[@class='orientation']//paragraph)[" + paragraphNumber + "]").realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).click({ force: true }));
     }
 
     clickEditIconOfParagraph(paragraphNumber) {

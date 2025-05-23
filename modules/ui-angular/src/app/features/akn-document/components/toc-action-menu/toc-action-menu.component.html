@@ -1,4 +1,4 @@
-<app-dynamic-dropdown-hover [items]="menuItems" *ngIf="isEditMode && node.tocItem.draggable && !node.tocItem.root && node.deletable !== false">
+<app-dynamic-dropdown-hover [items]="menuItems" *ngIf="isDropDown()">
     <button
             euiButton
             euiRounded

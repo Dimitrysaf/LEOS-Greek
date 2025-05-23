@@ -268,9 +268,7 @@ export class DocumentService {
       .pipe(
         filter(Boolean),
         tap((res) => {
-          this.tocService.reload();
           this.getRecentChanges(res.category, res.ref, 0, 1);
-          this.countDocumentVersionsData(res.category, res.ref);
           this.getDocumentConfig(res.ref, res.category);
         }),
         switchMap((option) =>
@@ -295,7 +293,6 @@ export class DocumentService {
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
     this.versionSearchParams$ = this.versionSearchParamsBS.asObservable();
-    this.updateVersionsData();
 
     this.documentConfig$.subscribe((config) => {
       this.annexDocNumber =
@@ -667,6 +664,14 @@ export class DocumentService {
 
   resetDocument() {
     this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
+  }
+
+  setBlockReloadOfToc() {
+    this.tocService.setBlockReloadOfToc();
+  }
+
+  showRefreshWarning() {
+    this.tocService.showRefreshWarning();
   }
 
   reloadConnectors(
@@ -1136,7 +1141,11 @@ export class DocumentService {
   updateVersionsData() {
     const self = this;
     this.versions$ = this.documentRefAndCategory$.pipe(
+      take(1),
       filter(Boolean),
+      tap((res) => {
+        this.countDocumentVersionsData(res.category, res.ref);
+      }),
       switchMap((option) =>
         this.getDocumentVersionsData(
           option.category,

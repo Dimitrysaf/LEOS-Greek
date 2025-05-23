@@ -13,26 +13,28 @@ import {
   SUBPARAGRAPH,
 } from '@/shared/constants';
 import { NodeValidation } from '@/shared/models/drop-response.model';
-import { TableOfContentItemVO } from '@/shared/models/toc.model';
+import {TableOfContentItemVO, TocItem} from '@/shared/models/toc.model';
 import { DocumentService } from '@/shared/services/document.service';
 import {
   containsItem,
   containsOnlySameIndentType,
-  getIndentLevel, getNumberingTypeByLanguage,
+  getIndentLevel, getNumberingTypeByLanguage, getTocItemByAknTag,
   isIndentAllowed,
   isNumSoftDeleted,
   validateAgainstOtherIndentsInList,
 } from '@/shared/utils/toc.utils';
 
 import { ValidateTocService } from './validate-node-drop.service';
+import {TableOfContentService} from "@/features/akn-document/services/table-of-content.service";
 
 @Injectable()
 export class ValidateTocMandateService extends ValidateTocService {
   constructor(
     protected _http: HttpClient,
     protected documentService: DocumentService,
+    protected tocService: TableOfContentService,
   ) {
-    super(_http, documentService);
+    super(_http, documentService, tocService);
   }
 
   validateAddingToItem(
@@ -46,10 +48,10 @@ export class ValidateTocMandateService extends ValidateTocService {
     if (!actualTargetItem) {
       actualTargetItem = targetItem;
     }
-    const droppedElementTagName = sourceItem.tocItem.aknTag;
-    const droppedElementTagNumberingType = getNumberingTypeByLanguage(sourceItem.tocItem, this.documentConfig.langGroup);
+    const droppedElementTagName = sourceItem.tagName;
+    const droppedElementTagNumberingType = getNumberingTypeByLanguage(this.tocItems, droppedElementTagName, this.documentConfig.langGroup);
 
-    const targetName = actualTargetItem.tocItem.aknTag;
+    const targetName = actualTargetItem.tagName;
     let indentAllowed = false;
 
     switch (droppedElementTagName) {
@@ -79,13 +81,14 @@ export class ValidateTocMandateService extends ValidateTocService {
           ([PARAGRAPH, LEVEL].includes(targetName) &&
             (containsItem(actualTargetItem, LIST) ||
               !containsOnlySameIndentType(
+                this.tocItems,
                 actualTargetItem,
                 droppedElementTagNumberingType,
                 this.documentConfig.langGroup
               ))) ||
           (targetName === droppedElementTagName &&
             containsItem(actualTargetItem, LIST)) ||
-          !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem, this.documentConfig.langGroup)
+          !validateAgainstOtherIndentsInList(this.tocItems, tocTree, sourceItem, targetItem, this.documentConfig.langGroup)
         ) {
           validationResult.success = false;
           if (!indentAllowed) {
@@ -132,10 +135,11 @@ export class ValidateTocMandateService extends ValidateTocService {
 
   private isNumbered = (element: TableOfContentItemVO) => {
     let _isNumbered = true;
-    if (element.tocItem.itemNumber === 'NONE') {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), element.tagName);
+    if (tocItem.itemNumber === 'NONE') {
       _isNumbered = false;
     } else if (
-      element.tocItem.itemNumber === 'OPTIONAL' &&
+      tocItem.itemNumber === 'OPTIONAL' &&
       (!element.number ||
         element.number === '' ||
         isNumSoftDeleted(element.numSoftActionAttr))

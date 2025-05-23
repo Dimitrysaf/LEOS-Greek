@@ -84,9 +84,50 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
         }
     }
 
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateExternalReferencesAsync(UpdateInternalReferencesMessage message) {
+        LOG.debug("Processing external references for document {}", message.getDocumentRef());
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(message.getDocumentId());
+        List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+        for (XmlDocument document : documents) {
+            String ref = document.getMetadata().get().getRef();
+            boolean canProcess = DOCUMENTS_TO_IGNORE.stream().noneMatch(p -> document.getMetadata().get().getCategory().equals(p));
+            List<Element> updatedElts = new ArrayList<>();
+            if (canProcess) {
+                try {
+                    XmlDocument xmlDocument = workspaceService.findDocumentById(document.getId(), XmlDocument.class);
+                    updatedElts = updateExternalReferences(xmlDocument);
+                    LOG.debug("updateExternalReferences processed for {}, isXmlChanged {}: ", ref, !updatedElts.isEmpty());
+                } catch (Exception e) {
+                    LOG.error("Error occurred calling updateExternalRef() for doc {}", ref, e);
+                }
+            }
+            if (!updatedElts.isEmpty()) {
+                User user = securityContext.getUser();
+                simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + ref,
+                        new UpdateCoEditionResponse(user, null, ref, InfoType.DOCUMENT_POST_PROCESSING,
+                                updatedElts));
+            }
+        }
+    }
+
     private List<Element> updateInternalReference(XmlDocument xmlDocument) throws Exception {
         byte[] content = xmlDocument.getContent().get().getSource().getBytes();
         Pair<byte[], List<Element>> result = xmlContentProcessor.updateReferences(content);
+        if(!result.right().isEmpty()) {
+            String message = messageHelper.getMessage("internal.ref.checkinComment");
+            leosRepository.updateDocument(xmlDocument.getId(), result.left(),
+                    (Map<String, Object>) updateDocumentProperties(xmlDocument.getMetadata().get()), VersionType.MINOR,
+                    message, XmlDocument.class);
+        }
+        return result.right();
+    }
+
+
+    private List<Element> updateExternalReferences(XmlDocument xmlDocument) throws Exception {
+        byte[] content = xmlDocument.getContent().get().getSource().getBytes();
+        Pair<byte[], List<Element>> result = xmlContentProcessor.updateExternalReferences(content);
         if(!result.right().isEmpty()) {
             String message = messageHelper.getMessage("internal.ref.checkinComment");
             leosRepository.updateDocument(xmlDocument.getId(), result.left(),

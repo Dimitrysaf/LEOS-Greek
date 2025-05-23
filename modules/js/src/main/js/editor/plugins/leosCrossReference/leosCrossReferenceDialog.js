@@ -86,10 +86,18 @@ define(function leosCrossReferenceDialog(require) {
                                     let tabRef = widget?.element?.find('ref')?.getItem(0)?.getAttribute('href');
                                     if (tabRef && tabRef.lastIndexOf('.') > 0) {
                                         tabRef = tabRef.substring(0, tabRef.lastIndexOf('.'));
-                                        this.getDialog().selectPage(tabRef);
+                                        try {
+                                            this.getDialog().selectPage(tabRef);
+                                        } catch (error) {
+                                            this.getDialog().selectPage(editor.LEOS.documentRef);
+                                        }
                                     } else if (tabRef && tabRef.startsWith('docNodeRef_')) {
                                         tabRef =  tabRef.replace('docNodeRef_', '');
-                                        this.getDialog().selectPage(tabRef);
+                                        try {
+                                            this.getDialog().selectPage(tabRef);
+                                        } catch (error) {
+                                            this.getDialog().selectPage(editor.LEOS.documentRef);
+                                        }
                                     }
 
                                     var brokenRef =  widget.element.getAttribute('leos:broken');
@@ -602,7 +610,7 @@ define(function leosCrossReferenceDialog(require) {
             }
             var that = this;
             tocItems.forEach(function(item) {
-                if(selectedIds[0].startsWith('docNodeRef_') && item.tocItem.aknTag === 'DOC') {
+                if(selectedIds[0].startsWith('docNodeRef_') && item.tagName === 'DOC') {
                     item.id = selectedIds[0]
                     currentItem.push(item);
                 } else if (selectedIds.indexOf(item.id) !== -1) {
@@ -628,7 +636,7 @@ define(function leosCrossReferenceDialog(require) {
                     var treeInstance = data.instance;
                     var selectedNodes = treeInstance.get_selected(true);
                     var firstSelectedNode = selectedNodes[0];
-                    var isDocNode = firstSelectedNode.original.tocItem.aknTag === 'DOC';
+                    var isDocNode = firstSelectedNode.original.tagName === 'DOC';
                     if (isDocNode) {
                         that.nodeContentHandler.setDocNodeRefTextLabel(firstSelectedNode.text);
                         that.nodeContentHandler.setDocNodeRef();
@@ -667,14 +675,14 @@ define(function leosCrossReferenceDialog(require) {
             var that = this;
             var treePath = "";
             selectedNodes.forEach(function(node, index, nodes) {
-                var typeName = (node.original.number != null) ? that.getAknTagDescription(node.original.tocItem.aknTag) + " " + node.original.number : that.getAknTagDescription(node.original.tocItem.aknTag);
+                var typeName = (node.original.number != null) ? that.getAknTagDescription(node.original.tagName) + " " + node.original.number : that.getAknTagDescription(node.original.tagName);
                 treePath += typeName + (index < (nodes.length - 1) ? " - " : "");
             });
             return treePath;
         },
         populateContent: function populateContent(selectedNode, nbrOfSelectedNodes) {
             var higherElements = ["part", "title", "chapter", "section"];
-            var selectedNodeTypeName = selectedNode.original.tocItem.aknTag;
+            var selectedNodeTypeName = selectedNode.original.tagName;
             if (this.contentRequired() && (nbrOfSelectedNodes === 1) && higherElements.indexOf(selectedNodeTypeName) === -1) {
                 var that = this;
                 this.editor.fire("requestElement", {

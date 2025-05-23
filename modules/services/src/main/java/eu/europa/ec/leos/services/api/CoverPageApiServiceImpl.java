@@ -250,7 +250,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
 
     @Override
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
-        return null;
+        Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        proposalService.createVersion(proposal.getId(), versionType, checkInComment);
+        return this.genericDocumentApiService.getMajorVersionsData(documentRef, 0, 1);
     }
 
     @Override

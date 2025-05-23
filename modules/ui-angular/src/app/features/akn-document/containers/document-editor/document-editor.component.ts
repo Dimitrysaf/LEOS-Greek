@@ -63,7 +63,11 @@ import { LeosLightService } from '@/shared/services/leos-light.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
-import {findNodeById, getNumberingTypeByLanguage, updateDepthOfTocItems} from '@/shared/utils/toc.utils';
+import {
+  findNodeById,
+  getNumberingTypeByLanguage, toCamelCaseEnum,
+  updateDepthOfTocItems
+} from '@/shared/utils/toc.utils';
 
 import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
 import { CKEditorService } from '../../services/ckeditor.service';
@@ -131,6 +135,7 @@ export class DocumentEditorComponent
   hasUpdatePermission = false;
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
+  isVersionsPaneInit = this.isVersionsPaneExpanded;
   isContributionsPaneExpanded = false;
   contributionActionSelected = 'accept_selected';
   processed = false;
@@ -291,6 +296,9 @@ export class DocumentEditorComponent
         this.documentService.setDidDocumentLoadAndRender(true);
         this.loadDocument = true;
         this.proposalRef = documentView.proposalRef;
+        if(this.tocService.refreshWarning) {
+          this.documentTocComponent.refreshWarningIcon = true;
+        }
       });
 
     this.documentService.hasUpdatePermission().subscribe(value => this.hasUpdatePermission = value);
@@ -472,6 +480,13 @@ export class DocumentEditorComponent
     return false;
   }
 
+  showRefreshWarningIcon() {
+    if(this.documentTocComponent) {
+      return this.documentTocComponent.refreshWarningIcon;
+    }
+    return false;
+  }
+
   getWarningMessages() {
     if(this.documentTocComponent) {
       return this.documentTocComponent.warningMessagesFromValidation;
@@ -493,6 +508,17 @@ export class DocumentEditorComponent
     }
   }
 
+  showRefreshWarning() {
+    if(this.documentTocComponent && !this.isEditMode) {
+      return this.translateService.instant('toc.refresh.generic.warning.message');
+    }
+  }
+
+  refreshToc() {
+      this.tocService.reloadToc();
+      this.documentTocComponent.refreshWarningIcon = false;
+      this.tocService.refreshWarning = false;
+  }
 
   handleListItemDragged(event, isAdd) {
     this.documentTocComponent.dragMoved(event, isAdd);
@@ -556,6 +582,9 @@ export class DocumentEditorComponent
     //set the styling for the toc
     this.documentService.setAnnotationMode('READ_ONLY');
     this.coEditionWSService.sendTocInlineEdit(this.documentRef);
+    if(this.tocService.refreshWarning) {
+      this.refreshToc();
+    }
   }
 
   handleUndo() {
@@ -612,16 +641,16 @@ export class DocumentEditorComponent
     }
   }
 
-  getTocItemDisplayTitle(item: TocItem) {
-    const numType = getNumberingTypeByLanguage(item,  this.documentConfig.langGroup);
+  getTocItemDisplayTitle(item: Partial<TableOfContentItemVO>) {
+    const numType = getNumberingTypeByLanguage(this.tocItems, item.tagName, this.documentConfig.langGroup);
     if (numType === 'BULLET_NUM') {
       return this.translateService.instant('toc.item.type.bullet');
     }
-    if (item.aknTag === 'CROSS_HEADING') {
+    if (item.tagName === 'CROSS_HEADING') {
       return this.translateService.instant('toc.item.type.crossheading');
     } else {
-      const key = 'toc.item.type.' + item.aknTag.toLowerCase();
-      const keyForMenu = 'toc.item.type.' + item.aknTag.toLowerCase() + '.edit.menu';
+      const key = 'toc.item.type.' + toCamelCaseEnum(item.tagName).toLowerCase();
+      const keyForMenu = 'toc.item.type.' + toCamelCaseEnum(item.tagName).toLowerCase() + '.edit.menu';
       let valueToMenuItem = this.translateService.instant(key);
       if (this.translateService.instant(keyForMenu) !== keyForMenu) {
         valueToMenuItem = this.translateService.instant(keyForMenu);
@@ -707,6 +736,7 @@ export class DocumentEditorComponent
   }
 
   onVersionsPaneExpanded(e: any) {
+    this.isVersionsPaneInit = true;
     this.isVersionsPaneExpanded = !this.isVersionsPaneExpanded;
     if (this.isTocPaneExpanded) {
       this.isTocPaneExpanded = false;
@@ -899,7 +929,7 @@ export class DocumentEditorComponent
 
         if (item.itemHeading === 'MANDATORY') {
           heading = this.translateService.instant(
-            'toc.item.type.' + item.aknTag.toLowerCase() + '.heading',
+            'toc.item.type.' + toCamelCaseEnum(item.aknTag).toLowerCase() + '.heading',
           );
         }
 
@@ -907,11 +937,11 @@ export class DocumentEditorComponent
           content =
             item.aknTag.toLowerCase() === 'recital' ||
             item.aknTag.toLowerCase() === 'citation'
-              ? capitalizeFirstLetter(item.aknTag) + '...'
+              ? capitalizeFirstLetter(toCamelCaseEnum(item.aknTag).toLowerCase()) + '...'
               : 'Text...';
         }
         dragItems.push({
-          tocItem: item,
+          tagName: item.aknTag,
           heading,
           number,
           content,

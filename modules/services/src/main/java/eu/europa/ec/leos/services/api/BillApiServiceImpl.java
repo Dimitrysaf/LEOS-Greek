@@ -222,7 +222,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
                 messageHelper.getMessage("operation.toc.updated"), user);
         Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
         List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile);
-        return billService.getTableOfContent(updatedBill, tocMode, tocItems);
+        return billService.getTableOfContent(updatedBill, tocMode, tocItems, true);
     }
 
     @Override
@@ -511,7 +511,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
         List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile);
-        return this.billService.getTableOfContent(bill, tocMode, tocItems);
+        return this.billService.getTableOfContent(bill, tocMode, tocItems, false);
     }
 
     @Override

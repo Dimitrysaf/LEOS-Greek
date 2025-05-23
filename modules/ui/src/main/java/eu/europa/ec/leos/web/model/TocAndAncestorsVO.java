@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.web.model;
 
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 
@@ -30,13 +31,13 @@ public class TocAndAncestorsVO {
     private Map<String, List<TocItemVO>> tocItemsMap;
     private List<String> elementAncestorsIds;
 
-    public TocAndAncestorsVO(Map<String, List<TableOfContentItemVO>> tocItemList,
+    public TocAndAncestorsVO(Map<String, List<TableOfContentItemVO>> tocItemList, List<TocItem> structureTocItems,
                              List<String> elementAncestorsIds, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs) {
         tocItemsMap = new HashMap<>(tocItemList.size());
         for (String ref : tocItemList.keySet()) {
             List<TocItemVO> tocItems = new ArrayList<>();
             for (TableOfContentItemVO tableOfContentItemVO : tocItemList.get(ref)) {
-                TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO,
+                TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO, structureTocItems,
                         messageHelper, numberingConfigs);
                 tocItems.add(tocItemVO);
             }

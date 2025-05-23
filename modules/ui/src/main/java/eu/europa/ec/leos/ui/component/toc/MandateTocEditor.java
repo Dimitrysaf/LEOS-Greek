@@ -24,8 +24,9 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
-import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.Level;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.NumberingType;
@@ -41,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -82,19 +84,19 @@ public class MandateTocEditor extends AbstractTocEditor {
 
     private static final String TEMP_PREFIX = "temp_";
     private static final int MAX_INDENT_LEVEL = 4;
-    private final TableOfContentProcessor tableOfContentProcessor;
     private final XmlContentProcessor xmlContentProcessor;
 
     @Autowired
-    public MandateTocEditor(TableOfContentProcessor tableOfContentProcessor, XmlContentProcessor xmlContentProcessor) {
-        this.tableOfContentProcessor = tableOfContentProcessor;
+    public MandateTocEditor(Provider<StructureContext> structureContextProvider, XmlContentProcessor xmlContentProcessor) {
+        super(structureContextProvider);
         this.xmlContentProcessor = xmlContentProcessor;
     }
 
     @Override
     public void setTocTreeDataFilter(boolean editionEnabled, TreeDataProvider<TableOfContentItemVO> dataProvider) {
         dataProvider.setFilter(tableOfContentItemVO -> {
-            return tableOfContentItemVO.getTocItem().isDisplay() &&
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tableOfContentItemVO.getTagName());
+            return tocItem.isDisplay() &&
                     !(editionEnabled
                             && TableOfContentHelper.isFirstSubParagraph(tableOfContentItemVO)
                             && tableOfContentItemVO.getNode() != null
@@ -161,7 +163,8 @@ public class MandateTocEditor extends AbstractTocEditor {
         TocDropResult result = validateAction(tocTree, tableOfContentRules, droppedItems, targetItem, position);
         if (result.isSuccess()) {
             TableOfContentItemVO parentItem = tocTree.getTreeData().getParent(targetItem);
-            List<TableOfContentItemVO> sourceItems = ((ItemPosition.BEFORE == position) || targetItem.getTocItem().isChildrenAllowed())
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
+            List<TableOfContentItemVO> sourceItems = ((ItemPosition.BEFORE == position) || tocItem.isChildrenAllowed())
                     ? droppedItems : Lists.reverse(droppedItems);
             TableOfContentItemVO originalForTarget = sourceItems.stream().filter(sourceItem -> isPlaceholderForDroppedItem(targetItem, sourceItem)).findFirst().orElse(null);
             if (originalForTarget != null && !isAdd) {
@@ -193,11 +196,12 @@ public class MandateTocEditor extends AbstractTocEditor {
             moveOriginAttribute(sourceItem, targetItem);
             setNumber(sourceItem, targetItem);
             String origin = getOriginOfDocument(targetItem);
-            if ((sourceItem.getTocItem().isAddSoftAttr() == null || sourceItem.getTocItem().isAddSoftAttr()) && !CN.equals(origin)) {
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, sourceItem.getTagName());
+            if (tocItem.isAddSoftAttr() && !CN.equals(origin)) {
                 sourceItem.setSoftActionAttr(ADD);
                 sourceItem.setSoftActionRoot(Boolean.TRUE);
             }
-            if (DIVISION.equals(sourceItem.getTocItem().getAknTag().value())) {
+            if (AknTag.DIVISION.equals(sourceItem.getTagName())) {
                 sourceItem.setStyle(ClassToDepthType.TYPE_1.name());
             }
         } else {
@@ -232,7 +236,7 @@ public class MandateTocEditor extends AbstractTocEditor {
     private void setBlockOrCrossHeading(TableOfContentItemVO sourceItem) {
         boolean iscrossHeading = getTagValueFromTocItemVo(sourceItem).equalsIgnoreCase(CROSSHEADING)
                 || getTagValueFromTocItemVo(sourceItem).equalsIgnoreCase(BLOCK);
-        if (iscrossHeading && MAIN_BODY.equals(sourceItem.getParentItem().getTocItem().getAknTag().value())) {
+        if (iscrossHeading && AknTag.MAIN_BODY.equals(sourceItem.getParentItem().getTagName())) {
             sourceItem.setBlock(true);
         } else if (iscrossHeading) {
             sourceItem.setCrossHeading(true);
@@ -259,10 +263,11 @@ public class MandateTocEditor extends AbstractTocEditor {
         if (actualTargetItem == null) {
             actualTargetItem = targetItem;
         }
-        String droppedElementTagName = sourceItem.getTocItem().getAknTag().value();
-        NumberingType droppedElementTagNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(sourceItem.getTocItem(), "EN");
+        String droppedElementTagName = sourceItem.getTagName().value();
+        NumberingType droppedElementTagNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                sourceItem.getTagName()), "EN");
 
-        String targetName = actualTargetItem.getTocItem().getAknTag().value();
+        String targetName = actualTargetItem.getTagName().value();
         result.setSourceItem(sourceItem);
         result.setTargetItem(actualTargetItem);
         boolean indentAllowed;
@@ -325,8 +330,9 @@ public class MandateTocEditor extends AbstractTocEditor {
     private boolean containsOnlySameIndentType(TableOfContentItemVO tableOfContentItemVO, NumberingType numberingType) {
         List<TableOfContentItemVO> chldItms = tableOfContentItemVO.getChildItems();
         for(TableOfContentItemVO child : chldItms) {
-            if(child.getTocItem().getAknTag().value().equals("indent") &&
-                    StructureConfigUtils.getNumberingTypeByLanguage(child.getTocItem(), "EN") != numberingType) {
+            if(child.getTagName().equals(AknTag.INDENT) &&
+                    StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                            child.getTagName()), "EN") != numberingType) {
                 return false;
             }
         }
@@ -354,7 +360,7 @@ public class MandateTocEditor extends AbstractTocEditor {
         List<TableOfContentItemVO> siblingsOfTargetItem = targetItem.getParentItem().getChildItems();
         int targetItemIndex = siblingsOfTargetItem.indexOf(targetItem);
         int clauseItemIndex = IntStream.range(0, siblingsOfTargetItem.size())
-                .filter(i -> siblingsOfTargetItem.get(i).getTocItem().getAknTag().value().equals(CONCLUSIONS))
+                .filter(i -> siblingsOfTargetItem.get(i).getTagName().equals(AknTag.CONCLUSIONS))
                 .findFirst().orElse(-1);
         return (targetItemIndex > clauseItemIndex) ||
                 ((targetItemIndex == clauseItemIndex) && !position.equals(ItemPosition.BEFORE));
@@ -390,9 +396,10 @@ public class MandateTocEditor extends AbstractTocEditor {
 
     private boolean isNumbered(TableOfContentItemVO element) {
         boolean isNumbered = true;
-        if (OptionsType.NONE.equals(element.getTocItem().getItemNumber())) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, element.getTagName());
+        if (OptionsType.NONE.equals(tocItem.getItemNumber())) {
             isNumbered = false;
-        } else if (OptionsType.OPTIONAL.equals(element.getTocItem().getItemNumber())
+        } else if (OptionsType.OPTIONAL.equals(tocItem.getItemNumber())
                 && ((element.getNumber() == null || element.getNumber().isEmpty()) || isNumSoftDeleted(element.getNumSoftActionAttr()))) {
             isNumbered = false;
         }
@@ -431,8 +438,9 @@ public class MandateTocEditor extends AbstractTocEditor {
     private TableOfContentItemVO copyMovingItemToTemp(TableOfContentItemVO originalItem, Boolean isSoftActionRoot, TreeGrid<TableOfContentItemVO> tocTree) {
         TableOfContentItemVO moveToItem;
 
-        if (!ELEMENTS_WITHOUT_CONTENT.contains(originalItem.getTocItem().getAknTag().value().toLowerCase())) {
-            moveToItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
+        if (!ELEMENTS_WITHOUT_CONTENT.contains(originalItem.getTagName().value().toLowerCase())) {
+            moveToItem = new TableOfContentItemVO(originalItem.getTagName(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(),
+                    originalItem.getOriginAttr(), originalItem.getNumber(),
                     EC, originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(), originalItem.getNode(),
                     originalItem.getList(), originalItem.getContent(), MOVE_TO, isSoftActionRoot, null, null);
 
@@ -453,7 +461,8 @@ public class MandateTocEditor extends AbstractTocEditor {
                 }
             }
         } else {
-            moveToItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
+            moveToItem = new TableOfContentItemVO(originalItem.getTagName(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(),
+                    originalItem.getOriginAttr(), originalItem.getNumber(),
                     EC, null, null, null, originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                     MOVE_TO, isSoftActionRoot, null, null);
 
@@ -519,8 +528,8 @@ public class MandateTocEditor extends AbstractTocEditor {
     private void updateMovedOnEmptyParent(final TableOfContentItemVO dropData, final TableOfContentItemVO targetItemVO,
                                           final String movedOntoType, final String movedElementType) {
 
-        if (targetItemVO != null && targetItemVO.getTocItem().getAknTag().value().equals(movedOntoType) &&
-                dropData != null && dropData.getTocItem().getAknTag().value().equals(movedElementType) &&
+        if (targetItemVO != null && targetItemVO.getTagName().value().equals(movedOntoType) &&
+                dropData != null && dropData.getTagName().value().equals(movedElementType) &&
                 !containsMovedElement(targetItemVO.getChildItems(), movedElementType)) {
             dropData.setMovedOnEmptyParent(true);
         }
@@ -528,7 +537,7 @@ public class MandateTocEditor extends AbstractTocEditor {
 
     private boolean containsMovedElement(List<TableOfContentItemVO> childItems, String movedElementType) {
         for (TableOfContentItemVO child : childItems) {
-            if (child.getTocItem().getAknTag().value().equals(movedElementType) && (child.getNode() != null)) {
+            if (child.getTagName().value().equals(movedElementType) && (child.getNode() != null)) {
                 return true;
             }
         }
@@ -634,17 +643,20 @@ public class MandateTocEditor extends AbstractTocEditor {
     }
 
     private boolean validateAgainstOtherIndent(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem) {
-        NumberingType targetNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(targetItem.getTocItem(), "EN");
-        NumberingType sourceNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(sourceItem.getTocItem(), "EN");
+        NumberingType targetNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                targetItem.getTagName()), "EN");
+        NumberingType sourceNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                sourceItem.getTagName()), "EN");
         return targetNumberingType.equals(sourceNumberingType);
     }
 
     @Override
     void setItemLevel(final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem, final ItemPosition position) {
         int targetItemLevel = TableOfContentHelper.getItemIndentLevel(targetItem, 0, Arrays.asList(LEVEL, PARAGRAPH, INDENT, POINT));
+        TocItem targetTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
         switch (position) {
             case AS_CHILDREN:
-                if (targetItem.getTocItem().isRoot()) {
+                if (targetTocItem.isRoot()) {
                     sourceItem.setIndentLevel(0);
                 } else if (Arrays.asList(LEVEL, PARAGRAPH, INDENT, POINT, LIST).contains(getTagValueFromTocItemVo(targetItem))) {
                     sourceItem.setIndentLevel(targetItemLevel + 1);
@@ -656,7 +668,7 @@ public class MandateTocEditor extends AbstractTocEditor {
                 sourceItem.setIndentLevel(targetItemLevel);
                 break;
             case AFTER:
-                if (targetItem.getTocItem().isRoot()) {
+                if (targetTocItem.isRoot()) {
                     sourceItem.setIndentLevel(0);
                 } else {
                     sourceItem.setIndentLevel(targetItemLevel);

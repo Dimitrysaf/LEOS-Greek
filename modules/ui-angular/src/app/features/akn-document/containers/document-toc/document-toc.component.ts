@@ -71,9 +71,9 @@ import {
   checkPositionAfterValidationExplanatory,
   findNodeById, findNodeSiblingById,
   getItemSoftStyle,
-  getNumberingTypeByLanguage,
+  getNumberingTypeByLanguage, getTocItemByAknTag,
   isFirstPointOrSubparagraph,
-  removeTag,
+  removeTag, toCamelCaseEnum,
 } from '@/shared/utils/toc.utils';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
@@ -91,7 +91,6 @@ export class DocumentTocComponent
   @Input() documentType: string;
   @Input() documentRef: string;
   @Input() versionId: string;
-  @Input() tocItems: TocItem[];
   @Input() readonly = true;
   @Output() reBuildTocItems: EventEmitter<boolean> = new EventEmitter();
 
@@ -114,6 +113,7 @@ export class DocumentTocComponent
   isTreeValidationWarning: boolean;
   isSelectionWarning: boolean;
   showWarningIcon: boolean;
+  refreshWarningIcon: boolean;
   dragAction: DragAction;
   expandedNodeIds = new Set<string>();
   invalidNodes: Set<TableOfContentItemVO>;
@@ -298,18 +298,19 @@ export class DocumentTocComponent
     if (node != null) {
       if (
         getNumberingTypeByLanguage(
-          node.tocItem,
+          this.tocService.getCurrentTocItems(),
+          node.tagName,
           this.documentConfig?.langGroup,
         ) === BULLET_NUM
       ) {
         return this.translateService.instant('toc.item.type.bullet');
-      } else if (node.node && node.node.toString().includes('name="signatory"')) {
+      } else if (node.blockSignature) {
         return this.translateService.instant(
           'toc.item.type.signatory',
         );
       } else {
         return this.translateService.instant(
-          'toc.item.type.' + node.tocItem.aknTag.toLowerCase(),
+          'toc.item.type.' + toCamelCaseEnum(node.tagName).toLowerCase(),
         );
       }
     }
@@ -374,6 +375,10 @@ export class DocumentTocComponent
     }
   }
 
+  get selectedNodesArray() {
+    return Array.from(this.selectedNodes);
+  }
+
   clearHighlightInvalidNodes() {
     this.document
       .querySelectorAll('.invalid-node')
@@ -395,10 +400,10 @@ export class DocumentTocComponent
 
   handleNodeSelect(node: TableOfContentItemVO, $event, scrollTo = true) {
     $event?.stopImmediatePropagation();
-    const lastSelectedType = this.lastSelectedNode ? this.lastSelectedNode.tocItem.aknTag : null;
+    const lastSelectedType = this.lastSelectedNode ? this.lastSelectedNode.tagName : null;
 
     if ($event && $event.ctrlKey) {
-      if (lastSelectedType == null || lastSelectedType == node.tocItem.aknTag) {
+      if (lastSelectedType == null || lastSelectedType == node.tagName) {
         if (this.isSelected(node)) {
           this.selectedNodes.delete(node);
         } else {
@@ -456,9 +461,24 @@ export class DocumentTocComponent
       this.dragAction.targetId,
     );
 
+    const targetTocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), nodeTarget.tagName);
+
     const nodesDragged = event.item.data instanceof Array ? event.item.data : [event.item.data];
+    let nodesDraggedOrdered = this.reorderIdsByTreeTraversal(this.treeControl.dataNodes, nodesDragged);
+
+    //In case we are dragging a new element
+    if (nodesDraggedOrdered.length !== nodesDragged.length){
+      nodesDraggedOrdered = nodesDragged;
+    }
+
+    if (this.dragAction.isAdd) {
+      for (let nodeDragged of nodesDraggedOrdered) {
+        nodeDragged.newNode = true;
+      }
+    }
+
     //TODO : Fix this => this is a hack for allowing the root to go for validation otherwise it will fail to find the nodeParent and will not send it for validaiton
-    if (nodeTarget.tocItem.root) {
+    if (targetTocItem.root) {
       nodeTarget.parentItem = nodeTarget.id;
     }
 
@@ -469,13 +489,54 @@ export class DocumentTocComponent
 
     // validate Drop
     this.validateAndMove(
-      nodesDragged,
+      nodesDraggedOrdered,
       nodeTarget,
       parentNode,
       this.dragAction.action,
       this.dragAction.isAdd,
     );
   }
+
+  reorderIdsByTreeTraversal(rootNodes: TableOfContentItemVO[], unorderedNodes: TableOfContentItemVO[]): TableOfContentItemVO[] {
+    const targetIds = new Set(unorderedNodes.map(n => n.id));
+    const ordered: TableOfContentItemVO[] = [];
+    let found = 0;
+    const total = targetIds.size;
+
+    function depthFirstSearch(node: TableOfContentItemVO): boolean {
+
+      if (targetIds.has(node.id)) {
+        const match = unorderedNodes.find(n => n.id === node.id);
+
+        if (match) {
+          ordered.push(match);
+        }
+
+        found++;
+
+        if (found === total) {
+          return true;
+        }
+      }
+
+      for (const child of node.childItems || []) {
+        if (depthFirstSearch(child)) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    for (const root of rootNodes) {
+      if (depthFirstSearch(root)) {
+        break;
+      }
+    }
+
+    return ordered;
+  }
+
 
   dragMoved(event: CdkDragMove<TableOfContentItemVO[]>, isAdd: boolean = false) {
     //introduce a small debounce , when the toc gets to large we have performance issues
@@ -602,11 +663,18 @@ export class DocumentTocComponent
       this.checkChildNodesToRender(root, n);
     }
   }
+
+  isDraggable(item: TableOfContentItemVO): boolean {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), item.tagName);
+    return tocItem.draggable;
+  }
+
   private rerender(): void {
       this.isVisible = false;
       this.cdr.detectChanges();
       this.isVisible = true;
   }
+
   private checkChildNodesToRender(
     root: TableOfContentItemVO[],
     parentNode: TableOfContentItemVO,
@@ -623,17 +691,18 @@ export class DocumentTocComponent
     root: TableOfContentItemVO[],
     n: TableOfContentItemVO,
   ) => {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), n.tagName);
     if (process.env.NG_APP_LEOS_INSTANCE === CN) {
       return (
-        n.tocItem.display &&
+        tocItem.display &&
         !(
           isFirstPointOrSubparagraph(root, n) &&
-          n.node !== null &&
+          !n.newNode &&
           !n.movedOnEmptyParent
         )
       );
     }
-    return n.tocItem.display;
+    return tocItem.display;
   };
 
   private scrollNodeIntoView(node: TableOfContentItemVO) {
@@ -675,8 +744,8 @@ export class DocumentTocComponent
       if(validationResult.sourceItem && validationResult.targetItem) {
         this.messageFromValidation = this.translateService.instant(validationResult.messageKey,
           {
-            0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
-            1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
+            0: capitalizeFirstLetter(validationResult.sourceItem.tagName),
+            1: capitalizeFirstLetter(validationResult.targetItem.tagName),
           },
         );
       }
@@ -701,6 +770,7 @@ export class DocumentTocComponent
   private prepareTreeForDisplay(root: TableOfContentItemVO[]) {
     for (const n of root || []) {
       if (n) {
+        const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), n.tagName);
         if (n.soleNumbered) {
           n.tocStyling = getItemSoftStyle(n);
           let soloNumElementLabel = '';
@@ -709,14 +779,14 @@ export class DocumentTocComponent
           } else if (n.number) {
             soloNumElementLabel = n.number + SPACE;
           }
-          if (n.tocItem.contentDisplayed) {
+          if (tocItem.contentDisplayed) {
             soloNumElementLabel +=  soloNumElementLabel && soloNumElementLabel.length > 0 ? CONTENT_SEPARATOR : '';
             soloNumElementLabel += removeTag(n.content);
           }
           n.label = soloNumElementLabel;
         } else {
           n.tocStyling = getItemSoftStyle(n);
-          let label: string = n.tocItem.itemDescription
+          let label: string = tocItem.itemDescription
             ? this.getLabel(n) + SPACE
             : '';
 
@@ -727,7 +797,7 @@ export class DocumentTocComponent
           }
           if (n.number && n.heading) {
             if (
-              n.tocItem.aknTag.toLowerCase() === n.number.toLowerCase().trim()
+              n.tagName.toLowerCase() === n.number.toLowerCase().trim()
             ) {
               n.number = HASH_NUM_VALUE;
             }
@@ -736,7 +806,7 @@ export class DocumentTocComponent
               label += SPAN_END_TAG;
               label += this.getMovedLabel();
             }
-            if (n.tocItem.aknTag === TBLOCK || n.content === '') {
+            if (n.tagName === TBLOCK || n.content === '') {
               label += CONTENT_SEPARATOR;
               label += n.heading;
             } else if (n.content !== '') {
@@ -747,14 +817,14 @@ export class DocumentTocComponent
             const softAction = n.numSoftActionAttr;
             if (softAction) {
               if (
-                PARAGRAPH === n.tocItem.aknTag &&
+                PARAGRAPH === n.tagName &&
                 DELETE === softAction &&
                 MOVE_TO !== n.softActionAttr
               ) {
                 label +=
                   '<span class="leos-soft-num-removed">' + n.number + '</span>';
               } else if (
-                PARAGRAPH === n.tocItem.aknTag &&
+                PARAGRAPH === n.tagName &&
                 ADD === softAction &&
                 MOVE_TO !== n.softActionAttr
               ) {
@@ -783,7 +853,7 @@ export class DocumentTocComponent
             label += SPAN_END_TAG;
             label += this.getMovedLabel();
           }
-          if (n.tocItem.contentDisplayed) {
+          if (tocItem.contentDisplayed) {
             label += label.length > 0 ? CONTENT_SEPARATOR : '';
             label += removeTag(n.content);
           }
@@ -806,7 +876,7 @@ export class DocumentTocComponent
     );
   }
 
-  private validateAndMove(
+  private async validateAndMove(
     nodesDragged: TableOfContentItemVO[],
     nodeTarget: TableOfContentItemVO,
     parentNode: any,
@@ -815,25 +885,39 @@ export class DocumentTocComponent
   ) {
     this.draggedItems = nodesDragged;
     this.targetNode = nodeTarget;
-    for (var i=0; i<nodesDragged.length; i++) {
-      let nodeDragged: TableOfContentItemVO = nodesDragged[i];
-      this.validateTocService.validateNodeDrop(
-        this.treeControl.dataNodes,
-        parentNode,
-        nodeTarget,
-        nodeDragged,
-        [nodeDragged.id],
-        nodeDragged.tocItem.aknTag,
-        nodeTarget.id,
-        nodeTarget.tocItem.aknTag,
-        parentNode.id,
-        parentNode.tocItem.aknTag,
-        position,
-        this.documentType,
-        this.documentRef,
-        isAdd,
-      );
-    }
+
+    const validateOneByOne = async () => {
+      for (let i = 0; i < nodesDragged.length; i++) {
+        let nodeDragged: TableOfContentItemVO = nodesDragged[i];
+        await new Promise<void>((resolve) => {
+          const subscription = this.validateTocService.dropValidationResult$.subscribe((res) => {
+            if (res?.sourceItem?.id === nodesDragged[i].id) {
+              subscription.unsubscribe();
+              resolve();
+            }
+          });
+
+          this.validateTocService.validateNodeDrop(
+            this.treeControl.dataNodes,
+            parentNode,
+            nodeTarget,
+            nodeDragged,
+            [nodeDragged.id],
+            nodeDragged.tagName,
+            nodeTarget.id,
+            nodeTarget.tagName,
+            parentNode.id,
+            parentNode.tagName,
+            position,
+            this.documentType,
+            this.documentRef,
+            isAdd
+          );
+        });
+      }
+    };
+
+    await validateOneByOne();
   }
 
   private handleNodeValidationResult(result: NodeValidation) {
@@ -874,7 +958,8 @@ export class DocumentTocComponent
     if (!nodeDragged) {
       return;
     }
-    if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged) || !nodeDragged.tocItem.draggable) {
+    const draggedTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), nodeDragged.tagName);
+    if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged) || !draggedTocItem.draggable) {
       this.populateValidationMessage({
         success: false,
         warning: false,
@@ -922,6 +1007,7 @@ export class DocumentTocComponent
       switch (this.documentType) {
         case 'council_explanatory':
           position = checkPositionAfterValidationExplanatory(
+            this.tocService.getCurrentTocItems(),
             nodeTarget,
             nodeDragged,
             position,
@@ -1079,7 +1165,8 @@ export class DocumentTocComponent
     if (!Array.isArray(toc)) return;
     for (const node of toc) {
       if (node.childItems) {
-        if (node.tocItem.expandedByDefault) {
+        const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), node.tagName);
+        if (tocItem.expandedByDefault) {
           this.expandedNodeIds.add(node.id);
         }
         this.setByDefaultExpandedNodes(node.childItems);
@@ -1107,7 +1194,7 @@ export class DocumentTocComponent
     if (isAdd) {
       eventItem.trackChangeAction = LEOS_TC_INSERT_ACTION;
       eventItem.indentOriginIndentLevel = '-1';
-      switch (eventItem.tocItem.aknTag) {
+      switch (eventItem.tagName) {
         case 'DIVISION': {
           break;
         }

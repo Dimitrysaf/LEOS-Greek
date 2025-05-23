@@ -839,7 +839,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 .build();
 
         // 2. save metadata
-        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"), false);
         eventBus.post(new DocumentUpdatedEvent());
         // 3.update ui
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "collection.block.annex.metadata.updated"));
@@ -955,6 +955,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         billContext.useActionMessage(ContextAction.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
         archiveService.archiveDocument(event.getAnnex(), Annex.class, leosPackage.getPath());
         billContext.executeRemoveBillAnnex();
+        billService.updateExternalReferencesAsync(leosPackage);
         eventBus.post(new DocumentUpdatedEvent());
         // 2. update ui
         populateData();

@@ -17,6 +17,7 @@ import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
@@ -187,6 +188,18 @@ public abstract class BillServiceImpl implements BillService {
         return bill;
     }
 
+    @Override
+    public void updateExternalReferencesAsync(LeosPackage leosPackage) {
+        try {
+            Bill bill = findBillByPackagePath(leosPackage.getPath());
+            xmlDocumentService.updateExternalReferencesAsync(new UpdateInternalReferencesMessage(bill.getId(),
+                    bill.getMetadata().get().getRef()));
+            LOG.debug("updateExternalReferences processed for {}: ", bill.getMetadata().get().getRef());
+        } catch (Exception e) {
+            LOG.error("Error while updating external references", e);
+        }
+    }
+
     private void updateInternalReferencesAsync(Bill bill) {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(bill.getId(),
@@ -271,7 +284,7 @@ public abstract class BillServiceImpl implements BillService {
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
         return bill;
     }
-    
+
     @Override
     public Bill createVersion(String id, VersionType versionType, String comment) {
         LOG.trace("Creating Bill version... [id={}, versionType={}, comment={}]", id, versionType, comment);
@@ -343,17 +356,17 @@ public abstract class BillServiceImpl implements BillService {
         newXmlContent = numberService.renumberArticles(newXmlContent, true);
         newXmlContent = numberService.renumberRecitals(newXmlContent);
         newXmlContent = numberService.renumberHigherSubDivisions(newXmlContent, tocList);
-        newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
+        newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         return updateBill(bill, newXmlContent, actionMsg, true);
     }
     
     @Override
-    public List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems) {
+    public List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode, List<TocItem> tocItems, boolean withNode) {
         final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
         final byte[] xmlContent = content.getSource().getBytes();
         Stopwatch stopwatch = Stopwatch.createStarted();
-        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, mode, tocItems);
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlContent, mode, tocItems, withNode);
         LOG.info("getTableOfContent in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         return tocList;
     }

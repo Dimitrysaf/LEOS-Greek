@@ -336,7 +336,11 @@ abstract class DocumentScreenImpl extends VerticalLayout implements DocumentScre
 
     @Override
     public void setTocAndAncestors(Map<String, List<TableOfContentItemVO>> tocItemList, List<String> elementAncestorsIds) {
-        eventBus.post(new FetchCrossRefTocResponseEvent(new TocAndAncestorsVO(tocItemList, elementAncestorsIds, messageHelper, structureContextProvider.get().getNumberingConfigs())));
+        eventBus.post(new FetchCrossRefTocResponseEvent(new TocAndAncestorsVO(tocItemList,
+                structureContextProvider.get().getTocItems(),
+                elementAncestorsIds,
+                messageHelper,
+                structureContextProvider.get().getNumberingConfigs())));
     }
 
     @Override

@@ -203,7 +203,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
     protected byte[] updateDataInXml(final byte[] content, ProposalMetadata dataObject) {
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
-        return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
     }
 
     @Override
@@ -219,11 +219,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
         //Do the xml update
         byte[] xmlBytes = proposal.getContent().get().getSource().getBytes();
-
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(xmlBytes,
                 keyValueMap,
                 xmlNodeConfigProcessor.getProposalComponentsConfig(leosCategory, "href", refersToOfDocument, showAs));
-        updatedBytes = xmlContentProcessor.doXMLPostProcessing(updatedBytes);
+        updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
 
         //save updated xml
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedBytes);
@@ -231,6 +230,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         LOG.trace("Added component in Proposal ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
+
     }
 
     @Override
@@ -475,7 +475,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Validate.notNull(proposal, "Proposal is required");
         final Content content = proposal.getContent().getOrError(() -> "Proposal content is required!");
         final byte[] proposalContent = content.getSource().getBytes();
-        return tableOfContentProcessor.buildTableOfContent(COVERPAGE, proposalContent, mode);
+        return tableOfContentProcessor.buildTableOfContent(COVERPAGE, proposalContent, mode, true);
     }
 
     @Override public List<Proposal> findVersions(String id) {

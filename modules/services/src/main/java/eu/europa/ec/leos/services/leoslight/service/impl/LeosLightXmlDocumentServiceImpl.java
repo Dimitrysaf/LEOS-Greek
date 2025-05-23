@@ -30,11 +30,13 @@ import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.io.IOUtils;
@@ -58,6 +60,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -123,7 +126,8 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     }
 
     @Override
-    public void addDocumentHtmlRendition(Map<String, Object> contentToZip, String xmlDocumentName, byte[] xmlContent,
+    public void addDocumentHtmlRendition(Provider<StructureContext> structureContextProvider,
+                                         Map<String, Object> contentToZip, String xmlDocumentName, byte[] xmlContent,
                                          String styleSheetName) {
         RenderedDocument htmlDocument = new RenderedDocument();
         htmlDocument.setStyleSheetName(styleSheetName);
@@ -154,7 +158,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         final String tocJsFile = JS_DEST_DIR + tocJsName;
 
         List<TableOfContentItemVO> tableOfContentItemVOList = genericDocumentTocApiService.getTableOfContent(xmlDocumentName.replace(XML_EXT, ""), TocMode.SIMPLIFIED);
-        String tocJson = getTocAsJson(tableOfContentItemVOList);
+        String tocJson = getTocAsJson(structureContextProvider.get().getTocItems(), tableOfContentItemVOList);
 
         contentToZip.put(tocJsFile, htmlRenditionProcessor.processJsTemplate(tocJson).getBytes(UTF_8));
 
@@ -301,10 +305,10 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         }
     }
 
-    private String getTocAsJson(List<TableOfContentItemVO> tableOfContent) {
+    private String getTocAsJson(List<TocItem> tocItems, List<TableOfContentItemVO> tableOfContent) {
         final String json;
         try {
-            List<TableOfContentItemHtmlVO> tocHtml = buildTocHtml(tableOfContent);
+            List<TableOfContentItemHtmlVO> tocHtml = buildTocHtml(tocItems, tableOfContent);
             json = new ObjectMapper().writeValueAsString(tocHtml);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Exception while converting 'tableOfContent' in json format.", e);
@@ -312,14 +316,15 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         return json;
     }
 
-    private List<TableOfContentItemHtmlVO> buildTocHtml(List<TableOfContentItemVO> tableOfContents) {
+    private List<TableOfContentItemHtmlVO> buildTocHtml(List<TocItem> tocItems, List<TableOfContentItemVO> tableOfContents) {
         List<TableOfContentItemHtmlVO> tocHtml = new ArrayList<>();
         String language = documentLanguageContext.getDocumentLanguage();
         for (TableOfContentItemVO item : tableOfContents) {
-            String name = TableOfContentHelper.buildItemCaption(item, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, language);
+            String name = TableOfContentHelper.buildItemCaption(item, tocItems,
+                    TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, language);
             TableOfContentItemHtmlVO itemHtml = new TableOfContentItemHtmlVO(name, "#" + item.getId());
             if (item.getChildItems().size() > 0) {
-                itemHtml.setChildren(buildTocHtml(item.getChildItems()));
+                itemHtml.setChildren(buildTocHtml(tocItems, item.getChildItems()));
             }
             tocHtml.add(itemHtml);
         }

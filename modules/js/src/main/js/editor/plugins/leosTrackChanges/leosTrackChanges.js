@@ -32,6 +32,7 @@ define(function leosTrackChangesModule(require) {
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
         DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
         ACCEPT: "accept", REJECT: "reject", TRACKCHANGES_NUMBER_ELEMENT_SELECTOR: "li[data-akn-action-number]",
+        DATA_AKN_NAME: "data-akn-name",
 
         DATA_AKN_SOFTACTION: "data-akn-attr-softaction", DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
         SOFTACTION_MOVE_FROM: "move_from", SOFTACTION_MOVE_TO: "move_to",
@@ -277,7 +278,7 @@ define(function leosTrackChangesModule(require) {
             var selectedElement = editor.getSelection().getStartElement();
             var range = editor.getSelection().getRanges()[0];
             if(selectedElement.getName() === 'div') {
-                let lastEditable = this.findLastEditable(selectedElement);
+                let lastEditable = leosPluginUtils.findLastEditable(selectedElement);
                 if (lastEditable) {
                     // Create a range for the last <li> or <p>
                     range = editor.createRange();
@@ -300,48 +301,21 @@ define(function leosTrackChangesModule(require) {
             } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
                 tcElement.insertAfter(selectedElement);
             } else {
+                // if selectedElement is div, wrap tcElement in a <p> tag
+                if(selectedElement.getName() === 'div' && !!selectedElement.getAttribute(core.DATA_AKN_NAME)
+                    && selectedElement.getAttribute(core.DATA_AKN_NAME).toLowerCase() === UTILS.BLOCKCONTAINER ){
+                    var paragraphElement = new CKEDITOR.dom.element(leosPluginUtils.HTML_SUB_POINT);
+                    paragraphElement.setAttribute(leosPluginUtils.DATA_AKN_NAME, 'aknParagraph');
+                    paragraphElement.append(tcElement);
+                    tcElement = paragraphElement;
+                }
+
                 editor.editable().insertElementIntoRange(tcElement, range);
             }
 
             this.setToEditablePosition(editor, tcElement, toEnd);
             editor.fire('unlockSnapshot');
             return tcElement;
-        },
-
-        findLastEditable(element) {
-            let result = null;
-
-            function search(node) {
-                if (!node) return;
-
-                // If node is <p> or <li>, remember it
-                if (node.getName && (node.getName() === 'p' || node.getName() === 'li')) {
-                    result = node;
-                }
-
-                // If node is <li> and contains <ul> or <ol>, search deeply inside
-                if (node.getName && node.getName() === 'li' && node.getChildren) {
-                    const children = node.getChildren();
-                    for (let i = 0; i < children.count(); i++) {
-                        const child = children.getItem(i);
-                        if (child.getName && (child.getName() === 'ul' || child.getName() === 'ol')) {
-                            search(child); // Dive into nested lists inside <li>
-                        }
-                    }
-                }
-
-                // Always search normal children (outside <li> context too)
-                if (node.getChildren) {
-                    const children = node.getChildren();
-                    for (let i = 0; i < children.count(); i++) {
-                        search(children.getItem(i));
-                    }
-                }
-            }
-
-            search(element);
-
-            return result;
         },
 
         toArray: function(list) {
@@ -1047,14 +1021,21 @@ define(function leosTrackChangesModule(require) {
                     element.remove();
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
-                if(parentElem && parentElem.getAttribute('data-akn-name') === core.ARTICLE && element.getAscendant("li")) {
+                if(parentElem && parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
                 } else {
                     var liParentElement = element.getAscendant("li");
                     var pParentElement = element.getAscendant("p");
                     element.remove();
                     if (pParentElement && !pParentElement.getText().trim()) {
-                        pParentElement.remove();
+                        let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
+                        if(!lastEditable || lastEditable.getId() !== pParentElement.getId()){
+                            pParentElement.remove();
+                        }else if(!!lastEditable){
+                            var range = editor.createRange();
+                            range.selectNodeContents(lastEditable);
+                            editor.getSelection().selectRanges([range]);
+                        }
                     }
                     if(liParentElement) {
                         editor.getSelection().fake(liParentElement);
@@ -1066,7 +1047,7 @@ define(function leosTrackChangesModule(require) {
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 if(parentElem) {
                     editor.fire('updateAlternateToolbarState', {index: parentElem.getAttribute("data-akn-original-option")})
-                    if(parentElem.getAttribute('data-akn-name') === core.ARTICLE) {
+                    if(parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE) {
                         core.removeTrackChangesAttributesForNumbering(element.getAscendant("li"));
                         core.addTrackChangesAttributes(editor, element, core.INSERT_ACTION);
                     } else {

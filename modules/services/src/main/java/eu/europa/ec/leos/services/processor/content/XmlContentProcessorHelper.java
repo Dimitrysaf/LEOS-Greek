@@ -17,9 +17,11 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.NumberingType;
@@ -38,6 +40,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
@@ -48,6 +51,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE_TRANSFORM;
 import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.searchInRules;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl.getTocItemFromNumberingType;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl.NBSP;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
@@ -115,6 +119,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.SIGNATORY;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
@@ -132,7 +137,7 @@ public class XmlContentProcessorHelper {
     private static final Logger LOG = LoggerFactory.getLogger(XmlContentProcessorHelper.class);
 
     public static List<TableOfContentItemVO> getAllChildTableOfContentItems(Node node, List<TocItem> tocItems, Map<TocItem,
-            List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode, String language, MessageHelper messageHelper) {
+            List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode, String language, MessageHelper messageHelper, boolean withNode) {
         List<TableOfContentItemVO> itemVOList = new ArrayList<>();
         Node child;
         NodeList nodeList;
@@ -145,7 +150,7 @@ public class XmlContentProcessorHelper {
                 child = nodeList.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE
                         && (elementsName.contains(child.getNodeName().toLowerCase()) || elementsName.isEmpty())) {
-                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper);
+                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper, withNode);
                 }
             }
         } else {
@@ -153,7 +158,7 @@ public class XmlContentProcessorHelper {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 child = nodeList.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
-                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper);
+                    addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language, messageHelper, withNode);
                 }
             }
             Node nameNode = node.getAttributes().getNamedItem("name");
@@ -183,20 +188,23 @@ public class XmlContentProcessorHelper {
     }
 
     private static void addTocItemVoToList(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, Node node,
-            List<TableOfContentItemVO> itemVOList, TocMode mode, String language, MessageHelper messageHelper) {
-        TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, messageHelper);
+                                           List<TableOfContentItemVO> itemVOList, TocMode mode, String language, MessageHelper messageHelper, boolean withNode) {
+        TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, messageHelper, withNode);
         if (tableOfContentItemVO != null) {
-            if (tableOfContentItemVO.getTocItem() != null
-                    && tableOfContentItemVO.getTocItem().isRootItemDeletable() != null
-                    && !tableOfContentItemVO.getTocItem().isRootItemDeletable()
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, tableOfContentItemVO.getTagName());
+            if (tocItem != null
+                    && tocItem.isRootItemDeletable() != null
+                    && !tocItem.isRootItemDeletable()
                     && node != null && node.getParentNode() != null
                     && !node.getParentNode().getNodeName().equals(node.getNodeName())) {
                 tableOfContentItemVO.setDeletable(false);
             }
             boolean isList = getTagValueFromTocItemVo(tableOfContentItemVO).equals(LIST);
-            List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language, messageHelper);
-            if ((!TocMode.SIMPLIFIED_CLEAN.equals(mode) || (TocMode.SIMPLIFIED_CLEAN.equals(mode) && tableOfContentItemVO.getTocItem().isDisplay()))
-                    && shouldItemBeAddedToToc(tocItems, tocRules, node, tableOfContentItemVO.getTocItem())) {
+            List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language,
+                    messageHelper, withNode);
+            if ((!TocMode.SIMPLIFIED_CLEAN.equals(mode) || (TocMode.SIMPLIFIED_CLEAN.equals(mode) && tocItem.isDisplay()))
+                    && shouldItemBeAddedToToc(tocItems, tocRules, node, StructureConfigUtils.getTocItemByName(tocItems,
+                    tableOfContentItemVO.getTagName()))) {
                 if (TocMode.SIMPLIFIED.equals(mode) || TocMode.SIMPLIFIED_CLEAN.equals(mode)) {
                     if (isList) {
                         if (!itemVOList.isEmpty()) {
@@ -250,7 +258,7 @@ public class XmlContentProcessorHelper {
     }
 
     public static TableOfContentItemVO buildTableOfContentsItemVO(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, Node node,
-            String language, MessageHelper messageHelper) {
+                                                                  String language, MessageHelper messageHelper, boolean withNode) {
         if (node == null) {
             return null;
         }
@@ -312,6 +320,13 @@ public class XmlContentProcessorHelper {
         String initialNumber = getAttributeValue(node, LEOS_INITIAL_NUM);
 
         boolean isCrossheadingInList = false;
+        boolean isBlockSignature = false;
+        if (tagName.equalsIgnoreCase(BLOCK)) {
+            String name = getAttributeValue(node, XML_NAME);
+            if (name != null && name.equalsIgnoreCase(SIGNATORY)) {
+                isBlockSignature = true;
+            }
+        }
         Node inlineNode = getFirstChild(node, INLINE);
         if ((tagName.equalsIgnoreCase(CROSSHEADING) || tagName.equalsIgnoreCase(BLOCK)) && inlineNode != null) {
             String name = getAttributeValue(inlineNode, XML_NAME);
@@ -398,18 +413,21 @@ public class XmlContentProcessorHelper {
         item.setInitialNum(initialNumber);
         item.setTocItemType(tocItemType);
         item.setTrackChangeAction(trackChangeAction);
-        seItemSoleNumber(numberingConfigs, item, messageHelper, numNodeText);
+        item.setBlockSignature(isBlockSignature);
+        item.setNode(withNode ? node : null);
+        setItemSoleNumber(numberingConfigs, tocItems, item, messageHelper, numNodeText);
         return item;
     }
 
-    private static void seItemSoleNumber(List<NumberingConfig> numberingConfigs, TableOfContentItemVO item,
-                                     MessageHelper messageHelper, String numNodeText) {
-        if (item.getTocItem().getSoleNumbering() != null) {
+    private static void setItemSoleNumber(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, TableOfContentItemVO item,
+                                          MessageHelper messageHelper, String numNodeText) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, item.getTagName());
+        if (tocItem.getSoleNumbering() != null) {
             List<NumberingConfig> numConfWithSoleNumLabel = numberingConfigs.stream().filter(numberingConfig -> StringUtils.isNotEmpty(numberingConfig.getLabel())).collect(Collectors.toList());
             List<String> soleNumberingLabels = messageHelper != null ? numConfWithSoleNumLabel.stream().map(numberingConfig -> messageHelper.getMessage(numberingConfig.getLabel())).collect(Collectors.toList()) : null;
             String label = soleNumberingLabels != null && soleNumberingLabels.contains(numNodeText) ? numNodeText : null;
             if ((StringUtils.isNotEmpty(label) && numNodeText.equalsIgnoreCase(label)) || (StringUtils.isEmpty(numNodeText)
-                    && StringUtils.isEmpty(label) && item.getTocItem().getAknTag().value().equalsIgnoreCase(RECITAL))) {
+                && StringUtils.isEmpty(label) && item.getTagName().equals(AknTag.RECITAL))) {
                 item.setNumber(label);
                 item.setSoleNumbered(true);
             }
@@ -434,7 +452,7 @@ public class XmlContentProcessorHelper {
 
     private static boolean isParentContainsTocItem(Map<TocItem, List<TocItem>> tocRules, TocItem tocItem, TocItem parentTocItem, TocItem parentFromTocRules) {
         if ((parentTocItem != null) && parentFromTocRules != null) {
-            List<TocItem> listOfTocItems = tocRules.get(parentFromTocRules);
+            List<TocItem> listOfTocItems = searchInRules(parentFromTocRules.getAknTag(), tocRules);
             for(TocItem tocItem1 : listOfTocItems) {
                 if(tocItem1.getAknTag().equals(tocItem.getAknTag())) {
                     return true;
@@ -455,7 +473,7 @@ public class XmlContentProcessorHelper {
     }
 
     public static String getTagValueFromTocItemVo(TableOfContentItemVO tableOfContentItemVO) {
-        return tableOfContentItemVO.getTocItem().getAknTag().value();
+        return tableOfContentItemVO.getTagName().value();
     }
 
     private static String extractContentForTocItemsExceptNumAndHeadingAndIntro(Node node, String elementName) {
@@ -504,7 +522,7 @@ public class XmlContentProcessorHelper {
         }
     }
 
-    public static Node extractOrBuildNumElement(Node node, TableOfContentItemVO tocVo) {
+    public static Node extractOrBuildNumElement(Provider<StructureContext> structureContextProvider, Node node, TableOfContentItemVO tocVo) {
         Node numNode = null;
         Boolean toggleFlag = checkIfParagraphNumberingIsToggled(tocVo);
 
@@ -531,8 +549,9 @@ public class XmlContentProcessorHelper {
                 || CN.equals(tocVo.getOriginNumAttr() != null ? tocVo.getOriginNumAttr() : tocVo.getOriginAttr()))) {
             tocVo.setNumber(null);
         }
-        if (StringUtils.isNotEmpty(tocVo.getNumber()) || tocVo.getTocItem().getSoleNumbering() != null) {
-            String newNum = createNumContent(tocVo);
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tocVo.getTagName());
+        if (StringUtils.isNotEmpty(tocVo.getNumber()) || tocItem.getSoleNumbering() != null) {
+            String newNum = createNumContent(structureContextProvider, tocVo);
             numNode = XercesUtils.getFirstChild(node, XercesUtils.getNumTag(getTagValueFromTocItemVo(tocVo)));
             if (numNode != null) {
                 if (getFirstChild(numNode, "del") == null && getFirstChild(numNode, "ins") == null && !newNum.equals(numNode.getTextContent())) {
@@ -555,7 +574,7 @@ public class XmlContentProcessorHelper {
     }
 
     private static Boolean checkIfParagraphNumberingIsToggled(TableOfContentItemVO tableOfContentItemVO) {
-        if (PARAGRAPH.equals(tableOfContentItemVO.getTocItem().getAknTag().value())) {
+        if (PARAGRAPH.equals(tableOfContentItemVO.getTagName().value())) {
             if (tableOfContentItemVO.getParentItem().isNumberingToggled() != null) {
                 return tableOfContentItemVO.getParentItem().isNumberingToggled();
             } else {
@@ -574,10 +593,11 @@ public class XmlContentProcessorHelper {
         return null;
     }
 
-    public static String createNumContent(TableOfContentItemVO tocVo) {
-        StringBuilder item = new StringBuilder(StringUtils.capitalize(tocVo.getTocItem().getAknTag().value()));
+    public static String createNumContent(Provider<StructureContext> structureContextProvider, TableOfContentItemVO tocVo) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tocVo.getTagName());
+        StringBuilder item = new StringBuilder(StringUtils.capitalize(tocVo.getTagName().value()));
         String newNum = trimmedXml(tocVo.getNumber());
-        if (tocVo.getTocItem().isNumWithType()) {
+        if (tocItem.isNumWithType()) {
             newNum = tocVo.isSoleNumbered() ? newNum : item + " " + newNum;
         }
         return newNum;
@@ -585,15 +605,16 @@ public class XmlContentProcessorHelper {
     
     public static Node extractOrBuildHeaderElement(Node node, TableOfContentItemVO tocVo, List<TocItem> tocItems, User user, String userLogin, String title, boolean isTrackChangesEnabled) {
         Node headingNode = null;
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, tocVo.getTagName());
         String newHeading =  StringEscapeUtils.unescapeXml(tocVo.getHeading());
-        if ((tocVo.getTocItem().getItemHeading().equals(OptionsType.MANDATORY) ||
-                tocVo.getTocItem().getItemHeading().equals(OptionsType.OPTIONAL)) &&
+        if ((tocItem.getItemHeading().equals(OptionsType.MANDATORY) ||
+                tocItem.getItemHeading().equals(OptionsType.OPTIONAL)) &&
                         ((newHeading != null) && !StringUtils.isEmpty(newHeading.replaceAll(NBSP, EMPTY_STRING).trim()))) {
             headingNode = extractOrBuildHeaderElement(node, tocItems, newHeading, isTrackChangesEnabled, userLogin, title);
             if (tocVo.isUndeleted()) {
                 XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, EMPTY_STRING, true);
             }
-        } else if (tocVo.getTocItem().getItemHeading().equals(OptionsType.OPTIONAL)
+        } else if (tocItem.getItemHeading().equals(OptionsType.OPTIONAL)
                 && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
             headingNode = extractOrBuildHeaderElement(node, tocItems, EMPTY_STRING, isTrackChangesEnabled, userLogin, title);
             XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
@@ -652,8 +673,8 @@ public class XmlContentProcessorHelper {
 
         return node;
     }
-    
-    public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
+
+    public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
         List<Node> childrenToAppend = new ArrayList<>();
         List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
@@ -665,7 +686,7 @@ public class XmlContentProcessorHelper {
         return childrenToAppend;
     }
 
-    public static List<Node> extractLevelNonTocItemsKeepingTextNodes(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
+    public static List<Node> extractLevelNonTocItemsKeepingTextNodes(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
         List<Node> childrenToAppend = new ArrayList<>();
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -715,8 +736,8 @@ public class XmlContentProcessorHelper {
             String xPath = "//*[@xml:id = '" + startingNodeId + "']";
             Node node = XercesUtils.getFirstElementByXPath(document, xPath);
             if (node != null) {
-                itemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, null);
-                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language, null);
+                itemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, null, true);
+                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language, null, true);
                 itemVO.addAllChildItems(itemVOList);
             }
         } catch (Exception e) {

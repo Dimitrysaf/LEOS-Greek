@@ -24,10 +24,14 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Provider;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +53,17 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentProcess
 @SpringComponent
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
 public class ProposalTocEditor extends AbstractTocEditor {
+    @Autowired
+    public ProposalTocEditor(Provider<StructureContext> structureContextProvider) {
+        super(structureContextProvider);
+    }
 
     @Override
     public void setTocTreeDataFilter(boolean editionEnabled, TreeDataProvider<TableOfContentItemVO> dataProvider) {
-        dataProvider.setFilter(tableOfContentItemVO -> tableOfContentItemVO.getTocItem().isDisplay());
+        dataProvider.setFilter(tableOfContentItemVO -> {
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tableOfContentItemVO.getTagName());
+            return tocItem.isDisplay();
+        });
     }
 
     @Override
@@ -88,7 +99,8 @@ public class ProposalTocEditor extends AbstractTocEditor {
         TocDropResult result = validateAction(tocTree, tocRules, droppedItems, targetItem, position);
         if (result.isSuccess()) {
             TableOfContentItemVO parentItem = tocTree.getTreeData().getParent(targetItem);
-            List<TableOfContentItemVO> sourceItems = ((ItemPosition.BEFORE == position) || targetItem.getTocItem().isChildrenAllowed())
+            TocItem targetTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
+            List<TableOfContentItemVO> sourceItems = ((ItemPosition.BEFORE == position) || targetTocItem.isChildrenAllowed())
                     ? droppedItems : Lists.reverse(droppedItems);
             for (TableOfContentItemVO sourceItem : sourceItems) {
                 performAddOrMoveAction(isAdd, tocTree, tocRules, sourceItem, targetItem, parentItem, position);
@@ -160,7 +172,8 @@ public class ProposalTocEditor extends AbstractTocEditor {
     private TableOfContentItemVO copyMovingItemToTemp(TableOfContentItemVO originalItem, Boolean isSoftActionRoot, TreeGrid<TableOfContentItemVO> tocTree) {
         TableOfContentItemVO moveToItem;
 
-        moveToItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
+        moveToItem = new TableOfContentItemVO(originalItem.getTagName(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(),
+                originalItem.getOriginAttr(), originalItem.getNumber(),
                 EC, originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(), originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                 MOVE_TO, isSoftActionRoot,null, null, LEOS_TC_DELETE_ACTION);
 

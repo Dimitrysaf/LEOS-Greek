@@ -242,7 +242,7 @@ public class AnnexContext {
                 .builder()
                 .withPurpose(purpose)
                 .build();
-        annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextAction.METADATA_UPDATED));
+        annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextAction.METADATA_UPDATED), false);
     }
 
     public void executeUpdateAnnexIndex() {
@@ -260,7 +260,7 @@ public class AnnexContext {
                 .withIndex(index)
                 .withNumber(annexNumber)
                 .build();
-        annex = annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextAction.ANNEX_METADATA_UPDATED));
+        annex = annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextAction.ANNEX_METADATA_UPDATED), false);
     }
 
     public void executeUpdateAnnexStructure() {

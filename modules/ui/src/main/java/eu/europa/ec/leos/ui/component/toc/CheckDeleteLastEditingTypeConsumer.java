@@ -3,13 +3,17 @@ package eu.europa.ec.leos.ui.component.toc;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.UI;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
 
 import org.vaadin.dialogs.ConfirmDialog;
 
+import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,15 +29,20 @@ import static eu.europa.ec.leos.vo.structure.AknTag.RECITAL;
 
 public class CheckDeleteLastEditingTypeConsumer implements Consumer<CheckDeleteLastEditingTypeEvent> {
 
-    private static final List<AknTag> NODES_TO_CONSIDER = Arrays.asList(CITATION, RECITAL, ARTICLE, LEVEL);
+    private static final List<String> NODES_TO_CONSIDER = Arrays.asList(CITATION.value(), RECITAL.value(), ARTICLE.value(), LEVEL.value());
     private final MultiSelectTreeGrid<TableOfContentItemVO> tocTree;
     private final MessageHelper messageHelper;
     private final EventBus eventBus;
+    private final Provider<StructureContext> structureContextProvider;
 
-    public CheckDeleteLastEditingTypeConsumer(MultiSelectTreeGrid<TableOfContentItemVO> tocTree, MessageHelper messageHelper, EventBus eventBus) {
+    public CheckDeleteLastEditingTypeConsumer(MultiSelectTreeGrid<TableOfContentItemVO> tocTree,
+                                              MessageHelper messageHelper,
+                                              EventBus eventBus,
+                                              Provider<StructureContext> structureContextProvider) {
         this.tocTree = tocTree;
         this.messageHelper = messageHelper;
         this.eventBus = eventBus;
+        this.structureContextProvider = structureContextProvider;
     }
 
     @Override
@@ -85,8 +94,8 @@ public class CheckDeleteLastEditingTypeConsumer implements Consumer<CheckDeleteL
         List<TableOfContentItemVO> toBeDeleted = item.flattened().collect(Collectors.toList());
         List<TableOfContentItemVO> toBeRemain = new ArrayList<>(allItems);
         toBeRemain.removeAll(toBeDeleted);
-        Set<AknTag> allElementTypes = getDistinctElementTypes(allItems);
-        Set<AknTag> toBeRemainElementTypes = getDistinctElementTypes(toBeRemain);
+        Set<String> allElementTypes = getDistinctElementTypes(allItems);
+        Set<String> toBeRemainElementTypes = getDistinctElementTypes(toBeRemain);
         return allElementTypes.size() != toBeRemainElementTypes.size();
     }
 
@@ -107,19 +116,21 @@ public class CheckDeleteLastEditingTypeConsumer implements Consumer<CheckDeleteL
     }
 
     private Optional<TableOfContentItemVO> findRoot(TableOfContentItemVO item) {
-        if (item.getTocItem().isRoot()) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, item.getTagName());
+        TocItem parentTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, item.getParentItem().getTagName());
+        if (tocItem.isRoot()) {
             return Optional.of(item);
-        } else if (item.getParentItem().getTocItem().isRoot()) {
+        } else if (parentTocItem.isRoot()) {
             return Optional.of(item.getParentItem());
         } else {
             return findRoot(item.getParentItem());
         }
     }
 
-    private Set<AknTag> getDistinctElementTypes(List<TableOfContentItemVO> allItems) {
+    private Set<String> getDistinctElementTypes(List<TableOfContentItemVO> allItems) {
         return allItems.stream()
-                .filter(p -> NODES_TO_CONSIDER.contains(p.getTocItem().getAknTag()))
-                .map(p -> p.getTocItem().getAknTag())
+                .filter(p -> NODES_TO_CONSIDER.contains(p.getTagName().value()))
+                .map(p -> p.getTagName().value())
                 .collect(Collectors.toSet());
     }
 

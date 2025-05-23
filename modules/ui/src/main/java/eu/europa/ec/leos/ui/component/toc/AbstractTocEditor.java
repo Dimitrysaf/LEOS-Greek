@@ -21,6 +21,8 @@ import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.OptionsType;
@@ -29,7 +31,9 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +46,7 @@ import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.model.action.SoftActionType.UNDELETE;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.getTocItemChildPosition;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.searchInRules;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLAUSE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
@@ -61,6 +65,12 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentProcess
 
 public abstract class AbstractTocEditor implements TocEditor {
     protected static final String TEMP_PREFIX = "temp_";
+    protected final Provider<StructureContext> structureContextProvider;
+
+    @Autowired
+    public AbstractTocEditor(Provider<StructureContext> structureContextProvider) {
+        this.structureContextProvider = structureContextProvider;
+    }
 
     protected TocDropResult validateAction(final TreeGrid<TableOfContentItemVO> tocTree, final Map<TocItem, List<TocItem>> tableOfContentRules,
                                            final List<TableOfContentItemVO> droppedItems, final TableOfContentItemVO targetItem, final ItemPosition position) {
@@ -113,7 +123,8 @@ public abstract class AbstractTocEditor implements TocEditor {
     private TableOfContentItemVO copyDeletedItemToTempForUndelete(TableOfContentItemVO originalItem){
         TableOfContentItemVO tempDeletedItem;
         if (isDeletedItem(originalItem)) {
-            tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId().replace(SOFT_DELETE_PLACEHOLDER_ID_PREFIX, ""),
+            tempDeletedItem = new TableOfContentItemVO(originalItem.getTagName(), TEMP_PREFIX + originalItem.getId().replace(SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
+                    ""),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     EC, originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
@@ -121,7 +132,7 @@ public abstract class AbstractTocEditor implements TocEditor {
                     null, null, null, true,
                     originalItem.getNumSoftActionAttr());
         } else {
-            tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX +originalItem.getId(),
+            tempDeletedItem = new TableOfContentItemVO(originalItem.getTagName(), TEMP_PREFIX +originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
@@ -154,13 +165,14 @@ public abstract class AbstractTocEditor implements TocEditor {
                                                        final TreeGrid<TableOfContentItemVO> tocTree, final Map<TocItem, List<TocItem>> tableOfContentRules,
                                                        final TableOfContentItemVO parentItem, final ItemPosition position) {
 
-        TocItem targetTocItem = targetItem.getTocItem();
-        List<TocItem> targetTocItems = tableOfContentRules.get(targetTocItem);
+        TocItem targetTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                targetItem.getTagName());
+        List<TocItem> targetTocItems = searchInRules(targetItem.getTagName(), tableOfContentRules);
         if (isSourceDivision(sourceItem) || isCrossheading(sourceItem) || isDroppedOnPointOrIndent(sourceItem, targetItem) || getTagValueFromTocItemVo(sourceItem).
                 equals(getTagValueFromTocItemVo(targetItem))) {
             TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, true);
             return validateAddingToActualTargetItem(result, sourceItem, targetItem, tocTree, tableOfContentRules, actualTargetItem, position);
-        } else if (targetTocItems != null && targetTocItems.size() > 0 && targetTocItems.contains(sourceItem.getTocItem())) {
+        } else if (targetTocItems != null && targetTocItems.size() > 0 && targetTocItems.contains(targetTocItem)) {
             //If target item type is root, source item will be added as child, else validate dropping item at dragged location
             TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, false);
             return targetTocItem.isRoot() || validateAddingToActualTargetItem(result, sourceItem, targetItem, tocTree, tableOfContentRules, actualTargetItem, position);
@@ -180,9 +192,9 @@ public abstract class AbstractTocEditor implements TocEditor {
 
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,
                                                              final TocItem parentTocItem, final List<TocItem> parentTocItems) {
-
-        if (parentTocItems == null || parentTocItems.size() == 0 || !parentTocItems.contains(sourceItem.getTocItem())
-                || !sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value())){
+        TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, sourceItem.getTagName());
+        if (parentTocItems == null || parentTocItems.size() == 0 || !parentTocItems.contains(sourceTocItem)
+                || !sourceTocItem.isSameParentAsChild() && parentTocItem.getAknTag().equals(sourceItem.getTagName())){
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");
             result.setSourceItem(sourceItem);
@@ -196,8 +208,9 @@ public abstract class AbstractTocEditor implements TocEditor {
                                                        final TreeGrid<TableOfContentItemVO> tocTree, final Map<TocItem, List<TocItem>> tableOfContentRules,
                                                        final TableOfContentItemVO actualTargetItem, final ItemPosition position) {
 
-        TocItem parentTocItem = actualTargetItem != null ? actualTargetItem.getTocItem() : null;
-        List<TocItem> parentTocItems = tableOfContentRules.get(parentTocItem);
+        TocItem parentTocItem = actualTargetItem != null ? StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                actualTargetItem.getTagName()) : null;
+        List<TocItem> parentTocItems = searchInRules(actualTargetItem.getTagName(), tableOfContentRules);
         boolean parentAndSourceTypeCompatible = validateParentAndSourceTypeCompatibility(result, sourceItem, actualTargetItem, parentTocItem, parentTocItems);
         boolean validAddingToItem = validateAddingToItem(result, sourceItem, targetItem, tocTree, actualTargetItem, position);
         boolean maxDepthReached = validateMaxDepth(result, sourceItem, targetItem);
@@ -208,8 +221,9 @@ public abstract class AbstractTocEditor implements TocEditor {
                                                     final TreeGrid<TableOfContentItemVO> tocTree, final TableOfContentItemVO actualTargetItem, final ItemPosition position);
 
     protected boolean validateMaxDepth(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem) {
-        if (targetItem.getTocItem().getMaxDepth() != null) {
-            int maxDepthRule = Integer.valueOf(targetItem.getTocItem().getMaxDepth());
+        TocItem targetTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
+        if (targetTocItem.getMaxDepth() != null) {
+            int maxDepthRule = Integer.valueOf(targetTocItem.getMaxDepth());
             if (maxDepthRule > 0 && targetItem.getItemDepth() >= maxDepthRule) {
                 result.setSuccess(false);
                 result.setMessageKey("toc.edit.window.drop.error.depth.message");
@@ -223,12 +237,12 @@ public abstract class AbstractTocEditor implements TocEditor {
 
     protected void performAddOrMoveAction(final boolean isAdd, final TreeGrid<TableOfContentItemVO> tocTree, final Map<TocItem, List<TocItem>> tableOfContentRules,
                                           final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem, final TableOfContentItemVO parentItem, final ItemPosition position) {
-
-        if (targetItem.getTocItem().isChildrenAllowed()) {
-            TocItem targetTocItem = targetItem.getTocItem();
-            List<TocItem> targetTocAllowedItems = tableOfContentRules.get(targetTocItem);
+        TocItem targetTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
+        TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, sourceItem.getTagName());
+        if (targetTocItem.isChildrenAllowed()) {
+            List<TocItem> targetTocAllowedItems = searchInRules(targetItem.getTagName(), tableOfContentRules);
             if (isSourceDivision(sourceItem) || isCrossheading(sourceItem) || isDroppedOnPointOrIndent(sourceItem, targetItem) || getTagValueFromTocItemVo(sourceItem).equals(getTagValueFromTocItemVo(targetItem))
-                    || !(targetTocAllowedItems != null && targetTocAllowedItems.size() > 0 && targetTocAllowedItems.contains(sourceItem.getTocItem()))) {
+                    || !(targetTocAllowedItems != null && targetTocAllowedItems.size() > 0 && targetTocAllowedItems.contains(sourceTocItem))) {
                 // If items have the same type or if child elements are not allowed in target add it to its parent
                 TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, true);
                 addOrMoveItem(isAdd, sourceItem, targetItem, tocTree, actualTargetItem, position);
@@ -240,7 +254,7 @@ public abstract class AbstractTocEditor implements TocEditor {
                 //If target item type is root, source item will be added as child before clause item if exists
                 if (targetItem.containsItem(CLAUSE)) {
                     TableOfContentItemVO clauseItem = targetItem.getChildItems().stream()
-                            .filter(x -> x.getTocItem().getAknTag().value().equals(CLAUSE)).findFirst().orElse(null);
+                            .filter(x -> x.getTagName().equals(AknTag.CLAUSE)).findFirst().orElse(null);
                     if(clauseItem != null) {
                         TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, clauseItem, clauseItem.getParentItem(), ItemPosition.BEFORE, true);
                         addOrMoveItem(isAdd, sourceItem, clauseItem, tocTree, actualTargetItem, ItemPosition.BEFORE);
@@ -281,7 +295,7 @@ public abstract class AbstractTocEditor implements TocEditor {
                 } else {
                     actualTargetItem.getChildItems().add(indexSiblings + 1, sourceItem);
                 }
-            } else if (actualTargetItem.equals(targetItem) && LEVEL.equals(sourceItem.getTocItem().getAknTag().value())) {
+            } else if (actualTargetItem.equals(targetItem) && AknTag.LEVEL.equals(sourceItem.getTagName())) {
                 /*
                  * This else is when we add level as child or after a Part, Title, Chapter or Section,
                  * because in this case the actualTargetItem is equal to targetItem, and we need to set
@@ -317,7 +331,7 @@ public abstract class AbstractTocEditor implements TocEditor {
     protected void handleLevelMove(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem) {
 
         // when moving back a LEVEL restore the initial depth
-        if(LEVEL.equals(sourceItem.getTocItem().getAknTag().value()) && LEVEL.equals(targetItem.getTocItem().getAknTag().value())) {
+        if(AknTag.LEVEL.equals(sourceItem.getTagName()) && AknTag.LEVEL.equals(targetItem.getTagName())) {
             sourceItem.setItemDepth(targetItem.getItemDepth());
         }
 
@@ -326,10 +340,11 @@ public abstract class AbstractTocEditor implements TocEditor {
     protected TableOfContentItemVO getActualTargetItem(final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem, final TableOfContentItemVO parentItem,
                                                        final ItemPosition position, boolean isTocItemSibling) {
 
+        TocItem targetTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
         switch (position) {
             case AS_CHILDREN:
-                if ((isTocItemSibling && !targetItem.getTocItem().isSameParentAsChild() && !isCrossheading(sourceItem)
-                        || (targetItem.getTocItem().isSameParentAsChild() && targetItem.containsItem(LIST)))
+                if ((isTocItemSibling && !targetTocItem.isSameParentAsChild() && !isCrossheading(sourceItem)
+                        || (targetTocItem.isSameParentAsChild() && targetItem.containsItem(LIST)))
                         || (targetItem.getId().equals(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + sourceItem.getId()))
                         || (getTagValueFromTocItemVo(targetItem).equalsIgnoreCase(SUBPARAGRAPH) && isCrossheading(sourceItem))) {
                     return parentItem;
@@ -367,8 +382,10 @@ public abstract class AbstractTocEditor implements TocEditor {
     }
 
     private void setItemDepth(final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem, final ItemPosition position) {
-        if ((sourceItem.getTocItem().isHigherElement() != null && sourceItem.getTocItem().isHigherElement())
-                || targetItem.getTocItem().isHigherElement() != null && targetItem.getTocItem().isHigherElement()) {
+        TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, sourceItem.getTagName());
+        TocItem targetTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
+        if ((sourceTocItem.isHigherElement())
+                || targetTocItem.isHigherElement()) {
             setItemDepthInHigherElements(sourceItem, targetItem);
         } else {
             switch (position) {
@@ -379,7 +396,7 @@ public abstract class AbstractTocEditor implements TocEditor {
                     sourceItem.setItemDepth(targetItem.getItemDepth() == 0 ? 1 : targetItem.getItemDepth());
                     break;
                 case AFTER:
-                    if (targetItem.getTocItem().isRoot()) {
+                    if (targetTocItem.isRoot()) {
                         sourceItem.setItemDepth(1);
                     } else {
                         sourceItem.setItemDepth(targetItem.getItemDepth() == 0 ? 1 : targetItem.getItemDepth());
@@ -427,7 +444,7 @@ public abstract class AbstractTocEditor implements TocEditor {
 
     private List<TableOfContentItemVO> getFullTableOfContentFromBody(TableOfContentItemVO sourceItem) {
         TableOfContentItemVO parent = sourceItem.getParentItem();
-        while (parent != null && !parent.getTocItem().getAknTag().equals(AknTag.MAIN_BODY)) {
+        while (parent != null && !parent.getTagName().equals(AknTag.MAIN_BODY.value())) {
             parent = parent.getParentItem();
         }
         return parent != null ? parent.flattened().collect(Collectors.toList()) : Collections.emptyList();
@@ -444,7 +461,8 @@ public abstract class AbstractTocEditor implements TocEditor {
     }
 
     protected boolean isHigherElement(TableOfContentItemVO tocItemVO) {
-        return (tocItemVO.getTocItem().isHigherElement() != null && tocItemVO.getTocItem().isHigherElement());
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tocItemVO.getTagName());
+        return (tocItem.isHigherElement());
     }
 
     protected boolean isLastExistingChildElement(TableOfContentItemVO tocItemVO) {
@@ -466,7 +484,7 @@ public abstract class AbstractTocEditor implements TocEditor {
     }
 
     protected TableOfContentItemVO copyItemToTemp(TableOfContentItemVO originalItem) {
-        TableOfContentItemVO temp = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId(),
+        TableOfContentItemVO temp = new TableOfContentItemVO(originalItem.getTagName(), TEMP_PREFIX + originalItem.getId(),
                 originalItem.getOriginAttr(), originalItem.getNumber(),
                 originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                 originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
@@ -507,7 +525,7 @@ public abstract class AbstractTocEditor implements TocEditor {
     }
 
     protected TableOfContentItemVO copyTempItemToFinalItem(TableOfContentItemVO tempItem) {
-        TableOfContentItemVO finalItem = new TableOfContentItemVO(tempItem.getTocItem(), tempItem.getId().replace(TEMP_PREFIX, ""),
+        TableOfContentItemVO finalItem = new TableOfContentItemVO(tempItem.getTagName(), tempItem.getId().replace(TEMP_PREFIX, ""),
                 tempItem.getOriginAttr(), tempItem.getNumber(),
                 tempItem.getOriginNumAttr(), tempItem.getHeading(), tempItem.getOriginalHeading(), tempItem.getOriginalTocItemType(),
                 tempItem.getNode(), tempItem.getList(), tempItem.getContent(),
@@ -704,9 +722,10 @@ public abstract class AbstractTocEditor implements TocEditor {
 
     private boolean isNumbered(TableOfContentItemVO droppedElement, TableOfContentItemVO targetElement) {
         boolean isNumbered = true;
-        if (OptionsType.NONE.equals(droppedElement.getTocItem().getItemNumber())) {
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, droppedElement.getTagName());
+        if (OptionsType.NONE.equals(tocItem.getItemNumber())) {
             isNumbered = false;
-        } else if (OptionsType.OPTIONAL.equals(droppedElement.getTocItem().getItemNumber())) {
+        } else if (OptionsType.OPTIONAL.equals(tocItem.getItemNumber())) {
             if (getTagValueFromTocItemVo(targetElement).equals(getTagValueFromTocItemVo(droppedElement))) {
                 if ((StringUtils.isEmpty(targetElement.getNumber())) || isNumSoftDeleted(targetElement.getNumSoftActionAttr())) {
                     isNumbered = false;
@@ -825,7 +844,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         TableOfContentItemVO tempDeletedItem;
 
         if (!MOVE_TO.equals(originalItem.getSoftActionAttr()) && !DELETE.equals(originalItem.getSoftActionAttr())) {
-            tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_DELETE_PLACEHOLDER_ID_PREFIX + originalItem.getId(),
+            tempDeletedItem = new TableOfContentItemVO(originalItem.getTagName(), TEMP_PREFIX + SOFT_DELETE_PLACEHOLDER_ID_PREFIX + originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     EC, originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(), originalItem.getNode(),
                     originalItem.getList(),
@@ -834,7 +853,7 @@ public abstract class AbstractTocEditor implements TocEditor {
                     originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(),
                     originalItem.getNumSoftActionAttr(), originalItem.getTrackChangeAction());
         } else {
-            tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId(),
+            tempDeletedItem = new TableOfContentItemVO(originalItem.getTagName(), TEMP_PREFIX + originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     originalItem.getOriginNumAttr(), originalItem.getHeading(), originalItem.getOriginalHeading(), originalItem.getOriginalTocItemType(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
@@ -869,7 +888,8 @@ public abstract class AbstractTocEditor implements TocEditor {
             }
         }
         if (!originalFound) {
-            tocDropResult.setSuccess(!isSoftDeletedOrMoveToItem(ItemPosition.AS_CHILDREN.equals(position) && targetItem.getTocItem().isChildrenAllowed() ? targetItem : parentItem));
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, targetItem.getTagName());
+            tocDropResult.setSuccess(!isSoftDeletedOrMoveToItem(ItemPosition.AS_CHILDREN.equals(position) && tocItem.isChildrenAllowed() ? targetItem : parentItem));
             tocDropResult.setMessageKey("toc.edit.window.drop.error.softdeleted.target.message");
         }
         return tocDropResult;

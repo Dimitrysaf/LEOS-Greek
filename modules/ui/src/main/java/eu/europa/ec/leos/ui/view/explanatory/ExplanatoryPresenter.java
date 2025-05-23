@@ -1365,7 +1365,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(explanatory,
                 TocMode.SIMPLIFIED_CLEAN);
         eventBus.post(new FetchCrossRefTocResponseEvent(
-                new TocAndAncestorsVO(tocItemList, elementAncestorsIds, messageHelper, structureContextProvider.get().getNumberingConfigs())));
+                new TocAndAncestorsVO(tocItemList, structureContextProvider.get().getTocItems(), elementAncestorsIds, messageHelper,
+                        structureContextProvider.get().getNumberingConfigs())));
     }
 
     @Subscribe

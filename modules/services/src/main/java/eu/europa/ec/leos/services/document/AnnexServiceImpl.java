@@ -141,19 +141,19 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, VersionType versionType, String comment) {
+    public Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, VersionType versionType, String comment, boolean updateInternalRefs) {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), updatedMetadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        byte[] updatedBytes = updateDataInXml(getContent(annex), updatedMetadata, true);
-        return updateAnnex(annex, updatedMetadata, updatedBytes, versionType, comment, stopwatch, true);
+        byte[] updatedBytes = updateDataInXml(getContent(annex), updatedMetadata, updateInternalRefs);
+        return updateAnnex(annex, updatedMetadata, updatedBytes, versionType, comment, stopwatch, false);
     }
 
     @Override
     public Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs) {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), metadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        updatedAnnexContent = updateDataInXml(updatedAnnexContent, metadata, updateInternalRefs);
-        return updateAnnex(annex, metadata, updatedAnnexContent, versionType, comment, stopwatch, false);
+        updatedAnnexContent = updateDataInXml(updatedAnnexContent, metadata, false);
+        return updateAnnex(annex, metadata, updatedAnnexContent, versionType, comment, stopwatch, updateInternalRefs);
     }
 
     private Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, byte[] updatedBytes, VersionType versionType, String comment, Stopwatch stopwatch, boolean updateInternalRefs) {
@@ -238,7 +238,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Validate.notNull(annex, "Annex is required");
         final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
         final byte[] annexContent = content.getSource().getBytes();
-        return tableOfContentProcessor.buildTableOfContent(DOC, annexContent, mode);
+        return tableOfContentProcessor.buildTableOfContent(DOC, annexContent, mode, true);
     }
 
     @Override
@@ -260,7 +260,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
                 break;
         }
         newXmlContent = numberService.renumberHigherSubDivisions(newXmlContent, tocList);
-        newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
+        newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         return updateAnnex(annex, newXmlContent, VersionType.MINOR, actionMsg);
     }

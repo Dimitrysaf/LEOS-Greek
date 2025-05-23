@@ -17,6 +17,7 @@ define(function leosDapInfoPluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
+    var lodash = require('lodash');
     var pluginName = "leosDapInfo";
     var TRISTATE_DISABLED = CKEDITOR.TRISTATE_DISABLED, TRISTATE_OFF = CKEDITOR.TRISTATE_OFF;
     var DAP_CMD_NAME = "dapinfo";
@@ -27,7 +28,7 @@ define(function leosDapInfoPluginModule(require) {
         icons: pluginName.toLowerCase(),
 
         init: function(editor) {
-            var currentTocItem =  editor.LEOS.tocItemsList.find(x => x.aknTag === editor.LEOS.elementType.toLowerCase());
+            var currentTocItem =  editor.LEOS.tocItemsList.find(x => lodash.camelCase(x.aknTag).toLowerCase() === lodash.camelCase(editor.LEOS.elementType).toLowerCase());
             if(!!currentTocItem
                 && currentTocItem.dapInfos
                 && currentTocItem.dapInfos.dapInfos) {

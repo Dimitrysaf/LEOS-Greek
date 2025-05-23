@@ -148,7 +148,7 @@ public class TableOfContentHelperTest extends LeosTest {
 
     private TableOfContentItemVO getItemFromToc(String fileName, String id) {
         byte[] v0 = TestUtils.getFileContent(INDENT_FOLDER, fileName);
-        List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(BILL, v0, TocMode.NOT_SIMPLIFIED);
+        List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(BILL, v0, TocMode.NOT_SIMPLIFIED, true);
         Optional<TableOfContentItemVO> item = TableOfContentHelper.getItemFromTocById(id, toc);
         return item.orElseGet(null);
     }

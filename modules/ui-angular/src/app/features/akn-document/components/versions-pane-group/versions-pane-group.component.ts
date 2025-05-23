@@ -62,7 +62,6 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       this.onVersionSearchResultsChange(results);
     });
     this.toggleShowMore(false);
-    this.updateSubVersionsCount();
     this.translate.onTranslationChange.subscribe(() => this.updateState());
     if (!this.majorVersion) {
       this.docService.recentChanges$.subscribe((recentVersions: Version[]) => {

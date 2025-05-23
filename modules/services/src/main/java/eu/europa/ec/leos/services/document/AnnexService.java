@@ -38,7 +38,7 @@ public interface AnnexService {
 
     void deleteAnnex(Annex annex);
 
-    Annex updateAnnex(Annex annex, AnnexMetadata metadata, VersionType versionType, String comment);
+    Annex updateAnnex(Annex annex, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs);
     
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, VersionType versionType, String comment);
     

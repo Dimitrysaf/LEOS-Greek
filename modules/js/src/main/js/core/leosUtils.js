@@ -18,6 +18,7 @@ define(function leosUtilsModule(require) {
     // load module dependencies
     require("dateFormat");
     var log = require("logger");
+    var lodash = require('lodash');
     //var $ = require("jquery");
     var CKEDITOR = require("promise!ckEditor");
     var REGEX_ORIGIN = new RegExp("[leos:|data-](\\w-?)*origin");
@@ -36,11 +37,11 @@ define(function leosUtilsModule(require) {
     var EMPHATIZED_TEXT_TAG = "EM";
     var SUB_TEXT_TAG = "SUB";
     var SUP_TEXT_TAG = "SUP";
+    var SPAN_TAG = "SPAN";
     var HEADING_TAG = "H2";
     var HEADING = "heading";
     var NUM = "num";
     var PARAGRAPH = "paragraph";
-    var BLOCKCONTAINER = "blockcontainer";
     var LEVEL = "level";
     var DOCPURPOSE = "docPurpose";
     var ID = "id";
@@ -87,9 +88,9 @@ define(function leosUtilsModule(require) {
             var parentTocItem;
             do {
                 parentTocItem = tocItemsList.find(function(elem) {
-                    return elem.aknTag.toLowerCase() === currentElem.parentElement.tagName.toLowerCase()
+                    return lodash.camelCase(elem.aknTag).toLowerCase() === currentElem.parentElement.tagName.toLowerCase()
                         // Added title tag special condition in the scope of LEOS-6070
-                        || (elem.aknTag.toLowerCase() === 'title' && currentElem.parentElement.tagName.toLowerCase() === 'akntitle');
+                        || (lodash.camelCase(elem.aknTag).toLowerCase() === 'title' && currentElem.parentElement.tagName.toLowerCase() === 'akntitle');
                 });
                 currentElem = currentElem.parentElement;
             } while (!parentTocItem && currentElem.parentElement);
@@ -119,7 +120,7 @@ define(function leosUtilsModule(require) {
                 return false;
             }
         }
-        var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG];
+        var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG, SPAN_TAG];
         var elementsToBeChecked = [PARAGRAPH_POINT_TAG, SUBPARAGRAPH_SUBPOINT_TAG];
         if (el.tagName === HEADING_TAG && CKEDITOR.currentInstance) {
             var tocItem = _getParentTocItem(el, CKEDITOR.currentInstance.LEOS.tocItemsList);
@@ -223,7 +224,7 @@ define(function leosUtilsModule(require) {
     function _getWrapper($element, tocItemsList) {
         var wrapperTag = _getElementTagName($element);
         var wrapperElement = tocItemsList.find(function (elem) {
-            return elem.aknTag.toLowerCase() === wrapperTag;
+            return lodash.camelCase(elem.aknTag).toLowerCase() === wrapperTag;
         });
 
         if (wrapperElement) {
@@ -234,7 +235,7 @@ define(function leosUtilsModule(require) {
                 return;
             }
             var parentElement = tocItemsList.find(function (elem) {
-                return elem.aknTag.toLowerCase() === wrapperTag;
+                return lodash.camelCase(elem.aknTag).toLowerCase() === wrapperTag;
             });
             if(parentElement && parentElement.root) {
                 return $element.parent();
@@ -420,7 +421,6 @@ define(function leosUtilsModule(require) {
         ID: ID,
         HEADING: HEADING,
         SPELLCHECKER: SPELLCHECKER,
-        BLOCKCONTAINER: BLOCKCONTAINER,
         LEVEL: LEVEL,
         DOCPURPOSE: DOCPURPOSE
     };

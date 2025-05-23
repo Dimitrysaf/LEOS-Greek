@@ -33,6 +33,7 @@ export class VersionsPaneComponent implements OnInit {
   initVersions() {
     const self = this;
     this.semaphore = false;
+    this.doc.updateVersionsData();
     this.doc.versions$.subscribe((recVersions: Version[]) => {
       self.versions = [...recVersions];
       self.hasMore = self.versions.length < self.totalNumVersions;

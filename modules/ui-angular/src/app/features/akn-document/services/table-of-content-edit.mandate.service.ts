@@ -25,14 +25,14 @@ import {
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import {
   ClassToDepthType,
-  TableOfContentItemVO,
+  TableOfContentItemVO, TocItem,
 } from '@/shared/models/toc.model';
 import { DocumentService } from '@/shared/services/document.service';
 import {
   containsItemOfOrigin,
   containsOnlySameIndentType,
   findNodeById,
-  getIndentLevel, getNumberingTypeByLanguage,
+  getIndentLevel, getNumberingTypeByLanguage, getTocItemByAknTag,
   isIndentAllowed,
   isLastExistingChildElement,
   isNumSoftDeleted,
@@ -65,10 +65,10 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
     if (!actualTargetItem) {
       actualTargetItem = targetItem;
     }
-    const droppedElementTagName = sourceItem.tocItem.aknTag;
-    const droppedElementTagNumberingType = getNumberingTypeByLanguage(sourceItem.tocItem, this.documentConfig.langGroup);
+    const droppedElementTagName = sourceItem.tagName;
+    const droppedElementTagNumberingType = getNumberingTypeByLanguage(this.tocService.getCurrentTocItems(), sourceItem.tagName, this.documentConfig.langGroup);
 
-    const targetName = actualTargetItem.tocItem.aknTag;
+    const targetName = actualTargetItem.tagName;
     let indentAllowed = false;
 
     switch (droppedElementTagName) {
@@ -98,13 +98,14 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
           ([PARAGRAPH, LEVEL].includes(targetName) &&
             (this.containsItem(actualTargetItem, LIST) ||
               !containsOnlySameIndentType(
+                this.tocService.getCurrentTocItems(),
                 actualTargetItem,
                 droppedElementTagNumberingType,
                 this.documentConfig.langGroup
               ))) ||
           (targetName === droppedElementTagName &&
             this.containsItem(actualTargetItem, LIST)) ||
-          !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem, this.documentConfig.langGroup)
+          !validateAgainstOtherIndentsInList(this.tocService.getCurrentTocItems(), tocTree, sourceItem, targetItem, this.documentConfig.langGroup)
         ) {
           validationResult.success = false;
           if (!indentAllowed) {
@@ -168,11 +169,12 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
       );
       sourceItem.originAttr = CN;
       this.setNumber(tocTree, sourceItem, targetItem);
-      if (!sourceItem.tocItem.addSoftAttr) {
+      const sourceTocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), sourceItem.tagName);
+      if (!sourceTocItem.addSoftAttr) {
         sourceItem.softActionAttr = ADD;
         sourceItem.softActionRoot = true;
       }
-      if (sourceItem.tocItem.aknTag === 'DIVISION') {
+      if (sourceItem.tagName === 'DIVISION') {
         sourceItem.style = 'type_1';
       }
     } else {
@@ -211,7 +213,7 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
         actualTargetItem,
         position,
       );
-      restoreMovedItemOrSetNumber(tocTree, sourceItem, targetItem, position);
+      restoreMovedItemOrSetNumber(this.tocService.getCurrentTocItems(), tocTree, sourceItem, targetItem, position);
     }
     const paretnNode = findNodeById(tocTree, sourceItem.parentItem);
     this.handleLevelMove(sourceItem, targetItem);
@@ -239,7 +241,7 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
 
       // Handles specific case while moving unnumbered paragraph together with numbered paragraphs
       if (
-        [PARAGRAPH, LEVEL].includes(moveFromItem.tocItem.aknTag) &&
+        [PARAGRAPH, LEVEL].includes(moveFromItem.tagName) &&
         moveFromItem.number === ''
       ) {
         const moveFromSiblings = findNodeById(
@@ -282,7 +284,7 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
   ) {
     const moveToItem = cloneDeep(originalItem);
     moveToItem.childItems = [];
-    if (!ELEMENTS_WITHOUT_CONTENT.includes(originalItem.tocItem.aknTag)) {
+    if (!ELEMENTS_WITHOUT_CONTENT.includes(originalItem.tagName)) {
       moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveToItem.id;
       moveToItem.originNumAttr = EC;
       moveToItem.softActionAttr = MOVE_TO;
@@ -334,18 +336,18 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
     treeData: TableOfContentItemVO[],
   ) {
     if (
-      ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING.includes(dropData.tocItem.aknTag)
+      ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING.includes(dropData.tagName)
     ) {
       let parentItemVO = findNodeById(treeData, dropData.parentItem);
       while (parentItemVO != null) {
         if (
           ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING.includes(
-            parentItemVO.tocItem.aknTag,
+            parentItemVO.tagName,
           )
         ) {
           parentItemVO.isAffected = true;
           if (
-            POINT_ROOT_PARENT_ELEMENTS.includes(parentItemVO.tocItem.aknTag)
+            POINT_ROOT_PARENT_ELEMENTS.includes(parentItemVO.tagName)
           ) {
             break;
           }
@@ -357,10 +359,11 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
 
   isNumberedCN = (element: TableOfContentItemVO) => {
     let isNumbered = true;
-    if ('NONE' === element.tocItem.itemNumber) {
+    const tocItem: TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), element.tagName);
+    if ('NONE' === tocItem.itemNumber) {
       isNumbered = false;
     } else if (
-      'OPTIONAL' === element.tocItem.itemNumber &&
+      'OPTIONAL' === tocItem.itemNumber &&
       (element.number == null ||
         element.number === '' ||
         isNumSoftDeleted(element.numSoftActionAttr))
@@ -398,7 +401,7 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
   ) => {
     const parentItem = findNodeById(tocTree, deletedItem.id);
     if (
-      parentItem.tocItem.aknTag === LIST &&
+      parentItem.tagName === LIST &&
       isLastExistingChildElement(deletedItem, parentItem)
     ) {
       return parentItem;

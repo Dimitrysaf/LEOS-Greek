@@ -145,6 +145,7 @@ public class XmlHelper {
     public static final String LEOS_OPTIONAL = "leos:optional";
     public static final String LEOS_GROUP = "leos:group";
     public static final String INLINE_NUM = "crossHnum";
+    public static final String SIGNATORY = "signatory";
     public static final String INDENT_LEVEL_PROPERTY = "--indent-level";
     public static final String INLINE_NUM_PROPERTY = "--inline-num";
     public static final String STYLE = "style";
@@ -313,7 +314,7 @@ public class XmlHelper {
     private static Pair<Integer, Integer> getStartEndIndexesOfContent(TableOfContentItemVO tocItem) {
         String content = tocItem.getContent();
         boolean containTagContent = content.contains(OPEN_TAG + CONTENT) && content.contains(OPEN_END_TAG + CONTENT + CLOSE_TAG);
-        String tagName = tocItem.getTocItem().getAknTag().value();
+        String tagName = tocItem.getTagName().value();
         boolean containTagName = content.contains(OPEN_TAG + tagName.toLowerCase()) && content.contains(OPEN_END_TAG + tagName.toLowerCase(Locale.ROOT) + CLOSE_TAG);
         if (!containTagName) {
             containTagName = content.contains(OPEN_TAG + tagName) && content.contains(OPEN_END_TAG + tagName + CLOSE_TAG);
@@ -847,6 +848,20 @@ public class XmlHelper {
             return false;
         }
         return pattern.matcher(documentRef).matches();
+    }
+
+    public static boolean hasIDAPrefix(String id) {
+        return id.startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX)
+                || id.startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)
+                || id.startsWith(SOFT_SPLITTED_PLACEHOLDER_ID_PREFIX)
+                || id.startsWith(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX);
+    }
+
+    public static String removeIDPrefix(String id) {
+        return id.replaceFirst(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, "")
+                .replaceFirst(SOFT_DELETE_PLACEHOLDER_ID_PREFIX, "")
+                .replaceFirst(SOFT_SPLITTED_PLACEHOLDER_ID_PREFIX, "")
+                .replaceFirst(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, "");
     }
 
     public static <T> T loadFromFile(byte[] fileBytes, Class<T> clazz, Class objectFactory, String schemaType) {
