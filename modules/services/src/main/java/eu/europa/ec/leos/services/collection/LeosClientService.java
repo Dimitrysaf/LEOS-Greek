@@ -16,4 +16,9 @@ public class LeosClientService {
     public Optional<LeosClientResponse> getLeosClient (String systemClientId) {
         return leosRepository.getLeosClient(systemClientId);
     }
+
+    public Optional<LeosClientResponse> getLeosClient (String systemClientId, String technicalUser) {
+        return leosRepository.getLeosClient(systemClientId, technicalUser);
+    }
+
 }

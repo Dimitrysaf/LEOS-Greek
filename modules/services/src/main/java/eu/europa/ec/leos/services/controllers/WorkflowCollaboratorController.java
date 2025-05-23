@@ -7,7 +7,9 @@ import eu.europa.ec.leos.integration.ExternalSystemACLService;
 import eu.europa.ec.leos.integration.dto.AccessDTO;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.CollaboratorService;
+import eu.europa.ec.leos.services.collection.LeosClientService;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
@@ -17,6 +19,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.utils.HttpUtils;
+import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Security;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,22 +47,25 @@ public class WorkflowCollaboratorController {
     private final PackageService packageService;
     private final ExternalSystemACLService externalSystemACLService;
     private final CollaboratorService collaboratorService;
+    private final LeosClientService leosClientService;
     private final CollectionUrlBuilder urlBuilder;
     private final UserService userService;
+    private final SecurityContext securityContext;
 
     @PostMapping(value = "/{proposalRef}/workflow-collaborators")
     public ResponseEntity<Object> addWorkflowCollaboratorAcl(
             @PathVariable("proposalRef") String proposalRef,
             @RequestBody WorkflowCollaboratorAclRequest workflowCollaboratorAclRequest,
             @RequestHeader("Authorization") String authorizationHeader) {
+        Optional<LeosClientResponse> leosClientResponse = getLeosClientResponse(authorizationHeader, securityContext);
+        LeosClientResponse leosClient = leosClientResponse.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN));
         final String proposalReference = encodeParam(proposalRef);
-        Proposal proposal = proposalService.findProposalByRef(proposalReference);
-        final Optional<String> systemClientId = HttpUtils.extractSystemClientIdFromAuthorizationHeader(authorizationHeader);
-        logInfo(log, "workflow-collaborators: proposalRef:%s, payload:%s, systemClientId:%s", proposalReference, workflowCollaboratorAclRequest.toString(),systemClientId.orElse("System-client-id not found"));
-        if (!systemClientId.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN);
-        }
-        final String clientSystemId = systemClientId.get();
+        Proposal proposal = proposalService.getProposalByRef(proposalReference);
+        logInfo(log, "workflow-collaborators: proposalRef:%s, payload:%s, securityContext.user:%s",
+                proposalReference,
+                workflowCollaboratorAclRequest.toString(),
+                securityContext.getUser().getLogin());
+        final String clientSystemId = leosClient.getName();
         deleteWorkflowCollaborators(proposal, proposalRef, clientSystemId);
         final Integer integer = workflowCollaboratorService.setWorkflowCollaboratorAcl(proposal, clientSystemId, workflowCollaboratorAclRequest);
         final List<AccessDTO> accessControlList = externalSystemACLService.getAccessControlList(workflowCollaboratorAclRequest.getAclCallbackUrl());
@@ -66,6 +73,14 @@ public class WorkflowCollaboratorController {
             addWorkflowCollaborator(proposal, proposalReference, clientSystemId, u)
         );
         return new ResponseEntity<>(integer, HttpStatus.OK);
+    }
+
+    private Optional<LeosClientResponse> getLeosClientResponse(String authorizationHeader, SecurityContext securityContext) {
+        final Optional<String> systemClientId = HttpUtils.extractSystemClientIdFromAuthorizationHeader(authorizationHeader);
+        if (systemClientId.isPresent()) {
+            return leosClientService.getLeosClient(systemClientId.get(), securityContext.getUser().getLogin());
+        }
+        return Optional.empty();
     }
 
     private void deleteWorkflowCollaborators(Proposal proposal, String proposalRef, String systemClientId) {
@@ -104,7 +119,13 @@ public class WorkflowCollaboratorController {
             }
         }
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        collaboratorService.addCollaborator(proposal, userId, userId, roleName, connectedDG, proposalUrl, systemClientId);
+        collaboratorService.addCollaborator(proposal,
+                userId,
+                userId,//collaboratorName
+                roleName,
+                connectedDG,
+                proposalUrl,
+                systemClientId);
     }
 
     /**

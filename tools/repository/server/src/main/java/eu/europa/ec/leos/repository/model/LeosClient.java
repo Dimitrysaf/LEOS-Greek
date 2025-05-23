@@ -8,4 +8,5 @@ import lombok.Data;
 public class LeosClient {
     private String name;
     private String displayName;
+    private String technicalUser;
 }
