@@ -27,6 +27,8 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
+import {LoadingService} from "@/shared/services/loading.service";
+import {EuiGrowlService} from "@eui/core";
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -77,6 +79,9 @@ export class ProposalDraftsComponent
     private coEditionService: CoEditionServiceWS,
     private translate: TranslateService,
     private dialogService: EuiDialogService,
+    private loadingService: LoadingService,
+    private growlService: EuiGrowlService,
+    private translateService: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -182,13 +187,30 @@ export class ProposalDraftsComponent
 
   drop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.annexes, event.previousIndex, event.currentIndex);
-    const annexRef = this.annexes[event.currentIndex].id;
     //if dropped in the same position do nothing
     if (event.currentIndex === event.previousIndex) return;
     this.proposalDetailsService.updateAnnexOrder(
-      ++event.previousIndex,
-      ++event.currentIndex,
-    );
+      event.previousIndex + 1,
+      event.currentIndex + 1,
+    ).subscribe({
+      next: () => this.proposalDetailsService.setProposalRef(this.proposalRef),
+      error: (res) => {
+        moveItemInArray(this.annexes, event.currentIndex, event.previousIndex);
+        this.growlService.growl({
+          severity: 'danger',
+          summary: this.translateService.instant(
+            'global.notifications.title.error',
+          ),
+          detail: this.translateService.instant(
+            'page.collection.drafts.annex.reorder-dialog.error',
+          ),
+          life: 5000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+        });
+        this.proposalDetailsService.setProposalRef(this.proposalRef);
+      },
+    });
   }
 
   handleExplanatoryDelete() {

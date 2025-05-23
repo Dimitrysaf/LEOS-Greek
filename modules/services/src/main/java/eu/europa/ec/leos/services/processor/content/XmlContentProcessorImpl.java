@@ -1423,6 +1423,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
+    public byte[] updateExternalReferencesOnAnnexesUpdate(byte[] xmlContent) {
+        Document document = createXercesDocument(xmlContent);
+        updateExternalReferences(document);
+        return nodeToByteArray(document);
+    }
+
+    @Override
     public byte[] updateReferencesOnImport(byte[] xmlContent, Map<String, String> refsMatching) {
         Document document = createXercesDocument(xmlContent);
         updateReferencesOnImport(document, refsMatching);

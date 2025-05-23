@@ -289,6 +289,7 @@
   "page.collection.drafts.title-dialog.title": "Edit title",
   "page.collection.drafts.title-dialog.label": "Title",
   "page.collection.drafts.annex.reorder-dialog.title": "Edit annex order",
+  "page.collection.drafts.annex.reorder-dialog.error": "Fail to reorder annexes, please try again",
   "page.collection.drafts.annex.deletion.error": "Annex Deletion failed",
   "page.collection.drafts.last-updated-on-by": "Last updated on {{ date }} by {{ name }}",
   "page.editor.actions-merge-contributions.title": "Merging not fully completed",

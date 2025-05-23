@@ -39,6 +39,7 @@ import { downloadBlob } from '@/shared/utils';
 import { ExportPackageVO } from '../models/export-package.model';
 import { Milestone } from '../models/milestone.model';
 import {EuiDialogService} from "@eui/components/eui-dialog";
+import {moveItemInArray} from "@angular/cdk/drag-drop";
 
 @Injectable({ providedIn: 'root' })
 export class ProposalDetailsService implements OnDestroy {
@@ -186,14 +187,11 @@ export class ProposalDetailsService implements OnDestroy {
     nextIndex: number,
   ) {
     this.loadingService.setLoading(true);
-    this.http
+    return this.http
       .post<any>(
         `${apiBaseUrl}/secured/updateAnnexPosition/${this.proposalRef}/annex?previousIndex=${previousIndex}&nextIndex=${nextIndex}`,
         {},
       )
-      .subscribe(() => {
-        this.setProposalRef(this.proposalRef);
-      });
   }
 
   updateProposalMetadata(docPurpose: string, eeaRelevance: boolean) {
