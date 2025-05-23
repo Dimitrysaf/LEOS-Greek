@@ -20,10 +20,9 @@ define(function refToLinkExtensionModule(require) {
     var $ = require("jquery");
     var refToLink = require("refToLink");
     var UTILS = require("core/leosUtils");
+    var CKEDITOR = require("promise!ckEditor");
     var target;
     var otherTargets;
-    var refLinkExecuted = false;
-
     var refLinkExecuted = false;
 
     function _initRefToLink(connector) {
@@ -36,7 +35,6 @@ define(function refToLinkExtensionModule(require) {
         // configure ref2Link
         // See https://webgate.ec.europa.eu/fpfis/wikis/spaces/Ref2Link/pages/800752769/Ref2Link+Javascript+API+advanced+v1.3 for available options
         R2L.setOptions({
-            //tooltipTrigger: 'notooltip',  //Disabling the tooltip
             worker: true,  // use a web worker for a smoother UX
             linkeddata: true // enable linked data
         });
@@ -54,6 +52,7 @@ define(function refToLinkExtensionModule(require) {
             require(['text!lib/ref2Link_1.3.29/data/rules.' + lang + '.json'], function (rulesJson) {
                 const rules = JSON.parse(rulesJson);
                 R2L.importRules(rules);
+                R2L.bindTooltips();
 
                 log.debug("Registering refToLink extension unregistration listener...");
                 connector.onUnregister = _connectorUnregistrationListener;
@@ -95,8 +94,8 @@ define(function refToLinkExtensionModule(require) {
         log.debug("Registering observers for elements...");
         const observer = new IntersectionObserver(function (entries) {
             entries.forEach(entry => {
-                if (entry.isIntersecting === true) { // Element appears in the screen
-                    observer.unobserve(entry.target); // Element refreshed then not needed to observe anymore
+                if (entry.isIntersecting === true) {
+                    observer.unobserve(entry.target);
                     setTimeout(_renderLinks, 1000, entry.target);
                 }
             });
@@ -122,8 +121,88 @@ define(function refToLinkExtensionModule(require) {
         }
     }
 
+    function _getEditor() {
+        var editor = CKEDITOR.currentInstance;
+        if (!editor) {
+            for (var name in CKEDITOR.instances) {
+                if (CKEDITOR.instances.hasOwnProperty(name)) {
+                    editor = CKEDITOR.instances[name];
+                    break;
+                }
+            }
+        }
+        return editor;
+    }
+
+
     function _renderLinks(el) {
-        $(el).parseDeferred();
+        const $clone = $(el).clone();
+        let editor = _getEditor();
+
+        $clone.parseDeferred()[0].then(() => {
+            const $links = $clone.find('.ref2link-generated');
+
+            $links.each(function () {
+                const $clonedLink = $(this);
+                const refText = $clonedLink.text();
+
+                safeInsertRef2Link(el, refText, $clonedLink, editor);
+            });
+
+            console.log('Ref2Link rendering completed.');
+        }).catch(err => {
+            console.error('Ref2Link parseDeferred failed:', err);
+        });
+    }
+
+
+    function safeInsertRef2Link(targetElement, refText, $refLink, editor) {
+        const linkNode = $refLink[0];
+        const isEditorReady = editor && editor.status === 'ready';
+
+        const walker = document.createTreeWalker(targetElement, NodeFilter.SHOW_TEXT, {
+            acceptNode: (node) => {
+                if (node.parentNode.closest('.ref2link-generated')) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                return node.nodeValue.includes(refText)
+                    ? NodeFilter.FILTER_ACCEPT
+                    : NodeFilter.FILTER_SKIP;
+            }
+        });
+
+        let node;
+        while ((node = walker.nextNode())) {
+            const text = node.nodeValue;
+            const start = text.indexOf(refText);
+            const end = start + refText.length;
+
+            if (start === -1) {
+                continue;
+            }
+
+            if (isEditorReady) {
+                const ckTextNode = new CKEDITOR.dom.text(node);
+                const range = editor.createRange();
+                range.setStart(ckTextNode, start);
+                range.setEnd(ckTextNode, end);
+                range.deleteContents();
+
+                const ckLink = new CKEDITOR.dom.element(linkNode.cloneNode(true));
+                range.insertNode(ckLink);
+            } else {
+                const parts = text.split(refText);
+                if (parts.length === 2) {
+                    const frag = document.createDocumentFragment();
+                    if (parts[0]) frag.appendChild(document.createTextNode(parts[0]));
+                    frag.appendChild(linkNode.cloneNode(true));
+                    if (parts[1]) frag.appendChild(document.createTextNode(parts[1]));
+                    node.parentNode.replaceChild(frag, node);
+                }
+            }
+
+            return;
+        }
     }
 
     return {
