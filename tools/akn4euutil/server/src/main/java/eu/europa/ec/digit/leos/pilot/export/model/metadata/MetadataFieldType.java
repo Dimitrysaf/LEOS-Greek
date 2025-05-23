@@ -8,7 +8,8 @@ public enum MetadataFieldType {
     INTERINSTITUTIONAL_COTE("interinstitutionalCote"),
     COTE("cote"),
     FINAL_COTE("finalCote"),
-    LINKED_DOCUMENTS("linkedDocuments");
+    LINKED_DOCUMENTS("linkedDocuments"),
+    STAMP("stamp");
 
     private final String typeName;
 
