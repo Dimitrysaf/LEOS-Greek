@@ -33,6 +33,11 @@
             & > doctype {
                 text-transform: uppercase;
             }
+
+            & > date {
+                display: contents;
+            }
+
         }
     }
 }
