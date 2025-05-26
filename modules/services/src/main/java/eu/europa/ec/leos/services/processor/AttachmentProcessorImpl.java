@@ -132,6 +132,10 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
                 String xPath = xPathCatalog.getXPathDocumentRefByShowAsAttr(attachmentsElements.get(elementRef));
                 String elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPath);
                 if (StringUtils.isBlank(elementId)) {
+                    xPath = xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef);
+                    elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPath);
+                }
+                if (StringUtils.isBlank(elementId)) {
                     throw new AssertionError("Didn't found a node in xpath: " + xPath + ", namespace: true");
                 }
                 String updatedElement = createDocumentRefTag(elementId, elementRef, attachmentsElements.get(elementRef));
