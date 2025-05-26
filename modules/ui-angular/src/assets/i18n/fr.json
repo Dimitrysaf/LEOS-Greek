@@ -293,6 +293,8 @@
   "page.collection.drafts.title-dialog.title": "Modifier le titre",
   "page.collection.drafts.title-dialog.label": "Titre",
   "page.collection.drafts.annex.reorder-dialog.title": "Editer l'ordre des annexes",
+  "page.collection.drafts.annex.reorder-dialog.error": "Échec de la réorganisation des annexes, veuillez réessayer",
+  "page.collection.drafts.annex.reorder-dialog.warning.concurrency": "Un autre utilisateur est en train de réorganisez les annexes, veuillez rafraichir l'écran et réessayer",
   "page.collection.drafts.annex.deletion.error": "Échec de la suppression de l'annexe",
   "page.collection.drafts.last-updated-on-by": "Dernière mise à jour le {{ date }} par {{ name }}",
   "page.editor.actions-dropdown.label": "Actions",

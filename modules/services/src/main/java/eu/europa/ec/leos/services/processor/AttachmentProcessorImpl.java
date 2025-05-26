@@ -67,7 +67,7 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
         } else {
             updatedContent = xmlContentProcessor.appendElementToTag(xmlContent, "attachments", createAttachmentTag(href, showAs), false);
         }
-        return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedContent);
+        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
     }
 
     @Override
@@ -129,8 +129,12 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
 
         for (String elementRef : attachmentsElements.keySet()) {
             try {
-                String xPath = xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef);
+                String xPath = xPathCatalog.getXPathDocumentRefByShowAsAttr(attachmentsElements.get(elementRef));
                 String elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPath);
+                if (StringUtils.isBlank(elementId)) {
+                    xPath = xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef);
+                    elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPath);
+                }
                 if (StringUtils.isBlank(elementId)) {
                     throw new AssertionError("Didn't found a node in xpath: " + xPath + ", namespace: true");
                 }
@@ -145,7 +149,6 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
     }
 
     private byte[] sortAttributesByAnnexRoman(byte[] xmlContent) {
-
         XercesUtils xercesUtils = new XercesUtils();
         Document document = xercesUtils.createXercesDocument(xmlContent, true);
         NodeList nodeList = document.getElementsByTagName("attachments");

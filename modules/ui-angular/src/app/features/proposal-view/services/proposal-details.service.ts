@@ -186,14 +186,11 @@ export class ProposalDetailsService implements OnDestroy {
     nextIndex: number,
   ) {
     this.loadingService.setLoading(true);
-    this.http
+    return this.http
       .post<any>(
         `${apiBaseUrl}/secured/updateAnnexPosition/${this.proposalRef}/annex?previousIndex=${previousIndex}&nextIndex=${nextIndex}`,
         {},
       )
-      .subscribe(() => {
-        this.setProposalRef(this.proposalRef);
-      });
   }
 
   updateProposalMetadata(docPurpose: string, eeaRelevance: boolean) {
