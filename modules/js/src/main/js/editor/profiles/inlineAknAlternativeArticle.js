@@ -132,7 +132,7 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
             mathJaxClass: 'mathTex',
             // LEOS-2887 removing tooltip title 
             title: false,
-            isAlternativeArticle: true
+            isAlternative: true
     };
     // adding the specific configs coming from the plugins.
     profileConfig = $.extend( profileConfig,  specificConfig);

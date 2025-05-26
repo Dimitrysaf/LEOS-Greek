@@ -85,7 +85,8 @@ define(function aknInlineClauseProfileModule(require) {
             name : "alternatives"
         }],
         // LEOS-3418 : to save modification in the Alternatives clause.
-        isClause: true
+        isClause: true,
+        isAlternative: true
     };
     // adding the specific configs coming from the plugins.
     profileConfig = $.extend( profileConfig,  specificConfig);

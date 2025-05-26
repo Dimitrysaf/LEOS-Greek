@@ -58,7 +58,7 @@ define(function leosTrackChangesPluginModule(require) {
             });
 
             // Add dropdown with Accept All & Reject All buttons
-            if(!editor.config.isAlternativeArticle && !editor.config.isClause) {
+            if(!editor.config.isAlternative && !editor.config.isClause) {
                 editor.ui.addRichCombo('trackChangeActions', {
                     label: 'TC',
                     toolbar: 'trackChanges',
