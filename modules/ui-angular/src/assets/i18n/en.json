@@ -296,6 +296,7 @@
   "page.editor.actions-undo-merge-contributions.title": "Undo not fully completed",
   "page.editor.actions-undo-merge-contributions.content": "Some changes could not be undone. These could be surely related to elements' indentation. Please do this manually if necessary.",
   "page.editor.actions-dropdown.label": "Actions",
+  "page.editor.actions-dropdown.save": "Save",
   "page.editor.actions-dropdown.save-version": "Save this version",
   "page.editor.actions-dropdown.save-version.modal": "Save this version",
   "page.editor.actions-dropdown.save-version.modal.info.label": "Be aware that changes are automatically saved into a version of the document. You can use the ‘Save’ functionality if you want to save a version of the document with a title.",

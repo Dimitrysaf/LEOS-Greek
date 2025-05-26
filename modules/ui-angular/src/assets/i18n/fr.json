@@ -296,6 +296,7 @@
   "page.collection.drafts.annex.deletion.error": "Échec de la suppression de l'annexe",
   "page.collection.drafts.last-updated-on-by": "Dernière mise à jour le {{ date }} par {{ name }}",
   "page.editor.actions-dropdown.label": "Actions",
+  "page.editor.actions-dropdown.save": "Sauver",
   "page.editor.actions-dropdown.save-version": "Sauver cette version",
   "page.editor.actions-dropdown.save-version.modal": "Sauver cette version",
   "page.editor.actions-dropdown.save-version.modal.info.label": "Notez que les modifications sont automatiquement enregistrées dans une version du document. Vous pouvez utiliser la fonction 'Sauver' pour enregistrer une version du document avec un titre.",
