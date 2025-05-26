@@ -149,7 +149,6 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
     }
 
     private byte[] sortAttributesByAnnexRoman(byte[] xmlContent) {
-
         XercesUtils xercesUtils = new XercesUtils();
         Document document = xercesUtils.createXercesDocument(xmlContent, true);
         NodeList nodeList = document.getElementsByTagName("attachments");

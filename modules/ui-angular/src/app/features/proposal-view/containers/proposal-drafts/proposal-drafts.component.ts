@@ -29,6 +29,7 @@ import { CreateProposalService } from '@/shared/services/create-proposal.service
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 import {LoadingService} from "@/shared/services/loading.service";
 import {EuiGrowlService} from "@eui/core";
+import {HttpErrorResponse, HttpStatusCode} from "@angular/common/http";
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -196,18 +197,33 @@ export class ProposalDraftsComponent
       next: () => this.proposalDetailsService.setProposalRef(this.proposalRef),
       error: (res) => {
         moveItemInArray(this.annexes, event.currentIndex, event.previousIndex);
-        this.growlService.growl({
-          severity: 'danger',
-          summary: this.translateService.instant(
-            'global.notifications.title.error',
-          ),
-          detail: this.translateService.instant(
-            'page.collection.drafts.annex.reorder-dialog.error',
-          ),
-          life: 5000,
-          isGrowlSticky: false,
-          position: 'bottom-right',
-        });
+        if (res.status === HttpStatusCode.TooManyRequests) {
+          this.growlService.growl({
+            severity: 'warning',
+            summary: this.translateService.instant(
+              'global.notifications.title.warning',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.drafts.annex.reorder-dialog.warning.concurrency',
+            ),
+            life: 5000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        } else {
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'global.notifications.title.error',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.drafts.annex.reorder-dialog.error',
+            ),
+            life: 5000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        }
         this.proposalDetailsService.setProposalRef(this.proposalRef);
       },
     });
