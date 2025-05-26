@@ -20,21 +20,10 @@ define(function refToLinkExtensionModule(require) {
     var $ = require("jquery");
     var refToLink = require("refToLink");
     var UTILS = require("core/leosUtils");
-    var referencesCache = new Map();
+    var CKEDITOR = require("promise!ckEditor");
     var target;
     var otherTargets;
-
-    var regExpEscape = function (pattern) {
-        return pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    };
-
-    function replaceNbsps(str) {
-        return str.replace(/&nbsp;/gi, String.fromCharCode(160));
-    }
-
-    function replaceNbspsBySpaces(str) {
-        return str.replace(/&nbsp;/gi, " ");
-    }
+    var refLinkExecuted = false;
 
     function _initRefToLink(connector) {
         log.debug("Initializing refToLink extension...");
@@ -46,30 +35,57 @@ define(function refToLinkExtensionModule(require) {
         // configure ref2Link
         // See https://webgate.ec.europa.eu/fpfis/wikis/spaces/Ref2Link/pages/800752769/Ref2Link+Javascript+API+advanced+v1.3 for available options
         R2L.setOptions({
-            tooltipTrigger: 'notooltip', //Disabling the tooltip
             worker: true,  // use a web worker for a smoother UX
             linkeddata: true // enable linked data
         });
-         
+
         R2L.setFilter('environments', ['EC-PRD']);// enable sets of rules
 
-        log.debug("Registering refToLink extension unregistration listener...");
-        connector.onUnregister = _connectorUnregistrationListener;
+        let elementsMetadata;
 
-        log.debug("Registering refToLink extension state change listener...");
-        connector.onStateChange = _connectorStateChangeListener;
+        if (connector.getState().documentsMetadataJsonArray) {
+            elementsMetadata = JSON.parse(connector.getState().documentsMetadataJsonArray);
+        }
+
+        if (Array.isArray(elementsMetadata) && elementsMetadata.length > 0 && elementsMetadata[0]?.language) {
+            let lang = elementsMetadata[0].language.toUpperCase();
+            require(['text!lib/ref2Link_1.3.29/data/rules.' + lang + '.json'], function (rulesJson) {
+                const rules = JSON.parse(rulesJson);
+                R2L.importRules(rules);
+                R2L.bindTooltips();
+
+                log.debug("Registering refToLink extension unregistration listener...");
+                connector.onUnregister = _connectorUnregistrationListener;
+
+                log.debug("Registering refToLink extension state change listener...");
+                connector.onStateChange = _connectorStateChangeListener;
+
+                if (!refLinkExecuted){
+                    _connectorStateChangeListener();
+                }
+
+            });
+        } else {
+            console.warn('No valid document or language found.');
+
+            log.debug("Registering refToLink extension unregistration listener...");
+            connector.onUnregister = _connectorUnregistrationListener;
+
+            log.debug("Registering refToLink extension state change listener...");
+            connector.onStateChange = _connectorStateChangeListener;
+        }
     }
 
     // handle connector unregistration on client-side
     function _connectorUnregistrationListener() {
         log.debug("Unregistering refToLink extension...");
         R2L.clearCache();
-        referencesCache.clear();
     }
 
     // handle connector state change on client-side
     function _connectorStateChangeListener() {
         log.debug("refToLink extension state changed...");
+        refLinkExecuted = true;
         // KLUGE delay execution due to sync issues with target update
         setTimeout(_registerObservers, 500);
     }
@@ -78,8 +94,8 @@ define(function refToLinkExtensionModule(require) {
         log.debug("Registering observers for elements...");
         const observer = new IntersectionObserver(function (entries) {
             entries.forEach(entry => {
-                if (entry.isIntersecting === true) { // Element appears in the screen
-                    observer.unobserve(entry.target); // Element refreshed then not needed to observe anymore
+                if (entry.isIntersecting === true) {
+                    observer.unobserve(entry.target);
                     setTimeout(_renderLinks, 1000, entry.target);
                 }
             });
@@ -105,127 +121,88 @@ define(function refToLinkExtensionModule(require) {
         }
     }
 
-    function _renderLinks(el) {
-
-        log.debug("Rendering links...");
-        var textNodes = _textNodesUnder(el);
-
-        _getReferences(el).subscribe({
-            next: (references) => {
-
-                //1. check for all references in text nodes
-                //2. check the reference with Longest match first and if found, store a placeholder
-                //3. if cache has something replace placeholders with values
-                var cache = {}; //placeholder-reference cache. 
-                textNodes.forEach(function (textNode, txtIndex) {
-                    var newVal = textNode.nodeValue;
-                    references.forEach(function (ref, refIndex) {
-                        // Check first that ref context is included in text node
-                        var refToFind = replaceNbsps(ref.match);
-                        var originalText = textNode.nodeValue;
-                        if (originalText.indexOf(replaceNbspsBySpaces(ref.context)) > -1
-                            || originalText.indexOf(replaceNbsps(ref.context)) > -1) {
-                            // Done like that to avoid too many matches if ref match is only one digit
-                            if ((refToFind.split(new RegExp('\\b')).length > 1 && newVal.indexOf(refToFind) > -1)
-                                || (newVal.search(new RegExp('\\b' + regExpEscape(refToFind) + '\\b')) > -1)) {
-                                newVal = _injectPlaceholders(newVal, '##R' + refIndex + '##', ref, cache);
-                            }
-                        } else if (refToFind.split(new RegExp(' ')).length > 1
-                            && refToFind.includes("/")
-                            && newVal.indexOf(refToFind) > -1) {
-                            // Case for LEOS-5351 where ref context is not present in the node but ref contains a ref to OJ
-                            newVal = _injectPlaceholders(newVal, '##R' + refIndex + '##', ref, cache);
-                        }
-                    });
-
-                    if (Object.keys(cache).length > 0) {
-                        newVal = _ejectPlaceholders(newVal, cache);
-                        $(textNode).replaceWith(newVal); //inject in DOM
-                    }
-                });
-            },
-            error: err => console.error('Error:', err),
-            complete: () => console.log('Done el Ref2Link processing')
-        });
-        
-        //helper functions
-        function _getReferences(el) {
-            return new Observable((observer) => {
-                let references, referenceKey = el.id + '_' + _getHash(el.innerText);
-                if (!referencesCache.has(referenceKey)) {
-                    let $el = $(el).clone();
-                    $el.parseDeferred()[0].then(res => {
-                        references = $el.getReferences();
-                        //Sort to handle case where two references are in same line Example art 2 directive 2017/11/EC and directive 2017/11/EC
-                        references.sort(function (left, right) {
-                            return replaceNbsps(right.match).length - replaceNbsps(left.match).length;
-                        });
-                        referencesCache.set(referenceKey, references);
-                        observer.next(references);
-                        observer.complete();
-                    }).catch(err => {
-                        observer.next([]);
-                        observer.complete();
-                    });
-                } else {
-                    references = referencesCache.get(referenceKey);
-                    observer.next(references);
-                    observer.complete();
+    function _getEditor() {
+        var editor = CKEDITOR.currentInstance;
+        if (!editor) {
+            for (var name in CKEDITOR.instances) {
+                if (CKEDITOR.instances.hasOwnProperty(name)) {
+                    editor = CKEDITOR.instances[name];
+                    break;
                 }
-            });
-        }
-
-        function _getHash(text) {
-            let hash = 0;
-            for (let i = 0; i < text.length; i++) {
-                const char = text.charCodeAt(i);
-                hash = (hash << 5) - hash + char;
-                hash &= hash; // Convert to 32bit integer
-            }
-            return new Uint32Array([hash])[0].toString(36);
-        }
-
-        function _injectPlaceholders(text, placeholder, ref, cache) {
-            cache[placeholder] = ref;
-            var refToFind = replaceNbsps(ref.match);
-            if (refToFind.split(new RegExp('\\b')).length > 1) {
-                return text.replace(new RegExp(regExpEscape(refToFind), 'g'), placeholder);
-            } else {
-                return text.replace(new RegExp('\\b' + regExpEscape(refToFind) + '\\b', 'g'), placeholder);
             }
         }
-
-        function _ejectPlaceholders(text, cache) {
-            Object.keys(cache).forEach(function (placeholder) {
-                // the new value to replace is coming as an attribute of the array cache[placeholder].views
-                var arrViews = cache[placeholder].views;
-                Object.keys(arrViews).forEach(function (key) {
-                    text = text.replace(new RegExp(placeholder, 'g'), arrViews[key].trim());
-                });
-            });
-            return text;
-        }
+        return editor;
     }
 
-    function _textNodesUnder(el) {
-        var node, result = [],
-            walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT,
-                {
-                    acceptNode: function (node) {
-                        return /^(\s*)(\S+)/.test(node.nodeValue)
-                            ? NodeFilter.FILTER_ACCEPT
-                            : NodeFilter.FILTER_REJECT;
-                    }
-                }, false);
 
-        //walk
-        var editedElement = el.querySelector('div.leos-placeholder'); // Skip text nodes inside CKEditor
-        while (node = walker.nextNode()) {
-            if ((editedElement == null) || ((editedElement != null) && (!editedElement.contains(node)))) {
-                result.push(node);
+    function _renderLinks(el) {
+        const $clone = $(el).clone();
+        let editor = _getEditor();
+
+        $clone.parseDeferred()[0].then(() => {
+            const $links = $clone.find('.ref2link-generated');
+
+            $links.each(function () {
+                const $clonedLink = $(this);
+                const refText = $clonedLink.text();
+
+                safeInsertRef2Link(el, refText, $clonedLink, editor);
+            });
+
+            console.log('Ref2Link rendering completed.');
+        }).catch(err => {
+            console.error('Ref2Link parseDeferred failed:', err);
+        });
+    }
+
+
+    function safeInsertRef2Link(targetElement, refText, $refLink, editor) {
+        const linkNode = $refLink[0];
+        const isEditorReady = editor && editor.status === 'ready';
+
+        const walker = document.createTreeWalker(targetElement, NodeFilter.SHOW_TEXT, {
+            acceptNode: (node) => {
+                if (node.parentNode.closest('.ref2link-generated')) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                return node.nodeValue.includes(refText)
+                    ? NodeFilter.FILTER_ACCEPT
+                    : NodeFilter.FILTER_SKIP;
             }
+        });
+
+        let node;
+        while ((node = walker.nextNode())) {
+            const text = node.nodeValue;
+            const start = text.indexOf(refText);
+            const end = start + refText.length;
+
+            if (start === -1) {
+                continue;
+            }
+
+            if (isEditorReady) {
+                const ckTextNode = new CKEDITOR.dom.text(node);
+                const range = editor.createRange();
+                range.setStart(ckTextNode, start);
+                range.setEnd(ckTextNode, end);
+                range.deleteContents();
+
+                const ckLink = new CKEDITOR.dom.element(linkNode.cloneNode(true));
+                range.insertNode(ckLink);
+            } else {
+                const parts = text.split(refText);
+                if (parts.length === 2) {
+                    const frag = document.createDocumentFragment();
+                    if (parts[0]) frag.appendChild(document.createTextNode(parts[0]));
+                    frag.appendChild(linkNode.cloneNode(true));
+                    if (parts[1]) frag.appendChild(document.createTextNode(parts[1]));
+                    node.parentNode.replaceChild(frag, node);
+                }
+            }
+
+            return;
         }
-        return result;
     }
 
     return {

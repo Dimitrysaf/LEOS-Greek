@@ -13,39 +13,39 @@ class annexPage {
     }
 
     mouseHoverAndClickOnLevel(levelNumber) {
-        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({force: true}));
+        cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({force: true}));
     }
 
     mouseHoverAndRealClickOnLevel(levelNumber) {
-        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover({ position: "center" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }).realClick({ position: "topLeft" }));
+        cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]").realHover({ position: "center" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }).realClick({ position: "topLeft" }));
     }
 
     clickEditIconOfLevel(levelNumber) {
-        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
+        cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
     }
 
     clickInsertBeforeIconOfLevel(levelNumber) {
-        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.before']").click({force:true}));
+        cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.before']").click({force:true}));
     }
 
     clickInsertAfterIconOfLevel(levelNumber) {
-        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.after']").click({force:true}));
+        cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.after']").click({force:true}));
     }
 
     clickDeleteIconOfLevel(levelNumber) {
-        cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='delete']").click({force:true}));
+        cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='delete']").click({force:true}));
     }
 
     mouseHoverAndClickOnParagraph(paragraphNumber) {
-        cy.xpath("(//div[@class='orientation']//paragraph)[" + paragraphNumber + "]").realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).click({ force: true }));
+        cy.xpath("(//div[contains(@class, 'orientation')]//paragraph)[" + paragraphNumber + "]").realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).click({ force: true }));
     }
 
     clickEditIconOfParagraph(paragraphNumber) {
-        cy.xpath("(//div[@class='orientation']//paragraph)[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
+        cy.xpath("(//div[contains(@class, 'orientation')]//paragraph)[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
     }
 
     getContentOfAnnex(levelNumber) {
-        return cy.xpath("(//div[@class='orientation']//level)[" + levelNumber + "]//content//aknp");
+        return cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]//content//aknp");
     }
 
     getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
