@@ -1050,7 +1050,10 @@ export abstract class DocumentActionsService {
   private saveVersionAction(form: FormGroup) {
     this.documentService
       .saveVersion(this.getNewVersionData(form))
-      .subscribe(() => this.documentService.reloadDocument());
+      .subscribe(() => {
+        this.documentService.reloadDocument();
+        this.documentService.updateVersionsData();
+      });
   }
 
   private confirmAnnexStructureChange() {
