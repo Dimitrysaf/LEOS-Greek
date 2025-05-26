@@ -32,6 +32,10 @@ public class ReferenceFieldInfo extends MetadataFieldInfo {
 
     public String getShortValue(){ return this.shortValue; }
 
+    public ReferenceFieldInfo withFieldType(final MetadataFieldType fieldType) {
+        return new ReferenceFieldInfo(this.id, this.href, this.displayValue, this.shortValue, fieldType);
+    }
+
     @Override
     public String toString(){
         return String.format("ReferenceFieldInfo(id: %s / href: %s / displayValue: %s / shortValue: %s / fieldType: %s)",

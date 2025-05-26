@@ -1,396 +1,616 @@
-/*
- * Copyright 2021-2025 European Commission
- *
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- *
- *     https://joinup.ec.europa.eu/software/page/eupl
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and limitations under the Licence.
- */
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
-import eu.europa.ec.digit.leos.pilot.export.exception.MetadataServiceException;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
-import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
-import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageFormats;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
-import eu.europa.ec.digit.leos.pilot.export.util.*;
-import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
+import eu.europa.ec.digit.leos.pilot.export.util.IdGenerator;
+import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.ResourcesUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
+import org.springframework.util.StringUtils;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Validator;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @Service
-class MetadataServiceImpl implements MetadataService {
-    private static final Logger LOG = LoggerFactory.getLogger(MetadataServiceImpl.class);
+@Slf4j
+public class MetadataServiceImpl implements MetadataService {
+    public static final Logger LOG = LoggerFactory.getLogger(MetadataServiceImpl.class);
 
-    public byte[] applyMetadata(MultipartFile inputFile) {
-        ApplyMetadataRequest request = null;
+    public MetadataServiceImpl(){}
 
+    public static MetadataService newInstance() {
+        return new MetadataServiceImpl();
+    }
+
+    @Override
+    public ApplyMetadataResponse.FieldNode getLookupFieldInfoErrorResult(
+            ApplyMetadataRequest.FieldNode field,
+            MetadataUtilsException e) {
+
+        if(e.getMessage().equals(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE)) {
+            return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
+                    String.format(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue()));
+        }
+
+        return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
+                String.format("tag not found (field=\"%s\", tag=\"%s\")", field.getKey(), MetadataUtil.FIELD));
+    }
+
+    @Override
+    public ApplyMetadataResponse.FieldNode getLookupFieldInfoSuccessResult(ApplyMetadataRequest.FieldNode field) {
+        return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ZERO, "Inserted");
+    }
+
+    @Override
+    public MetadataFieldInfo lookupFieldInfo(ApplyMetadataRequest.FieldNode field) throws MetadataUtilsException {
+        return lookupFieldInfo(field.getKey(), field.getValue());
+    }
+
+    @Override
+    public MetadataFieldInfo lookupFieldInfo(String field, String fieldValue) throws MetadataUtilsException {
         try {
-            LOG.debug("Start applying meta data ...");
-            Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
-            request = readContentXml(zipContent);
-
-            Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, getFirstTaskDocument(request));
-            List<XmlFile> documentXmlFiles = readDocumentXmlFiles(documentZipContent);
-            Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
-
-            validateDocumentXmlFiles(documentXmlFiles);
-            ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles);
-            XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response); // TODO: check: it's unused - required?
-            return buildResponse(response, documentXmlFiles, documentFurtherContent);
-        }
-        catch(XmlValidationException ex) {
-            LOG.error("One or more xml files do not match the xml schema", ex);
-            return buildXmlValidationErrorResponse(request);
-        }
-        catch(Exception ex){
-            LOG.error("Error applying metadata", ex);
-            return buildErrorResponse(request);
-        }
-    }
-
-    public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
-        CompletableFuture.runAsync(ApplyMetadataRunnable.create(inputFile, callbackUrl, this));
-    }
-
-    private ApplyMetadataRequest readContentXml(Map<String, Object> zipContent) throws MetadataServiceException {
-        byte[] contentXmlData = objectToByteArray(zipContent.get("content.xml"));
-
-        if (contentXmlData == null || contentXmlData.length == 0) {
-            throw new MetadataServiceException("content.xml not found");
-        }
-
-        try {
-            InputStream xmlInputStream = new ByteArrayInputStream(contentXmlData);
-            XmlFile contentXmlFile = XmlUtil.parseXml(xmlInputStream, "content.xml");
-            ApplyMetadataRequest request = MetadataUtil.xmlFileToApplyMetadataRequest(contentXmlFile);
-            closeInputStream(xmlInputStream);
-            return request;
-        } catch (XmlUtilException e) {
-            throw new MetadataServiceException("Error unzip document", e);
-        }
-    }
-
-    private Map<String, Object> readAndUnzipDocument(Map<String, Object> zipContent, ApplyMetadataRequest.DocumentNode document) throws MetadataServiceException {
-        if (document == null) {
-            throw new MetadataServiceException("Document not found");
-        }
-
-        byte[] documentZipData = objectToByteArray(zipContent.get(document.getFilename()));
-        if (documentZipData == null || documentZipData.length == 0) {
-            throw new MetadataServiceException("Document file not found");
-        }
-
-        try {
-            Map<String, Object> documentZipContent = ZipUtil.unzipByteArray(documentZipData);
-            return documentZipContent;
-        } catch (IOException e) {
-            throw new MetadataServiceException("Error unzip document", e);
-        }
-    }
-
-    private List<XmlFile> readDocumentXmlFiles(Map<String, Object> documentZipContent){
-        List<XmlFile> xmlDocuments = new ArrayList<>();
-        String[] contentNames = (String[]) documentZipContent.keySet().toArray(new String[0]);
-
-        for (String contentName : contentNames) {
-            if (!contentName.endsWith(".xml")) {
-                continue;
-            }
-            try {
-                byte[] documentZipBytes = objectToByteArray(documentZipContent.get(contentName));
-                XmlUtil.XmlFile xmlFile = XmlUtil.parseXml(new ByteArrayInputStream(documentZipBytes), contentName);
-                if (MetadataUtil.isDocumentXmlFilename(contentName) || MetadataUtil.isDocumentXmlFile(xmlFile)) {
-                    xmlDocuments.add(xmlFile);
-                }
-            } catch(Exception e){
-                LOG.error("Error parsing xml document", e);
-            }
-        }
-
-        return xmlDocuments;
-    }
-
-    private Map<String, Object> readFurtherDocumentContent(Map<String, Object> documentZipContent){
-        Map<String, Object> furtherContent = new HashMap<>();
-        String[] contentNames = (String[]) documentZipContent.keySet().toArray(new String[0]);
-
-        for (String contentName : contentNames) {
-            if (MetadataUtil.isDocumentXmlFilename(contentName)) {
-                continue;
-            }
-            try {
-                furtherContent.put(contentName, documentZipContent.get(contentName));
-            } catch(Exception e){
-                LOG.error("Error parsing xml document", e);
-            }
-        }
-
-        return furtherContent;
-    }
-
-    private void validateDocumentXmlFiles(List<XmlFile> xmlFiles) throws XmlValidationException {
-        Validator schemaValidator = XmlUtil.getAknSchemaValidator();
-        for (XmlFile xmlFile : xmlFiles) {
-            ByteArrayInputStream inputStream = null;
-            try {
-                inputStream = new ByteArrayInputStream(xmlFile.getBytes());
-                schemaValidator.validate(new StreamSource(inputStream));
-            } catch (XmlUtilException ex) {
-                LOG.error("Error reading xml file", ex);
-                throw new XmlValidationException("Error reading xml file", ex);
-            } catch (IOException | SAXException ex) {
-                LOG.error("Error validate xml file '" + xmlFile.getName() + "'", ex);
-                throw new XmlValidationException("Error validate xml file '" + xmlFile.getName() + "'", ex);
-            } finally {
-                closeInputStream(inputStream);
-            }
-        }
-    }
-
-    private ApplyMetadataResponse processApplyMetadataRequest(ApplyMetadataRequest request, List<XmlFile> documentXmlFiles) {
-        List<ApplyMetadataResponse.TaskNode> taskResponses = new ArrayList<>();
-        if (request.getTasks() != null) {
-            for (ApplyMetadataRequest.TaskNode task : request.getTasks()) {
-                taskResponses.add(processApplyMetadataRequestTask(task, documentXmlFiles));
-            }
-        }
-
-        final ApplyMetadataResponse.StatusNode successResult = isContainsTaskResponseWithErrors(taskResponses)
-                ? MetadataUtil.getErrorStatusResult() : MetadataUtil.getSuccessStatusResult();
-        return new ApplyMetadataResponse(request.getRequestId(), taskResponses, successResult);
-    }
-
-    private ApplyMetadataResponse.TaskNode processApplyMetadataRequestTask(ApplyMetadataRequest.TaskNode task, List<XmlFile> documentXmlFiles) {
-        List<ApplyMetadataResponse.ActionNode> actionResponses = new ArrayList<>();
-        for (ApplyMetadataRequest.ActionNode action : task.getActions()){
-            actionResponses.add(processApplyMetadataRequestAction(action, documentXmlFiles));
-        }
-
-        final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
-        return new ApplyMetadataResponse.TaskNode(task.getTaskId(), statusCode, actionResponses,
-                MetadataUtil.applyMetadataRequestDocumentToResultDocument(task.getDocument(), MetadataUtil.buildPrefinalizationLegName(task)),
-                MetadataUtil.getValidationSuccessResult("XMLValidationCheck"));
-    }
-
-    private ApplyMetadataResponse.ActionNode processApplyMetadataRequestAction(ApplyMetadataRequest.ActionNode action, List<XmlFile> documentXmlFiles){
-        List<ApplyMetadataResponse.FieldNode> fieldResponses = new ArrayList<>();
-        for (ApplyMetadataRequest.FieldNode field : action.getFields()){
-            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles));
-        }
-        if (!hasLinkedDocumentsField(action)) {
-            // Remove associatedReferences container if no linkedDocuments are set
-            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles);
-        }
-        return new ApplyMetadataResponse.ActionNode(action.getName(), fieldResponses);
-    }
-
-    private boolean hasLinkedDocumentsField(ApplyMetadataRequest.ActionNode action) {
-        return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
-    }
-
-    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles){
-        try {
-            MetadataFieldInfo fieldInfo = MetadataUtil.lookupFieldInfo(field);
-            processMetadataFieldInfo(fieldInfo, documentXmlFiles);
-            return MetadataUtil.getLookupFieldInfoSuccessResult(field);
-        } catch(MetadataUtilsException e) {
-            LOG.error("Lookup field info failed: {}", e);
-            return MetadataUtil.getLookupFieldInfoErrorResult(field, e);
-        }
-    }
-
-    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles){
-        LOG.debug("Process field info  '{}'", fieldInfo);
-        for (XmlFile xmlFile : documentXmlFiles){
-            LOG.debug("Process xml file '{}'", xmlFile.getName());
-            switch(fieldInfo.getFieldType()){
+            MetadataFieldType fieldType = MetadataFieldType.valueOfTypeName(field);
+            switch(fieldType){
+                case ADOPTION_DATE:
+                    return MetadataUtil.parseAdoptionDate(fieldValue);
                 case ADOPTION_LOCATION:
-                    MetadataUtil.processAdoptionLocation((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
+                    return MetadataUtil.parseAdoptionLocation(fieldValue);
                 case EMISSION_DATE:
-                    MetadataUtil.processEmissionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
+                    return MetadataUtil.parseEmissionDate(fieldValue);
                 case INTERINSTITUTIONAL_COTE:
-                    MetadataUtil.processInterinstitutionalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
+                    return MetadataUtil.parseInterinstitutionalCote(fieldValue);
                 case COTE:
-                    MetadataUtil.processCote((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
+                    return MetadataUtil.parseCote(fieldValue, MetadataFieldType.COTE);
                 case LINKED_DOCUMENTS:
-                    MetadataUtil.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);
-                    break;
+                    return MetadataUtil.parseLinkedDocuments(fieldValue);
                 case FINAL_COTE:
-                    MetadataUtil.processFinalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
+                    return MetadataUtil.parseCote(fieldValue, MetadataFieldType.FINAL_COTE);
+                case STAMP:
+                    return MetadataUtil.parseStamp(fieldValue);
+                default:
+                    throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
             }
+        } catch (IllegalArgumentException e){
+            throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
+        } catch (MetadataUtilsException mue){
+            throw mue;
         }
     }
 
-    private boolean isContainsActionResponseWithErrors(List<ApplyMetadataResponse.ActionNode> actions){
-        return (actions != null) &&  (actions.stream()
-                .filter(action -> isContainsFieldResponseWithErrors(action.getFields())).count() > 0);
+    @Override
+    public void processAdoptionLocation(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final ReferenceFieldInfo locationToLanguage = adaptLocationToLanguage(fieldInfo, xmlFile);
+        addAdoptionLocationToMetaReference(locationToLanguage, xmlFile);
+        addAdoptionLocationToCoverPage(locationToLanguage, xmlFile);
+        addAdoptionLocationToConclusion(locationToLanguage, xmlFile);
     }
 
-    private boolean isContainsFieldResponseWithErrors(List<ApplyMetadataResponse.FieldNode> fields){
-        return (fields != null) && (fields.stream().filter(field -> field.getStatusCode().equals("1")).count() > 0);
-    }
-
-    private boolean isContainsTaskResponseWithErrors(List<ApplyMetadataResponse.TaskNode> tasks){
-        return (tasks != null) &&  (tasks.stream().filter(task -> task.getStatusCode().equals("1")).count() > 0);
-    }
-
-    private byte[] buildResponse(ApplyMetadataResponse response, List<XmlFile> documentXmlFiles, Map<String, Object> documentFurtherContent){
-        try {
-            Map<String, Object> responseContent = new HashMap<>();
-            XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response);
-            responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
-            responseContent.put(getFirstTaskDocument(response).getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
-            return ZipUtil.zipByteArray(responseContent);
-        } catch(Exception e) {
-            LOG.error("Error building response {}", e);
-            return null;
+    @Override
+    public void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
+            addAdoptionDate(fieldInfo, xmlFile);
         }
     }
 
-    private byte[] buildResponseLegFile(List<XmlFile> xmlDocuments, Map<String, Object> documentFurtherContent){
-        try {
-            Map<String, Object> legFileContent = new HashMap<>();
+    private void addAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node longTitle = xmlFile.getElementByName("longTitle");
+        if (longTitle == null) return;
 
-            for (XmlFile xmlDocument : xmlDocuments) {
-                legFileContent.put(xmlDocument.getName(), xmlDocument.getBytes());
+        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, "p");
+        if (pNode == null) return;
+
+        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.DATE);
+        if (dateNode == null) return;
+
+
+        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.DATE, fieldInfo.getId());
+        final String displayValue = this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
+        dateNode.setTextContent(displayValue);
+    }
+
+    private String readAdoptionDateDisplayValue(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        return this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
+    }
+
+    private ReferenceFieldInfo adaptLocationToLanguage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final MetadataLanguageFormats metadataLanguageDateFormat = getMetadataLanguageDateFormat(xmlFile);
+        final String displayValue = metadataLanguageDateFormat.getLocationDisplayValue(fieldInfo.getId());
+        return new ReferenceFieldInfo(fieldInfo.getId(), fieldInfo.getHref(), displayValue, fieldInfo.getShortValue(), fieldInfo.getFieldType());
+
+    }
+
+    private void addAdoptionLocationToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeMeta = MetadataUtil.getXmlNodeMetaReference(xmlFile, "TLCLocation");
+        if (xmlNodeMeta == null) {
+            return;
+        }
+        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.XMLID, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.HREF, fieldInfo.getHref());
+        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.SHOWAS, fieldInfo.getDisplayValue());
+    }
+
+    private void addAdoptionLocationToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        if (xmlNodeMainDoc == null) {
+            return;
+        }
+
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "placeAndDate");
+        if (xmlNodeBlock == null) {
+            return;
+        }
+
+        Node xmlNodeLocation = XmlUtil.getChildNodeWithName(xmlNodeBlock, "location");
+        if (xmlNodeLocation == null) {
+            return;
+        }
+        MetadataUtil.addRefersToAttribute(xmlNodeLocation, fieldInfo.getId());
+        xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
+    }
+
+    private void addAdoptionLocationToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONSNEW);
+        if (xmlNodeConclusions == null) {
+            xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
+        }
+        if (xmlNodeConclusions == null) {
+            return;
+        }
+
+        List<Node> xmlNodesP = XmlUtil.getChildNodesWithName(xmlNodeConclusions, "p");
+        if (xmlNodesP.isEmpty()) {
+            return;
+        }
+
+        for(Node xmlNodeP : xmlNodesP) {
+            Node xmlNodeLocation = XmlUtil.getChildNodeWithName(xmlNodeP, "location");
+            if (xmlNodeLocation == null) {
+                continue;
             }
-            legFileContent.putAll(documentFurtherContent);
-
-            return ZipUtil.zipByteArray(legFileContent);
-        } catch(Exception e) {
-            LOG.error("Error building response leg file {}", e);
-            return new byte[0];
+            MetadataUtil.addRefersToAttribute(xmlNodeLocation, fieldInfo.getId());
+            xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
         }
     }
 
-    private byte[] buildXmlValidationErrorResponse(ApplyMetadataRequest request) {
-        if (request.getTasks() != null) {
-            try {
-                ApplyMetadataResponse response = MetadataUtil.getApplyMetadataResponseWithXmlValidationError(request);
-                Map<String, Object> responseContent = new HashMap<>();
-                XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response);
-                responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
-                return ZipUtil.zipByteArray(responseContent);
-            } catch(Exception e) {
-                LOG.error("Error building xml validation error response {}", e);
-            }
-        }
-        return buildErrorResponse(request);
+    @Override
+    public void processEmissionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        addEmissionDateToCoverPage(fieldInfo, xmlFile);
+        addEmissionDateToConclusion(fieldInfo, xmlFile);
     }
 
-    private byte[] buildErrorResponse(ApplyMetadataRequest request){
-        try {
-            ApplyMetadataResponse response = MetadataUtil.getApplyMetadataResponseWithErrorStatus(request);
-            Map<String, Object> responseContent = new HashMap<>();
-            XmlFile xmlResponse = MetadataUtil.akn4euResponseToXmlFile(response);
-            responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
-            return ZipUtil.zipByteArray(responseContent);
-        } catch(Exception e) {
-            LOG.error("Error building error response {}", e);
-            return new byte[0];
+    private void addEmissionDateToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        if (xmlNodeMainDoc == null) {
+            return;
+        }
+
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "placeAndDate");
+        if (xmlNodeBlock == null) {
+            return;
+        }
+
+        Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeBlock, MetadataUtil.DATE);
+        if (xmlNodeDate == null) {
+            return;
+        }
+        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.DATE, fieldInfo.getId());
+
+        String displayValue = readEmissionDataDisplayValue(fieldInfo, xmlFile);
+        MetadataUtil.removeClassAttribute(xmlNodeDate);
+        xmlNodeDate.setTextContent(displayValue);
+    }
+
+    private void addEmissionDateToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+
+        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONSNEW);
+        if (xmlNodeConclusions == null) {
+            xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
+        }
+        if (xmlNodeConclusions == null) {
+            return;
+        }
+
+        Node xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, MetadataUtil.CONCLUSION_NODE_IDNEW);
+        if (xmlNodeConclusionsP == null) {
+            xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, MetadataUtil.CONCLUSION_NODE_ID);
+        }
+        if (xmlNodeConclusionsP == null) {
+            return;
+        }
+
+        Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeConclusionsP, MetadataUtil.DATE);
+        if (xmlNodeDate == null) {
+            return;
+        }
+
+        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.DATE, fieldInfo.getId());
+        MetadataUtil.removeClassAttribute(xmlNodeDate);
+        String displayValue = this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
+        xmlNodeDate.setTextContent(displayValue);
+    }
+
+    private String readEmissionDataDisplayValue(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final MetadataLanguageFormats metadataLanguageFormats = getMetadataLanguageDateFormat(xmlFile);
+        return metadataLanguageFormats.formatDate(MetadataUtil.convertIsoDateToLanguageDateFormat(fieldInfo.getId(), metadataLanguageFormats));
+    }
+
+    private MetadataLanguageFormats getMetadataLanguageDateFormat(XmlUtil.XmlFile xmlFile){
+        Node xmlNodeLanguageReference = MetadataUtil.getLanguageReferenceNode(xmlFile);
+        if (xmlNodeLanguageReference == null) {
+            return MetadataLanguageFormats.EN;
+        }
+        final String countryCode = MetadataUtil.parseAlpha3CountryCode(xmlNodeLanguageReference);
+        return MetadataUtil.convertIso6392tCodeToMetadataLanguageDateFormat(countryCode);
+    }
+
+    @Override
+    public void processFinalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        processCote(fieldInfo, xmlFile);
+        final ReferenceFieldInfo finalFieldInfo = fieldInfo.withFieldType(MetadataFieldType.FINAL_COTE);
+        addFinalToCoverPage(finalFieldInfo, xmlFile);
+        addFinalToIdentification(finalFieldInfo, xmlFile);
+        addFinalToFilename(finalFieldInfo, xmlFile);
+    }
+
+    private void addFinalToFilename(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
+    {
+        final String fileName = xmlFile.getName();
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            final String[] splitFileName = fileName.split("-");
+            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + "final-" + b : a + b + "-");
+            xmlFile.setName(newFileName);
         }
     }
 
-    private void closeInputStream(InputStream inputStream) {
-        try {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        } catch(Exception e){
-            LOG.error("Error closing Stream", e);
+    private void addFinalToIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node frbrExpression = xmlFile.getElementByName("FRBRExpression");
+        if (frbrExpression == null) {
+            return;
+        }
+        final Element frbrVersionNumber = xmlFile.newElement("FRBRversionNumber");
+        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.VALUE, fieldInfo.getDisplayValue());
+
+        frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression,"FRBRlanguage"));
+    }
+
+    private void addFinalToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
+    {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeDocNumber = MetadataUtil.getXmlNodeDocNumber(xmlFile);
+        if (xmlNodeDocNumber == null) {
+            return;
+        }
+        MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
+        xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
+        final Element inline = xmlFile.newElement("inline");
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.NAME, "version");
+        inline.setTextContent(fieldInfo.getDisplayValue());
+        xmlNodeDocNumber.appendChild(inline);
+    }
+
+
+    @Override
+    public void processCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        addCoteToMetaIdentification(fieldInfo, xmlFile);
+        addCoteToMetaReference(fieldInfo, xmlFile);
+        addCoteToCoverPage(fieldInfo, xmlFile);
+        addCoteToDocumentFilename(fieldInfo, xmlFile);
+
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            removeMetaPreservation(xmlFile);
+        } else {
+            removeDocCuid(xmlFile);
+            addCoteToCuid(fieldInfo, xmlFile);
         }
     }
 
-    private byte[] objectToByteArray(Object obj){
-        if (obj != null && obj instanceof byte[]) {
-            return (byte[]) obj;
+    /**
+     * Add the cote value to the akn4eu:xxxxCUID nodes.
+     * */
+    public void addCoteToCuid(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
+        if (frbrWorkNode == null) {
+            return;
         }
-        return null;
+
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.PRESERVATION);
+        if (preservationNode == null) {
+            return;
+        }
+
+        String cuidValue = fieldInfo.getDisplayValue().replace(" ", "_");
+        replaceCuidValue(preservationNode, "docCUID", cuidValue);
+
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            replaceCuidValue(preservationNode, "fileCUID", cuidValue);
+        }
     }
 
-    private ApplyMetadataRequest.DocumentNode getFirstTaskDocument(ApplyMetadataRequest request) {
-        return request.getTasks()
-                .stream()
-                .findFirst()
-                .map((task) -> task.getDocument())
-                .orElseGet(null);
+    private void replaceCuidValue(Node preservationNode, String cuidName, String value) {
+        final Node cuidNode = XmlUtil.getChildNodeWithName(preservationNode, String.format("akn4eu:%s", cuidName));
+        if (cuidNode != null) {
+            XmlUtil.setNodeAttributeValue(cuidNode, "value", value);
+        }
     }
 
-    private ApplyMetadataResponse.DocumentNode getFirstTaskDocument(ApplyMetadataResponse response) {
-        return response.getTasks()
-                .stream()
-                .findFirst()
-                .map((task) -> task.getDocument())
-                .orElseGet(null);
+    private void addCoteToDocumentFilename(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final String fileName = xmlFile.getName();
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            final String[] splitFileName = fileName.split("-");
+            splitFileName[1] = prepareCoteForFileName(fieldInfo);
+            xmlFile.setName(String.join("-", splitFileName));
+        }
     }
 
+    private String prepareCoteForFileName(ReferenceFieldInfo fieldInfo) {
+        final String insertCote = fieldInfo.getDisplayValue();
+        return insertCote.replace(" ", "_");
+    }
 
-    public static class ApplyMetadataRunnable implements Runnable {
-        private final MetadataService metadataService;
-        private final String callbackUrl;
-        private final MultipartFile inputFile;
+    public void addCoteToMetaIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node identificationNode = xmlFile.getElementByName("identification");
+        if (identificationNode == null) return;
 
-        public ApplyMetadataRunnable(MultipartFile inputFile, String callbackUrl, MetadataService metadataService) {
-            this.metadataService = metadataService;
-            this.inputFile = inputFile;
-            this.callbackUrl = callbackUrl;
+        final Node frbrWorkNode = XmlUtil.getChildNodeWithName(identificationNode, MetadataUtil.FRBRWORK);
+        if (frbrWorkNode == null) return;
+
+        final Node prescriptiveNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRprescriptive");
+        if(prescriptiveNode == null) {
+            return;
         }
 
-        @Override
-        public void run() {
-            LOG.debug("Start apply metadata async ...");
-            final byte[] content = this.metadataService.applyMetadata(this.inputFile);
+        final Element frbrNumber = xmlFile.newElement("FRBRnumber");
+        XmlUtil.setNodeAttributeValue(frbrNumber, MetadataUtil.VALUE, fieldInfo.getDisplayValue());
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            MetadataUtil.addRefersToAttribute(frbrNumber, fieldInfo.getId());
+        }
+        frbrWorkNode.insertBefore(frbrNumber, prescriptiveNode);
+    }
 
-            final HttpUtil.HttpClient httpClient = HttpUtil.createHttpClient();
-            final Map<String,String> requestHeaders = new HashMap<>();
-            requestHeaders.put("Content-Type", ZipUtil.APPLICATION_ZIP_VALUE);
+    public void addCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if(MetadataUtil.isMainDocumentFile(xmlFile)) {
+            addTLCReference(fieldInfo, xmlFile, "identifier");
+        }
+    }
 
-            HttpUtil.HttpResponse httpResponse = null;
-            try {
-                LOG.debug("Send ZIP to callback url ...");
-                httpResponse = httpClient.doPost(this.callbackUrl, new HashMap<>(), requestHeaders, content);
-            } catch(HttpUtil.HttpClientRequestException ex) {
-                LOG.debug("Error sending ZIP to callback url [callbackUrl: {} / statusCode: {} / message: {}]", this.callbackUrl,
-                        (httpResponse != null) ? httpResponse.getStatusCode() : "unknown",
-                        (httpResponse != null) ? httpResponse.getStatusText() : "unknown", ex);
-            } catch(Exception ex) {
-                LOG.error("Error sending ZIP to callback url [callbackUrl: {}]", this.callbackUrl, ex);
-            }
+    public void removeMetaPreservation(XmlUtil.XmlFile xmlFile) {
+        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
+        if (frbrWorkNode == null) {
+            return;
         }
 
-        public static Runnable create(MultipartFile inputFile, String callbackUrl, MetadataService metadataService) {
-            return new ApplyMetadataRunnable(inputFile, callbackUrl, metadataService);
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.PRESERVATION);
+        if (preservationNode == null) {
+            return;
         }
+        frbrWorkNode.removeChild(preservationNode);
+    }
+
+    public void removeDocCuid(XmlUtil.XmlFile xmlFile) {
+        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
+        if (frbrWorkNode == null) {
+            return;
+        }
+
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.PRESERVATION);
+        if (preservationNode == null) {
+            return;
+        }
+
+        final Node docCuidNode = XmlUtil.getChildNodeWithName(preservationNode, "akn4eu:docCUID");
+        if (docCuidNode == null) {
+            return;
+        }
+        preservationNode.removeChild(docCuidNode);
+    }
+
+    public void addCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        if (xmlNodeMainDoc == null) {
+            return;
+        }
+
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "reference");
+        if (xmlNodeBlock == null) {
+            return;
+        }
+
+        Node xmlNodeDocNumber = XmlUtil.getChildNodeWithName(xmlNodeBlock, "docNumber");
+        if (xmlNodeDocNumber == null) {
+            return;
+        }
+        MetadataUtil.removeClassAttribute(xmlNodeBlock);
+        MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
+        MetadataUtil.addRefersToAttribute(xmlNodeDocNumber, fieldInfo.getId());
+        xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
+    }
+
+    @Override
+    public void processInterinstitutionalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final String langValue = MetadataUtil.readLanguageValue(xmlFile);
+        ReferenceFieldInfo langFieldInfo = fieldInfo.withHref(fieldInfo.getHref().replace(MetadataUtil.INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER, langValue));
+        addInterinstitutionalCoteToMetaReference(langFieldInfo, xmlFile);
+        addInterinstitutionalCoteToCoverPage(langFieldInfo, xmlFile);
+        addInterinstitutionalCoteToPreface(langFieldInfo, xmlFile);
+    }
+
+    private void addInterinstitutionalCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if(MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillDocumentFile(xmlFile)) {
+            addTLCReference(fieldInfo, xmlFile, "procedureReference");
+        }
+    }
+
+    private void addTLCReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, String name) {
+        final Node references = xmlFile.getElementByName("references");
+        if (references == null)
+            return;
+
+        Node tlcReference = XmlUtil.getChildNodeWithName(references, name);
+        final boolean isTlcReferenceFound = (tlcReference != null);
+        if (!isTlcReferenceFound) {
+            tlcReference = xmlFile.newElement(MetadataUtil.TLCREFERENCE);
+        }
+
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.NAME, name);
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.XMLID, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.HREF, fieldInfo.getHref());
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.SHOWAS, fieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.SHORTFORM, fieldInfo.getShortValue());
+
+        if (!isTlcReferenceFound) {
+            references.appendChild(tlcReference);
+        }
+    }
+
+    private void addInterinstitutionalCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+        addInterinstitutionalCoteToDocketNumber(fieldInfo, xmlNodeCoverpage);
+    }
+
+    private void addInterinstitutionalCoteToPreface(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodePreface = xmlFile.getElementByName("preface");
+        if (xmlNodePreface == null) {
+            return;
+        }
+        addInterinstitutionalCoteToDocketNumber(fieldInfo, xmlNodePreface);
+    }
+
+    public void addInterinstitutionalCoteToDocketNumber(ReferenceFieldInfo fieldInfo, Node xmlParentNode) {
+        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlParentNode, "procedureIdentifier");
+        if (xmlNodeContainer == null) {
+            return;
+        }
+
+        Node xmlNodeDocketNumber = MetadataUtil.getXmlNodeDocketNumber(xmlNodeContainer);
+        if (xmlNodeDocketNumber == null) {
+            return;
+        }
+        MetadataUtil.removeClassAttribute(xmlNodeContainer);
+        MetadataUtil.removeClassAttribute(xmlNodeDocketNumber);
+        MetadataUtil.addRefersToAttribute(xmlNodeDocketNumber, fieldInfo.getId());
+        xmlNodeDocketNumber.setTextContent(fieldInfo.getDisplayValue());
+    }
+
+    @Override
+    public void processLinkedDocuments(MultipleReferencesFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeAssociatedReferences = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "associatedReferences");
+        if (xmlNodeAssociatedReferences == null) {
+            return;
+        }
+
+        if (fieldInfo.getReferences().isEmpty()) {
+            xmlNodeCoverpage.removeChild(xmlNodeAssociatedReferences);
+            return;
+        }
+
+        MetadataUtil.removeClassAttribute(xmlNodeAssociatedReferences);
+        // remove any existing content
+        if(xmlNodeAssociatedReferences.hasChildNodes()) {
+            final NodeList children = xmlNodeAssociatedReferences.getChildNodes();
+            for(int i = children.getLength() - 1; i >= 0; i--)
+                xmlNodeAssociatedReferences.removeChild(children.item(i));
+        }
+
+        for (final ReferenceFieldInfo reference : fieldInfo.getReferences()) {
+            final Element referenceElement = createLinkedDocumentElement(reference, xmlFile);
+            xmlNodeAssociatedReferences.appendChild(referenceElement);
+        }
+    }
+
+    @Override
+    public void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (!MetadataUtil.ONE.equals(fieldInfo.getDisplayValue())) return;
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) return;
+
+        final Node conclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
+        if (conclusions == null) return;
+
+        final Node blockNode = xmlFile.newElement("block");
+        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.NAME, "stamp");
+
+        final String language = readLanguageValue(xmlFile);
+        final String b64Stamp = getLanguageStampAsBase64(language);
+
+        final Node imgNode = xmlFile.newElement("img");
+        XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
+        blockNode.appendChild(imgNode);
+        conclusions.appendChild(blockNode);
+    }
+
+    private String readLanguageValue(XmlUtil.XmlFile xmlFile) {
+        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.FRBRLANGUAGE);
+        if (frbrLanguage == null) {
+            return MetadataUtil.LANGUAGE_EN;
+        }
+
+        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.LANGUAGE);
+        if (!StringUtils.hasLength(value)) {
+            return MetadataUtil.LANGUAGE_EN;
+        }
+        return value.toUpperCase();
+    }
+
+    private String getLanguageStampAsBase64(final String languageShortValue) {
+        final String stampPath = String.format("stamp/%s.gif", languageShortValue);
+        final byte[] stampBytes = ResourcesUtil.readResourceFile(stampPath);
+        return Base64.getEncoder().encodeToString(stampBytes);
+    }
+
+    private Element createLinkedDocumentElement(final ReferenceFieldInfo reference, XmlUtil.XmlFile xmlFile) {
+        final Element refElement = xmlFile.newElement("ref");
+
+        XmlUtil.setNodeAttributeValue(refElement, MetadataUtil.XMLID, IdGenerator.generateId());
+        refElement.setTextContent(reference.getDisplayValue());
+        refElement.setAttribute(MetadataUtil.HREF, reference.getHref());
+
+        final Element referenceElement = xmlFile.newElement("p");
+        XmlUtil.setNodeAttributeValue(referenceElement, MetadataUtil.XMLID, IdGenerator.generateId());
+        referenceElement.appendChild(xmlFile.createTextNode("{"));
+        referenceElement.appendChild(refElement);
+        referenceElement.appendChild(xmlFile.createTextNode("}"));
+        return referenceElement;
     }
 }

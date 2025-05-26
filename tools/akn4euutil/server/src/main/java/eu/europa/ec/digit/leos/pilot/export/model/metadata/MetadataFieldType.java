@@ -3,12 +3,14 @@ package eu.europa.ec.digit.leos.pilot.export.model.metadata;
 import java.lang.IllegalArgumentException;
 
 public enum MetadataFieldType {
+    ADOPTION_DATE("adoptionDate"),
     ADOPTION_LOCATION("adoptionLocation"),
     EMISSION_DATE("emissionDate"),
     INTERINSTITUTIONAL_COTE("interinstitutionalCote"),
     COTE("cote"),
     FINAL_COTE("finalCote"),
-    LINKED_DOCUMENTS("linkedDocuments");
+    LINKED_DOCUMENTS("linkedDocuments"),
+    STAMP("stamp");
 
     private final String typeName;
 
@@ -43,6 +45,12 @@ public enum MetadataFieldType {
         }
         if(MetadataFieldType.FINAL_COTE.getTypeName().equals(typeName)){
             return MetadataFieldType.FINAL_COTE;
+        }
+        if(MetadataFieldType.STAMP.getTypeName().equals(typeName)){
+            return MetadataFieldType.STAMP;
+        }
+        if(MetadataFieldType.ADOPTION_DATE.getTypeName().equals(typeName)){
+            return MetadataFieldType.ADOPTION_DATE;
         }
         throw new IllegalArgumentException("Invalid metadata type name");
     }
