@@ -573,23 +573,20 @@ define(function leosTrackChangesPluginModule(require) {
                                 if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
                                     var rangeWasCollapsed = range.collapsed;
                                     editor.fire("saveSnapshot");
+                                    var previousElement = editor.getSelection().getRanges()[0].getPreviousEditableNode();
                                     style.apply(editor, deleteTcStyle);
-
+                                    var noNewRange = true;
                                     if(!rangeWasCollapsed){
                                         // insert here code to delete the empty elements
                                         _removeEmptyElements(initialCommonAncestor);
-                                        let lastEditable = leosPluginUtils.findLastEditable(initialCommonAncestor);
-                                        if(lastEditable){
-                                            range = editor.createRange();
-                                            range.selectNodeContents(lastEditable);
-                                            editor.getSelection().selectRanges([ range ]);
-                                        }
+                                        noNewRange = _safeSelectEnd(editor, previousElement, initialCommonAncestor, range);
                                     }
                                     editor.fire("saveSnapshot");
-                                    range = editor.getSelection().getRanges()[0];
-                                    range.collapse(!deleteKey);
-                                    range.select();
-
+                                    if(noNewRange) {
+                                        range = editor.getSelection().getRanges()[0];
+                                        range.collapse(!deleteKey);
+                                        range.select();
+                                    }
                                     editor.fire("change");
                                 }
 
@@ -999,6 +996,48 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 }
             });
+        }
+    }
+
+    function _safeSelectEnd(editor, previousElement, initialCommonAncestor, oldRange) {
+        if(initialCommonAncestor.type == CKEDITOR.NODE_TEXT){
+            return true;
+        }
+        if(!previousElement ||
+            (previousElement.type == CKEDITOR.NODE_ELEMENT
+                && previousElement.getName() != 'p'
+                && previousElement.getName() != 'li')){
+            var editablesNodeList = initialCommonAncestor.find("p, li");
+            if(editablesNodeList && editablesNodeList.count() > 0){
+                previousElement = editablesNodeList.getItem(0);
+            }
+        }
+
+        if (!previousElement
+            || !previousElement.getParent
+            || !previousElement.getParent()) {
+            console.warn('Invalid element for selection');
+            return true;
+        }
+        var id = (previousElement && previousElement.getId && previousElement.getId()) ?  previousElement.getId() : previousElement?.getParent().getId();
+        var element = editor.editable().$.querySelector('#' + id);
+        if (element) {
+            previousElement = new CKEDITOR.dom.element(element);
+        }
+        if (!editor.editable().contains(previousElement)) {
+            console.warn('Invalid element for selection');
+            return true;
+        }
+        try {
+            var newRange = editor.createRange();
+            newRange.selectNodeContents(previousElement);
+            newRange.collapse(false);
+            editor.getSelection().selectRanges([newRange]);
+            editor.focus();
+            return false;
+        } catch (e) {
+            console.error('Selection failed:', e);
+            return true;
         }
     }
 
