@@ -162,6 +162,10 @@ define(function refToLinkExtensionModule(require) {
 
         const walker = document.createTreeWalker(targetElement, NodeFilter.SHOW_TEXT, {
             acceptNode: (node) => {
+                const container = node.parentNode;
+                if (container.closest('.cke_editable.cke_focus') || container.closest('.leos-editor-focus-first-double')) {
+                    return NodeFilter.FILTER_REJECT;
+                }
                 if (node.parentNode.closest('.ref2link-generated')) {
                     return NodeFilter.FILTER_REJECT;
                 }
@@ -175,31 +179,20 @@ define(function refToLinkExtensionModule(require) {
         while ((node = walker.nextNode())) {
             const text = node.nodeValue;
             const start = text.indexOf(refText);
-            const end = start + refText.length;
 
             if (start === -1) {
                 continue;
             }
 
-            if (isEditorReady) {
-                const ckTextNode = new CKEDITOR.dom.text(node);
-                const range = editor.createRange();
-                range.setStart(ckTextNode, start);
-                range.setEnd(ckTextNode, end);
-                range.deleteContents();
-
-                const ckLink = new CKEDITOR.dom.element(linkNode.cloneNode(true));
-                range.insertNode(ckLink);
-            } else {
-                const parts = text.split(refText);
-                if (parts.length === 2) {
-                    const frag = document.createDocumentFragment();
-                    if (parts[0]) frag.appendChild(document.createTextNode(parts[0]));
-                    frag.appendChild(linkNode.cloneNode(true));
-                    if (parts[1]) frag.appendChild(document.createTextNode(parts[1]));
-                    node.parentNode.replaceChild(frag, node);
-                }
+            const parts = text.split(refText);
+            if (parts.length === 2) {
+                const frag = document.createDocumentFragment();
+                if (parts[0]) frag.appendChild(document.createTextNode(parts[0]));
+                frag.appendChild(linkNode.cloneNode(true));
+                if (parts[1]) frag.appendChild(document.createTextNode(parts[1]));
+                node.parentNode.replaceChild(frag, node);
             }
+
 
             return;
         }
