@@ -21,15 +21,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
-import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
-import {LoadingService} from "@/shared/services/loading.service";
-import {EuiGrowlService} from "@eui/core";
-import {HttpErrorResponse, HttpStatusCode} from "@angular/common/http";
+import { LoadingService } from "@/shared/services/loading.service";
+import { EuiGrowlService } from "@eui/core";
+import { HttpStatusCode } from "@angular/common/http";
 
 @Component({
   selector: 'app-proposal-drafts',

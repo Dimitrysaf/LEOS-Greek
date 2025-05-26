@@ -39,7 +39,6 @@ import { downloadBlob } from '@/shared/utils';
 import { ExportPackageVO } from '../models/export-package.model';
 import { Milestone } from '../models/milestone.model';
 import {EuiDialogService} from "@eui/components/eui-dialog";
-import {moveItemInArray} from "@angular/cdk/drag-drop";
 
 @Injectable({ providedIn: 'root' })
 export class ProposalDetailsService implements OnDestroy {
