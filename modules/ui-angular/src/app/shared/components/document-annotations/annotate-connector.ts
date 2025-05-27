@@ -6,7 +6,7 @@ import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import type {
   AnnotateConnectorState, Collaborator,
   MergeSuggestionRequest,
-  Permission, User,
+  Permission, User, CollaboratorRequest
 } from '@/shared';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
@@ -29,6 +29,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   target?: Element;
   receiveStoredDocumentAnnotations?: (annotationsList: any) => void;
   receiveListCollaborators?: (collaboratorsList: Collaborator[]) => void;
+  receiveAddCollaborators?: () => void;
   receiveSearchUsers?: (usersList: User[]) => void;
   receiveUserPermissions?: (...userPermissions: Permission[]) => void;
   receiveSecurityToken?: (token: string) => void;
@@ -78,6 +79,16 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
 
   requestListCollaborators() {
     this.detailsService.listCollaborators(this.getState().proposalRef).subscribe((col) => this.receiveListCollaborators(col));
+  }
+
+  requestAddCollaborators(collaborators: Collaborator[]) {
+    const collaboratorsRequest: CollaboratorRequest[] = collaborators.map(c => {
+      return { userId: c.login, roleName: c.role, connectedDG: c.entity.name };
+    });
+    /* return this.detailsService.addCollaboratorsToProposal(this.getState().proposalRef, collaboratorsRequest)
+       .pipe(switchMap(() => this.detailsService.listCollaborators(this.getState().proposalRef)))
+       .subscribe((col) => this.receiveAddCollaborators(col));*/
+    return this.detailsService.addCollaboratorsToProposal(this.getState().proposalRef, collaboratorsRequest).subscribe(() => this.receiveAddCollaborators());
   }
 
   requestSearchUsers(userId?: string) {

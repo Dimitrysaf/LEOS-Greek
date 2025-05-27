@@ -305,6 +305,26 @@ export class ProposalDetailsService implements OnDestroy {
       .pipe(tap(() => this.fetchCollaborators()));
   }
 
+  addCollaboratorsToProposal(
+    proposalRef: string,
+    collaborators: CollaboratorRequest[],
+    options?: { skipError400Interception: boolean }
+  ) {
+    return this.http
+      .post<null>(
+        `${apiBaseUrl}/secured/proposal/${proposalRef}/bulkCollaborators`,
+        { collaborators },
+        {
+          context: options?.skipError400Interception
+            ? new HttpContext().set(
+              IS_ERROR_INTERCEPTION_ENABLED,
+              (err) => err.status !== 400,
+            )
+            : undefined,
+        },
+      );
+  }
+
   setCollaboratorsRole(collaboratorToUpdate: CollaboratorRequest) {
     this.updateCollaboratorRole(collaboratorToUpdate);
   }
