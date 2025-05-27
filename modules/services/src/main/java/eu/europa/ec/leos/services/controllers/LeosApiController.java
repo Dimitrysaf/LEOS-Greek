@@ -665,25 +665,37 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/updateAnnexPosition/{proposalRef}/annex", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> updateProposalAnnexPosition(@PathVariable("proposalRef") String proposalRef,
-                                                           @RequestParam Integer previousIndex, @RequestParam Integer nextIndex) {
+                                                              @RequestParam Integer previousIndex, @RequestParam Integer nextIndex,
+                                                              HttpServletRequest request) {
         proposalRef = encodeParam(proposalRef);
+        String sessionId = request.getSession().getId();
         User user = securityContext.getUser();
-        CoEditionVO coEditionVO = new CoEditionVO(null, null, user.getLogin()
+        CoEditionVO coEditionVO = new CoEditionVO(sessionId, null, user.getLogin()
                 , user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
                 user.getEmail(), proposalRef + "_ANNEXES_POS", null, InfoType.DOCUMENT_INFO, System.currentTimeMillis());
-        if (!coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS").isEmpty()) {
+        List<CoEditionVO> coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
+        for (CoEditionVO coEditionVO1 : coEditionVOS) {
+            if (System.currentTimeMillis() - coEditionVO1.getEditionTime() > 30000) {
+                coEditionInfoHandler.removeInfo(coEditionVO1);
+            }
+        }
+        coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
+        if (!coEditionVOS.isEmpty()) {
             LOG.error("Error occured while updating annex order - Other user's concurrency");
             return new ResponseEntity<>("Cannot update annexes' positions because of other user's concurrency", HttpStatus.TOO_MANY_REQUESTS);
         }
         try {
             coEditionInfoHandler.storeInfo(coEditionVO);
             apiService.updateAnnexPosition(proposalRef, previousIndex, nextIndex);
-            coEditionInfoHandler.removeInfo(coEditionVO);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            coEditionInfoHandler.removeInfo(coEditionVO);
             LOG.error("Error occured while updating annex order - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while updating annex order", HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
+            for (CoEditionVO coEditionVO1 : coEditionVOS) {
+                coEditionInfoHandler.removeInfo(coEditionVO1);
+            }
         }
     }
 
