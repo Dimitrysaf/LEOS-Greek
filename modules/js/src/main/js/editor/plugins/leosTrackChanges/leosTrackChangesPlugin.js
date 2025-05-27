@@ -256,6 +256,9 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("handleTcAlternateClause", function (event) {
                 function changeOption(option, callback) {
                     var currentElement = editor.element.$.firstChild;
+                    if (currentElement && currentElement.firstChild && currentElement.firstChild.id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
+                        currentElement = editor.element.$.childNodes[1];
+                    }
                     core.addTrackChangesAttributesForAlternative(editor, currentElement, currentIndex);
                     var isArticle = currentElement && currentElement.getAttribute('data-akn-name') === core.ARTICLE;
                     if(isArticle) {
@@ -291,8 +294,8 @@ define(function leosTrackChangesPluginModule(require) {
                     var newOption = optionList.list.find(listOfOption => listOfOption.index == newIndex);
 
                     var currentElement = ckeditor.element.$.firstChild;
-                    if (editor.element && ckeditor.element.$.firstChild && ckeditor.element.$.firstChild.id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
-                        currentElement = editor.element.$.childNodes[1];
+                    if (currentElement && currentElement.firstChild && currentElement.firstChild.id === 'spellchecker-contextmenu' && ckeditor.element.$.childNodes[1]) {
+                        currentElement = ckeditor.element.$.childNodes[1];
                     }
                     var currentIndex = currentElement.getAttribute("leos:selectedoption");
                     var trackChangeElements = $(currentElement).find("[data-akn-action]");
