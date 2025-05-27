@@ -670,6 +670,7 @@ public class LeosApiController {
         proposalRef = encodeParam(proposalRef);
         String sessionId = request.getSession().getId();
         User user = securityContext.getUser();
+        // TODO Temporary solution should be replaced by a true co edition handling for proposal (same mechanism as edition documents),
         CoEditionVO coEditionVO = new CoEditionVO(sessionId, null, user.getLogin()
                 , user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
                 user.getEmail(), proposalRef + "_ANNEXES_POS", null, InfoType.DOCUMENT_INFO, System.currentTimeMillis());

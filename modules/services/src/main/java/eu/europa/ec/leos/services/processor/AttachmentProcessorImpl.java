@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.processor;
 
+import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -126,13 +127,12 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
 
     @Override
     public byte[] updateAttachmentsInBill(byte[] xmlContent, HashMap<String, String> attachmentsElements) {
-
         for (String elementRef : attachmentsElements.keySet()) {
             try {
-                String xPath = xPathCatalog.getXPathDocumentRefByShowAsAttr(attachmentsElements.get(elementRef));
+                String xPath = xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef);
                 String elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPath);
                 if (StringUtils.isBlank(elementId)) {
-                    xPath = xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef);
+                    xPath = xPathCatalog.getXPathDocumentRefByShowAsAttr(attachmentsElements.get(elementRef));
                     elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPath);
                 }
                 if (StringUtils.isBlank(elementId)) {
@@ -146,6 +146,29 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
         }
 
         return sortAttributesByAnnexRoman(xmlContent);
+    }
+
+    // TODO Be aware that in the future attachments could contain other documents than annexes,
+    // the annexes reordering screen should contain a "save" button and a cancel button to update the order only when closing annexes' reordering dialog box
+    @Override
+    public byte[] updateAllAttachmentsInBill(byte[] xmlContent, List<Annex> annexes) {
+        try {
+            StringBuilder newAttachemnts = new StringBuilder("<attachments>");
+            for (int i=1; i<=annexes.size(); i++) {
+                for (int j=0; j<annexes.size(); j++) {
+                    Annex annex = annexes.get(j);
+                    if (annex.getMetadata().get().getIndex() == i) {
+                        newAttachemnts.append(createAttachmentTag(annex.getName(), annex.getMetadata().get().getNumber()));
+                    }
+                }
+            }
+            newAttachemnts.append("</attachments>");
+            xmlContent = xmlContentProcessor.replaceElement(xmlContent, xPathCatalog.getXPathAttachments(), true, newAttachemnts.toString());
+            return xmlContentProcessor.doXMLPostProcessing(xmlContent);
+        } catch (Exception e) {
+            LOG.debug("Updating attachments: error while updating attachments");
+            return xmlContent;
+        }
     }
 
     private byte[] sortAttributesByAnnexRoman(byte[] xmlContent) {
