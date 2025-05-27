@@ -671,7 +671,14 @@ public class LeosApiController {
         CoEditionVO coEditionVO = new CoEditionVO(null, null, user.getLogin()
                 , user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
                 user.getEmail(), proposalRef + "_ANNEXES_POS", null, InfoType.DOCUMENT_INFO, System.currentTimeMillis());
-        if (!coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS").isEmpty()) {
+        List<CoEditionVO> coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
+        for (CoEditionVO coEditionVO1 : coEditionVOS) {
+            if (System.currentTimeMillis() - coEditionVO1.getEditionTime() > 30000) {
+                coEditionInfoHandler.removeInfo(coEditionVO1);
+            }
+        }
+        coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
+        if (!coEditionVOS.isEmpty()) {
             LOG.error("Error occured while updating annex order - Other user's concurrency");
             return new ResponseEntity<>("Cannot update annexes' positions because of other user's concurrency", HttpStatus.TOO_MANY_REQUESTS);
         }
