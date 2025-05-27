@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -276,6 +277,26 @@ public abstract class BillServiceImpl implements BillService {
         //Do the xml update
         byte[] xmlBytes = getContent(bill);
         byte[] updatedBytes = attachmentProcessor.updateAttachmentsInBill(xmlBytes, attachmentsElements);
+
+        //save updated xml
+        bill = billRepository.updateBill(bill.getId(), bill.getMetadata().get(), updatedBytes, VersionType.MINOR, actionMsg);
+
+        LOG.trace("Update attachments in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        return bill;
+    }
+
+    @Override
+    public Bill updateAllAttachments(Bill bill, LeosPackage leosPackage, String actionMsg) {
+        LOG.trace("Update all attachments in bill ... [id={}]", bill.getId());
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
+
+        List<Annex> annexes = packageRepository.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+        //Do the xml update
+        byte[] xmlBytes = getContent(bill);
+        byte[] updatedBytes = attachmentProcessor.updateAllAttachmentsInBill(xmlBytes, annexes);
 
         //save updated xml
         bill = billRepository.updateBill(bill.getId(), bill.getMetadata().get(), updatedBytes, VersionType.MINOR, actionMsg);
