@@ -32,6 +32,7 @@ export interface MessageEvent {
 export class CoEditionServiceWS {
   private user: UserDetails;
   private sessionId: string;
+  private currentDoc: string;
 
   private stompClient: Stomp.Client;
 
@@ -78,6 +79,10 @@ export class CoEditionServiceWS {
       debug: false,
     });
     this.stompClient = Stomp.over(socket);
+
+    this.stompClient.heartbeat.outgoing = 10000;
+    this.stompClient.heartbeat.incoming = 10000;
+
     this.stompClient.debug = () => {};
 
     this.stompClient.connect({}, () => {
@@ -86,10 +91,40 @@ export class CoEditionServiceWS {
         this.subscribe(topic, callback, id);
       }
       this.sessionId = socket._transport.url.split('/')[7];
+    }, (error) => {
+      console.error('STOMP connection error:', error);
+      this.scheduleReconnect();
     });
   }
 
+  private scheduleReconnect() {
+    setTimeout(() => {
+      console.log('Reconnecting STOMP...');
+
+      this.subscribeQueue.push({
+        topic: '/topic/document',
+        callback: (message) => this.handleDocumentChannel(message),
+        id: 'document',
+      });
+
+      this.subscribeQueue.push({
+        topic: `/topic/document/${this.currentDoc}`,
+        callback: (message) => {
+          const coEdits = JSON.parse(message.body) as
+            | CoEditionActionInfo
+            | CoEditionVO[]
+            | CoEditionUpdate;
+          this.handleCoEditionMessage(coEdits);
+        },
+        id: `${this.currentDoc}`,
+      });
+
+      this.connect();
+    }, 5000);
+  }
+
   public disconnect(): void {
+    console.log('disconnect');
     if (this.stompClient) {
       this.stompClient.disconnect(null);
     }
@@ -132,6 +167,7 @@ export class CoEditionServiceWS {
   }
 
   public joinSubDocumentChannel(documentId: string): void {
+    this.currentDoc = documentId;
     if (this.stompClient.connected) {
       this.subscribe(
         `/topic/document/${documentId}`,
