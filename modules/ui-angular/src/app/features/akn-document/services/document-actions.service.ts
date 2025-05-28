@@ -308,7 +308,9 @@ export abstract class DocumentActionsService {
           actionFn: () => this.handleOpenEditor(() => { this.openSaveDocumentVersionDialog() }),
           euiStyle: 'secondary',
           euiSize: 's',
-          label: 'Save',
+          label: this.translateService.instant(
+            'page.editor.actions-dropdown.save',
+          ),
           icon: 'save',
           svgType: 'default',
           type: IRibbonToolbarType.BUTTON,
@@ -1048,7 +1050,10 @@ export abstract class DocumentActionsService {
   private saveVersionAction(form: FormGroup) {
     this.documentService
       .saveVersion(this.getNewVersionData(form))
-      .subscribe(() => this.documentService.reloadDocument());
+      .subscribe(() => {
+        this.documentService.reloadDocument();
+        this.documentService.updateVersionsData();
+      });
   }
 
   private confirmAnnexStructureChange() {

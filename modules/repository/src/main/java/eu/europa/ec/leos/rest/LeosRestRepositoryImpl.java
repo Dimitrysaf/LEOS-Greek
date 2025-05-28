@@ -1081,7 +1081,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @PerformanceLogger
     public Optional<WorkflowCollaboratorConfigVO> getWorkflowCollaboratorConfig(String packageName, String clientName) {
         try {
-            return Optional.of(repository.getWorkflowCollaboratorConfig(packageName, clientName));
+            return Optional.ofNullable(repository.getWorkflowCollaboratorConfig(packageName, clientName));
         } catch (HttpClientErrorException.NotFound ex) {
             return Optional.empty();
         }
@@ -1091,6 +1091,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @PerformanceLogger
     public Optional<LeosClientResponse> getLeosClient(String clientName) {
         return repository.getLeosClient(clientName);
+    }
+
+    @Override
+    @PerformanceLogger
+    public Optional<LeosClientResponse> getLeosClient(String clientName, String technicalUser) {
+        return repository.getLeosClient(clientName, technicalUser);
     }
 
     @Override

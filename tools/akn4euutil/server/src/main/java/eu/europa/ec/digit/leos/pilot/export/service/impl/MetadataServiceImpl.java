@@ -1,16 +1,3 @@
-/*
- * Copyright 2021-2025 European Commission
- *
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- *
- *     https://joinup.ec.europa.eu/software/page/eupl
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and limitations under the Licence.
- */
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
@@ -26,6 +13,7 @@ import eu.europa.ec.digit.leos.pilot.export.util.IdGenerator;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ResourcesUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,12 +22,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
 @Service
+@Slf4j
 public class MetadataServiceImpl implements MetadataService {
     public static final Logger LOG = LoggerFactory.getLogger(MetadataServiceImpl.class);
 
@@ -56,7 +44,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         if(e.getMessage().equals(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE)) {
             return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
-                    String.format(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue(), MetadataUtil.FIELD));
+                    String.format(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue()));
         }
 
         return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
@@ -76,7 +64,6 @@ public class MetadataServiceImpl implements MetadataService {
     @Override
     public MetadataFieldInfo lookupFieldInfo(String field, String fieldValue) throws MetadataUtilsException {
         try {
-            LOG.debug("Lookup field ", field);
             MetadataFieldType fieldType = MetadataFieldType.valueOfTypeName(field);
             switch(fieldType){
                 case ADOPTION_DATE:
@@ -87,12 +74,12 @@ public class MetadataServiceImpl implements MetadataService {
                     return MetadataUtil.parseEmissionDate(fieldValue);
                 case INTERINSTITUTIONAL_COTE:
                     return MetadataUtil.parseInterinstitutionalCote(fieldValue);
-                case INSERT_COTE:
-                    return MetadataUtil.parseInsertCote(fieldValue);
+                case COTE:
+                    return MetadataUtil.parseCote(fieldValue, MetadataFieldType.COTE);
                 case LINKED_DOCUMENTS:
                     return MetadataUtil.parseLinkedDocuments(fieldValue);
-                case DOCUMENT_FINAL:
-                    return MetadataUtil.parseDocumentFinal(fieldValue);
+                case FINAL_COTE:
+                    return MetadataUtil.parseCote(fieldValue, MetadataFieldType.FINAL_COTE);
                 case STAMP:
                     return MetadataUtil.parseStamp(fieldValue);
                 default:
@@ -108,9 +95,9 @@ public class MetadataServiceImpl implements MetadataService {
     @Override
     public void processAdoptionLocation(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         final ReferenceFieldInfo locationToLanguage = adaptLocationToLanguage(fieldInfo, xmlFile);
-        this.addAdoptionLocationToMetaReference(locationToLanguage, xmlFile);
-        this.addAdoptionLocationToCoverPage(locationToLanguage, xmlFile);
-        this.addAdoptionLocationToConclusion(locationToLanguage, xmlFile);
+        addAdoptionLocationToMetaReference(locationToLanguage, xmlFile);
+        addAdoptionLocationToCoverPage(locationToLanguage, xmlFile);
+        addAdoptionLocationToConclusion(locationToLanguage, xmlFile);
     }
 
     @Override
@@ -157,7 +144,6 @@ public class MetadataServiceImpl implements MetadataService {
         XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.SHOWAS, fieldInfo.getDisplayValue());
     }
 
-
     private void addAdoptionLocationToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
         if (xmlNodeCoverpage == null) {
@@ -183,7 +169,6 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addAdoptionLocationToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-
         Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONSNEW);
         if (xmlNodeConclusions == null) {
             xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
@@ -209,8 +194,8 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public void processEmissionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        this.addEmissionDateToCoverPage(fieldInfo, xmlFile);
-        this.addEmissionDateToConclusion(fieldInfo, xmlFile);
+        addEmissionDateToCoverPage(fieldInfo, xmlFile);
+        addEmissionDateToConclusion(fieldInfo, xmlFile);
     }
 
     private void addEmissionDateToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -235,11 +220,10 @@ public class MetadataServiceImpl implements MetadataService {
         }
         XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.DATE, fieldInfo.getId());
 
-        String displayValue = this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
+        String displayValue = readEmissionDataDisplayValue(fieldInfo, xmlFile);
         MetadataUtil.removeClassAttribute(xmlNodeDate);
         xmlNodeDate.setTextContent(displayValue);
     }
-
 
     private void addEmissionDateToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
 
@@ -285,24 +269,75 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void processInsertCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        this.addInsertCoteToMetaIdentification(fieldInfo, xmlFile);
-        this.addInsertCoteToMetaReference(fieldInfo, xmlFile);
-        this.addInsertCoteToCoverPage(fieldInfo, xmlFile);
-        this.addInsertCoteToDocumentFilename(fieldInfo, xmlFile);
+    public void processFinalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        processCote(fieldInfo, xmlFile);
+        final ReferenceFieldInfo finalFieldInfo = fieldInfo.withFieldType(MetadataFieldType.FINAL_COTE);
+        addFinalToCoverPage(finalFieldInfo, xmlFile);
+        addFinalToIdentification(finalFieldInfo, xmlFile);
+        addFinalToFilename(finalFieldInfo, xmlFile);
+    }
+
+    private void addFinalToFilename(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
+    {
+        final String fileName = xmlFile.getName();
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            final String[] splitFileName = fileName.split("-");
+            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + "final-" + b : a + b + "-");
+            xmlFile.setName(newFileName);
+        }
+    }
+
+    private void addFinalToIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node frbrExpression = xmlFile.getElementByName("FRBRExpression");
+        if (frbrExpression == null) {
+            return;
+        }
+        final Element frbrVersionNumber = xmlFile.newElement("FRBRversionNumber");
+        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.VALUE, fieldInfo.getDisplayValue());
+
+        frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression,"FRBRlanguage"));
+    }
+
+    private void addFinalToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
+    {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeDocNumber = MetadataUtil.getXmlNodeDocNumber(xmlFile);
+        if (xmlNodeDocNumber == null) {
+            return;
+        }
+        MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
+        xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
+        final Element inline = xmlFile.newElement("inline");
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.NAME, "version");
+        inline.setTextContent(fieldInfo.getDisplayValue());
+        xmlNodeDocNumber.appendChild(inline);
+    }
+
+
+    @Override
+    public void processCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        addCoteToMetaIdentification(fieldInfo, xmlFile);
+        addCoteToMetaReference(fieldInfo, xmlFile);
+        addCoteToCoverPage(fieldInfo, xmlFile);
+        addCoteToDocumentFilename(fieldInfo, xmlFile);
 
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
-            this.removeMetaPreservation(xmlFile);
+            removeMetaPreservation(xmlFile);
         } else {
-            this.removeDocCuid(xmlFile);
-            this.addInsertCoteToCuid(fieldInfo, xmlFile);
+            removeDocCuid(xmlFile);
+            addCoteToCuid(fieldInfo, xmlFile);
         }
     }
 
     /**
      * Add the cote value to the akn4eu:xxxxCUID nodes.
      * */
-    private void addInsertCoteToCuid(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    public void addCoteToCuid(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
         if (frbrWorkNode == null) {
             return;
@@ -314,10 +349,10 @@ public class MetadataServiceImpl implements MetadataService {
         }
 
         String cuidValue = fieldInfo.getDisplayValue().replace(" ", "_");
-        this.replaceCuidValue(preservationNode, "docCUID", cuidValue);
+        replaceCuidValue(preservationNode, "docCUID", cuidValue);
 
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
-            this.replaceCuidValue(preservationNode, "fileCUID", cuidValue);
+            replaceCuidValue(preservationNode, "fileCUID", cuidValue);
         }
     }
 
@@ -328,22 +363,21 @@ public class MetadataServiceImpl implements MetadataService {
         }
     }
 
-    private void addInsertCoteToDocumentFilename(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
-    {
+    private void addCoteToDocumentFilename(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         final String fileName = xmlFile.getName();
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
             final String[] splitFileName = fileName.split("-");
-            splitFileName[1] = prepareInsertCoteForFileName(fieldInfo);
+            splitFileName[1] = prepareCoteForFileName(fieldInfo);
             xmlFile.setName(String.join("-", splitFileName));
         }
     }
 
-    private String prepareInsertCoteForFileName(ReferenceFieldInfo fieldInfo) {
+    private String prepareCoteForFileName(ReferenceFieldInfo fieldInfo) {
         final String insertCote = fieldInfo.getDisplayValue();
         return insertCote.replace(" ", "_");
     }
 
-    private void addInsertCoteToMetaIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    public void addCoteToMetaIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         final Node identificationNode = xmlFile.getElementByName("identification");
         if (identificationNode == null) return;
 
@@ -363,13 +397,13 @@ public class MetadataServiceImpl implements MetadataService {
         frbrWorkNode.insertBefore(frbrNumber, prescriptiveNode);
     }
 
-    private void addInsertCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    public void addCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if(MetadataUtil.isMainDocumentFile(xmlFile)) {
             addTLCReference(fieldInfo, xmlFile, "identifier");
         }
     }
 
-    private void removeMetaPreservation(XmlUtil.XmlFile xmlFile) {
+    public void removeMetaPreservation(XmlUtil.XmlFile xmlFile) {
         final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
         if (frbrWorkNode == null) {
             return;
@@ -382,7 +416,7 @@ public class MetadataServiceImpl implements MetadataService {
         frbrWorkNode.removeChild(preservationNode);
     }
 
-    private void removeDocCuid(XmlUtil.XmlFile xmlFile) {
+    public void removeDocCuid(XmlUtil.XmlFile xmlFile) {
         final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
         if (frbrWorkNode == null) {
             return;
@@ -400,7 +434,7 @@ public class MetadataServiceImpl implements MetadataService {
         preservationNode.removeChild(docCuidNode);
     }
 
-    public void addInsertCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    public void addCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
@@ -427,100 +461,12 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void processDocumentFinal(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
-    {
-        if (fieldInfo.getDisplayValue().equals("final")) {
-            this.addFinalToCoverPage(fieldInfo, xmlFile);
-            this.addFinalToIdentification(fieldInfo, xmlFile);
-            this.addFinalToFilename(fieldInfo, xmlFile);
-        }
-    }
-
-    private void addFinalToFilename(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
-    {
-        final String fileName = xmlFile.getName();
-        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
-            final String[] splitFileName = fileName.split("-");
-            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + "final-" + b : a + b + "-");
-            xmlFile.setName(newFileName);
-        }
-    }
-
-    private void addFinalToIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        final Node frbrExpression = xmlFile.getElementByName("FRBRExpression");
-        if (frbrExpression == null) {
-            return;
-        }
-        final Element frbrVersionNumber = xmlFile.newElement("FRBRversionNumber");
-        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.VALUE, fieldInfo.getDisplayValue());
-
-        frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression,MetadataUtil.FRBRLANGUAGE));
-    }
-
-    private void addFinalToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
-    {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
-        if (xmlNodeCoverpage == null) {
-            return;
-        }
-
-        Node xmlNodeDocNumber = MetadataUtil.getXmlNodeDocNumber(xmlFile);
-        if (xmlNodeDocNumber == null) {
-            return;
-        }
-        MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
-        xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
-        final Element inline = xmlFile.newElement("inline");
-        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.XMLID, IdGenerator.generateId());
-        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.NAME, "version");
-        inline.setTextContent(fieldInfo.getDisplayValue());
-        xmlNodeDocNumber.appendChild(inline);
-    }
-
-    @Override
     public void processInterinstitutionalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        this.addInterinstitutionalCoteToMetaReference(fieldInfo, xmlFile);
-        this.addInterinstitutionalCoteToCoverPage(fieldInfo, xmlFile);
-        this.addInterinstitutionalCoteToPreface(fieldInfo, xmlFile);
-    }
-
-    @Override
-    public void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        if (!MetadataUtil.ONE.equals(fieldInfo.getDisplayValue())) return;
-        if (MetadataUtil.isMainDocumentFile(xmlFile)) return;
-
-        final Node conclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
-        if (conclusions == null) return;
-
-        final Node blockNode = xmlFile.newElement("block");
-        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.NAME, "stamp");
-
-        final String language = this.readLanguageValue(xmlFile);
-        final String b64Stamp = this.getLanguageStampAsBase64(language);
-
-        final Node imgNode = xmlFile.newElement("img");
-        XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
-        blockNode.appendChild(imgNode);
-        conclusions.appendChild(blockNode);
-    }
-
-    private String readLanguageValue(XmlUtil.XmlFile xmlFile) {
-        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.FRBRLANGUAGE);
-        if (frbrLanguage == null) {
-            return MetadataUtil.LANGUAGE_EN;
-        }
-
-        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.LANGUAGE);
-        if (!StringUtils.hasLength(value)) {
-            return MetadataUtil.LANGUAGE_EN;
-        }
-        return value.toUpperCase();
-    }
-
-    private String getLanguageStampAsBase64(final String languageShortValue) {
-        final String stampPath = String.format("stamp/%s.gif", languageShortValue);
-        final byte[] stampBytes = ResourcesUtil.readResourceFile(stampPath);
-        return Base64.getEncoder().encodeToString(stampBytes);
+        final String langValue = MetadataUtil.readLanguageValue(xmlFile);
+        ReferenceFieldInfo langFieldInfo = fieldInfo.withHref(fieldInfo.getHref().replace(MetadataUtil.INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER, langValue));
+        addInterinstitutionalCoteToMetaReference(langFieldInfo, xmlFile);
+        addInterinstitutionalCoteToCoverPage(langFieldInfo, xmlFile);
+        addInterinstitutionalCoteToPreface(langFieldInfo, xmlFile);
     }
 
     private void addInterinstitutionalCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -534,13 +480,21 @@ public class MetadataServiceImpl implements MetadataService {
         if (references == null)
             return;
 
-        final Element tlcReference = xmlFile.newElement("TLCReference");
+        Node tlcReference = XmlUtil.getChildNodeWithName(references, name);
+        final boolean isTlcReferenceFound = (tlcReference != null);
+        if (!isTlcReferenceFound) {
+            tlcReference = xmlFile.newElement(MetadataUtil.TLCREFERENCE);
+        }
+
         XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.NAME, name);
         XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.XMLID, fieldInfo.getId());
         XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.HREF, fieldInfo.getHref());
         XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.SHOWAS, fieldInfo.getDisplayValue());
         XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.SHORTFORM, fieldInfo.getShortValue());
-        references.appendChild(tlcReference);
+
+        if (!isTlcReferenceFound) {
+            references.appendChild(tlcReference);
+        }
     }
 
     private void addInterinstitutionalCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -548,7 +502,7 @@ public class MetadataServiceImpl implements MetadataService {
         if (xmlNodeCoverpage == null) {
             return;
         }
-        this.addInterinstitutionalCoteToDocketNumber(fieldInfo, xmlNodeCoverpage);
+        addInterinstitutionalCoteToDocketNumber(fieldInfo, xmlNodeCoverpage);
     }
 
     private void addInterinstitutionalCoteToPreface(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -556,10 +510,10 @@ public class MetadataServiceImpl implements MetadataService {
         if (xmlNodePreface == null) {
             return;
         }
-        this.addInterinstitutionalCoteToDocketNumber(fieldInfo, xmlNodePreface);
+        addInterinstitutionalCoteToDocketNumber(fieldInfo, xmlNodePreface);
     }
 
-    private void addInterinstitutionalCoteToDocketNumber(ReferenceFieldInfo fieldInfo, Node xmlParentNode) {
+    public void addInterinstitutionalCoteToDocketNumber(ReferenceFieldInfo fieldInfo, Node xmlParentNode) {
         Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlParentNode, "procedureIdentifier");
         if (xmlNodeContainer == null) {
             return;
@@ -604,6 +558,45 @@ public class MetadataServiceImpl implements MetadataService {
             final Element referenceElement = createLinkedDocumentElement(reference, xmlFile);
             xmlNodeAssociatedReferences.appendChild(referenceElement);
         }
+    }
+
+    @Override
+    public void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (!MetadataUtil.ONE.equals(fieldInfo.getDisplayValue())) return;
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) return;
+
+        final Node conclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
+        if (conclusions == null) return;
+
+        final Node blockNode = xmlFile.newElement("block");
+        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.NAME, "stamp");
+
+        final String language = readLanguageValue(xmlFile);
+        final String b64Stamp = getLanguageStampAsBase64(language);
+
+        final Node imgNode = xmlFile.newElement("img");
+        XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
+        blockNode.appendChild(imgNode);
+        conclusions.appendChild(blockNode);
+    }
+
+    private String readLanguageValue(XmlUtil.XmlFile xmlFile) {
+        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.FRBRLANGUAGE);
+        if (frbrLanguage == null) {
+            return MetadataUtil.LANGUAGE_EN;
+        }
+
+        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.LANGUAGE);
+        if (!StringUtils.hasLength(value)) {
+            return MetadataUtil.LANGUAGE_EN;
+        }
+        return value.toUpperCase();
+    }
+
+    private String getLanguageStampAsBase64(final String languageShortValue) {
+        final String stampPath = String.format("stamp/%s.gif", languageShortValue);
+        final byte[] stampBytes = ResourcesUtil.readResourceFile(stampPath);
+        return Base64.getEncoder().encodeToString(stampBytes);
     }
 
     private Element createLinkedDocumentElement(final ReferenceFieldInfo reference, XmlUtil.XmlFile xmlFile) {

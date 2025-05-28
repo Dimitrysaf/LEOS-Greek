@@ -836,6 +836,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useOriginRef(cloneOriginRef);
                 billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex();
+                billService.updateExternalReferencesAsync(leosPackage);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;

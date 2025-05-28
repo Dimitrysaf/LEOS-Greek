@@ -58,7 +58,7 @@ define(function leosTrackChangesPluginModule(require) {
             });
 
             // Add dropdown with Accept All & Reject All buttons
-            if(!editor.config.isAlternativeArticle && !editor.config.isClause) {
+            if(!editor.config.isAlternative && !editor.config.isClause) {
                 editor.ui.addRichCombo('trackChangeActions', {
                     label: 'TC',
                     toolbar: 'trackChanges',
@@ -256,6 +256,9 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("handleTcAlternateClause", function (event) {
                 function changeOption(option, callback) {
                     var currentElement = editor.element.$.firstChild;
+                    if (currentElement && currentElement.firstChild && currentElement.firstChild.id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
+                        currentElement = editor.element.$.childNodes[1];
+                    }
                     core.addTrackChangesAttributesForAlternative(editor, currentElement, currentIndex);
                     var isArticle = currentElement && currentElement.getAttribute('data-akn-name') === core.ARTICLE;
                     if(isArticle) {
@@ -291,8 +294,8 @@ define(function leosTrackChangesPluginModule(require) {
                     var newOption = optionList.list.find(listOfOption => listOfOption.index == newIndex);
 
                     var currentElement = ckeditor.element.$.firstChild;
-                    if (editor.element && ckeditor.element.$.firstChild && ckeditor.element.$.firstChild.id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
-                        currentElement = editor.element.$.childNodes[1];
+                    if (currentElement && currentElement.firstChild && currentElement.firstChild.id === 'spellchecker-contextmenu' && ckeditor.element.$.childNodes[1]) {
+                        currentElement = ckeditor.element.$.childNodes[1];
                     }
                     var currentIndex = currentElement.getAttribute("leos:selectedoption");
                     var trackChangeElements = $(currentElement).find("[data-akn-action]");
@@ -575,6 +578,12 @@ define(function leosTrackChangesPluginModule(require) {
                                     if(!rangeWasCollapsed){
                                         // insert here code to delete the empty elements
                                         _removeEmptyElements(initialCommonAncestor);
+                                        let lastEditable = leosPluginUtils.findLastEditable(initialCommonAncestor);
+                                        if(lastEditable){
+                                            range = editor.createRange();
+                                            range.selectNodeContents(lastEditable);
+                                            editor.getSelection().selectRanges([ range ]);
+                                        }
                                     }
                                     editor.fire("saveSnapshot");
                                     range = editor.getSelection().getRanges()[0];
@@ -725,14 +734,23 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("afterCommandExec", function(event) {
                 if (event.data.name === "enter") {
                     var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
+                    var newParagraph = null;
                     if (!elementToRemoveAttribute) {
                         elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("p");
+                        if(elementToRemoveAttribute) {
+                            newParagraph = $(elementToRemoveAttribute).prev('p[new]:not([data-akn-action-number])').filter(function() {
+                                return $(this).text().trim() === '';
+                            })[0];
+                        }
                     }
                     if (elementToRemoveAttribute) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
                         elementToRemoveAttribute.removeAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUM_ID);
                         event.editor.fire("handleTcIndent", { data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
+                        if(newParagraph) {
+                            event.editor.fire("handleTcIndent", { data: newParagraph, previousNumber: newParagraph.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
+                        }
                     }
                 }
             }, null, null, 15);
@@ -997,7 +1015,7 @@ define(function leosTrackChangesPluginModule(require) {
     function _cleanElements(data) {
         var eventDataAsObject = $(data);
         var elementsToRemove = eventDataAsObject
-            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph']")
+            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph'], p[data-akn-name='aknParagraph']")
             .find("*").addBack().filter(function () {
                 return UTILS.isEmptyElement(this);
             });

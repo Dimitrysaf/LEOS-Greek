@@ -1141,7 +1141,6 @@ export class DocumentService {
   updateVersionsData() {
     const self = this;
     this.versions$ = this.documentRefAndCategory$.pipe(
-      take(1),
       filter(Boolean),
       tap((res) => {
         this.countDocumentVersionsData(res.category, res.ref);

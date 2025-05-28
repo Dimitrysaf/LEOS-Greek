@@ -26,13 +26,12 @@ public interface MetadataService {
     MetadataFieldInfo lookupFieldInfo(String field, String fieldValue) throws MetadataUtilsException;
     ApplyMetadataResponse.FieldNode getLookupFieldInfoErrorResult(ApplyMetadataRequest.FieldNode field, MetadataUtilsException ex);
     ApplyMetadataResponse.FieldNode getLookupFieldInfoSuccessResult(ApplyMetadataRequest.FieldNode field);
-    void processInsertCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
-    void processDocumentFinal(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processFinalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processInterinstitutionalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
-    void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processLinkedDocuments(MultipleReferencesFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processEmissionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processAdoptionLocation(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 }
-

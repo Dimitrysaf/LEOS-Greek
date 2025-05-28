@@ -417,6 +417,8 @@ public interface LeosRepository {
 
     Optional<LeosClientResponse> getLeosClient(String clientName);
 
+    Optional<LeosClientResponse> getLeosClient(String clientName, String technicalUser);
+
     Integer createOrUpdateWorkflowCollaboratorConfig(String clientSystemId, String packageName, String aclCallbackUrl, String userCheckCallbackUrl);
 
     void deleteWorkflowCollaborator(BigInteger id);

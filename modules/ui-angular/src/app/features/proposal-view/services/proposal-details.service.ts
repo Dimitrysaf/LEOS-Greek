@@ -186,14 +186,11 @@ export class ProposalDetailsService implements OnDestroy {
     nextIndex: number,
   ) {
     this.loadingService.setLoading(true);
-    this.http
+    return this.http
       .post<any>(
         `${apiBaseUrl}/secured/updateAnnexPosition/${this.proposalRef}/annex?previousIndex=${previousIndex}&nextIndex=${nextIndex}`,
         {},
       )
-      .subscribe(() => {
-        this.setProposalRef(this.proposalRef);
-      });
   }
 
   updateProposalMetadata(docPurpose: string, eeaRelevance: boolean) {
@@ -306,6 +303,26 @@ export class ProposalDetailsService implements OnDestroy {
         },
       )
       .pipe(tap(() => this.fetchCollaborators()));
+  }
+
+  addCollaboratorsToProposal(
+    proposalRef: string,
+    collaborators: CollaboratorRequest[],
+    options?: { skipError400Interception: boolean }
+  ) {
+    return this.http
+      .post<null>(
+        `${apiBaseUrl}/secured/proposal/${proposalRef}/bulkCollaborators`,
+        { collaborators },
+        {
+          context: options?.skipError400Interception
+            ? new HttpContext().set(
+              IS_ERROR_INTERCEPTION_ENABLED,
+              (err) => err.status !== 400,
+            )
+            : undefined,
+        },
+      );
   }
 
   setCollaboratorsRole(collaboratorToUpdate: CollaboratorRequest) {

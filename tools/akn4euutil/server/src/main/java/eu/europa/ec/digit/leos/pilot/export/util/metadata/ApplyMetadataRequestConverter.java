@@ -30,21 +30,16 @@ public class ApplyMetadataRequestConverter {
     }
 
     public ApplyMetadataRequest xmlFileToApplyMetadataRequest(XmlUtil.XmlFile xmlFile) {
-        final Node nodeRequest = xmlFile.getElementByName("akn4euRequest");
+        final Node nodeRequest = xmlFile.getElementByName("legisWriteRequest");
         return processApplyMetadataRequestNode(nodeRequest);
     }
 
     public ApplyMetadataRequest processApplyMetadataRequestNode(Node nodeRequest) {
         if (nodeRequest != null){
-            Node nodeDocument = XmlUtil.getChildNodeWithName(nodeRequest, MetadataUtil.DOCUMENT);
-            ApplyMetadataRequest.DocumentNode requestDocument = parseApplyMetadataRequestDocumentNode(nodeDocument);
-
             List<Node> taskNodes = XmlUtil.getChildNodesWithName(nodeRequest, MetadataUtil.TASK);
             List<ApplyMetadataRequest.TaskNode> requestTasks = processApplyMetadataRequestTaskNodes(taskNodes);
-
-            ApplyMetadataRequest applyMetadataRequest = parseApplyMetadataRequestNode(nodeRequest);
-            applyMetadataRequest.setDocument(requestDocument);
-            applyMetadataRequest.setTasks(requestTasks);
+            ApplyMetadataRequest applyMetadataRequest = parseApplyMetadataRequestNode(nodeRequest)
+                    .setTasks(requestTasks);
             return applyMetadataRequest;
         }
         return null;
@@ -65,9 +60,12 @@ public class ApplyMetadataRequestConverter {
             List<ApplyMetadataRequest.TaskNode> tasks = new ArrayList<>();
             for (int i = 0; i < taskNodes.size(); i++){
                 Node nodeTask = taskNodes.get(i);
-                ApplyMetadataRequest.TaskNode akn4euTask = parseApplyMetadataRequestTaskNode(nodeTask);
-                akn4euTask.setActions(processApplyMetadataRequestTaskNode(nodeTask));
-                tasks.add(akn4euTask);
+                Node nodeDocument = XmlUtil.getChildNodeWithName(nodeTask, MetadataUtil.DOCUMENT);
+                ApplyMetadataRequest.DocumentNode requestDocument = parseApplyMetadataRequestDocumentNode(nodeDocument);
+                ApplyMetadataRequest.TaskNode task = parseApplyMetadataRequestTaskNode(nodeTask)
+                        .setDocument(requestDocument)
+                        .setActions(processApplyMetadataRequestTaskNode(nodeTask));
+                tasks.add(task);
             }
             return tasks;
         }
@@ -87,8 +85,8 @@ public class ApplyMetadataRequestConverter {
             List<Node> actionNodes = XmlUtil.getChildNodesWithName(nodeTask, MetadataUtil.ACTION);
             for (int i = 0; i < actionNodes.size(); i++){
                 Node nodeAction = actionNodes.get(i);
-                ApplyMetadataRequest.ActionNode akn4euAction = parseApplyMetadataRequestActionNode(nodeAction);
-                akn4euAction.setFields(processApplyMetadataRequestActionNode(nodeAction));
+                ApplyMetadataRequest.ActionNode akn4euAction = parseApplyMetadataRequestActionNode(nodeAction)
+                        .setFields(processApplyMetadataRequestActionNode(nodeAction));
                 actions.add(akn4euAction);
             }
             return actions;
@@ -135,5 +133,6 @@ public class ApplyMetadataRequestConverter {
         }
         return null;
     }
+
 
 }

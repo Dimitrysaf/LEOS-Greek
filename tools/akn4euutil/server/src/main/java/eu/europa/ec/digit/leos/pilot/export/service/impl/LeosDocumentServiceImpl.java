@@ -25,6 +25,7 @@ import eu.europa.ec.digit.leos.pilot.export.service.rest.Akn4EUUtilRestClient;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,12 +42,13 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
     private final LeosPrefinalisationService leosPrefinalisationService;
     private final Akn4EUUtilRestClient restClient;
 
+    @Autowired
     public LeosDocumentServiceImpl(LeosLegDocumentService leosLegDocumentService,
                                    XmlDocumentService xmlDocumentService,
-                                   LeosPrefinalisationService leosPrefinalisationService, Akn4EUUtilRestClient restClient) {
+                                   LeosPrefinalisationService metadataService, Akn4EUUtilRestClient restClient) {
         this.leosLegDocumentService = leosLegDocumentService;
         this.xmlDocumentService = xmlDocumentService;
-        this.leosPrefinalisationService = leosPrefinalisationService;
+        this.leosPrefinalisationService = metadataService;
         this.restClient = restClient;
     }
 

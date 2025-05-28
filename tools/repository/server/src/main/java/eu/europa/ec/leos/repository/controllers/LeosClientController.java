@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -23,18 +24,23 @@ public class LeosClientController {
 
     @GetMapping(path = "/leos-client")
     @Operation(summary = "Get LEOS client info")
-    public ResponseEntity<Object> getLeosClient(@RequestParam("clientName") String clientName) {
-        final Optional<LeosClients> leosClient = leosClientsRepository.findByName(clientName);
-        if (leosClient.isPresent()) {
-            return ResponseEntity.ok(convert(leosClient.get()));
-        }
-        //HTTP.NOT_FOUND is not correctly handled so return empty instead
-        //return ResponseEntity.ok(new Object());
-        return ResponseEntity.ok(LeosClient.builder().build());
+    public ResponseEntity<Object> getLeosClient(
+            @RequestParam(value = "clientName", required = true) String clientName,
+            @RequestParam(value = "technicalUser", required = false) String technicalUser
+            ) {
+        final Optional<LeosClients> leosClient = Objects.isNull(technicalUser)?
+                leosClientsRepository.findByName(clientName) :
+                leosClientsRepository.findByNameAndTechnicalUser(clientName, technicalUser);
+        return leosClient.<ResponseEntity<Object>>map(leosClients -> ResponseEntity.ok(convert(leosClients)))
+                .orElseGet(() -> ResponseEntity.ok().build());
     }
 
     private LeosClient convert(LeosClients leosClients) {
-        return LeosClient.builder().name(leosClients.getName()).displayName(leosClients.getDisplayName()).build();
+        return LeosClient.builder()
+                .name(leosClients.getName())
+                .displayName(leosClients.getDisplayName())
+                .technicalUser(leosClients.getTechnicalUser())
+                .build();
     }
 
 }

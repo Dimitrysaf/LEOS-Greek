@@ -68,7 +68,7 @@ public class EditionInfoRepositoryImpl implements EditionInfoRepository {
 
     @Override
     public List<CoEditionVO> getSessionEditInfo(String sessionId) {
-        return this.getEditInfo(c -> ((CoEditionVO)c.getObjectValue()).getSessionId().equals(sessionId));
+        return this.getEditInfo(c -> ((CoEditionVO)c.getObjectValue()).getSessionId() != null && ((CoEditionVO)c.getObjectValue()).getSessionId().equals(sessionId));
     }
 
     @Override

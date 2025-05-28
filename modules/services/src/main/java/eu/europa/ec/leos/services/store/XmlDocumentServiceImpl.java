@@ -13,6 +13,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.coedition.UpdateCoEditionResponse;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import io.atlassian.fugue.Pair;
 import org.slf4j.Logger;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.cmis.support.RepositoryUtil.updateDocumentProperties;
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 
 @Service
 public class XmlDocumentServiceImpl implements XmlDocumentService {
@@ -115,12 +120,7 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     private List<Element> updateInternalReference(XmlDocument xmlDocument) throws Exception {
         byte[] content = xmlDocument.getContent().get().getSource().getBytes();
         Pair<byte[], List<Element>> result = xmlContentProcessor.updateReferences(content);
-        if(!result.right().isEmpty()) {
-            String message = messageHelper.getMessage("internal.ref.checkinComment");
-            leosRepository.updateDocument(xmlDocument.getId(), result.left(),
-                    (Map<String, Object>) updateDocumentProperties(xmlDocument.getMetadata().get()), VersionType.MINOR,
-                    message, XmlDocument.class);
-        }
+        updateDocumentWithNewRefs(xmlDocument, result);
         return result.right();
     }
 
@@ -128,12 +128,28 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     private List<Element> updateExternalReferences(XmlDocument xmlDocument) throws Exception {
         byte[] content = xmlDocument.getContent().get().getSource().getBytes();
         Pair<byte[], List<Element>> result = xmlContentProcessor.updateExternalReferences(content);
+        updateDocumentWithNewRefs(xmlDocument, result);
+        return result.right();
+    }
+
+    private void updateDocumentWithNewRefs(XmlDocument xmlDocument, Pair<byte[], List<Element>> result) throws Exception {
         if(!result.right().isEmpty()) {
+            xmlDocument = workspaceService.findDocumentById(xmlDocument.getId(), XmlDocument.class);
+            byte[] content = xmlDocument.getContent().get().getSource().getBytes();
+            Document document = createXercesDocument(content);
+
+            for (Element element : result.right()) {
+                Node elementNode = XercesUtils.getElementById(document, element.getElementId());
+                if (elementNode != null) {
+                    XercesUtils.replaceElement(elementNode, element.getElementFragment());
+                }
+            }
+
+            content = XercesUtils.nodeToByteArray(document);
             String message = messageHelper.getMessage("internal.ref.checkinComment");
-            leosRepository.updateDocument(xmlDocument.getId(), result.left(),
+            leosRepository.updateDocument(xmlDocument.getId(), content,
                     (Map<String, Object>) updateDocumentProperties(xmlDocument.getMetadata().get()), VersionType.MINOR,
                     message, XmlDocument.class);
         }
-        return result.right();
     }
 }

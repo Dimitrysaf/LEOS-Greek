@@ -59,6 +59,7 @@ define(function annotateExtensionModule(require) {
         connector.receiveDocumentMetadata = _receiveDocumentMetadata;
         connector.receiveSearchMetadata = _receiveSearchMetadata;
         connector.receiveListCollaborators = _receiveListCollaborators;
+        connector.receiveAddCollaborators = _receiveAddCollaborators;
         connector.receiveSearchUsers = _receiveSearchUsers;
 
         connector.stateChangeHandler = _stateChangeHandler;
@@ -89,6 +90,11 @@ define(function annotateExtensionModule(require) {
             connector.hostBridge.requestListCollaborators = function() {
                 if (connector.requestListCollaborators) {
                     connector.requestListCollaborators();
+                }
+            }
+            connector.hostBridge.requestAddCollaborators = function(collaborators) {
+                if (connector.requestAddCollaborators) {
+                    connector.requestAddCollaborators(collaborators);
                 }
             }
             connector.hostBridge.requestSearchUsers = function(userId) {
@@ -203,6 +209,14 @@ define(function annotateExtensionModule(require) {
         }
     }
 
+    function _receiveAddCollaborators() {
+        var connector = this;
+        log.debug("Add collaborators response received and being sent to annotate..!");
+        if (connector.hostBridge && connector.hostBridge.responseAddCollaborators && typeof connector.hostBridge.responseAddCollaborators === 'function') {
+            connector.hostBridge.responseAddCollaborators();
+        }
+    }
+
     function _receiveSearchUsers(usersList) {
         var connector = this;
         log.debug("Search of users' response received and being sent to annotate..!");
@@ -312,6 +326,7 @@ define(function annotateExtensionModule(require) {
 
         var webSocketUrl = annotateState.anotHost.replace('https','wss').replace('http','ws')+"/ws";
         var innerHtmlJson = {
+            "uiStyle": "progressive",
             "isAngularUI": annotateState.isAngularUI,
             "sidebarContainer": annotateState.sidebarContainer,
             "leosDocumentRootNode": "akomantoso",

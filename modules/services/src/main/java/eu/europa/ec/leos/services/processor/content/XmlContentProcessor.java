@@ -112,6 +112,8 @@ public interface XmlContentProcessor {
 
     Pair<byte[], List<Element>> updateExternalReferences(byte[] xmlContent) throws Exception;
 
+    byte[] updateExternalReferencesOnAnnexesUpdate(byte[] xmlContent);
+
     Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent);
 
     byte[] applyMoveActionOnElement(byte[] xmlContent, String elementId, boolean accept);
