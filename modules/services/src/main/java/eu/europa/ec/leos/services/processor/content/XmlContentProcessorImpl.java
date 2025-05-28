@@ -1424,6 +1424,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
+    public byte[] updateExternalReferencesOnAnnexesUpdate(byte[] xmlContent) {
+        Document document = createXercesDocument(xmlContent);
+        updateExternalReferences(document);
+        return nodeToByteArray(document);
+    }
+
+    @Override
     public byte[] updateReferencesOnImport(byte[] xmlContent, Map<String, String> refsMatching) {
         Document document = createXercesDocument(xmlContent);
         updateReferencesOnImport(document, refsMatching);
@@ -1536,8 +1543,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
                             mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
                             updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
-                        }
-                        if (XercesUtils.hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true")) {
+                        } else if (XercesUtils.hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true")) {
                             updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
                         }
                         XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);

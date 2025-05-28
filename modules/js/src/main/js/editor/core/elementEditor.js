@@ -532,7 +532,7 @@ define(function elementEditorModule(require) {
             var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
             // set read-only to prevent changes
             editor.setReadOnly(true);
-            const alternateElementId = editor.config.isAlternativeArticle ? editor.element.getFirst().getId() : null;
+            const alternateElementId = editor.config.isAlternative ? editor.element.getFirst().getId() : null;
 
             // save the element being edited
             var data = {

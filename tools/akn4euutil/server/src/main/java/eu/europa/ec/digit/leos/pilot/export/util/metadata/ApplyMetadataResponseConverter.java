@@ -34,13 +34,12 @@ public class ApplyMetadataResponseConverter {
         return new ApplyMetadataResponseConverter();
     }
 
-    public XmlUtil.XmlFile applayMetadataResponseToXmlFile(ApplyMetadataResponse response) throws MetadataUtilsException {
+    public XmlUtil.XmlFile applyMetadataResponseToXmlFile(ApplyMetadataResponse response) throws MetadataUtilsException {
         try {
             XmlUtil.XmlFile xmlFile = XmlUtil.newXmlFile();
             xmlFile.setName("content.xml");
             Element rootElement = createApplyMetadataResponseXmlRootElement(xmlFile, response);
             rootElement.appendChild(createApplyMetadataResponseXmlStatusNode(xmlFile, response.getStatus()));
-            rootElement.appendChild(createApplyMetadataResponseXmlDocumentNode(xmlFile, response.getDocument()));
 
             if (response.getTasks() != null){
                 for (ApplyMetadataResponse.TaskNode task : response.getTasks()) {
@@ -54,9 +53,8 @@ public class ApplyMetadataResponseConverter {
         }
     }
 
-
     private Element createApplyMetadataResponseXmlRootElement(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse response) {
-        Element rootElement = xmlFile.createRoot("akn4euResponse");
+        Element rootElement = xmlFile.createRoot("legisWriteResponse");
         rootElement.setAttribute("responseId", response.getResponseId());
         rootElement.setAttribute(MetadataUtil.VERSION, response.getVersion());
         rootElement.setAttribute("xmlns", response.getXmlns());
@@ -64,7 +62,6 @@ public class ApplyMetadataResponseConverter {
     }
 
     private Element createApplyMetadataResponseXmlStatusNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.StatusNode status) {
-
         Element statusNode = xmlFile.newElement("status");
         if (status != null){
             statusNode.setAttribute("code", status.getCode());
@@ -75,7 +72,6 @@ public class ApplyMetadataResponseConverter {
     }
 
     private Element createApplyMetadataResponseXmlDocumentNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.DocumentNode document) {
-
         Element documentNode = xmlFile.newElement(MetadataUtil.DOCUMENT);
         if (document != null){
             documentNode.setAttribute(MetadataUtil.DOCUMENTID, document.getDocumentId());
@@ -99,6 +95,7 @@ public class ApplyMetadataResponseConverter {
             }
         }
 
+        taskNode.appendChild(createApplyMetadataResponseXmlDocumentNode(xmlFile, task.getDocument()));
         return taskNode;
     }
 
@@ -123,6 +120,7 @@ public class ApplyMetadataResponseConverter {
         return actionNode;
     }
 
+
     private Element createApplyMetadataResponseXmlFieldNode(XmlUtil.XmlFile xmlFile, ApplyMetadataResponse.FieldNode field) {
         Element fieldNode = xmlFile.newElement(MetadataUtil.FIELD);
         fieldNode.setAttribute(MetadataUtil.KEY, field.getKey());
@@ -133,10 +131,7 @@ public class ApplyMetadataResponseConverter {
     }
 
     public ApplyMetadataResponse getApplyMetadataResponseWithErrorStatus(ApplyMetadataRequest request) {
-        return new ApplyMetadataResponse(
-                request != null ? request.getRequestId() : "",
-                request != null ? applyMetadataRequestDocumentToResultDocument(request.getDocument()) : null,
-                null, getErrorStatusResult());
+        return new ApplyMetadataResponse(request != null ? request.getRequestId() : "", null, getErrorStatusResult());
     }
 
     public ApplyMetadataResponse getApplyMetadataResponseWithXmlValidationError(ApplyMetadataRequest request) {
@@ -145,18 +140,9 @@ public class ApplyMetadataResponseConverter {
             for (ApplyMetadataRequest.TaskNode task : request.getTasks()) {
                 responseTasks.add(getApplyMetadataResponseTaskWithXmlValidationError(task));
             }
-
-            return new ApplyMetadataResponse(
-                    request != null ? request.getRequestId() : "",
-                    request != null ? applyMetadataRequestDocumentToResultDocument(request.getDocument()) : null,
-                    responseTasks, getErrorStatusResult());
+            return new ApplyMetadataResponse(request != null ? request.getRequestId() : "", responseTasks, getErrorStatusResult());
         }
         return getApplyMetadataResponseWithErrorStatus(request);
-    }
-
-    public ApplyMetadataResponse.DocumentNode applyMetadataRequestDocumentToResultDocument(ApplyMetadataRequest.DocumentNode document, String legFilename) {
-        return new ApplyMetadataResponse.DocumentNode("zip://" + legFilename, legFilename, document.getMimeType(),
-                document.getDocumentId());
     }
 
     public ApplyMetadataResponse.DocumentNode applyMetadataRequestDocumentToResultDocument(ApplyMetadataRequest.DocumentNode document) {
@@ -164,6 +150,10 @@ public class ApplyMetadataResponseConverter {
                 document.getDocumentId());
     }
 
+    public ApplyMetadataResponse.DocumentNode applyMetadataRequestDocumentToResultDocument(ApplyMetadataRequest.DocumentNode document, String legFilename) {
+        return new ApplyMetadataResponse.DocumentNode("zip://" + legFilename, legFilename, document.getMimeType(),
+                document.getDocumentId());
+    }
 
     public ApplyMetadataResponse.TaskNode getApplyMetadataResponseTaskWithXmlValidationError(ApplyMetadataRequest.TaskNode requestTask) {
         List<ApplyMetadataResponse.ActionNode> responseTaskActions = new ArrayList<>();
@@ -179,10 +169,11 @@ public class ApplyMetadataResponseConverter {
         }
 
         return new ApplyMetadataResponse.TaskNode(taskId, MetadataUtil.ONE, responseTaskActions,
+                applyMetadataRequestDocumentToResultDocument(requestTask.getDocument()),
                 getValidationErrorResult(MetadataValidationResultKey.XML_VALIDATION_CHECK.getKey()));
     }
 
-    private ApplyMetadataResponse.ActionNode getApplyMetadataResponseActionError(ApplyMetadataRequest.ActionNode requestAction) {
+    public ApplyMetadataResponse.ActionNode getApplyMetadataResponseActionError(ApplyMetadataRequest.ActionNode requestAction) {
         List<ApplyMetadataResponse.FieldNode> responseActionFields = new ArrayList<>();
         if (requestAction.getFields() != null) {
             for (ApplyMetadataRequest.FieldNode requestField : requestAction.getFields()) {
@@ -207,4 +198,6 @@ public class ApplyMetadataResponseConverter {
     public ApplyMetadataResponse.ValidationResultNode getValidationErrorResult(String key) {
         return new ApplyMetadataResponse.ValidationResultNode(key, MetadataUtil.ONE);
     }
+
+
 }

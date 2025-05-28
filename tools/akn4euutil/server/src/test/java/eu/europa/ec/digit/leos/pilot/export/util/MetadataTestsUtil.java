@@ -100,8 +100,8 @@ public final class MetadataTestsUtil {
         Node taskNode =  XmlUtil.getChildNodeWithName(rootNode, "task");
         Assert.notNull(taskNode, "content.xml task node is null");
 
-        Node documentNode =  XmlUtil.getChildNodeWithName(rootNode, "document");
-        Assert.notNull(documentNode, "content.xml document node is null");
+        Node documentNode =  XmlUtil.getChildNodeWithName(taskNode, "document");
+        Assert.notNull(documentNode, "Task document node is null");
 
         Node validationResultNode = XmlUtil.getChildNodeWithName(taskNode, "validationResult");
         Assert.notNull(validationResultNode, "content.xml validation result is null");
@@ -286,7 +286,8 @@ public final class MetadataTestsUtil {
 
     private static String readContentXmlDocumentName(XmlFile xmlFile) throws Exception {
         Node rootNode = xmlFile.getRootNode();
-        Node documentNode = XmlUtil.getChildNodeWithName(rootNode, "document");
+        Node taskNode = XmlUtil.getChildNodeWithName(rootNode, "task");
+        Node documentNode = XmlUtil.getChildNodeWithName(taskNode, "document");
         String documentName = XmlUtil.getNodeAttributeValue(documentNode, "filename");
         Assert.notNull(documentName, "content.xml document name is null");
         return documentName;

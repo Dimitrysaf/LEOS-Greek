@@ -703,6 +703,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public Optional<LeosClientResponse> getLeosClient(String clientName, String technicalUser) {
+        return Optional.empty();
+    }
+
+    @Override
     public Integer createOrUpdateWorkflowCollaboratorConfig(String clientSystemId, String proposalName, String aclCallbackUrl, String userCheckCallbackUrl) {
         return -1;
     }

@@ -6,5 +6,6 @@ import lombok.Data;
 public class LeosClientResponse {
     private String name;
     private String displayName;
+    private String technicalUser;
 }
 

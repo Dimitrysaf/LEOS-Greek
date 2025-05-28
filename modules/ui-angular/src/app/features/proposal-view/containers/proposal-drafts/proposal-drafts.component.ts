@@ -21,12 +21,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
-import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
+import { LoadingService } from "@/shared/services/loading.service";
+import { EuiGrowlService } from "@eui/core";
+import { HttpStatusCode } from "@angular/common/http";
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -77,6 +79,9 @@ export class ProposalDraftsComponent
     private coEditionService: CoEditionServiceWS,
     private translate: TranslateService,
     private dialogService: EuiDialogService,
+    private loadingService: LoadingService,
+    private growlService: EuiGrowlService,
+    private translateService: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -182,13 +187,45 @@ export class ProposalDraftsComponent
 
   drop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.annexes, event.previousIndex, event.currentIndex);
-    const annexRef = this.annexes[event.currentIndex].id;
     //if dropped in the same position do nothing
     if (event.currentIndex === event.previousIndex) return;
     this.proposalDetailsService.updateAnnexOrder(
-      ++event.previousIndex,
-      ++event.currentIndex,
-    );
+      event.previousIndex + 1,
+      event.currentIndex + 1,
+    ).subscribe({
+      next: () => this.proposalDetailsService.setProposalRef(this.proposalRef),
+      error: (res) => {
+        moveItemInArray(this.annexes, event.currentIndex, event.previousIndex);
+        if (res.status === HttpStatusCode.TooManyRequests) {
+          this.growlService.growl({
+            severity: 'warning',
+            summary: this.translateService.instant(
+              'global.notifications.title.warning',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.drafts.annex.reorder-dialog.warning.concurrency',
+            ),
+            life: 5000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        } else {
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'global.notifications.title.error',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.drafts.annex.reorder-dialog.error',
+            ),
+            life: 5000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        }
+        this.proposalDetailsService.setProposalRef(this.proposalRef);
+      },
+    });
   }
 
   handleExplanatoryDelete() {

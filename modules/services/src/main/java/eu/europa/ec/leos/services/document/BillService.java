@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.document;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -62,6 +63,8 @@ public interface BillService {
     Bill addAttachment(Bill bill, String href, String showAs, String actionMsg);
 
     Bill removeAttachment(Bill bill, String href, String actionMsg);
+
+    Bill updateAllAttachments(Bill bill, LeosPackage leosPackage, String actionMsg);
 
     Bill updateAttachments(Bill bill, HashMap<String, String> attachmentsElements, String actionMsg);
 

@@ -15,6 +15,7 @@ package eu.europa.ec.digit.leos.pilot.export.service;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.service.impl.MetadataServiceImpl;
@@ -37,10 +38,10 @@ public class MetadataServiceImplTest {
     }
 
     @Test
-    public void testAddInsertCoteToCuidInMainXml() throws XmlUtilException, MetadataUtilsException {
+    public void testAddCoteToCuidInMainXml() throws XmlUtilException, MetadataUtilsException {
         XmlUtil.XmlFile xmlFile = createCuidXmlFile("main-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
-        ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
-        metadataService.processInsertCote(insertCoteFieldInfo, xmlFile);
+        ReferenceFieldInfo coteFieldInfo = createCoteFieldInfo("COM(2024) 1811");
+        metadataService.processCote(coteFieldInfo, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
         Assertions.assertNull(fileCuidNode);
@@ -50,10 +51,10 @@ public class MetadataServiceImplTest {
     }
 
     @Test
-    public void testAddInsertCoteToCuidInNotMainXml() throws XmlUtilException, MetadataUtilsException {
+    public void testAddCoteToCuidInNotMainXml() throws XmlUtilException, MetadataUtilsException {
         XmlUtil.XmlFile xmlFile = createCuidXmlFile("notMain-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
-        ReferenceFieldInfo insertCoteFieldInfo = createInsertCoteFieldInfo("COM(2024) 1811");
-        metadataService.processInsertCote(insertCoteFieldInfo, xmlFile);
+        ReferenceFieldInfo coteFieldInfo = createCoteFieldInfo("COM(2024) 1811");
+        metadataService.processCote(coteFieldInfo, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
         Assertions.assertNotNull(fileCuidNode);
@@ -95,7 +96,6 @@ public class MetadataServiceImplTest {
         Assertions.assertTrue(XmlUtil.isNodeEmpty(referencesContainer));
     }
 
-
     private XmlUtil.XmlFile createCuidXmlFile(String filename, String cuid) throws XmlUtilException {
         XmlUtil.XmlFile xmlFile = XmlUtil.newXmlFile();
         xmlFile.setName(filename);
@@ -124,8 +124,8 @@ public class MetadataServiceImplTest {
         return xmlFile;
     }
 
-    private ReferenceFieldInfo createInsertCoteFieldInfo(String fieldValue) throws MetadataUtilsException {
-        return (ReferenceFieldInfo)MetadataUtil.parseInsertCote(fieldValue);
+    private ReferenceFieldInfo createCoteFieldInfo(String fieldValue) throws MetadataUtilsException {
+        return (ReferenceFieldInfo)MetadataUtil.parseCote(fieldValue, MetadataFieldType.COTE);
     }
 
     private XmlUtil.XmlFile createAssociatedReferencesXmlFile(String filename) throws XmlUtilException {
@@ -148,4 +148,5 @@ public class MetadataServiceImplTest {
 
         return xmlFile;
     }
+
 }

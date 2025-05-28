@@ -13,7 +13,10 @@
  */
 package eu.europa.ec.leos.services.processor;
 
+import eu.europa.ec.leos.domain.repository.document.Annex;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface AttachmentProcessor {
@@ -47,4 +50,11 @@ public interface AttachmentProcessor {
      * @return udpated xml content
      */
     byte[] updateAttachmentsInBill(byte[] xmlContent, HashMap<String, String> attachments);
+
+    /** This method update existing elements "attachment/documentRef" section to 'attachments' tag.
+     * @param xmlContent
+     * @param annexes
+     * @return udpated xml content
+     */
+    byte[] updateAllAttachmentsInBill(byte[] xmlContent, List<Annex> annexes);
 }

@@ -660,7 +660,6 @@ public class BillContextService {
         Validate.notNull(annexPreviousIndex, "Bill annexPreviousIndex is required");
         Validate.notNull(annexNextIndex, "Bill annexNextIndex is required");
 
-        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         Annex operatedAnnex = findAnnexFromIndex(annexes, annexPreviousIndex);
         String operatedAnnexNumber  = AnnexNumberGenerator.getAnnexNumber(annexNextIndex);
@@ -703,7 +702,8 @@ public class BillContextService {
         operatedAnnexContext.executeUpdateAnnexIndex();
         attachments.put(operatedAnnex.getName(), operatedAnnexNumber);
 
-        billService.updateAttachments(billByPackagePath, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
+        billService.updateAllAttachments(billByPackagePath, leosPackage, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
     }
 
     private Annex findAffectedAnnex(boolean before, int index) {

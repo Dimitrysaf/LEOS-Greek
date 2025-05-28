@@ -62,44 +62,6 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         this.metadataService = metadataService;
     }
 
-
-    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles){
-        LOG.debug("Process field info  '{}'", fieldInfo);
-
-        final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
-        for (XmlFile xmlFile : documentXmlFiles){
-            LOG.debug("Process xml file '{}'", xmlFile.getName());
-            switch(fieldInfo.getFieldType()){
-                case ADOPTION_DATE:
-                    metadataService.processAdoptionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case ADOPTION_LOCATION:
-                    metadataService.processAdoptionLocation((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case EMISSION_DATE:
-                    metadataService.processEmissionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case INTERINSTITUTIONAL_COTE:
-                    metadataService.processInterinstitutionalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case INSERT_COTE:
-                    metadataService.processInsertCote((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case LINKED_DOCUMENTS:
-                    metadataService.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case DOCUMENT_FINAL:
-                    metadataService.processDocumentFinal((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
-                case STAMP:
-                    if(isAutonomousAct) {
-                        metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    }
-                    break;
-            }
-        }
-    }
-
     public byte[] applyMetadata(MultipartFile inputFile) {
         ApplyMetadataRequest request = null;
 
@@ -108,7 +70,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
             request = readContentXml(zipContent);
 
-            Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, request.getDocument());
+            Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, getFirstTaskDocument(request));
             List<XmlFile> documentXmlFiles = readDocumentXmlFiles(documentZipContent);
             Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
 
@@ -235,9 +197,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
         final ApplyMetadataResponse.StatusNode successResult = isContainsTaskResponseWithErrors(taskResponses)
                 ? getResponseConverter().getErrorStatusResult() : getResponseConverter().getSuccessStatusResult();
-        return new ApplyMetadataResponse(request.getRequestId(),
-                getResponseConverter().applyMetadataRequestDocumentToResultDocument(request.getDocument(), MetadataUtil.buildPrefinalizationLegName(request)),
-                taskResponses, successResult);
+        return new ApplyMetadataResponse(request.getRequestId(), taskResponses, successResult);
     }
 
     private ApplyMetadataResponse.TaskNode processApplyMetadataRequestTask(ApplyMetadataRequest.TaskNode task, List<XmlFile> documentXmlFiles) {
@@ -248,6 +208,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
         final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
         return new ApplyMetadataResponse.TaskNode(task.getTaskId(), statusCode, actionResponses,
+                getResponseConverter().applyMetadataRequestDocumentToResultDocument(task.getDocument()),
                 getResponseConverter().getValidationSuccessResult("XMLValidationCheck"));
     }
 
@@ -278,6 +239,43 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
+    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles){
+        LOG.debug("Process field info  '{}'", fieldInfo);
+
+        final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
+        for (XmlFile xmlFile : documentXmlFiles){
+            LOG.debug("Process xml file '{}'", xmlFile.getName());
+            switch(fieldInfo.getFieldType()){
+                case ADOPTION_DATE:
+                    metadataService.processAdoptionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case ADOPTION_LOCATION:
+                    metadataService.processAdoptionLocation((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case EMISSION_DATE:
+                    metadataService.processEmissionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case INTERINSTITUTIONAL_COTE:
+                    metadataService.processInterinstitutionalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case COTE:
+                    metadataService.processCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case LINKED_DOCUMENTS:
+                    metadataService.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case FINAL_COTE:
+                    metadataService.processFinalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case STAMP:
+                    if(isAutonomousAct) {
+                        metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    }
+                    break;
+            }
+        }
+    }
+
     private boolean isContainsActionResponseWithErrors(List<ApplyMetadataResponse.ActionNode> actions){
         return (actions != null) &&  (actions.stream()
                 .filter(action -> isContainsFieldResponseWithErrors(action.getFields())).count() > 0);
@@ -294,9 +292,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     private byte[] buildResponse(ApplyMetadataResponse response, List<XmlFile> documentXmlFiles, Map<String, Object> documentFurtherContent){
         try {
             Map<String, Object> responseContent = new HashMap<>();
-            XmlFile xmlResponse = getResponseConverter().applayMetadataResponseToXmlFile(response);
+            XmlFile xmlResponse = getResponseConverter().applyMetadataResponseToXmlFile(response);
             responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
-            responseContent.put(response.getDocument().getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
+            responseContent.put(getFirstTaskDocument(response).getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
             return ZipUtil.zipByteArray(responseContent);
         } catch(Exception e) {
             LOG.error("Error building response {}", e);
@@ -326,7 +324,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                 final ApplyMetadataResponseConverter responseConverter = getResponseConverter();
                 ApplyMetadataResponse response = responseConverter.getApplyMetadataResponseWithXmlValidationError(request);
                 Map<String, Object> responseContent = new HashMap<>();
-                XmlFile xmlResponse = responseConverter.applayMetadataResponseToXmlFile(response);
+                XmlFile xmlResponse = responseConverter.applyMetadataResponseToXmlFile(response);
                 responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
                 return ZipUtil.zipByteArray(responseContent);
             } catch(Exception e) {
@@ -341,7 +339,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             final ApplyMetadataResponseConverter responseConverter = getResponseConverter();
             ApplyMetadataResponse response = responseConverter.getApplyMetadataResponseWithErrorStatus(request);
             Map<String, Object> responseContent = new HashMap<>();
-            XmlFile xmlResponse = responseConverter.applayMetadataResponseToXmlFile(response);
+            XmlFile xmlResponse = responseConverter.applyMetadataResponseToXmlFile(response);
             responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
             return ZipUtil.zipByteArray(responseContent);
         } catch(Exception e) {
@@ -365,6 +363,22 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             return (byte[]) obj;
         }
         return null;
+    }
+
+    private ApplyMetadataRequest.DocumentNode getFirstTaskDocument(ApplyMetadataRequest request) {
+        return request.getTasks()
+                .stream()
+                .findFirst()
+                .map((task) -> task.getDocument())
+                .orElseGet(null);
+    }
+
+    private ApplyMetadataResponse.DocumentNode getFirstTaskDocument(ApplyMetadataResponse response) {
+        return response.getTasks()
+                .stream()
+                .findFirst()
+                .map((task) -> task.getDocument())
+                .orElseGet(null);
     }
 
     private ApplyMetadataResponseConverter getResponseConverter() {

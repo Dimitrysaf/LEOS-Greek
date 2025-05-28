@@ -221,7 +221,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             entity = firstEntity.getName();
         } else {
             Entity userEntity = user.getEntities().stream()
-                    .filter(e -> e.getOrganizationName().equalsIgnoreCase(connectedDG))
+                    .filter(e -> e.getOrganizationName().equalsIgnoreCase(connectedDG) || e.getName().equalsIgnoreCase(connectedDG))
                     .findFirst()
                     .orElse(null);
             if (userEntity == null) {

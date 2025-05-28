@@ -30,6 +30,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.ConfigService;
+import eu.europa.ec.leos.services.coedition.handler.CoEditionInfoHandler;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
@@ -49,6 +50,8 @@ import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.vo.coedition.CoEditionVO;
+import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -119,6 +122,7 @@ public class LeosApiController {
     private final ExportPackageService exportPackageService;
     private final ApiService apiService;
     private final UserService userService;
+    private final CoEditionInfoHandler coEditionInfoHandler;
 
     private final ConfigService configService;
     private final SecurityContext securityContext;
@@ -140,7 +144,7 @@ public class LeosApiController {
                              EventBus leosApplicationEventBus, ExportService exportService,
                              CreateCollectionService createCollectionService, Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
-                             SecurityContext securityContext, UserService userService) {
+                             SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -155,6 +159,7 @@ public class LeosApiController {
         this.configService = configService;
         this.securityContext = securityContext;
         this.userService = userService;
+        this.coEditionInfoHandler = coEditionInfoHandler;
     }
 
     @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -660,14 +665,38 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/updateAnnexPosition/{proposalRef}/annex", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> updateProposalAnnexPosition(@PathVariable("proposalRef") String proposalRef,
-                                                           @RequestParam Integer previousIndex, @RequestParam Integer nextIndex) {
+                                                              @RequestParam Integer previousIndex, @RequestParam Integer nextIndex,
+                                                              HttpServletRequest request) {
+        proposalRef = encodeParam(proposalRef);
+        String sessionId = request.getSession().getId();
+        User user = securityContext.getUser();
+        // TODO Temporary solution should be replaced by a true co edition handling for proposal (same mechanism as edition documents),
+        CoEditionVO coEditionVO = new CoEditionVO(sessionId, null, user.getLogin()
+                , user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
+                user.getEmail(), proposalRef + "_ANNEXES_POS", null, InfoType.DOCUMENT_INFO, System.currentTimeMillis());
+        List<CoEditionVO> coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
+        for (CoEditionVO coEditionVO1 : coEditionVOS) {
+            if (System.currentTimeMillis() - coEditionVO1.getEditionTime() > 30000) {
+                coEditionInfoHandler.removeInfo(coEditionVO1);
+            }
+        }
+        coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
+        if (!coEditionVOS.isEmpty()) {
+            LOG.error("Error occured while updating annex order - Other user's concurrency");
+            return new ResponseEntity<>("Cannot update annexes' positions because of other user's concurrency", HttpStatus.TOO_MANY_REQUESTS);
+        }
         try {
-            proposalRef = encodeParam(proposalRef);
+            coEditionInfoHandler.storeInfo(coEditionVO);
             apiService.updateAnnexPosition(proposalRef, previousIndex, nextIndex);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error("Error occured while updating annex order - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while updating annex order", HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
+            for (CoEditionVO coEditionVO1 : coEditionVOS) {
+                coEditionInfoHandler.removeInfo(coEditionVO1);
+            }
         }
     }
 

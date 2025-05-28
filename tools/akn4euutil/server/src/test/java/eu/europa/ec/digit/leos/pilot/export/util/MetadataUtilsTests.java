@@ -24,9 +24,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFi
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -113,7 +111,7 @@ public class MetadataUtilsTests {
     @Test
     public void testParseCote_spaceLeft() throws MetadataUtilsException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013) 2456");
+        final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013) 2456", MetadataFieldType.COTE);
 
         Assertions.assertNotNull(actual);
 
@@ -124,7 +122,7 @@ public class MetadataUtilsTests {
     @Test
     public void testParseCote_noSpaceLeft() throws MetadataUtilsException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013)2456");
+        final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013)2456", MetadataFieldType.COTE);
 
         Assertions.assertNotNull(actual);
 
@@ -135,7 +133,7 @@ public class MetadataUtilsTests {
     @Test
     public void testParseCote_spaceLeftWithSuffix() throws MetadataUtilsException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013) 2456 final");
+        final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013) 2456 final", MetadataFieldType.FINAL_COTE);
 
         Assertions.assertNotNull(actual);
 
@@ -146,7 +144,7 @@ public class MetadataUtilsTests {
     @Test
     public void testParseCote_noSpaceLeftWithSuffix() throws MetadataUtilsException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013)2456 final");
+        final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013)2456 final", MetadataFieldType.FINAL_COTE);
 
         Assertions.assertNotNull(actual);
 
@@ -157,31 +155,31 @@ public class MetadataUtilsTests {
     @Test
     public void testPreFinalizationLegNameWithoutInstitutionalReference() {
         ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
-        actionNode.setFields(Collections.singletonList(createIsFinalNode("true")));
+        actionNode.setFields(Collections.singletonList(createFinalCoteNode("COM(2022) 666")));
 
         ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
         taskNode.setActions(Collections.singletonList(actionNode));
         ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+        taskNode.setDocument(documentNode);
 
         ApplyMetadataRequest request = getDummyMetadataRequest();
-        request.setDocument(documentNode);
         request.setTasks(Collections.singletonList(taskNode));
 
         String legName = MetadataUtil.buildPrefinalizationLegName(request);
-        Assertions.assertEquals(documentNode.getFilename(), legName);
+        Assertions.assertEquals("PROP_ACT-COM(2022)_666-final-en.leg", legName);
     }
 
     @Test
     public void testPreFinalizationLegNameWithInstitutionalReference() {
         ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
-        actionNode.setFields(Arrays.asList(createInsertCoteNode("COM(2022) 666"), createIsFinalNode("0")));
+        actionNode.setFields(Collections.singletonList(createCoteNode("COM(2022) 666")));
 
         ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
         taskNode.setActions(Collections.singletonList(actionNode));
         ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+        taskNode.setDocument(documentNode);
 
         ApplyMetadataRequest request = getDummyMetadataRequest();
-        request.setDocument(documentNode);
         request.setTasks(Collections.singletonList(taskNode));
 
         String legName = MetadataUtil.buildPrefinalizationLegName(request);
@@ -189,16 +187,16 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testPreFinalizationLegNameWithInstitutionalReferenceAndIsFinal() {
+    public void testPreFinalizationLegNameWithInstitutionalReferenceAndFinalCote() {
         ApplyMetadataRequest.ActionNode actionNode = getDummyActionNode();
-        actionNode.setFields(Arrays.asList(createInsertCoteNode("COM(2022) 666"), createIsFinalNode("1")));
+        actionNode.setFields(Collections.singletonList(createFinalCoteNode("COM(2022) 666")));
 
         ApplyMetadataRequest.TaskNode taskNode = getDummyTaskNode();
         taskNode.setActions(Collections.singletonList(actionNode));
         ApplyMetadataRequest.DocumentNode documentNode = getDummyDocumentNode();
+        taskNode.setDocument(documentNode);
 
         ApplyMetadataRequest request = getDummyMetadataRequest();
-        request.setDocument(documentNode);
         request.setTasks(Collections.singletonList(taskNode));
 
         String legName = MetadataUtil.buildPrefinalizationLegName(request);
@@ -302,11 +300,11 @@ public class MetadataUtilsTests {
         return new ApplyMetadataRequest.ActionNode("InsertData", "true");
     }
 
-    private ApplyMetadataRequest.FieldNode createInsertCoteNode(final String value) {
-        return new ApplyMetadataRequest.FieldNode("insertCote", value);
+    private ApplyMetadataRequest.FieldNode createCoteNode(final String value) {
+        return new ApplyMetadataRequest.FieldNode("cote", value);
     }
 
-    private ApplyMetadataRequest.FieldNode createIsFinalNode(final String value) {
-        return new ApplyMetadataRequest.FieldNode("isFinal", value);
+    private ApplyMetadataRequest.FieldNode createFinalCoteNode(final String value) {
+        return new ApplyMetadataRequest.FieldNode("finalCote", value);
     }
 }

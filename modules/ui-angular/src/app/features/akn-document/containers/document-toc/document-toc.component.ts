@@ -470,6 +470,10 @@ export class DocumentTocComponent
     if (nodesDraggedOrdered.length !== nodesDragged.length){
       nodesDraggedOrdered = nodesDragged;
     }
+    if (nodesDraggedOrdered.length > 1 && this.dragAction.action !== 'BEFORE' && nodesDraggedOrdered[0].tagName === nodeTarget.tagName)
+    {
+      nodesDraggedOrdered = nodesDraggedOrdered.slice().reverse();
+    }
 
     if (this.dragAction.isAdd) {
       for (let nodeDragged of nodesDraggedOrdered) {
