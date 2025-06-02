@@ -92,6 +92,7 @@ public class MetadataUtil {
     public static final String LANGUAGE_EN="EN";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
     public static final String AUTONOMOUS_ACT_VALUE="ACT_AUTO_COM";
+    public static final String FINAL_VALUE = "final";
 
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
@@ -330,7 +331,7 @@ public class MetadataUtil {
         int closingBracketIndex = displayValue.indexOf(")");
         final String year = displayValue.substring(bracketIndex+1, closingBracketIndex).trim();
 
-        int wordPos = displayValue.indexOf("final");
+        int wordPos = displayValue.indexOf(FINAL_VALUE);
         if(wordPos < 0) wordPos = displayValue.lastIndexOf("draft");
         if(wordPos < 0) wordPos = displayValue.length();
         final String number = displayValue.substring(closingBracketIndex+1, wordPos).trim();
@@ -480,7 +481,7 @@ public class MetadataUtil {
 
         prefinalisationName = documentFilename.substring(0, pos+1) + coteValue;
         if (finalCote.isPresent()) {
-            prefinalisationName = prefinalisationName + "-final";
+            prefinalisationName = prefinalisationName + "-" + FINAL_VALUE;
         }
 
         pos = documentFilename.indexOf("-", pos+1);
