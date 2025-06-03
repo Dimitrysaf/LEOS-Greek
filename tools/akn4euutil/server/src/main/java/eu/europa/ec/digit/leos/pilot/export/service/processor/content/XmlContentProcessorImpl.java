@@ -50,6 +50,7 @@ import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServi
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.DIR_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.MEMORANDUM_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.PROP_ACT_PREFIX;
+import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.REG_DEL_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.REG_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XML_NAME;
@@ -76,6 +77,7 @@ public class XmlContentProcessorImpl implements XmlContentProcessor {
                     category = LeosCategory.ANNEX;
                     break;
                 case REG_FILE_PREFIX:
+                case REG_DEL_FILE_PREFIX:
                 case DIR_FILE_PREFIX:
                 case DEC_FILE_PREFIX:
                     category = LeosCategory.BILL;
@@ -90,7 +92,7 @@ public class XmlContentProcessorImpl implements XmlContentProcessor {
                     category = STAT_DIGIT_FINANC_LEGIS;
                     break;
                 default:
-                    category = LeosCategory.MEDIA;
+                    category = null;
             }
         }
         return category;
