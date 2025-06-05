@@ -25,6 +25,7 @@ public abstract class LeosMetadata {
     private String callbackAddress;
     protected boolean imported;
     protected String packageRef;
+    protected String documentCollectionName;
 
     protected String creationOptions;
 
@@ -153,6 +154,14 @@ public abstract class LeosMetadata {
 
     public void setAuthenticLang(List<String> authenticLang) {
         this.authenticLang = authenticLang;
+    }
+
+    public String getDocumentCollectionName() {
+        return documentCollectionName;
+    }
+
+    public void setDocumentCollectionName(String documentCollectionName) {
+        this.documentCollectionName = documentCollectionName;
     }
 
     @Override

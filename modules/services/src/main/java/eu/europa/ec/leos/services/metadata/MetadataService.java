@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 European Commission
+ * Copyright 2024 European Union
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -11,15 +11,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.digit.leos.pilot.export.service;
+package eu.europa.ec.leos.services.metadata;
 
-import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
-import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
-import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
-import org.springframework.web.multipart.MultipartFile;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.services.export.LegPackage;
 
-import java.util.List;
+import java.util.Map;
 
-public interface LeosPrefinalisationService {
-    void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlUtil.XmlFile> documentXmlFiles) throws MetadataUtilsException;
+public interface MetadataService {
+
+    Map<String, Object> applyMetadata(LegPackage legPackage, Proposal proposal, MetadataOptions metadataOptions) throws Exception;
+
 }

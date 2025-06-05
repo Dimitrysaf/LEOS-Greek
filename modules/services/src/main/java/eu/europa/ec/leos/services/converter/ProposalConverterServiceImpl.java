@@ -54,6 +54,9 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.D
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TYPE_META;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_VERSION;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.EXPLANATORY_TITLE_PREFACE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
@@ -204,7 +207,10 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                         ANNEX_TITLE_META,
                         ANNEX_INDEX_META,
                         ANNEX_NUMBER_META,
-                        EXPLANATORY_TITLE_PREFACE
+                        EXPLANATORY_TITLE_PREFACE,
+                        PROPOSAL_INTERNAL_REFERENCE,
+                        PROPOSAL_DOC_COLLECTION,
+                        PROPOSAL_PACKAGE_TITLE
                 }, xmlNodeConfigProcessor.getConfig(document.getCategory()));
 
                 metadata.setDocVersion(metadataVOMap.get(DOC_VERSION));
@@ -219,6 +225,12 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                 } else {
                     metadata.setTitle(metadataVOMap.get(ANNEX_TITLE_META));
                 }
+                if(document.getDocumentType().equals(LeosCategory.PROPOSAL)) {
+                    metadata.setPackageTitle(metadataVOMap.get(PROPOSAL_PACKAGE_TITLE));
+                    metadata.setInternalRef(metadataVOMap.get(PROPOSAL_INTERNAL_REFERENCE));
+                    metadata.setDocCollectionName(metadataVOMap.get(PROPOSAL_DOC_COLLECTION));
+                }
+
 
                 metadata.setIndex(metadataVOMap.get(ANNEX_INDEX_META));
                 metadata.setNumber(metadataVOMap.get(ANNEX_NUMBER_META));

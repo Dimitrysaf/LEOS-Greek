@@ -147,6 +147,12 @@ public class DocumentVO {
                 this.getMetadata().setDocTemplate(metadataP.getDocTemplate());
                 this.getMetadata().setTemplateName(metadataP.getTemplate());
                 this.getMetadata().setEeaRelevance(metadataP.getEeaRelevance());
+
+                this.getMetadata().setPackageTitle(metadataP.getPackageTitle());
+                this.getMetadata().setInternalRef(metadataP.getInternalRef());
+                this.getMetadata().setAuthenticLang(metadataP.getAuthenticLang());
+                this.getMetadata().setIsAuthenticLang(metadataP.getIsAuthenticLang());
+
                 this.setRef(metadataP.getRef());
                 Proposal proposal = ((Proposal) xmlDocument);
                 if(proposal.isClonedProposal()) {

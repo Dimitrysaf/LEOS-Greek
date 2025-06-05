@@ -14,6 +14,10 @@
 package eu.europa.ec.leos.domain.vo;
 
 
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
+
+import java.util.List;
+
 public class MetadataVO {
 
     private String docStage;
@@ -34,6 +38,11 @@ public class MetadataVO {
     private String number;
     private String callbackAddress;
     private boolean imported;
+    private String docCollectionName;
+
+    private List<String> authenticLang;
+    private String documentCollectionName;
+    private LeosAuthenticLanguage isAuthenticLang;
 
     public MetadataVO() {
     }// added for early binding
@@ -195,6 +204,38 @@ public class MetadataVO {
         this.imported = imported;
     }
 
+    public String getDocCollectionName() {
+        return docCollectionName;
+    }
+
+    public void setDocCollectionName(String docCollectionName) {
+        this.docCollectionName = docCollectionName;
+    }
+
+    public List<String> getAuthenticLang() {
+        return authenticLang;
+    }
+
+    public void setAuthenticLang(List<String> authenticLanguages) {
+        this.authenticLang = authenticLanguages;
+    }
+
+    public String getDocumentCollectionName() {
+        return documentCollectionName;
+    }
+
+    public void setDocumentCollectionName(String documentCollectionName) {
+        this.documentCollectionName = documentCollectionName;
+    }
+
+    public LeosAuthenticLanguage getIsAuthenticLang() {
+        return isAuthenticLang;
+    }
+
+    public void setIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
+        this.isAuthenticLang = isAuthenticLang;
+    }
+
     public void clean() {
         this.setDocStage(null);
         this.setDocType(null);
@@ -213,5 +254,6 @@ public class MetadataVO {
         this.setEeaRelevance(false);
         this.setCallbackAddress(null);
         this.setImported(false);
+        this.setAuthenticLang(null);
     }
 }

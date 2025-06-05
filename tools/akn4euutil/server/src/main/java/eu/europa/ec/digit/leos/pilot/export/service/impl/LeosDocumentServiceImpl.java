@@ -17,6 +17,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutputList;
+import eu.europa.ec.digit.leos.pilot.export.service.LeosMetadataService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
@@ -39,16 +40,17 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
 
     private final LeosLegDocumentService leosLegDocumentService;
     private final XmlDocumentService xmlDocumentService;
-    private final LeosPrefinalisationService leosPrefinalisationService;
+    private final LeosMetadataService leosMetadataService;
     private final Akn4EUUtilRestClient restClient;
 
     @Autowired
     public LeosDocumentServiceImpl(LeosLegDocumentService leosLegDocumentService,
                                    XmlDocumentService xmlDocumentService,
-                                   LeosPrefinalisationService metadataService, Akn4EUUtilRestClient restClient) {
+                                   LeosMetadataService metadataService,
+                                   Akn4EUUtilRestClient restClient) {
         this.leosLegDocumentService = leosLegDocumentService;
         this.xmlDocumentService = xmlDocumentService;
-        this.leosPrefinalisationService = metadataService;
+        this.leosMetadataService = metadataService;
         this.restClient = restClient;
     }
 
@@ -88,10 +90,10 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
     }
 
     public byte[] applyMetadata(MultipartFile inputFile) {
-        return leosPrefinalisationService.applyMetadata(inputFile);
+        return leosMetadataService.applyMetadata(inputFile);
     }
 
     public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
-        this.leosPrefinalisationService.applyMetadataAsync(inputFile, callbackUrl);
+        this.leosMetadataService.applyMetadataAsync(inputFile, callbackUrl);
     }
 }

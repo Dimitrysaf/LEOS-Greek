@@ -77,9 +77,12 @@ import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.LegPackage;
+import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -131,6 +134,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
+import static eu.europa.ec.leos.services.metadata.MetadataServiceImpl.FILE_NOT_DELETED;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
@@ -311,8 +315,9 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) {
+    public DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) throws Exception {
         LOG.trace("Saving proposal metadata...");
+        LegPackage legPackage = null;
         try {
             CollectionContextService context = collectionContextProvider.get();
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -337,13 +342,35 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.useAuthenticLang(proposal.getMetadata().get().getAuthenticLang());
             }
+            if (request.getIsAuthenticLang() != null) {
+                context.useIsAuthenticLang(request.getIsAuthenticLang());
+            } else {
+                context.useIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
+            }
             String comment = messageHelper.getMessage("operation.metadata.updated");
             context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
             context.useActionComment(comment);
-            return new DocumentVO(context.executeUpdateProposal());
+            DocumentVO updatedProposalVO = new DocumentVO(context.executeUpdateProposal());
+            if (request.getPackageTitle() != null || request.getInternalRef() != null
+                    || (request.getAuthenticLang() != null)) {
+                if (proposal.isClonedProposal()) {
+                    legPackage = legService.createLegPackageForClone(proposal.getId(), new ExportLeos());
+                } else {
+                    legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
+                }
+                return proposalService.applyMetadata(legPackage, proposal, request);
+            }
+            return updatedProposalVO;
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;
+        } finally {
+            if (legPackage != null && legPackage.getFile() != null && legPackage.getFile().exists()) {
+                if (!legPackage.getFile().delete()) {
+                    LOG.info(FILE_NOT_DELETED, legPackage.getFile().toPath());
+                }
+            }
+            LOG.debug("createLegisWritePackage() end....");
         }
     }
 
@@ -547,6 +574,7 @@ public abstract class ApiServiceImpl implements ApiService {
             proposal = this.proposalService.findProposalByRef(proposalRef);
             if (LOG.isTraceEnabled())
                 LOG.trace(proposal.toString());
+            proposal = proposalService.populateProposalMetadataFromXml(proposal);
         }
         if (proposal != null) {
             String proposalId = proposal.getId();
@@ -565,6 +593,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
                 legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
                 DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, favouritePackageResponse.isFavourite());
+                proposalVO.getMetadata().setDocumentCollectionName(proposal.getMetadata().get().getDocumentCollectionName());
                 proposalVO.setCreationOptions(documents.stream().filter(doc -> doc.getCategory().name().equals("PROPOSAL")).findFirst().get().getMetadata().get().getCreationOptions());
                 List<LinkedPackage> linkedPackageList = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
                 if (linkedPackageList != null && linkedPackageList.size() > 0) {
@@ -628,7 +657,7 @@ public abstract class ApiServiceImpl implements ApiService {
                                 : new byte[0];
                     }
                     MetadataVO metadataVO = createMetadataVO(proposal);
-                    proposalVO.setMetaData(metadataVO);
+                    proposalVO.setMetaData(proposalService.populateProposalMetadataFromXml(proposalXmlContent, metadataVO));
                     proposalVO.addCollaborators(proposal.getCollaborators());
                     proposalVO.setUpdatedBy(userHelper.convertToPresentation(proposal.getLastModifiedBy()));
                     proposalVO.setCreatedBy(userHelper.convertToPresentation(proposal.getCreatedBy()));
@@ -638,6 +667,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposalVO.setSource(proposalXmlContent);
                     proposalVO.setRef(proposal.getMetadata().get().getRef());
                     proposalVO.setFavourite(isFavourite);
+
                     if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO, proposal.getOriginRef()));
                     }
@@ -802,7 +832,13 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private MetadataVO createMetadataVO(Proposal proposal) {
         ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
-        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(), metadata.getEeaRelevance());
+        MetadataVO metadataVO = new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(),
+            metadata.getEeaRelevance());
+        metadataVO.setAuthenticLang(proposal.getMetadata().get().getAuthenticLang());
+        metadataVO.setIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
+        metadataVO.setPackageTitle(proposal.getMetadata().get().getPackageTitle());
+        metadataVO.setInternalRef(proposal.getMetadata().get().getInternalRef());
+        return metadataVO;
     }
 
     private LegDocument getLegDocument(String legFileName, LeosPackage leosPackage) {

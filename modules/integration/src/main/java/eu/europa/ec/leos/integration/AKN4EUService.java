@@ -7,4 +7,6 @@ import java.io.File;
 public interface AKN4EUService {
 
     void convert(File legFile, User user, String outputDescriptor) throws Exception;
+
+    byte[] applyMetadata(File legFile) throws Exception;
 }

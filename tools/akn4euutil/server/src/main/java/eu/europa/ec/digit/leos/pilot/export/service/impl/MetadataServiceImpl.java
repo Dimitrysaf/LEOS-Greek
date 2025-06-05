@@ -5,9 +5,11 @@ import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageFormats;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ListFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.SimpleFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.util.IdGenerator;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
@@ -22,9 +24,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.deleteElementsByXPath;
 
 @Service
 @Slf4j
@@ -82,6 +88,12 @@ public class MetadataServiceImpl implements MetadataService {
                     return MetadataUtil.parseCote(fieldValue, MetadataFieldType.FINAL_COTE);
                 case STAMP:
                     return MetadataUtil.parseStamp(fieldValue);
+                case PACKAGE_TITLE:
+                    return MetadataUtil.parsePackageTitle(fieldValue);
+                case INTERNAL_REF:
+                    return MetadataUtil.parseInternalRef(fieldValue);
+                case AUTHENTIC_LANG:
+                    return MetadataUtil.parseAuthenticLanguages(fieldValue);
                 default:
                     throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
             }
@@ -608,5 +620,95 @@ public class MetadataServiceImpl implements MetadataService {
         referenceElement.appendChild(refElement);
         referenceElement.appendChild(xmlFile.createTextNode("}"));
         return referenceElement;
+    }
+
+    //  <container name="packageTitle">
+    //      <p>Package Title</p>
+    //  </container>
+    public void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, MetadataUtil.PACKAGE_TITLE);
+        if (xmlNodeBlock != null) {
+            xmlNodeCoverpage.removeChild(xmlNodeBlock);
+        }
+        xmlNodeCoverpage.appendChild(createPackageTitleElement(fieldInfo, xmlFile));
+    }
+
+    private Element createPackageTitleElement(final SimpleFieldInfo packageTitle, XmlUtil.XmlFile xmlFile) {
+        final Element containerElement = xmlFile.newElement("container");
+
+        XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.XMLID, IdGenerator.generateId());
+        containerElement.setAttribute(MetadataUtil.NAME, MetadataUtil.PACKAGE_TITLE);
+
+        final Element packageTitleElement = xmlFile.newElement("p");
+        XmlUtil.setNodeAttributeValue(packageTitleElement, MetadataUtil.XMLID, IdGenerator.generateId());
+        packageTitleElement.setTextContent(packageTitle.getValue());
+        containerElement.appendChild(packageTitleElement);
+        return containerElement;
+    }
+
+    public void processInternalRef(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+
+    }
+
+    public void processAuthenticLanguages(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final String language = readLanguageValue(xmlFile);
+        Node xmlNodeMeta = xmlFile.getElementByName(MetadataUtil.META);
+        if (xmlNodeMeta == null) {
+            return;
+        }
+        Node xmlNodeRef = xmlFile.getElementByName(MetadataUtil.REFERENCES);
+        if (xmlNodeRef == null) {
+            return;
+        }
+        deleteElementsByXPath(xmlNodeRef, MetadataUtil.AUTHENTIC_LANGUAGES_PATH, true);
+        Element authLangeElement = xmlFile.newElement(MetadataUtil.TLCREFERENCE);
+        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.NAME, MetadataUtil.LANGUAGE);
+        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.HREF, String.format(MetadataUtil.ATHENTIC_LANGUAGE_HREF_PATTERN, language.toUpperCase()));
+        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.SHOWAS, language.toLowerCase());
+        xmlNodeRef.appendChild(authLangeElement);
+        for (String lang: fieldInfo.getValue()) {
+            authLangeElement = xmlFile.newElement(MetadataUtil.TLCREFERENCE);
+            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.NAME, MetadataUtil.LANGUAGE);
+            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.HREF, String.format(MetadataUtil.ATHENTIC_LANGUAGE_HREF_PATTERN, lang.toUpperCase()));
+            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.SHOWAS, lang.toLowerCase());
+            xmlNodeRef.appendChild(authLangeElement);
+        }
+        processAuthenticLanguagesInCoverPage(fieldInfo, xmlFile, language);
+    }
+
+    public void processAuthenticLanguagesInCoverPage(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, String proposalLanguage) {
+        Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverPage == null) {
+            return;
+        }
+        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverPage, MetadataUtil.AUTHENTIC_LANGUAGES_NAME);
+        if (xmlNodeContainer != null) {
+            xmlNodeContainer.getParentNode().removeChild(xmlNodeContainer);
+        }
+
+        if (!fieldInfo.getValue().isEmpty()) {
+            final Element authContainerElement = xmlFile.newElement(MetadataUtil.CONTAINER);
+            XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.NAME, MetadataUtil.AUTHENTIC_LANGUAGES_NAME);
+            xmlNodeCoverPage.appendChild(authContainerElement);
+            final Element authPElement = xmlFile.newElement(MetadataUtil.P);
+            List<String> langArray = new ArrayList();
+
+            for (String lang: fieldInfo.getValue()) {
+                langArray.add(MetadataUtil.AUTHENTIC_LANGUAGES.get(lang.toUpperCase()));
+            }
+            langArray = langArray.stream().sorted().collect(Collectors.toList());
+            final String langStr = String.join(", ", langArray);
+            XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            authPElement.setTextContent(String.format(MetadataUtil.AUTHENTIC_LANGUAGES_COVERPAGE_TEXT, langStr));
+            authContainerElement.appendChild(authPElement);
+        }
     }
 }

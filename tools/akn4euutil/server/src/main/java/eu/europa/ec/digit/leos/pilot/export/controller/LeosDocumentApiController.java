@@ -83,10 +83,22 @@ public class LeosDocumentApiController {
 
     @RequestMapping(value = "/applyMetadata", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile) {
+    public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile) {
         try {
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
             return buildValidZipResponse(documentOutput);
+        } catch (LeosDocumentException e) {
+            return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return buildErrorResponse("Error found while processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR, true);
+        }
+    }
+
+    @RequestMapping(value = "/applyProposalMetadata", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> applyProposalMetadata(@RequestParam("inputFile") MultipartFile inputFile) {
+        try {
+            return new ResponseEntity<>(leosDocumentService.applyMetadata(inputFile), HttpStatus.OK);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {

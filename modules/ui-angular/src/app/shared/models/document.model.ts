@@ -48,7 +48,9 @@ export interface Metadata {
   title: string | null;
   index: string | null;
   number: string | null;
-
+  authenticLang: string[] | null;
+  isAuthenticLang : AuthenticLanguage | null;
+  documentCollectionName: string
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {
@@ -227,6 +229,8 @@ export type ProcedureType =
   | 'STAFF_WORKING_DOCUMENT';
 
 export type ActType = 'REGULATION' | 'DIRECTIVE' | 'DECISION';
+
+export type AuthenticLanguage = 'PROPOSAL_LANGUAGE' | 'NON_PROPOSAL_LANGUAGE' | 'FALSE' | 'ALL';
 
 export interface Collaborator {
   id: string;

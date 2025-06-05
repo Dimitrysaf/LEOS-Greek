@@ -23,9 +23,11 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.ExternalSystemACLService;
 import eu.europa.ec.leos.integration.dto.AccessDTO;
@@ -37,7 +39,11 @@ import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
+import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
+import eu.europa.ec.leos.services.export.LegPackage;
+import eu.europa.ec.leos.services.metadata.MetadataOptions;
+import eu.europa.ec.leos.services.metadata.MetadataService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -51,6 +57,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -61,6 +68,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -97,6 +105,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     protected WorkflowCollaboratorService workflowCollaboratorService;
     protected ExternalSystemACLService externalSystemACLService;
     protected PackageService packageService;
+    protected MetadataService metadataService;
 
     protected static final String PROPOSAL_NAME_PREFIX = "main";
 
@@ -204,6 +213,46 @@ public abstract class ProposalServiceImpl implements ProposalService {
     protected byte[] updateDataInXml(final byte[] content, ProposalMetadata dataObject) {
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
         return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
+    }
+
+    @Override
+    public Proposal populateProposalMetadataFromXml(Proposal proposal) {
+        Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(proposal.getContent().get().getSource().getBytes(),
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,
+                        XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE,
+                        XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        proposal.getMetadata().get().setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
+        proposal.getMetadata().get().setInternalRef(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE));
+        Map<String, List<String>> authenticLanguages = xmlNodeProcessor.getMultipleValuesFromXml(proposal.getContent().get().getSource().getBytes(),
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_AUTHENTIC_LANGUAGES},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        List<String> authLangList = authenticLanguages.get(XmlNodeConfigProcessor.PROPOSAL_AUTHENTIC_LANGUAGES);
+        if (authLangList != null && proposal.getMetadata().get().getIsAuthenticLang() != null
+                && proposal.getMetadata().get().getIsAuthenticLang().equals(LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE)) {
+            authLangList.remove(proposal.getMetadata().get().getLanguage().toLowerCase());
+        }
+        proposal.getMetadata().get().setAuthenticLang(authLangList);
+        proposal.getMetadata().get().setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
+        return proposal;
+    }
+
+    @Override
+    public MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, MetadataVO metadataVO) {
+        Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(xmlContent,
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        metadataVO.setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
+        metadataVO.setInternalRef(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE));
+        Map<String, List<String>> authenticLanguages = xmlNodeProcessor.getMultipleValuesFromXml(xmlContent,
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_AUTHENTIC_LANGUAGES},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        List<String> authLangList = authenticLanguages.get(XmlNodeConfigProcessor.PROPOSAL_AUTHENTIC_LANGUAGES);
+        if (authLangList != null && metadataVO.getIsAuthenticLang() != null && metadataVO.getIsAuthenticLang().equals(LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE)) {
+            authLangList.remove(metadataVO.getLanguage().toLowerCase());
+        }
+        metadataVO.setAuthenticLang(authLangList);
+        return metadataVO;
     }
 
     @Override
@@ -602,6 +651,36 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Proposal proposal = proposalRepository.createProposalFromContent(path, ref + XML_DOC_EXT, metadata, updateDataInXml(proposalDocument.getSource(), metadata));
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
+    }
+
+    @Override
+    public DocumentVO applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception {
+        MetadataOptions metadataOptions = convertUpdateProposalRequestToMetadataOptions(legPackage.getExportResource().getName() + ".leg", proposal, request);
+
+        Map<String, Object> zipContent = metadataService.applyMetadata(legPackage, proposal, metadataOptions);
+        for (String fileName : zipContent.keySet()) {
+            if (fileName.startsWith(PROPOSAL_NAME_PREFIX)) {
+                proposal = updateProposal(proposal.getId(), (byte[]) zipContent.get(fileName));
+            }
+        }
+        return new DocumentVO(populateProposalMetadataFromXml(proposal));
+    }
+
+    @Override
+    public MetadataOptions convertUpdateProposalRequestToMetadataOptions(String legFileName, Proposal proposal, UpdateProposalRequest request) {
+        MetadataOptions metadataOptions = new MetadataOptions();
+        List<MetadataOptions.FieldNode> fields = new ArrayList();
+        if (request.getPackageTitle() != null) {
+            fields.add(new MetadataOptions.FieldNode("packageTitle", StringUtils.normalizeSpace(request.getPackageTitle())));
+        }
+        if (request.getInternalRef() != null) {
+            fields.add(new MetadataOptions.FieldNode("internalRef", StringUtils.normalizeSpace(request.getInternalRef())));
+        }
+        if (request.getAuthenticLang() != null) {
+            fields.add(new MetadataOptions.FieldNode("authenticLang", String.join("-", request.getAuthenticLang())));
+        }
+        metadataOptions.addTask(legFileName, proposal, fields);
+        return metadataOptions;
     }
 
     protected String generateProposalReference(String language) {

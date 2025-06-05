@@ -58,7 +58,7 @@
               </div>
 
             </div>
-            <div class="row details-gen-rows">
+            <div class="row details-gen-rows" *ngIf="isAutononousAct">
               <div class="col-sm-2">
                 <input
                   name="checkbox-auth-lang"
@@ -79,7 +79,8 @@
                     [(ngModel)]="allSelected"
                     (change)="toggleAllLanguages()"
                     [disabled]="!isAuthenticLang"/>
-                  <label>All</label></div>
+                  <label>{{ 'page.collection.details.all'
+                    | translate }}</label></div>
                 <div class="language-checkbox"><label>|</label></div>
 
                 <div class="language-checkbox" *ngFor="let lang of languages">
@@ -98,13 +99,13 @@
               <div class="col-sm-4 label-column"></div>
             </div>
 
-            <div class="row details-gen-rows">
+            <div class="row details-gen-rows" *ngIf="false">
               <div class="col-sm-12 label-column">
                 <label>{{ 'page.collection.details.package-title' | translate }}</label>
               </div>
             </div>
 
-            <div class="row details-gen-rows">
+            <div class="row details-gen-rows" *ngIf="false">
               <div class="col-sm-2">
                 <input
                   id="package-title-input"
@@ -120,7 +121,7 @@
               <div class="col-sm-10"></div>
             </div>
 
-            <div class="row details-gen-rows">
+            <!--<div class="row details-gen-rows">
               <div class="col-sm-12 label-column">
                 <label>{{ 'page.collection.details.internal-reference' | translate }}</label>
               </div>
@@ -137,7 +138,7 @@
                 />
               </div>
               <div class="col-sm-10"></div>
-            </div>
+            </div>-->
           </div>
         </div>
       </eui-card-content>
@@ -154,7 +155,7 @@
 </div>
 
 
-<div class="row eui-u-mt-l d-flex align-items-start">
+<div class="row eui-u-mt-l d-flex align-items-start" *ngIf="isAutononousAct">
 
   <div class="col-md-11">
     <eui-card
@@ -232,7 +233,7 @@
             <div class="row details-gen-rows">
               <div class="col-sm-2 label-column vertical-shift-disclaimer-label">
                 <label>
-                  Vertical shift of disclaimer:
+                  {{ 'page.collection.details.switch.coverpage.shift' | translate }}
                 </label>
               </div>
               <div class="col-sm-8 label-column">

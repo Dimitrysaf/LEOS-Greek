@@ -69,7 +69,12 @@ public class LeosMetadataExtensions {
                 .filter(s -> s != null && !s.isEmpty())
                 .collect(Collectors.joining(" "));
 
-        return buildCommonProperties(proposalMetadata, title);
+        Map<String, Object> leosProperties = new HashMap<>();
+        leosProperties.putAll(buildCommonProperties(proposalMetadata, title));
+
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_AUTHENTIC_LANGUAGE), proposalMetadata.getIsAuthenticLang());
+
+        return leosProperties;
     }
 
     private static Map<String, ? extends Object> toLeosRepositoryProperties(ExplanatoryMetadata explanatoryMetadata) {

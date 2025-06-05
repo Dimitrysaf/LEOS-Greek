@@ -73,6 +73,10 @@ public interface XmlNodeConfigProcessor {
     String FIN_STMT_TITLE_PREFACE = "financialStatementTitlePreface";
     String DOC_TITLE_META = "docTitleMeta";
 
+    String PROPOSAL_PACKAGE_TITLE = "proposalPackageTitle";
+    String PROPOSAL_INTERNAL_REFERENCE = "proposalInternalReference";
+    String PROPOSAL_AUTHENTIC_LANGUAGES = "proposalAuthenticLanguages";
+
     List<String> docEEATagList = Arrays.asList(DOC_EEA_RELEVANCE_COVER, DOC_EEA_RELEVANCE_PREFACE, DOC_EEA_RELEVANCE_META);
 
     Map<String, XmlNodeConfig> getConfig(LeosCategory proposal);

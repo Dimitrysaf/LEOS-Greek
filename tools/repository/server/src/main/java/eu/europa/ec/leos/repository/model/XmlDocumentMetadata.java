@@ -41,6 +41,7 @@ public class XmlDocumentMetadata {
     private String language;
     private String ref;
     private Boolean eeaRelevance;
+    private String authenticLanguage;
     private String templateName;
     private String template;
     private String docTemplate;
@@ -355,5 +356,13 @@ public class XmlDocumentMetadata {
 
     public void setProcedureType(String procedureType) {
         this.procedureType = procedureType;
+    }
+
+    public String getAuthenticLanguage() {
+        return authenticLanguage;
+    }
+
+    public void setAuthenticLanguage(String authenticLanguage) {
+        this.authenticLanguage = authenticLanguage;
     }
 }
