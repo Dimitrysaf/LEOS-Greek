@@ -63,6 +63,8 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
                 Collections.emptyList()));
         proposalConfigMap.put(PROPOSAL_AUTHENTIC_LANGUAGES, new XmlNodeConfig("//akn:meta/akn:references/akn:TLCReference[@name='language']/@showAs", false,
                 Collections.emptyList()));
+        proposalConfigMap.put(PROPOSAL_VERTICAL_SHIFT, new XmlNodeConfig("//akn:coverPage/akn:container[@name='disclaimer']/@style", false,
+                Collections.emptyList()));
 
         return proposalConfigMap;
     }

@@ -25,6 +25,7 @@ import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
+import eu.europa.ec.leos.domain.repository.metadata.LeosCoverPageType;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
@@ -106,6 +107,7 @@ public abstract class CollectionContextService {
     protected String packageTitle;
     protected List<String> authenticLang;
     protected LeosAuthenticLanguage isAuthenticLang;
+    protected LeosCoverPageType coverPageType;
     private DocumentVO propDocument;
     private String propChildDocument;
     private String proposalComment;
@@ -215,6 +217,11 @@ public abstract class CollectionContextService {
         this.isAuthenticLang = isAuthenticLang;
     }
 
+    public void useCoverPageType(LeosCoverPageType coverPageType) {
+        LOG.trace("Using Proposal coverPageType... [coverPageType={}]", coverPageType);
+        this.coverPageType = coverPageType;
+    }
+
     public void useTemplateKey(String templateKey) {
         LOG.trace("Using Proposal templateKey... [templateKey={}]", templateKey);
         this.templateKey = templateKey;
@@ -307,7 +314,7 @@ public abstract class CollectionContextService {
         Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
         purpose = propMeta.getDocPurpose();
         Validate.notNull(purpose, PROPOSAL_PURPOSE_IS_REQUIRED);
-        eeaRelevance = propMeta.getEeaRelevance();
+        eeaRelevance = propMeta.isEeaRelevance();
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -595,6 +602,7 @@ public abstract class CollectionContextService {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .withIsAuthenticLang(isAuthenticLang)
+                .withCoverPageType(coverPageType)
                 .build();
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);

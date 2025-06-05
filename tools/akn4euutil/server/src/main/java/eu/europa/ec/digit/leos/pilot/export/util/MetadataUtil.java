@@ -88,44 +88,26 @@ public class MetadataUtil {
     public static final String REFERSTO="refersTo";
     public static final String VALUE="value";
     public static final String CLASS="class";
+    public static final String STYLE="style";
     public static final String FRBRWORK="FRBRWork";
     public static final String FRBRLANGUAGE="FRBRlanguage";
     public static final String TLCREFERENCE = "TLCReference";
     public static final String PRESERVATION="preservation";
     public static final String REFERENCES="references";
+    public static final String COVERPAGE_TYPE="coverPageType";
     public static final String CONTAINER="container";
+    public static final String DISCLAIMER="disclaimer";
+    public static final String LOGO="logo";
+    public static final String WATERMARK="watermark";
+    public static final String VERTICAL_SHIFT="verticalShift";
     public static final String P="p";
-    public static final String AUTHENTIC_LANGUAGES_COVERPAGE_TEXT = "(Only the %s texts are authentic)";
-    public static final Map<String, String> AUTHENTIC_LANGUAGES = new HashMap<String, String>() {{
-        put("BG", "Bulgarian");
-        put("CS", "Czech");
-        put("DA", "Danish");
-        put("DE", "German");
-        put("EL", "Greek");
-        put("EN", "English");
-        put("ES", "Spanish");
-        put("ET", "Estonian");
-        put("FI", "Finnish");
-        put("FR", "French");
-        put("GA", "Irish");
-        put("HR", "Croatian");
-        put("HU", "Hungarian");
-        put("IT", "Italian");
-        put("LT", "Lithuanian");
-        put("LV", "Latvian");
-        put("MT", "Maltese");
-        put("NL", "Dutch");
-        put("PL", "Polish");
-        put("PT", "Portuguese");
-        put("RO", "Romanian");
-        put("SK", "Slovak");
-        put("SL", "Slovenian");
-        put("SV", "Swedish");
-    }};
+    public static final String IMG="img";
+    public static final String ORGANIZATION="organization";
     public static final String LANGUAGE="language";
     public static final String LANGUAGE_EN="EN";
     public static final String PACKAGE_TITLE="packageTitle";
     public static final String AUTHENTIC_LANGUAGES_NAME = "authenticLang";
+    public static final String ACTING_ENTITY_NAME = "actingEntity";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
     public static final String AUTONOMOUS_ACT_VALUE="ACT_AUTO_COM";
     public static final String FINAL_VALUE = "final";
@@ -133,6 +115,8 @@ public class MetadataUtil {
             MetadataFieldType.ADOPTION_LOCATION, MetadataFieldType.EMISSION_DATE, MetadataFieldType.INTERINSTITUTIONAL_COTE,
             MetadataFieldType.LINKED_DOCUMENTS, MetadataFieldType.STAMP, MetadataFieldType.COTE);
     public static final String AUTHENTIC_LANGUAGES_PATH = "//akn:meta/akn:references/akn:TLCReference[@name='language']";
+    public static final String COVERPAGE_TYPE_PATH = "//akn:coverPage/akn:container[@name='disclaimer']";
+    public static final String ACTING_ENTITY_PATH = "//akn:coverPage/akn:container[@name='actingEntity']";
 
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
@@ -397,6 +381,10 @@ public class MetadataUtil {
     public static MetadataFieldInfo parseAuthenticLanguages(String fieldValue) {
         String[] values = StringUtils.hasLength(fieldValue) ? fieldValue.split("-") : new String[0];
         return new ListFieldInfo(Arrays.asList(values), MetadataFieldType.AUTHENTIC_LANG);
+    }
+
+    public static MetadataFieldInfo parseCoverPageType(String fieldValue) {
+        return new SimpleFieldInfo(fieldValue, MetadataFieldType.COVERPAGE_TYPE);
     }
 
     public static MetadataFieldInfo parseInternalRef(String fieldValue) {

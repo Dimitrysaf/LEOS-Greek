@@ -550,7 +550,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         metadataBinder.forField(internalRef).bind(MetadataVO::getInternalRef, MetadataVO::setInternalRef);
         metadataBinder.forField(new ReadOnlyHasValue<>(docStage::setValue)).bind(MetadataVO::getDocStage, MetadataVO::setDocStage);
         metadataBinder.forField(new ReadOnlyHasValue<>(docType::setValue)).bind(MetadataVO::getDocType, MetadataVO::setDocType);
-        metadataBinder.forField(eeaRelevance).bind(MetadataVO::getEeaRelevance, MetadataVO::setEeaRelevance);
+        metadataBinder.forField(eeaRelevance).bind(MetadataVO::isEeaRelevance, MetadataVO::setEeaRelevance);
         metadataBinder.forField(securityLevel).bind(MetadataVO::getSecurityLevel, MetadataVO::setSecurityLevel);
         metadataBinder.forField(new ReadOnlyHasValue<>(collectionLanguage::setValue))
                 .withConverter(langConverter)

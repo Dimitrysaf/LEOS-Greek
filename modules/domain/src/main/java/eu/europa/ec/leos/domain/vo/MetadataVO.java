@@ -13,13 +13,16 @@
  */
 package eu.europa.ec.leos.domain.vo;
 
-
 import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
+import eu.europa.ec.leos.domain.repository.metadata.LeosCoverPageType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class MetadataVO {
-
     private String docStage;
     private String docType;
     private String docPurpose;
@@ -43,6 +46,8 @@ public class MetadataVO {
     private List<String> authenticLang;
     private String documentCollectionName;
     private LeosAuthenticLanguage isAuthenticLang;
+    private LeosCoverPageType coverPageType;
+    private Float verticalShift;
 
     public MetadataVO() {
     }// added for early binding
@@ -54,78 +59,6 @@ public class MetadataVO {
         this.template = template;
         this.language = language;
         this.eeaRelevance = eeaRelevance;
-    }
-
-    public String getDocStage() {
-        return docStage;
-    }
-
-    public void setDocStage(String docStage) {
-        this.docStage = docStage;
-    }
-
-    public String getDocType() {
-        return docType;
-    }
-
-    public void setDocType(String docType) {
-        this.docType = docType;
-    }
-
-    public String getDocPurpose() {
-        return docPurpose;
-    }
-
-    public void setDocPurpose(String docPurpose) {
-        this.docPurpose = docPurpose;
-    }
-
-    public String getDocVersion() {
-        return docVersion;
-    }
-
-    public void setDocVersion(String docVersion) {
-        this.docVersion = docVersion;
-    }
-
-    public String getPackageTitle() {
-        return packageTitle;
-    }
-
-    public void setPackageTitle(String packageTitle) {
-        this.packageTitle = packageTitle;
-    }
-
-    public String getInternalRef() {
-        return internalRef;
-    }
-
-    public void setInternalRef(String internalRef) {
-        this.internalRef = internalRef;
-    }
-
-    public SecurityLevel getSecurityLevel() {
-        return securityLevel;
-    }
-
-    public void setSecurityLevel(SecurityLevel securityLevel) {
-        this.securityLevel = securityLevel;
-    }
-
-    public boolean getEeaRelevance() {
-        return eeaRelevance;
-    }
-
-    public void setEeaRelevance(boolean eeaRelevance) {
-        this.eeaRelevance = eeaRelevance;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String languageCode) {
-        this.language = languageCode;
     }
 
     public enum SecurityLevel {
@@ -255,5 +188,8 @@ public class MetadataVO {
         this.setCallbackAddress(null);
         this.setImported(false);
         this.setAuthenticLang(null);
+        this.setIsAuthenticLang(null);
+        this.setCoverPageType(null);
+        this.setVerticalShift(null);
     }
 }

@@ -818,7 +818,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         CollectionContextService context = proposalContextProvider.get();
         context.useProposalId(proposalId);
         context.usePurpose(event.getMetaDataVO().getDocPurpose());
-        context.useEeaRelevance(event.getMetaDataVO().getEeaRelevance());
+        context.useEeaRelevance(event.getMetaDataVO().isEeaRelevance());
         String comment = messageHelper.getMessage("operation.metadata.updated");
         context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
         context.useActionComment(comment);

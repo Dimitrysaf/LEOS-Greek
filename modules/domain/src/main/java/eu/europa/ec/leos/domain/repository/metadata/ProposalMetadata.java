@@ -1,12 +1,18 @@
 package eu.europa.ec.leos.domain.repository.metadata;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public final class ProposalMetadata extends LeosMetadata {
     private String internalRef;
     private LeosAuthenticLanguage isAuthenticLang;
+    private LeosCoverPageType coverPageType;
+    private Float verticalShift;
 
     public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance) {
         super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance);
@@ -33,7 +39,9 @@ public final class ProposalMetadata extends LeosMetadata {
         private String packageTitle;
         private List<String> authenticLang;
         private LeosAuthenticLanguage isAuthenticLang;
+        private LeosCoverPageType coverPageType;
         private String internalRef;
+        private Float verticalShift;
 
         private ProposalMetadataBuilder() {
         }
@@ -54,6 +62,8 @@ public final class ProposalMetadata extends LeosMetadata {
             this.packageTitle = metadata.packageTitle;
             this.internalRef = metadata.internalRef;
             this.isAuthenticLang = metadata.isAuthenticLang;
+            this.coverPageType = metadata.coverPageType;
+            this.verticalShift = metadata.getVerticalShift();
             this.actType = metadata.getActType();
         }
         public ProposalMetadataBuilder withStage(String stage) {
@@ -101,17 +111,18 @@ public final class ProposalMetadata extends LeosMetadata {
             this.packageTitle = packageTitle;
             return this;
         }
-
         public ProposalMetadataBuilder withAuthenticLang(List<String> authenticLang) {
             this.authenticLang = authenticLang;
             return this;
         }
-
         public ProposalMetadataBuilder withIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
             this.isAuthenticLang = isAuthenticLang;
             return this;
         }
-
+        public ProposalMetadataBuilder withCoverPageType(LeosCoverPageType coverPageType) {
+            this.coverPageType = coverPageType;
+            return this;
+        }
         public ProposalMetadataBuilder withProcedureType(String procedureType) {
             this.procedureType = procedureType;
             return this;
@@ -122,6 +133,10 @@ public final class ProposalMetadata extends LeosMetadata {
         }
         public ProposalMetadataBuilder withInternalRef(String internalRef) {
             this.internalRef = internalRef;
+            return this;
+        }
+        public ProposalMetadataBuilder withVerticalShift(Float verticalShift) {
+            this.verticalShift = verticalShift;
             return this;
         }
 
@@ -135,6 +150,8 @@ public final class ProposalMetadata extends LeosMetadata {
             metadata.setInternalRef(internalRef);
             metadata.setAuthenticLang(authenticLang);
             metadata.setIsAuthenticLang(isAuthenticLang);
+            metadata.setCoverPageType(coverPageType != null ? coverPageType : null);
+            metadata.setVerticalShift(verticalShift);
             return metadata;
         }
     }

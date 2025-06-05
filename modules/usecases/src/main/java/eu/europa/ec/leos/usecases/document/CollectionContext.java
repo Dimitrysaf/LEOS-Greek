@@ -182,7 +182,7 @@ public abstract class CollectionContext {
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
         purpose = propMeta.getDocPurpose();
         Validate.notNull(purpose, "Proposal purpose is required!");
-        eeaRelevance = propMeta.getEeaRelevance();
+        eeaRelevance = propMeta.isEeaRelevance();
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)

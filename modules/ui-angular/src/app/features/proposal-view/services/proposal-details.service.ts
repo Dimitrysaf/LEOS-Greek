@@ -12,7 +12,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage
+  User, AuthenticLanguage, CoverPageType
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -193,7 +193,8 @@ export class ProposalDetailsService implements OnDestroy {
       )
   }
 
-  updateProposalMetadata(docPurpose: string, eeaRelevance: boolean, packageTitle?: string, isAuthenticLang?: AuthenticLanguage, authenticLang?: string[]) {
+  updateProposalMetadata(docPurpose: string, eeaRelevance: boolean, packageTitle?: string, isAuthenticLang?: AuthenticLanguage,
+                         authenticLang?: string[], coverPageType?: CoverPageType, verticalShift?: string) {
     const internalRef = null;
     this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
@@ -202,7 +203,9 @@ export class ProposalDetailsService implements OnDestroy {
         packageTitle,
         internalRef,
         isAuthenticLang,
-        authenticLang
+        authenticLang,
+        coverPageType,
+        verticalShift
       })
       .subscribe((val) => {
         this.proposalRefBS.next([this.proposalRef, true]);

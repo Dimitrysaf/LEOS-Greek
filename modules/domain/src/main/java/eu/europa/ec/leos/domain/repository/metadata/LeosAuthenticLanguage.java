@@ -16,7 +16,6 @@ public enum LeosAuthenticLanguage {
             }
         }
         return null;
-        //throw new IllegalArgumentException("No enum constant " + LeosAuthenticLanguage.class + "." + name);
     }
 
 }
