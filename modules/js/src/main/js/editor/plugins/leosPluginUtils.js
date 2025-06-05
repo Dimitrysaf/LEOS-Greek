@@ -37,11 +37,13 @@ define(function leosPluginUtilsModule(require) {
     var DATA_INDENT_LEVEL_ATTR = "data-indent-level";
     var AKN_ORDERED_ANNEX_LIST = "aknAnnexOrderedList";
     var AKN_ORDERED_LIST = "aknOrderedList";
+    var AKN_UNORDERED_LIST = "aknUnorderedList";
     var AKN_NUMBERED_PARAGRAPH = "aknNumberedParagraph";
     var INDENT_LEVEL_ATTR = "--indent-level"
     var INLINE_NUM_ATTR = "--inline-num"
     var DIV = "div";
     var ORDER_LIST_ELEMENT = "ol";
+    var UNORDERED_LIST_ELEMENT = "ul";
     var LIST_ELEMENT= "li";
     var HTML_POINT = "li";
     var HTML_SUB_POINT = "p";
@@ -49,6 +51,7 @@ define(function leosPluginUtilsModule(require) {
     var MAX_LEVEL_DEPTH = 7;
     var MAX_LIST_LEVEL = 5;
     var MAX_LEVEL_LIST_DEPTH = 4;
+    var MAX_LIST_LEVEL_RECITAL = 4;
     var MAX_LIST_LEVEL_DEF = 4;
     var MAX_LEVEL_LIST_DEPTH_DEF = 3;
     var MAINBODY = "mainbody";
@@ -170,16 +173,17 @@ define(function leosPluginUtilsModule(require) {
             if (!_isListIntro(actualEL)) {
                 level++;
             }
-            actualEL = actualEL.getAscendant(ORDER_LIST_ELEMENT);
+            actualEL = actualEL.getAscendant({ ol:1, ul:1 });
         }
         return level;
     }
 
     /**
-     * Returns true if the selected element is child of an li or ol
+     * Returns true if the selected element is child of an li, ol or ul
      */
     function _isListElement(el) {
-        return (el && (el.getAscendant(ORDER_LIST_ELEMENT) || el.getAscendant(HTML_POINT)));
+        return (el && (el.getAscendant(UNORDERED_LIST_ELEMENT) ||
+            _getElementName(el) !== UNORDERED_LIST_ELEMENT && (el.getAscendant(ORDER_LIST_ELEMENT) || el.getAscendant(HTML_POINT))));
     }
 
     function _isAnnexList(element) {
@@ -192,6 +196,10 @@ define(function leosPluginUtilsModule(require) {
 
     function _isOrderedList(element) {
         return !!element && AKN_ORDERED_LIST === element.getAttribute(DATA_AKN_NAME);
+    }
+
+    function _isUnorderedList(element) {
+        return !!element && AKN_UNORDERED_LIST === element.getAttribute(DATA_AKN_NAME);
     }
 
     function _isRecitalAA(element) {
@@ -250,7 +258,7 @@ define(function leosPluginUtilsModule(require) {
 
     function _isListIntro(element) {
         if (!!element && element instanceof CKEDITOR.dom.element
-            && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
+            && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()) || _isUnorderedList(element.getParent()))
             && element.getParent().getFirst(liOrp).equals(element)) {
             return _isSubparagraph(element);
         }
@@ -268,6 +276,10 @@ define(function leosPluginUtilsModule(require) {
     function _isInsideList(element) {
         return (!!element
             && (_getElementName(element.getParent()) == ORDER_LIST_ELEMENT));
+    }
+
+    function _isInsideUnorderedList(element) {
+        return (!!element && element.getAscendant(UNORDERED_LIST_ELEMENT, true));
     }
 
     function liOrp( node ) {
@@ -1354,6 +1366,11 @@ define(function leosPluginUtilsModule(require) {
         return type;
     }
 
+    function _isRecitalEditor(editor){
+        var editorData = $(editor.getData());
+        return editorData.length && editorData.prop("tagName").toLowerCase() === RECITAL;
+    }
+
     function _isDefinitionArticle(editor){
         var editorData = $(editor.getData());
         var rootElt = editorData.length && editorData.prop("tagName").toLowerCase() ===  ARTICLE ? editorData : $(editor.element.$).closest(ARTICLE);
@@ -1364,7 +1381,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _getMaxListLevel(editor) {
-        return _isDefinitionArticle(editor) ? MAX_LIST_LEVEL_DEF : MAX_LIST_LEVEL;
+        return _isDefinitionArticle(editor) ? MAX_LIST_LEVEL_DEF : _isRecitalEditor(editor) ? MAX_LIST_LEVEL_RECITAL : MAX_LIST_LEVEL;
     }
 
     function _getMaxListLevelDepth(editor) {
@@ -1507,10 +1524,6 @@ define(function leosPluginUtilsModule(require) {
 
     function _isEmpty(element) {
         return element && $(element).children() && $(element).children().length > 0 && $(element).children().get(0).nodeName.ignoreCase === BOGUS.ignoreCase;
-    }
-
-    function _isEmptyWithBogus(element) {
-        return element && $(element).children() && $(element).children().length > 0 && $(element).children().get(0).nodeName.toLowerCase() === BOGUS;
     }
 
     function _isInsideTable(element) {
@@ -1703,6 +1716,7 @@ define(function leosPluginUtilsModule(require) {
         isListIntro: _isListIntro,
         isListEnding: _isListEnding,
         isInsideList: _isInsideList,
+        isInsideUnorderedList: _isInsideUnorderedList,
         getNestingLevelForOl: _getNestingLevelForOl,
         convertToCrossheading: _convertToCrossheading,
         setCrossheadingIndentAttribute: _setCrossheadingIndentAttribute,
@@ -1760,7 +1774,6 @@ define(function leosPluginUtilsModule(require) {
         selectCorrectPathForList: _selectCorrectPathForList,
         getRefConfig: _getRefConfig,
         isEmpty: _isEmpty,
-        isEmptyWithBogus: _isEmptyWithBogus,
         isInsideTable: _isInsideTable,
         findLastEditable: _findLastEditable,
         commonAttributes: commonAttributes,
@@ -1785,6 +1798,7 @@ define(function leosPluginUtilsModule(require) {
         PARAGRAPH: PARAGRAPH,
         LEVEL: LEVEL,
         ORDER_LIST_ELEMENT: ORDER_LIST_ELEMENT,
+        UNORDERED_LIST_ELEMENT: UNORDERED_LIST_ELEMENT,
         LIST_ELEMENT: LIST_ELEMENT,
         DATA_AKN_NAME: DATA_AKN_NAME,
         DATA_AKN_ELEMENT: DATA_AKN_ELEMENT,

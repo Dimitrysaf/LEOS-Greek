@@ -22,6 +22,8 @@ define(function aknRecitalAAPluginModule(require) {
     var leosHierarchicalElementTransformerStamp = require("plugins/leosHierarchicalElementTransformer/hierarchicalElementTransformer");
     var numberModule = require("plugins/leosNumber/recitalNumberModule");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
+    var UTILS = require("core/leosUtils");
+    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var pluginName = "aknRecitalAA";
     var ENTER_KEY = 13;
@@ -59,6 +61,8 @@ define(function aknRecitalAAPluginModule(require) {
 
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
             editor.on('insertElement', _onInsertTable, this, null, 99 );
+            editor.on('beforeCommandExec', _onClickListButton, null, null, 1 );
+            editor.on('key', _handleKey, null, null, 1 );
             $(editor.element.$).on("keydown", null, [editor], _preventTextInputInSubflow);
             $(editor.element.$).on("keyup", null, [editor], _handleKeyUpEvent);
 
@@ -113,25 +117,19 @@ define(function aknRecitalAAPluginModule(require) {
                 key : BOLD,
                 action : _onCtrlBKey
             });
-
-            leosKeyHandler.on({
-                editor : editor,
-                eventType : 'key',
-                key : DELETE,
-                action : _onDeleteKey
-            });
-
-            leosKeyHandler.on({
-                editor : editor,
-                eventType : 'key',
-                key : BACKSPACE,
-                action : _onBackspaceKey
-            });
         }
     };
 
     function _onEnterKey(context) {
-        context.event.cancel();
+        var selection = context.editor.getSelection();
+        var startElement = leosKeyHandler.getSelectedElement(selection);
+        if (startElement && leosPluginUtils.getElementName(startElement) === leosPluginUtils.ORDER_LIST_ELEMENT) {
+            startElement = startElement.getLast().getLast();
+        }
+        var div = startElement?.getAscendant("div", true);
+        if (div?.getAttribute(leosPluginUtils.DATA_AKN_NAME) !== leosPluginUtils.SUBFLOW_NAME || div.getAttribute("data-akn-hcontainer")) {
+            context.event.cancel();
+        }
     }
 
     function _onCtrlUKey(context) {
@@ -142,12 +140,13 @@ define(function aknRecitalAAPluginModule(require) {
         context.event.cancel();
     }
 
-    function preventBlockMerge(context) {
-        var selection = context.editor.getSelection();
+    function preventBlockMerge(event) {
+        var editor = event.editor;
+        var selection = editor.getSelection();
 
         function unselectEndBreakLine() {
             if (!range.startContainer.equals(range.endContainer) && range.endOffset === 0) {
-                range.setEndAt(range.endContainer.getPrevious(), CKEDITOR.POSITION_BEFORE_END);
+                range.setEndAt(range.endContainer.getAscendant(leosPluginUtils.DIV,true).getPrevious(), CKEDITOR.POSITION_BEFORE_END);
                 range.optimize();
                 range.select();
             }
@@ -156,45 +155,69 @@ define(function aknRecitalAAPluginModule(require) {
         function isAllTextInDivSelected() {
             var startElement = range.startContainer,
                 endElement = range.endContainer;
-            return startElement.type === CKEDITOR.NODE_ELEMENT && startElement.getId() === endElement.getId() &&
-                    startElement.getName() === leosPluginUtils.DIV &&
-                    startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) !== leosPluginUtils.SUBFLOW_NAME &&
-                    range.startOffset === 0 && range.endOffset === startElement.getChildCount();
+            return startElement.type === CKEDITOR.NODE_ELEMENT && endElement.type === CKEDITOR.NODE_ELEMENT && startElement.getId() === endElement.getId() &&
+                startElement.getName() === leosPluginUtils.DIV && startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) !== leosPluginUtils.SUBFLOW_NAME &&
+                range.startOffset === 0 && range.endOffset === endElement.getChildCount();
+        }
+
+        function deleteIfEmptyList(divElement) {
+            if (divElement) {
+                var listElement = divElement.getChild(0);
+                if (leosPluginUtils.getElementName(listElement) === leosPluginUtils.UNORDERED_LIST_ELEMENT && listElement.getChildCount() === 1) {
+                    var listItemElement = listElement.getChild(0);
+                    UTILS.removeZeroWidthSpaces(listItemElement.getId());
+                    if (UTILS.isEmptyElement(listItemElement.$)) {
+                        editor.fire('saveSnapshot');
+                        if (editor.LEOS.isTrackChangesEnabled) {
+                            var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(range);
+                            var isNewTrackChangeEnter = leosTrackChanges.core.isNewTrackChangeEnter(range);
+                            if (!isNewTrackChangeNumber && !isNewTrackChangeEnter &&
+                                (!range.startContainer.$.attributes || !(range.startContainer.$.attributes[leosPluginUtils.DATA_AKN_EMPTY] ||
+                                    range.startContainer.$.attributes[leosPluginUtils.DATA_REJECT_INSERTED_ENTER]))) {
+                                editor.fire("handleTrackTraceForEnterDeleted", range);
+                                return;
+                            }
+                        }
+                        removeAndUpdateSelection(divElement, range);
+                    }
+                }
+                range.startContainer.removeAttribute && range.startContainer.removeAttribute(leosPluginUtils.DATA_REJECT_INSERTED_ENTER);
+            }
         }
 
         if (selection) {
             var range = selection.getRanges()[0];
             if (range.collapsed) {
-                if (context.event.data.keyCode === BACKSPACE && range.checkStartOfBlock() ||
-                        context.event.data.keyCode === DELETE && range.checkEndOfBlock()) {
-                    context.event.cancel();
+                var div = range.startContainer.getAscendant("div", true);
+                if (event.data.keyCode === BACKSPACE && (range.checkBoundaryOfElement(div, CKEDITOR.START)
+                        // When rejecting list insertion, range offset is incorrect as removeZeroWidthSpace doesn't update selection
+                        || range.startContainer.getAttribute(leosPluginUtils.DATA_REJECT_INSERTED_ENTER))
+                    || event.data.keyCode === DELETE && range.checkBoundaryOfElement(div, CKEDITOR.END)) {
+                    deleteIfEmptyList(div);
+                    event.cancel();
+                    return false;
                 }
             } else {
                 unselectEndBreakLine();
-                if (range.collapsed || leosPluginUtils.isEmptyWithBogus(range.startContainer.$) && leosPluginUtils.isEmptyWithBogus(range.endContainer.$)) {
-                    context.event.cancel();
-                } else if (!context.editor.LEOS.isTrackChangesEnabled) {
+                if (range.collapsed || leosKeyHandler.isContentEmptyTextNode(range.startContainer) && leosKeyHandler.isContentEmptyTextNode(range.endContainer)) {
+                    event.cancel();
+                    return false;
+                } else if (!editor.LEOS.isTrackChangesEnabled) {
                     if (isAllTextInDivSelected()) {
                         range.deleteContents();
                         range.startContainer.appendBogus();
-                        context.event.cancel();
-                    } else if (leosPluginUtils.mergeBlocksNonCollapsedSelection(context.editor, range, range.startPath())) {
+                        event.cancel();
+                        return false;
+                    } else if (leosPluginUtils.mergeBlocksNonCollapsedSelection(editor, range, range.startPath())) {
                         // Scroll to the new position of the caret (https://dev.ckeditor.com/ticket/11960).
                         selection.scrollIntoView();
-                        context.editor.fire('saveSnapshot');
-                        context.event.cancel();
+                        editor.fire('saveSnapshot');
+                        event.cancel();
+                        return false;
                     }
                 }
             }
         }
-    }
-
-    function _onDeleteKey(context) {
-        preventBlockMerge(context);
-    }
-
-    function _onBackspaceKey(context) {
-        preventBlockMerge(context);
     }
 
     function _preventTextInputInSubflow(e) {
@@ -204,32 +227,66 @@ define(function aknRecitalAAPluginModule(require) {
             startElement = startElement.getLast().getLast();
         }
         if (startElement?.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME &&
-                !ARROW_KEYS.includes(e.keyCode) && e.keyCode !== BACKSPACE && e.keyCode !== DELETE) {
+            startElement?.getAttribute("data-akn-hcontainer") &&
+            !ARROW_KEYS.includes(e.keyCode) && e.keyCode !== BACKSPACE && e.keyCode !== DELETE) {
             //Cancel the event
             e.stopImmediatePropagation();
             return false;
         }
     }
 
+    function _handleKey(event) {
+        if (event.data.keyCode === BACKSPACE || event.data.keyCode === DELETE) {
+            return preventBlockMerge(event);
+        }
+    }
+
     function _onSelectionChange(event) {
         var editor = event.editor;
         var selection = editor.getSelection();
-        if (selection) {
-            if (selection.getStartElement().getName() === leosPluginUtils.ORDER_LIST_ELEMENT) {
-                selection = leosPluginUtils.selectLastEditableElement(selection, leosPluginUtils.DIV);
+
+        function allowOnlyOneListInRecital() {
+            if (editor.element.findOne(leosPluginUtils.UNORDERED_LIST_ELEMENT) && startElement) {
+                leosCommandStateHandler.changeCommandState(editor, 'leosIndentList', changeStateElements, true);
+            } else {
+                leosCommandStateHandler.changeCommandState(editor, 'leosIndentList', null, true);
             }
-            if (selection.getSelectedText() !== "" || leosPluginUtils.isInsideTable(selection.getStartElement())) {
+        }
+
+        if (selection) {
+            var startElement = selection.getStartElement();
+            var startElementName = leosPluginUtils.getElementName(startElement);
+            if (startElementName === leosPluginUtils.ORDER_LIST_ELEMENT ||
+                startElementName === leosPluginUtils.DIV && startElement.find(leosPluginUtils.ORDER_LIST_ELEMENT).$.length > 0) {
+                selection = leosPluginUtils.selectLastEditableElement(selection, leosPluginUtils.DIV);
+                startElement = selection.getStartElement();
+            }
+            if (selection.getSelectedText() !== "" || leosPluginUtils.isInsideTable(startElement)) {
                 leosCommandStateHandler.changeCommandState(editor, 'leosBase64ImageDialog', changeStateElements, true);
                 leosCommandStateHandler.changeCommandState(editor, 'table', changeStateElements, true);
+                leosCommandStateHandler.changeCommandState(editor, 'leosIndentList', changeStateElements, true);
             } else {
                 leosCommandStateHandler.changeCommandState(editor, 'leosBase64ImageDialog', null, true);
                 if (selection.getSelectedElement()?.getName() === "img") {
                     leosCommandStateHandler.changeCommandState(editor, 'table', changeStateElements, true);
+                    leosCommandStateHandler.changeCommandState(editor, 'leosIndentList', changeStateElements, true);
                 } else {
                     leosCommandStateHandler.changeCommandState(editor, 'table', null, true);
+                    allowOnlyOneListInRecital();
                 }
             }
         }
+    }
+
+    function removeAndUpdateSelection(element, range) {
+        var nextElement = element.getNext();
+        if (nextElement != null) {
+            range.moveToElementEditStart(nextElement);
+        } else {
+            range.moveToElementEditEnd(element.getPrevious());
+        }
+        element.remove();
+        range.select();
     }
 
     function checkAndRemoveEmptyElement(element, editor, range) {
@@ -240,14 +297,7 @@ define(function aknRecitalAAPluginModule(require) {
             }
         });
         if (element.getChildCount() === 0) {
-            var nextElement = element.getNext();
-            if (nextElement != null) {
-                range.moveToElementEditStart(nextElement);
-            } else {
-                range.moveToElementEditEnd(element.getPrevious());
-            }
-            range.select();
-            element.remove();
+            removeAndUpdateSelection(element, range);
         }
         editor.fire('unlockSnapshot');
     }
@@ -260,12 +310,38 @@ define(function aknRecitalAAPluginModule(require) {
         checkAndRemoveEmptyElement(selectedElement, editor, range);
     }
 
+    function _onClickListButton(event) {
+        if (event.data.name === 'leosIndentList') {
+            var selection = event.editor.getSelection();
+            var selectedElement = leosKeyHandler.getSelectedElement(selection);
+            if (selectedElement) {
+                var range = selection.getRanges()[0];
+                if (leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                    selectedElement = selectedElement.getLast().getLast();
+                }
+                selectedElement = selectedElement.getAscendant(leosPluginUtils.DIV, true);
+                var newBlock = new CKEDITOR.dom.element(leosPluginUtils.DIV);
+                var newList = new CKEDITOR.dom.element(leosPluginUtils.UNORDERED_LIST_ELEMENT);
+                var newListItemPoint = new CKEDITOR.dom.element(leosPluginUtils.LIST_ELEMENT);
+                newListItemPoint.appendBogus();
+                newListItemPoint.setAttribute(leosPluginUtils.DATA_AKN_NUM, "-");
+                newList.append(newListItemPoint);
+                newBlock.append(newList);
+                newBlock.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
+                newBlock.insertAfter(selectedElement);
+                range.moveToPosition(newListItemPoint, CKEDITOR.POSITION_AFTER_START);
+                range.select();
+                event.editor.fire('saveSnapshot');
+            }
+        }
+    }
+
     function _handleKeyUpEvent(event) {
         var editor = event.data[0];
         var selection =  editor.getSelection();
         if (selection) {
             var range = selection.getRanges()[0];
-            if (range.collapsed) {
+            if (range && range.collapsed) {
                 var startElement = leosKeyHandler.getSelectedElement(selection);
                 if ((event.originalEvent.keyCode === BACKSPACE || event.originalEvent.keyCode === DELETE) &&
                         (startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME ||
@@ -284,7 +360,7 @@ define(function aknRecitalAAPluginModule(require) {
     var leosHierarchicalElementTransformer = leosHierarchicalElementTransformerStamp({
         firstLevelConfig: {
             akn: RECITAL_NAME,
-            html: "ol",
+            html: ["ol[data-akn-name=", RECITAL_NAME, "]"].join(""),
             attr: [{
                 html: ["data-akn-name", RECITAL_NAME].join("=")
             }, {

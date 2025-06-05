@@ -174,11 +174,12 @@ define(function leosBase64ImageDialog(require) {
             elem.setValue(v + u);
         }
 
-        function insertImgInNewP(selection, selectedElement, img) {
+        function insertImgInSubflow(selection, selectedElement, img) {
             let range = selection.getRanges()[0];
             if (leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.ORDER_LIST_ELEMENT) {
                 selectedElement = selectedElement.getLast().getLast();
             }
+            selectedElement = selectedElement.getAscendant(leosPluginUtils.DIV, true);
             img.insertAfter(selectedElement);
             range.setStartAfter(selectedElement);
             range.fixBlock(true, 'div');
@@ -317,7 +318,7 @@ define(function leosBase64ImageDialog(require) {
                     var selection = editor.getSelection();
                     var selectedElement = leosKeyHandler.getSelectedElement(selection);
                     if (leosPluginUtils.isRecitalAA(selectedElement)) {
-                        insertImgInNewP(selection, selectedElement, newImg);
+                        insertImgInSubflow(selection, selectedElement, newImg);
                     } else {
                         editor.insertElement(newImg);
                     }

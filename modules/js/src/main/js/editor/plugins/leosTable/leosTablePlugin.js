@@ -138,7 +138,8 @@ define(function leosTablePluginModule(require) {
                     if (parentElem.getName() === leosPluginUtils.ORDER_LIST_ELEMENT) {
                         parentElem = parentElem.getLast().getLast();
                     }
-                    var newBlock = new CKEDITOR.dom.element("div");
+                    parentElem = parentElem.getAscendant(leosPluginUtils.DIV, true);
+                    var newBlock = new CKEDITOR.dom.element(leosPluginUtils.DIV);
                     newBlock.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
                     newBlock.setAttribute('data-akn-hcontainer', 'BLOCK_TAB');
                     newBlock.setAttribute('data-akn-sub-hcontainer', 'TAB');

@@ -27,7 +27,6 @@ define(function elementEditorModule(require) {
     var pluginTools = require("../plugins/pluginTools");
     var leosPluginUtils = require("../plugins/leosPluginUtils");
 
-    var ZERO_WIDTH_SPACE = "^\u200B{7}$";
     var WHITE_SPACE = '\u00A0';
     var NUM = "num";
 
@@ -354,23 +353,8 @@ define(function elementEditorModule(require) {
 
     function _canBeSaved(connector, elementId, event) {
         var editor = event.editor;
-        _removeZeroWidthSpaces(elementId);
+        UTILS.removeZeroWidthSpaces(elementId);
         return !_isArticleWithOneNumberedParagraph(elementId, editor) && !_isEmptyElement(elementId, editor);
-    }
-
-    function _removeZeroWidthSpaces(elementId) {
-        $("#" + elementId).find("*").addBack().contents().filter(function () {
-            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
-                return this.textContent.match(ZERO_WIDTH_SPACE);
-            }
-            return false;
-        }).remove();
-        $("#" + elementId).parent().contents().filter(function () {
-            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
-                return this.textContent.match(ZERO_WIDTH_SPACE);
-            }
-            return false;
-        }).remove();
     }
 
     function _isEmptyElement(elementId, editor) {
@@ -559,7 +543,7 @@ define(function elementEditorModule(require) {
     }
 
     function _removeZeroWidthSpacesOnFocus(connector, elementId) {
-        _removeZeroWidthSpaces(elementId);
+        UTILS.removeZeroWidthSpaces(elementId);
     }
 
     function _removeNonBreakingSpaceFromElement(elementId, eventData){

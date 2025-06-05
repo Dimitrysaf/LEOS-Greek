@@ -59,6 +59,9 @@ define(function aknRecitalAAProfileModule(require) {
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
     plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandler/leosHierarchicalElementShiftEnterHandler"));
+    plugins.push(require("plugins/aknUnorderedList/aknUnorderedListPlugin"));
+    plugins.push(require("plugins/leosArticleList/leosArticleListPlugin"));
+    plugins.push(require("plugins/leosArticleIndentlist/leosArticleIndentlistPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -83,7 +86,7 @@ define(function aknRecitalAAProfileModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath," +
-                 "clipboard,undo,pastefromword,basicstyles,enterkey," +
+                 "clipboard,undo,pastefromword,basicstyles,enterkey,indent," +
                  "specialchar,table,tableresize,tabletools,tableselection,button,dialog,dialogui,contextmenu,menubutton,widget,colorbutton",
         // comma-separated list of toolbar button names that must not be rendered
         removeButtons: "Bold,Underline,Strike,TextColor,PasteFromWord",
@@ -122,7 +125,8 @@ define(function aknRecitalAAProfileModule(require) {
         }, {
             name : "shiftenter"
         }, {
-            name : "paragraph"
+            name : "paragraph",
+            groups : [ "unumberedList","indent" ]
         }, {
             name : "ref"
         }, {
