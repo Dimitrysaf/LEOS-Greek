@@ -345,6 +345,16 @@ public interface LeosRepository {
      */
     <D extends LeosDocument> List<D> findDocumentsByUserId(String userId, Class<? extends D> type, String leosAuthority);
 
+    /**
+     * Finds a document with the specified characteristics.
+     *
+     * @param userId   the ID of the User.
+     * @param entities
+     * @param type     the type class of the document.
+     * @return the found document.
+     */
+    <D extends LeosDocument> List<D> findDocumentsByUserIdOrEntity(String userId, List<String> entities, Class<? extends D> type, String leosAuthority);
+
     <D extends LeosDocument> Stream<D> findPagedDocumentsByParentPath(String path, Class<? extends D> type, boolean descendants, boolean fetchContent,
                                                                       int startIndex, int maxResults, QueryFilter workspaceFilter);
 

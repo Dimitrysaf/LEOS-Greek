@@ -31,6 +31,7 @@ import eu.europa.ec.leos.domain.vo.LegDocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.rendition.RenderedDocument;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.repository.store.WorkspaceRepository;
@@ -67,6 +68,7 @@ import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.io.FileUtils;
@@ -154,6 +156,7 @@ public class LegServiceImpl implements LegService {
     private final FinancialStatementService financialStatementService;
     private final XPathCatalog xPathCatalog;
     private final DocumentLanguageContext documentLanguageContext;
+    private final UserService userService;
 
     private static final String MEDIA_DIR = "media/";
     private static final String ANNOT_FILE_EXT = ".json";
@@ -203,7 +206,7 @@ public class LegServiceImpl implements LegService {
                           ProposalService proposalService,
                           XPathCatalog xPathCatalog,
                           ExplanatoryService explanatoryService, FinancialStatementService financialStatementService,
-                          DocumentLanguageContext documentLanguageContext) {
+                          DocumentLanguageContext documentLanguageContext, UserService userService) {
         this.packageRepository = packageRepository;
         this.workspaceRepository = workspaceRepository;
         this.attachmentProcessor = attachmentProcessor;
@@ -226,6 +229,7 @@ public class LegServiceImpl implements LegService {
         this.explanatoryService = explanatoryService;
         this.financialStatementService = financialStatementService;
         this.documentLanguageContext = documentLanguageContext;
+        this.userService = userService;
     }
 
     @Override
@@ -283,29 +287,49 @@ public class LegServiceImpl implements LegService {
     @Override
     public List<LegDocumentVO> getLegDocumentDetailsByUserId(String userId, String proposalId, String legStatus) {
         List<LegDocumentVO> legDocumentVOs = new ArrayList<>();
+        User user = userService.getUser(userId);
         if(!StringUtils.isEmpty(proposalId)) {
             Proposal proposal = proposalService.getProposalByRef(proposalId);
-            Optional<Collaborator> userAsCollaborator = proposal.getCollaborators().stream()
-                    .filter(x -> x.getLogin().equalsIgnoreCase(userId)).findAny();
+            Optional<Collaborator> userAsCollaborator = getCollaborator(user, proposal);
             if(userAsCollaborator.isPresent()) {
-                LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus);
-                if(legDocumentVO != null) {
-                    legDocumentVOs.add(legDocumentVO);
-                }
+                addLegDocumentVoToList(legStatus, proposal, legDocumentVOs);
             }
         } else {
-            //TODO:Improve performance by searching for leg files using userId and legFileStatus only.
-            //TODO:CMIS properties needs to be added in leg file (leos:collaborator,docTitle, proposalId)
-            List<Proposal> proposals = packageRepository.findDocumentsByUserId(userId, Proposal.class,
-                    authorityMapHelper.getRoleForDocCreation());
+            List<String> entities = new ArrayList<>();
+            user.getEntities().stream().forEach(entity -> entities.add(entity.getOrganizationName()));
+            List<Proposal> proposals = packageRepository.findDocumentsByUserIdOrEntity(userId,
+                    entities, Proposal.class, authorityMapHelper.getRoleForDocCreation());
             for (Proposal proposal : proposals) {
-                LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus);
-                if(legDocumentVO != null) {
-                    legDocumentVOs.add(legDocumentVO);
+                Optional<Collaborator> userAsCollaborator = getCollaborator(user, proposal);
+                if(userAsCollaborator.isPresent()) {
+                    addLegDocumentVoToList(legStatus, proposal, legDocumentVOs);
                 }
             }
         }
         return legDocumentVOs;
+    }
+
+    private Optional<Collaborator> getCollaborator(User user, Proposal proposal) {
+        Optional<Collaborator> userAsCollaborator = proposal.getCollaborators().stream()
+                .filter(x -> x.getLogin().equalsIgnoreCase(user.getLogin())).findAny();
+        if(!userAsCollaborator.isPresent()) {
+            userAsCollaborator = proposal.getCollaborators().stream()
+                    .filter(collab -> user.getEntities().stream()
+                            .anyMatch(entity -> entity.getOrganizationName().equalsIgnoreCase(collab.getEntity())))
+                    .findFirst();
+        }
+        if(!userAsCollaborator.isPresent()) {
+            LOG.error("The user does not belong to the list of collaborators or their entities - " + user.getLogin());
+            throw new RuntimeException("The user does not belong to the list of collaborators or their entities - "+ user.getLogin());
+        }
+        return userAsCollaborator;
+    }
+
+    private void addLegDocumentVoToList(String legStatus, Proposal proposal, List<LegDocumentVO> legDocumentVOs) {
+        LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus);
+        if(legDocumentVO != null) {
+            legDocumentVOs.add(legDocumentVO);
+        }
     }
 
     @Override

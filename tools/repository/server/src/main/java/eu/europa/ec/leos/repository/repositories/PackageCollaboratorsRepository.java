@@ -18,6 +18,7 @@ import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,4 +41,14 @@ public interface PackageCollaboratorsRepository extends JpaRepository<PackageCol
             "?1 AND c.ROLE_ID = ?2)",
             nativeQuery = true)
     List<BigDecimal> findPackageIdByCollaboratorNameAndRole(String collaboratorName, String role);
+
+    @Query(value = "SELECT p.PACKAGE_ID FROM PACKAGE_COLLABORATORS p WHERE p.COLLABORATOR_ID IN (SELECT ID FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = " +
+            "?1)", nativeQuery = true)
+    List<BigDecimal> findPackageIdByCollaboratorName(String collaboratorName);
+
+    @Query(value = "SELECT p.PACKAGE_ID FROM PACKAGE_COLLABORATORS p " +
+            "WHERE p.COLLABORATOR_ID IN (" +
+            "SELECT c.ID FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME IN (:collaboratorNames))",
+            nativeQuery = true)
+    List<BigDecimal> findPackageIdsByCollaboratorNames(@Param("collaboratorNames") List<String> collaboratorNames);
 }

@@ -152,10 +152,31 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         ;
     }
 
-
-    public List<BigDecimal> findDocumentsByCollaboratorName(final String userId, final String role) {
+    @Override
+    public List<BigDecimal> findDocumentsByCollaboratorNameAndRole(final String userId, final String role) {
         List<BigDecimal> packageIdsList = new ArrayList<>();
         List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdByCollaboratorNameAndRole(userId, role);
+        for (BigDecimal packageIdBD : packageIdsListBD) {
+            packageIdsList.add(packageIdBD);
+        }
+        return packageIdsList;
+    }
+
+    @Override
+    public List<BigDecimal> findDocumentsByCollaboratorName(final String userId) {
+        List<BigDecimal> packageIdsList = new ArrayList<>();
+        List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdByCollaboratorName(userId);
+        for (BigDecimal packageIdBD : packageIdsListBD) {
+            packageIdsList.add(packageIdBD);
+        }
+        return packageIdsList;
+    }
+
+    @Override
+    public List<BigDecimal> findDocumentsByCollaboratorNames(String collaboratorNames) {
+        List<BigDecimal> packageIdsList = new ArrayList<>();
+        List<String> entityList = Arrays.asList(collaboratorNames.split("_"));
+        List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdsByCollaboratorNames(entityList);
         for (BigDecimal packageIdBD : packageIdsListBD) {
             packageIdsList.add(packageIdBD);
         }

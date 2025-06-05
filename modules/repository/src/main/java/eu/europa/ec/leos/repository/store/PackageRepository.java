@@ -239,6 +239,16 @@ public interface PackageRepository {
     <D extends LeosDocument> List<D> findDocumentsByUserId(String userId, Class<? extends D> type, String leosAuthority);
 
     /**
+     * Finds documents with the specified characteristics.
+     *
+     * @param userId   the userId of the user
+     * @param entities the entityName of the user
+     * @return the list of found documents or empty.
+     */
+    <D extends LeosDocument> List<D> findDocumentsByUserIdOrEntity(String userId, List<String> entities, Class<? extends D> type, String leosAuthority);
+
+
+    /**
      * Finds leg documents with the specified status.
      *
      * @param status the status of the document.
