@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -677,25 +678,27 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
             if (nodeToRestore.getParentNode() != null) {
                 List<Node> children = XercesUtils.getChildren(nodeToRestore.getParentNode(), Arrays.asList(INDENT, POINT));
-                Node firstElement = children.get(0);
-                int elementDepth = XercesUtils.getPointDepth(firstElement);
-                String elementName = firstElement.getNodeName();
-                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
-                boolean changeOffset = false;
-                for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
-                    Node node = children.get(nodeListCount);
-                    if (changeOffset) {
-                        numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-                        if (numNode != null) {
-                            Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
-                            if (insNode != null) {
-                                int index = numberConfig.getNumberIndex(insNode.getTextContent()) + 1;
-                                insNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                if (!CollectionUtils.isEmpty(children)) {
+                    Node firstElement = children.get(0);
+                    int elementDepth = XercesUtils.getPointDepth(firstElement);
+                    String elementName = firstElement.getNodeName();
+                    NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
+                    boolean changeOffset = false;
+                    for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
+                        Node node = children.get(nodeListCount);
+                        if (changeOffset) {
+                            numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+                            if (numNode != null) {
+                                Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
+                                if (insNode != null) {
+                                    int index = numberConfig.getNumberIndex(insNode.getTextContent()) + 1;
+                                    insNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                                }
                             }
                         }
-                    }
-                    if (nodeToRestore == node) {
-                        changeOffset = true;
+                        if (nodeToRestore == node) {
+                            changeOffset = true;
+                        }
                     }
                 }
             }
@@ -721,25 +724,27 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             Node nodeToDelete = XercesUtils.getElementById(document, idToDelete);
             if (nodeToDelete != null && nodeToDelete.getParentNode() != null) {
                 List<Node> children = XercesUtils.getChildren(nodeToDelete.getParentNode(), Arrays.asList(INDENT, POINT));
-                Node firstElement = children.get(0);
-                int elementDepth = XercesUtils.getPointDepth(firstElement);
-                String elementName = firstElement.getNodeName();
-                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
-                boolean changeOffset = false;
-                for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
-                    Node node = children.get(nodeListCount);
-                    if (changeOffset) {
-                        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-                        if (numNode != null) {
-                            Node delNode = getFirstChild(numNode, LEOS_SOFT_ACTION_DELETE);
-                            if (delNode != null) {
-                                int index = numberConfig.getNumberIndex(delNode.getTextContent()) - 1;
-                                delNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                if (!CollectionUtils.isEmpty(children)) {
+                    Node firstElement = children.get(0);
+                    int elementDepth = XercesUtils.getPointDepth(firstElement);
+                    String elementName = firstElement.getNodeName();
+                    NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
+                    boolean changeOffset = false;
+                    for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
+                        Node node = children.get(nodeListCount);
+                        if (changeOffset) {
+                            Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+                            if (numNode != null) {
+                                Node delNode = getFirstChild(numNode, LEOS_SOFT_ACTION_DELETE);
+                                if (delNode != null) {
+                                    int index = numberConfig.getNumberIndex(delNode.getTextContent()) - 1;
+                                    delNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                                }
                             }
                         }
-                    }
-                    if (nodeToDelete == node) {
-                        changeOffset = true;
+                        if (nodeToDelete == node) {
+                            changeOffset = true;
+                        }
                     }
                 }
             }
