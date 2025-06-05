@@ -728,6 +728,8 @@ define(function leosTrackChangesPluginModule(require) {
                             core.setToEditablePosition(editor, trackedDeletedOrMovedToElement, core.CARET_END);
                         }
                         break;
+                    case "leosIndentList":
+                        handleMutations = true;
                 }
             });
 
@@ -898,6 +900,12 @@ define(function leosTrackChangesPluginModule(require) {
                                         var target = node.closest(".cke_widget_inline");
                                         if (target && target.classList.contains("cke_widget_leosCrossReferenceWidget")) { // Cross-reference modification
                                             processModification(new CKEDITOR.dom.element(target));
+                                        }
+                                        break;
+                                    } else if ((node.tagName === "DIV") && !node.id) { // It is a new list inside div (recital)
+                                        var newList = node.querySelector("li");
+                                        if (newList) {
+                                            core.addTrackChangesAttributesForNumbering(editor, newList, core.INSERT_ACTION);
                                         }
                                         break;
                                     }

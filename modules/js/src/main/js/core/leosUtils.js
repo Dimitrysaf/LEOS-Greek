@@ -22,6 +22,7 @@ define(function leosUtilsModule(require) {
     //var $ = require("jquery");
     var CKEDITOR = require("promise!ckEditor");
     var REGEX_ORIGIN = new RegExp("[leos:|data-](\\w-?)*origin");
+    var ZERO_WIDTH_SPACE = "^\u200B{7}$";
     
     var COUNCIL_INSTANCE = "COUNCIL";
     // configuration
@@ -102,14 +103,14 @@ define(function leosUtilsModule(require) {
             }
             return true;
         }
-        function _containsOnlyDeletedElts(element) {
+        function _containsOnlyDeletedOrEmptyElts(element) {
             if (element.childNodes.length > 0) {
                 for (var j = 0; j < element.childNodes.length; j++) {
                     if (element.childNodes[j].nodeType === Node.TEXT_NODE) {
                         if (element.childNodes[0].textContent.trim() !== '') {
                             return false;
                         }
-                    } else if (element.childNodes[j].tagName !== 'SPAN'
+                    } else if (element.childNodes[j].tagName !== 'SPAN' && element.childNodes[j].tagName !== LINE_BREAK_TAG
                         || !element.childNodes[j].hasAttribute('data-akn-action')
                         || element.childNodes[j].getAttribute('data-akn-action') !== 'delete') {
                         return false;
@@ -147,10 +148,7 @@ define(function leosUtilsModule(require) {
                     return el.children.length === 0 || _containsOnlyChildrenOf(el, childElementsToBeChecked);
                 }
             }
-            if (_containsOnlyDeletedElts(el)) {
-                return true;
-            }
-            if (el.childNodes[0].nodeName === LINE_BREAK_TAG) {
+            if (_containsOnlyDeletedOrEmptyElts(el)) {
                 return true;
             }
         }
@@ -321,7 +319,8 @@ define(function leosUtilsModule(require) {
                     "float: left; border: 0pt" +
                     "}\n";
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before, " +
-                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before {" +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before, " +
+                    "ul > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before {" +
                     "content: '↰' attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt" +
                     "}\n";
@@ -398,6 +397,21 @@ define(function leosUtilsModule(require) {
         return mouseX <= left || mouseX >= right || mouseY <= top || mouseY >= bottom;
     }
 
+    function _removeZeroWidthSpaces(elementId) {
+        $("#" + elementId).find("*").addBack().contents().filter(function () {
+            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
+                return this.textContent.match(ZERO_WIDTH_SPACE);
+            }
+            return false;
+        }).remove();
+        $("#" + elementId).parent().contents().filter(function () {
+            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
+                return this.textContent.match(ZERO_WIDTH_SPACE);
+            }
+            return false;
+        }).remove();
+    }
+
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
@@ -414,6 +428,7 @@ define(function leosUtilsModule(require) {
         getDocContainer: _getDocContainer,
         getElementPosition: _getElementPosition,
         isMouseOutsideEditor: _isMouseOutsideEditor,
+        removeZeroWidthSpaces: _removeZeroWidthSpaces,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE,
         KEYS: KEYS,
         PARAGRAPH: PARAGRAPH,

@@ -485,8 +485,8 @@ define(function leosArticleIndentListPluginModule(require) {
             for (var child_idx = 0; child_idx < childList.count(); child_idx++) {
                 var child = childList.getItem(child_idx);
                 var child_name = leosPluginUtils.getElementName(child);
-                // only if we find an order_list_element (ol) it means we found another depth level
-                if (child_name === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                // only if we find an order_list_element (ol) or UNORDERED_LIST_ELEMENT (ul) it means we found another depth level
+                if (child_name === leosPluginUtils.ORDER_LIST_ELEMENT || child_name === leosPluginUtils.UNORDERED_LIST_ELEMENT) {
                     level = 1;
                     //LOG.debug(child_idx+"-th child found: " + child_name + ", calculated level: " + level + ", stopLevel: " + stopLevel);
                     if (level >= stopLevel) {
