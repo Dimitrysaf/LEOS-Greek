@@ -301,8 +301,8 @@ define(function hierarchicalElementTransformer(require) {
             var childElementName = that._getElementName(childElement);
 
             function createInlineGroup() {
-                if (childElement.getAscendant('ol')?.attributes[DATA_AKN_NAME] === RECITAL) {
-                    createMp.call(that, childElement.parent, rootPath, inlineGroup);
+                if (childElement.getAscendant('li')?.attributes[DATA_AKN_NAME] === RECITAL) {
+                    createMpRecitalAA.call(that, childElement.parent, rootPath, inlineGroup);
                 } else {
                     var contentId = childElement.parent.attributes[DATA_AKN_WRAPPED_CONTENT_ID] ?
                         DATA_AKN_WRAPPED_CONTENT_ID : DATA_AKN_CONTENT_ID;
@@ -337,12 +337,10 @@ define(function hierarchicalElementTransformer(require) {
                 }
             } else if (childElementName === "p") {
                 createContent.call(that, childElement, rootPath, childElement.children, DATA_AKN_WRAPPED_CONTENT_ID, DATA_CONTENT_ORIGIN);
+            } else if (childElement.getAscendant('li')?.attributes[DATA_AKN_NAME] === RECITAL) {
+                createMpRecitalAA.call(that, childElement.parent, rootPath, [childElement]);
             } else if (TABLE_ELEMENT_MATCH.test(childElementName)) {
-                if (childElement.getAscendant('ol')?.attributes[DATA_AKN_NAME] === RECITAL) {
-                    createMp.call(that, childElement.parent, rootPath, [childElement]);
-                } else {
-                    wrapElementWithContent.call(that, childElement, rootPath, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN);
-                }
+                wrapElementWithContent.call(that, childElement, rootPath, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN);
             } else {
                 that.mapToNestedChildProduct(childElement, {
                     toPath: rootPath
@@ -351,7 +349,7 @@ define(function hierarchicalElementTransformer(require) {
         });
     }
 
-    function createMp(element, contentPath, contentChildren) {
+    function createMpRecitalAA(element, contentPath, contentChildren) {
         this.mapToChildProducts(element, {
             toPath: contentPath,
             toChild: "mp",
@@ -418,7 +416,9 @@ define(function hierarchicalElementTransformer(require) {
                     }
                 }
             } else {
-                // TODO Transform List
+                this.mapToNestedChildProduct(contentChildren[0], {
+                    toPath: contentPath
+                });
             }
         } else {
             createContentChildren.call(this, element, contentPath, contentChildren);
@@ -651,8 +651,9 @@ define(function hierarchicalElementTransformer(require) {
             var rootElementsWithContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content\/mp"].join("")));
             var rootElementsWithMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp"].join("")));
             var rootElementsWithMpAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/text"].join("")));
-            var rootElementsWithMpAndSubflowForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow"].join("")));
             var rootElementsWithMpAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/((?!text|subflow).)+"].join("")));
+            var rootElementsWithSubflowForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow"].join("")));
+            var rootElementsWithSubflowAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/((?!hcontainer).)+"].join("")));
             var rootElementsWithSubflowSubHcontainerAndContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content"].join("")));
             var rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp"].join("")));
             var rootElementsWithSubflowSubHcontainerContentMpAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp\/.+"].join("")));
@@ -934,7 +935,7 @@ define(function hierarchicalElementTransformer(require) {
                                             action: "passAttributeTransformer"
                                         }, {
                                             from: "leos:title",
-                                            to: DATA_AKN_TITLE_ENTER    ,
+                                            to: DATA_AKN_TITLE_ENTER,
                                             action: "passAttributeTransformer"
                                         }]
                                     });
@@ -1062,7 +1063,7 @@ define(function hierarchicalElementTransformer(require) {
                                     toChild: "text",
                                     toChildTextValue: element.value
                                 });
-                            } else if (rootElementsWithMpAndSubflowForFromRegExp.test(path)) {
+                            } else if (rootElementsWithSubflowForFromRegExp.test(path)) {
                                 this.mapToProducts(element, {
                                     toPath: rootsElementsWithDivPathForTo,
                                     attrs: [{
@@ -1319,9 +1320,9 @@ define(function hierarchicalElementTransformer(require) {
                                 this.mapToNestedChildProduct(element, {
                                     toPath: rootsElementsPathForTo
                                 });
-                            } else if (rootElementsWithMpAndNestedForFromRegExp.test(path) ||
-                                    rootElementsWithSubflowSubHcontainerContentAndNestedForFromRegExp.test(path) ||
-                                    rootElementsWithSubflowSubHcontainerContentMpAndNestedForFromRegExp.test(path)) {
+                            } else if (rootElementsWithMpAndNestedForFromRegExp.test(path) || rootElementsWithSubflowAndNestedForFromRegExp.test(path) ||
+                                rootElementsWithSubflowSubHcontainerContentAndNestedForFromRegExp.test(path) ||
+                                rootElementsWithSubflowSubHcontainerContentMpAndNestedForFromRegExp.test(path)) {
                                 this.mapToNestedChildProduct(element, {
                                     toPath: rootsElementsWithDivPathForTo
                                 });

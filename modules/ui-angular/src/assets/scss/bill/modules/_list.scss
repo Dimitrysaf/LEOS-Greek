@@ -60,11 +60,15 @@ $LIST_SPACING: 40px;
     paragraph > list > subparagraph:not(:nth-child(1)) {
         padding-left: $LIST_SPACING;
     }
+    subflow > list > point {
+        padding-left: 0;  // override default list padding
+    }
 }
 
 //--------------------------------Editor list---------------------------------/
 %editorList {
     ol[data-akn-name=aknOrderedList] > li[data-akn-element=subparagraph]:first-child,
+    ul[data-akn-name=aknUnorderedList] > li[data-akn-element=subparagraph]:first-child,
     ol[data-akn-name=aknAnnexOrderedList] > li[data-akn-element=subparagraph]:first-child {
         margin-top: -7px;
     }
@@ -74,6 +78,7 @@ $LIST_SPACING: 40px;
     ol[data-akn-name=aknNumberedParagraphMandate],
     ol[data-akn-name=aknSubParagraphMandate],
     ol[data-akn-name=recital],
+    div[data-akn-name=structuredContent] > ul,
     li > ol,
     li > ul {
         list-style-type: none;
@@ -134,6 +139,7 @@ $LIST_SPACING: 40px;
     ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknNumberedParagraphMandate],
     ol[data-akn-name=recital],
+    div[data-akn-name=structuredContent] > ul,
     paragraph > ol[data-akn-name=aknSubParagraphMandate],
     point > ol[data-akn-name=aknSubParagraphMandate],
     indent > ol[data-akn-name=aknSubParagraphMandate],
@@ -145,7 +151,8 @@ $LIST_SPACING: 40px;
     li[data-akn-name=aknNumberedParagraph] > ol[data-akn-name=aknOrderedList],
     ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknPointMandateOrderedList] > li,
-    li > ol > li[data-akn-num]:not([data-akn-element='subparagraph']) {
+    li > ol > li[data-akn-num]:not([data-akn-element='subparagraph']),
+    li > ul > li[data-akn-num]:not([data-akn-element='subparagraph']) {
         padding-left: $LIST_SPACING;
     }
 
