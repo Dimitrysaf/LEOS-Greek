@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
@@ -30,7 +31,9 @@ import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -39,6 +42,10 @@ import eu.europa.ec.leos.vo.structure.TocItemType;
 
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
@@ -47,8 +54,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +119,42 @@ public interface BaseDocumentService<T extends XmlDocument> {
     DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception;
 
     DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception;
+
+    default List<Element> getMovedFromElements(XmlDocument updatedDoc, String newContent, String elementId) {
+        List<Element> result = new ArrayList<>();
+        List<String> idsToSearch = new ArrayList<>();
+        String newContentId = null;
+        //Get id moved from for new short xml fragment (newContent)
+        //String newContent = new String(updatedDoc.getContent().get().getSource().getBytes());
+        Document newContentDocument = XercesUtils.createXercesDocument(LeosDomainUtil.wrapXmlFragment(newContent).getBytes(StandardCharsets.UTF_8));
+        NodeList elementsByXPath = XercesUtils.getElementsByXPath(newContentDocument, String.format("//*[@%s = '%s']//*[@%s]",
+                XMLID, elementId, XmlHelper.LEOS_SOFT_MOVE_FROM));
+        for (int countElements = 0; countElements < elementsByXPath.getLength(); countElements++) {
+            Node element = elementsByXPath.item(countElements);
+            newContentId = (newContentId == null) ? element.getParentNode().getAttributes().getNamedItem(XMLID).getNodeValue()
+                    : newContentId;
+            NamedNodeMap attributes = element.getAttributes();
+            String idXml = attributes.getNamedItem(XMLID).getNodeValue();
+            idsToSearch.add(idXml);
+        }
+        Document document = XercesUtils.createXercesDocument(LeosDomainUtil.wrapXmlFragment(updatedDoc.getContent().get().getSource().toString())
+                .getBytes(StandardCharsets.UTF_8));
+        NodeList elementsByXPath1 = XercesUtils.getElementsByXPath(document, String.format("//*[@%s = '%s']//*[@%s]", XMLID, elementId, XmlHelper.LEOS_SOFT_MOVE_TO));
+        for (int countElements = 0; countElements < elementsByXPath1.getLength(); countElements++) {
+            Node element = elementsByXPath1.item(countElements);
+            NamedNodeMap attributes = element.getAttributes();
+            String movedToAttr = attributes.getNamedItem(XmlHelper.LEOS_SOFT_MOVE_TO).getNodeValue();
+            Node parentNode = element.getParentNode();
+            String parentId = parentNode.getAttributes().getNamedItem(XMLID).getNodeValue();
+            if((!parentId.equals(newContentId))// verify not to be moved in the same parent
+                    && idsToSearch.contains(movedToAttr)){
+                String parentName = parentNode.getNodeName();
+                String parentFragment = XercesUtils.nodeToString(parentNode);
+                result.add(new Element(parentId, parentName, parentFragment));
+            }
+        }
+        return result;
+    }
 
     default Map<String, Attribute> getArticleTypesAttributes(List<TocItem> tocItems) {
         Map<String, Attribute> articleTypesAttributes = new HashMap<>();
