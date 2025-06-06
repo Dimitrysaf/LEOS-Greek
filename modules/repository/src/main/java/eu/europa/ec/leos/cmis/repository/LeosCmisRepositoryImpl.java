@@ -482,6 +482,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public <D extends LeosDocument> List<D> findDocumentsByUserIdOrEntity(String userId, List<String> entities, Class<? extends D> type, String leosAuthority) {
+        return emptyList();
+    }
+
+    @Override
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 

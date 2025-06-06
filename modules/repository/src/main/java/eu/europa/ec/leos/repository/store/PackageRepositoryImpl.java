@@ -244,6 +244,12 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
+    public <D extends LeosDocument> List<D> findDocumentsByUserIdOrEntity(String userId, List<String> entities, Class<? extends D> type, String leosAuthority) {
+        logger.debug("Finding document by user... userId=" + userId + ", entities=" + entities);
+        return leosRepository.findDocumentsByUserIdOrEntity(userId, entities, type, leosAuthority);
+    }
+
+    @Override
     public <D extends LeosDocument> List<D> findDocumentsByStatus(LeosLegStatus status, Class<? extends D> type) {
         logger.debug("Finding documents by status... status=" + status);
         return leosRepository.findDocumentsByStatus(status, type);

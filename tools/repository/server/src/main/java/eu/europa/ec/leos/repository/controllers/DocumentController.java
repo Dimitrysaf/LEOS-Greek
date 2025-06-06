@@ -177,6 +177,19 @@ public class DocumentController {
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
+    @GetMapping(path = "/documents/find-by-collaborator/{userName}/{entities}",
+            consumes = {},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Find Xml documents by collaborator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity findDocumentsByUserNameOrEntityName(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
+                                                  @PathVariable("userName") String userName, @PathVariable("entities") String entities) {
+        List<LeosDocument> xmlDocs = documentService.findDocumentsByUserIdOrEntity(userName, entities, role, category);
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
+    }
+
     @GetMapping(path = "/document/find-version/{versionId}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Find a Xml document by version id")
