@@ -752,6 +752,19 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             }, null, null, 15);
 
+            editor.on('insertElement', function(evt) {
+                if(isTrackChangesEnabled) {
+                    const insertedElement = evt.data;
+                    if (insertedElement && insertedElement.is('table')) {
+                        const next = insertedElement.getNext();
+                        if (next && next.is('p')) {
+                            next.setAttribute(core.NEW, '');
+                            evt.editor.fire("handleTcIndent", { data: next.$, previousNumber: null });
+                        }
+                    }
+                }
+            }, null, null, 15);
+
             // Implementation for tracking special characters
             // Handle element added by authorial note, references, mathjax and table
             CKEDITOR.on("dialogDefinition", function(event) {

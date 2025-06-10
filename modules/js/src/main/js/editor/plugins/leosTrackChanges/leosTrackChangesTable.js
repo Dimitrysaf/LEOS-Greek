@@ -294,6 +294,7 @@ define(function leosTrackChangesTableModule(require) {
                 table.remove();
             }
             range.select();
+            editor.focus();
         },
 
         execCustomCommand: function(editor, command) {
