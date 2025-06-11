@@ -393,6 +393,7 @@ define(function elementEditorModule(require) {
             if (lastEditable) {
                 var range = editor.createRange();
                 range.selectNodeContents(lastEditable);
+                range.collapse();
                 editor.getSelection().selectRanges([range]);
             }
         }
