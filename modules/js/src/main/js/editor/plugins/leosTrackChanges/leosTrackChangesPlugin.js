@@ -33,6 +33,7 @@ define(function leosTrackChangesPluginModule(require) {
             if (editor.LEOS.instanceType === "COUNCIL") {
                 return;
             }
+            numberModule.init(editor);
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
@@ -89,8 +90,8 @@ define(function leosTrackChangesPluginModule(require) {
                         if(element.getName() === 'tr') {
                             actions.acceptRowChange(editor, element);
                         } else {
-                        actions.acceptChange(editor, element, numberModule);
-                    }
+                            actions.acceptChange(editor, element, numberModule);
+                        }
                     }
                 });
                 editor.addCommand("rejectElement", {
@@ -100,8 +101,8 @@ define(function leosTrackChangesPluginModule(require) {
                         if(element.getName() === 'tr') {
                             actions.rejectRowChange(editor, element, numberModule);
                         } else {
-                        actions.rejectChange(editor, element, numberModule);
-                    }
+                            actions.rejectChange(editor, element, numberModule);
+                        }
                     }
                 });
             }
