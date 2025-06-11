@@ -110,9 +110,9 @@ define(function leosUtilsModule(require) {
                         if (element.childNodes[0].textContent.trim() !== '') {
                             return false;
                         }
-                    } else if (element.childNodes[j].tagName !== 'SPAN' && element.childNodes[j].tagName !== LINE_BREAK_TAG
-                        || !element.childNodes[j].hasAttribute('data-akn-action')
-                        || element.childNodes[j].getAttribute('data-akn-action') !== 'delete') {
+                    } else if (element.childNodes[j].tagName !== LINE_BREAK_TAG && !(element.childNodes[j].tagName === 'SPAN'
+                        && element.childNodes[j].hasAttribute('data-akn-action')
+                        && element.childNodes[j].getAttribute('data-akn-action') === 'delete')) {
                         return false;
                     }
                 }
@@ -132,7 +132,8 @@ define(function leosUtilsModule(require) {
             elementsToBeChecked.push(DIV_TAG);
         }
         if (elementsToBeChecked.includes(el.tagName)) {
-            if (!$.trim(el.innerText)) {
+            var trimmedInnerText = $.trim(el.innerText);
+            if (!trimmedInnerText || trimmedInnerText.match(ZERO_WIDTH_SPACE)) {
                 if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
                     && el.parentElement 
                     && ((el.parentElement.tagName === TABLE_CELL_TAG &&
