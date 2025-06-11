@@ -220,12 +220,15 @@ define(function leosPluginUtilsModule(require) {
             && !element.is("table"));
     }
 
+    function _isTable(element) {
+        return (!!element && element.type === CKEDITOR.NODE_ELEMENT && element.is("table"));
+    }
+
     function _isParagraph(element) {
         return (!!element && element.type === CKEDITOR.NODE_ELEMENT
             && element.is(HTML_POINT)
             && !!element.getAttribute(DATA_AKN_ELEMENT)
-            && element.getAttribute(DATA_AKN_ELEMENT) === PARAGRAPH
-            && !element.is("table"));
+            && element.getAttribute(DATA_AKN_ELEMENT) === PARAGRAPH);
     }
 
     function _isPointOrIndent(element) {
@@ -1190,7 +1193,7 @@ define(function leosPluginUtilsModule(require) {
             var hasPrevious = subElem.hasPrevious() && !_hasEmptyTextAsPrevSibling(subElem);
             // Previous n'est pas nul mais est text vide-> trouver solution
             var isParentSubParagraph = !!parent && _isSubparagraph(parent);
-            if (isParentSubParagraph && !hasNext && !hasPrevious) {
+            if (isParentSubParagraph && !hasNext && !hasPrevious && !_isTable(subElem)) {
                 _moveChildrenToParent(subElem);
             } else if (parent) {
                 var newParentElement = new CKEDITOR.dom.element(HTML_POINT);
