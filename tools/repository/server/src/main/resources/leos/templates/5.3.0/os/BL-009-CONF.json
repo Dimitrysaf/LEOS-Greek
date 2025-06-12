@@ -56,35 +56,43 @@
       "list": [
         {
           "index": "1",
-          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "title": "The President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "2",
-          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Executive Vice-Presiden</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "title": "Executive Vice-President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Executive Vice-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "3",
-          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Vice-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "title": "Vice-President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"3\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Vice-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "4",
-          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Member of the Commission</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "title": "Member of the Commission",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"4\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Member of the Commission</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "5",
-          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director-General</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "title": "Director-General",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"5\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director-General</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "6",
-          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "title": "Director",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"6\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "7",
-          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of unit</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "title": "Head of unit",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"7\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of unit</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "8",
-          "content": "<organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of service </role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person>"
+          "title": "Head of service",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"8\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of service</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         }
       ]
     }
