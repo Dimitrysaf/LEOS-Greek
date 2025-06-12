@@ -19,9 +19,9 @@ define(function aknUnorderedListPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var $ = require('jquery');
     var leosHierarchicalElementTransformerStamp = require("plugins/leosHierarchicalElementTransformer/hierarchicalElementTransformer");
+    var numberModule = require("plugins/leosNumber/listItemNumberModule");
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
-    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var pluginName = "aknUnorderedList";
 
@@ -41,7 +41,8 @@ define(function aknUnorderedListPluginModule(require) {
             editor.addCommand(INDENT_LIST_CMD_NAME, {});
 
             editor.on("change", resetDataAknNameForUnOrderedList, null, null, 0);
-            editor.on("change", fireHandleTcIndent, null, null, 1);
+            editor.on("change", resetNumbering, null, null, 1);
+            editor.on("change", refreshIndent, null, null, 1);
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -60,7 +61,7 @@ define(function aknUnorderedListPluginModule(require) {
                 && !selectedElement.getParent().getAscendant(leosPluginUtils.UNORDERED_LIST_ELEMENT);
         }
 
-        if (isFirstLevelEmptyPoint() || leosPluginUtils.isSubparagraph(selectedElement)) {
+        if (isFirstLevelEmptyPoint() || leosPluginUtils.isSubparagraph(selectedElement) || leosPluginUtils.isUnorderedList(selectedElement)) {
             context.event.cancel();
         }
     }
@@ -81,25 +82,22 @@ define(function aknUnorderedListPluginModule(require) {
         event.editor.fire( 'unlockSnapshot' );
     }
 
-    /*
-     * Fires handleTcIndent event to reject the attached number deletion track change when enter deletion track change is rejected.
-     * 
-     */
-    function fireHandleTcIndent(event) {
-        event.editor.fire( 'lockSnapshot' );
+    function resetNumbering(event) {
+        event.editor.fire('lockSnapshot');
         var jqEditor = $(event.editor.editable().$);
-        var unOrderedLists = jqEditor.find("*[data-akn-name='aknUnorderedList']");
-        for (var ii = 0; ii < unOrderedLists.length; ii++) {
-            var listItems = unOrderedLists[ii].children;
-            for (var jj = 0; jj < listItems.length; jj++) {
-                if (listItems[jj].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_ENTER) !== leosTrackChanges.core.DELETE_ACTION
-                    && listItems[jj].getAttribute(leosPluginUtils.DATA_AKN_NUM)
-                    && !(listItems[jj].getAttribute(leosPluginUtils.ID) && listItems[jj].getAttribute(leosPluginUtils.ID).startsWith(leosPluginUtils.MOVED))) {
-                    event.editor.fire("handleTcIndent", {data: listItems[jj], previousNumber: "-"});
-                }
-            }
+        var unorderedLists = jqEditor.find("*[data-akn-name='aknUnorderedList']");
+        numberModule.updateNumbers(unorderedLists, numberModule.getSequences("IndentDash"));
+        event.editor.fire('unlockSnapshot');
+    }
+
+    /*
+     * To remove point when deleted content is accepted and element becomes empty
+     */
+    function refreshIndent(event) {
+        var editor = event.editor;
+        if (!!editor.getCommand('indent') && !!editor.elementPath()) {
+            editor.getCommand('indent').refresh(editor, editor.elementPath());
         }
-        event.editor.fire( 'unlockSnapshot' );
     }
 
     function elementTagIndexProvider(element) {
