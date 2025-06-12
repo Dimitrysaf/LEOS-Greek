@@ -46,9 +46,7 @@ public interface PackageCollaboratorsRepository extends JpaRepository<PackageCol
             "?1)", nativeQuery = true)
     List<BigDecimal> findPackageIdByCollaboratorName(String collaboratorName);
 
-    @Query(value = "SELECT p.PACKAGE_ID FROM PACKAGE_COLLABORATORS p " +
-            "WHERE p.COLLABORATOR_ID IN (" +
-            "SELECT c.ID FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME IN (:collaboratorNames))",
+    @Query(value = "SELECT p.PACKAGE_ID FROM PACKAGE_COLLABORATORS p WHERE p.COLLABORATOR_ID IN (:collaboratorIds)",
             nativeQuery = true)
-    List<BigDecimal> findPackageIdsByCollaboratorNames(@Param("collaboratorNames") List<String> collaboratorNames);
+    List<BigDecimal> findPackageIdsByCollaboratorIds(@Param("collaboratorIds") List<BigDecimal> collaboratorIds);
 }

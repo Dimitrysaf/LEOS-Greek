@@ -176,7 +176,12 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
     public List<BigDecimal> findDocumentsByCollaboratorNames(String collaboratorNames) {
         List<BigDecimal> packageIdsList = new ArrayList<>();
         List<String> entityList = Arrays.asList(collaboratorNames.split("_"));
-        List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdsByCollaboratorNames(entityList);
+
+        List<BigDecimal> matchedCollaboratorIds = collaboratorsRepository.findAllCollaborators().stream()
+                .filter(collab -> entityList.stream().anyMatch(input -> input.startsWith(collab.getCollaboratorName())))
+                .map(Collaborators::getId).collect(Collectors.toList());
+
+        List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdsByCollaboratorIds(matchedCollaboratorIds);
         for (BigDecimal packageIdBD : packageIdsListBD) {
             packageIdsList.add(packageIdBD);
         }
