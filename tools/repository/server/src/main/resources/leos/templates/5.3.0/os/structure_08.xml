@@ -907,7 +907,7 @@
             <profiles>
                 <profile>
                     <elementSelector>block[name='signatory']</elementSelector>
-                    <profileName>inlineAknSignatory</profileName>
+                    <profileName>inlineAknSignatoryAutonomousAct</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
@@ -1240,6 +1240,10 @@
         <alternateConfig>
             <type>clause</type>
             <profile>inlineAknClause</profile>
+        </alternateConfig>
+        <alternateConfig>
+            <type>block</type>
+            <profile>inlineAknSignatoryAutonomousAct</profile>
         </alternateConfig>
     </alternateConfigs>
 
