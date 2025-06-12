@@ -168,16 +168,8 @@ public class LeosLightApiController {
     public ResponseEntity<Object> importProposal(@RequestParam("legFile") MultipartFile file) {
         try {
             validatePath(file.getOriginalFilename());
-            Pair<Object, Object> result = leosLightApiService.importProposal(file);
-            if(result.right() == HttpStatus.OK) {
-                return new ResponseEntity<>(result.left(), HttpStatus.OK);
-            } else if(result.right() == HttpStatus.ACCEPTED) {
-                return new ResponseEntity<>(result.left(), HttpStatus.ACCEPTED);
-            } else if(result.right() == HttpStatus.NOT_FOUND) {
-                return new ResponseEntity<>(result.left(), HttpStatus.NOT_FOUND);
-            }else {
-                return new ResponseEntity<>(result.left(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            Pair<Object, HttpStatus> result = leosLightApiService.importProposal(file);
+            return new ResponseEntity<>(result.left(), result.right());
         } catch (Exception ex) {
             LOG.error("Error Occurred while creating collection from the Leg file: " + ex.getMessage(), ex);
             return new ResponseEntity<>("An error occurred during collection creation.", HttpStatus.INTERNAL_SERVER_ERROR);
