@@ -296,14 +296,11 @@ public class LegServiceImpl implements LegService {
             }
         } else {
             List<String> entities = new ArrayList<>();
-            user.getEntities().stream().forEach(entity -> entities.add(entity.getOrganizationName()));
+            user.getEntities().stream().forEach(entity -> entities.add(entity.getName()));
             List<Proposal> proposals = packageRepository.findDocumentsByUserIdOrEntity(userId,
                     entities, Proposal.class, authorityMapHelper.getRoleForDocCreation());
             for (Proposal proposal : proposals) {
-                Optional<Collaborator> userAsCollaborator = getCollaborator(user, proposal);
-                if(userAsCollaborator.isPresent()) {
-                    addLegDocumentVoToList(legStatus, proposal, legDocumentVOs);
-                }
+                addLegDocumentVoToList(legStatus, proposal, legDocumentVOs);
             }
         }
         return legDocumentVOs;
@@ -315,7 +312,7 @@ public class LegServiceImpl implements LegService {
         if(!userAsCollaborator.isPresent()) {
             userAsCollaborator = proposal.getCollaborators().stream()
                     .filter(collab -> user.getEntities().stream()
-                            .anyMatch(entity -> entity.getOrganizationName().equalsIgnoreCase(collab.getEntity())))
+                            .anyMatch(entity -> entity.getName().startsWith(collab.getEntity())))
                     .findFirst();
         }
         if(!userAsCollaborator.isPresent()) {

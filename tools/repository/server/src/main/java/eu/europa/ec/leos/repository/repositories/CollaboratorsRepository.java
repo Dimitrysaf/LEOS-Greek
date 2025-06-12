@@ -34,4 +34,6 @@ public interface CollaboratorsRepository extends JpaRepository<Collaborators, Bi
     @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1", nativeQuery = true)
     List<Collaborators> findCollaboratorByName(String collaboratorName);
 
+    @Query("SELECT c FROM Collaborators c")
+    List<Collaborators> findAllCollaborators();
 }
