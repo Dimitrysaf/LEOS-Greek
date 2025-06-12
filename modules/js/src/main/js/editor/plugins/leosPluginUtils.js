@@ -426,10 +426,10 @@ define(function leosPluginUtilsModule(require) {
     // Check lists: is list only contains subparagraphs and crossheadings,
     // this should be removed and children moved to the parent
     function _manageEmptyLists(editor) {
-        var lists = editor.element.find('ol');
+        var lists = editor.element.find('ol, ul');
         for (var i = 0; i < lists.count(); i++) {
             var list = lists.getItem(i);
-            if ((_isOrderedAnnexList(list) || _isOrderedList(list)) && _isListContainsOnlySubparagraphsCrossheadingsOrEmpty(list)) {
+            if ((_isOrderedAnnexList(list) || _isOrderedList(list) || _isUnorderedList(list)) && _isListContainsOnlySubparagraphsCrossheadingsOrEmpty(list)) {
                 var parent = list.getParent();
                 _moveChildrenToParent(list);
                 var range = editor.createRange();
@@ -868,9 +868,9 @@ define(function leosPluginUtilsModule(require) {
         if (!!parent.is &&  parent.is('li')) {
             for (var i = 0; i < children.length; i++) {
                 var child = children[i];
-                if (child.type == CKEDITOR.NODE_ELEMENT && !!child.is && child.is('li') && !child.getParent().is('ol') && _isSubparagraph(child)) {
+                if (child.type == CKEDITOR.NODE_ELEMENT && !!child.is && child.is('li') && !child.getParent().is('ol', 'ul') && _isSubparagraph(child)) {
                     child.renameNode('p');
-                } else if (child.type == CKEDITOR.NODE_ELEMENT && !!child.is && child.is('p') && child.getParent().is('ol') && _isSubparagraph(child)) {
+                } else if (child.type == CKEDITOR.NODE_ELEMENT && !!child.is && child.is('p') && child.getParent().is('ol', 'ul') && _isSubparagraph(child)) {
                     child.renameNode('li');
                 }
             }
@@ -1560,28 +1560,53 @@ define(function leosPluginUtilsModule(require) {
     function _changedContent(event){
         var editor = event.editor;
         var olList = editor.editable().getElementsByTag('ol');
-        for (var i = 0, count =  olList.count(); i < count; i++ ) {
-            var sublist = olList.getItem(i);
-            if(!!sublist
+        var ulList = editor.editable().getElementsByTag('ul');
+
+        function hasFirstChildPointAndNoSiblings() {
+            return !!sublist
                 && !!sublist.getFirst()
-                && sublist.getFirst().type == CKEDITOR.NODE_ELEMENT
+                && sublist.getFirst().type === CKEDITOR.NODE_ELEMENT
                 && !!sublist.getFirst().getAttribute
-                && sublist.getFirst().getAttribute(DATA_AKN_ELEMENT) == POINT
+                && sublist.getFirst().getAttribute(DATA_AKN_ELEMENT) === POINT
                 && !!sublist.getParent()
                 && !!sublist.getParent().getChildCount
-                && sublist.getParent().getChildCount() == 1){
+                && sublist.getParent().getChildCount() === 1;
+        }
+
+        function notFirstLevelUnorderedList() {
+            return !!sublist.getParent().getParent()
+                && !!sublist.getParent().getParent().getAttribute
+                && sublist.getParent().getParent().getAttribute(DATA_AKN_NAME) === AKN_UNORDERED_LIST;
+        }
+
+        function mergeChildrenAndRemoveSublist() {
+            var nextLi = sublist.getParent();
+
+            _mergeChildren(sublist, nextLi.getParent(), nextLi);
+            sublist.remove();
+            nextLi.remove();
+            _manageEmptyLists(editor);
+            _managePoints(editor);
+        }
+
+        for (var i = 0, count =  olList.count(); i < count; i++ ) {
+            var sublist = olList.getItem(i);
+            if (hasFirstChildPointAndNoSiblings()) {
                 // decrement the element position, it is removed.
                 i--;
-                var nextLi = sublist.getParent();
-
-                _mergeChildren( sublist, nextLi.getParent(), nextLi);
-                sublist.remove();
-                nextLi.remove();
-                _manageEmptyLists(editor);
-                _managePoints(editor);
+                mergeChildrenAndRemoveSublist();
                 _manageEmptySubparagraphs(editor);
                 _manageCrossheadings(editor);
                 _manageSiblingLists(editor);
+            }
+        }
+
+        for (var i = 0, count =  ulList.count(); i < count; i++) {
+            var sublist = ulList.getItem(i);
+            if (hasFirstChildPointAndNoSiblings() && notFirstLevelUnorderedList()) {
+                // decrement the element position, it is removed.
+                i--;
+                mergeChildrenAndRemoveSublist();
             }
         }
 
@@ -1738,6 +1763,7 @@ define(function leosPluginUtilsModule(require) {
         isAnnexList: _isAnnexList,
         isOrderedAnnexList: _isOrderedAnnexList,
         isOrderedList: _isOrderedList,
+        isUnorderedList: _isUnorderedList,
         isRecitalAA: _isRecitalAA,
 		isUnnumberedCNParagraph: _isUnnumberedCNParagraph,
 		isAnnexUnnumberedCNParagraph: _isAnnexUnnumberedCNParagraph,
