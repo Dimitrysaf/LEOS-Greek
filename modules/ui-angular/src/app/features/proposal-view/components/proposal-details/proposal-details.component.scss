@@ -1,9 +1,18 @@
+.details-cards-common {
+  border: none !important;
+  box-shadow: none
+}
+
+.details-gen-rows {
+  padding-bottom: 10px;
+}
+
 .label-column label {
   font-weight: bold;
   padding-right: 0;
 }
 
-.col-sm-3 { 
+.col-sm-3 {
   width: 25% !important;
   padding-bottom: 6px;
 }
@@ -20,3 +29,61 @@
     width: 100%;
   }
 }
+
+.language-checkbox {
+  display: inline;
+  padding: 5px;
+}
+
+.package-title {
+  display: block;
+}
+
+.details-tooltip-icon {
+  border: none;
+  padding-bottom: 2px;
+}
+
+.col-sm-1-coverpage-type {
+  width: 3px;
+}
+
+.vertical-shift-disclaimer-label {
+  width: 225px;
+}
+
+.vertical-shift-num {
+  display: flex;
+  align-items: center;
+  border: 1px;
+}
+
+.vertical-shift-num-buttons {
+  display: flex;
+  flex-direction: column;
+  margin-left: 4px;
+  border: 1px;
+}
+
+.number-input {
+  width: 60px;
+  padding: 4px;
+  font-size: 14px;
+}
+
+.number-up-down-button {
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  height: 12px;
+  width: 5px;
+}
+
+.number-up-down-button-icon {
+  padding-bottom: 3px;
+}
+
+.coverpage-option {
+  font-weight: normal;
+}
+
