@@ -108,7 +108,7 @@ define(function leosAlternativesSignatoryPluginModule(require) {
                         });
                     }
                 });
-                this.setValue(pluginName + currentConfig.selectOptionIndex);
+                this._.value = pluginName + currentConfig.selectOptionIndex;
             },
 
             onClick: function (value) {
@@ -118,7 +118,8 @@ define(function leosAlternativesSignatoryPluginModule(require) {
             },
 
             onOpen: function () {
-                this.setValue(pluginName + currentConfig.selectOptionIndex);
+                this._.value = pluginName + currentConfig.selectOptionIndex;
+                this._.list.mark(pluginName + currentConfig.selectOptionIndex);
             },
 
         });
