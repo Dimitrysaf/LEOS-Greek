@@ -729,11 +729,11 @@ define(function elementEditorModule(require) {
 
 
         var isEmptyRefersToElement = false;
-        var aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknOrderedList']");
-        if(aknOrderedList.length == 0){
-            aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknAnnexOrderedList']");
+        var aknLists = $("#" + elementId).find("ol[data-akn-name='aknOrderedList'], ul[data-akn-name='aknUnorderedList']");
+        if (aknLists.length === 0) {
+            aknLists = $("#" + elementId).find("ol[data-akn-name='aknAnnexOrderedList']");
         }
-        aknOrderedList.each(function() {
+        aknLists.each(function() {
             var refersToElement = this.firstChild, newRefersToElement = this.previousSibling;
             var containsRefersToElement = refersToElement && refersToElement.hasAttribute("refersto");
 
