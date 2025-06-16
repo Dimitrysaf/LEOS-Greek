@@ -281,10 +281,14 @@ public class XmlHelper {
     public static final String REG_FILE_PREFIX = "REG";
     public static final String DIR_FILE_PREFIX = "DIR";
     public static final String DEC_FILE_PREFIX = "DEC";
+    public static final String ACT_AUTO_REG_FILE_PREFIX = "REG_IMPL";
+    public static final String ACT_AUTO_DIR_FILE_PREFIX = "DIR_IMPL";
+    public static final String ACT_AUTO_DEC_FILE_PREFIX = "DEC_IMPL";
     public static final String MEMORANDUM_FILE_PREFIX = "EXPL_MEMORANDUM";
     public static final String STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX = "STAT_DIGIT_FINANC_LEGIS";
     public static final String PROPOSAL_FILE = "main";
     public static final String PROP_ACT = "PROP_ACT";
+    public static final String AUTONOMOUS_ACT = "ACT_AUTO_COM";
     public static final String COUNCIL_EXPLANATORY = "EXPL_COUNCIL";
     public static final String STAT_DIGIT_FINANC_LEGIS = "STAT_DIGIT_FINANC_LEGIS";
 
