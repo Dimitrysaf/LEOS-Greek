@@ -2995,6 +2995,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 case REG_FILE_PREFIX:
                 case DIR_FILE_PREFIX:
                 case DEC_FILE_PREFIX:
+                case ACT_AUTO_REG_FILE_PREFIX:
+                case ACT_AUTO_DIR_FILE_PREFIX:
+                case ACT_AUTO_DEC_FILE_PREFIX:
                     category = LeosCategory.BILL;
                     break;
                 case MEMORANDUM_FILE_PREFIX:
@@ -3004,6 +3007,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     category = LeosCategory.COUNCIL_EXPLANATORY;
                     break;
                 case PROP_ACT:
+                case AUTONOMOUS_ACT:
                     category = LeosCategory.PROPOSAL;
                     break;
                 case STAT_DIGIT_FINANC_LEGIS:
