@@ -33,6 +33,7 @@ define(function leosTrackChangesPluginModule(require) {
             if (editor.LEOS.instanceType === "COUNCIL") {
                 return;
             }
+            numberModule.init(editor);
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
@@ -89,8 +90,8 @@ define(function leosTrackChangesPluginModule(require) {
                         if(element.getName() === 'tr') {
                             actions.acceptRowChange(editor, element);
                         } else {
-                        actions.acceptChange(editor, element, numberModule);
-                    }
+                            actions.acceptChange(editor, element, numberModule);
+                        }
                     }
                 });
                 editor.addCommand("rejectElement", {
@@ -100,8 +101,8 @@ define(function leosTrackChangesPluginModule(require) {
                         if(element.getName() === 'tr') {
                             actions.rejectRowChange(editor, element, numberModule);
                         } else {
-                        actions.rejectChange(editor, element, numberModule);
-                    }
+                            actions.rejectChange(editor, element, numberModule);
+                        }
                     }
                 });
             }
@@ -573,23 +574,20 @@ define(function leosTrackChangesPluginModule(require) {
                                 if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
                                     var rangeWasCollapsed = range.collapsed;
                                     editor.fire("saveSnapshot");
+                                    var previousElement = editor.getSelection().getRanges()[0].getPreviousEditableNode();
                                     style.apply(editor, deleteTcStyle);
-
+                                    var noNewRange = true;
                                     if(!rangeWasCollapsed){
                                         // insert here code to delete the empty elements
                                         _removeEmptyElements(initialCommonAncestor);
-                                        let lastEditable = leosPluginUtils.findLastEditable(initialCommonAncestor);
-                                        if(lastEditable){
-                                            range = editor.createRange();
-                                            range.selectNodeContents(lastEditable);
-                                            editor.getSelection().selectRanges([ range ]);
-                                        }
+                                        noNewRange = _safeSelectEnd(editor, previousElement, initialCommonAncestor, range);
                                     }
                                     editor.fire("saveSnapshot");
-                                    range = editor.getSelection().getRanges()[0];
-                                    range.collapse(!deleteKey);
-                                    range.select();
-
+                                    if(noNewRange) {
+                                        range = editor.getSelection().getRanges()[0];
+                                        range.collapse(!deleteKey);
+                                        range.select();
+                                    }
                                     editor.fire("change");
                                 }
 
@@ -752,6 +750,19 @@ define(function leosTrackChangesPluginModule(require) {
                         event.editor.fire("handleTcIndent", { data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
                         if(newParagraph) {
                             event.editor.fire("handleTcIndent", { data: newParagraph, previousNumber: newParagraph.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
+                        }
+                    }
+                }
+            }, null, null, 15);
+
+            editor.on('insertElement', function(evt) {
+                if(isTrackChangesEnabled) {
+                    const insertedElement = evt.data;
+                    if (insertedElement && insertedElement.is('table')) {
+                        const next = insertedElement.getNext();
+                        if (next && next.is('p')) {
+                            next.setAttribute(core.NEW, '');
+                            evt.editor.fire("handleTcIndent", { data: next.$, previousNumber: null });
                         }
                     }
                 }
@@ -1007,6 +1018,48 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 }
             });
+        }
+    }
+
+    function _safeSelectEnd(editor, previousElement, initialCommonAncestor, oldRange) {
+        if(initialCommonAncestor.type == CKEDITOR.NODE_TEXT){
+            return true;
+        }
+        if(!previousElement ||
+            (previousElement.type == CKEDITOR.NODE_ELEMENT
+                && previousElement.getName() != 'p'
+                && previousElement.getName() != 'li')){
+            var editablesNodeList = initialCommonAncestor.find("p, li");
+            if(editablesNodeList && editablesNodeList.count() > 0){
+                previousElement = editablesNodeList.getItem(0);
+            }
+        }
+
+        if (!previousElement
+            || !previousElement.getParent
+            || !previousElement.getParent()) {
+            console.warn('Invalid element for selection');
+            return true;
+        }
+        var id = (previousElement && previousElement.getId && previousElement.getId()) ?  previousElement.getId() : previousElement?.getParent().getId();
+        var element = editor.editable().$.querySelector('#' + id);
+        if (element) {
+            previousElement = new CKEDITOR.dom.element(element);
+        }
+        if (!editor.editable().contains(previousElement)) {
+            console.warn('Invalid element for selection');
+            return true;
+        }
+        try {
+            var newRange = editor.createRange();
+            newRange.selectNodeContents(previousElement);
+            newRange.collapse(false);
+            editor.getSelection().selectRanges([newRange]);
+            editor.focus();
+            return false;
+        } catch (e) {
+            console.error('Selection failed:', e);
+            return true;
         }
     }
 

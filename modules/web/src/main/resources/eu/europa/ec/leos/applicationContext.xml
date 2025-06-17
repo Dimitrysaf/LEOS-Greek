@@ -21,9 +21,6 @@
         <value>en-UK</value>
     </util:list>
 
-    <!-- Enable Vaadin-Spring -->
-    <bean class="com.vaadin.spring.VaadinConfiguration"/>
-
     <!-- Message Source -->
     <bean id="webMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="cacheSeconds" value="-1"/>

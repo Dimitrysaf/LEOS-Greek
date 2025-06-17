@@ -48,6 +48,7 @@ export interface Metadata {
   title: string | null;
   index: string | null;
   number: string | null;
+
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {

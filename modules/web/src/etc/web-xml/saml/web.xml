@@ -27,25 +27,10 @@
         <param-value>classpath:eu/europa/ec/leos/applicationContext.xml</param-value>
     </context-param>
     <context-param>
-        <description>Vaadin production mode</description>
-        <param-name>productionMode</param-name>
-        <param-value>${leos.vaadin.productionMode}</param-value>
-    </context-param>
-    <context-param>
-        <description>Vaadin Property.toString() behavior</description>
-        <param-name>legacyPropertyToString</param-name>
-        <param-value>false</param-value>
-    </context-param>
-    <context-param>
         <param-name>heartbeatInterval</param-name>
         <param-value>120</param-value>
         <!-- heartbeat should always be smaller then half of the session timeout  -->
     </context-param>
-
-    <!-- SLF4J bridge listener -->
-    <listener>
-        <listener-class>eu.europa.ec.leos.web.support.log.SLF4JBridgeListener</listener-class>
-    </listener>
 
     <!-- Spring framework listeners -->
     <listener>
@@ -63,15 +48,13 @@
 
     <filter-mapping>
         <filter-name>requestContextFilter</filter-name>
-        <url-pattern>/ui-v/*</url-pattern>
-        <url-pattern>/VAADIN/*</url-pattern>
         <url-pattern>/ws/*</url-pattern>
     </filter-mapping>
 
     <!-- Milestone resource filters -->
     <filter>
         <filter-name>milestoneCssFilter</filter-name>
-        <filter-class>eu.europa.ec.leos.ui.window.milestone.filter.MilestoneCssFilter</filter-class>
+        <filter-class>eu.europa.ec.leos.filter.MilestoneCssFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
 
@@ -115,41 +98,11 @@
         <url-pattern>/ui/*</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>LEOS Web Application Servlet</servlet-name>
-        <servlet-class>eu.europa.ec.leos.web.support.vaadin.LeosSpringVaadinServlet</servlet-class>
-        <init-param>
-            <param-name>sessionInitListenerBeans</param-name>
-            <param-value>leosBootstrapSessionListener</param-value>
-        </init-param>
-        <init-param>
-            <param-name>beanName</param-name>
-            <param-value>leosUI</param-value>
-        </init-param>
-        <init-param>
-            <description>LEOS main UI</description>
-            <param-name>UI</param-name>
-            <param-value>eu.europa.ec.leos.ui.LeosUI</param-value>
-        </init-param>
-        <init-param>
-            <description>LEOS WidgetSet</description>
-            <param-name>widgetset</param-name>
-            <param-value>eu.europa.ec.leos.ui.LeosWidgetSet</param-value>
-        </init-param>
-    </servlet>
-
     <!-- Logback Status Servlet -->
     <servlet>
         <servlet-name>Logback Status Servlet</servlet-name>
         <servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
     </servlet>
-
-    <!-- LEOS Web Application Servlet mappings -->
-    <servlet-mapping>
-        <servlet-name>LEOS Web Application Servlet</servlet-name>
-        <url-pattern>/ui-v/*</url-pattern>
-        <url-pattern>/VAADIN/*</url-pattern>
-    </servlet-mapping>
 
     <!-- Logback Status Servlet mappings -->
     <servlet-mapping>
@@ -176,7 +129,7 @@
     <!-- Leos CORS filter -->
     <filter>
         <filter-name>LeosCorsFilter</filter-name>
-        <filter-class>eu.europa.ec.leos.web.support.LeosCorsFilter</filter-class>
+        <filter-class>eu.europa.ec.leos.filter.LeosCorsFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
 
@@ -190,7 +143,7 @@
     <!-- ForwardSlashFilter filter -->
     <filter>
         <filter-name>ForwardSlashFilter</filter-name>
-        <filter-class>eu.europa.ec.leos.web.support.resource.ForwardSlashFilter</filter-class>
+        <filter-class>eu.europa.ec.leos.filter.ForwardSlashFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
 
@@ -199,17 +152,6 @@
         <url-pattern>/ui</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ASYNC</dispatcher>
-    </filter-mapping>
-
-    <!-- LeosVaadinAccessFilter filter -->
-    <filter>
-        <filter-name>LeosVaadinAccessFilter</filter-name>
-        <filter-class>eu.europa.ec.leos.web.support.LeosVaadinAccessFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>LeosVaadinAccessFilter</filter-name>
-        <url-pattern>/ui-v</url-pattern>
     </filter-mapping>
 
     <!-- Hook for Spring Security-->
@@ -223,8 +165,6 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/api/secured/*</url-pattern>
-        <url-pattern>/ui-v/*</url-pattern>
-        <url-pattern>/VAADIN/*</url-pattern>
         <url-pattern>/saml/*</url-pattern>
         <url-pattern>/ui/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>

@@ -75,8 +75,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
 
             validateDocumentXmlFiles(documentXmlFiles);
+            String prefinalizedLegName = MetadataUtil.buildPrefinalizationLegName(request);
             ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles);
-            return buildResponse(response, documentXmlFiles, documentFurtherContent);
+            return buildResponse(response, documentXmlFiles, documentFurtherContent, prefinalizedLegName);
         }
         catch(XmlValidationException ex) {
             LOG.error("One or more xml files do not match the xml schema", ex);
@@ -289,12 +290,15 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return (tasks != null) &&  (tasks.stream().filter(task -> task.getStatusCode().equals("1")).count() > 0);
     }
 
-    private byte[] buildResponse(ApplyMetadataResponse response, List<XmlFile> documentXmlFiles, Map<String, Object> documentFurtherContent){
+    private byte[] buildResponse(ApplyMetadataResponse response,
+                                 List<XmlFile> documentXmlFiles,
+                                 Map<String, Object> documentFurtherContent,
+                                 String prefinalizedLegName){
         try {
             Map<String, Object> responseContent = new HashMap<>();
             XmlFile xmlResponse = getResponseConverter().applyMetadataResponseToXmlFile(response);
             responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
-            responseContent.put(getFirstTaskDocument(response).getFilename(), buildResponseLegFile(documentXmlFiles, documentFurtherContent));
+            responseContent.put(prefinalizedLegName, buildResponseLegFile(documentXmlFiles, documentFurtherContent));
             return ZipUtil.zipByteArray(responseContent);
         } catch(Exception e) {
             LOG.error("Error building response {}", e);

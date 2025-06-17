@@ -45,8 +45,11 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -124,6 +127,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestFindRecentMinorVersionsURI;
     @Value("${leos.rest.repository.find.documents.user.id}")
     private String leosRestFindDocumentsByUserIdURI;
+    @Value("${leos.rest.repository.find.documents.user.id.entity.id}")
+    private String leosRestFindDocumentsByUserIdEntityNameURI;
     @Value("${leos.rest.repository.count.all.minors.intermediate}")
     private String leosRestGetAllMinorsCountForIntermediateURI;
     @Value("${leos.rest.repository.find.package.by.document.ref.uri}")
@@ -467,6 +472,14 @@ public class RestRepository extends AbstractRestClient {
         LOGGER.trace("Finding Documents By UserId  [userId={}, role={}, category={}]", userId, role, category);
         String url = getUrl(leosRestFindDocumentsByUserIdURI + "?role={role}&category={category}");
         LeosDocumentList resp = getEntity(url, LeosDocumentList.class, userId, role, category);
+        return resp;
+    }
+
+    LeosDocumentList findDocumentsByUserIdOrEntity(String userId, List<String> entities, String role, String category) {
+        LOGGER.trace("Finding Documents By UserId  [userId={}, role={}, category={}]", userId, role, category);
+        String joinedEntities = String.join("_", entities);
+        String url = getUrl(leosRestFindDocumentsByUserIdEntityNameURI + "?role={role}&category={category}");
+        LeosDocumentList resp = getEntity(url, LeosDocumentList.class, userId, joinedEntities, role, category);
         return resp;
     }
 

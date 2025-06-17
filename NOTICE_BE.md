@@ -159,85 +159,6 @@ __com.thoughtworks.xstream:xstream 1.4.9__
  * Copyright:
    * XStream Committers
 
-__com.vaadin:vaadin-client 8.14.3__
- * https://vaadin.com/
- * License: Apache License Version 2.0
- * Copyright:
-   * Vaadin Team, Developer Henri Sara*
-
-__com.vaadin:vaadin-compatibility-client 8.14.3__
- * https://vaadin.com/
- * License: Apache License Version 2.0
- * Copyright:
-   * Vaadin Team, Developer Henri Sara*
-
-__com.vaadin:vaadin-compatibility-server 8.14.3__
- * https://vaadin.com/
- * License: Apache License Version 2.0
- * Copyright:
-   * Vaadin Team, Developer Henri Sara*
-
-__com.vaadin:vaadin-compatibility-shared 8.14.3__
- * https://vaadin.com/
- * License: Apache License Version 2.0
- * Copyright:
-   * Vaadin Team, Developer Henri Sara*
-
-__com.vaadin:vaadin-sass-compiler 0.9.13__
- * http://vaadin.com/
- * License: Apache License 2.0
- * Copyright:
-   * Vaadin Team, Developer Henri Sara*
-
-__com.vaadin:vaadin-server 8.14.3__
- * https://vaadin.com/
- * License: Apache License Version 2.0
- * Copyright:
-   * Vaadin Team, Developer Henri Sara*
-
-__com.vaadin:vaadin-shared 8.14.3__
- * https://vaadin.com/
- * License: Apache License Version 2.0
- * Copyright:
-   * Vaadin Team, Developer Henri Sara*
-
-__com.vaadin:vaadin-spring 3.2.1__
- * https://github.com/vaadin/spring
- * License: Apache License 2.0
- * Copyright:
-   * Copyright 2015-2018 Vaadin Ltd.
-
-__com.vaadin:vaadin-themes 8.14.3__
- * https://vaadin.com/
- * License: Apache License Version 2.0
- * Copyright:
-   * Vaadin Team, Developer Henri Sara*
-
-__com.vaadin.addon:vaadin-onoffswitch 1.1.0__
- * no url defined
- * License: The Apache Software License, Version 2.0
- * Copyright:
-   * Daesung Kim
-
-__com.vaadin.external:gentyref 1.2.0.vaadin1__
- * http://code.google.com/p/gentyref/
- * License: The Apache Software License, Version 2.0
- * Copyright:
-   * Wouter Coekaerts
-
-__com.vaadin.external.flute:flute 1.3.0.gg2__
- * http://www.w3.org
- * License: W3C Software Copyright Notice and License
- * Copyright:
-   * Copyright © 2023 World Wide Web Consortium.
-
-__com.vaadin.external.gwt:gwt-elemental 2.8.2.vaadin2__
- * http://vaadin.com/gwt-elemental
- * License: Apache License Version 2.0
- * Copyright:
-   * Copyright 2010 Google Inc.
-   * Copyright 2011 Google Inc.
-
 __com.yahoo.platform.yui:yuicompressor 2.4.8__
  * http://developer.yahoo.com/yui/compressor/
  * License: BSD License
@@ -299,12 +220,6 @@ __cool.graph:cuid-java 0.1.1__
  * License: MIT License
  * Copyright:
    * Nilan Marktanner
-
-__de.datenhahn.vaadin:componentrenderer 2.0.0__
- * https://github.com/datenhahn/componentrenderer
- * License: Apache License 2.0
- * Copyright:
-   * datenhahn
 
 __io.atlassian.fugue:fugue 4.4.0__
  * http://www.atlassian.com/central-pom/fugue-parent/fugue/
@@ -1130,48 +1045,6 @@ __org.springframework.security.extensions:spring-security-saml2-core 1.0.9.RELEA
  * License: The Apache Software License, Version 2.0
  * Copyright:
    * Copyright (c) 2003-2005 Liberty Alliance
-
-__org.vaadin:simplefiledownloader 2.1__
- * no url defined
- * License: Apache License 2.0
- * Copyright:
-   * Vaadin Community
-
-__org.vaadin.addon:confirmdialog 3.2.0__
- * no url defined
- * License: Apache 2
- * Copyright:
-   * Sami Ekblad
-
-__org.vaadin.addons:autocomplete 0.2.4__
- * no url defined
- * License: https://github.com/wbadam/autocomplete-extension
- * Copyright:
-   * Adam Wagner
-
-__org.vaadin.addons:vaadin-sliderpanel 2.2.1__
- * https://github.com/melistik/vaadin-sliderpanel
- * License: The MIT License (MIT)
- * Copyright:
-   * Copyright (c) 2017 rocketbase.io
-
-__org.vaadin.anna:dndscroll 2.0.2__
- * no url defined
- * License: Apache 2
- * Copyright:
-   * Anna Koskinen
-
-__org.vaadin.olli:v8-client-storage 0.1__
- * no url defined
- * License: Apache 2
- * Copyright:
-   * Olli Tietäväinen
-
-__org.vaadin.teemusa:gridextensionpack 2.0.0__
- * no url defined
- * License: Apache 2
- * Copyright:
-   * teemusa
 
 __org.w3c.css:sac 1.3__
  * http://www.w3.org/Style/CSS/SAC/

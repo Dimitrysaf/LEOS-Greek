@@ -152,10 +152,36 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         ;
     }
 
-
-    public List<BigDecimal> findDocumentsByCollaboratorName(final String userId, final String role) {
+    @Override
+    public List<BigDecimal> findDocumentsByCollaboratorNameAndRole(final String userId, final String role) {
         List<BigDecimal> packageIdsList = new ArrayList<>();
         List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdByCollaboratorNameAndRole(userId, role);
+        for (BigDecimal packageIdBD : packageIdsListBD) {
+            packageIdsList.add(packageIdBD);
+        }
+        return packageIdsList;
+    }
+
+    @Override
+    public List<BigDecimal> findDocumentsByCollaboratorName(final String userId) {
+        List<BigDecimal> packageIdsList = new ArrayList<>();
+        List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdByCollaboratorName(userId);
+        for (BigDecimal packageIdBD : packageIdsListBD) {
+            packageIdsList.add(packageIdBD);
+        }
+        return packageIdsList;
+    }
+
+    @Override
+    public List<BigDecimal> findDocumentsByCollaboratorNames(String collaboratorNames) {
+        List<BigDecimal> packageIdsList = new ArrayList<>();
+        List<String> entityList = Arrays.asList(collaboratorNames.split("_"));
+
+        List<BigDecimal> matchedCollaboratorIds = collaboratorsRepository.findAllCollaborators().stream()
+                .filter(collab -> entityList.stream().anyMatch(input -> input.startsWith(collab.getCollaboratorName())))
+                .map(Collaborators::getId).collect(Collectors.toList());
+
+        List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdsByCollaboratorIds(matchedCollaboratorIds);
         for (BigDecimal packageIdBD : packageIdsListBD) {
             packageIdsList.add(packageIdBD);
         }

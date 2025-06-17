@@ -327,6 +327,16 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
             }
+            if (request.getPackageTitle() != null) {
+                context.usePackageTitle(request.getPackageTitle());
+            } else {
+                context.usePackageTitle(proposal.getMetadata().get().getPackageTitle());
+            }
+            if (request.getAuthenticLang() != null) {
+                context.useAuthenticLang(request.getAuthenticLang());
+            } else {
+                context.useAuthenticLang(proposal.getMetadata().get().getAuthenticLang());
+            }
             String comment = messageHelper.getMessage("operation.metadata.updated");
             context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
             context.useActionComment(comment);

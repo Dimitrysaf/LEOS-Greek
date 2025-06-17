@@ -556,26 +556,31 @@ define(function leosTrackChangesModule(require) {
 
         getLastTCElement: function(elementId, editor, processedElements) {
             var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
+            if (!element) { //LFDS case
+                element = editor.document.find('.leos-placeholder').getItem(0).find(`[${leosPluginUtils.DATA_AKN_MP_ID}='${elementId}']`).getItem(0);
+            }
             if(element) {
-            for (var i = element.getChildCount()-1; i >= 0; i--) {
-                var childElement = element.getChild(i);
+                for (var i = element.getChildCount()-1; i >= 0; i--) {
+                    var childElement = element.getChild(i);
                     if (!childElement || childElement.type === CKEDITOR.NODE_TEXT || (processedElements && processedElements.includes(childElement.getAttribute(this.ID)))) {
-                    continue;
-                }
-                if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
-                        var lastTCElement = this.getLastTCElement(childElement.getAttribute(this.ID), editor, processedElements);
-                    if(lastTCElement) {
-                        return lastTCElement;
+                        continue;
+                    }
+                    if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
+                        var idToSend = childElement.getAttribute(core.ID)  //LFDS case
+                            ? childElement.getAttribute(core.ID) : childElement.getAttribute(leosPluginUtils.DATA_AKN_MP_ID);
+                        var lastTCElement = this.getLastTCElement(idToSend, editor, processedElements);
+                        if(lastTCElement) {
+                            return lastTCElement;
+                        }
+                    }
+                    if (this.hasTrackChanges(childElement.getAttribute(this.ID), editor)) {
+                        return childElement;
                     }
                 }
-                    if (this.hasTrackChanges(childElement.getAttribute(this.ID), editor)) {
-                    return childElement;
+                if (this.hasTrackChanges(element.getAttribute(this.ID), editor)) {
+                    return element;
                 }
             }
-                if (this.hasTrackChanges(element.getAttribute(this.ID), editor)) {
-                return element;
-            }
-        }
         }
     };
 
@@ -702,20 +707,44 @@ define(function leosTrackChangesModule(require) {
             var isElementDeleted = false;
             var element = editor.document.find('.leos-placeholder').getItem(0);
             var maxDepth = this.findMaximusDepth(element);
-            for (var i = maxDepth; i > 0; i--) {
-                var olElements = this.findOlElementsByDepth(element, i);
-                for (var j = olElements.length - 1; j >= 0; j--) {
-                    var olElementToProcess = olElements[j];
-                var processedElements = [];
-                    isElementDeleted = this.processOlElement(editor, olElementToProcess, processedElements, actionName);
+            if(maxDepth > 0) {
+                for (var i = maxDepth; i > 0; i--) {
+                    var olElements = this.findOlElementsByDepth(element, i);
+                    for (var j = olElements.length - 1; j >= 0; j--) {
+                        var olElementToProcess = olElements[j];
+                        var processedElements = [];
+                        isElementDeleted = this.processOlElement(editor, olElementToProcess, processedElements, actionName);
+                        if (isElementDeleted) {
+                            break;
+                        }
+                    }
                     if (isElementDeleted) {
                         break;
                     }
                 }
                 if (isElementDeleted) {
+                    this.processAllChanges(editor, actionName);
+                }
+            }
+
+            var editableElements = element.find("[data-akn-attr-editable='true']");
+            if(editableElements.count() == 0){
+                editableElements = element.find("[leos\\:editable='true']");
+            }
+            if(editableElements.count() == 0){ //signature
+                editableElements = element.find("td[data-akn-name='signature']");
+            }
+            if(editableElements.count() == 0){ //LFDS
+                editableElements = element.find("ol[data-akn-name='aknAnnexList']");
+            }
+            for (var j = editableElements.count() - 1; j >= 0; j--) {
+                var edElementToProcess = editableElements.getItem(j);
+                var processedElements = [];
+                isElementDeleted = this.processOlElement(editor, edElementToProcess, processedElements, actionName);
+                if (isElementDeleted) {
                     break;
                 }
-                }
+            }
             if (isElementDeleted) {
                 this.processAllChanges(editor, actionName);
             }
@@ -730,7 +759,7 @@ define(function leosTrackChangesModule(require) {
             }
 
             // Process Soft Enter Inserts
-            var softEnterElements = olElementToProcess.find(`p[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_ENTER}]`);
+            var softEnterElements = olElementToProcess.find(`p[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_NUMBER}]`);
             for (var j = softEnterElements.count() - 1; j >= 0; j--) {
                 var softEnterElementToProcess = softEnterElements.getItem(j);
                 if (!softEnterElementToProcess.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
@@ -745,22 +774,23 @@ define(function leosTrackChangesModule(require) {
 
         processElement: function (editor, element, processedElements, actionName) {
             if (this.isElementPresentInEditor(editor, element)) {
-                var lastTCElement = core.getLastTCElement(element.getAttribute(core.ID), editor, processedElements);
+                var idToSend = element.getAttribute(core.ID) ? element.getAttribute(core.ID) : element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID);
+                var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
                 if(lastTCElement) {
                     editor.execCommand(actionName, lastTCElement);
                     if (lastTCElement.hasAttribute(core.ID)) {
                         processedElements.push(lastTCElement.getAttribute(core.ID));
                     }
-                        this.processElement(editor, element, processedElements, actionName);
-                    }
+                    this.processElement(editor, element, processedElements, actionName);
                 }
+            }
         },
 
         findOlElementsByDepth: function (root, targetDepth) {
             const result = [];
 
             function traverse(node, currentDepth) {
-                if (node.getName && node.getName().toLowerCase() === 'ol') {
+                if (node.getName && node.getName().toLowerCase() === 'ol' && node.getAttribute && !!node.getAttribute(core.ID)) {
                     currentDepth++; // Entering a deeper ol
                     if (currentDepth === targetDepth) {
                         result.push(node);
@@ -784,7 +814,7 @@ define(function leosTrackChangesModule(require) {
             let maxDepth = 0;
 
             function traverse(node, depth) {
-                if (node.getName && node.getName().toLowerCase() === 'ol') {
+                if (node.getName && node.getName().toLowerCase() === 'ol' && node.getAttribute && !!node.getAttribute(core.ID)) {
                     depth++; // Increase depth when encountering an <ol>
                     if (depth > maxDepth) {
                         maxDepth = depth;
@@ -796,7 +826,7 @@ define(function leosTrackChangesModule(require) {
                         var child = node.getChild(i);
                         traverse(child, depth);
                     }
-            }
+                }
             }
 
             traverse(root, 0);
@@ -844,7 +874,7 @@ define(function leosTrackChangesModule(require) {
                     var liParentElement = element.getParent();
                     element.remove();
                     if (this.checkIfEmptyListElement(liParentElement)) {
-                    this.removeEmptyElement(liParentElement, numberModule, editor);
+                        this.removeEmptyElement(liParentElement, numberModule, editor);
                     }
                 } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
                     element.$.outerHTML = element.$.innerHTML;
@@ -866,7 +896,7 @@ define(function leosTrackChangesModule(require) {
                     if (changeOffset) {
                         var sequence = numberModule.getSequence(nodeInSameEditorSession.getParent().$);
                         var originalNumber = node.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                        if (originalNumber) {
+                        if (originalNumber && sequence) {
                             var originalNumberIndex = sequence.getIndex(originalNumber);
                             if (originalNumberIndex >= 0) {
                                 node.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(nodeInSameEditorSession.getParent().$, node, originalNumberIndex - 2));
@@ -889,10 +919,7 @@ define(function leosTrackChangesModule(require) {
                 liParentElementToCheckText = liParentElementToCheckText.getParent();
             }
             var liParentElementToCheckNumber = element;
-            while (liParentElementToCheckNumber
-            && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
-                liParentElementToCheckNumber = liParentElementToCheckNumber.getParent();
-            }
+            liParentElementToCheckNumber = this.getParentToCheckAndRemove(liParentElementToCheckNumber);
             if (liParentElementToCheckText && liParentElementToCheckText.getText().trim() === ''
                 && liParentElementToCheckNumber && liParentElementToCheckNumber.getParent()
                 && liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
@@ -909,30 +936,37 @@ define(function leosTrackChangesModule(require) {
             });
 
             var liParentElementToCheckNumber = liParentElement;
-            while (liParentElementToCheckNumber
-            && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
+            liParentElementToCheckNumber = this.getParentToCheckAndRemove(liParentElementToCheckNumber);
+            var isFirstOfAll = numberModule.isFistElement(liParentElementToCheckNumber.getParent().$, liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+            var keyCodeToUse = 8;
+            if (isFirstOfAll) {
+                keyCodeToUse = 46;
+            }
+            var ckEditorEvent = new CKEDITOR.dom.event(
+                new KeyboardEvent('key', {
+                    keyCode: keyCodeToUse,
+                    ctrlKey: false,
+                    shiftKey: false,
+                    getKey: function () {
+                        return keyCode;
+                    }
+                })
+            );
+            liParentElement.setAttribute(leosPluginUtils.DATA_AKN_EMPTY, 'true');
+            if(liParentElement.getParent()) {
+                core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
+            }
+            editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
+        },
+
+        getParentToCheckAndRemove(liParentElementToCheckNumber) {
+            while (liParentElementToCheckNumber && liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT)
+            && !(liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.POINT
+                || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.INDENT
+                || liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH)) {
                 liParentElementToCheckNumber = liParentElementToCheckNumber.getParent();
             }
-                var isFirstOfAll = numberModule.isFistElement(liParentElementToCheckNumber.getParent().$, liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM));
-                var keyCodeToUse = 8;
-                if (isFirstOfAll) {
-                    keyCodeToUse = 46;
-                }
-                var ckEditorEvent = new CKEDITOR.dom.event(
-                    new KeyboardEvent('key', {
-                        keyCode: keyCodeToUse,
-                        ctrlKey: false,
-                        shiftKey: false,
-                        getKey: function () {
-                            return keyCode;
-                        }
-                    })
-                );
-                liParentElement.setAttribute(leosPluginUtils.DATA_AKN_EMPTY, 'true');
-                if(liParentElement.getParent()) {
-                    core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
-                }
-                editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
+            return liParentElementToCheckNumber;
         },
 
         removeEnterAndJoinLines: function (element, editor) {

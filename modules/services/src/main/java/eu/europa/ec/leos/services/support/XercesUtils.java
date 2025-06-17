@@ -701,7 +701,7 @@ public class XercesUtils {
     }
 
     public static void removeAttribute(Node node, String attName) {
-        if (node.getNodeType() != Node.ELEMENT_NODE) {
+        if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
             return;
         }
         Element element = (Element) node;
@@ -1081,7 +1081,7 @@ public class XercesUtils {
 
     public static int getPointDepth(Node node) {
         int pointDepth = 0;
-        if (Arrays.asList(POINT, INDENT).contains(node.getNodeName())) {
+        if (node != null && Arrays.asList(POINT, INDENT).contains(node.getNodeName())) {
             Node parentNode = node.getParentNode();
             while (parentNode != null) {
                 String parentName = parentNode.getNodeName();

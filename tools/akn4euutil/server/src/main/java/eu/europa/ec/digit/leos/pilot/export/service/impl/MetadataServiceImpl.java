@@ -259,7 +259,7 @@ public class MetadataServiceImpl implements MetadataService {
         return metadataLanguageFormats.formatDate(MetadataUtil.convertIsoDateToLanguageDateFormat(fieldInfo.getId(), metadataLanguageFormats));
     }
 
-    private MetadataLanguageFormats getMetadataLanguageDateFormat(XmlUtil.XmlFile xmlFile){
+    private MetadataLanguageFormats getMetadataLanguageDateFormat(XmlUtil.XmlFile xmlFile) {
         Node xmlNodeLanguageReference = MetadataUtil.getLanguageReferenceNode(xmlFile);
         if (xmlNodeLanguageReference == null) {
             return MetadataLanguageFormats.EN;
@@ -271,35 +271,31 @@ public class MetadataServiceImpl implements MetadataService {
     @Override
     public void processFinalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         processCote(fieldInfo, xmlFile);
-        final ReferenceFieldInfo finalFieldInfo = fieldInfo.withFieldType(MetadataFieldType.FINAL_COTE);
-        addFinalToCoverPage(finalFieldInfo, xmlFile);
-        addFinalToIdentification(finalFieldInfo, xmlFile);
-        addFinalToFilename(finalFieldInfo, xmlFile);
+        addFinalToCoverPage(xmlFile);
+        addFinalToIdentification(xmlFile);
+        addFinalToFilename(xmlFile);
     }
 
-    private void addFinalToFilename(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
-    {
+    private void addFinalToFilename(XmlUtil.XmlFile xmlFile) {
         final String fileName = xmlFile.getName();
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
             final String[] splitFileName = fileName.split("-");
-            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + "final-" + b : a + b + "-");
+            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + MetadataUtil.FINAL_VALUE + "-" + b : a + b + "-");
             xmlFile.setName(newFileName);
         }
     }
 
-    private void addFinalToIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    private void addFinalToIdentification(XmlUtil.XmlFile xmlFile) {
         final Node frbrExpression = xmlFile.getElementByName("FRBRExpression");
         if (frbrExpression == null) {
             return;
         }
         final Element frbrVersionNumber = xmlFile.newElement("FRBRversionNumber");
-        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.VALUE, fieldInfo.getDisplayValue());
-
+        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.VALUE, MetadataUtil.FINAL_VALUE);
         frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression,"FRBRlanguage"));
     }
 
-    private void addFinalToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile)
-    {
+    private void addFinalToCoverPage(XmlUtil.XmlFile xmlFile) {
         Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
@@ -314,7 +310,7 @@ public class MetadataServiceImpl implements MetadataService {
         final Element inline = xmlFile.newElement("inline");
         XmlUtil.setNodeAttributeValue(inline, MetadataUtil.XMLID, IdGenerator.generateId());
         XmlUtil.setNodeAttributeValue(inline, MetadataUtil.NAME, "version");
-        inline.setTextContent(fieldInfo.getDisplayValue());
+        inline.setTextContent(MetadataUtil.FINAL_VALUE);
         xmlNodeDocNumber.appendChild(inline);
     }
 

@@ -82,6 +82,8 @@ public class CollectionContextMandateService extends CollectionContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
+                .withPackageTitle(packageTitle)
+                .withAuthenticLang(authenticLang)
                 .build();
 
         String explanatoryTemplate = categoryTemplateMap.get(COUNCIL_EXPLANATORY).getName();

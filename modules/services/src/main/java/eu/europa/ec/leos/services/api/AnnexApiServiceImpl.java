@@ -226,7 +226,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         }
 
         newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
-        return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
+        List<Element> result = getMovedFromElements(annex, elementContent, elementId);
+        return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
     }
 
     @Override

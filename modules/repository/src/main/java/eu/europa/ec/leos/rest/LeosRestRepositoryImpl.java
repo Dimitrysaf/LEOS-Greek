@@ -609,6 +609,17 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    public <D extends LeosDocument> List<D> findDocumentsByUserIdOrEntity(String userId, List<String> entities, Class<? extends D> type, String leosAuthority) {
+        logger.trace("Finding document by userId... [userId=" + userId + ", entityName=" + entities + ", role=" + leosAuthority + ']');
+
+        String category = type != null ? type.getSimpleName().toUpperCase() : null;
+        LeosDocumentList docs = repository.findDocumentsByUserIdOrEntity(userId, entities, leosAuthority, category);
+
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
+    }
+
+    @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 

@@ -147,7 +147,7 @@ define(function listItemNumberModule(require) {
         var tocItem = ckEditor.LEOS.tocItemsList.find(function (e) {
             return lodash.camelCase(e.aknTag).toLowerCase() === lodash.camelCase(elementName).toLowerCase()
         });
-        return tocItem.autoNumbering.langNumConfigs
+        return tocItem?.autoNumbering?.langNumConfigs
             .find(config => config.langGroup.toLowerCase() === ckEditor.LEOS.langGroup.toLowerCase())
             ?.numberingTypes[0];
     }
@@ -162,11 +162,11 @@ define(function listItemNumberModule(require) {
                 return e.type === numTypeName
             });
             var paragraphSequence = sequenceMap.find(function(el){
-                return el.type === numberingConfig.type
+                return el.type === numberingConfig?.type
             });
             if(paragraphSequence) {
                 paragraphSequence.format = 'x';
-                paragraphSequence.suffix = numberingConfig.suffix;
+                paragraphSequence.suffix = numberingConfig?.suffix;
             }
             return paragraphSequence;
         } else {
@@ -346,13 +346,15 @@ define(function listItemNumberModule(require) {
         var articleType = leosPluginUtils.getArticleType(editor.element, editor.LEOS.articleTypesConfig);
         listNumberConfig = editor.LEOS.listNumberConfig[articleType];
         numberingConfigs = editor.LEOS.numberingConfigs;
-        for (var i = 0; i < listNumberConfig.length; i++) {
-            if (sequences[i].inDefault) {
-                var numberType = numberingConfigs.find(function(e){return e.type === listNumberConfig[i].numberingType});
-                var defaultListItem = sequences.find(function(e){return e.type ===  numberType.type});
-                defaultListItem.prefix = numberType.prefix;
-                defaultListItem.suffix = numberType.suffix;
-                defaultList[listNumberConfig[i].depth-1] = defaultListItem;
+        if(listNumberConfig){
+            for (var i = 0; i < listNumberConfig.length; i++) {
+                if (sequences[i].inDefault) {
+                    var numberType = numberingConfigs.find(function(e){return e.type === listNumberConfig[i].numberingType});
+                    var defaultListItem = sequences.find(function(e){return e.type ===  numberType.type});
+                    defaultListItem.prefix = numberType.prefix;
+                    defaultListItem.suffix = numberType.suffix;
+                    defaultList[listNumberConfig[i].depth-1] = defaultListItem;
+                }
             }
         }
     }
@@ -431,7 +433,7 @@ define(function listItemNumberModule(require) {
         if (currentNestingLevel === 0) {
             sequence = _getSequences('Paragraph');
         }
-        return (currentNestingLevel === 0 && sequence.getIndex(number) === 1);
+        return (currentNestingLevel === 0 && sequence?.getIndex(number) === 1);
     }
 
     function _removeCrossHeadingsFromListItems(listItems) {
