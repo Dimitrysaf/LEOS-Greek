@@ -66,6 +66,7 @@
                     <inputFolder>${basedir}/src/assets/scss</inputFolder>
                     <outputFolder>${basedir}/src/assets/css</outputFolder>
                     <style>EXPANDED</style>
+                    <version>1.89.2</version>
                 </configuration>
             </plugin>
             <!-- clean the dist directory used by Angular -->
