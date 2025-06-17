@@ -727,8 +727,16 @@ define(function elementEditorModule(require) {
     }
 
     function isEmpty(element) {
-        return element && !$(element).children(":not(br)").length &&
-            !$(element).contents().filter(function() { return this.nodeType == Node.TEXT_NODE && CKEDITOR.tools.trim(this.textContent).length > 0; }).length;
+        if (!element) {
+            return true;
+        }
+        if (element.nodeType === CKEDITOR.NODE_TEXT) {
+            return CKEDITOR.tools.trim(element.textContent).length == 0;
+        }
+        return !$(element).children(":not(br)").length &&
+            !$(element).contents().filter(function() {
+                return this.nodeType == Node.TEXT_NODE && CKEDITOR.tools.trim(this.textContent).length > 0;
+            }).length;
     }
 
     function isLastEditableElement(elementToTest){
