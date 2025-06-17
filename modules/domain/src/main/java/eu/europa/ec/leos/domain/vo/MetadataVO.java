@@ -35,6 +35,8 @@ public class MetadataVO {
     private String callbackAddress;
     private boolean imported;
 
+    private String documentCollectionName;
+
     public MetadataVO() {
     }// added for early binding
 
@@ -194,6 +196,15 @@ public class MetadataVO {
     public void setImported(boolean imported) {
         this.imported = imported;
     }
+
+    public String getDocumentCollectionName() {
+        return documentCollectionName;
+    }
+
+    public void setDocumentCollectionName(String documentCollectionName) {
+        this.documentCollectionName = documentCollectionName;
+    }
+
 
     public void clean() {
         this.setDocStage(null);
