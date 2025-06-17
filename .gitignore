@@ -227,7 +227,7 @@ hs_err_pid*
 styles.css
 
 # -- .gitignore ---------------------------------------------------------------
-/modules/ui/src/main/assets/css
+/modules/ui-angular/src/assets/css
 /modules/web/activemq-data
 /modules/web/logs
 

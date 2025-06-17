@@ -2,6 +2,8 @@ package eu.europa.ec.leos.domain.repository.metadata;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 
+import java.util.List;
+
 public final class ProposalMetadata extends LeosMetadata {
 
     public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance) {
@@ -26,6 +28,8 @@ public final class ProposalMetadata extends LeosMetadata {
         private String procedureType;
         private String actType;
         private boolean eeaRelevance;
+        private String packageTitle;
+        private List<String> authenticLang;
         private ProposalMetadataBuilder() {
         }
         private  ProposalMetadataBuilder(ProposalMetadata metadata) {
@@ -39,6 +43,8 @@ public final class ProposalMetadata extends LeosMetadata {
             this.objectId= metadata.objectId;
             this.docVersion= metadata.docVersion;
             this.eeaRelevance= metadata.eeaRelevance;
+            this.packageTitle = metadata.packageTitle;
+            this.authenticLang = metadata.authenticLang;
             this.procedureType = metadata.getProcedureType();
             this.actType = metadata.getActType();
         }
@@ -82,6 +88,17 @@ public final class ProposalMetadata extends LeosMetadata {
             this.eeaRelevance = eeaRelevance;
             return this;
         }
+
+        public ProposalMetadataBuilder withPackageTitle(String packageTitle) {
+            this.packageTitle = packageTitle;
+            return this;
+        }
+
+        public ProposalMetadataBuilder withAuthenticLang(List<String> authenticLang) {
+            this.authenticLang = authenticLang;
+            return this;
+        }
+
         public ProposalMetadataBuilder withProcedureType(String procedureType) {
             this.procedureType = procedureType;
             return this;

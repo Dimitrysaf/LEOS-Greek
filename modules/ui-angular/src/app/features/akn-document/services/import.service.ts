@@ -99,6 +99,7 @@ export class ImportService {
     this.importElements(params).subscribe({
       next: () => {
         this.documentService.reloadDocument();
+        this.documentService.showRefreshWarning();
         this.showSuccessMessage(elementIds);
       },
       error: (err) => {

@@ -688,7 +688,23 @@ public class DocumentServiceImpl implements DocumentService {
         List<LeosDocument> xmlDocs = new ArrayList<>();
         Set<String> categories = new HashSet<>();
         categories.add(category);
-        List<BigDecimal> pkgIdsList = collaboratorsService.findDocumentsByCollaboratorName(userName, leosAuthority);
+        List<BigDecimal> pkgIdsList = collaboratorsService.findDocumentsByCollaboratorNameAndRole(userName, leosAuthority);
+        for (BigDecimal pkgId : pkgIdsList) {
+            List<LeosDocument> foundDocs = packageService.findDocumentsByPackageId(pkgId, categories, false, false);
+            xmlDocs.addAll(foundDocs);
+        }
+        return xmlDocs;
+    }
+
+    @Override
+    public List<LeosDocument> findDocumentsByUserIdOrEntity(String userName, String entities, String role, String category) {
+        List<LeosDocument> xmlDocs = new ArrayList<>();
+        Set<String> categories = new HashSet<>();
+        categories.add(category);
+        //Step 1: Find the package by collaborator name
+        List<BigDecimal> pkgIdsList = collaboratorsService.findDocumentsByCollaboratorName(userName);
+        //Step 2: Find the package by collaborator's entity name and add it to the list
+        pkgIdsList.addAll(collaboratorsService.findDocumentsByCollaboratorNames(entities));
         for (BigDecimal pkgId : pkgIdsList) {
             List<LeosDocument> foundDocs = packageService.findDocumentsByPackageId(pkgId, categories, false, false);
             xmlDocs.addAll(foundDocs);

@@ -45,10 +45,29 @@
         -->
         <_CSDR.skipTest>:</_CSDR.skipTest>
         <_CSDR.skipLint>:</_CSDR.skipLint>
+        <resourcesOutputDirectory>META-INF/resources</resourcesOutputDirectory>
     </properties>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>io.github.cleydyr</groupId>
+                <artifactId>dart-sass-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>compile-sass</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <inputFolder>${basedir}/src/assets/scss</inputFolder>
+                    <outputFolder>${basedir}/src/assets/css</outputFolder>
+                    <style>EXPANDED</style>
+                </configuration>
+            </plugin>
             <!-- clean the dist directory used by Angular -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -132,6 +151,10 @@
             <resource>
                 <directory>dist</directory>
                 <targetPath>ui</targetPath>
+            </resource>
+            <resource>
+                <directory>src/assets/css</directory>
+                <targetPath>${resourcesOutputDirectory}/assets/css</targetPath>
             </resource>
         </resources>
     </build>

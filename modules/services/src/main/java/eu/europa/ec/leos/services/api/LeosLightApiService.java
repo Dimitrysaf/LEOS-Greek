@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.services.dto.request.ExportDocumentRequest;
 import eu.europa.ec.leos.services.exception.InvalidInputException;
 import io.atlassian.fugue.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -14,5 +15,5 @@ public interface LeosLightApiService {
 
     Pair<Boolean, File> exportDocument(ExportDocumentRequest request, String clientContextToken);
 
-    Pair<Object, Object> importProposal(MultipartFile file) throws IOException;
+    Pair<Object, HttpStatus> importProposal(MultipartFile file) throws IOException;
 }

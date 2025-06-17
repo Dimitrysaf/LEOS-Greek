@@ -51,7 +51,7 @@ class tableOfContent {
         euiLabelSuccess: () => cy.get('span.eui-label--success'),
         euiLabelDanger: () => cy.get('span.eui-label--danger'),
         euiLabelWarningList: () => cy.get('span.eui-label--warning'),
-        warningSymbol: () => cy.get("eui-icon-svg[icon='eui-ecl-warning']"),
+        warningSymbol: () => cy.get("eui-icon-svg[icon='eui-exclamation']"),
         moveOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Move']"),
         placeBeforeOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place before']"),
         deleteOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Delete']"),

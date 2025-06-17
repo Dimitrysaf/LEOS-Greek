@@ -14,7 +14,6 @@
 package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.entities.Package;
-import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 
@@ -34,7 +33,11 @@ public interface CollaboratorsService {
 
     void updateCollaborators(String pkgId, List<Collaborator> collaboratorList, String userId);
 
-    List<BigDecimal> findDocumentsByCollaboratorName(final String userId, final String role);
+    List<BigDecimal> findDocumentsByCollaboratorName(final String userId);
+
+    List<BigDecimal> findDocumentsByCollaboratorNames(String collaboratorNames);
+
+    List<BigDecimal> findDocumentsByCollaboratorNameAndRole(final String userId, final String role);
 
     void removeCollaborator(final String id) throws RepositoryException;
 

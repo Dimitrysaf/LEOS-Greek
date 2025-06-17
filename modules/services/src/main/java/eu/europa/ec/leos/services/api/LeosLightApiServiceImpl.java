@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.ErrorCode;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
@@ -22,6 +23,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.collection.CollaboratorService;
+import eu.europa.ec.leos.services.collection.CreateCollectionError;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
@@ -41,6 +43,8 @@ import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
 import eu.europa.ec.leos.services.leoslight.util.ByteChecksumComparator;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
+import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.light.SystemName;
@@ -114,6 +118,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     private TokenService tokenService;
     private CollaboratorService collaboratorService;
     private Provider<StructureContext> structureContextProvider;
+    private CollectionUrlBuilder urlBuilder;
 
     @Autowired
     public LeosLightApiServiceImpl(ValidationService validationService, ProposalConverterService proposalConverterService, LeosRepository leosRepository,
@@ -122,7 +127,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                                    Properties applicationProperties, ApiService apiService,
                                    CreateCollectionService createCollectionService,
                                    TokenService tokenService,
-                                   CollaboratorService collaboratorService, Provider<StructureContext> structureContextProvider) {
+                                   CollaboratorService collaboratorService, Provider<StructureContext> structureContextProvider,
+                                   CollectionUrlBuilder urlBuilder) {
         this.validationService = validationService;
         this.proposalConverterService = proposalConverterService;
         this.leosRepository = leosRepository;
@@ -136,6 +142,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         this.tokenService = tokenService;
         this.collaboratorService = collaboratorService;
         this.structureContextProvider = structureContextProvider;
+        this.urlBuilder = urlBuilder;
     }
 
     @Override
@@ -223,7 +230,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     @Override
-    public Pair<Object, Object> importProposal(MultipartFile file) throws IOException {
+    public Pair<Object, HttpStatus> importProposal(MultipartFile file) throws IOException {
         validateBasePath(FilenameUtils.normalize(file.getOriginalFilename()), "./");
         String originalFilename = file.getOriginalFilename();
         File content = new File(file.getOriginalFilename());
@@ -239,6 +246,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         DocumentVO propDocument = validation.getDocumentToBeCreated();
 
         if (validation.getErrors() == null || validation.getErrors().isEmpty()) {
+            CreateCollectionResult createCollectionResult;
             String docRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
             LegDocument savedLegDocument = (LegDocument) findLeosDocument(docRef, LegDocument.class);
             if (savedLegDocument == null) {
@@ -248,7 +256,6 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                     LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                     return new Pair<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-                CreateCollectionResult createCollectionResult;
                 try {
                     LeosDocument originalProposal = findLeosDocument(propDocument.getRef(), Proposal.class);
                     if (originalProposal != null) {
@@ -261,22 +268,26 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                                 String pkgName = createCollectionResult.getPackageName();
                                 addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false, "1.0.0");
                             }
+                            collaboratorService.synchCollaborators((Proposal) originalProposal);
                         } else {
                             if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), propDocument.getSource())) {
                                 return new Pair<>(messageHelper.getMessage("leoslight.document.duplicate"), HttpStatus.INTERNAL_SERVER_ERROR);
                             } else {
+                                CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
                                 updateLeosDocument(savedDocument.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
+                                addDocumentIdAndUrl(idsAndUrlsHolder, translatedDocRef, LeosCategory.PROPOSAL);
                                 propDocument.getChildDocuments().forEach(docVo -> {
                                     String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
+                                    addDocumentIdAndUrl(idsAndUrlsHolder, translatedChildDocRef, docVo.getCategory());
                                     LeosDocument childDocument = findLeosDocument(translatedChildDocRef, LeosCategoryClass.getClass(docVo.getCategory()));
                                     if (!ByteChecksumComparator.checksumMatched(childDocument.getContent().get().getSource().getBytes(), docVo.getSource())) {
                                         updateChildDocuments(translatedChildDocRef, docVo);
                                     }
                                 });
-                                return new Pair<>(messageHelper.getMessage("leoslight.document.updated.major.version"), HttpStatus.OK);
+                                createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
+                                        new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.updated.major.version")));
                             }
                         }
-                        collaboratorService.synchCollaborators((Proposal) originalProposal);
                     } else {
                         return new Pair<>(messageHelper.getMessage("leoslight.original.document.not.found"), HttpStatus.NOT_FOUND);
                     }
@@ -292,6 +303,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                 if (ByteChecksumComparator.checksumMatched(savedLegDocument.getContent().get().getSource().getBytes(), fileContent)) {
                     return new Pair<>(messageHelper.getMessage("leoslight.document.duplicate"), HttpStatus.INTERNAL_SERVER_ERROR);
                 } else {
+                    CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
                     String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
                     String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
                     LeosPackage leosPackage = findLeosPackageById(savedLegDocument.getPackageId());
@@ -299,12 +311,14 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                     try {
                         String versionLabel = getNextVersionLabel(VersionType.MAJOR, proposals.get(0).getVersionLabel());
                         addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode,
-                                leosPackage.getName(), true, versionLabel);
+                                leosPackage.getName(), true, versionLabel, idsAndUrlsHolder);
+                        createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
+                                new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.updated.major.version")));
                     } catch (Exception e) {
                         LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
                         return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
                     }
-                    return new Pair<>(messageHelper.getMessage("leoslight.document.updated.major.version"), HttpStatus.ACCEPTED);
+                    return new Pair<>(createCollectionResult, HttpStatus.OK);
                 }
             }
         } else {
@@ -321,12 +335,17 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
     private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode,
                                 String pkgName, boolean updateDocs, String currentVersionLabel) throws Exception {
+        this.addLegDocument(file, fileContent, propDocument, proposalRef, languageCode, pkgName, updateDocs, currentVersionLabel, new CollectionIdsAndUrlsHolder());
+    }
+    private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode,
+                                String pkgName, boolean updateDocs, String currentVersionLabel, CollectionIdsAndUrlsHolder idsAndUrlsHolder) throws Exception {
         List<String> containedDocs = new ArrayList<>();
         containedDocs.add(proposalRef + "_" + currentVersionLabel);
         if (updateDocs) {
             Proposal proposal = leosRepository.findDocumentByRef(proposalRef, Proposal.class);
             updateLeosDocument(proposal.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
         }
+        addDocumentIdAndUrl(idsAndUrlsHolder, proposalRef, LeosCategory.PROPOSAL);
         propDocument.getChildDocuments().forEach(docVo -> {
             String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
             String versionLabel = "1.0.0";
@@ -341,6 +360,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                     versionLabel = document.getVersionLabel();
                 }
             }
+            addDocumentIdAndUrl(idsAndUrlsHolder, translatedChildDocRef, docVo.getCategory());
             containedDocs.add(translatedChildDocRef + "_" + versionLabel);
         });
         List<String> milestoneComments = new ArrayList<>();
@@ -472,6 +492,38 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         String urlPart = DOC_TYPE_MAP.get(docType);
         String documentReferenceUrl = mappingUrl + "/ui/" + urlPart + '/' + docRef;
         return encodeParam(documentReferenceUrl);
+    }
+
+    private void addDocumentIdAndUrl(CollectionIdsAndUrlsHolder idsAndUrlsHolder, String docRef, LeosCategory docCategory) {
+        switch (docCategory) {
+            case ANNEX:
+                idsAndUrlsHolder.addAnnexIdAndUrl(docRef, urlBuilder.buildAnnexViewUrl(docRef));
+                break;
+            case BILL:
+                idsAndUrlsHolder.setBillId(docRef);
+                idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(docRef));
+                break;
+            case COUNCIL_EXPLANATORY:
+                idsAndUrlsHolder.setExplanatoryUrl(docRef);
+                idsAndUrlsHolder.setExplanatoryUrl(urlBuilder.buildExplanatoryViewUrl(docRef));
+                break;
+            case STAT_DIGIT_FINANC_LEGIS:
+                idsAndUrlsHolder.setFinancialStatementId(docRef);
+                idsAndUrlsHolder.setFinancialStatementUrl(urlBuilder.buildFinancialStatementViewUrl(docRef));
+                break;
+            case MEMORANDUM:
+                idsAndUrlsHolder.setMemorandumId(docRef);
+                idsAndUrlsHolder.setMemorandumUrl(urlBuilder.buildMemorandumViewUrl(docRef));
+                break;
+            case PROPOSAL:
+                idsAndUrlsHolder.setProposalId(docRef);
+                idsAndUrlsHolder.setProposalUrl(urlBuilder.buildProposalViewUrl(docRef));
+                break;
+            case COVERPAGE:
+                idsAndUrlsHolder.setCoverpageId(docRef);
+                idsAndUrlsHolder.setCoverpageUrl(urlBuilder.buildCoverPageViewUrl(docRef));
+                break;
+        }
     }
 
     private File getXmlFile(String docRef, byte[] docContent) throws IOException {

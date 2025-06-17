@@ -408,36 +408,6 @@
         </license>
         <copyright>Tatu Saloranta</copyright>
     </artifact>
-    <artifact>
-        <groupId>com.vaadin.addon</groupId>
-        <artifactId>vaadin-onoffswitch</artifactId>
-        <version>1.1.0</version>
-        <url>https://vaadin.com/directory/component/onoffswitch</url>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-        </license>
-        <copyright>Daesung Kim</copyright>
-    </artifact>
-    <artifact>
-        <groupId>com.vaadin.external</groupId>
-        <artifactId>gentyref</artifactId>
-        <version>1.2.0.vaadin1</version>
-        <url>https://mvnrepository.com/artifact/com.vaadin.external/gentyref/1.2.0.vaadin1</url>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-        </license>
-        <copyright>Wouter Coekaerts</copyright>
-    </artifact>
-    <artifact>
-        <groupId>de.datenhahn.vaadin</groupId>
-        <artifactId>componentrenderer</artifactId>
-        <version>2.0.0</version>
-        <url>https://github.com/datenhahn/componentrenderer</url>
-        <license>
-            <name>Apache License 2.0</name>
-        </license>
-        <copyright>datenhahn</copyright>
-    </artifact>
 
     <artifact>
         <groupId>javax.inject</groupId>
@@ -686,71 +656,6 @@
         <!--<copyright>(c) 2003, IBM Corporation., http://www.ibm.com.</copyright>-->
         <!--<copyright>voluntary contributions made by Ovidiu Predescu (ovidiu@cup.hp.com) on behalf of the-->
         <!--Apache Software Foundation and was originally developed at Hewlett Packard Company.</copyright>-->
-    </artifact>
-
-    <artifact>
-        <groupId>org.vaadin</groupId>
-        <artifactId>simplefiledownloader</artifactId>
-        <version>2.1</version>
-        <url>https://mvnrepository.com/artifact/org.vaadin/simplefiledownloader/2.1</url>
-        <license>
-            <name>Apache License 2.0</name>
-        </license>
-        <copyright>Vaadin Community</copyright>
-    </artifact>
-
-    <artifact>
-        <groupId>org.vaadin.addon</groupId>
-        <artifactId>confirmdialog</artifactId>
-        <version>3.2.0</version>
-        <url>https://github.com/samie/Vaadin-ConfirmDialog/</url>
-        <license>
-            <name>Apache 2</name>
-        </license>
-        <copyright>Sami Ekblad</copyright>
-    </artifact>
-
-    <artifact>
-        <groupId>org.vaadin.addons</groupId>
-        <artifactId>autocomplete</artifactId>
-        <version>0.2.4</version>
-        <license>
-            <name>https://github.com/wbadam/autocomplete-extension</name>
-        </license>
-        <copyright>Adam Wagner</copyright>
-    </artifact>
-
-    <artifact>
-        <groupId>org.vaadin.anna</groupId>
-        <artifactId>dndscroll</artifactId>
-        <version>2.0.2</version>
-        <url>https://mvnrepository.com/artifact/org.vaadin.anna/dndscroll/2.0.1</url>
-        <license>
-            <name>Apache 2</name>
-        </license>
-        <copyright>Anna Koskinen</copyright>
-    </artifact>
-
-    <artifact>
-        <groupId>org.vaadin.olli</groupId>
-        <artifactId>v8-client-storage</artifactId>
-        <version>0.1</version>
-        <url>https://mvnrepository.com/artifact/org.vaadin.olli/v8-client-storage/0.1</url>
-        <license>
-            <name>Apache 2</name>
-        </license>
-        <copyright>Olli Tietäväinen</copyright>
-    </artifact>
-
-    <artifact>
-        <groupId>org.vaadin.teemusa</groupId>
-        <artifactId>gridextensionpack</artifactId>
-        <version>2.0.0</version>
-        <url>https://mvnrepository.com/artifact/org.vaadin.teemusa/gridextensionpack/2.0.0</url>
-        <license>
-            <name>Apache 2</name>
-        </license>
-        <copyright>teemusa</copyright>
     </artifact>
 
     <artifact>
