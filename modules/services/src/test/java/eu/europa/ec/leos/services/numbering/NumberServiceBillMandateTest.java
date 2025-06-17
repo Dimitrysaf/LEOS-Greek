@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.numbering;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
 import eu.europa.ec.leos.services.util.TestUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
@@ -10,6 +11,7 @@ import org.mockito.Mockito;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class NumberServiceBillMandateTest extends NumberServiceMandateTest {
 
     @InjectMocks

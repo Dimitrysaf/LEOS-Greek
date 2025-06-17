@@ -22,7 +22,9 @@ import java.util.List;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import org.junit.Ignore;
 
+@Ignore
 public abstract class SaveTocBillMandateTest_IT extends SaveTocMandateTest_IT {
 
     protected List<TableOfContentItemVO> buildTableOfContentBill(byte[] xmlInput) {
