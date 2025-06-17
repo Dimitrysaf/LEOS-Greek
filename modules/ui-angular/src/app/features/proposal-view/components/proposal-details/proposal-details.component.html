@@ -1,263 +1,56 @@
-<div class="row eui-u-mt-l d-flex align-items-start">
-  <div class="col-md-11">
-    <eui-card
-      class="eui-u-mt-s eui-u-mb-l"
-      #documentCard
-      euiCollapsible
-      euiCollapsed="false"
-      class="details-cards-common"
-    >
-      <eui-card-header>
-        <eui-card-header-title>
-          <strong>{{'page.collection.details.card.general.header.label' | translate}}</strong>
-          <span>
-            <button
-              euiButton
-              euiIconButton
-              euiSecondary
-              euiOutline
-              euiSizeS
-              class="details-tooltip-icon"
-            >
-            <eui-icon-svg icon="eui-question-circle" set="eui" size="m" fillColor="grey-100" [euiTooltip]="
-              'page.collection.details.general.tooltip'
-                | translate
-            "></eui-icon-svg>
-          </button>
-          </span>
-
-        </eui-card-header-title>
-
-      </eui-card-header>
-
-      <eui-card-content>
-        <div
-          class="eui-u-flex eui-u-pb-m"
-          *ngIf="!documentCard.euiCollapsed "
-        >
-
-          <div class="col-md-12">
-            <div class="row details-gen-rows">
-              <div class="col-sm-2 label-column">
-                <label>{{ 'page.collection.details.template' | translate }}</label>
-              </div>
-              <div class="col-sm-4">{{ proposal.metadata.template }}</div>
-              <div class="col-sm-6 label-column"></div>
-            </div>
-
-            <div class="row details-gen-rows">
-              <div class="col-sm-12 label-column"><input
-                name="checkbox-eea-rel"
-                euiInputCheckBox
-                label="EEA Relevance"
-                [(ngModel)]="eeaRelevance"
-                [disabled]="!permissions.includes('CAN_ADD_REMOVE_COLLABORATOR')"
-                (ngModelChange)="handleEEAChange($event)"
-              />
-                <label>{{ 'page.workspace.create-form.document.eea-relevance' | translate }}</label>
-              </div>
-
-            </div>
-            <div class="row details-gen-rows">
-              <div class="col-sm-2">
-                <input
-                  name="checkbox-auth-lang"
-                  euiInputCheckBox
-                  label="Authentic language"
-                  [(ngModel)]="isAuthenticLang"
-                  (ngModelChange)="handleAuthLangChange($event)"
-                />
-                <label
-                  style="display: inline">{{ 'page.workspace.create-form.document.auth-language' | translate }}</label>
-              </div>
-              <div class="col-sm-10">
-
-                <div class="language-checkbox">
-                  <input
-                    type="checkbox"
-                    id="all_lang"
-                    [(ngModel)]="allSelected"
-                    (change)="toggleAllLanguages()"
-                    [disabled]="!isAuthenticLang"/>
-                  <label>All</label></div>
-                <div class="language-checkbox"><label>|</label></div>
-
-                <div class="language-checkbox" *ngFor="let lang of languages">
-                  <input type="checkbox" [id]="lang" [(ngModel)]="selectedLanguages[lang]"
-                         (change)="onLanguageChange()" [disabled]="!isAuthenticLang"/>
-                  <label [for]="lang">{{ lang }}</label>
-                </div>
-              </div>
-            </div>
-
-            <div class="row details-gen-rows confidentiality-row">
-              <div class="col-sm-2 label-column">
-                <label>{{ 'page.collection.confidentiality-level' | translate }}</label>
-              </div>
-              <div class="col-sm-6">{{ proposal.metadata.securityLevel }}</div>
-              <div class="col-sm-4 label-column"></div>
-            </div>
-
-            <div class="row details-gen-rows">
-              <div class="col-sm-12 label-column">
-                <label>{{ 'page.collection.details.package-title' | translate }}</label>
-              </div>
-            </div>
-
-            <div class="row details-gen-rows">
-              <div class="col-sm-2">
-                <input
-                  id="package-title-input"
-                  value="{{proposal.metadata.packageTitle}}"
-                  [(ngModel)]="packageTitle"
-                  type="text"
-                  euiInputText
-                  euiClearable
-                  class="eui-input-text--clearable eui-input-text"
-                />
-
-              </div>
-              <div class="col-sm-10"></div>
-            </div>
-
-            <div class="row details-gen-rows">
-              <div class="col-sm-12 label-column">
-                <label>{{ 'page.collection.details.internal-reference' | translate }}</label>
-              </div>
-            </div>
-
-            <div class="row details-gen-rows">
-              <div class="col-sm-2">
-                <input
-                  id="internal-ref-input"
-                  type="text"
-                  euiInputText
-                  euiClearable
-                  class="eui-input-text--clearable eui-input-text"
-                />
-              </div>
-              <div class="col-sm-10"></div>
-            </div>
-          </div>
-        </div>
-      </eui-card-content>
-
-    </eui-card>
+<div class="row eui-u-mt-l">
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-sm-1 label-column"></div>
+      <div class="col-sm-3 label-column">
+        <label>{{ 'page.collection.details.package-title' | translate }}</label>
+      </div>
+      <div class="col-sm-8">{{ proposal.metadata.packageTitle }}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1 label-column"></div>
+      <div class="col-sm-3 label-column">
+        <label>{{ 'page.collection.details.template' | translate }}</label>
+      </div>
+      <div class="col-sm-8">{{ proposal.metadata.template }}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1 label-column"></div>
+      <div class="col-sm-3 label-column">
+        <label>{{ 'page.collection.details.language' | translate }}</label>
+      </div>
+      <div class="col-sm-8">{{ proposal.metadata.language }}</div>
+    </div>
   </div>
-
-  <div class="col-md-1 d-flex align-items-start pt-2">
-    <button euiButton euiPrimary (click)="saveGeneralDetails()">
-      {{ 'global.actions.save' | translate }}
-    </button>
-  </div>
-
-</div>
-
-
-<div class="row eui-u-mt-l d-flex align-items-start">
-
-  <div class="col-md-11">
-    <eui-card
-      class="eui-u-mt-s eui-u-mb-l"
-      #documentCard
-      euiCollapsible
-      euiCollapsed="false"
-      class="details-cards-common"
-    >
-      <eui-card-header>
-        <eui-card-header-title>
-          <strong>{{'page.collection.details.card.coverpage.type.header.label' | translate}}</strong>
-          <span>
-            <button
-              euiButton
-              euiIconButton
-              euiSecondary
-              euiOutline
-              euiSizeS
-              class="details-tooltip-icon"
-            >
-            <eui-icon-svg icon="eui-question-circle" set="eui" size="m" fillColor="grey-100" [euiTooltip]="
-              'page.collection.details.coverpage.tooltip' | translate">
-            </eui-icon-svg>
-          </button>
-          </span>
-
-        </eui-card-header-title>
-
-      </eui-card-header>
-
-      <eui-card-content>
-        <div
-          class="eui-u-flex eui-u-pb-m"
-          *ngIf="!documentCard.euiCollapsed "
-        >
-
-          <div class="col-md-12">
-            <div class="row details-gen-rows">
-              <div class="col-sm-12 label-column">
-                <label>{{ 'page.collection.details.switch.coverpage.label' | translate }}</label>
-              </div>
-            </div>
-
-            <div class="row details-gen-rows">
-              <div class="col-sm-1 label-column col-sm-1-coverpage-type">
-              </div>
-              <div class="col-sm-11 label-column">
-                <label class="coverpage-option">
-                  <input type="radio" name="myRadioGroup"/>
-                  {{'page.collection.details.switch.coverpage.option1' | translate}}
-                </label>
-              </div>
-            </div>
-            <div class="row details-gen-rows">
-              <div class="col-sm-1 label-column col-sm-1-coverpage-type">
-              </div>
-              <div class="col-sm-11 label-column">
-                <label>
-                  <input type="radio" name="myRadioGroup"/>
-                  {{'page.collection.details.switch.coverpage.option2' | translate}}
-                </label>
-              </div>
-            </div>
-            <div class="row details-gen-rows">
-              <div class="col-sm-1 label-column col-sm-1-coverpage-type">
-              </div>
-              <div class="col-sm-11 label-column">
-                <label>
-                  <input type="radio" name="myRadioGroup"/>
-                  {{'page.collection.details.switch.coverpage.option3' | translate}}
-                </label>
-              </div>
-            </div>
-            <div class="row details-gen-rows">
-              <div class="col-sm-2 label-column vertical-shift-disclaimer-label">
-                <label>
-                  Vertical shift of disclaimer:
-                </label>
-              </div>
-              <div class="col-sm-8 label-column">
-                <div class="vertical-shift-num">
-                  <input type="text"
-                         [value]="quantity.toFixed(1)"
-                         readonly
-                         style="width: 60px; text-align: center;"/>
-                  <div class="vertical-shift-num-buttons">
-                    <button (click)="increase()" class="number-up-down-button">
-                      <eui-icon-svg icon="eui-caret-up" set="eui" size="xs" fillColor="grey-100"
-                                    class="number-up-down-button-icon"></eui-icon-svg>
-                    </button>
-                    <button (click)="decrease()" class="number-up-down-button">
-                      <eui-icon-svg icon="eui-caret-down" set="eui" size="xs" fillColor="grey-100"
-                                    class="number-up-down-button-icon"></eui-icon-svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </eui-card-content>
-    </eui-card>
+  <div class="col-md-6">
+    <div class="row confidentiality-row">
+      <div class="col-sm-1 label-column"></div>
+      <div class="col-sm-3 label-column">
+        <label>{{ 'page.collection.confidentiality-level' | translate }}</label>
+      </div>
+      <div class="col-sm-8">{{ proposal.metadata.securityLevel }}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1 label-column"></div>
+      <div class="col-sm-3 label-column">
+        <label>{{ 'page.collection.internal-reference' | translate }}</label>
+      </div>
+      <div class="col-sm-8">{{ proposal.metadata.internalRef }}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1 label-column"></div>
+      <div class="col-sm-3 eui-u-flex eui-u-flex-align-items-center">
+        <input
+          name="checkbox-en"
+          euiInputCheckBox
+          label="EEA Relevance"
+          [(ngModel)]="eeaRelevance"
+          [disabled]="!permissions.includes('CAN_ADD_REMOVE_COLLABORATOR')"
+          (ngModelChange)="handleEEAChange($event)"
+        />
+        <label>{{ 'page.workspace.create-form.document.eea-relevance' | translate }}</label>
+      </div>
+      <div class="col-sm-8"></div>
+    </div>
   </div>
 </div>
-

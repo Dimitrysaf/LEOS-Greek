@@ -193,13 +193,12 @@ export class ProposalDetailsService implements OnDestroy {
       )
   }
 
-  updateProposalMetadata(docPurpose: string, eeaRelevance: boolean, packageTitle?: string, authenticLang?: string[]) {
+  updateProposalMetadata(docPurpose: string, eeaRelevance: boolean) {
     this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
         docPurpose,
         eeaRelevance,
-        packageTitle,
-        authenticLang
+        title: '',
       })
       .subscribe((val) => {
         this.proposalRefBS.next([this.proposalRef, true]);
