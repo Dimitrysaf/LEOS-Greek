@@ -65,11 +65,6 @@
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.leos.pilot</groupId>
-            <artifactId>leos-ui</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.leos.pilot</groupId>
             <artifactId>leos-ui-angular</artifactId>
             <version>${project.version}</version>
         </dependency>

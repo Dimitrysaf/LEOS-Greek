@@ -259,6 +259,7 @@
                     <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Annexes</dapInfoURL>
                 </dapInfo>
             </dapInfos>
+            <depthEnabled>true</depthEnabled>
         </tocItem>
 
         <tocItem>
