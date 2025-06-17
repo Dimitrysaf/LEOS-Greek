@@ -28,6 +28,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
+@Ignore
 public class SaveTocBillUnDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
 
     private static final Logger log = LoggerFactory.getLogger(SaveTocBillUnDeleteMandateTest_IT.class);

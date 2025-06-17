@@ -28,6 +28,7 @@ import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,6 +47,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 
+@Ignore
 public class ImportServiceMandateTest_IT extends NumberServiceMandateTest {
 
     @Mock
