@@ -672,7 +672,9 @@ public class MetadataServiceImpl implements MetadataService {
         XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.HREF, String.format(MetadataUtil.ATHENTIC_LANGUAGE_HREF_PATTERN, language.toUpperCase()));
         XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.SHOWAS, language.toLowerCase());
         xmlNodeRef.appendChild(authLangeElement);
-        for (String lang: fieldInfo.getValue()) {
+        List<String> authenticLang = new ArrayList<>(fieldInfo.getValue());
+        authenticLang.remove(language.toLowerCase());
+        for (String lang: authenticLang) {
             authLangeElement = xmlFile.newElement(MetadataUtil.TLCREFERENCE);
             XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.XMLID, IdGenerator.generateId());
             XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.NAME, MetadataUtil.LANGUAGE);
@@ -680,10 +682,10 @@ public class MetadataServiceImpl implements MetadataService {
             XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.SHOWAS, lang.toLowerCase());
             xmlNodeRef.appendChild(authLangeElement);
         }
-        processAuthenticLanguagesInCoverPage(fieldInfo, xmlFile, language);
+        processAuthenticLanguagesInCoverPage(fieldInfo.getValue(), xmlFile);
     }
 
-    public void processAuthenticLanguagesInCoverPage(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, String proposalLanguage) {
+    public void processAuthenticLanguagesInCoverPage(List<String> authenticLang, XmlUtil.XmlFile xmlFile) {
         Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
         if (xmlNodeCoverPage == null) {
             return;
@@ -693,7 +695,7 @@ public class MetadataServiceImpl implements MetadataService {
             xmlNodeContainer.getParentNode().removeChild(xmlNodeContainer);
         }
 
-        if (!fieldInfo.getValue().isEmpty()) {
+        if (!authenticLang.isEmpty()) {
             final Element authContainerElement = xmlFile.newElement(MetadataUtil.CONTAINER);
             XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.XMLID, IdGenerator.generateId());
             XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.NAME, MetadataUtil.AUTHENTIC_LANGUAGES_NAME);
@@ -701,7 +703,7 @@ public class MetadataServiceImpl implements MetadataService {
             final Element authPElement = xmlFile.newElement(MetadataUtil.P);
             List<String> langArray = new ArrayList();
 
-            for (String lang: fieldInfo.getValue()) {
+            for (String lang: authenticLang) {
                 langArray.add(MetadataUtil.AUTHENTIC_LANGUAGES.get(lang.toUpperCase()));
             }
             langArray = langArray.stream().sorted().collect(Collectors.toList());

@@ -49,7 +49,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.PROPOSAL_FILE_PREFIX;
 
 @Service
 class LeosMetadataServiceImpl implements LeosMetadataService {
@@ -250,17 +253,18 @@ class LeosMetadataServiceImpl implements LeosMetadataService {
         LOG.debug("Process field info  '{}'", fieldInfo);
 
         final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
-        for (XmlFile xmlFile : documentXmlFiles){
-            LOG.debug("Process xml file '{}'", xmlFile.getName());
+        Optional<XmlFile> xmlFile = documentXmlFiles.stream().filter(f -> f.getName().startsWith(PROPOSAL_FILE_PREFIX)).findAny();
+        if (xmlFile.isPresent()){
+            LOG.debug("Process xml file '{}'", xmlFile.get().getName());
             switch(fieldInfo.getFieldType()){
                 case PACKAGE_TITLE:
-                    metadataService.processPackageTitle((SimpleFieldInfo)fieldInfo, xmlFile);
+                    metadataService.processPackageTitle((SimpleFieldInfo)fieldInfo, xmlFile.get());
                     break;
                 case INTERNAL_REF:
-                    metadataService.processInternalRef((SimpleFieldInfo)fieldInfo, xmlFile);
+                    metadataService.processInternalRef((SimpleFieldInfo)fieldInfo, xmlFile.get());
                     break;
                 case AUTHENTIC_LANG:
-                    metadataService.processAuthenticLanguages((ListFieldInfo)fieldInfo, xmlFile);
+                    metadataService.processAuthenticLanguages((ListFieldInfo)fieldInfo, xmlFile.get());
                     break;
                 default:
                     throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
