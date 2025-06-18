@@ -51,7 +51,7 @@ public class HazelcastCacheConfig {
         joinConfig.getAwsConfig().setEnabled(false);
         joinConfig.getKubernetesConfig().setEnabled(false);
 
-        // Configure individual caches based on your EhCache configuration
+        // Configure individual caches based on old EhCache configuration
         configureUserCaches(config);
         configureTocCaches(config);
         configureDocumentCaches(config);
@@ -210,8 +210,8 @@ public class HazelcastCacheConfig {
         coEditionCache.setBackupCount(1); // Number of backup copies
         coEditionCache.setAsyncBackupCount(1); // Async backup copies
 
-        // Add entry listeners for cache events (equivalent to EhCache event listeners)
-        // In Hazelcast 5.x, use constructor with local=false and includeValue=true
+        // Entry listeners for cache events (equivalent to EhCache event listeners)
+        // In Hazelcast 5.x, we use constructor with local=false and includeValue=true
         EntryListenerConfig listenerConfig = new EntryListenerConfig(
                 "eu.europa.ec.leos.services.coedition.cache.CoEditionCacheEntryListener",
                 false,  // local = false means listen to events from all cluster members
