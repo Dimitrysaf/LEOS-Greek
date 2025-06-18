@@ -104,6 +104,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       }
     } else {
       isMetadataAuthenticLang = 'FALSE';
+      this.authenticLang = [];
     }
 
     this.detailsService.updateProposalMetadata(
