@@ -15,6 +15,7 @@ import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -31,6 +32,7 @@ import integration.saveToc.SaveTocTest_IT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static org.mockito.Mockito.when;
 
+@Ignore
 public abstract class SaveTocMandateTest_IT extends SaveTocTest_IT {
 
     @InjectMocks

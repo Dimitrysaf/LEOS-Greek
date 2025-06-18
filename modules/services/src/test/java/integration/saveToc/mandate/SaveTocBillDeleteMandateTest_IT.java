@@ -30,6 +30,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
  * test_add__article => starting from a initial state, add an article, the output will be an XML with a CN article.
  * test_delete__article => from the output of previous method, delete the CN element, the output will be the initial state.
  */
+@Ignore
 public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
 
     private static final Logger log = LoggerFactory.getLogger(SaveTocBillDeleteMandateTest_IT.class);

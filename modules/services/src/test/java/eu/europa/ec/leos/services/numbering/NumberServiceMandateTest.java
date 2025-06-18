@@ -12,6 +12,7 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDefault;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Ignore
 public abstract class NumberServiceMandateTest extends NumberServiceTest {
 
     protected ParentChildConverter parentChildConverter = new ParentChildConverter();

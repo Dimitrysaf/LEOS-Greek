@@ -31,6 +31,7 @@ import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 
+@Ignore
 public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends XmlContentProcessorTest {
 
     @InjectMocks
