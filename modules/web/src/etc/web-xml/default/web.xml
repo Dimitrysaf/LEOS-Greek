@@ -54,7 +54,7 @@
     <!-- Milestone resource filters -->
     <filter>
         <filter-name>milestoneCssFilter</filter-name>
-        <filter-class>eu.europa.ec.leos.filter.MilestoneCssFilter</filter-class>
+        <filter-class>eu.europa.ec.leos.services.filter.MilestoneCssFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
 
@@ -131,7 +131,7 @@
     <!-- Leos CORS filter -->
     <filter>
         <filter-name>LeosCorsFilter</filter-name>
-        <filter-class>eu.europa.ec.leos.filter.LeosCorsFilter</filter-class>
+        <filter-class>eu.europa.ec.leos.services.filter.LeosCorsFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
 
@@ -145,7 +145,7 @@
     <!-- ForwardSlashFilter filter -->
     <filter>
         <filter-name>ForwardSlashFilter</filter-name>
-        <filter-class>eu.europa.ec.leos.filter.ForwardSlashFilter</filter-class>
+        <filter-class>eu.europa.ec.leos.services.filter.ForwardSlashFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
 
