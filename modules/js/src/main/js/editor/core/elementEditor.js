@@ -651,8 +651,9 @@ define(function elementEditorModule(require) {
         if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
             || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
             emptyElements.each(function(){
+                var isAknParagraph = ($(this).is("p") && $(this).attr("data-akn-name") == "aknParagraph");
                 var isSubparagraph = ($(this).is("p") && $(this).attr("data-akn-element") == "subparagraph");
-                if(!$(this).is("li,br") && !isSubparagraph ){
+                if(!$(this).is("li,br") && !isSubparagraph && !isAknParagraph){
                     isEmptyElementFound = true;
                 }
             })
