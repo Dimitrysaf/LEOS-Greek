@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.processor.node;
 
+import java.util.List;
 import java.util.Map;
 
 public interface XmlNodeProcessor {
@@ -51,4 +52,15 @@ public interface XmlNodeProcessor {
      * @return map of keys with first value found in xml. if value if not found in xml, null is placed in map.
      */
     Map<String, String> getValuesFromXml(byte[] xmlContent, String[] keys, Map<String, XmlNodeConfig> configuration);
+
+
+    /**
+     * This method returns the map of values found for the key for the configuration.
+     * (Key->XPATH from config-> value from XML.)
+     * @param xmlContent original xml bytes
+     * @param keys of property to be read from Xml
+     * @return map of keys with all values found in xml. if value if not found in xml, null is placed in map.
+     */
+    Map<String, List<String>> getMultipleValuesFromXml(byte[] xmlContent, String[] keys, Map<String, XmlNodeConfig> config);
+
 }

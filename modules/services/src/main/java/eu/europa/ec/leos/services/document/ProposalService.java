@@ -117,4 +117,6 @@ public interface ProposalService {
 
     LeosDocument findConfigByName(String name);
 
+    Proposal populateProposalMetadataFromXml(Proposal proposal);
+
 }
