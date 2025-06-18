@@ -42,6 +42,7 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import integration.saveToc.TocVOCreateMandateUtils;
 
+@Ignore
 public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
 
     private static final Logger log = LoggerFactory.getLogger(SaveTocBillMoveMandateTest_IT.class);

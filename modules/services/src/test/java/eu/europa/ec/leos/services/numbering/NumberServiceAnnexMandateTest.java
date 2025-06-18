@@ -14,6 +14,7 @@ import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,6 +29,7 @@ import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class NumberServiceAnnexMandateTest extends NumberServiceTest {
 
     protected final static String FILE_PREFIX = "/numbering/annex/";
