@@ -48,6 +48,7 @@ export interface Metadata {
   title: string | null;
   index: string | null;
   number: string | null;
+  documentCollectionName: string;
 
 }
 //used in document-config.documentsmetadata

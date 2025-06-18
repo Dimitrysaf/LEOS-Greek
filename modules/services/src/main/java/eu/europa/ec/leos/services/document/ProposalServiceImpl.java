@@ -201,6 +201,15 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
     }
 
+    @Override
+    public Proposal populateProposalMetadataFromXml(Proposal proposal) {
+        Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(proposal.getContent().get().getSource().getBytes(),
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        proposal.getMetadata().get().setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
+        return proposal;
+    }
+
     protected byte[] updateDataInXml(final byte[] content, ProposalMetadata dataObject) {
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
         return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
