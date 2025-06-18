@@ -547,6 +547,7 @@ public abstract class ApiServiceImpl implements ApiService {
             proposal = this.proposalService.findProposalByRef(proposalRef);
             if (LOG.isTraceEnabled())
                 LOG.trace(proposal.toString());
+            proposal = proposalService.populateProposalMetadataFromXml(proposal);
         }
         if (proposal != null) {
             String proposalId = proposal.getId();
@@ -565,6 +566,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
                 legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
                 DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, favouritePackageResponse.isFavourite());
+                proposalVO.getMetadata().setDocumentCollectionName(proposal.getMetadata().get().getDocumentCollectionName());
                 proposalVO.setCreationOptions(documents.stream().filter(doc -> doc.getCategory().name().equals("PROPOSAL")).findFirst().get().getMetadata().get().getCreationOptions());
                 List<LinkedPackage> linkedPackageList = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
                 if (linkedPackageList != null && linkedPackageList.size() > 0) {

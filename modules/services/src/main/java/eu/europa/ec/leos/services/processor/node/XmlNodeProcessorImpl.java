@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
@@ -49,6 +51,29 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
                 if (node != null) {
                     String value = StringEscapeUtils.unescapeXml(node.getTextContent());
                     metaDataMap.put(key, value);
+                }
+            }
+        }
+        LOG.trace("{} Values retrieved from xml in ({} milliseconds)", metaDataMap.size(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        return metaDataMap;
+    }
+
+    @Override
+    public Map<String, List<String>> getMultipleValuesFromXml(byte[] xmlContent, String[] keys, Map<String, XmlNodeConfig> config) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Map<String, List<String>> metaDataMap = new HashMap<>();
+        Document document = createXercesDocument(xmlContent);
+        for (String key : keys) {
+            if (config.get(key) != null) {
+                NodeList nodes = XercesUtils.getElementsByXPath(document, config.get(key).xPath);
+                if (nodes != null) {
+                    List<String> values = new ArrayList<>();
+                    for (int i = 0; i < nodes.getLength(); i++) {
+                        Node node = nodes.item(i);
+                        values.add(StringEscapeUtils.unescapeXml(node.getTextContent()));
+                    }
+
+                    metaDataMap.put(key, values);
                 }
             }
         }
