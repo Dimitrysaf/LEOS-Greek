@@ -50,24 +50,53 @@
 
     <build>
         <plugins>
+<!--            <plugin>-->
+<!--                <groupId>nl.geodienstencentrum.maven</groupId>-->
+<!--                <artifactId>sass-maven-plugin</artifactId>-->
+<!--                <version>${sass-maven-plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>update-stylesheets</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <sassOptions>-->
+<!--                        <always_update>true</always_update>-->
+<!--                        <style>:expanded</style>-->
+<!--                        <sourcemap>:none</sourcemap>-->
+<!--                    </sassOptions>-->
+<!--                    <sassSourceDirectory>${basedir}/src/assets/scss</sassSourceDirectory>-->
+<!--                    <destination>${basedir}/src/assets/css</destination>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>io.github.cleydyr</groupId>
                 <artifactId>dart-sass-maven-plugin</artifactId>
                 <version>1.5.0</version>
+                <configuration>
+                    <cachedFilesDirectory>${project.basedir}/src/assets/dart-sass-cache</cachedFilesDirectory>
+                    <inputFolder>${basedir}/src/assets/scss</inputFolder>
+                    <outputFolder>${basedir}/src/assets/css</outputFolder>
+                    <style>EXPANDED</style>
+                    <version>1.89.2</version>
+                </configuration>
                 <executions>
                     <execution>
+                        <configuration>
+                            <cachedFilesDirectory>${project.basedir}/src/assets/dart-sass-cache</cachedFilesDirectory>
+                            <inputFolder>${basedir}/src/assets/scss</inputFolder>
+                            <outputFolder>${basedir}/src/assets/css</outputFolder>
+                            <style>EXPANDED</style>
+                            <version>1.89.2</version>
+                        </configuration>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>compile-sass</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <inputFolder>${basedir}/src/assets/scss</inputFolder>
-                    <outputFolder>${basedir}/src/assets/css</outputFolder>
-                    <style>EXPANDED</style>
-                    <version>1.89.2</version>
-                </configuration>
             </plugin>
             <!-- clean the dist directory used by Angular -->
             <plugin>
