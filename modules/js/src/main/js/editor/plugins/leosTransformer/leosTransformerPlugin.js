@@ -62,7 +62,7 @@ define(function leosTransformerPluginModule(require) {
     function _cleanElements(data) {
         var eventDataAsObject = $(data);
         var elementsToRemove =  eventDataAsObject
-            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph']")
+            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph'] ,p[data-akn-name='aknParagraph']")
             .find("*").addBack().filter(function() {
                 return UTILS.isEmptyElement(this);
             });
@@ -95,7 +95,8 @@ define(function leosTransformerPluginModule(require) {
         // if LI and it has attribute 'refersto', do not delete it
         var isPBeforeTable = $(elem).is('p') && $(elem).prev().is('table');
         var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
-        isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList;
+        var isParentBlockContainer = $(elem).parent().attr('data-akn-name')==="blockContainer";
+        isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList && !isParentBlockContainer;
         if (($(elem).parents('table').length === 0)
             && (!$(elem).attr("refersto") || $(elem).attr("refersto") === '~WRP')
             && !isPBeforeTable &&
