@@ -102,8 +102,6 @@ public abstract class CollectionContextService {
     private String versionComment;
     private String milestoneComment;
     protected boolean eeaRelevance;
-    protected String packageTitle;
-    protected List<String> authenticLang;
     private DocumentVO propDocument;
     private String propChildDocument;
     private String proposalComment;
@@ -196,16 +194,6 @@ public abstract class CollectionContextService {
     public void useEeaRelevance(boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
-    }
-
-    public void usePackageTitle(String packageTitle) {
-        LOG.trace("Using Proposal Package Title... [PackageTitle={}]", packageTitle);
-        this.packageTitle = packageTitle;
-    }
-
-    public void useAuthenticLang(List<String> authenticLang) {
-        LOG.trace("Using Proposal authenticLang... [authenticLang={}]", authenticLang);
-        this.authenticLang = authenticLang;
     }
 
     public void useTemplateKey(String templateKey) {
