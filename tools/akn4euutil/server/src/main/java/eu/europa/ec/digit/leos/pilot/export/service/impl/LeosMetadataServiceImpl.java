@@ -1,0 +1,428 @@
+/*
+ * Copyright 2021-2025 European Commission
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+package eu.europa.ec.digit.leos.pilot.export.service.impl;
+
+import eu.europa.ec.digit.leos.pilot.export.exception.LeosPrefinalisationException;
+import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
+import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
+import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
+import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
+import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ListFieldInfo;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.SimpleFieldInfo;
+import eu.europa.ec.digit.leos.pilot.export.service.LeosMetadataService;
+import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
+import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
+import eu.europa.ec.digit.leos.pilot.export.util.HttpUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
+import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.metadata.ApplyMetadataRequestConverter;
+import eu.europa.ec.digit.leos.pilot.export.util.metadata.ApplyMetadataResponseConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
+
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Validator;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.PROPOSAL_FILE_PREFIX;
+
+@Service
+class LeosMetadataServiceImpl implements LeosMetadataService {
+    private static final Logger LOG = LoggerFactory.getLogger(LeosMetadataServiceImpl.class);
+
+    private final MetadataService metadataService;
+    private final LeosPrefinalisationService prefinalisationService;
+
+    @Autowired
+    public LeosMetadataServiceImpl(final MetadataService metadataService, final LeosPrefinalisationService prefinalisationService) {
+        this.metadataService = metadataService;
+        this.prefinalisationService = prefinalisationService;
+    }
+
+    public byte[] applyMetadata(MultipartFile inputFile) {
+        ApplyMetadataRequest request = null;
+
+        try {
+            LOG.debug("Start applying meta data ...");
+            Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
+            request = readContentXml(zipContent);
+
+            Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, getFirstTaskDocument(request));
+            List<XmlFile> documentXmlFiles = readDocumentXmlFiles(documentZipContent);
+            Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
+
+            validateDocumentXmlFiles(documentXmlFiles);
+            String prefinalizedLegName = MetadataUtil.buildPrefinalizationLegName(request);
+            ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles);
+            return buildResponse(response, documentXmlFiles, documentFurtherContent, prefinalizedLegName);
+        }
+        catch(XmlValidationException ex) {
+            LOG.error("One or more xml files do not match the xml schema", ex);
+            return buildXmlValidationErrorResponse(request);
+        }
+        catch(Exception ex){
+            LOG.error("Error applying metadata", ex);
+            return buildErrorResponse(request);
+        }
+    }
+
+    public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
+        CompletableFuture.runAsync(ApplyMetadataRunnable.create(inputFile, callbackUrl, this));
+    }
+
+    private ApplyMetadataRequest readContentXml(Map<String, Object> zipContent) throws LeosPrefinalisationException {
+        byte[] contentXmlData = objectToByteArray(zipContent.get("content.xml"));
+
+        if (contentXmlData == null || contentXmlData.length == 0) {
+            throw new LeosPrefinalisationException("content.xml not found");
+        }
+
+        try {
+            InputStream xmlInputStream = new ByteArrayInputStream(contentXmlData);
+            XmlFile contentXmlFile = XmlUtil.parseXml(xmlInputStream, "content.xml");
+            ApplyMetadataRequest request = getRequestConverter().xmlFileToApplyMetadataRequest(contentXmlFile);
+            closeInputStream(xmlInputStream);
+            return request;
+        } catch (XmlUtilException e) {
+            throw new LeosPrefinalisationException("Error unzip document", e);
+        }
+    }
+
+    private Map<String, Object> readAndUnzipDocument(Map<String, Object> zipContent, ApplyMetadataRequest.DocumentNode document) throws LeosPrefinalisationException {
+        if (document == null) {
+            throw new LeosPrefinalisationException("Document not found");
+        }
+
+        byte[] documentZipData = objectToByteArray(zipContent.get(document.getFilename()));
+        if (documentZipData == null || documentZipData.length == 0) {
+            throw new LeosPrefinalisationException("Document file not found");
+        }
+
+        try {
+            Map<String, Object> documentZipContent = ZipUtil.unzipByteArray(documentZipData);
+            return documentZipContent;
+        } catch (IOException e) {
+            throw new LeosPrefinalisationException("Error unzip document", e);
+        }
+    }
+
+    private List<XmlFile> readDocumentXmlFiles(Map<String, Object> documentZipContent){
+        List<XmlFile> xmlDocuments = new ArrayList<>();
+        String[] contentNames = (String[]) documentZipContent.keySet().toArray(new String[0]);
+
+        for (String contentName : contentNames) {
+            if (!contentName.endsWith(".xml")) {
+                continue;
+            }
+            try {
+                byte[] documentZipBytes = objectToByteArray(documentZipContent.get(contentName));
+                XmlFile xmlFile = XmlUtil.parseXml(new ByteArrayInputStream(documentZipBytes), contentName);
+                if (MetadataUtil.isDocumentXmlFilename(contentName) || MetadataUtil.isDocumentXmlFile(xmlFile)) {
+                    xmlDocuments.add(xmlFile);
+                }
+            } catch(Exception e){
+                LOG.error("Error parsing xml document", e);
+            }
+        }
+
+        return xmlDocuments;
+    }
+
+    private Map<String, Object> readFurtherDocumentContent(Map<String, Object> documentZipContent){
+        Map<String, Object> furtherContent = new HashMap<>();
+        String[] contentNames = (String[]) documentZipContent.keySet().toArray(new String[0]);
+
+        for (String contentName : contentNames) {
+            if (MetadataUtil.isDocumentXmlFilename(contentName)) {
+                continue;
+            }
+            try {
+                furtherContent.put(contentName, documentZipContent.get(contentName));
+            } catch(Exception e){
+                LOG.error("Error parsing xml document", e);
+            }
+        }
+
+        return furtherContent;
+    }
+
+    private void validateDocumentXmlFiles(List<XmlFile> xmlFiles) throws XmlValidationException {
+        Validator schemaValidator = XmlUtil.getAknSchemaValidator();
+        for (XmlFile xmlFile : xmlFiles) {
+            ByteArrayInputStream inputStream = null;
+            try {
+                inputStream = new ByteArrayInputStream(xmlFile.getBytes());
+                schemaValidator.validate(new StreamSource(inputStream));
+            } catch (XmlUtilException ex) {
+                LOG.error("Error reading xml file", ex);
+                throw new XmlValidationException("Error reading xml file", ex);
+            } catch (IOException | SAXException ex) {
+                LOG.error("Error validate xml file '" + xmlFile.getName() + "'", ex);
+                throw new XmlValidationException("Error validate xml file '" + xmlFile.getName() + "'", ex);
+            } finally {
+                closeInputStream(inputStream);
+            }
+        }
+    }
+
+    private ApplyMetadataResponse processApplyMetadataRequest(ApplyMetadataRequest request, List<XmlFile> documentXmlFiles) {
+        List<ApplyMetadataResponse.TaskNode> taskResponses = new ArrayList<>();
+        if (request.getTasks() != null) {
+            for (ApplyMetadataRequest.TaskNode task : request.getTasks()) {
+                taskResponses.add(processApplyMetadataRequestTask(task, documentXmlFiles));
+            }
+        }
+
+        final ApplyMetadataResponse.StatusNode successResult = isContainsTaskResponseWithErrors(taskResponses)
+                ? getResponseConverter().getErrorStatusResult() : getResponseConverter().getSuccessStatusResult();
+        return new ApplyMetadataResponse(request.getRequestId(), taskResponses, successResult);
+    }
+
+    private ApplyMetadataResponse.TaskNode processApplyMetadataRequestTask(ApplyMetadataRequest.TaskNode task, List<XmlFile> documentXmlFiles) {
+        List<ApplyMetadataResponse.ActionNode> actionResponses = new ArrayList<>();
+        for (ApplyMetadataRequest.ActionNode action : task.getActions()){
+            actionResponses.add(processApplyMetadataRequestAction(action, documentXmlFiles));
+        }
+
+        final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
+        return new ApplyMetadataResponse.TaskNode(task.getTaskId(), statusCode, actionResponses,
+                getResponseConverter().applyMetadataRequestDocumentToResultDocument(task.getDocument()),
+                getResponseConverter().getValidationSuccessResult("XMLValidationCheck"));
+    }
+
+    private ApplyMetadataResponse.ActionNode processApplyMetadataRequestAction(ApplyMetadataRequest.ActionNode action, List<XmlFile> documentXmlFiles){
+        List<ApplyMetadataResponse.FieldNode> fieldResponses = new ArrayList<>();
+        for (ApplyMetadataRequest.FieldNode field : action.getFields()){
+            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles));
+        }
+        if (!hasLinkedDocumentsField(action)) {
+            // Remove associatedReferences container if no linkedDocuments are set
+            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles);
+        }
+        return new ApplyMetadataResponse.ActionNode(action.getName(), fieldResponses);
+    }
+
+    private boolean hasLinkedDocumentsField(ApplyMetadataRequest.ActionNode action) {
+        return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
+    }
+
+    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles){
+        try {
+            MetadataFieldInfo fieldInfo = metadataService.lookupFieldInfo(field);
+            if (MetadataUtil.isPrefinalisationField(fieldInfo.getFieldType())) {
+                prefinalisationService.processMetadataFieldInfo(fieldInfo, documentXmlFiles);
+            } else {
+                processMetadataFieldInfo(fieldInfo, documentXmlFiles);
+            }
+            return metadataService.getLookupFieldInfoSuccessResult(field);
+        } catch(MetadataUtilsException e) {
+            LOG.error("Lookup field info failed: {}", e);
+            return metadataService.getLookupFieldInfoErrorResult(field, e);
+        }
+    }
+
+    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles) throws MetadataUtilsException {
+        LOG.debug("Process field info  '{}'", fieldInfo);
+
+        final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
+        Optional<XmlFile> xmlFile = documentXmlFiles.stream().filter(f -> f.getName().startsWith(PROPOSAL_FILE_PREFIX)).findAny();
+        if (xmlFile.isPresent()){
+            LOG.debug("Process xml file '{}'", xmlFile.get().getName());
+            switch(fieldInfo.getFieldType()){
+                case PACKAGE_TITLE:
+                    metadataService.processPackageTitle((SimpleFieldInfo)fieldInfo, xmlFile.get());
+                    break;
+                case INTERNAL_REF:
+                    metadataService.processInternalRef((SimpleFieldInfo)fieldInfo, xmlFile.get());
+                    break;
+                case AUTHENTIC_LANG:
+                    metadataService.processAuthenticLanguages((ListFieldInfo)fieldInfo, xmlFile.get());
+                    break;
+                default:
+                    throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
+            }
+        }
+    }
+
+    private boolean isContainsActionResponseWithErrors(List<ApplyMetadataResponse.ActionNode> actions){
+        return (actions != null) &&  (actions.stream()
+                .filter(action -> isContainsFieldResponseWithErrors(action.getFields())).count() > 0);
+    }
+
+    private boolean isContainsFieldResponseWithErrors(List<ApplyMetadataResponse.FieldNode> fields){
+        return (fields != null) && (fields.stream().filter(field -> field.getStatusCode().equals("1")).count() > 0);
+    }
+
+    private boolean isContainsTaskResponseWithErrors(List<ApplyMetadataResponse.TaskNode> tasks){
+        return (tasks != null) &&  (tasks.stream().filter(task -> task.getStatusCode().equals("1")).count() > 0);
+    }
+
+    private byte[] buildResponse(ApplyMetadataResponse response,
+                                 List<XmlFile> documentXmlFiles,
+                                 Map<String, Object> documentFurtherContent,
+                                 String prefinalizedLegName){
+        try {
+            Map<String, Object> responseContent = new HashMap<>();
+            XmlFile xmlResponse = getResponseConverter().applyMetadataResponseToXmlFile(response);
+            responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
+            responseContent.put(prefinalizedLegName, buildResponseLegFile(documentXmlFiles, documentFurtherContent));
+            return ZipUtil.zipByteArray(responseContent);
+        } catch(Exception e) {
+            LOG.error("Error building response {}", e);
+            return null;
+        }
+    }
+
+    private byte[] buildResponseLegFile(List<XmlFile> xmlDocuments, Map<String, Object> documentFurtherContent){
+        try {
+            Map<String, Object> legFileContent = new HashMap<>();
+
+            for (XmlFile xmlDocument : xmlDocuments) {
+                legFileContent.put(xmlDocument.getName(), xmlDocument.getBytes());
+            }
+            legFileContent.putAll(documentFurtherContent);
+
+            return ZipUtil.zipByteArray(legFileContent);
+        } catch(Exception e) {
+            LOG.error("Error building response leg file {}", e);
+            return new byte[0];
+        }
+    }
+
+    private byte[] buildXmlValidationErrorResponse(ApplyMetadataRequest request) {
+        if (request.getTasks() != null) {
+            try {
+                final ApplyMetadataResponseConverter responseConverter = getResponseConverter();
+                ApplyMetadataResponse response = responseConverter.getApplyMetadataResponseWithXmlValidationError(request);
+                Map<String, Object> responseContent = new HashMap<>();
+                XmlFile xmlResponse = responseConverter.applyMetadataResponseToXmlFile(response);
+                responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
+                return ZipUtil.zipByteArray(responseContent);
+            } catch(Exception e) {
+                LOG.error("Error building xml validation error response {}", e);
+            }
+        }
+        return buildErrorResponse(request);
+    }
+
+    private byte[] buildErrorResponse(ApplyMetadataRequest request){
+        try {
+            final ApplyMetadataResponseConverter responseConverter = getResponseConverter();
+            ApplyMetadataResponse response = responseConverter.getApplyMetadataResponseWithErrorStatus(request);
+            Map<String, Object> responseContent = new HashMap<>();
+            XmlFile xmlResponse = responseConverter.applyMetadataResponseToXmlFile(response);
+            responseContent.put(xmlResponse.getName(), xmlResponse.getBytes());
+            return ZipUtil.zipByteArray(responseContent);
+        } catch(Exception e) {
+            LOG.error("Error building error response {}", e);
+            return new byte[0];
+        }
+    }
+
+    private void closeInputStream(InputStream inputStream) {
+        try {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        } catch(Exception e){
+            LOG.error("Error closing Stream", e);
+        }
+    }
+
+    private byte[] objectToByteArray(Object obj){
+        if (obj != null && obj instanceof byte[]) {
+            return (byte[]) obj;
+        }
+        return null;
+    }
+
+    private ApplyMetadataRequest.DocumentNode getFirstTaskDocument(ApplyMetadataRequest request) {
+        return request.getTasks()
+                .stream()
+                .findFirst()
+                .map((task) -> task.getDocument())
+                .orElseGet(null);
+    }
+
+    private ApplyMetadataResponse.DocumentNode getFirstTaskDocument(ApplyMetadataResponse response) {
+        return response.getTasks()
+                .stream()
+                .findFirst()
+                .map((task) -> task.getDocument())
+                .orElseGet(null);
+    }
+
+    private ApplyMetadataResponseConverter getResponseConverter() {
+        return ApplyMetadataResponseConverter.newInstance();
+    }
+
+    private ApplyMetadataRequestConverter getRequestConverter() {
+        return ApplyMetadataRequestConverter.newInstance();
+    }
+
+    public static class ApplyMetadataRunnable implements Runnable {
+        private final LeosMetadataService leosMetadataService;
+        private final String callbackUrl;
+        private final MultipartFile inputFile;
+
+        public ApplyMetadataRunnable(MultipartFile inputFile, String callbackUrl, LeosMetadataService leosMetadataService) {
+            this.leosMetadataService = leosMetadataService;
+            this.inputFile = inputFile;
+            this.callbackUrl = callbackUrl;
+        }
+
+        @Override
+        public void run() {
+            LOG.debug("Start apply metadata async ...");
+            final byte[] content = this.leosMetadataService.applyMetadata(this.inputFile);
+
+            final HttpUtil.HttpClient httpClient = HttpUtil.createHttpClient();
+            final Map<String,String> requestHeaders = new HashMap<>();
+            requestHeaders.put("Content-Type", ZipUtil.APPLICATION_ZIP_VALUE);
+
+            HttpUtil.HttpResponse httpResponse = null;
+            try {
+                LOG.debug("Send ZIP to callback url ...");
+                httpResponse = httpClient.doPost(this.callbackUrl, new HashMap<>(), requestHeaders, content);
+            } catch(HttpUtil.HttpClientRequestException ex) {
+                LOG.debug("Error sending ZIP to callback url [callbackUrl: {} / statusCode: {} / message: {}]", this.callbackUrl,
+                        (httpResponse != null) ? httpResponse.getStatusCode() : "unknown",
+                        (httpResponse != null) ? httpResponse.getStatusText() : "unknown", ex);
+            } catch(Exception ex) {
+                LOG.error("Error sending ZIP to callback url [callbackUrl: {}]", this.callbackUrl, ex);
+            }
+        }
+
+        public static Runnable create(MultipartFile inputFile, String callbackUrl, LeosMetadataService leosMetadataService) {
+            return new ApplyMetadataRunnable(inputFile, callbackUrl, leosMetadataService);
+        }
+    }
+}

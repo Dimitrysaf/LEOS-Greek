@@ -5,6 +5,8 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import java.util.List;
 
 public final class ProposalMetadata extends LeosMetadata {
+    private String internalRef;
+    private LeosAuthenticLanguage isAuthenticLang;
 
     public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance) {
         super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance);
@@ -30,6 +32,9 @@ public final class ProposalMetadata extends LeosMetadata {
         private boolean eeaRelevance;
         private String packageTitle;
         private List<String> authenticLang;
+        private LeosAuthenticLanguage isAuthenticLang;
+        private String internalRef;
+
         private ProposalMetadataBuilder() {
         }
         private  ProposalMetadataBuilder(ProposalMetadata metadata) {
@@ -46,6 +51,9 @@ public final class ProposalMetadata extends LeosMetadata {
             this.packageTitle = metadata.packageTitle;
             this.authenticLang = metadata.authenticLang;
             this.procedureType = metadata.getProcedureType();
+            this.packageTitle = metadata.packageTitle;
+            this.internalRef = metadata.internalRef;
+            this.isAuthenticLang = metadata.isAuthenticLang;
             this.actType = metadata.getActType();
         }
         public ProposalMetadataBuilder withStage(String stage) {
@@ -99,12 +107,21 @@ public final class ProposalMetadata extends LeosMetadata {
             return this;
         }
 
+        public ProposalMetadataBuilder withIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
+            this.isAuthenticLang = isAuthenticLang;
+            return this;
+        }
+
         public ProposalMetadataBuilder withProcedureType(String procedureType) {
             this.procedureType = procedureType;
             return this;
         }
         public ProposalMetadataBuilder withActType(String actType) {
             this.actType = actType;
+            return this;
+        }
+        public ProposalMetadataBuilder withInternalRef(String internalRef) {
+            this.internalRef = internalRef;
             return this;
         }
 
@@ -114,7 +131,43 @@ public final class ProposalMetadata extends LeosMetadata {
                 this.docVersion, this.eeaRelevance);
             metadata.setProcedureType(procedureType);
             metadata.setActType(actType);
+            metadata.setPackageTitle(packageTitle);
+            metadata.setInternalRef(internalRef);
+            metadata.setAuthenticLang(authenticLang);
+            metadata.setIsAuthenticLang(isAuthenticLang);
             return metadata;
         }
+    }
+
+    public List<String> getAuthenticLang() {
+        return authenticLang;
+    }
+
+    public void setAuthenticLang(List<String> authenticLanguages) {
+        this.authenticLang = authenticLanguages;
+    }
+
+    public LeosAuthenticLanguage getIsAuthenticLang() {
+        return isAuthenticLang;
+    }
+
+    public void setIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
+        this.isAuthenticLang = isAuthenticLang;
+    }
+
+    public String getPackageTitle() {
+        return packageTitle;
+    }
+
+    public void setPackageTitle(String packageTitle) {
+        this.packageTitle = packageTitle;
+    }
+
+    public String getInternalRef() {
+        return internalRef;
+    }
+
+    public void setInternalRef(String internalRef) {
+        this.internalRef = internalRef;
     }
 }

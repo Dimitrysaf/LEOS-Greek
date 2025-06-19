@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {Document, Permission} from '@leos/shared';
+import {Document, ProcedureType, Permission, AuthenticLanguage} from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
 
@@ -17,11 +17,13 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   isAuthenticLang: boolean;
   packageTitle: string;
   authenticLang: string[];
+  proposal_language: string;
+  isAutononousAct: boolean;
   destroy$: Subject<any> = new Subject();
-
 
   allSelected = false;
 
+  //TODO To be moved to the backend configuration
   languages = ['BG', 'CS', 'DA', 'DE', 'EL', 'EN', 'ES', 'ET', 'FI', 'FR','GA', 'HR', 'HU', 'IT', 'LT', 'LV',
     'MT', 'NL', 'PL', 'PT','RO', 'SK', 'SL', 'SV'];
 
@@ -33,11 +35,38 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       .subscribe((perms) => (this.permissions = perms));
     this.languages.forEach(lang => this.selectedLanguages[lang] = false);
   }
+
   ngOnInit(): void {
-    this.eeaRelevance = this.proposal.metadata.eeaRelevance;
     this.languages.forEach(lang => {
       this.selectedLanguages[lang] = false;
     });
+
+    this.eeaRelevance = this.proposal.metadata.eeaRelevance;
+    this.packageTitle = this.proposal.metadata.packageTitle;
+    this.authenticLang = this.proposal.metadata.authenticLang;
+    this.isAutononousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
+
+    this.proposal_language = this.proposal.metadata.language;
+    if (this.proposal.metadata.isAuthenticLang != null) {
+      if (this.proposal.metadata.isAuthenticLang.includes("PROPOSAL_LANGUAGE")) {
+        this.isAuthenticLang = true;
+      } else if (this.proposal.metadata.isAuthenticLang == 'ALL') {
+        this.isAuthenticLang = true;
+        this.allSelected = true;
+        this.languages.forEach(lang => {
+          this.selectedLanguages[lang] = true;
+        });
+      }
+    }
+
+    if (this.isAuthenticLang) {
+      this.authenticLang.forEach(lang => {
+        if (this.proposal.metadata.isAuthenticLang == "PROPOSAL_LANGUAGE"
+          || this.proposal_language.toUpperCase() != lang.toUpperCase()) {
+          this.selectedLanguages[lang.toUpperCase()] = true
+        }
+      });
+    }
   }
 
   handleEEAChange(e: boolean) {
@@ -45,7 +74,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   handleAuthLangChange(e: boolean) {
-    //this.eeaRelevanceChanged.emit(e);
+    if (!e) {
+      this.languages.forEach(lang => {
+        this.selectedLanguages[lang] = false;
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -54,16 +87,31 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   saveGeneralDetails() {
-
-    if(this.isAuthenticLang) {
+    let isMetadataAuthenticLang : AuthenticLanguage;
+    if (this.isAuthenticLang) {
       this.authenticLang = Object.keys(this.selectedLanguages)
-        .filter(lang => this.selectedLanguages[lang]);
+        .filter(lang => this.selectedLanguages[lang]).map(lang => lang.toLowerCase());
+
+      if (this.authenticLang.includes(this.proposal_language.toLowerCase())) {
+        isMetadataAuthenticLang = 'PROPOSAL_LANGUAGE';
+      } else {
+        isMetadataAuthenticLang = 'NON_PROPOSAL_LANGUAGE';
+      }
+
+      if (this.authenticLang.length == this.languages.length) {
+        this.authenticLang = [];
+        isMetadataAuthenticLang = 'ALL';
+      }
+    } else {
+      isMetadataAuthenticLang = 'FALSE';
+      this.authenticLang = [];
     }
 
     this.detailsService.updateProposalMetadata(
       this.proposal.metadata.docPurpose,
       this.eeaRelevance,
       this.packageTitle,
+      isMetadataAuthenticLang,
       this.authenticLang,
     );
   }
@@ -89,7 +137,4 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   decrease() {
     this.quantity = Math.round((this.quantity - 0.1) * 10) / 10;
   }
-
-
-
 }

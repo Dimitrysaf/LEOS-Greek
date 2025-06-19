@@ -23,7 +23,11 @@ import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
+import eu.europa.ec.leos.services.export.LegPackage;
+import eu.europa.ec.leos.services.metadata.MetadataOptions;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
@@ -119,4 +123,11 @@ public interface ProposalService {
 
     LeosDocument findConfigByName(String name);
 
+    DocumentVO applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception;
+
+    MetadataOptions convertUpdateProposalRequestToMetadataOptions(String legFileName, Proposal proposal, UpdateProposalRequest request);
+
+    Proposal populateProposalMetadataFromXml(Proposal proposal);
+
+    MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, MetadataVO metadataVO);
 }

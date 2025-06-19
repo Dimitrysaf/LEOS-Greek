@@ -50,7 +50,6 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
                 Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "container"),
                 new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "p")),
             true, "//akn:coverPage/akn:container[@name='eeaRelevance']"));
-
         proposalConfigMap.putAll(coverPageConfig);
 
         final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();

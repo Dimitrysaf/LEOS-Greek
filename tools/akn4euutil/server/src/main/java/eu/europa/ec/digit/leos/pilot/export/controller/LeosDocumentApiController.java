@@ -83,7 +83,7 @@ public class LeosDocumentApiController {
 
     @RequestMapping(value = "/applyMetadata", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile) {
+    public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile) {
         try {
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
             return buildValidZipResponse(documentOutput);

@@ -57,6 +57,13 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();
         proposalConfigMap.putAll(otherConfig);
 
+        proposalConfigMap.put(PROPOSAL_PACKAGE_TITLE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='packageTitle']/akn:p", false,
+                Collections.emptyList()));
+        proposalConfigMap.put(PROPOSAL_INTERNAL_REFERENCE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='internalRef']/akn:p", false,
+                Collections.emptyList()));
+        proposalConfigMap.put(PROPOSAL_AUTHENTIC_LANGUAGES, new XmlNodeConfig("//akn:meta/akn:references/akn:TLCReference[@name='language']/@showAs", false,
+                Collections.emptyList()));
+
         return proposalConfigMap;
     }
 

@@ -24,6 +24,7 @@ import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
@@ -104,6 +105,7 @@ public abstract class CollectionContextService {
     protected boolean eeaRelevance;
     protected String packageTitle;
     protected List<String> authenticLang;
+    protected LeosAuthenticLanguage isAuthenticLang;
     private DocumentVO propDocument;
     private String propChildDocument;
     private String proposalComment;
@@ -206,6 +208,11 @@ public abstract class CollectionContextService {
     public void useAuthenticLang(List<String> authenticLang) {
         LOG.trace("Using Proposal authenticLang... [authenticLang={}]", authenticLang);
         this.authenticLang = authenticLang;
+    }
+
+    public void useIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
+        LOG.trace("Using Proposal authenticLang... [isAuthenticLang={}]", isAuthenticLang);
+        this.isAuthenticLang = isAuthenticLang;
     }
 
     public void useTemplateKey(String templateKey) {
@@ -587,6 +594,7 @@ public abstract class CollectionContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
+                .withIsAuthenticLang(isAuthenticLang)
                 .build();
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);

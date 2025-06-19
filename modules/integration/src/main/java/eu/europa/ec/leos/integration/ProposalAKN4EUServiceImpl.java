@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.util.Arrays;
 
 @Service
 @Instance(InstanceType.COMMISSION)
@@ -34,6 +35,9 @@ public class ProposalAKN4EUServiceImpl implements AKN4EUService {
 
     @Value("#{integrationProperties['leos.akn4eu.convert.uri']}")
     private String convertUri;
+
+    @Value("#{integrationProperties['leos.akn4eu.apply.metadata.uri']}")
+    private String applyMetadataUri;
 
     @Override
     public void convert(File legFile, User user, String outputDescriptor) throws Exception {
@@ -57,6 +61,33 @@ public class ProposalAKN4EUServiceImpl implements AKN4EUService {
 
             LOG.error("Not successfull conversion using the external service Akn4EU");
             throw new IllegalStateException("Not successfull conversion using the external service Akn4EU");
+
+        } catch(Exception e){
+            throw new Exception("Exception while calling external service Akn4EU", e);
+        }
+    }
+
+    @Override
+    public byte[] applyMetadata(File legFile) throws Exception {
+        Validate.notNull(legFile, "legFile must not be null!");
+        try {
+            String uri = akn4euUrl + applyMetadataUri;
+
+            MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+            map.add("inputFile", new FileSystemResource(legFile));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+            ResponseEntity<byte[]> response = restTemplate.postForEntity(uri, requestEntity, byte[].class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return (byte[]) response.getBody();
+            }
+
+            LOG.error("Not successfull apply metadata using the external service Akn4EU");
+            throw new IllegalStateException("Not successfull apply metadata using the external service Akn4EU");
 
         } catch(Exception e){
             throw new Exception("Exception while calling external service Akn4EU", e);

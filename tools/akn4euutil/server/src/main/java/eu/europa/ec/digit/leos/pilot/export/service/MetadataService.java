@@ -16,9 +16,11 @@ package eu.europa.ec.digit.leos.pilot.export.service;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ListFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.SimpleFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 
 public interface MetadataService {
@@ -34,4 +36,7 @@ public interface MetadataService {
     void processAdoptionLocation(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processInternalRef(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processAuthenticLanguages(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 }

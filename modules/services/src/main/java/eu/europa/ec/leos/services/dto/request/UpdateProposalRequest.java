@@ -1,13 +1,17 @@
 package eu.europa.ec.leos.services.dto.request;
 
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
+
 import java.util.List;
 
 public class UpdateProposalRequest {
 
     private String docPurpose;
     private Boolean eeaRelevance;
-    private List<String> authenticLang;
     private String packageTitle;
+    private String internalRef;
+    private LeosAuthenticLanguage isAuthenticLang;
+    private List<String> authenticLang;
 
     public String getDocPurpose() {
         return docPurpose;
@@ -17,6 +21,18 @@ public class UpdateProposalRequest {
         return eeaRelevance;
     }
 
+    public String getPackageTitle() {
+        return packageTitle;
+    }
+
+    public LeosAuthenticLanguage getIsAuthenticLang() {
+        return isAuthenticLang;
+    }
+
+    public String getInternalRef() { return internalRef; }
+
+    public List<String> getAuthenticLang() { return authenticLang; }
+
     public void setDocPurpose(String docPurpose) {
         this.docPurpose = docPurpose;
     }
@@ -25,21 +41,19 @@ public class UpdateProposalRequest {
         this.eeaRelevance = eeaRelevance;
     }
 
-    public List<String> getAuthenticLang() {
-        return authenticLang;
-    }
-
     public void setAuthenticLang(List<String> authenticLang) {
         this.authenticLang = authenticLang;
     }
 
-    public String getPackageTitle() {
-        return packageTitle;
+    public void setIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
+        this.isAuthenticLang = isAuthenticLang;
     }
 
     public void setPackageTitle(String packageTitle) {
         this.packageTitle = packageTitle;
     }
+
+    public void setInternalRef(String internalRef) { this.internalRef = internalRef; }
 
     @Override
     public String toString() {

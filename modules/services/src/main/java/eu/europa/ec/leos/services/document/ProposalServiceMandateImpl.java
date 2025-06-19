@@ -25,6 +25,7 @@ import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
+import eu.europa.ec.leos.services.metadata.MetadataService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -59,13 +60,13 @@ public class ProposalServiceMandateImpl extends ProposalServiceImpl {
                                       SecurityContext securityContext,
                                       WorkflowCollaboratorService workflowCollaboratorService,
                                       ExternalSystemACLService externalSystemACLService,
-                                      PackageService packageService) {
+                                      PackageService packageService, MetadataService metadataService) {
         super(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository,
                 xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext,
                 securityContext,
                 workflowCollaboratorService,
                 externalSystemACLService,
-                packageService);
+                packageService, metadataService);
     }
 
     @Override

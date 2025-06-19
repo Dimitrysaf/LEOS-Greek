@@ -13,13 +13,9 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.service;
 
-import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
-import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
-import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
-public interface LeosPrefinalisationService {
-    void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlUtil.XmlFile> documentXmlFiles) throws MetadataUtilsException;
+public interface LeosMetadataService {
+    byte[] applyMetadata(MultipartFile inputFile);
+    void applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
 }
