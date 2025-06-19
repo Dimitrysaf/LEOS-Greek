@@ -103,16 +103,14 @@ define(function leosUtilsModule(require) {
             }
             return true;
         }
-        function _containsOnlyDeletedOrEmptyElts(element) {
+        function _containsOnlyEmptyElts(element) {
             if (element.childNodes.length > 0) {
                 for (var j = 0; j < element.childNodes.length; j++) {
                     if (element.childNodes[j].nodeType === Node.TEXT_NODE) {
                         if (element.childNodes[0].textContent.trim() !== '') {
                             return false;
                         }
-                    } else if (element.childNodes[j].tagName !== LINE_BREAK_TAG && !(element.childNodes[j].tagName === 'SPAN'
-                        && element.childNodes[j].hasAttribute('data-akn-action')
-                        && element.childNodes[j].getAttribute('data-akn-action') === 'delete')) {
+                    } else if (element.childNodes[j].tagName !== LINE_BREAK_TAG) {
                         return false;
                     }
                 }
@@ -149,7 +147,7 @@ define(function leosUtilsModule(require) {
                     return el.children.length === 0 || _containsOnlyChildrenOf(el, childElementsToBeChecked);
                 }
             }
-            if (_containsOnlyDeletedOrEmptyElts(el)) {
+            if (_containsOnlyEmptyElts(el)) {
                 return true;
             }
         }
@@ -423,6 +421,20 @@ define(function leosUtilsModule(require) {
         }).remove();
     }
 
+    function _getHtmlDocFromMatch(tcElement, regex, editor) {
+        const matches = tcElement.$.innerHTML.match(regex);
+        if (matches) {
+            tcElement.$.innerHTML = matches.join('');
+        }
+        var data = {
+            dataValue: tcElement.$.innerHTML,
+            filter: editor.filter
+        }
+        var transformedFragment = editor.fire('toHtml', data);
+
+        return new DOMParser().parseFromString(transformedFragment.dataValue, 'text/html');
+    }
+
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
@@ -440,6 +452,7 @@ define(function leosUtilsModule(require) {
         getElementPosition: _getElementPosition,
         isMouseOutsideEditor: _isMouseOutsideEditor,
         removeZeroWidthSpaces: _removeZeroWidthSpaces,
+        getHtmlDocFromMatch: _getHtmlDocFromMatch,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE,
         KEYS: KEYS,
         PARAGRAPH: PARAGRAPH,
