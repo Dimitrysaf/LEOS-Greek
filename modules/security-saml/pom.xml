@@ -27,10 +27,9 @@
     <properties>
         <!-- Spring SAML2 extensions -->
         <spring-security-extensions-saml2.version>1.0.9.RELEASE</spring-security-extensions-saml2.version>
-        <commons-codec.version>1.10</commons-codec.version>
+        <commons-codec.version>1.15</commons-codec.version>
         <xml-sec.version>1.5.8</xml-sec.version>
         <xml-apis.version>1.4.01</xml-apis.version>
-        <bouncycastle-bcprov.version>1.55</bouncycastle-bcprov.version>
     </properties>
 
     <dependencies>
@@ -120,17 +119,14 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>${bouncycastle-bcprov.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-ext-jdk15on</artifactId>
-            <version>${bouncycastle-bcprov.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>${bouncycastle-bcprov.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
