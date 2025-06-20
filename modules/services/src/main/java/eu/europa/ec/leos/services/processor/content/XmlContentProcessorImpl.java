@@ -35,6 +35,7 @@ import eu.europa.ec.leos.services.support.EditableAttributeValue;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
@@ -429,9 +430,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public String getAttributeValueByXpath(byte[] xmlContent, String xPath, String attrName) {
+    public Node getElementByXpath(byte[] xmlContent, String xPath) {
         Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getFirstElementByXPath(document, xPath);
+        return XercesUtils.getFirstElementByXPath(document, xPath);
+    }
+
+    @Override
+    public String getAttributeValueByXpath(byte[] xmlContent, String xPath, String attrName) {
+        Node node = getElementByXpath(xmlContent, xPath);
         String docType = null;
         if (node != null) {
             docType = getAttributeValue(node, attrName);
@@ -2983,38 +2989,34 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public LeosCategory identifyCategory(String docName, byte[] xmlContent) {
+    public LeosCategory identifyCategory(byte[] xmlContent) {
         LeosCategory category = null;
         String xPath = xPathCatalog.getXPathAkomaNtosoFirstChild();
-        String docNameAttr = getAttributeValueByXpath(xmlContent, xPath, XML_NAME);
-        if (docNameAttr != null) {
-            switch (docNameAttr) {
-                case ANNEX_FILE_PREFIX:
-                    category = LeosCategory.ANNEX;
-                    break;
-                case REG_FILE_PREFIX:
-                case DIR_FILE_PREFIX:
-                case DEC_FILE_PREFIX:
-                case ACT_AUTO_REG_FILE_PREFIX:
-                case ACT_AUTO_DIR_FILE_PREFIX:
-                case ACT_AUTO_DEC_FILE_PREFIX:
-                    category = LeosCategory.BILL;
-                    break;
-                case MEMORANDUM_FILE_PREFIX:
-                    category = LeosCategory.MEMORANDUM;
-                    break;
-                case COUNCIL_EXPLANATORY:
-                    category = LeosCategory.COUNCIL_EXPLANATORY;
-                    break;
-                case PROP_ACT:
-                case AUTONOMOUS_ACT:
-                    category = LeosCategory.PROPOSAL;
-                    break;
-                case STAT_DIGIT_FINANC_LEGIS:
-                    category = LeosCategory.STAT_DIGIT_FINANC_LEGIS;
-                    break;
-                default:
-                    category = LeosCategory.MEDIA;
+        Node node = getElementByXpath(xmlContent, xPath);
+        if (XmlHelper.BILL.equals(node.getNodeName())) {
+            category = LeosCategory.BILL;
+        } else {
+            String docNameAttr = getAttributeValue(node, XML_NAME);
+            if (docNameAttr != null) {
+                switch (docNameAttr) {
+                    case ANNEX_FILE_PREFIX:
+                        category = LeosCategory.ANNEX;
+                        break;
+                    case MEMORANDUM_FILE_PREFIX:
+                        category = LeosCategory.MEMORANDUM;
+                        break;
+                    case COUNCIL_EXPLANATORY:
+                        category = LeosCategory.COUNCIL_EXPLANATORY;
+                        break;
+                    case PROP_ACT:
+                        category = LeosCategory.PROPOSAL;
+                        break;
+                    case STAT_DIGIT_FINANC_LEGIS:
+                        category = LeosCategory.STAT_DIGIT_FINANC_LEGIS;
+                        break;
+                    default:
+                        category = LeosCategory.MEDIA;
+                }
             }
         }
         return category;
