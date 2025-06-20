@@ -1359,8 +1359,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     }
                 } else {
                     tocFile = contentFileName + TOC_JS;
-                    LeosCategory category = xmlContentProcessor.identifyCategory(key,
-                            xmlContent.getBytes(StandardCharsets.UTF_8));
+                    LeosCategory category = xmlContentProcessor.identifyCategory(xmlContent.getBytes(StandardCharsets.UTF_8));
                     milestoneView.setLeosCategory(category);
                     if (category.equals(LeosCategory.ANNEX)) {
                         milestoneView.setOrder(annexKeyMap.get(contentFileName));

@@ -380,11 +380,13 @@ public interface XmlContentProcessor {
 
     void updateSoftMoveLabelAttribute(Node documentNode, String attr);
 
+    Node getElementByXpath(byte[] xmlContent, String xPath);
+
     String getAttributeValueByXpath(byte[] xmlContent, String xPath, String attrName);
 
     String getDocReference(byte[] xmlContent);
 
-    LeosCategory identifyCategory(String docName, byte[] xmlContent);
+    LeosCategory identifyCategory(byte[] xmlContent);
 
     void updateIfEmptyOrigin(Node node, boolean isEmptyOrigin);
 

@@ -2039,9 +2039,12 @@ public class LegServiceImpl implements LegService {
     private void addMemorandumToPackageForClone(final LeosPackage leosPackage, final Map<String, Object> contentToZip,
                                                 ExportResource exportProposalResource, final Map<String, String> proposalRefsMap,
                                                 LegPackage legPackage, String proposalRef) {
-        final Memorandum memorandum = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), proposalRefsMap.get(LeosCategory.MEMORANDUM.name() + "_href"), Memorandum.class);
-        enrichZipWithMemorandumForClone(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposalRef);
-        legPackage.addContainedFile(memorandum.getVersionedReference());
+        final String memorandumRef = proposalRefsMap.get(LeosCategory.MEMORANDUM.name() + "_href");
+        if (StringUtils.isNotEmpty(memorandumRef)) {
+            final Memorandum memorandum = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), memorandumRef, Memorandum.class);
+            enrichZipWithMemorandumForClone(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposalRef);
+            legPackage.addContainedFile(memorandum.getVersionedReference());
+        }
     }
 
     private void enrichZipWithMemorandumForClone(final Map<String, Object> contentToZip, ExportResource exportProposalResource,
