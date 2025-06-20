@@ -385,8 +385,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
 
         String xPath = xPathCatalog.getXPathCPMilestoneRefByNameAndVersionAttr(legDocumentName, docVersion);
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getFirstElementByXPath(document, xPath);
+        Node node = xmlContentProcessor.getElementByXpath(xmlContent, xPath);
 
         if (node != null) {
             List<Node> clonedList = getChildren(node, CLONED_PROPOSAL_REF);
