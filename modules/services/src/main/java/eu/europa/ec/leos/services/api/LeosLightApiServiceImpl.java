@@ -232,6 +232,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     @Override
     public Pair<Object, HttpStatus> importProposal(MultipartFile file) throws IOException {
         validateBasePath(FilenameUtils.normalize(file.getOriginalFilename()), "./");
+
         String originalFilename = file.getOriginalFilename();
         File content = new File(file.getOriginalFilename());
         byte[] fileContent = file.getBytes();
@@ -241,89 +242,81 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
             return new Pair<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        //Validate Leg file first
-        LegFileValidation validation = apiService.validateLegFile(content);
-        DocumentVO propDocument = validation.getDocumentToBeCreated();
 
-        if (validation.getErrors() == null || validation.getErrors().isEmpty()) {
-            CreateCollectionResult createCollectionResult;
-            String docRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
-            LegDocument savedLegDocument = (LegDocument) findLeosDocument(docRef, LegDocument.class);
-            if (savedLegDocument == null) {
-                try (FileOutputStream fos = new FileOutputStream(content)) {
-                    fos.write(file.getBytes());
-                } catch (IOException ioe) {
-                    LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-                    return new Pair<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-                try {
-                    LeosDocument originalProposal = findLeosDocument(propDocument.getRef(), Proposal.class);
-                    if (originalProposal != null) {
-                        String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
-                        String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
-                        LeosDocument savedDocument = findLeosDocument(translatedDocRef, Proposal.class);
-                        if (savedDocument == null) {
-                            createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, languageCode, true);
-                            if (createCollectionResult.isCollectionCreated()) {
-                                String pkgName = createCollectionResult.getPackageName();
-                                addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false, "1.0.0");
-                            }
-                            collaboratorService.synchCollaborators((Proposal) originalProposal);
-                        } else {
-                            if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), propDocument.getSource())) {
-                                return new Pair<>(messageHelper.getMessage("leoslight.document.duplicate"), HttpStatus.INTERNAL_SERVER_ERROR);
-                            } else {
-                                CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
-                                updateLeosDocument(savedDocument.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
-                                addDocumentIdAndUrl(idsAndUrlsHolder, translatedDocRef, LeosCategory.PROPOSAL);
-                                propDocument.getChildDocuments().forEach(docVo -> {
-                                    String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
-                                    addDocumentIdAndUrl(idsAndUrlsHolder, translatedChildDocRef, docVo.getCategory());
-                                    LeosDocument childDocument = findLeosDocument(translatedChildDocRef, LeosCategoryClass.getClass(docVo.getCategory()));
-                                    if (!ByteChecksumComparator.checksumMatched(childDocument.getContent().get().getSource().getBytes(), docVo.getSource())) {
-                                        updateChildDocuments(translatedChildDocRef, docVo);
-                                    }
-                                });
-                                createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
-                                        new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.updated.major.version")));
-                            }
-                        }
-                    } else {
-                        return new Pair<>(messageHelper.getMessage("leoslight.original.document.not.found"), HttpStatus.NOT_FOUND);
-                    }
-                } catch (CreateCollectionException e) {
-                    LOG.error("Error Occurred while reading the Leg file: " + e.getMessage(), e);
-                    return new Pair<>("An error occurred during the reading of the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-                } catch (Exception e) {
-                    LOG.error("Error Occurred while reading the Leg file: " + e.getMessage(), e);
-                    return new Pair<>("An error occurred during the reading of the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-                return new Pair<>(createCollectionResult, HttpStatus.OK);
-            } else {
-                if (ByteChecksumComparator.checksumMatched(savedLegDocument.getContent().get().getSource().getBytes(), fileContent)) {
-                    return new Pair<>(messageHelper.getMessage("leoslight.document.duplicate"), HttpStatus.INTERNAL_SERVER_ERROR);
-                } else {
-                    CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
-                    String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
-                    String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
-                    LeosPackage leosPackage = findLeosPackageById(savedLegDocument.getPackageId());
-                    List<Proposal> proposals = leosRepository.findDocumentsByPackageId(leosPackage.getId(), Proposal.class, false, false);
+        // Validate Leg file first
+        LegFileValidation validation = apiService.validateLegFile(content);
+        if ((validation.getErrors() != null) && !validation.getErrors().isEmpty()) {
+            return new Pair<>(validation.getErrors(), HttpStatus.PRECONDITION_FAILED);
+        }
+
+        CreateCollectionResult createCollectionResult;
+        DocumentVO propDocument = validation.getDocumentToBeCreated();
+        String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
+        String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
+        String docRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+        LegDocument savedLegDocument = (LegDocument) findLeosDocument(docRef, LegDocument.class);
+        if (savedLegDocument == null) {
+            LeosDocument originalProposal = findLeosDocument(propDocument.getRef(), Proposal.class);
+            if (originalProposal != null) {
+                LeosDocument savedDocument = findLeosDocument(translatedDocRef, Proposal.class);
+                if (savedDocument == null) {
                     try {
-                        String versionLabel = getNextVersionLabel(VersionType.MAJOR, proposals.get(0).getVersionLabel());
-                        addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode,
-                                leosPackage.getName(), true, versionLabel, idsAndUrlsHolder);
-                        createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
-                                new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.updated.major.version")));
+                        createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, languageCode, true);
+                        if (createCollectionResult.isCollectionCreated()) {
+                            String pkgName = createCollectionResult.getPackageName();
+                            addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false, "1.0.0");
+                        }
+                        collaboratorService.synchCollaborators((Proposal) originalProposal);
                     } catch (Exception e) {
                         LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
                         return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
                     }
-                    return new Pair<>(createCollectionResult, HttpStatus.OK);
+                } else {
+                    CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
+                    if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), propDocument.getSource())) {
+                        addDocumentIdAndUrl(idsAndUrlsHolder, translatedDocRef, LeosCategory.PROPOSAL);
+                        createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
+                                new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.duplicate")));
+                    } else {
+                        updateLeosDocument(savedDocument.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
+                        addDocumentIdAndUrl(idsAndUrlsHolder, translatedDocRef, LeosCategory.PROPOSAL);
+                        propDocument.getChildDocuments().forEach(docVo -> {
+                            String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
+                            addDocumentIdAndUrl(idsAndUrlsHolder, translatedChildDocRef, docVo.getCategory());
+                            LeosDocument childDocument = findLeosDocument(translatedChildDocRef, LeosCategoryClass.getClass(docVo.getCategory()));
+                            if (!ByteChecksumComparator.checksumMatched(childDocument.getContent().get().getSource().getBytes(), docVo.getSource())) {
+                                updateChildDocuments(translatedChildDocRef, docVo);
+                            }
+                        });
+                        createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
+                                new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.updated.major.version")));
+                    }
                 }
+            } else {
+                return new Pair<>(messageHelper.getMessage("leoslight.original.document.not.found"), HttpStatus.NOT_FOUND);
             }
         } else {
-            return new Pair<>(validation.getErrors(), HttpStatus.PRECONDITION_FAILED);
+            CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
+            if (ByteChecksumComparator.checksumMatched(savedLegDocument.getContent().get().getSource().getBytes(), fileContent)) {
+                addDocumentIdAndUrl(idsAndUrlsHolder, translatedDocRef, LeosCategory.PROPOSAL);
+                createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
+                        new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.duplicate")));
+            } else {
+                LeosPackage leosPackage = findLeosPackageById(savedLegDocument.getPackageId());
+                List<Proposal> proposals = leosRepository.findDocumentsByPackageId(leosPackage.getId(), Proposal.class, false, false);
+                try {
+                    String versionLabel = getNextVersionLabel(VersionType.MAJOR, proposals.get(0).getVersionLabel());
+                    addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode,
+                            leosPackage.getName(), true, versionLabel, idsAndUrlsHolder);
+                    createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
+                            new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.updated.major.version")));
+                } catch (Exception e) {
+                    LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
+                    return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
         }
+        return new Pair<>(createCollectionResult, HttpStatus.OK);
     }
 
     private void updateChildDocuments(String translatedChildDocRef, DocumentVO docVo) {

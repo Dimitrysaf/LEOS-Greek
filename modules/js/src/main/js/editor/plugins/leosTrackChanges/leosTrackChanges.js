@@ -18,7 +18,7 @@ define(function leosTrackChangesModule(require) {
     var log = require("logger");
     var UTILS = require("core/leosUtils");
     var leosPluginUtils = require("plugins/leosPluginUtils");
-
+    var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
     var core = {
 
         // Track changes names and element types
@@ -559,6 +559,9 @@ define(function leosTrackChangesModule(require) {
             if (!element) { //LFDS case
                 element = editor.document.find('.leos-placeholder').getItem(0).find(`[${leosPluginUtils.DATA_AKN_MP_ID}='${elementId}']`).getItem(0);
             }
+            if (!element && elementId) { //selector case where elementId contains the selector
+                element = editor.document.find('.leos-placeholder').getItem(0).find(elementId).getItem(0);
+            }
             if(element) {
                 for (var i = element.getChildCount()-1; i >= 0; i--) {
                     var childElement = element.getChild(i);
@@ -691,8 +694,28 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
+        findSelector: function (element) {
+            let nativeElement = element.$;
+            // Get the tag name (lowercase for consistency)
+            const tag = nativeElement.tagName.toLowerCase();
+
+            // Get all attributes
+            const attributes = Array.from(nativeElement.attributes)
+                .map(attr => `[${attr.name}="${attr.value.replace(/"/g, '\\"')}"]`)
+                .join('');
+
+            // Combine tag and attributes
+            const selector = `${tag}${attributes}`;
+            return selector;
+        },
+
         isElementPresentInEditor(editor, element) {
-            return !!editor.document.find('.leos-placeholder').getItem(0).find(`#${element.getAttribute(core.ID)}`).getItem(0);
+            if(!!element.getAttribute(core.ID)) {
+                return !!editor.document.find('.leos-placeholder').getItem(0).find(`#${element.getAttribute(core.ID)}`).getItem(0);
+            }else{
+                const selector = this.findSelector(element);
+                return !!editor.document.find('.leos-placeholder').getItem(0).find(selector).getItem(0);
+            }
         },
 
         acceptAllChanges: function(editor) {
@@ -704,8 +727,10 @@ define(function leosTrackChangesModule(require) {
         },
 
         processAllChanges: function (editor, actionName) {
+
             var isElementDeleted = false;
             var element = editor.document.find('.leos-placeholder').getItem(0);
+            this.injectTagIdsInNodeIncludingSpan(element);
             var maxDepth = this.findMaximusDepth(element);
             if(maxDepth > 0) {
                 for (var i = maxDepth; i > 0; i--) {
@@ -750,6 +775,37 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
+        injectTagIdsInNodeIncludingSpan(element) {
+            if (!element){
+                return;
+            }
+
+            let tagName = element.getName();
+            if ("meta" === tagName) {
+                return;
+            }
+
+            if (!["akomaNtoso", "bill", "documentCollection", "div", "doc", "attachments", "br" ].includes(tagName)) {
+                let idAttrValue = element.getAttribute("id");
+                if ((idAttrValue == undefined) || (idAttrValue.trim().length == 0)) {
+                    idAttrValue = identityHandler.generateId();
+                    element.setAttribute("id", idAttrValue);
+                    element.setAttribute("NEW", '');
+                    element.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
+                    element.removeAttribute(leosPluginUtils.DATA_AKN_WRAPPED_CONTENT_ID);
+                    element.removeAttribute(leosPluginUtils.DATA_AKN_MP_ID);
+                }
+            }
+
+            let children = element.getChildren();
+            for (let i = 0; i < children.count(); i++) {
+                let child = children.getItem(i)
+                if (child.$.nodeType === Node.ELEMENT_NODE) {
+                    this.injectTagIdsInNodeIncludingSpan(child);
+                }
+            }
+        },
+
         processOlElement: function (editor, olElementToProcess, processedElements, actionName) {
             // Process table rows
             var rowElements = olElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
@@ -774,7 +830,8 @@ define(function leosTrackChangesModule(require) {
 
         processElement: function (editor, element, processedElements, actionName) {
             if (this.isElementPresentInEditor(editor, element)) {
-                var idToSend = element.getAttribute(core.ID) ? element.getAttribute(core.ID) : element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID);
+                var idToSend = element.getAttribute(core.ID) ? element.getAttribute(core.ID) :
+                    (element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) ? element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) : this.findSelector(element)) ;
                 var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
                 if(lastTCElement) {
                     editor.execCommand(actionName, lastTCElement);

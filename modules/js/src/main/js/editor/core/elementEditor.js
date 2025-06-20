@@ -638,8 +638,9 @@ define(function elementEditorModule(require) {
         if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
             || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
             emptyElements.each(function(){
+                var isAknParagraph = ($(this).is("p") && $(this).attr("data-akn-name") == "aknParagraph");
                 var isSubparagraph = ($(this).is("p") && $(this).attr("data-akn-element") == "subparagraph");
-                if(!$(this).is("li,br") && !isSubparagraph ){
+                if(!$(this).is("li,br") && !isSubparagraph && !isAknParagraph){
                     isEmptyElementFound = true;
                 }
             })
@@ -714,8 +715,16 @@ define(function elementEditorModule(require) {
     }
 
     function isEmpty(element) {
-        return element && !$(element).children(":not(br)").length &&
-            !$(element).contents().filter(function() { return this.nodeType == Node.TEXT_NODE && CKEDITOR.tools.trim(this.textContent).length > 0; }).length;
+        if (!element) {
+            return true;
+        }
+        if (element.nodeType === CKEDITOR.NODE_TEXT) {
+            return CKEDITOR.tools.trim(element.textContent).length == 0;
+        }
+        return !$(element).children(":not(br)").length &&
+            !$(element).contents().filter(function() {
+                return this.nodeType == Node.TEXT_NODE && CKEDITOR.tools.trim(this.textContent).length > 0;
+            }).length;
     }
 
     function isLastEditableElement(elementToTest){
