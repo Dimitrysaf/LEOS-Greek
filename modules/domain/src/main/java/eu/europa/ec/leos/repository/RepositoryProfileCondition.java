@@ -31,8 +31,14 @@ public class RepositoryProfileCondition implements ConfigurationCondition {
         if (beanFactory == null) {
             throw new IllegalStateException("Not able to retrieve BeanFactory from ConditionContext");
         }
-        Object applicationProperties = beanFactory.getBean("applicationProperties");
-        String leosRepositoryProfile = ((Properties) applicationProperties).getProperty("leos.repository.profile");
+//        Object applicationProperties = beanFactory.getBean("applicationProperties");
+//        String leosRepositoryProfile = ((Properties) applicationProperties).getProperty("leos.repository.profile");
+        String leosRepositoryProfile = conditionContext.getEnvironment().getProperty("leos.repository.profile");
+        if (leosRepositoryProfile == null) {
+            // Set a default if needed
+            leosRepositoryProfile = "default"; // or whatever your default should be
+        }
+
         RepositoryProfileType currentRepositoryProfile = RepositoryProfileType.valueOf(leosRepositoryProfile);
         MultiValueMap<String, Object> attributes = annotatedTypeMetadata.getAllAnnotationAttributes(RepositoryProfile.class.getName());
         if (attributes == null) {
@@ -54,6 +60,6 @@ public class RepositoryProfileCondition implements ConfigurationCondition {
 
     @Override
     public ConfigurationPhase getConfigurationPhase() {
-        return ConfigurationPhase.REGISTER_BEAN;
+        return ConfigurationPhase.PARSE_CONFIGURATION;
     }
 }
