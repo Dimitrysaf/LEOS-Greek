@@ -14,6 +14,7 @@
             <sec:xss-protection disabled="true"/><!-- Info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection -->
             <sec:content-security-policy policy-directives="default-src 'none'"/>
         </sec:headers>
+        <sec:jee mappable-roles="**"/>
         <sec:cors configuration-source-ref="corsSource"/>
         <sec:custom-filter after="PRE_AUTH_FILTER" ref="leosApiAuthenticationFilter"/>
     </sec:http>
@@ -35,7 +36,7 @@
         </property>
     </bean>
 
-    <bean id="restAuthenticationEntryPoint" class="eu.europa.ec.leos.api.auth.RestAuthenticationEntryPoint"/>
+<!--    <bean id="restAuthenticationEntryPoint" class="eu.europa.ec.leos.api.auth.RestAuthenticationEntryPoint"/>-->
 
     <bean id="leosApiAuthenticationFilter" class="eu.europa.ec.leos.api.auth.LeosApiAuthenticationFilter">
         <constructor-arg value="${leos.api.filter.processor.url}" />
@@ -52,9 +53,9 @@
         <sec:authentication-provider ref="leosApiAuthenticationProvider"/>
     </sec:authentication-manager>
 
-    <bean id="leosApiAuthenticationProvider"
-          class="eu.europa.ec.leos.api.auth.LeosApiAuthenticationProvider">
-    </bean>
+<!--    <bean id="leosApiAuthenticationProvider"-->
+<!--          class="eu.europa.ec.leos.api.auth.LeosApiAuthenticationProvider">-->
+<!--    </bean>-->
 
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass" value="org.springframework.security.core.context.SecurityContextHolder" />

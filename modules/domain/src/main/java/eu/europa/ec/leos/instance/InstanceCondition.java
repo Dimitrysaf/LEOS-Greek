@@ -31,8 +31,14 @@ public class InstanceCondition implements ConfigurationCondition {
         if (beanFactory == null) {
             throw new IllegalStateException("Not able to retrieve BeanFactory from ConditionContext");
         }
-        Object applicationProperties = beanFactory.getBean("applicationProperties");
-        String leosInstance = ((Properties) applicationProperties).getProperty("leos.instance");
+//        Object applicationProperties = beanFactory.getBean("applicationProperties");
+//        String leosInstance = ((Properties) applicationProperties).getProperty("leos.instance");
+        String leosInstance = conditionContext.getEnvironment().getProperty("leos.instance");
+        if (leosInstance == null) {
+            // Fallback to system properties or default
+            leosInstance = conditionContext.getEnvironment().getProperty("leos.build.instance", "os");
+        }
+
         InstanceType currentInstance = InstanceType.valueOf(leosInstance);
         MultiValueMap<String, Object> attributes = annotatedTypeMetadata.getAllAnnotationAttributes(Instance.class.getName());
         if (attributes == null) {
@@ -54,6 +60,6 @@ public class InstanceCondition implements ConfigurationCondition {
 
     @Override
     public ConfigurationPhase getConfigurationPhase() {
-        return ConfigurationPhase.REGISTER_BEAN;
+        return ConfigurationPhase.PARSE_CONFIGURATION;
     }
 }
