@@ -14,7 +14,6 @@
             <sec:xss-protection disabled="true"/><!-- Info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection -->
             <sec:content-security-policy policy-directives="default-src 'none'"/>
         </sec:headers>
-        <sec:jee mappable-roles="**"/>
         <sec:cors configuration-source-ref="corsSource"/>
         <sec:custom-filter after="PRE_AUTH_FILTER" ref="leosApiAuthenticationFilter"/>
     </sec:http>
