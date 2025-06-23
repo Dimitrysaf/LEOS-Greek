@@ -80,6 +80,7 @@ export class ProposalViewComponent
             proposal.cloneProposalMetadataVO?.clonedProposal,
           );
           this.documentService.setIsClonedProposal(this.isClonedProposal);
+          this.documentService.setDocumentCollectionName(proposal.metadata?.documentCollectionName);
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;
           this.setStateDone(proposal);
           this.translatedDocs = proposal.translatedProposals;

@@ -43,6 +43,7 @@ export const DIVISION = 'DIVISION';
 export const NUMBERED = 'Numbered';
 export const UNNUMBERED = 'Unnumbered';
 
+export const AUTONOMOUS_ACT_DOC_COLLECTION = 'ACT_AUTO_COM';
 export const BILL = 'bill';
 export const MEMORANDUM = 'memorandum';
 export const ANNEX = 'annex';
