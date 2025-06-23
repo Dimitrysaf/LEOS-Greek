@@ -89,7 +89,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         final String leosClientId = getLeosClient(systemClientId) != null ? getLeosClient(systemClientId).getClientId() : null;
 
         List<LeosPackage> packages = getLinkedPackagesForProposal(proposal);
-        if (isCollaboratorPresent(proposal, user, role, entity, leosClientId)) {
+        if (isCollaboratorPresent(proposal, collaborator, role, entity, leosClientId)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.present", collaborator.getLogin(), role.getName(), entity));
         }
 
