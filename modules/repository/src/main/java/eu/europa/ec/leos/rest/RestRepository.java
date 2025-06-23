@@ -171,7 +171,6 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestpackageDeleteCollaborators;
 
     @Autowired
-    @Qualifier("restProperties")
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     private String getUrl(String resourceUrl) {
