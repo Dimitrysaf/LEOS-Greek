@@ -75,13 +75,20 @@ public class HazelcastCacheConfig {
     // Helper method to create standard cache configuration
     private MapConfig createCacheConfig(String name, int maxSize, int ttlSeconds, int maxIdleSeconds) {
         MapConfig mapConfig = new MapConfig(name);
+        mapConfig.setInMemoryFormat(InMemoryFormat.BINARY);
 
         // Create and set eviction config (includes size configuration in Hazelcast 5.x)
         EvictionConfig evictionConfig = new EvictionConfig();
         evictionConfig.setEvictionPolicy(EvictionPolicy.LFU);
-        evictionConfig.setMaxSizePolicy(MaxSizePolicy.PER_NODE);
-        evictionConfig.setSize(maxSize);
         mapConfig.setEvictionConfig(evictionConfig);
+
+        if (name.equals("coEditionCache")) {
+            evictionConfig.setMaxSizePolicy(MaxSizePolicy.PER_PARTITION);
+            evictionConfig.setSize(maxSize);
+        } else {
+            evictionConfig.setMaxSizePolicy(MaxSizePolicy.PER_NODE);
+            evictionConfig.setSize(Math.max(maxSize, 300));
+        }
 
         // Time-based expiration
         if (ttlSeconds > 0) {
@@ -204,7 +211,7 @@ public class HazelcastCacheConfig {
 
     // CoEdition cache with clustering (replaces JGroups replication)
     private void configureCoEditionCache(Config config) {
-        MapConfig coEditionCache = createCacheConfig("coEditionCache", 50, 0, 600);
+        MapConfig coEditionCache = createCacheConfig("coEditionCache", 2, 0, 600);
 
         // Enable backup for distributed cache (replaces JGroups replication)
         coEditionCache.setBackupCount(1); // Number of backup copies
