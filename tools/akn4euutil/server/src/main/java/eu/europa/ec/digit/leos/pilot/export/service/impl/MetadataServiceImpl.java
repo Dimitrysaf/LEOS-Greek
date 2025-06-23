@@ -565,12 +565,14 @@ public class MetadataServiceImpl implements MetadataService {
         if (conclusions == null) return;
 
         final Node blockNode = xmlFile.newElement("block");
+        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.XMLID, IdGenerator.generateId());
         XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.NAME, "stamp");
 
         final String language = readLanguageValue(xmlFile);
         final String b64Stamp = getLanguageStampAsBase64(language);
 
         final Node imgNode = xmlFile.newElement("img");
+        XmlUtil.setNodeAttributeValue(imgNode, MetadataUtil.XMLID, IdGenerator.generateId());
         XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
         blockNode.appendChild(imgNode);
         conclusions.appendChild(blockNode);
