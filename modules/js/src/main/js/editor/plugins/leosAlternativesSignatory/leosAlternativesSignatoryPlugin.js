@@ -46,8 +46,7 @@ define(function leosAlternativesSignatoryPluginModule(require) {
     function _getCurrentAltConfigFromAttributes(editor) {
         var currentAltConfig = {};
         var element = editor.element.$.firstChild;
-        if (element && element.firstChild
-            && (element.firstChild.id === 'spellchecker-contextmenu' || (element.getAttribute('class') && element.getAttribute('class').includes('leosNonEditableEmptyWidget')))
+        if (element && (element.firstChild && element.firstChild.id === 'spellchecker-contextmenu' || !element.getAttribute('leos:alternative'))
             && editor.element.$.childNodes[1]) {
             element = editor.element.$.childNodes[1];
         }
@@ -199,8 +198,8 @@ define(function leosAlternativesSignatoryPluginModule(require) {
     function _updateRootEltAttributes(editor, index) {
         var currentConfig = _getCurrentAltConfigFromAttributes(editor);
         var rootElt = editor.element.getChild(0);
-        if (rootElt && rootElt.getChild(0) && rootElt.getChild(0).$
-            && (rootElt.getChild(0).$.id === 'spellchecker-contextmenu' || (rootElt.getAttribute('class') && rootElt.getAttribute('class').includes('leosNonEditableEmptyWidget')))
+        if (rootElt && (rootElt.getChild(0) && rootElt.getChild(0).$ && rootElt.getChild(0).$.id === 'spellchecker-contextmenu'
+                || !rootElt.getAttribute('leos:alternative'))
             && editor.element.$.childNodes[1]) {
             rootElt = editor.element.$.childNodes[1];
         }

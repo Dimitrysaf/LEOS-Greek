@@ -25,7 +25,7 @@ define(function leosTrackChangesModule(require) {
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
         SOFT_ACTION_ATTR: "data-akn-attr-softaction", LEOS_SOFT_ACTION_ATTR: "leos:softaction", LEOS_SOFT_ACTION_MOVE_FROM_VALUE: "move_from",
         LEOS_ACTION_ATTR: "leos:action", ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", ID: "id",
+        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", SIGNATORY:"signatory", ID: "id",
 
         DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_TC_ORIGINAL_INDENT_ACTION: "data-akn-tc-original-indent-action", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
@@ -249,27 +249,20 @@ define(function leosTrackChangesModule(require) {
         updateTransformedAlternateArticle: function(tcElement, editor) {
             // Regex pattern to match everything between the first <paragraph> and the last </paragraph>
             const regex = /<paragraph[^>]*>[\s\S]*?<\/paragraph>/g;
-            // Find all matches for <paragraph> tags
-            const matches = tcElement.$.innerHTML.match(regex);
-            // Join all matches to get the full content between first and last paragraph
-            if (matches) {
-                const contentBetweenParagraphs = matches.join('');
-                tcElement.$.innerHTML = contentBetweenParagraphs;
-            }
-            var data = {
-                dataValue: tcElement.$.innerHTML,
-                filter: editor.filter
-            }
-            var transformedFragment = editor.fire('toHtml', data);
-
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(transformedFragment.dataValue, 'text/html');
+            const doc = UTILS.getHtmlDocFromMatch(tcElement, regex, editor);
             const liElements = doc.querySelectorAll('li');
             liElements.forEach(element => {
                 core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
             })
             const updatedHTML = doc.body.innerHTML;
             tcElement.$.innerHTML = updatedHTML;
+        },
+
+        updateTransformedAlternateSignatory: function(tcElement, editor) {
+            // Regex pattern to match everything between the first <signature> and the last <signature>
+            const regex = /<signature[^>]*>[\s\S]*?<\/signature>/g;
+            const doc = UTILS.getHtmlDocFromMatch(tcElement, regex, editor);
+            tcElement.$.innerHTML = doc.body.innerHTML;
         },
 
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
@@ -290,10 +283,16 @@ define(function leosTrackChangesModule(require) {
             }
 
             if (core.isTrackChangeElement(selectedElement, core.DELETE_ACTION)) {
-                if (range && range.root.getFirst().getName() === core.ARTICLE &&
-                  (range.endOffset - range.startOffset) <= 1 && !range.collapsed) {
-                    this.updateTransformedAlternateArticle(tcElement, editor);
-                    tcElement.insertAfter(range.startContainer.getAscendant('ol').getLast());
+                if (range && (range.endOffset - range.startOffset) <= 1 && !range.collapsed) {
+                    if (range.root.getFirst().getName() === core.ARTICLE) {
+                        this.updateTransformedAlternateArticle(tcElement, editor);
+                        tcElement.insertAfter(range.startContainer.getAscendant('ol').getLast());
+                    } else if (range.root.getLast().getAttribute  && range.root.getLast().getAttribute(core.DATA_AKN_NAME) === core.SIGNATORY) {
+                        this.updateTransformedAlternateSignatory(tcElement, editor);
+                        tcElement.insertAfter(range.startContainer.getAscendant('td').getLast());
+                    } else {
+                        tcElement.insertAfter(selectedElement);
+                    }
                 } else {
                     tcElement.insertAfter(selectedElement);
                 }
