@@ -22,6 +22,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import eu.europa.ec.leos.services.coedition.cache.CoEditionCacheEntryListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -38,6 +41,8 @@ public class EditionInfoRepositoryImpl implements EditionInfoRepository {
 
     private Cache coEditionCache;
 
+    private static final Logger LOG = LoggerFactory.getLogger(EditionInfoRepositoryImpl.class);
+
     @PostConstruct
     public void CoEditionCacheInit() {
         coEditionCache = cacheManager.getCache("coEditionCache");
@@ -53,19 +58,24 @@ public class EditionInfoRepositoryImpl implements EditionInfoRepository {
     public CoEditionVO removeInfo(CoEditionVO editionVo) {
         IMap<Object, Object> nativeMap = (IMap<Object, Object>) coEditionCache.getNativeCache();
 
-        // Get all entries that match the document ID and the CoEditionVO value
+        // Find matching entries
         List<Object> keysToRemove = nativeMap.entrySet().stream()
                 .filter(entry -> {
                     String key = (String) entry.getKey();
                     Object value = entry.getValue();
-                    return key.startsWith(editionVo.getDocumentId() + "_") &&
-                            value.equals(editionVo);
+                    boolean keyMatches = key.startsWith(editionVo.getDocumentId() + "_");
+                    boolean valueMatches = value.equals(editionVo);
+                    return keyMatches && valueMatches;
                 })
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
-        // Remove all matching entries
-        keysToRemove.forEach(key -> coEditionCache.evict(key));
+        // What method are you using for removal?
+        keysToRemove.forEach(key -> {
+            // Use direct Hazelcast removal instead of Spring Cache evict
+            IMap<Object, Object> nativeMapRemoval = (IMap<Object, Object>) coEditionCache.getNativeCache();
+            nativeMapRemoval.remove(key);
+        });
 
         return keysToRemove.size() > 0 ? editionVo : null;
     }
