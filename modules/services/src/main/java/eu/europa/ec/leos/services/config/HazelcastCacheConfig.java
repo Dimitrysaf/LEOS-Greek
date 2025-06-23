@@ -80,8 +80,6 @@ public class HazelcastCacheConfig {
         // Create and set eviction config (includes size configuration in Hazelcast 5.x)
         EvictionConfig evictionConfig = new EvictionConfig();
         evictionConfig.setEvictionPolicy(EvictionPolicy.LFU);
-        evictionConfig.setMaxSizePolicy(MaxSizePolicy.PER_NODE);
-        evictionConfig.setSize(maxSize);
         mapConfig.setEvictionConfig(evictionConfig);
 
         if (name.equals("coEditionCache")) {
