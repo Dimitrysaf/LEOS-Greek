@@ -664,7 +664,9 @@ define(function elementEditorModule(require) {
             if(!_hasSiblingWithContent(ele)) {
                 var parent = $(ele).parent()[0];
                 if(($(ele).is("p") && $(ele).attr("data-akn-element") == "subparagraph" && $(parent).attr("data-akn-element") == "level")
-                    || ($(ele).is("li") && $(ele).attr("data-akn-element") == "paragraph" && $(parent).parent()[0].localName == 'article')) {
+                    || ($(ele).is("li") && $(ele).attr("data-akn-element") == "paragraph" && $(parent).parent()[0].localName == 'article')
+                    || ($(ele).is("p") && $(ele).attr("data-akn-name") == "aknParagraph" && $(parent).attr("data-akn-name") == "blockContainer")
+                ) {
                     hasOnlyEmptyLines = true;
                     break;
                 }

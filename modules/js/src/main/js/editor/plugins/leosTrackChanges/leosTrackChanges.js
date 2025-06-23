@@ -25,14 +25,15 @@ define(function leosTrackChangesModule(require) {
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
         SOFT_ACTION_ATTR: "data-akn-attr-softaction", LEOS_SOFT_ACTION_ATTR: "leos:softaction", LEOS_SOFT_ACTION_MOVE_FROM_VALUE: "move_from",
         LEOS_ACTION_ATTR: "leos:action", ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", ID: "id",
+        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", CITATION:"citation", RECITAL:"recital", ID: "id", LEVEL: "level",
 
         DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_TC_ORIGINAL_INDENT_ACTION: "data-akn-tc-original-indent-action", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
+        DATA_AKN_NUM_DEL_ACTION: "data-akn-num-del-action",  DATA_AKN_NUM_INS_ACTION: "data-akn-num-ins-action",
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
         DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
         ACCEPT: "accept", REJECT: "reject", TRACKCHANGES_NUMBER_ELEMENT_SELECTOR: "li[data-akn-action-number]",
-        DATA_AKN_NAME: "data-akn-name",
+        DATA_AKN_NAME: "data-akn-name", DATA_AKN_ELEMENT: "data-akn-element",
 
         DATA_AKN_SOFTACTION: "data-akn-attr-softaction", DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
         SOFTACTION_MOVE_FROM: "move_from", SOFTACTION_MOVE_TO: "move_to",
@@ -181,6 +182,14 @@ define(function leosTrackChangesModule(require) {
 
         removeTrackChangesAttributesForNumbering: function(element) {
             var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-tc-original-indent-action", "NEW"];
+            for (var attrName of tcAttributes) {
+                element.removeAttribute(attrName);
+            }
+        },
+
+        removeTrackChangesAttributesRecital: function(element) {
+            var tcAttributes = ["data-akn-del-num-id", "data-akn-num-del-action", "data-akn-ins-num-id", "data-akn-num-ins-action",
+                "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-tc-original-indent-action", "NEW"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -551,7 +560,12 @@ define(function leosTrackChangesModule(require) {
 
         hasTrackChanges: function(elementId, editor) {
             var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
-            return element && (element.hasAttribute(this.ACTION_ATTR) || element.hasAttribute(this.DATA_AKN_ACTION_NUMBER) || element.hasAttribute(this.DATA_AKN_ACTION_ENTER));
+            return element &&
+                (element.hasAttribute(this.ACTION_ATTR)
+                    || element.hasAttribute(this.DATA_AKN_ACTION_NUMBER)
+                    || element.hasAttribute(this.DATA_AKN_ACTION_ENTER)
+                    || element.hasAttribute(this.DATA_AKN_NUM_DEL_ACTION)
+                    || element.hasAttribute(this.DATA_AKN_NUM_INS_ACTION));
         },
 
         getLastTCElement: function(elementId, editor, processedElements) {
@@ -835,7 +849,7 @@ define(function leosTrackChangesModule(require) {
                 var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
                 if(lastTCElement) {
                     editor.execCommand(actionName, lastTCElement);
-                    if (lastTCElement.hasAttribute(core.ID)) {
+                    if (lastTCElement.hasAttribute(core.ID)){
                         processedElements.push(lastTCElement.getAttribute(core.ID));
                     }
                     this.processElement(editor, element, processedElements, actionName);
@@ -925,16 +939,37 @@ define(function leosTrackChangesModule(require) {
                         }
                     }
                 }
-            } else {
+            } else if (element.getAttribute(core.DATA_AKN_NUM_DEL_ACTION)
+                || element.getAttribute(core.DATA_AKN_NUM_INS_ACTION)) { // recitals
+                core.removeTrackChangesAttributesRecital(element);
+            }else {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                     var liParentElement = element.getParent();
+                    var pParentElement = element.getAscendant("p");
                     element.remove();
+
+                    if (pParentElement && !pParentElement.getText().trim()) {
+                        let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
+                        if(!!lastEditable && lastEditable.getId() == pParentElement.getId()){
+                            pParentElement.appendBogus();
+                            var range = editor.createRange();
+                            range.selectNodeContents(lastEditable);
+                            range.collapse(true);
+                            editor.getSelection().selectRanges([range]);
+                            editor.focus();
+                        }
+                    }
                     if (this.checkIfEmptyListElement(liParentElement)) {
                         this.removeEmptyElement(liParentElement, numberModule, editor);
                     }
                 } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
-                    element.$.outerHTML = element.$.innerHTML;
+                    if([core.RECITAL, core.CITATION].includes(element.getAttribute(core.DATA_AKN_NAME))
+                        || (element.getAttribute(core.DATA_AKN_ELEMENT) == core.LEVEL)){
+                        core.removeTrackChangesAttributes(element);
+                    }else{
+                        element.$.outerHTML = element.$.innerHTML;
+                    }
                 }
             }
         },
@@ -1114,7 +1149,16 @@ define(function leosTrackChangesModule(require) {
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 if(parentElem && parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
-                } else {
+                } else if([core.RECITAL, core.CITATION].includes(element.getAttribute(core.DATA_AKN_NAME)) // recitals or citations
+                        || (element.getAttribute(core.DATA_AKN_ELEMENT) == core.LEVEL && element.getName() === 'li')){ // annex case with new added level
+                    element.setHtml(' ');
+                    var range = editor.createRange();
+                    range.selectNodeContents(element);
+                    range.collapse(true);
+                    editor.getSelection().selectRanges([range]);
+                    editor.focus();
+                    core.removeTrackChangesAttributes(element);
+                }else {
                     var liParentElement = element.getAscendant("li");
                     var pParentElement = element.getAscendant("p");
                     element.remove();
@@ -1123,9 +1167,12 @@ define(function leosTrackChangesModule(require) {
                         if(!lastEditable || lastEditable.getId() !== pParentElement.getId()){
                             pParentElement.remove();
                         }else if(!!lastEditable){
+                            lastEditable.appendBogus();
                             var range = editor.createRange();
                             range.selectNodeContents(lastEditable);
+                            range.collapse(true);
                             editor.getSelection().selectRanges([range]);
+                            editor.focus();
                         }
                     }
                     if(liParentElement) {
@@ -1147,6 +1194,13 @@ define(function leosTrackChangesModule(require) {
                 }
                 if($(element, editor.getData()).length > 0) {
                     element.$.outerHTML = element.$.innerHTML;
+                }
+            } else if([core.RECITAL].includes(element.getAttribute(core.DATA_AKN_NAME))) {
+                element.setAttribute(leosPluginUtils.DATA_AKN_NUM, element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER));
+                var tcAttributes = ["data-akn-uid-number", "data-akn-tc-original-number", "data-akn-num-del-action",  "title-number",
+                    "data-akn-del-num-id", "data-akn-num-ins-action", "data-akn-ins-num-id"];
+                for (var attrName of tcAttributes) {
+                    element.removeAttribute(attrName);
                 }
             }
         },
