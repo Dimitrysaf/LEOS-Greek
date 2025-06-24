@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.common;
 
-public enum InstanceType {
+import java.io.Serializable;
+
+public enum InstanceType implements Serializable {
     COUNCIL,
     COMMISSION,
     OS,
