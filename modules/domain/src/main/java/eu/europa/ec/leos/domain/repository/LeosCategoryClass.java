@@ -8,7 +8,9 @@ import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
-public enum LeosCategoryClass {
+import java.io.Serializable;
+
+public enum LeosCategoryClass implements Serializable {
 
     PROPOSAL(Proposal.class),
     MEMORANDUM(Memorandum.class),

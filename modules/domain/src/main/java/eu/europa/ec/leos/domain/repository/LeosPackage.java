@@ -1,8 +1,9 @@
 package eu.europa.ec.leos.domain.repository;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class LeosPackage {
+public class LeosPackage implements Serializable {
     private final String id;
     private final String name;
     private final String path;
