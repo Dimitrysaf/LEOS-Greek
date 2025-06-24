@@ -1,8 +1,9 @@
 package eu.europa.ec.leos.model.user;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Collaborator {
+public class Collaborator implements Serializable {
 
     private String login;
 
