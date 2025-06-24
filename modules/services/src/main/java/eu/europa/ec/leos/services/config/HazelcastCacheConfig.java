@@ -89,8 +89,6 @@ public class HazelcastCacheConfig {
         } else {
             evictionConfig.setMaxSizePolicy(MaxSizePolicy.PER_NODE);
             evictionConfig.setSize(Math.max(maxSize, 300));
-            mapConfig.setBackupCount(0);
-            mapConfig.setAsyncBackupCount(0);
         }
 
         // Time-based expiration
