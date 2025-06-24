@@ -74,6 +74,7 @@ public class HazelcastCacheConfig {
 
     // Helper method to create standard cache configuration
     private MapConfig createCacheConfig(String name, int maxSize, int ttlSeconds, int maxIdleSeconds) {
+        System.out.println("🔧 Creating cache config for: " + name);
         MapConfig mapConfig = new MapConfig(name);
         mapConfig.setInMemoryFormat(InMemoryFormat.OBJECT);
 
@@ -88,6 +89,8 @@ public class HazelcastCacheConfig {
         } else {
             evictionConfig.setMaxSizePolicy(MaxSizePolicy.PER_NODE);
             evictionConfig.setSize(Math.max(maxSize, 300));
+            mapConfig.setBackupCount(0);
+            mapConfig.setAsyncBackupCount(0);
         }
 
         // Time-based expiration
@@ -99,6 +102,7 @@ public class HazelcastCacheConfig {
             mapConfig.setMaxIdleSeconds(maxIdleSeconds);
         }
 
+        System.out.println("🔧 Configured cache: " + name + " with format: " + mapConfig.getInMemoryFormat() + ", backupCount: " + mapConfig.getBackupCount());
         return mapConfig;
     }
 
