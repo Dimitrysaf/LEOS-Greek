@@ -1,8 +1,9 @@
 package eu.europa.ec.leos.domain.repository.common;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class VersionData implements Versionable {
+public class VersionData implements Versionable, Serializable {
 
     private final String versionSeriesId;
     private final String versionLabel;

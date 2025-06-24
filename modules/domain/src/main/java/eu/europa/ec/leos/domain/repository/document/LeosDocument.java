@@ -9,10 +9,11 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.common.Versionable;
 import io.atlassian.fugue.Option;
 
+import java.io.Serializable;
 import java.time.Instant;
 
-public abstract class LeosDocument implements Auditable, Versionable {
-
+public abstract class LeosDocument implements Auditable, Versionable, Serializable {
+    private static final long serialVersionUID = 1L;
     private final LeosCategory category;
     private final String id;
     private final String name;

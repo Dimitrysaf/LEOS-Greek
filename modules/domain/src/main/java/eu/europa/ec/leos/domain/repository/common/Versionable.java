@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.repository.common;
 
-public interface Versionable {
+import java.io.Serializable;
+
+public interface Versionable extends Serializable {
     String getVersionSeriesId();
 
     String getCmisVersionLabel();
