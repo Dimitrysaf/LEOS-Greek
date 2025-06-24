@@ -70,7 +70,6 @@ public class EditionInfoRepositoryImpl implements EditionInfoRepository {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
-        // What method are you using for removal?
         keysToRemove.forEach(key -> {
             // Use direct Hazelcast removal instead of Spring Cache evict
             IMap<Object, Object> nativeMapRemoval = (IMap<Object, Object>) coEditionCache.getNativeCache();

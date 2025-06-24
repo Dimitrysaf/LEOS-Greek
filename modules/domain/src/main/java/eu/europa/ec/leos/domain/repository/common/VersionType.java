@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.repository.common;
 
-public enum VersionType {
+import java.io.Serializable;
+
+public enum VersionType implements Serializable {
 
     MAJOR(1), INTERMEDIATE(2), MINOR(3);
     private final int value;

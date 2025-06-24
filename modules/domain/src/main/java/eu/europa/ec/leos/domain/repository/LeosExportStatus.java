@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.repository;
 
-public enum LeosExportStatus {
+import java.io.Serializable;
+
+public enum LeosExportStatus implements Serializable {
     FILE_READY,
     NOTIFIED,
     PROCESSED_OK,

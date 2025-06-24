@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.common;
 
-public enum TocMode {
+import java.io.Serializable;
+
+public enum TocMode implements Serializable {
     RAW,
     NOT_SIMPLIFIED,
     SIMPLIFIED,
