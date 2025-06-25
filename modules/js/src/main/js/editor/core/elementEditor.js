@@ -630,6 +630,32 @@ define(function elementEditorModule(require) {
         return isSiblingWithContent;
     }
 
+    function hasEmptyAllListItem(elementId) {
+
+        const $parentElement = $(`#${elementId}`);
+        const $listItems = $parentElement.find('li');
+        // Return false if there are no list items
+        if ($listItems.length === 0) {
+            return false;
+        }
+
+        let allEmpty = true;
+        $listItems.each(function() {
+            const $li = $(this);
+            // Check if it only has br and no text
+            const hasOnlyBr = $li.contents().length === 1 && $li.children('br').length === 1;
+            const noText = $li.text().trim().length === 0;
+
+            if (!hasOnlyBr || !noText) {
+                allEmpty = false;
+                return false; // breaks the each loop
+            }
+        });
+
+        return allEmpty;
+    }
+
+
     function _isEmptyContentInElement(elementId) {
         var isEmptyElementFound = false;
 
@@ -726,7 +752,9 @@ define(function elementEditorModule(require) {
             }
         });
 
-        return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement;
+        var isAllLiItemEmpty = hasEmptyAllListItem(elementId);
+
+        return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement || isAllLiItemEmpty;
     }
 
     function isEmpty(element) {
