@@ -151,8 +151,9 @@ define(function aknLevelPluginModule(require) {
                 }
             });
         }
-
-        event.data.dataValue = levelTag.outerHTML.replace('xmlns:leos="leos"', '');
+        if(levelTag){
+            event.data.dataValue = levelTag.outerHTML.replace('xmlns:leos="leos"', '');
+        }
     }
 
     function _renumberOnIndent(evt) {

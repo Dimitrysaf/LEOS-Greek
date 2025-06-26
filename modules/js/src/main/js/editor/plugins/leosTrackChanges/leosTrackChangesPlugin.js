@@ -62,6 +62,7 @@ define(function leosTrackChangesPluginModule(require) {
             if(!editor.config.isAlternative && !editor.config.isClause) {
                 editor.ui.addRichCombo('trackChangeActions', {
                     label: 'TC',
+                    title: $(editor.getData()).attr('leos\:action') === 'insert' ? 'Element needs to be accepted first' : 'Accept/reject all changes',
                     toolbar: 'trackChanges',
                     className: 'cke_format',
                     multiSelect: false,
@@ -73,6 +74,9 @@ define(function leosTrackChangesPluginModule(require) {
                     init: function () {
                         this.add('acceptAll', 'Accept All', 'Accept All');
                         this.add('rejectAll', 'Reject All', 'Reject All');
+                        if($(editor.getData()).attr('leos\:action') === 'insert'){
+                            this.disable();
+                        }
                     },
 
                     onClick: function (value) {
@@ -80,6 +84,12 @@ define(function leosTrackChangesPluginModule(require) {
                             actions.acceptAllChanges(editor);
                         } else {
                             actions.rejectAllChanges(editor);
+                        }
+                    },
+
+                    refresh: function() {
+                        if($(editor.getData()).attr('leos\:action') === 'insert'){
+                            this.disable();
                         }
                     },
                 });

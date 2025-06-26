@@ -187,14 +187,6 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        removeTrackChangesAttributesRecital: function(element) {
-            var tcAttributes = ["data-akn-del-num-id", "data-akn-num-del-action", "data-akn-ins-num-id", "data-akn-num-ins-action",
-                "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-tc-original-indent-action", "NEW"];
-            for (var attrName of tcAttributes) {
-                element.removeAttribute(attrName);
-            }
-        },
-
         removeTrackChangesAttributesForEnter: function(element) {
             var tcAttributes = ["data-akn-action-enter", "data-akn-uid-enter", "title-enter"];
             for (var attrName of tcAttributes) {
@@ -560,22 +552,14 @@ define(function leosTrackChangesModule(require) {
 
         hasTrackChanges: function(elementId, editor) {
             var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
-            return element &&
+            return element && element.getAttribute(core.DATA_AKN_ELEMENT) != core.LEVEL &&
                 (element.hasAttribute(this.ACTION_ATTR)
                     || element.hasAttribute(this.DATA_AKN_ACTION_NUMBER)
-                    || element.hasAttribute(this.DATA_AKN_ACTION_ENTER)
-                    || element.hasAttribute(this.DATA_AKN_NUM_DEL_ACTION)
-                    || element.hasAttribute(this.DATA_AKN_NUM_INS_ACTION));
+                    || element.hasAttribute(this.DATA_AKN_ACTION_ENTER));
         },
 
         getLastTCElement: function(elementId, editor, processedElements) {
             var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
-            if (!element) { //LFDS case
-                element = editor.document.find('.leos-placeholder').getItem(0).find(`[${leosPluginUtils.DATA_AKN_MP_ID}='${elementId}']`).getItem(0);
-            }
-            if (!element && elementId) { //selector case where elementId contains the selector
-                element = editor.document.find('.leos-placeholder').getItem(0).find(elementId).getItem(0);
-            }
             if(element) {
                 for (var i = element.getChildCount()-1; i >= 0; i--) {
                     var childElement = element.getChild(i);
@@ -583,8 +567,7 @@ define(function leosTrackChangesModule(require) {
                         continue;
                     }
                     if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
-                        var idToSend = childElement.getAttribute(core.ID)  //LFDS case
-                            ? childElement.getAttribute(core.ID) : childElement.getAttribute(leosPluginUtils.DATA_AKN_MP_ID);
+                        var idToSend = childElement.getAttribute(core.ID);
                         var lastTCElement = this.getLastTCElement(idToSend, editor, processedElements);
                         if(lastTCElement) {
                             return lastTCElement;
@@ -844,8 +827,7 @@ define(function leosTrackChangesModule(require) {
 
         processElement: function (editor, element, processedElements, actionName) {
             if (this.isElementPresentInEditor(editor, element)) {
-                var idToSend = element.getAttribute(core.ID) ? element.getAttribute(core.ID) :
-                    (element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) ? element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) : this.findSelector(element)) ;
+                var idToSend = element.getAttribute(core.ID);
                 var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
                 if(lastTCElement) {
                     editor.execCommand(actionName, lastTCElement);
@@ -939,9 +921,6 @@ define(function leosTrackChangesModule(require) {
                         }
                     }
                 }
-            } else if (element.getAttribute(core.DATA_AKN_NUM_DEL_ACTION)
-                || element.getAttribute(core.DATA_AKN_NUM_INS_ACTION)) { // recitals
-                core.removeTrackChangesAttributesRecital(element);
             }else {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
@@ -964,12 +943,7 @@ define(function leosTrackChangesModule(require) {
                         this.removeEmptyElement(liParentElement, numberModule, editor);
                     }
                 } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
-                    if([core.RECITAL, core.CITATION].includes(element.getAttribute(core.DATA_AKN_NAME))
-                        || (element.getAttribute(core.DATA_AKN_ELEMENT) == core.LEVEL)){
-                        core.removeTrackChangesAttributes(element);
-                    }else{
-                        element.$.outerHTML = element.$.innerHTML;
-                    }
+                    element.$.outerHTML = element.$.innerHTML;
                 }
             }
         },
@@ -1149,15 +1123,6 @@ define(function leosTrackChangesModule(require) {
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 if(parentElem && parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
-                } else if([core.RECITAL, core.CITATION].includes(element.getAttribute(core.DATA_AKN_NAME)) // recitals or citations
-                        || (element.getAttribute(core.DATA_AKN_ELEMENT) == core.LEVEL && element.getName() === 'li')){ // annex case with new added level
-                    element.setHtml(' ');
-                    var range = editor.createRange();
-                    range.selectNodeContents(element);
-                    range.collapse(true);
-                    editor.getSelection().selectRanges([range]);
-                    editor.focus();
-                    core.removeTrackChangesAttributes(element);
                 }else {
                     var liParentElement = element.getAscendant("li");
                     var pParentElement = element.getAscendant("p");
@@ -1194,13 +1159,6 @@ define(function leosTrackChangesModule(require) {
                 }
                 if($(element, editor.getData()).length > 0) {
                     element.$.outerHTML = element.$.innerHTML;
-                }
-            } else if([core.RECITAL].includes(element.getAttribute(core.DATA_AKN_NAME))) {
-                element.setAttribute(leosPluginUtils.DATA_AKN_NUM, element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER));
-                var tcAttributes = ["data-akn-uid-number", "data-akn-tc-original-number", "data-akn-num-del-action",  "title-number",
-                    "data-akn-del-num-id", "data-akn-num-ins-action", "data-akn-ins-num-id"];
-                for (var attrName of tcAttributes) {
-                    element.removeAttribute(attrName);
                 }
             }
         },
