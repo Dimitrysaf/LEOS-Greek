@@ -91,7 +91,7 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return leosPrefinalisationService.applyMetadata(inputFile);
     }
 
-    public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
-        this.leosPrefinalisationService.applyMetadataAsync(inputFile, callbackUrl);
+    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
+        return this.leosPrefinalisationService.applyMetadataAsync(inputFile, callbackUrl);
     }
 }

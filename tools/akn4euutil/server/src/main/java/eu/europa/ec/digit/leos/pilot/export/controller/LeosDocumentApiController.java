@@ -94,13 +94,13 @@ public class LeosDocumentApiController {
         }
     }
 
-    @RequestMapping(value = "/applyMetadata/async", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @RequestMapping(value = "/applyMetadata/async", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile,
                                                 @RequestParam("callbackUrl") String callbackUrl) {
         try {
-            leosDocumentService.applyMetadataAsync(inputFile, callbackUrl);
-            return ResponseEntity.ok("Ok");
+            String asyncId = leosDocumentService.applyMetadataAsync(inputFile, callbackUrl);
+            return new ResponseEntity<>(asyncId, HttpStatus.OK);
         } catch (Exception e) {
             return buildErrorResponse("Error found while processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR, true);
         }

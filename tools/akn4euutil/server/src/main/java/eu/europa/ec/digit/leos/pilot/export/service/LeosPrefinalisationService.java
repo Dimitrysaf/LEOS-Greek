@@ -17,5 +17,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface LeosPrefinalisationService {
     byte[] applyMetadata(MultipartFile inputFile);
-    void applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
+    String applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
 }
