@@ -46,9 +46,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -89,8 +91,10 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
-        CompletableFuture.runAsync(ApplyMetadataRunnable.create(inputFile, callbackUrl, this));
+    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
+        String asyncId = UUID.randomUUID().toString();
+        CompletableFuture.runAsync(ApplyMetadataRunnable.create(asyncId, inputFile, callbackUrl, this));
+        return asyncId;
     }
 
     private ApplyMetadataRequest readContentXml(Map<String, Object> zipContent) throws LeosPrefinalisationException {
@@ -394,14 +398,16 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     }
 
     public static class ApplyMetadataRunnable implements Runnable {
-        private final LeosPrefinalisationService leosPrefinalisationService;
+        private String id;
         private final String callbackUrl;
         private final MultipartFile inputFile;
+        private final LeosPrefinalisationService leosPrefinalisationService;
 
-        public ApplyMetadataRunnable(MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
-            this.leosPrefinalisationService = leosPrefinalisationService;
+        public ApplyMetadataRunnable(String id, MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
+            this.id = id;
             this.inputFile = inputFile;
             this.callbackUrl = callbackUrl;
+            this.leosPrefinalisationService = leosPrefinalisationService;
         }
 
         @Override
@@ -416,18 +422,18 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             HttpUtil.HttpResponse httpResponse = null;
             try {
                 LOG.debug("Send ZIP to callback url ...");
-                httpResponse = httpClient.doPost(this.callbackUrl, new HashMap<>(), requestHeaders, content);
+                httpResponse = httpClient.doPost(this.callbackUrl, Collections.singletonMap("token", this.id), requestHeaders, content);
             } catch(HttpUtil.HttpClientRequestException ex) {
-                LOG.debug("Error sending ZIP to callback url [callbackUrl: {} / statusCode: {} / message: {}]", this.callbackUrl,
+                LOG.debug("Error sending ZIP to callback url [callbackUrl: {} / id: {} / statusCode: {} / message: {}]", this.callbackUrl, this.id,
                         (httpResponse != null) ? httpResponse.getStatusCode() : "unknown",
                         (httpResponse != null) ? httpResponse.getStatusText() : "unknown", ex);
             } catch(Exception ex) {
-                LOG.error("Error sending ZIP to callback url [callbackUrl: {}]", this.callbackUrl, ex);
+                LOG.error("Error sending ZIP to callback url [callbackUrl: {} / id: {}]", this.callbackUrl, this.id, ex);
             }
         }
 
-        public static Runnable create(MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
-            return new ApplyMetadataRunnable(inputFile, callbackUrl, leosPrefinalisationService);
+        public static Runnable create(String id, MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
+            return new ApplyMetadataRunnable(id, inputFile, callbackUrl, leosPrefinalisationService);
         }
     }
 }

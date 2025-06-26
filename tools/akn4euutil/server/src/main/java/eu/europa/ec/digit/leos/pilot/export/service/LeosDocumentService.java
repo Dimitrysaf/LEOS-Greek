@@ -29,5 +29,5 @@ public interface LeosDocumentService {
 
     byte[] applyMetadata(MultipartFile inputFile);
 
-    void applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
+    String applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
 }
