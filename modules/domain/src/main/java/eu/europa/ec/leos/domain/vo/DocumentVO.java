@@ -152,6 +152,7 @@ public class DocumentVO {
                 this.getMetadata().setInternalRef(metadataP.getInternalRef());
                 this.getMetadata().setAuthenticLang(metadataP.getAuthenticLang());
                 this.getMetadata().setIsAuthenticLang(metadataP.getIsAuthenticLang());
+                this.getMetadata().setCrossReferences(metadataP.getCrossReferences());
 
                 this.setRef(metadataP.getRef());
                 Proposal proposal = ((Proposal) xmlDocument);

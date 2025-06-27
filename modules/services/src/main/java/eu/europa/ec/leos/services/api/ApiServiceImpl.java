@@ -357,7 +357,8 @@ public abstract class ApiServiceImpl implements ApiService {
             context.useActionComment(comment);
             DocumentVO updatedProposalVO = new DocumentVO(context.executeUpdateProposal());
             if (request.getPackageTitle() != null || request.getInternalRef() != null
-                    || (request.getAuthenticLang() != null) || request.getCoverPageType() != null) {
+                    || (request.getAuthenticLang() != null) || request.getCoverPageType() != null
+                    || request.getCrossReferences() != null) {
                 if (proposal.isClonedProposal()) {
                     legPackage = legService.createLegPackageForClone(proposal.getId(), new ExportLeos());
                 } else {
@@ -844,6 +845,7 @@ public abstract class ApiServiceImpl implements ApiService {
         metadataVO.setPackageTitle(proposal.getMetadata().get().getPackageTitle());
         metadataVO.setInternalRef(proposal.getMetadata().get().getInternalRef());
         metadataVO.setCoverPageType(proposal.getMetadata().get().getCoverPageType());
+        metadataVO.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
         return metadataVO;
     }
 

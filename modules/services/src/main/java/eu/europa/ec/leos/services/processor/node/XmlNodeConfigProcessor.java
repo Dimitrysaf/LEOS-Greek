@@ -77,6 +77,7 @@ public interface XmlNodeConfigProcessor {
     String PROPOSAL_INTERNAL_REFERENCE = "proposalInternalReference";
     String PROPOSAL_AUTHENTIC_LANGUAGES = "proposalAuthenticLanguages";
     String PROPOSAL_VERTICAL_SHIFT = "proposalVerticalShift";
+    String PROPOSAL_CROSS_REFERENCES = "proposalCrossReferences";
 
     List<String> docEEATagList = Arrays.asList(DOC_EEA_RELEVANCE_COVER, DOC_EEA_RELEVANCE_PREFACE, DOC_EEA_RELEVANCE_META);
 

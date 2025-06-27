@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,4 +23,23 @@ public class UpdateProposalRequest {
     private List<String> authenticLang;
     private LeosCoverPageType coverPageType;
     private Float verticalShift;
+    private List<String> crossReferences;
+
+    public void setCrossReferences(List<String> crossReferences) {
+        if (crossReferences == null) {
+            return;
+        }
+        List<String> newCrossRefs = new ArrayList<String>();
+        for (String crossReference : crossReferences) {
+            crossReference = crossReference.trim();
+            if (!crossReference.startsWith("{")) {
+                crossReference = "{" + crossReference;
+            }
+            if (!crossReference.endsWith("{")) {
+                crossReference = crossReference + "}";
+            }
+            newCrossRefs.add(crossReference);
+        }
+        this.crossReferences = newCrossRefs;
+    }
 }

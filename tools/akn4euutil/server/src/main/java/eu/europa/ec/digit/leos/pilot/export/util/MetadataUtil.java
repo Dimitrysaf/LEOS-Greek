@@ -13,6 +13,9 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
@@ -29,6 +32,7 @@ import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -36,10 +40,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MetadataUtil {
     public static final Logger LOG = LoggerFactory.getLogger(MetadataUtil.class);
@@ -107,6 +114,7 @@ public class MetadataUtil {
     public static final String LANGUAGE_EN="EN";
     public static final String PACKAGE_TITLE="packageTitle";
     public static final String AUTHENTIC_LANGUAGES_NAME = "authenticLang";
+    public static final String CROSS_CONFERENCE_NAME = "associatedReferences";
     public static final String ACTING_ENTITY_NAME = "actingEntity";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
     public static final String AUTONOMOUS_ACT_VALUE="ACT_AUTO_COM";
@@ -121,6 +129,11 @@ public class MetadataUtil {
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
             "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
+
+    public static final Set<String> orderInCoverPage = new ConcurrentSkipListSet<>(Arrays.asList("akn:container[@name='logo']"
+            , "akn:container[@name='actingEntity']", "akn:container[@name='mainDoc']", "akn:container[@name='procedureIdentifier']"
+            , "akn:container[@name='corrigendum']", "akn:longTitle", "akn:container[@name='authenticLang']"
+            , "akn:container[@name='associatedReferences']", "akn:container[@name='eeaRelevance']", "akn:container[@name='mainDocLanguage']"));
 
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
         return new ReferenceFieldInfo("BEL_BRU",
@@ -353,21 +366,22 @@ public class MetadataUtil {
         if (!displayValue.matches(LINKED_DOCUMENT_PARSE_PATTERN)){
             throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
         }
-        int bracketIndex = displayValue.indexOf("(");
-        final String abbreviation = displayValue.substring(0, bracketIndex).trim();
 
-        int closingBracketIndex = displayValue.indexOf(")");
-        final String year = displayValue.substring(bracketIndex+1, closingBracketIndex).trim();
+        String regex = "(([A-Z]+)\\(([0-9]+)\\) ([0-9]*)( .*)?)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(displayValue);
+        while (matcher.find()) {
+            String crossRef = matcher.group(1);
+            String abbreviation = matcher.group(2);
+            String year = matcher.group(3);
+            String number = matcher.group(4);
+            final String href = String.format(LINKED_DOCUMENT_HREF_PATTERN,
+                    abbreviation.toLowerCase().replace("sec",  "swd"), // SEC documents are published under SWD
+                    year, number);
 
-        int wordPos = displayValue.indexOf(FINAL_VALUE);
-        if(wordPos < 0) wordPos = displayValue.lastIndexOf("draft");
-        if(wordPos < 0) wordPos = displayValue.length();
-        final String number = displayValue.substring(closingBracketIndex+1, wordPos).trim();
-        final String href = String.format(LINKED_DOCUMENT_HREF_PATTERN,
-                abbreviation.toLowerCase().replace("sec",  "swd"), // SEC documents are published under SWD
-                year, number);
-
-        return new ReferenceFieldInfo("", href, displayValue, "", MetadataFieldType.LINKED_DOCUMENTS);
+            return new ReferenceFieldInfo("", href, displayValue, "", MetadataFieldType.LINKED_DOCUMENTS);
+        }
+        throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
     }
 
     public static MetadataFieldInfo parseStamp(String fieldValue) {
@@ -379,7 +393,15 @@ public class MetadataUtil {
     }
 
     public static MetadataFieldInfo parseAuthenticLanguages(String fieldValue) {
-        String[] values = StringUtils.hasLength(fieldValue) ? fieldValue.split("-") : new String[0];
+        String[] values = {};
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            values = mapper.readValue(fieldValue, String[].class);
+        } catch (JsonMappingException e) {
+            LOG.debug("Issue parsing json list of authentic languages");
+        } catch (JsonProcessingException e) {
+            LOG.debug("Issue parsing json list of authentic languages");
+        }
         return new ListFieldInfo(Arrays.asList(values), MetadataFieldType.AUTHENTIC_LANG);
     }
 
@@ -554,5 +576,30 @@ public class MetadataUtil {
 
     public static void removeClassAttribute(Node xmlNode) {
         XmlUtil.removeNodeAttributeValue(xmlNode, CLASS);
+    }
+
+    public static Element insertElementInCoverPage(XmlFile xmlFile, String elementName) {
+        String coverPagePath = "//akn:coverPage/";
+        Element containerElement = null;
+        Node xmlCoverPage = xmlFile.getElementByName(COVERPAGE);
+        String eltXPath = "akn:container[@name='" + elementName + "']";
+        if (xmlCoverPage != null) {
+            containerElement = xmlFile.newElement(MetadataUtil.CONTAINER);
+            XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.NAME, elementName);
+            boolean found = false;
+            for (String elementPath : orderInCoverPage) {
+                if (found) {
+                    NodeList node = XmlUtil.getElementsByXPath(xmlCoverPage, coverPagePath + elementPath, true);
+                    if (node.getLength() > 0) {
+                        xmlCoverPage.insertBefore(containerElement, node.item(0));
+                        return containerElement;
+                    }
+                }
+                found = found || (elementPath.equals(eltXPath));
+            }
+            xmlCoverPage.appendChild(containerElement);
+        }
+        return containerElement;
     }
 }

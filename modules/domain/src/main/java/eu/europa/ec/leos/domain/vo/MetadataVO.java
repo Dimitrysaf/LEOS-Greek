@@ -48,6 +48,7 @@ public class MetadataVO {
     private LeosAuthenticLanguage isAuthenticLang;
     private LeosCoverPageType coverPageType;
     private Float verticalShift;
+    private List<String> crossReferences;
 
     public MetadataVO() {
     }// added for early binding
@@ -64,111 +65,6 @@ public class MetadataVO {
     public enum SecurityLevel {
         STANDARD, SENSITIVE;
     }
-
-    public String getTemplateName() {
-        return templateName;
-    }
-
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getIndex() {
-        return index;
-    }
-
-    public void setIndex(String index) {
-        this.index = index;
-    }
-    
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getDocTemplate() {
-        return docTemplate;
-    }
-
-    public void setDocTemplate(String docTemplate) {
-        this.docTemplate = docTemplate;
-    }
-
-    public String getDocTemplateCategory() {
-        return docTemplateCategory;
-    }
-
-    public void setDocTemplateCategory(String docTemplateCategory) {
-        this.docTemplateCategory = docTemplateCategory;
-    }
-
-    public String getCallbackAddress() {
-        return callbackAddress;
-    }
-
-    public void setCallbackAddress(String callbackAddress) {
-        this.callbackAddress = callbackAddress;
-    }
-
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
-    }
-
-    public String getDocCollectionName() {
-        return docCollectionName;
-    }
-
-    public void setDocCollectionName(String docCollectionName) {
-        this.docCollectionName = docCollectionName;
-    }
-
-    public List<String> getAuthenticLang() {
-        return authenticLang;
-    }
-
-    public void setAuthenticLang(List<String> authenticLanguages) {
-        this.authenticLang = authenticLanguages;
-    }
-
-    public String getDocumentCollectionName() {
-        return documentCollectionName;
-    }
-
-    public void setDocumentCollectionName(String documentCollectionName) {
-        this.documentCollectionName = documentCollectionName;
-    }
-
-    public LeosAuthenticLanguage getIsAuthenticLang() {
-        return isAuthenticLang;
-    }
-
-    public void setIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
-        this.isAuthenticLang = isAuthenticLang;
-    }
-
     public void clean() {
         this.setDocStage(null);
         this.setDocType(null);
@@ -191,5 +87,6 @@ public class MetadataVO {
         this.setIsAuthenticLang(null);
         this.setCoverPageType(null);
         this.setVerticalShift(null);
+        this.setCrossReferences(null);
     }
 }

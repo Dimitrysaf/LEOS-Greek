@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.domain.repository.metadata;
+package eu.europa.ec.digit.leos.pilot.export.util.metadata;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +14,9 @@ public class CoverPageTypeMetadata implements Serializable {
     boolean disclaimer;
     boolean watermark;
     Float verticalShift;
+
+    public CoverPageTypeMetadata() {
+    }
 
     public CoverPageTypeMetadata(LeosCoverPageType coverPageType, Float verticalShift) {
         setCoverPageType(coverPageType, verticalShift);
