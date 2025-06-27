@@ -76,7 +76,7 @@ public class ApplyMetadataResponseConverter {
         if (document != null){
             documentNode.setAttribute(MetadataUtil.DOCUMENTID, document.getDocumentId());
             documentNode.setAttribute(MetadataUtil.MIMETYPE, document.getMimeType());
-            documentNode.setAttribute(MetadataUtil.FILENAME, document.getFilename());
+            documentNode.setAttribute(MetadataUtil.FILENAME, document.getFileName());
             documentNode.setAttribute(MetadataUtil.SOURCEURL, document.getSourceURL());
         }
 
@@ -146,7 +146,7 @@ public class ApplyMetadataResponseConverter {
     }
 
     public ApplyMetadataResponse.DocumentNode applyMetadataRequestDocumentToResultDocument(ApplyMetadataRequest.DocumentNode document) {
-        return new ApplyMetadataResponse.DocumentNode(document.getSourceURL(), document.getFilename(), document.getMimeType(),
+        return new ApplyMetadataResponse.DocumentNode(document.getSourceURL(), document.getFileName(), document.getMimeType(),
                 document.getDocumentId());
     }
 

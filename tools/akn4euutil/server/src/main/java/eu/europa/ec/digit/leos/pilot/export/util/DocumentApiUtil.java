@@ -39,11 +39,11 @@ public class DocumentApiUtil {
 
     public static ResponseEntity<Object> buildValidZipResponse(byte[] outputFile, String fileName) {
         HttpHeaders headers = new HttpHeaders();
-        String filename = fileName != null ? fileName : "result_" + System.currentTimeMillis() + ".zip";
+        String responseFileName = fileName != null ? fileName : "result_" + System.currentTimeMillis() + ".zip";
         headers.setContentDisposition(
                 ContentDisposition
                         .builder("attachment")
-                        .filename(filename)
+                        .filename(responseFileName)
                         .build());
         headers.setContentType(MediaType.valueOf(ZipUtil.APPLICATION_ZIP_VALUE));
         headers.setContentLength(outputFile.length);

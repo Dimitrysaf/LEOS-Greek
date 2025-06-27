@@ -132,8 +132,8 @@ public final class MetadataTestsUtil {
         }
     }
 
-    private static void checkProcessedXml(byte [] xmlData, String filename, MetadataTestConfiguration configuration) throws Exception {
-        XmlFile xmlFile = bytesToXmlFile(xmlData, filename);
+    private static void checkProcessedXml(byte [] xmlData, String fileName, MetadataTestConfiguration configuration) throws Exception {
+        XmlFile xmlFile = bytesToXmlFile(xmlData, fileName);
         checkAdoptionLocation(xmlFile, configuration);
         checkEmissionDate(xmlFile, configuration);
         checkInsertCote(xmlFile);
@@ -288,7 +288,7 @@ public final class MetadataTestsUtil {
         Node rootNode = xmlFile.getRootNode();
         Node taskNode = XmlUtil.getChildNodeWithName(rootNode, "task");
         Node documentNode = XmlUtil.getChildNodeWithName(taskNode, "document");
-        String documentName = XmlUtil.getNodeAttributeValue(documentNode, "filename");
+        String documentName = XmlUtil.getNodeAttributeValue(documentNode, "fileName");
         Assert.notNull(documentName, "content.xml document name is null");
         return documentName;
     }

@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -120,7 +119,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             throw new LeosPrefinalisationException("Document not found");
         }
 
-        byte[] documentZipData = objectToByteArray(zipContent.get(document.getFilename()));
+        byte[] documentZipData = objectToByteArray(zipContent.get(document.getFileName()));
         if (documentZipData == null || documentZipData.length == 0) {
             throw new LeosPrefinalisationException("Document file not found");
         }
@@ -157,7 +156,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
     private Map<String, Object> readFurtherDocumentContent(Map<String, Object> documentZipContent){
         Map<String, Object> furtherContent = new HashMap<>();
-        String[] contentNames = (String[]) documentZipContent.keySet().toArray(new String[0]);
+        String[] contentNames = documentZipContent.keySet().toArray(new String[0]);
 
         for (String contentName : contentNames) {
             if (MetadataUtil.isDocumentXmlFilename(contentName)) {

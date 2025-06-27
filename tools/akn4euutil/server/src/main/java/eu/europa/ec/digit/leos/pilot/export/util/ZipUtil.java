@@ -188,16 +188,16 @@ public class ZipUtil {
     /**
      * extract a certain file specified by its name from a given ZIP
      * 
-     * @param filename wanted filename
+     * @param fileName wanted file name
      * @param zippedData the ZIP file data
      * @return extracted file content in byte format
      * 
      * @throws IOException
      */
-    public static byte[] unzipSingleFile(String filename, byte[] zippedData) throws IOException {
+    public static byte[] unzipSingleFile(String fileName, byte[] zippedData) throws IOException {
         
-        if(!StringUtils.hasLength(filename)) {
-            throw new InvalidParameterException("Filename is missing");
+        if(!StringUtils.hasLength(fileName)) {
+            throw new InvalidParameterException("fileName is missing");
         }
         
         if(zippedData == null) {
@@ -206,14 +206,14 @@ public class ZipUtil {
         
         Map<String, Object> unzippedData = unzipByteArray(zippedData);
         if(unzippedData == null || unzippedData.isEmpty()) {
-            throw new IOException(String.format("File '%s' did not contain any files.", filename));
+            throw new IOException(String.format("File '%s' did not contain any files.", fileName));
         }
         
-        if(!unzippedData.containsKey(filename)) {
-            throw new IOException(String.format("File '%s' is not contained in ZIP file.", filename));
+        if(!unzippedData.containsKey(fileName)) {
+            throw new IOException(String.format("File '%s' is not contained in ZIP file.", fileName));
         }
         
-        return (byte[]) unzippedData.get(filename);
+        return (byte[]) unzippedData.get(fileName);
     }
     
     /**
@@ -221,10 +221,10 @@ public class ZipUtil {
      * <p>note: does not check if the file has any content</p>
      * 
      * @param zippedData the zip, as byte array
-     * @param filename the wanted filename
+     * @param fileName the wanted file name
      * @return
      */
-    public static boolean containsFile(byte[] zippedData, String filename) {
+    public static boolean containsFile(byte[] zippedData, String fileName) {
         
         try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zippedData))) {
             ZipEntry ze;
@@ -232,7 +232,7 @@ public class ZipUtil {
                 if (ze.isDirectory()) {
                     continue;
                 }
-                if(filename.equals(ze.getName())) {
+                if(fileName.equals(ze.getName())) {
                     zis.closeEntry();
                     return true;
                 }

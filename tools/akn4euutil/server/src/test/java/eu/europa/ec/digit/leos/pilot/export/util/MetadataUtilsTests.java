@@ -205,28 +205,28 @@ public class MetadataUtilsTests {
 
     @Test
     public void testIsDocumentXmlFilename() {
-        String filenameSuffix = "-cm3rbjrge0004si76xfw7zuq7-en.xml";
+        String fileNameSuffix = "-cm3rbjrge0004si76xfw7zuq7-en.xml";
 
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("ANNEX" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("BILL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_MEMORANDUM" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_COUNCIL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("main" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("MEMORANDUM" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_DEL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_IMPL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_DEL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_IMPL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_DEL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_IMPL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("FINANCIAL_STATEMENT" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_FINANCE" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_DIGIT_FINANCE" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("ANNEX" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("BILL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_MEMORANDUM" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_COUNCIL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("main" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("MEMORANDUM" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_DEL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_IMPL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_DEL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_IMPL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_DEL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_IMPL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("FINANCIAL_STATEMENT" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_FINANCE" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_DIGIT_FINANCE" + fileNameSuffix));
         Assertions.assertFalse(MetadataUtil.isDocumentXmlFilename("main-cm3rbjrge0004si76xfw7zuq7-en.css"));
-        Assertions.assertFalse(MetadataUtil.isDocumentXmlFilename("MY_DOC" + filenameSuffix));
+        Assertions.assertFalse(MetadataUtil.isDocumentXmlFilename("MY_DOC" + fileNameSuffix));
     }
 
     @Test
