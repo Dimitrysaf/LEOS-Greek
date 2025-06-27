@@ -64,7 +64,7 @@ public class MetadataUtil {
     public static final String FIELD="field";
     public static final String VERSION="version";
     public static final String MIMETYPE="mimeType";
-    public static final String FILENAME="filename";
+    public static final String FILENAME="fileName";
     public static final String SOURCEURL="sourceURL";
     public static final String DOCUMENTID="documentId";
     public static final String ACTION="action";
@@ -161,13 +161,13 @@ public class MetadataUtil {
         return XmlUtil.getNodeAttributeValue(documentNode, "name").length() > 0;
     }
 
-    public static boolean isDocumentXmlFilename(final String filename) {
-        final String lowerCaseFilename = filename.toLowerCase();
-        if (!lowerCaseFilename.endsWith(".xml")) {
+    public static boolean isDocumentXmlFilename(final String fileName) {
+        final String lowerCaseFileName = fileName.toLowerCase();
+        if (!lowerCaseFileName.endsWith(".xml")) {
             return false;
         }
         return MetadataUtil.validXmlDocumentPrefixes.stream()
-                .anyMatch((prefix) -> lowerCaseFilename.startsWith(prefix));
+                .anyMatch((prefix) -> lowerCaseFileName.startsWith(prefix));
     }
 
     public static boolean isMainDocumentFile(XmlFile xmlFile) {
@@ -457,16 +457,16 @@ public class MetadataUtil {
     }
 
     public static String buildPrefinalizationLegName(ApplyMetadataRequest.TaskNode task) {
-        final String documentFilename = task.getDocument().getFilename();
+        final String documentFileName = task.getDocument().getFileName();
         Optional<ApplyMetadataRequest.ActionNode> action = task.getActions().stream().findFirst();
         if (!action.isPresent()) {
-            return documentFilename;
+            return documentFileName;
         }
 
         Optional<ApplyMetadataRequest.FieldNode> coteField = action.get().getFieldWithKey(MetadataFieldType.COTE.toString());
         Optional<ApplyMetadataRequest.FieldNode> finalCote = action.get().getFieldWithKey(MetadataFieldType.FINAL_COTE.toString());
         if (!coteField.isPresent() && !finalCote.isPresent()) {
-            return documentFilename;
+            return documentFileName;
         }
         if (finalCote.isPresent()) {
             coteField = finalCote;
@@ -474,21 +474,21 @@ public class MetadataUtil {
 
         final String coteValue = coteField.get().getValue().replace(" ", "_");
         String prefinalisationName = "";
-        int pos = documentFilename.indexOf("-");
+        int pos = documentFileName.indexOf("-");
         if (pos == -1) {
-            return documentFilename;
+            return documentFileName;
         }
 
-        prefinalisationName = documentFilename.substring(0, pos+1) + coteValue;
+        prefinalisationName = documentFileName.substring(0, pos+1) + coteValue;
         if (finalCote.isPresent()) {
             prefinalisationName = prefinalisationName + "-" + FINAL_VALUE;
         }
 
-        pos = documentFilename.indexOf("-", pos+1);
+        pos = documentFileName.indexOf("-", pos+1);
         if (pos == -1) {
-            return documentFilename;
+            return documentFileName;
         }
-        return prefinalisationName + documentFilename.substring(pos);
+        return prefinalisationName + documentFileName.substring(pos);
     }
 
     public static void addRefersToAttribute(Node xmlNode, final String id) {

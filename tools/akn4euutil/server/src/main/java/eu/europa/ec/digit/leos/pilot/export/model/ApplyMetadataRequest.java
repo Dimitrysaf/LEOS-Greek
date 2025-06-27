@@ -12,33 +12,33 @@ public class ApplyMetadataRequest {
 
     public static class DocumentNode {
         private final String sourceURL;
-        private final String filename;
+        private final String fileName;
         private final String mimeType;
         private final String documentId;
 
         public DocumentNode(String sourceURL,
-                            String filename,
+                            String fileName,
                             String mimeType,
                             String documentId){
             this.sourceURL = sourceURL;
-            this.filename = filename;
+            this.fileName = fileName;
             this.mimeType = mimeType;
             this.documentId = documentId;
         }
 
         public static DocumentNode newInstance(String sourceURL,
-                                               String filename,
+                                               String fileName,
                                                String mimeType,
                                                String documentId) {
-            return new DocumentNode(sourceURL, filename, mimeType, documentId);
+            return new DocumentNode(sourceURL, fileName, mimeType, documentId);
         }
 
         public String getSourceURL() {
             return sourceURL;
         }
 
-        public String getFilename() {
-            return filename;
+        public String getFileName() {
+            return fileName;
         }
 
         public String getMimeType() {
@@ -54,8 +54,8 @@ public class ApplyMetadataRequest {
         }
 
         public String toString(){
-            return String.format("Document(sourceURL: %s / filename: %s / mimeType: %s / documentId %s)",
-                    sourceURL, filename, mimeType, documentId);
+            return String.format("Document(sourceURL: %s / fileName: %s / mimeType: %s / documentId %s)",
+                    sourceURL, fileName, mimeType, documentId);
         }
     }
 

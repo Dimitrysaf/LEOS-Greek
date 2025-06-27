@@ -123,7 +123,7 @@ public class LegServiceImpl implements LegService {
                         .filter(e -> e.getKey().equals(annexVO.getRef()))
                         .map(Map.Entry::getValue)
                         .findFirst()
-                        .orElseThrow(() -> new RuntimeException(String.format("The %s document ref does not match with its filename: %s",
+                        .orElseThrow(() -> new RuntimeException(String.format("The %s document ref does not match with its file name: %s",
                                 annexVO.getRef(), annexVO.getName())));
                 final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, annexVO.getName(), resourceId);
                 billExportResource.addChildResource(annexExportResource);
@@ -141,7 +141,7 @@ public class LegServiceImpl implements LegService {
     private void validateRef(DocumentVO documentVO) {
         Assert.notNull(documentVO, "documentVO is null");
         if(!documentVO.getRef().equalsIgnoreCase(documentVO.getName().replaceFirst("\\.xml$", ""))) {
-            throw new RuntimeException(String.format("The %s document ref does not match with its filename %s - %s",
+            throw new RuntimeException(String.format("The %s document ref does not match with its file name %s - %s",
                     documentVO.getRef(), documentVO.getName(), documentVO.getCategory().toString()));
         }
     }
