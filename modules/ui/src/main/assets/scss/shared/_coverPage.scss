@@ -15,6 +15,11 @@
 
 //------------------------------- XML Styles --------------------------------//
 %xmlCoverPage {
+    container {
+        display: block;
+        text-align: center;
+    }
+
     container[name=eeaRelevance] {
         & > * {
             text-align: center;
@@ -22,6 +27,18 @@
             display: block;
             font-weight: normal;
         }
+    }
+
+    container[name=disclaimer] {
+        border: 1px;
+        display: block;
+        border-style: solid;
+        border-color: black;
+        position: absolute;
+        padding: 10px;
+        width: 75%;
+        text-align: justify;
+        font-style: italic;
     }
 
     coverPage {

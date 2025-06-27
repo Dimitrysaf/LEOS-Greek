@@ -180,7 +180,7 @@ class WorkspacePresenter extends AbstractLeosPresenter {
                 context.useTemplate(name);
             }
             context.usePurpose(event.getDocument().getMetadata().getDocPurpose());
-            context.useEeaRelevance(event.getDocument().getMetadata().getEeaRelevance());
+            context.useEeaRelevance(event.getDocument().getMetadata().isEeaRelevance());
             if (event.getDocument().getProcedureType() != null) {
                 context.useProcedureType(event.getDocument().getProcedureType());
             }

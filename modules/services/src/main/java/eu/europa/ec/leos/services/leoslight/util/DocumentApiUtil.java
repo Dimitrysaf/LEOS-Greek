@@ -90,7 +90,7 @@ public class DocumentApiUtil {
                         documentVO.getTitle(),
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
-                        metadataVO.getEeaRelevance(),
+                        metadataVO.isEeaRelevance(),
                         documentVO.getRef());
                 break;
             case BILL:
@@ -103,7 +103,7 @@ public class DocumentApiUtil {
                         docRef,
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
-                        metadataVO.getEeaRelevance());
+                        metadataVO.isEeaRelevance());
                 break;
             case MEMORANDUM:
                 metaData = new MemorandumMetadata(metadataVO.getDocStage(),
@@ -115,7 +115,7 @@ public class DocumentApiUtil {
                         docRef,
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
-                        metadataVO.getEeaRelevance());
+                        metadataVO.isEeaRelevance());
                 break;
             case STAT_DIGIT_FINANC_LEGIS:
                 metaData = new FinancialStatementMetadata(metadataVO.getDocStage(),
@@ -128,7 +128,7 @@ public class DocumentApiUtil {
                         documentVO.getTitle(),
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
-                        metadataVO.getEeaRelevance());
+                        metadataVO.isEeaRelevance());
                 break;
             case PROPOSAL:
                 metaData = new ProposalMetadata(metadataVO.getDocStage(),
@@ -140,7 +140,7 @@ public class DocumentApiUtil {
                         docRef,
                         documentVO.getTitle(),
                         documentVO.getId(),
-                        metadataVO.getEeaRelevance());
+                        metadataVO.isEeaRelevance());
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + documentVO.getDocumentType().name());

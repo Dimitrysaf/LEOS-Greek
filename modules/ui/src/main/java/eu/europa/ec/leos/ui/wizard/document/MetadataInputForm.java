@@ -135,7 +135,7 @@ class MetadataInputForm extends FormLayout {
 
         CheckBox checkBox = new CheckBox();
         layout.addComponent(checkBox);
-        formBinder.forField(checkBox).bind(MetadataVO::getEeaRelevance, MetadataVO::setEeaRelevance);
+        formBinder.forField(checkBox).bind(MetadataVO::isEeaRelevance, MetadataVO::setEeaRelevance);
 
         TextField textField = new TextField();
         textField.setValue(messageHelper.getMessage("wizard.document.create.metadata.eeaRelevance.default"));

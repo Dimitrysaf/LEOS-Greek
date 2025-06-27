@@ -67,7 +67,8 @@
         	<#assign coverPage = .data_model.cover_data.coverPage>
     	</#if>
         <#local idAttr = coverPage["@xml:id"][0]!''>
-        <coverPage id="${idAttr}"><#recurse coverPage></coverPage><#t>
+        <#local classAttr = coverPage["@class"][0]!''>
+        <coverPage id="${idAttr}" class="${classAttr}"><#recurse coverPage></coverPage><#t>
     </#if>
 </#macro>
 

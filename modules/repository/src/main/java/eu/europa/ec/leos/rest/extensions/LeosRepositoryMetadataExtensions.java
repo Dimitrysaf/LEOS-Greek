@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
+import eu.europa.ec.leos.domain.repository.metadata.LeosCoverPageType;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProfileMetaData;
@@ -36,7 +37,7 @@ class LeosRepositoryMetadataExtensions {
     private static RepositoryPropertiesMapper repositoryPropertiesMapper = new RestProperties();
 
     private static class CommonMetadataProperties {
-        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress, creationOptions, authenticLanguage;
+        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress, creationOptions, authenticLanguage, coverPageType;
         Boolean eeaRelevance, imported;
     }
 
@@ -58,11 +59,7 @@ class LeosRepositoryMetadataExtensions {
             metadata.setImported(props.imported);
             metadata.setCreationOptions(props.creationOptions);
             metadata.setIsAuthenticLang(LeosAuthenticLanguage.caseInsensitiveValueOf(props.authenticLanguage));
-            if (props.authenticLanguage != null && props.authenticLanguage.equalsIgnoreCase("TRUE")) {
-                metadata.setAuthenticLang(Arrays.asList());
-            } else if (props.authenticLanguage != null) {
-                metadata.setAuthenticLang(Arrays.asList(props.authenticLanguage.split("-")));
-            }
+            metadata.setCoverPageType(LeosCoverPageType.caseInsensitiveValueOf(props.coverPageType));
 
             return Option.some(metadata);
         });
@@ -150,6 +147,7 @@ class LeosRepositoryMetadataExtensions {
         props.imported = getMetadataImported(doc);
         props.creationOptions = getMetadataCreationOptions(doc);
         props.authenticLanguage = getMetadataAuthenticLanguage(doc);
+        props.coverPageType = getMetadataCoverPageType(doc);
 
         Option<T> result;
         if (props.language != null && props.docTemplate != null) {
@@ -183,6 +181,10 @@ class LeosRepositoryMetadataExtensions {
 
     private static String getMetadataAuthenticLanguage(LeosDocument leosDocument) {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_AUTHENTIC_LANGUAGE));
+    }
+
+    private static String getMetadataCoverPageType(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_COVERPAGE_TYPE));
     }
 
     private static String getMetadataCallbaclAddress(LeosDocument leosDocument) {

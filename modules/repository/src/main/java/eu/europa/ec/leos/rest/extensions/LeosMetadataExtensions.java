@@ -73,6 +73,7 @@ public class LeosMetadataExtensions {
         leosProperties.putAll(buildCommonProperties(proposalMetadata, title));
 
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_AUTHENTIC_LANGUAGE), proposalMetadata.getIsAuthenticLang());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_COVERPAGE_TYPE), proposalMetadata.getCoverPageType());
 
         return leosProperties;
     }

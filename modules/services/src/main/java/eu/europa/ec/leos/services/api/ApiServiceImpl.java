@@ -327,8 +327,8 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.usePurpose(proposal.getMetadata().get().getPurpose());
             }
-            if (request.isEeaRelevance() != null) {
-                context.useEeaRelevance(request.isEeaRelevance());
+            if (request.getEeaRelevance() != null) {
+                context.useEeaRelevance(request.getEeaRelevance());
             } else {
                 context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
             }
@@ -347,12 +347,17 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.useIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
             }
+            if (request.getCoverPageType() != null) {
+                context.useCoverPageType(request.getCoverPageType());
+            } else {
+                context.useCoverPageType(proposal.getMetadata().get().getCoverPageType());
+            }
             String comment = messageHelper.getMessage("operation.metadata.updated");
             context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
             context.useActionComment(comment);
             DocumentVO updatedProposalVO = new DocumentVO(context.executeUpdateProposal());
             if (request.getPackageTitle() != null || request.getInternalRef() != null
-                    || (request.getAuthenticLang() != null)) {
+                    || (request.getAuthenticLang() != null) || request.getCoverPageType() != null) {
                 if (proposal.isClonedProposal()) {
                     legPackage = legService.createLegPackageForClone(proposal.getId(), new ExportLeos());
                 } else {
@@ -838,6 +843,7 @@ public abstract class ApiServiceImpl implements ApiService {
         metadataVO.setIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
         metadataVO.setPackageTitle(proposal.getMetadata().get().getPackageTitle());
         metadataVO.setInternalRef(proposal.getMetadata().get().getInternalRef());
+        metadataVO.setCoverPageType(proposal.getMetadata().get().getCoverPageType());
         return metadataVO;
     }
 

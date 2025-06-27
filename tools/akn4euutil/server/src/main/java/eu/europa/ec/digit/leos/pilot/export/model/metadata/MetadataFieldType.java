@@ -6,6 +6,7 @@ public enum MetadataFieldType {
     PACKAGE_TITLE("packageTitle"),
     INTERNAL_REF("internalRef"),
     AUTHENTIC_LANG("authenticLang"),
+    COVERPAGE_TYPE("coverPageType"),
     // Prefinalization fields' types
     ADOPTION_DATE("adoptionDate"),
     ADOPTION_LOCATION("adoptionLocation"),
@@ -41,6 +42,9 @@ public enum MetadataFieldType {
         }
         if (MetadataFieldType.AUTHENTIC_LANG.getTypeName().equals(typeName)){
             return MetadataFieldType.AUTHENTIC_LANG;
+        }
+        if (MetadataFieldType.COVERPAGE_TYPE.getTypeName().equals(typeName)){
+            return MetadataFieldType.COVERPAGE_TYPE;
         }
         if (MetadataFieldType.ADOPTION_LOCATION.getTypeName().equals(typeName)){
             return MetadataFieldType.ADOPTION_LOCATION;

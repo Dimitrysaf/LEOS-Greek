@@ -14,6 +14,7 @@
 package eu.europa.ec.digit.leos.pilot.export.service;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
+import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ListFieldInfo;
@@ -39,4 +40,5 @@ public interface MetadataService {
     void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processInternalRef(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
     void processAuthenticLanguages(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processCoverPageType(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) throws XmlUtilException;
 }

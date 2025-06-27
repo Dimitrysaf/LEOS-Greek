@@ -1,6 +1,7 @@
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
+import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
@@ -24,6 +25,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -94,6 +96,8 @@ public class MetadataServiceImpl implements MetadataService {
                     return MetadataUtil.parseInternalRef(fieldValue);
                 case AUTHENTIC_LANG:
                     return MetadataUtil.parseAuthenticLanguages(fieldValue);
+                case COVERPAGE_TYPE:
+                    return MetadataUtil.parseCoverPageType(fieldValue);
                 default:
                     throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
             }
@@ -655,6 +659,101 @@ public class MetadataServiceImpl implements MetadataService {
 
     }
 
+    public void processCoverPageType(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) throws XmlUtilException {
+        final String language = readLanguageValue(xmlFile);
+        XmlUtil.XmlFile xmlField = XmlUtil.parseXml(fieldInfo.getValue().getBytes(StandardCharsets.UTF_8));
+        Node xmlNodeCoverPageType = xmlField.getElementByName(MetadataUtil.COVERPAGE_TYPE);
+        if (xmlNodeCoverPageType == null) {
+            return;
+        }
+        Node xmlNodeDisclaimer = xmlField.getElementByName(MetadataUtil.DISCLAIMER);
+        if (xmlNodeDisclaimer == null) {
+            return;
+        }
+        Node xmlNodeLogo = xmlField.getElementByName(MetadataUtil.LOGO);
+        if (xmlNodeLogo == null) {
+            return;
+        }
+        Node xmlNodeWatermark = xmlField.getElementByName(MetadataUtil.WATERMARK);
+        if (xmlNodeWatermark == null) {
+            return;
+        }
+        Node xmlNodeVerticalShift = xmlField.getElementByName(MetadataUtil.VERTICAL_SHIFT);
+        Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        if (xmlNodeCoverPage == null) {
+            return;
+        }
+        String coverPageType = xmlNodeCoverPageType.getTextContent();
+        boolean disclaimer = Boolean.parseBoolean(xmlNodeDisclaimer.getTextContent());
+        boolean logo = Boolean.parseBoolean(xmlNodeLogo.getTextContent());
+        boolean watermark = Boolean.parseBoolean(xmlNodeWatermark.getTextContent());
+        String verticalShift = xmlNodeVerticalShift != null ? xmlNodeVerticalShift.getTextContent() : null;
+        deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.COVERPAGE_TYPE_PATH, true);
+        if (disclaimer) {
+            Element coverPageTypeElement = xmlFile.newElement(MetadataUtil.CONTAINER);
+            XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.NAME, MetadataUtil.DISCLAIMER);
+            if (verticalShift != null) {
+                XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("margin-top: %scm", verticalShift));
+            }
+            Element coverPageTypePElement = xmlFile.newElement(MetadataUtil.P);
+            XmlUtil.setNodeAttributeValue(coverPageTypePElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            if (coverPageType.contains("EUROPA")) {
+                coverPageTypePElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.disclaimer.europa"));
+            } else {
+                coverPageTypePElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.disclaimer.expert"));
+            }
+            coverPageTypeElement.appendChild(coverPageTypePElement);
+            xmlNodeCoverPage.appendChild(coverPageTypeElement);
+        }
+        Node xmlNodeContainerLogo = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverPage, MetadataUtil.LOGO);
+        if (xmlNodeContainerLogo == null && logo) {
+            deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.ACTING_ENTITY_PATH, true);
+            Element containerLogoElement = xmlFile.newElement(MetadataUtil.CONTAINER);
+            XmlUtil.setNodeAttributeValue(containerLogoElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(containerLogoElement, MetadataUtil.NAME, MetadataUtil.LOGO);
+            Element containerLogoPElement = xmlFile.newElement(MetadataUtil.P);
+            XmlUtil.setNodeAttributeValue(containerLogoPElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            containerLogoElement.appendChild(containerLogoPElement);
+            Element containerLogoImgElement = xmlFile.newElement(MetadataUtil.IMG);
+            XmlUtil.setNodeAttributeValue(containerLogoImgElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(containerLogoImgElement, "alt", ResourcesUtil.getMessage(language, "coverpage.logo.ec.title"));
+            XmlUtil.setNodeAttributeValue(containerLogoImgElement, "src", "data:image/png;base64," + getEcLogoAsBase64());
+            XmlUtil.setNodeAttributeValue(containerLogoImgElement, "title", ResourcesUtil.getMessage(language, "coverpage.logo.ec.title"));
+            containerLogoPElement.appendChild(containerLogoImgElement);
+
+            Element containerActingEntityElement = xmlFile.newElement(MetadataUtil.CONTAINER);
+            XmlUtil.setNodeAttributeValue(containerActingEntityElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(containerActingEntityElement, MetadataUtil.NAME, MetadataUtil.ACTING_ENTITY_NAME);
+            Element containerActingPElement = xmlFile.newElement(MetadataUtil.P);
+            XmlUtil.setNodeAttributeValue(containerActingPElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            containerActingEntityElement.appendChild(containerActingPElement);
+            Element containerActingEntityOrgElement = xmlFile.newElement(MetadataUtil.ORGANIZATION);
+            XmlUtil.setNodeAttributeValue(containerActingEntityOrgElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(containerActingEntityOrgElement, MetadataUtil.REFERSTO, "~COM");
+            containerActingEntityOrgElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.logo.acting.entity.ec"));
+            containerActingPElement.appendChild(containerActingEntityOrgElement);
+
+            Node firstChild = xmlNodeCoverPage.getFirstChild();
+            xmlNodeCoverPage.insertBefore(containerLogoElement, firstChild);
+            xmlNodeCoverPage.insertBefore(containerActingEntityElement, firstChild);
+        } else if (xmlNodeContainerLogo != null && !logo) {
+            deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.ACTING_ENTITY_PATH, true);
+            xmlNodeContainerLogo.getParentNode().removeChild(xmlNodeContainerLogo);
+        }
+        if (watermark) {
+            XmlUtil.setNodeAttributeValue(xmlNodeCoverPage, MetadataUtil.CLASS, "watermark");
+        } else {
+            XmlUtil.removeNodeAttributeValue(xmlNodeCoverPage, MetadataUtil.CLASS);
+        }
+    }
+
+    private String getEcLogoAsBase64() {
+        final String logoPath = "logo/ec.png";
+        final byte[] logoBytes = ResourcesUtil.readResourceFile(logoPath);
+        return Base64.getEncoder().encodeToString(logoBytes);
+    }
+
     public void processAuthenticLanguages(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         final String language = readLanguageValue(xmlFile);
         Node xmlNodeMeta = xmlFile.getElementByName(MetadataUtil.META);
@@ -686,6 +785,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     public void processAuthenticLanguagesInCoverPage(List<String> authenticLang, XmlUtil.XmlFile xmlFile) {
+        final String language = readLanguageValue(xmlFile);
         Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
         if (xmlNodeCoverPage == null) {
             return;
@@ -704,12 +804,12 @@ public class MetadataServiceImpl implements MetadataService {
             List<String> langArray = new ArrayList();
 
             for (String lang: authenticLang) {
-                langArray.add(MetadataUtil.AUTHENTIC_LANGUAGES.get(lang.toUpperCase()));
+                langArray.add(ResourcesUtil.getMessage(language, "authentic.language." + lang.toUpperCase()));
             }
             langArray = langArray.stream().sorted().collect(Collectors.toList());
             final String langStr = String.join(", ", langArray);
             XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.XMLID, IdGenerator.generateId());
-            authPElement.setTextContent(String.format(MetadataUtil.AUTHENTIC_LANGUAGES_COVERPAGE_TEXT, langStr));
+            authPElement.setTextContent(String.format(ResourcesUtil.getMessage(language, "authentic.languages.text.template"), langStr));
             authContainerElement.appendChild(authPElement);
         }
     }

@@ -77,6 +77,7 @@
                     type="checkbox"
                     id="all_lang"
                     [(ngModel)]="allSelected"
+                    (ngModelChange)="handleChange()"
                     (change)="toggleAllLanguages()"
                     [disabled]="!isAuthenticLang"/>
                   <label>{{ 'page.collection.details.all'
@@ -109,8 +110,8 @@
               <div class="col-sm-2">
                 <input
                   id="package-title-input"
-                  value="{{proposal.metadata.packageTitle}}"
                   [(ngModel)]="packageTitle"
+                  (ngModelChange)="handleChange()"
                   type="text"
                   euiInputText
                   euiClearable
@@ -147,7 +148,7 @@
   </div>
 
   <div class="col-md-1 d-flex align-items-start pt-2">
-    <button euiButton euiPrimary (click)="saveGeneralDetails()">
+    <button euiButton euiPrimary (click)="saveGeneralDetails()" [disabled]="!enableSave">
       {{ 'global.actions.save' | translate }}
     </button>
   </div>
@@ -205,7 +206,7 @@
               </div>
               <div class="col-sm-11 label-column">
                 <label class="coverpage-option">
-                  <input type="radio" name="myRadioGroup"/>
+                  <input type="radio" name="myRadioGroup" [(ngModel)]="coverPageType" (ngModelChange)="handleCoverPageTypeChange($event)" value="STANDARD"/>
                   {{'page.collection.details.switch.coverpage.option1' | translate}}
                 </label>
               </div>
@@ -215,7 +216,7 @@
               </div>
               <div class="col-sm-11 label-column">
                 <label>
-                  <input type="radio" name="myRadioGroup"/>
+                  <input type="radio" name="myRadioGroup" [(ngModel)]="coverPageType" (ngModelChange)="handleCoverPageTypeChange($event)" value="EUROPA_EURLEX"/>
                   {{'page.collection.details.switch.coverpage.option2' | translate}}
                 </label>
               </div>
@@ -225,7 +226,8 @@
               </div>
               <div class="col-sm-11 label-column">
                 <label>
-                  <input type="radio" name="myRadioGroup"/>
+                  <input type="radio" name="myRadioGroup" [(ngModel)]="coverPageType" (ngModelChange)="handleCoverPageTypeChange($event)"
+                         value="COMMITEE_EXPERTS_GROUP">
                   {{'page.collection.details.switch.coverpage.option3' | translate}}
                 </label>
               </div>
@@ -239,19 +241,21 @@
               <div class="col-sm-8 label-column">
                 <div class="vertical-shift-num">
                   <input type="text"
-                         [value]="quantity.toFixed(1)"
+                         [disabled]="!isVerticalShift"
+                         [(ngModel)]="verticalShift"
+                         (ngModelChange)="handleChange()"
                          readonly
                          style="width: 60px; text-align: center;"/>
                   <div class="vertical-shift-num-buttons">
-                    <button (click)="increase()" class="number-up-down-button">
+                    <button [disabled]="!isVerticalShift" (click)="increase()" class="number-up-down-button">
                       <eui-icon-svg icon="eui-caret-up" set="eui" size="xs" fillColor="grey-100"
                                     class="number-up-down-button-icon"></eui-icon-svg>
                     </button>
-                    <button (click)="decrease()" class="number-up-down-button">
+                    <button [disabled]="!isVerticalShift" (click)="decrease()" class="number-up-down-button">
                       <eui-icon-svg icon="eui-caret-down" set="eui" size="xs" fillColor="grey-100"
                                     class="number-up-down-button-icon"></eui-icon-svg>
                     </button>
-                  </div>
+                  </div><div style="padding-left: 20px;">cm</div>
                 </div>
               </div>
             </div>

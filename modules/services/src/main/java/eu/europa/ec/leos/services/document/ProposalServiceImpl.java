@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.CoverPageTypeMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -72,6 +73,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
@@ -219,7 +222,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public Proposal populateProposalMetadataFromXml(Proposal proposal) {
         Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(proposal.getContent().get().getSource().getBytes(),
                 new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,
-                        XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE,
+                        XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE, XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT,
                         XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION},
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         proposal.getMetadata().get().setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
@@ -234,13 +237,31 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
         proposal.getMetadata().get().setAuthenticLang(authLangList);
         proposal.getMetadata().get().setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
+        proposal.getMetadata().get().setVerticalShift(extractVerticalShift(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT)));
         return proposal;
+    }
+
+    private Float extractVerticalShift(String styleStr) {
+        if (styleStr == null) {
+            return null;
+        }
+        String regex="([0-9]+[.]*[0-9]*)cm";
+
+        Pattern pattern=Pattern.compile(regex);
+        Matcher matcher=pattern.matcher(styleStr);
+
+        while(matcher.find())
+        {
+            return Float.parseFloat(matcher.group().replaceAll("cm", ""));
+        }
+        return null;
     }
 
     @Override
     public MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, MetadataVO metadataVO) {
         Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(xmlContent,
-                new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE},
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE,
+                        XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT, XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION},
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         metadataVO.setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
         metadataVO.setInternalRef(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE));
@@ -252,6 +273,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
             authLangList.remove(metadataVO.getLanguage().toLowerCase());
         }
         metadataVO.setAuthenticLang(authLangList);
+        metadataVO.setVerticalShift(extractVerticalShift(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT)));
+        metadataVO.setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
         return metadataVO;
     }
 
@@ -678,6 +701,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
         if (request.getAuthenticLang() != null) {
             fields.add(new MetadataOptions.FieldNode("authenticLang", String.join("-", request.getAuthenticLang())));
+        }
+        if (request.getCoverPageType() != null) {
+            fields.add(new MetadataOptions.FieldNode("coverPageType", new CoverPageTypeMetadata(request.getCoverPageType(), request.getVerticalShift()).toString()));
         }
         metadataOptions.addTask(legFileName, proposal, fields);
         return metadataOptions;

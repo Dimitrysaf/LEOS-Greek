@@ -81,6 +81,7 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> updateProposalMetadata(@PathVariable String proposalRef, @RequestBody UpdateProposalRequest request) {
         try {
+            LOG.info("Updating proposal metadata for proposal ref {} and request {}", proposalRef, request);
             proposalRef = encodeParam(proposalRef);
             return new ResponseEntity<>(apiService.updateProposalMetadata(proposalRef, request), HttpStatus.OK);
         } catch (Exception e) {

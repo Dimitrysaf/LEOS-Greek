@@ -252,23 +252,30 @@ class LeosMetadataServiceImpl implements LeosMetadataService {
     private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles) throws MetadataUtilsException {
         LOG.debug("Process field info  '{}'", fieldInfo);
 
-        final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
-        Optional<XmlFile> xmlFile = documentXmlFiles.stream().filter(f -> f.getName().startsWith(PROPOSAL_FILE_PREFIX)).findAny();
-        if (xmlFile.isPresent()){
-            LOG.debug("Process xml file '{}'", xmlFile.get().getName());
-            switch(fieldInfo.getFieldType()){
-                case PACKAGE_TITLE:
-                    metadataService.processPackageTitle((SimpleFieldInfo)fieldInfo, xmlFile.get());
-                    break;
-                case INTERNAL_REF:
-                    metadataService.processInternalRef((SimpleFieldInfo)fieldInfo, xmlFile.get());
-                    break;
-                case AUTHENTIC_LANG:
-                    metadataService.processAuthenticLanguages((ListFieldInfo)fieldInfo, xmlFile.get());
-                    break;
-                default:
-                    throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
+        try {
+            final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
+            Optional<XmlFile> xmlFile = documentXmlFiles.stream().filter(f -> f.getName().startsWith(PROPOSAL_FILE_PREFIX)).findAny();
+            if (xmlFile.isPresent()){
+                LOG.debug("Process xml file '{}'", xmlFile.get().getName());
+                switch(fieldInfo.getFieldType()){
+                    case PACKAGE_TITLE:
+                        metadataService.processPackageTitle((SimpleFieldInfo)fieldInfo, xmlFile.get());
+                        break;
+                    case INTERNAL_REF:
+                        metadataService.processInternalRef((SimpleFieldInfo)fieldInfo, xmlFile.get());
+                        break;
+                    case AUTHENTIC_LANG:
+                        metadataService.processAuthenticLanguages((ListFieldInfo)fieldInfo, xmlFile.get());
+                        break;
+                    case COVERPAGE_TYPE:
+                        metadataService.processCoverPageType((SimpleFieldInfo)fieldInfo, xmlFile.get());
+                        break;
+                    default:
+                        throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
+                }
             }
+        } catch (Exception e) {
+            throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
         }
     }
 
