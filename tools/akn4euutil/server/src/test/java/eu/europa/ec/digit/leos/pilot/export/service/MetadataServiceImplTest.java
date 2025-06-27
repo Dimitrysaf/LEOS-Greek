@@ -96,9 +96,9 @@ public class MetadataServiceImplTest {
         Assertions.assertTrue(XmlUtil.isNodeEmpty(referencesContainer));
     }
 
-    private XmlUtil.XmlFile createCuidXmlFile(String filename, String cuid) throws XmlUtilException {
+    private XmlUtil.XmlFile createCuidXmlFile(String fileName, String cuid) throws XmlUtilException {
         XmlUtil.XmlFile xmlFile = XmlUtil.newXmlFile();
-        xmlFile.setName(filename);
+        xmlFile.setName(fileName);
         Node rootNode = xmlFile.createRoot("doc");
 
         Node metaNode = xmlFile.newElement("meta");
@@ -128,9 +128,9 @@ public class MetadataServiceImplTest {
         return (ReferenceFieldInfo)MetadataUtil.parseCote(fieldValue, MetadataFieldType.COTE);
     }
 
-    private XmlUtil.XmlFile createAssociatedReferencesXmlFile(String filename) throws XmlUtilException {
+    private XmlUtil.XmlFile createAssociatedReferencesXmlFile(String fileName) throws XmlUtilException {
         XmlUtil.XmlFile xmlFile = XmlUtil.newXmlFile();
-        xmlFile.setName(filename);
+        xmlFile.setName(fileName);
         Node rootNode = xmlFile.createRoot("doc");
 
         Node coverpageNode = xmlFile.newElement("coverPage");
