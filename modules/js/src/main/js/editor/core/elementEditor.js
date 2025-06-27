@@ -644,7 +644,7 @@ define(function elementEditorModule(require) {
             const $li = $(this);
             // Check if it only has br and no text
             const hasOnlyBr = $li.contents().length === 1 && $li.children('br').length === 1;
-            const noText = $li.text().trim().length === 0;
+            const noText = $li.contents().length === 1 && $li.html().trim().length === 0;
 
             if (hasOnlyBr || noText) {
                 allEmpty = true;
