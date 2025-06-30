@@ -639,16 +639,16 @@ define(function elementEditorModule(require) {
             return false;
         }
 
-        let allEmpty = true;
+        let allEmpty = false;
         $listItems.each(function() {
             const $li = $(this);
             // Check if it only has br and no text
             const hasOnlyBr = $li.contents().length === 1 && $li.children('br').length === 1;
-            const noText = $li.text().trim().length === 0;
+            const noText = $li.contents().length === 1 && $li.html().trim().length === 0;
 
-            if (!hasOnlyBr || !noText) {
-                allEmpty = false;
-                return false; // breaks the each loop
+            if (hasOnlyBr || noText) {
+                allEmpty = true;
+                return true; // breaks the each loop
             }
         });
 
@@ -663,6 +663,15 @@ define(function elementEditorModule(require) {
             + ", li[refersto]").find("*").addBack().filter(function() {
             return UTILS.isEmptyElement(this);
         });
+        // Element is completely empty and is the last editable block
+        var $el = $("#" + elementId);
+        if (
+            $el.text().trim() === '' &&             // no text
+            $el.children().length === 0 &&          // no children
+            isLastEditableElement($el)              // passes structural check
+        ) {
+            isEmptyElementFound = true;
+        }
 
         var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
         var sibling;
@@ -724,6 +733,10 @@ define(function elementEditorModule(require) {
             }
         });
 
+        if(hasEmptyAllListItem(elementId)){
+            isEmptyList = true;
+        }
+
 
         var isEmptyRefersToElement = false;
         var aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknOrderedList']");
@@ -752,9 +765,8 @@ define(function elementEditorModule(require) {
             }
         });
 
-        var isAllLiItemEmpty = hasEmptyAllListItem(elementId);
 
-        return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement || isAllLiItemEmpty;
+        return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement;
     }
 
     function isEmpty(element) {
