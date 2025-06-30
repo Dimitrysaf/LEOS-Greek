@@ -354,8 +354,10 @@ Feature: Legal Act Page Regression Features
     Then ck editor window is displayed
     When select content from offset 0 till offset 7 in li 1 with data-akn-element "indent" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click delete button from keyboard in edition mode
-    And  select content from offset 0 till offset 8 in li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click backspace from keyboard in edition mode
+    And  select content from offset 0 till offset 8 in li 1 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click delete button from keyboard in edition mode
+    And  click backspace from keyboard in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
     And  num tag of paragraph 1 of article 1 contains "1."
