@@ -644,7 +644,7 @@ define(function elementEditorModule(require) {
             const $li = $(this);
             // Check if it only has br and no text
             const hasOnlyBr = $li.contents().length === 1 && $li.children('br').length === 1;
-            const noText = $li.contents().length === 1 && $li.html().trim().length === 0;
+            const noText = $li.html().trim().length === 0;
 
             if (hasOnlyBr || noText) {
                 allEmpty = true;
@@ -701,6 +701,7 @@ define(function elementEditorModule(require) {
                 if(($(ele).is("p") && $(ele).attr("data-akn-element") == "subparagraph" && $(parent).attr("data-akn-element") == "level")
                     || ($(ele).is("li") && $(ele).attr("data-akn-element") == "paragraph" && $(parent).parent()[0].localName == 'article')
                     || ($(ele).is("p") && $(ele).attr("data-akn-name") == "aknParagraph" && $(parent).attr("data-akn-name") == "blockContainer")
+                    || ($(ele).is("li") && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList")))
                 ) {
                     hasOnlyEmptyLines = true;
                     break;
