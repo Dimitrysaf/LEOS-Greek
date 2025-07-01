@@ -48,3 +48,18 @@ When(/^click on edit role button$/, function () {
 When(/^select role with value "([^"]*)" in column action of row (\d+) of collaborators tab$/, function (role, row) {
     collaboratorsTab.selectRoleFromRow(role, row);
 });
+
+And  ('click on delete role button',()=>{
+    collaboratorsTab.clickDeleteRole();
+});
+
+Then('{string} is not displayed in collaborators tab', function (name) {
+    collaboratorsTab.getRowByName('name').should('not.exist');
+});
+
+Then ('delete option is not be visible for the collaborator',()=>{
+        collaboratorsTab.elements.deleteRole().should('not.exist');
+    });
+
+
+
