@@ -35,6 +35,20 @@ define(function aknBlockContainerPluginModule(require) {
                         // Nothing to do if no selection or track changes enabled
                         return;
                     }
+                    var root = editor.editable().getNative();
+                    var startContainer = range.startContainer.$;
+                    var endContainer = range.endContainer.$;
+
+                    var isAtStart = (range.startOffset === 0);
+                    var endLength = (endContainer.nodeType === Node.TEXT_NODE) ? endContainer.length
+                        : (endContainer.nodeType === Node.ELEMENT_NODE) ? endContainer.childNodes.length
+                            : 0;
+                    var isAtEnd = (range.endOffset === endLength);
+
+                    var isWholeSelected = (startContainer === root && endContainer === root && isAtStart && isAtEnd);
+
+                    if (isWholeSelected) {
+
                     var iterator = range.createIterator();
                     iterator.enlargeBr = false;
 
@@ -59,7 +73,7 @@ define(function aknBlockContainerPluginModule(require) {
                                 } else {
                                     toRemove.push(node);
                                 }
-                            }else{
+                            } else {
                                 toRemove.push(node);
                             }
                         }
@@ -87,9 +101,10 @@ define(function aknBlockContainerPluginModule(require) {
                         }
 
                         editor.fire('saveSnapshot');
-                        setTimeout( function() {
-                            editor.selectionChange( 1 );
-                        } );
+                        setTimeout(function () {
+                            editor.selectionChange(1);
+                        });
+                    }
                     }
                 }
 

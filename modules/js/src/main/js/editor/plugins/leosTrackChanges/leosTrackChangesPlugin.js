@@ -724,12 +724,15 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                         break;
                     case "cut":
-                        style.apply(editor, deleteTcStyle);
-                        var range = editor.getSelection().getRanges()[0];
-                        range.collapse(false);
-                        range.select();
-                        editor.fire("change");
-                        return false;
+                        if (isTrackChangesEnabled) {
+                            style.apply(editor, deleteTcStyle);
+                            var range = editor.getSelection().getRanges()[0];
+                            range.collapse(false);
+                            range.select();
+                            editor.fire("change");
+                            return false;
+                        }
+                        break;
                     case "enter":
                         var trackedDeletedOrMovedToElement = core.isInsideTrackedDeletedOrSoftMovedToElement(editor);
                         if (trackedDeletedOrMovedToElement) {
