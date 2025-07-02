@@ -1,4 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import ckeDialogWindow from "../pages/ckeDialogWindow";
 
 Then(`cke dialog window is displayed with title {string}`, (title) => {
@@ -15,4 +15,12 @@ When('type {string} in cke dialog textarea', function (text) {
 
 When('click on cell {int} of row {int} of special character table in cke dialog window', function (cell, row) {
     ckeDialogWindow.clickTrTdDialogUIHBoxTable(cell, row);
+});
+
+Then('click dialog ok button', () => {
+    ckeDialogWindow.clickDialogOkBtn();
+});
+
+Then('click on dialog cancel button', () => {
+    ckeDialogWindow.clickDialogCancelBtn();
 });

@@ -799,10 +799,10 @@ Feature: Legal Act Page Regression Features
     When mouseover and click on article 3
     Then ck editor window is displayed
     When click on alternative 2 icon present in ck editor panel
-    And click dialog ok button
+    And  click dialog ok button
     Then check content inside ckeditor is of size 3202
     When click source button
-    And click on cancel button in source dialog
+    And  click on dialog cancel button
     Then check content inside ckeditor is of size 3202
     When mouseover and click on article 3
     Then ck editor window is displayed
