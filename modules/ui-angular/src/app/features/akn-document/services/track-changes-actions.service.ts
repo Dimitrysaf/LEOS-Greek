@@ -32,6 +32,7 @@ export class TrackChangesActionsService {
   private ALLOWED_TAGS = [
     'article',
     'citation',
+    'recitals',
     'recital',
     ':not(article) paragraph',
     'level',
