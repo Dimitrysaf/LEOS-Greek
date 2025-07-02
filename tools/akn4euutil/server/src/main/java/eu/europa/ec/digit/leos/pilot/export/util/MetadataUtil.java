@@ -14,7 +14,7 @@
 package eu.europa.ec.digit.leos.pilot.export.util;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
-import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageFormats;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLocationType;
@@ -27,7 +27,6 @@ import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -50,49 +49,49 @@ public class MetadataUtil {
     public static final String INTERINSTITUTIONAL_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     public static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
     public static final String LINKED_DOCUMENT_PARSE_PATTERN = "([A-Za-z0-9]+)\\((\\d{4})\\)(\\s?)(\\d+)(\\s?)([A-Za-z0-9]*)";
-    public static final String CONCLUSIONS = "conclusions";
-    public static final String CONCLUSIONSNEW = "_" + CONCLUSIONS;
-    public static final String CONCLUSION_NODE_ID = "conclusions__p_1";
-    public static final String CONCLUSION_NODE_IDNEW = "_" + CONCLUSION_NODE_ID;
-    public static final String STATUS_CODE="statusCode";
-    public static final String KEY="key";
-    public static final String DOCUMENT="document";
-    public static final String TASK="task";
-    public static final String TASKID="taskId";
-    public static final String NAME="name";
-    public static final String CLEANUP="cleanup";
-    public static final String FIELD="field";
-    public static final String VERSION="version";
-    public static final String MIMETYPE="mimeType";
-    public static final String FILENAME="fileName";
-    public static final String SOURCEURL="sourceURL";
-    public static final String DOCUMENTID="documentId";
-    public static final String ACTION="action";
-    public static final String DATE="date";
-    public static final String ONE="1";
-    public static final String ZERO="0";
-    public static final String FIELD_NOT_SUPPORTED_MESSAGE="Field not supported";
-    public static final String LOCATION_NOT_SUPPORTED_MESSAGE="Location not supported";
-    public static final String INVALID_ISO_DATE_MESSAGE="Invalid iso date";
-    public static final String INVALID_FIELD_VALUE_MESSAGE="Invalid field value";
-    public static final String XMLID="xml:id";
-    public static final String HREF="href";
-    public static final String SHOWAS="showAs";
-    public static final String SHORTFORM="shortForm";
-    public static final String COVERPAGE="coverPage";
-    public static final String REFERSTO="refersTo";
-    public static final String VALUE="value";
-    public static final String CLASS="class";
-    public static final String FRBRWORK="FRBRWork";
-    public static final String FRBRLANGUAGE="FRBRlanguage";
-    public static final String TLCREFERENCE = "TLCReference";
-    public static final String PRESERVATION="preservation";
-    public static final String REFERENCES="references";
-    public static final String LANGUAGE="language";
-    public static final String LANGUAGE_EN="EN";
+    public static final String ELEMENT_CONCLUSIONS = "conclusions";
+    public static final String ATTRIBUTE_CONCLUSIONSNEW = "_" + ELEMENT_CONCLUSIONS;
+    public static final String VALUE_CONCLUSION_NODE_ID = "conclusions__p_1";
+    public static final String VALUE_CONCLUSION_NODE_IDNEW = "_" + VALUE_CONCLUSION_NODE_ID;
+    public static final String ATTRIBUTE_STATUS_CODE ="statusCode";
+    public static final String ATTRIBUTE_KEY ="key";
+    public static final String ELEMENT_DOCUMENT ="document";
+    public static final String ELEMENT_TASK ="task";
+    public static final String ATTRIBUTE_TASKID ="taskId";
+    public static final String ATTRIBUTE_NAME="name";
+    public static final String ATTRIBUTE_CLEANUP ="cleanup";
+    public static final String ELEMENT_FIELD ="field";
+    public static final String ATTRIBUTE_VERSION ="version";
+    public static final String ATTRIBUTE_MIMETYPE ="mimeType";
+    public static final String ATTRIBUTE_FILENAME ="fileName";
+    public static final String ATTRIBUTE_SOURCE_URL ="sourceURL";
+    public static final String ATTRIBUTE_DOCUMENTID ="documentId";
+    public static final String ELEMENT_ACTION ="action";
+    public static final String ATTRIBUTE_DATE="date";
+    public static final String ELEMENT_DATE="date";
+    public static final String VALUE_ONE ="1";
+    public static final String VALUE_ZERO ="0";
+    public static final String MESSAGE_LOCATION_NOT_SUPPORTED ="Location not supported";
+    public static final String MESSAGE_INVALID_ISO_DATE ="Invalid iso date";
+    public static final String MESSAGE_INVALID_FIELD_VALUE ="Invalid field value";
+    public static final String ATTRIBUTE_XMLID ="xml:id";
+    public static final String ATTRIBUTE_HREF ="href";
+    public static final String ATTRIBUTE_SHOWAS ="showAs";
+    public static final String ATTRIBUTE_SHORTFORM ="shortForm";
+    public static final String ELEMENT_COVERPAGE ="coverPage";
+    public static final String ATTRIBUTE_REFERSTO ="refersTo";
+    public static final String ATTRIBUTE_VALUE ="value";
+    public static final String ATTRIBUTE_CLASS ="class";
+    public static final String ELEMENT_FRBRWORK ="FRBRWork";
+    public static final String ELEMENT_FRBRLANGUAGE ="FRBRlanguage";
+    public static final String ELEMENT_TLCREFERENCE = "TLCReference";
+    public static final String ELEMENT_PRESERVATION ="preservation";
+    public static final String ELEMENT_REFERENCES ="references";
+    public static final String ATTRIBUTE_LANGUAGE ="language";
+    public static final String VALUE_LANGUAGE_EN ="EN";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
     public static final String AUTONOMOUS_ACT_VALUE="ACT_AUTO_COM";
-    public static final String FINAL_VALUE = "final";
+    public static final String VALUE_FINAL = "final";
 
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
@@ -196,23 +195,22 @@ public class MetadataUtil {
             ApplyMetadataRequest.FieldNode field,
             MetadataUtilsException e) {
 
-        if(e.getMessage().equals(INVALID_FIELD_VALUE_MESSAGE)) {
-            return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE,
-                    String.format(INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue(), FIELD));
+        if(e.getMessage().equals(MESSAGE_INVALID_FIELD_VALUE)) {
+            return new ApplyMetadataResponse.FieldNode(field.getKey(), VALUE_ONE,
+                    String.format(MESSAGE_INVALID_FIELD_VALUE + " \"%s\"", field.getValue(), ELEMENT_FIELD));
         }
 
-        return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE,
-                String.format("tag not found (field=\"%s\", tag=\"%s\")", field.getKey(), FIELD));
+        return new ApplyMetadataResponse.FieldNode(field.getKey(), VALUE_ONE,
+                String.format("tag not found (field=\"%s\", tag=\"%s\")", field.getKey(), ELEMENT_FIELD));
     }
 
     public static ApplyMetadataResponse.FieldNode getLookupFieldInfoSuccessResult(ApplyMetadataRequest.FieldNode field) {
-        return new ApplyMetadataResponse.FieldNode(field.getKey(), ZERO, "Inserted");
+        return new ApplyMetadataResponse.FieldNode(field.getKey(), VALUE_ZERO, "Inserted");
     }
 
-    public static MetadataFieldInfo parseAdoptionLocation(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseAdoptionLocation(String fieldValue) throws MetadataFieldInvalidValueException {
         try {
             MetadataLocationType locationType = MetadataLocationType.valueOfLocation(fieldValue.toUpperCase());
-
             switch (locationType){
                 case BRUSSELS:
                     return getFieldInfoLocationBrussels();
@@ -221,23 +219,26 @@ public class MetadataUtil {
                 case STRASBOURG:
                     return getFieldInfoLocationStrasbourg();
                 default:
-                    throw new MetadataUtilsException(LOCATION_NOT_SUPPORTED_MESSAGE);
+                    throw MetadataFieldInvalidValueException.newException(MetadataFieldType.ADOPTION_LOCATION.toString(), MESSAGE_LOCATION_NOT_SUPPORTED);
             }
-        } catch (IllegalArgumentException e){
-            throw new MetadataUtilsException(LOCATION_NOT_SUPPORTED_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            throw MetadataFieldInvalidValueException.newException(MetadataFieldType.ADOPTION_LOCATION.toString(), MESSAGE_LOCATION_NOT_SUPPORTED);
         }
     }
 
-    public static MetadataFieldInfo parseAdoptionDate(String fieldValue) throws MetadataUtilsException {
-        return ((ReferenceFieldInfo)parseEmissionDate(fieldValue)).withFieldType(MetadataFieldType.ADOPTION_DATE);
+    public static MetadataFieldInfo parseAdoptionDate(String fieldValue) throws MetadataFieldInvalidValueException {
+        return ((ReferenceFieldInfo)parseEmissionDate(MetadataFieldType.ADOPTION_DATE.toString(), fieldValue)).withFieldType(MetadataFieldType.ADOPTION_DATE);
     }
 
-    public static MetadataFieldInfo parseEmissionDate(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseEmissionDate(String fieldValue) throws MetadataFieldInvalidValueException {
+        return ((ReferenceFieldInfo)parseEmissionDate(MetadataFieldType.EMISSION_DATE.toString(), fieldValue));
+    }
+
+    private static MetadataFieldInfo parseEmissionDate(String fieldName, String fieldValue) throws MetadataFieldInvalidValueException {
         Date parsedDate = stringToDate(fieldValue, EMISSION_DATE_PARSE_PATTERN);
         if (parsedDate == null) {
-            throw new MetadataUtilsException(INVALID_ISO_DATE_MESSAGE);
-        };
-
+            throw MetadataFieldInvalidValueException.newException(fieldName, MESSAGE_INVALID_ISO_DATE);
+        }
         return new ReferenceFieldInfo(fieldValue, "", "", "", MetadataFieldType.EMISSION_DATE);
     }
 
@@ -250,9 +251,9 @@ public class MetadataUtil {
         }
     }
 
-    public static MetadataFieldInfo parseInterinstitutionalCote(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseInterinstitutionalCote(String fieldValue) throws MetadataFieldInvalidValueException {
         if (!fieldValue.matches(INTERINSTITUTIONAL_COTE_PARSE_PATTERN)) {
-            throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
+            throw MetadataFieldInvalidValueException.newException(MetadataFieldType.INTERINSTITUTIONAL_COTE.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
 
         int slashIndex = fieldValue.indexOf("/");
@@ -271,15 +272,15 @@ public class MetadataUtil {
     }
 
     public static String removeTrailingZeros(String value) {
-        while (value.startsWith(ZERO)){
+        while (value.startsWith(VALUE_ZERO)){
             value = value.substring(1);
         }
         return value;
     }
 
-    public static MetadataFieldInfo parseCote(String fieldValue, MetadataFieldType coteType) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseCote(String fieldValue, MetadataFieldType coteType) throws MetadataFieldInvalidValueException {
         if (!fieldValue.matches(INSERT_COTE_PARSE_PATTERN)){
-            throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
+            throw MetadataFieldInvalidValueException.newException(MetadataFieldType.COTE.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
 
         int bracketIndex = fieldValue.indexOf("(");
@@ -307,7 +308,7 @@ public class MetadataUtil {
         return coteNumber.trim();
     }
 
-    public static MetadataFieldInfo parseLinkedDocuments(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseLinkedDocuments(final String fieldValue) throws MetadataFieldInvalidValueException {
         String[] references = StringUtils.hasLength(fieldValue) ? fieldValue.split("-") : new String[0];
         List<ReferenceFieldInfo> referenceFieldInfoList = new ArrayList<>();
 
@@ -318,12 +319,12 @@ public class MetadataUtil {
         return new MultipleReferencesFieldInfo(referenceFieldInfoList, MetadataFieldType.LINKED_DOCUMENTS);
     }
 
-    public static ReferenceFieldInfo parseLinkedDocumentInfo(final String referenceValue) throws MetadataUtilsException
+    public static ReferenceFieldInfo parseLinkedDocumentInfo(final String referenceValue) throws MetadataFieldInvalidValueException
     {
         final String displayValue = referenceValue.replace("{", "").replace("}", "").trim();
 
         if (!displayValue.matches(LINKED_DOCUMENT_PARSE_PATTERN)){
-            throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
+            throw MetadataFieldInvalidValueException.newException(MetadataFieldType.LINKED_DOCUMENTS.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
         int bracketIndex = displayValue.indexOf("(");
         final String abbreviation = displayValue.substring(0, bracketIndex).trim();
@@ -331,7 +332,7 @@ public class MetadataUtil {
         int closingBracketIndex = displayValue.indexOf(")");
         final String year = displayValue.substring(bracketIndex+1, closingBracketIndex).trim();
 
-        int wordPos = displayValue.indexOf(FINAL_VALUE);
+        int wordPos = displayValue.indexOf(VALUE_FINAL);
         if(wordPos < 0) wordPos = displayValue.lastIndexOf("draft");
         if(wordPos < 0) wordPos = displayValue.length();
         final String number = displayValue.substring(closingBracketIndex+1, wordPos).trim();
@@ -381,17 +382,17 @@ public class MetadataUtil {
 
     public static String parseAlpha3CountryCode(Node nodeLanguageReference) {
         if (nodeLanguageReference == null) { return null; }
-        String hrefAttributeValue = XmlUtil.getNodeAttributeValue(nodeLanguageReference, HREF);
+        String hrefAttributeValue = XmlUtil.getNodeAttributeValue(nodeLanguageReference, ATTRIBUTE_HREF);
         return (hrefAttributeValue != null && hrefAttributeValue.length() >= 3)
                 ? hrefAttributeValue.substring(hrefAttributeValue.length() - 3) : null;
     }
 
     public static Node getLanguageReferenceNode(XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeReferences = xmlFile.getElementByName(REFERENCES);
+        Node xmlNodeReferences = xmlFile.getElementByName(ELEMENT_REFERENCES);
         if (xmlNodeReferences == null) {
             return null;
         }
-        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.LANGUAGE);
+        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.ATTRIBUTE_LANGUAGE);
     }
 
     public static Node getXmlNodeDocketNumber(Node xmlNode) {
@@ -420,7 +421,7 @@ public class MetadataUtil {
         while(index < xmlNodesReferences.getLength() && xmlNodeReferenceProcedureReference == null) {
             Node xmlNodeReference = xmlNodesReferences.item(index);
             if (isMetaReferenceXmlNode(xmlNodeReference)
-                    && (XmlUtil.nodeAttributeValueEquals(xmlNodeReference, NAME, nameAttributeValue))) {
+                    && (XmlUtil.nodeAttributeValueEquals(xmlNodeReference, ATTRIBUTE_NAME, nameAttributeValue))) {
                 xmlNodeReferenceProcedureReference = xmlNodeReference;
             }
             index++;
@@ -431,19 +432,19 @@ public class MetadataUtil {
 
     public static boolean isMetaReferenceXmlNode(Node xmlNode) {
         return xmlNode != null
-                && XmlUtil.parentNodeNameEquals(xmlNode, REFERENCES)
+                && XmlUtil.parentNodeNameEquals(xmlNode, ELEMENT_REFERENCES)
                 && XmlUtil.parentNodeNameEquals(xmlNode.getParentNode(), "meta");
     }
 
     public static String readLanguageValue(XmlUtil.XmlFile xmlFile) {
-        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.FRBRLANGUAGE);
+        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBRLANGUAGE);
         if (frbrLanguage == null) {
-            return MetadataUtil.LANGUAGE_EN;
+            return MetadataUtil.VALUE_LANGUAGE_EN;
         }
 
-        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.LANGUAGE);
+        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.ATTRIBUTE_LANGUAGE);
         if (!StringUtils.hasLength(value)) {
-            return MetadataUtil.LANGUAGE_EN;
+            return MetadataUtil.VALUE_LANGUAGE_EN;
         }
         return value.toUpperCase();
     }
@@ -481,7 +482,7 @@ public class MetadataUtil {
 
         prefinalisationName = documentFileName.substring(0, pos+1) + coteValue;
         if (finalCote.isPresent()) {
-            prefinalisationName = prefinalisationName + "-" + FINAL_VALUE;
+            prefinalisationName = prefinalisationName + "-" + VALUE_FINAL;
         }
 
         pos = documentFileName.indexOf("-", pos+1);
@@ -492,7 +493,7 @@ public class MetadataUtil {
     }
 
     public static void addRefersToAttribute(Node xmlNode, final String id) {
-        XmlUtil.setNodeAttributeValue(xmlNode, REFERSTO, "~" + id);
+        XmlUtil.setNodeAttributeValue(xmlNode, ATTRIBUTE_REFERSTO, "~" + id);
     }
 
     public static Node getAkomaNtosoNode(XmlFile xmlFile) {
@@ -500,6 +501,6 @@ public class MetadataUtil {
     }
 
     public static void removeClassAttribute(Node xmlNode) {
-        XmlUtil.removeNodeAttributeValue(xmlNode, CLASS);
+        XmlUtil.removeNodeAttributeValue(xmlNode, ATTRIBUTE_CLASS);
     }
 }
