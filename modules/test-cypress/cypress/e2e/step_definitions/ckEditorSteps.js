@@ -1,6 +1,5 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import ckEditorWindow from "../pages/ckEditorWindow";
-import annexPage from "../pages/annexPage";
 
 And('click delete button from keyboard in edition mode', () => {
     ckEditorWindow.clickDeleteFromKeyboardWhenCKEditorOpen();
@@ -362,10 +361,6 @@ Then('drafting rule violations dialog box displayed with message {string}', (msg
     ckEditorWindow.getCkEditorDialogHtml().invoke('text').then(text => expect(text.trim()).equal(msg));
 });
 
-Then('click dialog ok button', () => {
-    ckEditorWindow.clickCkEditorDialogOkBtn();
-});
-
 Then('{int} paragraphs are present in article in edition mode', function (paragraphCount) {
     ckEditorWindow.getAllParagraphElementsOfArticle().should('have.length', paragraphCount);
 });
@@ -542,20 +537,8 @@ When(/^click on paragraph mode icon two times present in ck editor panel$/, func
     ckEditorWindow.clickTwoTimesParagraphModeIcon();
 });
 
-When(`click on internal reference link {int} of level {int}`, (mReferenceNumber, levelNumber) => {
-    annexPage.clickRefOfMRefOfLevel(mReferenceNumber, levelNumber);
-});
-
-Then(`level {int} of annex is displayed`, (levelNumber) => {
-    annexPage.getLevel(levelNumber).should('be.visible');
-});
-
 When(`click on image icon present in ck editor panel`, () => {
     ckEditorWindow.clickInsertImageIcon();
-});
-
-Then('click on cancel button in source dialog', () => {
-    ckEditorWindow.clickCkEditorDialogCancelBtnFromSourceDialog();
 });
 
 When(`upload an image file from a relative location {string} in iframe {string}`, (location, iframeClass) => {
@@ -604,4 +587,12 @@ When('click at offset {int} of pTag {int} with data-akn-element {string} of li {
 
 Then('level contains attribute name {string} with attribute value {string} in edition mode', function (attributeName, attributeValue) {
     ckEditorWindow.getElementLiTagOfLevel().should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+When(/^double click on internal reference link (\d+) in edition mode$/, function (count) {
+    ckEditorWindow.clickInterReferenceLink(count);
+});
+
+Then(/^innerText of internal reference link (\d+) is "([^"]*)" in edition mode$/, function (count, innerText) {
+    ckEditorWindow.getRefTag(count).should('have.text', innerText);
 });

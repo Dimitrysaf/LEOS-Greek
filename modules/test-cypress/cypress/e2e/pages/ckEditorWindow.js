@@ -31,11 +31,10 @@ class ckEditorWindow {
         ckEditorBtn: () => cy.get('a.cke_button'),
         docPurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
         pTag: () => this.elements.ckEditableInline().find('p'),
+        refTag: () => this.elements.ckEditableInline().find('ref'),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
-        ckEditorDialogOkBtn: () => cy.get('.cke_dialog_ui_button_ok'),
-        ckEditorDialogCancelBtnFromSourceDialog: () => cy.get('.cke_dialog_ui_button_cancel').eq(1),
         ckEditorLeosAlternative1Btn: () => cy.get('.cke_button__leosalternatives1'),
-        ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2'),
+        ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2')
     }
 
     uploadImageFile(location, iframeClass) {
@@ -50,14 +49,6 @@ class ckEditorWindow {
 
     getCkEditorDialogHtml() {
         return this.elements.ckEditorDialogHtml();
-    }
-
-    clickCkEditorDialogOkBtn() {
-        this.elements.ckEditorDialogOkBtn().click();
-    }
-
-    clickCkEditorDialogCancelBtnFromSourceDialog() {
-        this.elements.ckEditorDialogCancelBtnFromSourceDialog().click();
     }
 
     clickCkEditorLeosAlternative2Btn() {
@@ -368,6 +359,14 @@ class ckEditorWindow {
 
     clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement) {
         this.elements.ckEditableInline().find("ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offSet, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
+    }
+
+    getRefTag(count) {
+        return this.elements.refTag().eq(count-1);
+    }
+
+    clickInterReferenceLink(count) {
+        this.elements.refTag().eq(count-1).dblclick();
     }
 
     clickAtCellInRowInTableOfParagraph(cell, row, table, paragraphLi, dataAknElement) {

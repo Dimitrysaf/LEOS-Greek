@@ -1,7 +1,6 @@
 class internalReferenceWindow {
     elements = {
         legalActTabPanel: () => cy.get("div[role='tabpanel'][name^='REG']"),
-        //annexTabPanel: () => cy.get("div[role='tabpanel'][name^='ANNEX']"),
         bill: () => this.elements.legalActTabPanel().find('bill'),
         article: () => this.elements.bill().find('article'),
         navigationPane: () => cy.get("div[role='tabpanel'][name^='REG'] div[title='Navigation pane']"),
@@ -9,7 +8,20 @@ class internalReferenceWindow {
         citationList: () => this.elements.navigationPane().contains('Citations').next("ul[role='group']"),
         recitalList: () => this.elements.navigationPane().contains('Recitals').next("ul[role='group']"),
         articleList: () => this.elements.navigationPane().contains('Enacting Terms').next("ul[role='group']"),
-        levelList: () => this.elements.annexNavigationPane().contains('Body').next("ul[role='group']")
+        levelList: () => this.elements.annexNavigationPane().contains('Body').next("ul[role='group']"),
+        documentTab:()=> cy.get('div.cke_dialog_tabs > a'),
+        selectedDialogPageContents:()=>cy.get(".cke_dialog_page_contents[aria-hidden='false']"),
+        jsTreeAnchorLink:()=>this.elements.selectedDialogPageContents().find('a.jstree-anchor'),
+        referenceTextLabel:()=>this.elements.selectedDialogPageContents().find("input[id^='refrenceTextLabel']"),
+        selectedDialogTab:()=>cy.get('.cke_dialog_tab_selected')
+    }
+
+    clickLabelInDialogPageContents(label){
+        this.elements.jsTreeAnchorLink().contains(label).click()
+    }
+
+    clickDocumentTab(tabName){
+        this.elements.documentTab().contains(tabName).click()
     }
 
     clickParagraphOfArticle(paragraphNumber){

@@ -651,3 +651,7 @@ Then(/^article (\d+) doesn't contain attribute "([^"]*)"$/, function (articleNum
 Then ('the document does not contain recital {int}',function (recitalNumber){
     legalActPage.getRecital(recitalNumber).should('not.exist');
 });
+
+Then(/^recital number (\d+) contains mref tag with attribute "([^"]*)" and value "([^"]*)"$/, function (recitalNumber, attributeName, attributeValue) {
+    legalActPage.getRecital(recitalNumber).find('mref').invoke('attr', attributeName).should('eq', attributeValue);
+});

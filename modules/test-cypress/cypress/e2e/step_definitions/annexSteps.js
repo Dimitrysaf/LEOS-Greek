@@ -205,3 +205,11 @@ Then(/^content of computed style before of subparagraph (\d+) of level (\d+) con
 Then(/^ins tag of content of subparagraph (\d+) of level (\d+) is "([^"]*)"$/, function (subParagraphNumber, levelNumber, content) {
     annexPage.getSubparagraphOfLevel(levelNumber, subParagraphNumber).find('content aknp').find('ins').should('have.text', content);
 });
+
+When(`click on internal reference link {int} of level {int}`, (mReferenceNumber, levelNumber) => {
+    annexPage.clickRefOfMRefOfLevel(mReferenceNumber, levelNumber);
+});
+
+Then(`level {int} of annex is displayed`, (levelNumber) => {
+    annexPage.getLevel(levelNumber).should('be.visible');
+});
