@@ -15,7 +15,19 @@
 
 //------------------------------- XML Styles --------------------------------//
 %xmlCoverPage {
-    container {
+    container[name=associatedReferences] {
+        display: block;
+        text-align: center;
+    }
+
+    container[name=associatedReferences] aknp:not(:first-child):before {
+        content: " - ";
+        width: 10px;
+        text-align: center;
+        display: inline-block;
+    }
+
+    container[name=packageTitle], container[name=authenticLang] {
         display: block;
         text-align: center;
     }

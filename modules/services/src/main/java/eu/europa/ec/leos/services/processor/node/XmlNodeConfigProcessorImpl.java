@@ -65,6 +65,8 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
                 Collections.emptyList()));
         proposalConfigMap.put(PROPOSAL_VERTICAL_SHIFT, new XmlNodeConfig("//akn:coverPage/akn:container[@name='disclaimer']/@style", false,
                 Collections.emptyList()));
+        proposalConfigMap.put(PROPOSAL_CROSS_REFERENCES, new XmlNodeConfig("//akn:coverPage/akn:container[@name='associatedReferences']/akn:p/akn:ref", false,
+                Collections.emptyList()));
 
         return proposalConfigMap;
     }

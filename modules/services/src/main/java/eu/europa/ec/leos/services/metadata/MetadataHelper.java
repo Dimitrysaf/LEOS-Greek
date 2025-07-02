@@ -51,7 +51,6 @@ public class MetadataHelper {
 
         LOG.trace("Creating content file document...");
         try {
-
             Map<String, MetadataOptions> tasks = new HashMap<>();
             tasks.put("task_tree", metadataOptions);
             String templateName = getTemplateName(metadataOptions);

@@ -13,6 +13,7 @@ public final class ProposalMetadata extends LeosMetadata {
     private LeosAuthenticLanguage isAuthenticLang;
     private LeosCoverPageType coverPageType;
     private Float verticalShift;
+    private List<String> crossReferences;
 
     public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance) {
         super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance);
@@ -42,6 +43,7 @@ public final class ProposalMetadata extends LeosMetadata {
         private LeosCoverPageType coverPageType;
         private String internalRef;
         private Float verticalShift;
+        private List<String> crossReferences;
 
         private ProposalMetadataBuilder() {
         }
@@ -65,6 +67,7 @@ public final class ProposalMetadata extends LeosMetadata {
             this.coverPageType = metadata.coverPageType;
             this.verticalShift = metadata.getVerticalShift();
             this.actType = metadata.getActType();
+            this.crossReferences = metadata.getCrossReferences();
         }
         public ProposalMetadataBuilder withStage(String stage) {
             this.stage = stage;
@@ -152,39 +155,8 @@ public final class ProposalMetadata extends LeosMetadata {
             metadata.setIsAuthenticLang(isAuthenticLang);
             metadata.setCoverPageType(coverPageType != null ? coverPageType : null);
             metadata.setVerticalShift(verticalShift);
+            metadata.setCrossReferences(crossReferences);
             return metadata;
         }
-    }
-
-    public List<String> getAuthenticLang() {
-        return authenticLang;
-    }
-
-    public void setAuthenticLang(List<String> authenticLanguages) {
-        this.authenticLang = authenticLanguages;
-    }
-
-    public LeosAuthenticLanguage getIsAuthenticLang() {
-        return isAuthenticLang;
-    }
-
-    public void setIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
-        this.isAuthenticLang = isAuthenticLang;
-    }
-
-    public String getPackageTitle() {
-        return packageTitle;
-    }
-
-    public void setPackageTitle(String packageTitle) {
-        this.packageTitle = packageTitle;
-    }
-
-    public String getInternalRef() {
-        return internalRef;
-    }
-
-    public void setInternalRef(String internalRef) {
-        this.internalRef = internalRef;
     }
 }

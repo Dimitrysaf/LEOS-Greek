@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -58,7 +59,6 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
 import lombok.AllArgsConstructor;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import java.io.File;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -238,6 +238,11 @@ public abstract class ProposalServiceImpl implements ProposalService {
         proposal.getMetadata().get().setAuthenticLang(authLangList);
         proposal.getMetadata().get().setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
         proposal.getMetadata().get().setVerticalShift(extractVerticalShift(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT)));
+        Map<String, List<String>> crossRefs = xmlNodeProcessor.getMultipleValuesFromXml(proposal.getContent().get().getSource().getBytes(),
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        List<String> crossReferences = crossRefs.get(XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES);
+        proposal.getMetadata().get().setCrossReferences(crossReferences);
         return proposal;
     }
 
@@ -275,6 +280,11 @@ public abstract class ProposalServiceImpl implements ProposalService {
         metadataVO.setAuthenticLang(authLangList);
         metadataVO.setVerticalShift(extractVerticalShift(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT)));
         metadataVO.setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
+        Map<String, List<String>> crossRefs = xmlNodeProcessor.getMultipleValuesFromXml(xmlContent,
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        List<String> crossReferences = crossRefs.get(XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES);
+        metadataVO.setCrossReferences(crossReferences);
         return metadataVO;
     }
 
@@ -700,13 +710,27 @@ public abstract class ProposalServiceImpl implements ProposalService {
             fields.add(new MetadataOptions.FieldNode("internalRef", StringUtils.normalizeSpace(request.getInternalRef())));
         }
         if (request.getAuthenticLang() != null) {
-            fields.add(new MetadataOptions.FieldNode("authenticLang", String.join("-", request.getAuthenticLang())));
+            fields.add(new MetadataOptions.FieldNode("authenticLang", listToJson(request.getAuthenticLang())));
         }
         if (request.getCoverPageType() != null) {
-            fields.add(new MetadataOptions.FieldNode("coverPageType", new CoverPageTypeMetadata(request.getCoverPageType(), request.getVerticalShift()).toString()));
+            fields.add(new MetadataOptions.FieldNode("coverPageType",
+                    listToJson(new CoverPageTypeMetadata(request.getCoverPageType(), request.getVerticalShift()))));
+        }
+        if (request.getCrossReferences() != null) {
+            fields.add(new MetadataOptions.FieldNode("linkedDocuments", String.join(" - ", request.getCrossReferences())));
         }
         metadataOptions.addTask(legFileName, proposal, fields);
         return metadataOptions;
+    }
+
+    private String listToJson(Object values) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(values);
+        }
+        catch (Exception e) {
+            return "";
+        }
     }
 
     protected String generateProposalReference(String language) {
