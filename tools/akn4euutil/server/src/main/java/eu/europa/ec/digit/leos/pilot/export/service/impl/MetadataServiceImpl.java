@@ -42,9 +42,19 @@ public class MetadataServiceImpl implements MetadataService {
             ApplyMetadataRequest.FieldNode field,
             MetadataUtilsException e) {
 
-        if(e.getMessage().equals(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE)) {
+        if (e.getMessage().equals(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE)) {
             return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
                     String.format(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue()));
+        }
+
+        if (e.getMessage().equals(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE)) {
+            return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ZERO,
+                    String.format(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE + " \"%s\"", field.getKey()));
+        }
+
+        if (e.getMessage().equals(MetadataUtil.LOCATION_NOT_SUPPORTED_MESSAGE)) {
+            return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
+                    String.format(MetadataUtil.LOCATION_NOT_SUPPORTED_MESSAGE + " \"%s\"", field.getValue()));
         }
 
         return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
