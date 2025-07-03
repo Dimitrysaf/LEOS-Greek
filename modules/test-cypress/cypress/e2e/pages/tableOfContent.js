@@ -1,6 +1,7 @@
 class tableOfContent {
     elements = {
         editBtn: () => cy.get("*[icon='eui-ecl-edit']"),
+        refreshBtn: ()=> cy.get("*[icon='eui-refresh']"),
         saveBtn: () => cy.get("button img[src='assets/images/toc-save.png']"),
         saveCloseBtn: () => cy.get("button img[src='assets/images/toc-save-close.png']"),
         cancelBtn: () => cy.get("*[icon='eui-close']"),
@@ -38,7 +39,7 @@ class tableOfContent {
         recitalList: () => this.elements.recitalsLink().closest('li').find('ul mat-nested-tree-node'),
         // recitalLabelList: () => this.elements.recitalList().find('li.node-li div.label'),
         enactingTermsList: () => this.elements.enactingTermsLink().closest('li').find('ul mat-nested-tree-node'),
-        // enactingTermsLabelList: () => this.elements.enactingTermsList().find('li.node-li div.label'),
+        enactingTermsLabelList: () => this.elements.enactingTermsList().find('li.node-li div.label'),
         rightAngleIconOfPreambleLink: () => this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']"),
         minimizePreambleLink: () => this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-down']"),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
@@ -57,7 +58,6 @@ class tableOfContent {
         deleteOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Delete']"),
         euiCardHeaderTitle: () => cy.get('eui-card-header-title.eui-card-header__title-container-title'),
         totalRecitals:()=>cy.get('.mat-tree-node > div').contains('Recital')
-
     }
 
     clickContributionsPaneButton() {
@@ -72,6 +72,10 @@ class tableOfContent {
     clickEditBtn() {
         this.elements.editBtn().click();
         cy.wait(2000);
+    }
+
+    clickRefreshBtn() {
+        this.elements.refreshBtn().click();
     }
 
     clickSaveBtn() {
