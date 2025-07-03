@@ -17,7 +17,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
-import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageFormats;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLocationType;
@@ -40,11 +39,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -130,10 +126,10 @@ public class MetadataUtil {
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
             "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
 
-    public static final Set<String> orderInCoverPage = new ConcurrentSkipListSet<>(Arrays.asList("akn:container[@name='logo']"
+    public static final List<String> orderInCoverPage = Arrays.asList("akn:container[@name='logo']"
             , "akn:container[@name='actingEntity']", "akn:container[@name='mainDoc']", "akn:container[@name='procedureIdentifier']"
             , "akn:container[@name='corrigendum']", "akn:longTitle", "akn:container[@name='authenticLang']"
-            , "akn:container[@name='associatedReferences']", "akn:container[@name='eeaRelevance']", "akn:container[@name='mainDocLanguage']"));
+            , "akn:container[@name='associatedReferences']", "akn:container[@name='eeaRelevance']", "akn:container[@name='mainDocLanguage']");
 
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
         return new ReferenceFieldInfo("BEL_BRU",
