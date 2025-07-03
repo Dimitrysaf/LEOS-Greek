@@ -40,6 +40,7 @@ define(function aknUnorderedListPluginModule(require) {
 
             editor.addCommand(INDENT_LIST_CMD_NAME, {});
 
+            editor.on("beforeAknIndentList", leosPluginUtils.resetDataNumOnIndent);
             editor.on("change", resetDataAknNameForUnOrderedList, null, null, 0);
             editor.on("change", resetNumbering, null, null, 1);
             editor.on("change", refreshIndent, null, null, 1);
@@ -57,7 +58,7 @@ define(function aknUnorderedListPluginModule(require) {
 
         function isFirstLevelEmptyPoint() {
             return leosKeyHandler.isContentEmptyTextNode(selectedElement)
-                && leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.LIST_ELEMENT
+                && leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.LIST_ITEM
                 && !selectedElement.getParent().getAscendant(leosPluginUtils.UNORDERED_LIST_ELEMENT);
         }
 
