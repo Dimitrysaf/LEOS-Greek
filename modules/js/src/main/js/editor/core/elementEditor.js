@@ -696,12 +696,16 @@ define(function elementEditorModule(require) {
 
         var hasOnlyEmptyLines = false;
         for(var ele of emptyElements){
+            var parent = $(ele).parent()[0];
+            if($(ele).is("li") && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList"))) {
+                hasOnlyEmptyLines = true;
+                break;
+            }
             if(!_hasSiblingWithContent(ele)) {
                 var parent = $(ele).parent()[0];
                 if(($(ele).is("p") && $(ele).attr("data-akn-element") == "subparagraph" && $(parent).attr("data-akn-element") == "level")
                     || ($(ele).is("li") && $(ele).attr("data-akn-element") == "paragraph" && $(parent).parent()[0].localName == 'article')
                     || ($(ele).is("p") && $(ele).attr("data-akn-name") == "aknParagraph" && $(parent).attr("data-akn-name") == "blockContainer")
-                    || ($(ele).is("li") && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList")))
                 ) {
                     hasOnlyEmptyLines = true;
                     break;
