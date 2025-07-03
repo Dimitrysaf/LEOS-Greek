@@ -380,7 +380,6 @@ Then(/^below warning message is displayed in navigation pane$/, function (datata
             )
         })
         .should('deep.equal', givenWarningList)
-
 });
 
 Then(/^warning symbol is displayed in navigation pane$/, function () {
@@ -397,4 +396,31 @@ When(/^click on ngContent "([^"]*)" from navigation pane$/, function (ngContent)
 
 Then('node label {string} contains node label {string}', function (parentNodeLabel, childNodeLabel) {
     tableOfContent.getCloseLiOfNodeLabel(parentNodeLabel).contains(childNodeLabel);
+});
+
+Then(/^toc refresh icon is visible$/, function () {
+    tableOfContent.elements.refreshBtn().should('be.visible');
+});
+
+When(/^click on toc refresh icon$/, function () {
+    tableOfContent.clickRefreshBtn();
+});
+
+Then(/^toc refresh icon is not visible$/, function () {
+    tableOfContent.elements.refreshBtn().should('not.exist');
+});
+
+When(/^enacting terms contains below node labels in this order$/, function (datatable) {
+    const givenNodeLabelList = [];
+    datatable.hashes().forEach((nodeLabel) => {
+        givenNodeLabelList.push(nodeLabel.nodeLabel);
+    });
+    tableOfContent.elements.enactingTermsLabelList()
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    .map((el) => el.innerText.trim())
+            )
+        })
+        .should('deep.equal', givenNodeLabelList)
 });

@@ -175,6 +175,13 @@ Feature: Legal Act Page Regression Features
       | Article     |
     When drag element "Article" from element tree list and drop before node label "Article 2 - Definitions Text..." in navigation pane
     Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
+    When click on three vertical dots for the element contains text "Article # - Article heading... Text..." in toc
+    And  click on delete option from eui dropdown content
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then enacting terms doesn't contain new element in navigation pane
+    When drag element "Article" from element tree list and drop before node label "Article 2 - Definitions Text..." in navigation pane
+    Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled
     When click on "Article 2 - Article heading... 1.Text..." link in navigation pane
@@ -986,13 +993,39 @@ Feature: Legal Act Page Regression Features
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is maximized
+    When click on insert after icon of article 3
+    Then total article count is 4
+    And  toc refresh icon is visible
+    When click on toc refresh icon
+    Then toc refresh icon is not visible
+    And  enacting terms contains node label "Article 4 - Article heading... 1.Text..."
     When click on toc edit button
     Then cancel button is displayed and enabled in navigation pane
-    When drag element "Chapter" from element tree list and drop before node label "Article 1 - Scope 1. Text..." in navigation pane
+    When click on ngContent "Article 1 - Scope 1. Text..." from navigation pane
+    And  click on ngContent "Article 3 - Entry into force This Regulation shall enter into force on" from navigation pane along with control button from keyboard
+    And  drag node label "Article 1 - Scope 1. Text..." and drop to node label "Article 4 - Article heading... 1.Text..." in navigation pane
+    And  wait for 5000 milliseconds
+    And  enacting terms contains below node labels in this order
+      | nodeLabel                                                                                                                                                             |
+      | Article 2 - Definitions Text...                                                                                                                                       |
+      | Article 4 - Article heading... 1.Text...                                                                                                                              |
+      | Article 1 - Scope 1. Text...                                                                                                                                          |
+      | Article 3 - Entry into force This Regulation shall enter into force on the [...] day following that of its publication in the Official Journal of the European Union. |
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  enacting terms contains below node labels in this order
+      | nodeLabel                                                                                                                                                             |
+      | Article 1 - Definitions Text...                                                                                                                                       |
+      | Article 2 - Article heading... 1.Text...                                                                                                                              |
+      | Article 3 - Scope 1. Text...                                                                                                                                          |
+      | Article 4 - Entry into force This Regulation shall enter into force on the [...] day following that of its publication in the Official Journal of the European Union. |
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When drag element "Chapter" from element tree list and drop before node label "Article 1 - Definitions Text..." in navigation pane
     Then success message "Chapter has been added successfully!" is displayed in navigation pane
     And  success message disappears from table of content
     And  ngContent "Chapter # Chapter heading..." is showing as bold in toc
-    When drag element "Section" from element tree list and drop before node label "Article 1 - Scope 1. Text..." in navigation pane
+    When drag element "Section" from element tree list and drop before node label "Article 1 - Definitions Text..." in navigation pane
     Then ngContent "Section # Section heading..." is showing as bold in toc
     And  warning symbol is displayed in navigation pane
     And  below warning message is displayed in navigation pane
@@ -1009,16 +1042,16 @@ Feature: Legal Act Page Regression Features
       | A lower division cannot exist outside a higher division element                                        |
     When click on toc edit button
     And  click on ngContent "Section 1 Section heading..." from navigation pane along with control button from keyboard
-    And  click on ngContent "Article 1 - Scope 1. Text..." from navigation pane along with control button from keyboard
+    And  click on ngContent "Article 1 - Definitions Text..." from navigation pane along with control button from keyboard
     Then below warning message is displayed in navigation pane
       | warning                                                                                                |
       | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
       | A higher division must contain at least one sub-element                                                |
       | A lower division cannot exist outside a higher division element                                        |
       | Only elements of the same type can be selected together.                                               |
-    When click on ngContent "Article 1 - Scope 1. Text..." from navigation pane
-    And  click on ngContent "Article 2 - Definitions Text..." from navigation pane along with control button from keyboard
-    And  drag node label "Article 1 - Scope 1. Text..." and drop to node label "Section 1 Section heading..." in navigation pane
+    When click on ngContent "Article 1 - Definitions Text..." from navigation pane
+    And  click on ngContent "Article 2 - Article heading... 1.Text..." from navigation pane along with control button from keyboard
+    And  drag node label "Article 1 - Definitions Text..." and drop to node label "Section 1 Section heading..." in navigation pane
     And  wait for 5000 milliseconds
     Then below warning message is displayed in navigation pane
       | warning                                                                                                |

@@ -567,3 +567,67 @@ Feature: CK Editor Regression Features
         Then "Open Editor Detected" dialog box window is displayed
         When click on confirm button in dialog box window
         Then user is on act viewer page
+
+    @saveAddNext @local
+    Scenario: create a new element with same type after the current element using shortcut control and enter key together when ck editor is open
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation saveAddNext Testing" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 1
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        And  total citation count is 6
+        When mouseover and click on citation 1
+        Then ck editor window is displayed
+        And  click ctrl key and enter key together from keyboard in edition mode
+        Then ck editor window is displayed
+        When click close button of ck editor
+        Then ck editor window is not displayed
+        And  total citation count is 7
+        And  total recital count is 2
+        When mouseover and click on recital 1
+        Then ck editor window is displayed
+        And  click ctrl key and enter key together from keyboard in edition mode
+        Then ck editor window is displayed
+        When click close button of ck editor
+        Then ck editor window is not displayed
+        And  total recital count is 3
+        And  total article count is 3
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        And  click ctrl key and enter key together from keyboard in edition mode
+        Then ck editor window is displayed
+        When click close button of ck editor
+        Then ck editor window is not displayed
+        And  total article count is 4
+        When click on close button present in legal act page
+        Then user is on act viewer page
+        When click on annex 1 link
+        Then user is on annex page
+        When refresh the browser
+        When click on toc edit button
+        And  drag element "Paragraph" from element tree list and drop after node label "2. Text..." in navigation pane
+        And  click on save and close button in navigation pane
+        Then total number of level is 3
+        When click on edit icon of level 1
+        Then ck editor window is displayed
+        And  click ctrl key and enter key together from keyboard in edition mode
+        Then ck editor window is displayed
+        When click close button of ck editor
+        Then ck editor window is not displayed
+        And  total number of level is 4
+        And  total number of paragraph is 1
+        When mouseover and click on paragraph 1
+        Then ck editor window is displayed
+        And  click ctrl key and enter key together from keyboard in edition mode
+        Then ck editor window is displayed
+        When click close button of ck editor
+        Then ck editor window is not displayed
+        And  total number of paragraph is 2

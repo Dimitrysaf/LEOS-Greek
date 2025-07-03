@@ -1766,7 +1766,7 @@ Feature: Track Changes Feature
     Then sole recital doesn't contain num tag
     And  recital 1 contains "Recital..."
     When click on insert before icon of recital 1
-    Then the total number of recital is 2
+    Then total recital count is 2
     And  all recitals has "num" tag
     When mouseover on recital 2
     When click on delete icon of recital 2
