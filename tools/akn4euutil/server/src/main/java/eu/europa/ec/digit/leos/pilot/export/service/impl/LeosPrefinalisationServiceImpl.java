@@ -238,7 +238,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             processMetadataFieldInfo(fieldInfo, documentXmlFiles);
             return metadataService.getLookupFieldInfoSuccessResult(field);
         } catch(MetadataUtilsException e) {
-            LOG.error("Lookup field info failed: {}", e);
+            LOG.error("Lookup field info {} failed: {}", field.getKey(), e.getMessage());
             return metadataService.getLookupFieldInfoErrorResult(field, e);
         }
     }
