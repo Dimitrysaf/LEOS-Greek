@@ -330,7 +330,7 @@ define(function aknRecitalAAPluginModule(require) {
                 selectedElement = selectedElement.getAscendant(leosPluginUtils.DIV, true);
                 var newBlock = new CKEDITOR.dom.element(leosPluginUtils.DIV);
                 var newList = new CKEDITOR.dom.element(leosPluginUtils.UNORDERED_LIST_ELEMENT);
-                var newListItemPoint = new CKEDITOR.dom.element(leosPluginUtils.LIST_ELEMENT);
+                var newListItemPoint = new CKEDITOR.dom.element(leosPluginUtils.LIST_ITEM);
                 newListItemPoint.appendBogus();
                 newListItemPoint.setAttribute(leosPluginUtils.DATA_AKN_NUM, "—");
                 newList.append(newListItemPoint);
