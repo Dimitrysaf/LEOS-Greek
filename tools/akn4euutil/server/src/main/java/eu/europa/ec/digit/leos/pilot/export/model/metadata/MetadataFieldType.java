@@ -10,7 +10,22 @@ public enum MetadataFieldType {
     COTE("cote"),
     FINAL_COTE("finalCote"),
     LINKED_DOCUMENTS("linkedDocuments"),
-    STAMP("stamp");
+    STAMP("stamp"),
+    // Following keys will be ignored at the moment
+    STATUS("status"),
+    COMMISSIONER("commissioner"),
+    DELETE_INTERNAL_REFERENCE("deleteInternalReference"),
+    START_PAGE_NUMBER("startPageNumber"),
+    CLEANUP_HEADER_AND_FOOTER("cleanupHeaderAndFooter"),
+    FREEZE_NUMBERING("freezeNumbering"),
+    DELETE_COMMENTS("deleteComments"),
+    DELETE_VERSIONS("deleteVersions"),
+    DELETE_HIDDEN_TEXT("deleteHiddenText"),
+    DELETE_USER_PROPERTIES("deleteUserProperties"),
+    CLEAR_MARKER("clearMarker"),
+    ADJUST_SIGNATURE_LAYOUT("adjustSignatureLayout"),
+    REMOVE_SENSITIVITY("removeSensitivity"),
+    UPDATE_COVER_PAGE("updateCoverPage");
 
     private final String typeName;
 
@@ -27,7 +42,16 @@ public enum MetadataFieldType {
         return this.typeName;
     }
 
-    public static MetadataFieldType valueOfTypeName(String typeName) throws IllegalArgumentException {
+    public static boolean isValidTypeName(final String typeName) {
+        try {
+            MetadataFieldType.valueOfTypeName(typeName);
+            return true;
+        } catch(IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public static MetadataFieldType valueOfTypeName(final String typeName) throws IllegalArgumentException {
         if (MetadataFieldType.ADOPTION_LOCATION.getTypeName().equals(typeName)){
             return MetadataFieldType.ADOPTION_LOCATION;
         }
@@ -49,8 +73,47 @@ public enum MetadataFieldType {
         if(MetadataFieldType.STAMP.getTypeName().equals(typeName)){
             return MetadataFieldType.STAMP;
         }
-        if(MetadataFieldType.ADOPTION_DATE.getTypeName().equals(typeName)){
-            return MetadataFieldType.ADOPTION_DATE;
+        if(MetadataFieldType.STATUS.getTypeName().equals(typeName)){
+            return MetadataFieldType.STATUS;
+        }
+        if(MetadataFieldType.COMMISSIONER.getTypeName().equals(typeName)){
+            return MetadataFieldType.COMMISSIONER;
+        }
+        if(MetadataFieldType.DELETE_INTERNAL_REFERENCE.getTypeName().equals(typeName)){
+            return MetadataFieldType.DELETE_INTERNAL_REFERENCE;
+        }
+        if(MetadataFieldType.START_PAGE_NUMBER.getTypeName().equals(typeName)){
+            return MetadataFieldType.START_PAGE_NUMBER;
+        }
+        if(MetadataFieldType.CLEANUP_HEADER_AND_FOOTER.getTypeName().equals(typeName)){
+            return MetadataFieldType.CLEANUP_HEADER_AND_FOOTER;
+        }
+        if(MetadataFieldType.FREEZE_NUMBERING.getTypeName().equals(typeName)){
+            return MetadataFieldType.FREEZE_NUMBERING;
+        }
+        if(MetadataFieldType.DELETE_COMMENTS.getTypeName().equals(typeName)){
+            return MetadataFieldType.DELETE_COMMENTS;
+        }
+        if(MetadataFieldType.DELETE_VERSIONS.getTypeName().equals(typeName)){
+            return MetadataFieldType.DELETE_VERSIONS;
+        }
+        if(MetadataFieldType.DELETE_HIDDEN_TEXT.getTypeName().equals(typeName)){
+            return MetadataFieldType.DELETE_HIDDEN_TEXT;
+        }
+        if(MetadataFieldType.DELETE_USER_PROPERTIES.getTypeName().equals(typeName)){
+            return MetadataFieldType.DELETE_USER_PROPERTIES;
+        }
+        if(MetadataFieldType.CLEAR_MARKER.getTypeName().equals(typeName)){
+            return MetadataFieldType.CLEAR_MARKER;
+        }
+        if(MetadataFieldType.ADJUST_SIGNATURE_LAYOUT.getTypeName().equals(typeName)){
+            return MetadataFieldType.ADJUST_SIGNATURE_LAYOUT;
+        }
+        if(MetadataFieldType.REMOVE_SENSITIVITY.getTypeName().equals(typeName)){
+            return MetadataFieldType.REMOVE_SENSITIVITY;
+        }
+        if(MetadataFieldType.UPDATE_COVER_PAGE.getTypeName().equals(typeName)){
+            return MetadataFieldType.UPDATE_COVER_PAGE;
         }
         throw new IllegalArgumentException("Invalid metadata type name");
     }

@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.util;
 
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
-import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
@@ -32,7 +32,7 @@ import java.util.Collections;
  */
 public class MetadataUtilsTests {
     @Test
-    public void testLinkedDocumentsSwdWithDraft() throws MetadataUtilsException {
+    public void testLinkedDocumentsSwdWithDraft() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("{SWD(2012) 1234 draft}");
 
@@ -48,7 +48,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testLinkedDocumentsComWithoutSuffixAndBrackets() throws MetadataUtilsException {
+    public void testLinkedDocumentsComWithoutSuffixAndBrackets() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("COM(2014) 4");
 
@@ -64,7 +64,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testLinkedDocumentsSecIsConvertedToSwdInHref() throws MetadataUtilsException {
+    public void testLinkedDocumentsSecIsConvertedToSwdInHref() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("{SEC(2011) 12 final}");
 
@@ -82,10 +82,9 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testParseMultipleLinkedDocuments() throws MetadataUtilsException {
+    public void testParseMultipleLinkedDocuments() throws MetadataFieldInvalidValueException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments(
-                "{COM(2014) 4 final}-{SWD(2012) 1111}-{SEC(2016) 248 final}");
+        final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("{COM(2014) 4 final}-{SWD(2012) 1111}-{SEC(2016) 248 final}");
 
         Assertions.assertNotNull(actual);
 
@@ -109,7 +108,7 @@ public class MetadataUtilsTests {
     // verify space tolerance for parsing the "cote"
     //---------------------------
     @Test
-    public void testParseCote_spaceLeft() throws MetadataUtilsException {
+    public void testParseCote_spaceLeft() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013) 2456", MetadataFieldType.COTE);
 
@@ -120,7 +119,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testParseCote_noSpaceLeft() throws MetadataUtilsException {
+    public void testParseCote_noSpaceLeft() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013)2456", MetadataFieldType.COTE);
 
@@ -131,7 +130,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testParseCote_spaceLeftWithSuffix() throws MetadataUtilsException {
+    public void testParseCote_spaceLeftWithSuffix() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013) 2456 final", MetadataFieldType.FINAL_COTE);
 
@@ -142,7 +141,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testParseCote_noSpaceLeftWithSuffix() throws MetadataUtilsException {
+    public void testParseCote_noSpaceLeftWithSuffix() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013)2456 final", MetadataFieldType.FINAL_COTE);
 
