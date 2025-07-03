@@ -123,7 +123,7 @@ public interface ProposalService {
 
     LeosDocument findConfigByName(String name);
 
-    DocumentVO applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception;
+    byte[] applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception;
 
     MetadataOptions convertUpdateProposalRequestToMetadataOptions(String legFileName, Proposal proposal, UpdateProposalRequest request);
 

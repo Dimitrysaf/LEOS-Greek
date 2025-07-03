@@ -122,13 +122,6 @@ export class ProposalViewComponent
     }
   }
 
-  onSaveEEA(eea: boolean) {
-    this.proposalDetailsService.updateProposalMetadata(
-      this.proposal.metadata.docPurpose,
-      eea,
-    );
-  }
-
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();

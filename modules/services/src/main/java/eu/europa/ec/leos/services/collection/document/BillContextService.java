@@ -89,6 +89,7 @@ public class BillContextService {
     private LeosPackage leosPackage = null;
     private Bill bill = null;
     private String versionComment;
+    private VersionType versionType;
     private String milestoneComment;
     private String purpose = null;
     private String moveDirection = null;
@@ -225,6 +226,11 @@ public class BillContextService {
     public void useVersionComment(String comment) {
         Validate.notNull(comment, "Version comment is required!");
         this.versionComment = comment;
+    }
+
+    public void useVersionType(VersionType versionType) {
+        Validate.notNull(versionType, "Version type is required!");
+        this.versionType = versionType;
     }
 
     public void useMilestoneComment(String milestoneComment) {
@@ -424,6 +430,7 @@ public class BillContextService {
     public void executeUpdateBill() {
         LOG.trace("Executing 'Update Bill' use case...");
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+        Validate.notNull(versionType, "Version Type is required!");
         
         Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
         if(billByPackagePath != null) {
@@ -435,7 +442,7 @@ public class BillContextService {
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
-            billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            billService.updateBill(billByPackagePath, metadata, VersionType.MAJOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
             if(isAnnexToBeUpdated) {
                 // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
                 List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
@@ -445,6 +452,7 @@ public class BillContextService {
                     annexContext.useAnnexId(annex.getId());
                     annexContext.useActionMessageMap(actionMsgMap);
                     annexContext.useEeaRelevance(eeaRelevance);
+                    annexContext.useVersionType(versionType);
                     annexContext.executeUpdateAnnexMetadata();
                 });
             }

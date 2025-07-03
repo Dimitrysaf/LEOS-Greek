@@ -3,6 +3,8 @@ import {Document, Permission, AuthenticLanguage, CoverPageType} from '@leos/shar
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
 import {toNumber} from "lodash-es";
+import {EuiGrowlService} from "@eui/core";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-proposal-details',
@@ -12,14 +14,13 @@ import {toNumber} from "lodash-es";
 export class ProposalDetailsComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
   permissions: Permission[];
-  @Output() eeaRelevanceChanged: EventEmitter<boolean> =
-    new EventEmitter<boolean>();
   eeaRelevance: boolean;
   isAuthenticLang: boolean;
   isVerticalShift: boolean;
   packageTitle: string;
   authenticLang: string[];
-  proposal_language: string;
+  verticalShift: number;
+  proposalLanguage: string;
   isAutononousAct: boolean;
   enableSave = false;
   coverPageType: CoverPageType | null;
@@ -32,8 +33,21 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     'MT', 'NL', 'PL', 'PT','RO', 'SK', 'SL', 'SV'];
 
   selectedLanguages: { [key: string]: boolean } = {};
+  metadataChanged: { [key: string]: boolean } = {
+    ['eeaRelevance']: false,
+    ['packageTitle']: false,
+    ['isAuthentigLang']: false,
+    ['authenticLang']: false,
+    ['coverPageType']: false,
+    ['verticalShift']: false,
+    ['crossReferences']: false,
+  };
 
-  constructor(protected detailsService: ProposalDetailsService,) {
+  constructor(
+    protected detailsService: ProposalDetailsService,
+    private growlService: EuiGrowlService,
+    private translateService: TranslateService,
+    ) {
     this.detailsService.permissions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => (this.permissions = perms));
@@ -55,9 +69,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     }
     this.isVerticalShift = this.coverPageType !== 'STANDARD';
     this.verticalShift = this.proposal.metadata.verticalShift != null ? toNumber(this.proposal.metadata.verticalShift) : 6.0;
-    this.isAutononousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
+    this.isAutononousAct = this.proposal.metadata.documentCollectionName != 'ACT_AUTO_COM';
 
-    this.proposal_language = this.proposal.metadata.language;
+    this.proposalLanguage = this.proposal.metadata.language;
     if (this.proposal.metadata.isAuthenticLang != null) {
       if (this.proposal.metadata.isAuthenticLang.includes("PROPOSAL_LANGUAGE")) {
         this.isAuthenticLang = true;
@@ -73,23 +87,28 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     if (this.isAuthenticLang) {
       this.authenticLang.forEach(lang => {
         if (this.proposal.metadata.isAuthenticLang == "PROPOSAL_LANGUAGE"
-          || this.proposal_language.toUpperCase() != lang.toUpperCase()) {
+          || this.proposalLanguage.toUpperCase() != lang.toUpperCase()) {
           this.selectedLanguages[lang.toUpperCase()] = true
         }
       });
     }
   }
 
-  handleChange() {
+  handleChange(metadata: string) {
     this.enableSave = true;
+    if (this.isAuthenticLang && !this.isThereSelectedLanguage()) {
+      this.enableSave = false;
+    }
+    this.metadataChanged[metadata] = true;
   }
 
   handleEEAChange(e: boolean) {
-    this.eeaRelevanceChanged.emit(e);
+    this.eeaRelevance = e;
+    this.handleChange('eeaRelevance');
   }
 
   handleAuthLangChange(e: boolean) {
-    this.handleChange();
+    this.handleChange('isAuthenticLang');
     if (!e) {
       this.languages.forEach(lang => {
         this.selectedLanguages[lang] = false;
@@ -97,8 +116,17 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
+  isThereSelectedLanguage(): boolean {
+    for (let lang of this.languages) {
+      if (this.selectedLanguages[lang]) {
+        return true;
+      }
+    }
+    return this.allSelected;
+  }
+
   handleCoverPageTypeChange(covertype: string) {
-    this.handleChange();
+    this.handleChange('coverPageType');
     this.isVerticalShift = covertype != 'STANDARD';
   }
 
@@ -113,7 +141,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.authenticLang = Object.keys(this.selectedLanguages)
         .filter(lang => this.selectedLanguages[lang]).map(lang => lang.toLowerCase());
 
-      if (this.authenticLang.includes(this.proposal_language.toLowerCase())) {
+      if (this.authenticLang.includes(this.proposalLanguage.toLowerCase())) {
         isMetadataAuthenticLang = 'PROPOSAL_LANGUAGE';
       } else {
         isMetadataAuthenticLang = 'NON_PROPOSAL_LANGUAGE';
@@ -132,17 +160,34 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     if (this.isVerticalShift) {
       verticalShiftMetadata = this.verticalShift.toString();
     }
-    this.enableSave = false;
-
     this.detailsService.updateProposalMetadata(
-      this.proposal.metadata.docPurpose,
-      this.eeaRelevance,
-      this.packageTitle,
-      isMetadataAuthenticLang,
-      this.authenticLang,
-      this.coverPageType,
-      verticalShiftMetadata
-    );
+      null,
+      this.metadataChanged['eeaRelevance'] ? this.eeaRelevance : null,
+      this.metadataChanged['packageTitle'] ? this.packageTitle : null,
+      (this.metadataChanged['isAuthenticLang'] || this.metadataChanged['authenticLang']) ? isMetadataAuthenticLang : null,
+      (this.metadataChanged['authenticLang'] || this.metadataChanged['isAuthenticLang']) ? this.authenticLang : null,
+      (this.metadataChanged['coverPageType'] || this.metadataChanged['verticalShift']) ? this.coverPageType : null,
+      (this.metadataChanged['coverPageType'] || this.metadataChanged['verticalShift']) ? verticalShiftMetadata : null
+    ).subscribe({
+      next: () => {
+        this.detailsService.setProposalRef(this.proposal.ref);
+        this.enableSave = false;
+        this.growlService.growl({
+          severity: 'success',
+          summary: this.translateService.instant(
+            'page.collection.details.message.success',
+          ),
+          life: 3000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+        });
+      },
+      error: (err) => {
+        this.growlService.growlError(this.translateService.instant(
+          'page.collection.default-error',
+        ),);
+      },
+    });
   }
 
   toggleAllLanguages() {
@@ -154,18 +199,18 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   onLanguageChange() {
     const allChecked = this.languages.every(lang => this.selectedLanguages[lang]);
     this.allSelected = allChecked;
-    this.handleChange();
+    this.handleChange('authenticLang');
   }
-
-  verticalShift: number;
 
   increase() {
     this.verticalShift = Math.round((this.verticalShift + 0.1) * 10) / 10;
-    this.handleChange();
+    this.handleChange('verticalShift');
   }
 
   decrease() {
-    this.verticalShift = Math.round((this.verticalShift - 0.1) * 10) / 10;
-    this.handleChange();
+    if (this.verticalShift > 0) {
+      this.verticalShift = Math.round((this.verticalShift - 0.1) * 10) / 10;
+      this.handleChange('verticalShift');
+    }
   }
 }

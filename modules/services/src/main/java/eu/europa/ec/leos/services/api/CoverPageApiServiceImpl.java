@@ -214,6 +214,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             String comment = messageHelper.getMessage("operation.docpurpose.updated");
             context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
             context.useActionComment(comment);
+            context.useVersionType(VersionType.MINOR);
             context.executeUpdateDocumentsAssociatedToProposal();
 
             String newContent = elementProcessor.getElement(proposal, elementName, elementId);

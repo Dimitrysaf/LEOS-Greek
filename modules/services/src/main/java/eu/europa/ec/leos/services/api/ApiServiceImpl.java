@@ -111,6 +111,7 @@ import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -315,32 +316,63 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
+    public DocumentVO updateProposalTitleAndEEaRelevance(String proposalRef, String docPurpose, Boolean eeaRelevance) throws Exception {
+        LOG.trace("Saving proposal metadata...");
+        try {
+            CollectionContextService context = collectionContextProvider.get();
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            context.useProposal(proposal);
+            if (docPurpose != null) {
+                context.usePurpose(docPurpose);
+            } else {
+                context.usePurpose(proposal.getMetadata().get().getPurpose());
+            }
+            if (eeaRelevance != null) {
+                context.useEeaRelevance(eeaRelevance);
+            } else {
+                context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+            }
+            String comment = messageHelper.getMessage("operation.metadata.updated");
+            context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
+            context.useActionComment(comment);
+            return new DocumentVO(context.executeUpdateProposal());
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating proposal metadata ", e);
+            throw e;
+        }
+    }
+
+    @Override
     public DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) throws Exception {
         LOG.trace("Saving proposal metadata...");
         LegPackage legPackage = null;
         try {
             CollectionContextService context = collectionContextProvider.get();
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
-            context.useProposal(proposal);
+            proposal = proposalService.populateProposalMetadataFromXml(proposal);
+            List<String> metadata = new ArrayList<>();
             if (request.getDocPurpose() != null) {
                 context.usePurpose(request.getDocPurpose());
             } else {
                 context.usePurpose(proposal.getMetadata().get().getPurpose());
             }
-            if (request.getEeaRelevance() != null) {
-                context.useEeaRelevance(request.getEeaRelevance());
-            } else {
-                context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+            if (request.getCrossReferences() == null) {
+                request.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
             }
+            for (Field field: request.getClass().getDeclaredFields()) {
+                if (request.getClass().getMethod("get" + StringUtils.capitalize(field.getName())).invoke(request) != null) {
+                    String key = "operation.details.element." + String.join(".", field.getName().split("(?=\\p{Lu})")).toLowerCase();
+                    String message = messageHelper.getMessage(key);
+                    if (!message.equals(key)) {
+                        metadata.add(message);
+                    }
+                }
+            }
+            context.useEeaRelevance(request.getEeaRelevance());
             if (request.getPackageTitle() != null) {
                 context.usePackageTitle(request.getPackageTitle());
             } else {
                 context.usePackageTitle(proposal.getMetadata().get().getPackageTitle());
-            }
-            if (request.getAuthenticLang() != null) {
-                context.useAuthenticLang(request.getAuthenticLang());
-            } else {
-                context.useAuthenticLang(proposal.getMetadata().get().getAuthenticLang());
             }
             if (request.getIsAuthenticLang() != null) {
                 context.useIsAuthenticLang(request.getIsAuthenticLang());
@@ -352,21 +384,21 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.useCoverPageType(proposal.getMetadata().get().getCoverPageType());
             }
-            String comment = messageHelper.getMessage("operation.metadata.updated");
+            String comment = messageHelper.getMessage("operation.details.updated",
+                    String.join(", ", metadata));
             context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
             context.useActionComment(comment);
-            DocumentVO updatedProposalVO = new DocumentVO(context.executeUpdateProposal());
-            if (request.getPackageTitle() != null || request.getInternalRef() != null
-                    || (request.getAuthenticLang() != null) || request.getCoverPageType() != null
-                    || request.getCrossReferences() != null) {
-                if (proposal.isClonedProposal()) {
-                    legPackage = legService.createLegPackageForClone(proposal.getId(), new ExportLeos());
-                } else {
-                    legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
-                }
-                return proposalService.applyMetadata(legPackage, proposal, request);
+            if (proposal.isClonedProposal()) {
+                legPackage = legService.createLegPackageForClone(proposal.getId(), new ExportLeos());
+            } else {
+                legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
             }
-            return updatedProposalVO;
+            byte[] proposalContent = proposalService.applyMetadata(legPackage, proposal, request);
+            context.useProposal(proposal);
+            context.useProposalContent(proposalContent);
+            proposal = context.executeUpdateMetadataProposal();
+            proposal = proposalService.populateProposalMetadataFromXml(proposal);
+            return new DocumentVO(proposal);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;
