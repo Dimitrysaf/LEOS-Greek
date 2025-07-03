@@ -157,7 +157,7 @@ define(function leosUtilsModule(require) {
             if (node.textContent === '' || /^\s*$/.test(node.textContent)) {
                 const secondNode = el.childNodes[1];
                 if (secondNode && secondNode.nodeType === Node.ELEMENT_NODE && secondNode.nodeName !== 'UL' && secondNode.nodeName !== 'OL') {
-                    return false; // skip: whitespace followed by <table>
+                    return secondNode.nodeName === LINE_BREAK_TAG; // true if <br>, false otherwise
                 }
                 return true; // text node is empty or whitespace only
             }
