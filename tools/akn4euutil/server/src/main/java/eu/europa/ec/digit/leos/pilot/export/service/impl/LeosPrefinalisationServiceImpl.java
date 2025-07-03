@@ -14,6 +14,9 @@
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.LeosPrefinalisationException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
@@ -232,14 +235,19 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
     }
 
-    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles){
+    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles) {
         try {
-            MetadataFieldInfo fieldInfo = metadataService.lookupFieldInfo(field);
-            processMetadataFieldInfo(fieldInfo, documentXmlFiles);
-            return metadataService.getLookupFieldInfoSuccessResult(field);
-        } catch(MetadataUtilsException e) {
-            LOG.error("Lookup field info failed: {}", e);
-            return metadataService.getLookupFieldInfoErrorResult(field, e);
+            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles);
+            return metadataService.getFieldSuccessResult(field.getKey());
+        } catch(MetadataFieldNotAvailableException ex) {
+            LOG.debug("Lookup field info failed: {}", ex);
+            return metadataService.getFieldNotAvailableResult(field.getKey());
+        } catch(MetadataFieldNotSupportedException ex) {
+            LOG.debug("Lookup field info failed: {}", ex);
+            return metadataService.getFieldNotSupportedResult(field.getKey());
+        } catch(MetadataFieldInvalidValueException ex) {
+            LOG.error("Lookup field info '{}' failed: {}", field.getKey(), ex.getReason());
+            return metadataService.getFieldInvalidValueResult(field.getKey(), ex.getReason());
         }
     }
 
