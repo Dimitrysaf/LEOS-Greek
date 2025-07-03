@@ -575,7 +575,7 @@ define(function elementEditorModule(require) {
         if (element$.attr(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.ARTICLE) {
             var orderedList$ = element$.children(leosPluginUtils.ORDER_LIST_ELEMENT);
             if (orderedList$.length === 1) {
-                var listItem$ = orderedList$.children(leosPluginUtils.LIST_ELEMENT);
+                var listItem$ = orderedList$.children(leosPluginUtils.LIST_ITEM);
                 if ((listItem$.length === 1 && listItem$.attr(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH && listItem$.attr(leosPluginUtils.DATA_AKN_NUM))
                     || _checkForEmptyParagraphs(listItem$)) {
                     pluginTools.addDialog(leosOneParaArticleDialog.dialogName, leosOneParaArticleDialog.initializeDialog);

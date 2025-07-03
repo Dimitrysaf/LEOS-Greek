@@ -1692,7 +1692,8 @@ define(function hierarchicalElementTransformer(require) {
                                         if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
                                             && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW
                                             && !element.attributes[DATA_AKN_ACTION_ENTER]
-                                            && element.attributes[DATA_AKN_NUM] !== element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]) {
+                                            && (element.attributes[DATA_AKN_NUM] !== element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]
+                                                || element.attributes[DATA_INDENT_ORIGIN_LEVEL])) {
                                             this.mapToChildProducts(element, {
                                                 toPath: contentPath,
                                                 toChild: "del",

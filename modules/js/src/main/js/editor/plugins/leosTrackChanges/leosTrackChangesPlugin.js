@@ -371,7 +371,9 @@ define(function leosTrackChangesPluginModule(require) {
                     if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
                         && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
                         && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
-                        if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                        if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)
+                            || element.getAttribute(core.DATA_INDENT_ORIGIN_LEVEL)
+                            && element.getAttribute(core.DATA_INDENT_ORIGIN_LEVEL) != leosPluginUtils.calculateListDepthWithoutRoot(CKEDITOR.dom.element.get(element))) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         } else {
                             core.removeTrackChangesAttributesForNumbering(element);

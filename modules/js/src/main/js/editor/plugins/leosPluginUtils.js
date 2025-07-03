@@ -35,6 +35,7 @@ define(function leosPluginUtilsModule(require) {
     var REGULAR = "REGULAR";
     var CROSSHEADING_LIST_ATTR = "data-akn-crossheading-type";
     var DATA_INDENT_LEVEL_ATTR = "data-indent-level";
+    var AKN_ANNEX_LIST = "aknAnnexList";
     var AKN_ORDERED_ANNEX_LIST = "aknAnnexOrderedList";
     var AKN_ORDERED_LIST = "aknOrderedList";
     var AKN_UNORDERED_LIST = "aknUnorderedList";
@@ -44,7 +45,8 @@ define(function leosPluginUtilsModule(require) {
     var DIV = "div";
     var ORDER_LIST_ELEMENT = "ol";
     var UNORDERED_LIST_ELEMENT = "ul";
-    var LIST_ELEMENT= "li";
+    var LIST_ELEMENTS = "ol, ul";
+    var LIST_ITEM= "li";
     var HTML_POINT = "li";
     var HTML_SUB_POINT = "p";
     var SPAN = "span";
@@ -73,6 +75,7 @@ define(function leosPluginUtilsModule(require) {
     var INP = "~INP";
     var WRP = "~WRP";
 
+    var LIST_ROOT_ELEMENTS = [PARAGRAPH, LEVEL];
     var NUMBERED_ITEM = "point, indent, paragraph";
     var UNUMBERED_ITEM = "alinea, subparagraph";
     var NUMBERED_LEVEL_ITEM = "point, indent, paragraph, level";
@@ -92,6 +95,7 @@ define(function leosPluginUtilsModule(require) {
     var DATA_INDENT_ORIGIN_NUMBER_ID = "data-indent-origin-num-id";
     var DATA_INDENT_ORIGIN_NUMBER_ORIGIN = "data-indent-origin-num-origin";
     var DATA_INDENT_ORIGIN_TYPE = "data-indent-origin-type";
+    var DATA_INDENT_ORIGIN_LEVEL = "data-indent-origin-indent-level";
 
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
     var DATA_AKN_TC_ORIGINAL_INDENT_ACTION = "data-akn-tc-original-indent-action";
@@ -163,8 +167,8 @@ define(function leosPluginUtilsModule(require) {
     }
 
     /**
-     * Calculates the depth level of the selected element inside the list (ol block).
-     * It counts how many ol elements are present in the hierarchy.
+     * Calculates the depth level of the selected element inside the list (ol/ul block).
+     * It counts how many ol/ul elements are present in the hierarchy.
      */
     function _calculateListLevel(selected) {
         var level = 0;
@@ -176,6 +180,17 @@ define(function leosPluginUtilsModule(require) {
             actualEL = actualEL.getAscendant({ ol:1, ul:1 });
         }
         return level;
+    }
+
+    /**
+     * Calculates the depth level of the selected element inside the list (ol/ul block).
+     * It counts how many ol/ul elements are present in the hierarchy, without the root paragraph or level.
+     */
+    function _calculateListDepthWithoutRoot(element) {
+        var level = _calculateListLevel(element);
+        return element.getAscendant(el =>
+            el.getName && el.getName() === LIST_ITEM && el.getAttribute && LIST_ROOT_ELEMENTS.includes(el.getAttribute(DATA_AKN_ELEMENT)), true)
+            ? level - 1 : level;
     }
 
     /**
@@ -199,7 +214,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isUnorderedList(element) {
-        return !!element && AKN_UNORDERED_LIST === element.getAttribute(DATA_AKN_NAME);
+        return !!element && element.getAttribute && AKN_UNORDERED_LIST === element.getAttribute(DATA_AKN_NAME);
     }
 
     function _isRecitalAA(element) {
@@ -1299,6 +1314,52 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
+    //This is removing num and origin() on indent and outdent also
+    function _resetDataNumOnIndent(event) {
+        var editor = event.editor, isIndent = event.data.isIndent, range, node;
+        var selection = editor.getSelection();
+        selection = _selectCorrectElementForList(selection, isIndent);
+        var ranges = selection && selection.getRanges(),
+            iterator = ranges.createIterator();
+
+        while ((range = iterator.getNextRange())) {
+            if (range.startContainer) {
+                var startNode = range.startContainer.type !== CKEDITOR.NODE_TEXT && range.startContainer.getName() === LIST_ITEM
+                    ? range.startContainer
+                    : range.startContainer.getAscendant(LIST_ITEM);
+                _handleNodeOnIndent(startNode, editor, isIndent);
+            }
+            if (range.endContainer) {
+                var endNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === LIST_ITEM
+                    ? range.endContainer
+                    : range.endContainer.getAscendant(LIST_ITEM);
+                _handleNodeOnIndent(endNode, editor, isIndent);
+            }
+
+            var rangeWalker = new CKEDITOR.dom.walker(range);
+            while (node = rangeWalker.next()) {
+                _handleNodeOnIndent(node, editor, isIndent);
+            }
+        }
+    }
+
+    function _handleNodeOnIndent(node, editor, isIndent) {
+        if (!node || node.type !== CKEDITOR.NODE_ELEMENT || node.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST) {
+            return;
+        }
+        var point = node.getAscendant(el => el.getName && el.getName() === HTML_POINT && el.getAttribute && el.getAttribute(DATA_AKN_ELEMENT) !== SUBPARAGRAPH,
+            true);
+        _handleIndentAttributes(point, editor, isIndent);
+        if (!node.getAttribute(DATA_AKN_ELEMENT) || node.getAttribute(DATA_AKN_ELEMENT).toLowerCase() !== CROSSHEADING.toLowerCase()) {
+            point.removeAttribute(DATA_AKN_NUM);
+        }
+        point.findOne(LIST_ELEMENTS)?.getChildren().toArray().forEach((child) => {
+            if (_getElementName(child) === HTML_POINT && !_isListIntro(child)) {
+                _handleNodeOnIndent(child, editor, isIndent);
+            }
+        });
+    }
+
     function _handleIndentAttributes(node, editor, isIndent) {
         if (editor.LEOS.isTrackChangesEnabled && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
             var elementName = node.getAttribute(DATA_AKN_ELEMENT).toUpperCase();
@@ -1334,6 +1395,9 @@ define(function leosPluginUtilsModule(require) {
             }
             if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
                 node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
+            }
+            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL)) {
+                node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
             }
             editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
         }
@@ -1726,6 +1790,7 @@ define(function leosPluginUtilsModule(require) {
         getElementName: _getElementName,
         setFocus: _setFocus,
         calculateListLevel: _calculateListLevel,
+        calculateListDepthWithoutRoot: _calculateListDepthWithoutRoot,
         changedContent:_changedContent,
         getAnnexList: _getAnnexList,
         isSelectionInFirstLevelList: _isSelectionInFirstLevelList,
@@ -1770,7 +1835,8 @@ define(function leosPluginUtilsModule(require) {
         popSingleSubElement : _popSingleSubElement,
         popNotInlineSubElement: _popNotInlineSubElement,
         pushNotInlineElements: _pushNotInlineElements,
-        handleIndentAttributes : _handleIndentAttributes,
+        resetDataNumOnIndent: _resetDataNumOnIndent,
+        handleNodeOnIndent: _handleNodeOnIndent,
         moveChildren: _moveChildren,
         moveElementChildren: _moveElementChildren,
         manageParagraphs: _manageParagraphs,
@@ -1828,7 +1894,7 @@ define(function leosPluginUtilsModule(require) {
         LEVEL: LEVEL,
         ORDER_LIST_ELEMENT: ORDER_LIST_ELEMENT,
         UNORDERED_LIST_ELEMENT: UNORDERED_LIST_ELEMENT,
-        LIST_ELEMENT: LIST_ELEMENT,
+        LIST_ITEM: LIST_ITEM,
         DATA_AKN_NAME: DATA_AKN_NAME,
         DATA_AKN_ELEMENT: DATA_AKN_ELEMENT,
         DATA_AKN_ID: DATA_AKN_ID,
@@ -1845,6 +1911,7 @@ define(function leosPluginUtilsModule(require) {
         DATA_INDENT_ORIGIN_NUMBER_ORIGIN: DATA_INDENT_ORIGIN_NUMBER_ORIGIN,
         DATA_INDENT_ORIGIN_TYPE: DATA_INDENT_ORIGIN_TYPE,
         DATA_INDENT_ORIGIN_NUM_ID: DATA_INDENT_ORIGIN_NUM_ID,
+        DATA_INDENT_ORIGIN_LEVEL: DATA_INDENT_ORIGIN_LEVEL,
         DATA_AKN_WRAPPED_CONTENT_ID: DATA_AKN_WRAPPED_CONTENT_ID,
         DATA_AKN_MP_ID: DATA_AKN_MP_ID,
         DATA_AKN_TC_ORIGINAL_NUMBER: DATA_AKN_TC_ORIGINAL_NUMBER,
