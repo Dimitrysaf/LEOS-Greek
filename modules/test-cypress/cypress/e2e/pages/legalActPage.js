@@ -314,5 +314,9 @@ class legalActPage {
     clickDeleteIconOfRecital(recitalNumber) {
         this.getRecital(recitalNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='delete']").click({ force: true }));
     }
+
+    getTagFromArticle(articleNumber, tagName) {
+        return this.getArticle(articleNumber).find(`> ${tagName}`);
+    }
 }
 export default new legalActPage();
