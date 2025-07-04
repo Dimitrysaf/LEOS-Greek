@@ -424,3 +424,11 @@ When(/^enacting terms contains below node labels in this order$/, function (data
         })
         .should('deep.equal', givenNodeLabelList)
 });
+
+Then(/^enacting terms contains article having text "(.*)" in toc$/, function (label) {
+    tableOfContent.elements.nodeLabel().contains(label).should("include.text", label)
+});
+
+Then ('enacting terms does not contains article having text {string} in toc',function(label){
+    tableOfContent.elements.nodeLabel().should("not.contain", label)
+});

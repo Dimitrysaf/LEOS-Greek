@@ -41,9 +41,9 @@ Feature: Track Changes Feature
     And  click save and close button of ck editor
     # Check results
     Then num of point 1 of list 1 of paragraph 1 of article 1 has below content
-      | ins  | "(a)"                              |
+      | ins | "(a)" |
     Then point 1 of list 1 of paragraph 1 of article 1 has below content
-      | ins  | "New paragraph"                    |
+      | ins | "New paragraph" |
     When disable track changes
     Then enable track changes toggle bar is off in ribbon toolbar
     When click on insert after icon of article 1
@@ -100,8 +100,8 @@ Feature: Track Changes Feature
     When append "Text" at offset 7 in numbered paragraph 1 of article in edition mode
     And  click save and close button of ck editor
     Then paragraph 1 of article 1 has below content
-      | text | "Text..."                       |
-      | ins  | "Text"                          |
+      | text | "Text..." |
+      | ins  | "Text"    |
     When disable track changes
     Then enable track changes toggle bar is off in ribbon toolbar
     When mouseover and click on article 1
@@ -109,9 +109,9 @@ Feature: Track Changes Feature
     When append "updated" at offset 4 of child 1 of numbered paragraph 1 of article in edition mode
     And  click save and close button of ck editor
     Then paragraph 1 of article 1 has below content
-      | text | "Text..."                    |
-      | ins  | "Text"                       |
-      | text | "updated"                    |
+      | text | "Text..." |
+      | ins  | "Text"    |
+      | text | "updated" |
 
 
   @addTrackChangesText @local
@@ -333,27 +333,27 @@ Feature: Track Changes Feature
     And click save and close button of ck editor
     # Check results
     Then paragraph 5 of article 1 has below content
-      | text     | "Fifth"      |
-      | ins,del  | " querying"  |
-      | text     | " numbered " |
-      | ins,del  | "registered "|
-      | text     | "paragraph." |
+      | text    | "Fifth"       |
+      | ins,del | " querying"   |
+      | text    | " numbered "  |
+      | ins,del | "registered " |
+      | text    | "paragraph."  |
     Then paragraph 6 of article 1 has below content
-      | text     | "Si"         |
-      | del      | "xth"        |
-      | ins,del  | " querying"  |
-      | del      | " nu"        |
-      | text     | "mbe"        |
-      | del      | "red "       |
-      | ins,del  | "registered "|
-      | del      | "par"        |
-      | text     | "agraph."    |
+      | text    | "Si"          |
+      | del     | "xth"         |
+      | ins,del | " querying"   |
+      | del     | " nu"         |
+      | text    | "mbe"         |
+      | del     | "red "        |
+      | ins,del | "registered " |
+      | del     | "par"         |
+      | text    | "agraph."     |
     Then paragraph 7 of article 1 has below content
-      | text     | "Seventh"     |
-      | html     | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> qu<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ery<\/del>ing<\/ins> |
-      | text     | " numbered "  |
-      | html     | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">reg<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ist</del>ered </ins> |
-      | text     | "paragraph."  |
+      | text | "Seventh"                                                                                                                                                                                                                            |
+      | html | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> qu<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ery<\/del>ing<\/ins> |
+      | text | " numbered "                                                                                                                                                                                                                         |
+      | html | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">reg<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ist</del>ered </ins> |
+      | text | "paragraph."                                                                                                                                                                                                                         |
     # Ticket created to fix this issue:
     # https://code.europa.eu/leos/core/-/issues/1725
     # After this issue is fixed, uncomment next test
@@ -1818,3 +1818,100 @@ Feature: Track Changes Feature
     And  click on accept this change option under track changes action
     Then sole recital doesn't contain num tag
     And  recital 1 contains "Recital..."
+
+
+  @soleArticle @local
+  Scenario: Verify numbering remains correct when last article is deleted
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Sole Article Testing" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+
+    And  all articles has "num" tag
+    And  "num" tag of article 1 contains "Article 1"
+    And  "num" tag of article 2 contains "Article 2"
+    And  "num" tag of article 3 contains "Article 3"
+    When mouseover on article 3
+    When click on delete icon of article 3
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    When mouseover on article 2
+    When click on delete icon of article 2
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    And  "num" tag of article 1 contains "Sole Article"
+
+    When click on insert before icon of article 1
+    Then the total number of article is 2
+    And  "num" tag of article 1 contains "Article 1"
+    And  "num" tag of article 2 contains "Article 2"
+    When click on toc edit button
+    And  click on three vertical dots for the element contains text "Article 1 " in toc
+    And  click on delete option from eui dropdown content
+    When click on confirm button in dialog box window
+    When click on save and close button in navigation pane
+    Then enacting terms contains article having text "Sole Article - Scope 1. Text..." in toc
+    When click on toc edit button
+    When drag element "Article" from element tree list and drop after node label "Enacting Terms" in navigation pane
+    When click on save and close button in navigation pane
+    Then enacting terms does not contains article having text "Sole Article" in toc
+    And enacting terms contains article having text "Article 1" in toc
+    And enacting terms contains article having text "Article 2 " in toc
+
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When click on delete icon of article 1
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then article 1 contains attribute "leos:action" with value "delete"
+    And  del tag of num tag of article 2 contains value "Article 2"
+    And  ins tag of num tag of article 2 contains value "Sole Article"
+    When right click on article 1
+    And  click on reject this change option under track changes action
+    And  "num" tag of article 1 contains "Article 1"
+    And  "num" tag of article 2 contains "Article 2"
+
+    When click on delete icon of article 1
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    When right click on article 1
+    And  click on accept this change option under track changes action
+    Then  "num" tag of article 1 contains "Sole Article"
+    When click on insert before icon of article 1
+    Then article 1 contains attribute "leos:action" with value "insert"
+    When right click on article 1
+    And  click on accept this change option under track changes action
+    And  "num" tag of article 1 contains "Article 1"
+    And  "num" tag of article 2 contains "Article 2"
+
+    When disable track changes
+    And mouseover and click on article 2
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on internal reference icon present in ck editor panel
+    Then cke dialog window is displayed with title "Internal reference"
+    And enacting terms contains following articles in internal reference window
+      | Article 1 - Article heading... 1.Text... |
+      | Article 2 - Article heading... 1.Text... |
+    And click on cancel button in cke dialog window
+    And  click close button of ck editor
+    When mouseover on article 2
+    When click on delete icon of article 2
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    And mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on internal reference icon present in ck editor panel
+    Then cke dialog window is displayed with title "Internal reference"
+    And enacting terms contains following articles in internal reference window
+      | Sole Article - Article heading... 1.Text... |
