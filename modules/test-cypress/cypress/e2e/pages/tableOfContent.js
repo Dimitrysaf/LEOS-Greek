@@ -121,7 +121,7 @@ class tableOfContent {
     }
 
     clickThreeDotsOfTOCElement(ngContent) {
-        this.elements.matTree().contains(ngContent).parent().find("button *[icon='eui-ellipsis-vertical']").wait(500).realHover({pointer: "mouse", position: "center"}).click();
+        this.elements.matTree().contains(ngContent).parent().find("button *[icon='eui-ellipsis-vertical']").realHover({pointer: "mouse", position: "center"}).click();
     }
 
     clickShowMoreBtn(euiCardName) {

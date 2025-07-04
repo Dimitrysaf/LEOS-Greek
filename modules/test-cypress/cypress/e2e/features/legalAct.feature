@@ -175,6 +175,7 @@ Feature: Legal Act Page Regression Features
       | Article     |
     When drag element "Article" from element tree list and drop before node label "Article 2 - Definitions Text..." in navigation pane
     Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
+    And  wait for 1000 milliseconds
     When click on three vertical dots for the element contains text "Article # - Article heading... Text..." in toc
     And  click on delete option from eui dropdown content
     Then "Delete Element: confirmation" dialog confirm box window is displayed
