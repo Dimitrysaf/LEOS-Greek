@@ -43,7 +43,6 @@ define(function aknUnorderedListPluginModule(require) {
             editor.on("beforeAknIndentList", leosPluginUtils.resetDataNumOnIndent);
             editor.on("change", resetDataAknNameForUnOrderedList, null, null, 0);
             editor.on("change", resetNumbering, null, null, 1);
-            editor.on("change", refreshIndent, null, null, 1);
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -89,16 +88,6 @@ define(function aknUnorderedListPluginModule(require) {
         var unorderedLists = jqEditor.find("*[data-akn-name='aknUnorderedList']");
         numberModule.updateNumbers(unorderedLists, numberModule.getSequences("IndentDash"));
         event.editor.fire('unlockSnapshot');
-    }
-
-    /*
-     * To remove point when deleted content is accepted and element becomes empty
-     */
-    function refreshIndent(event) {
-        var editor = event.editor;
-        if (!!editor.getCommand('indent') && !!editor.elementPath()) {
-            editor.getCommand('indent').refresh(editor, editor.elementPath());
-        }
     }
 
     function elementTagIndexProvider(element) {
