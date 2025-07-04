@@ -18,7 +18,7 @@
     <import resource="classpath:eu/europa/ec/leos/xslt/xsltContext.xml"/>
     
     <cache:annotation-driven cache-manager="cacheManager" mode="proxy" proxy-target-class="false"/>
-    
+
     <!-- Always use the delegatingSecurityContextAsyncTaskExecutor bean.
     Using the DelegatingSecurityContextAsyncTaskExecutor wrapping the default SimpleAsyncTaskExecutor
     to spawn a new thread executing asynchronously and to pass it the current SecurityContext.
