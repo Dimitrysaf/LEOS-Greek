@@ -629,6 +629,33 @@ define(function elementEditorModule(require) {
         }
         return isSiblingWithContent;
     }
+    function _hasValidLIChildContent(element) {
+        if($(element).is("li")){
+            var hasEmpty = false;
+            var childNodes = $(element)[0].childNodes;
+            for(var node of childNodes){
+                if (node.nodeType === Node.TEXT_NODE) {
+                    if (node.textContent.trim() === '') continue; // skip whitespace
+                    return true; //  visible text is valid
+                }
+
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.nodeName;
+
+                    if (tag === 'BR') continue; // skip <br>
+
+                    if (tag === 'OL' || tag === 'UL') {
+                        //  if list is the first meaningful content
+                        return false;
+                    }
+                    // other tag is valid as first meaningful content
+                    return true;
+                }
+            }
+        }
+       return true; // not LI  no validation needed
+    }
+
 
     function hasEmptyAllListItem(elementId) {
 
@@ -696,6 +723,7 @@ define(function elementEditorModule(require) {
 
         var hasOnlyEmptyLines = false;
         for(var ele of emptyElements){
+            var parent = $(ele).parent()[0];
             if(!_hasSiblingWithContent(ele)) {
                 var parent = $(ele).parent()[0];
                 if(($(ele).is("p") && $(ele).attr("data-akn-element") == "subparagraph" && $(parent).attr("data-akn-element") == "level")
@@ -703,6 +731,12 @@ define(function elementEditorModule(require) {
                     || ($(ele).is("p") && $(ele).attr("data-akn-name") == "aknParagraph" && $(parent).attr("data-akn-name") == "blockContainer")
                     || ($(ele).is("li") && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList")))
                 ) {
+                    hasOnlyEmptyLines = true;
+                    break;
+                }
+            }
+            if(!_hasValidLIChildContent(ele)) {
+                if($(ele).is("li") && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList"))){
                     hasOnlyEmptyLines = true;
                     break;
                 }
