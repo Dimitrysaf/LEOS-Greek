@@ -13,8 +13,10 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.service;
 
-import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
@@ -38,7 +40,7 @@ public class MetadataServiceImplTest {
     }
 
     @Test
-    public void testAddCoteToCuidInMainXml() throws XmlUtilException, MetadataUtilsException {
+    public void testAddCoteToCuidInMainXml() throws XmlUtilException, MetadataFieldInvalidValueException {
         XmlUtil.XmlFile xmlFile = createCuidXmlFile("main-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
         ReferenceFieldInfo coteFieldInfo = createCoteFieldInfo("COM(2024) 1811");
         metadataService.processCote(coteFieldInfo, xmlFile);
@@ -51,7 +53,7 @@ public class MetadataServiceImplTest {
     }
 
     @Test
-    public void testAddCoteToCuidInNotMainXml() throws XmlUtilException, MetadataUtilsException {
+    public void testAddCoteToCuidInNotMainXml() throws XmlUtilException, MetadataFieldInvalidValueException {
         XmlUtil.XmlFile xmlFile = createCuidXmlFile("notMain-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
         ReferenceFieldInfo coteFieldInfo = createCoteFieldInfo("COM(2024) 1811");
         metadataService.processCote(coteFieldInfo, xmlFile);
@@ -65,7 +67,7 @@ public class MetadataServiceImplTest {
     }
 
     @Test
-    public void testAssociatedReferences() throws MetadataUtilsException,XmlUtilException {
+    public void testAssociatedReferences() throws MetadataFieldInvalidValueException, XmlUtilException {
         final MultipleReferencesFieldInfo referencesFieldInfo = (MultipleReferencesFieldInfo) MetadataUtil.parseLinkedDocuments("{SEC(2021) 11 jcwtest5} - {SWD(2021) 42 final} - {SWD(2021) 43 final}");
         final XmlUtil.XmlFile xmlFile = createAssociatedReferencesXmlFile("main.xml");
         metadataService.processLinkedDocuments(referencesFieldInfo, xmlFile);
@@ -87,7 +89,7 @@ public class MetadataServiceImplTest {
     }
 
     @Test
-    public void testMissingAssociatedReferences() throws MetadataUtilsException,XmlUtilException {
+    public void testMissingAssociatedReferences() throws MetadataFieldInvalidValueException, XmlUtilException {
         final MultipleReferencesFieldInfo referencesFieldInfo = (MultipleReferencesFieldInfo) MetadataUtil.parseLinkedDocuments("");
         final XmlUtil.XmlFile xmlFile = createAssociatedReferencesXmlFile("main.xml");
         metadataService.processLinkedDocuments(referencesFieldInfo, xmlFile);
@@ -96,9 +98,9 @@ public class MetadataServiceImplTest {
         Assertions.assertTrue(XmlUtil.isNodeEmpty(referencesContainer));
     }
 
-    private XmlUtil.XmlFile createCuidXmlFile(String filename, String cuid) throws XmlUtilException {
+    private XmlUtil.XmlFile createCuidXmlFile(String fileName, String cuid) throws XmlUtilException {
         XmlUtil.XmlFile xmlFile = XmlUtil.newXmlFile();
-        xmlFile.setName(filename);
+        xmlFile.setName(fileName);
         Node rootNode = xmlFile.createRoot("doc");
 
         Node metaNode = xmlFile.newElement("meta");
@@ -124,13 +126,13 @@ public class MetadataServiceImplTest {
         return xmlFile;
     }
 
-    private ReferenceFieldInfo createCoteFieldInfo(String fieldValue) throws MetadataUtilsException {
+    private ReferenceFieldInfo createCoteFieldInfo(String fieldValue) throws MetadataFieldInvalidValueException {
         return (ReferenceFieldInfo)MetadataUtil.parseCote(fieldValue, MetadataFieldType.COTE);
     }
 
-    private XmlUtil.XmlFile createAssociatedReferencesXmlFile(String filename) throws XmlUtilException {
+    private XmlUtil.XmlFile createAssociatedReferencesXmlFile(String fileName) throws XmlUtilException {
         XmlUtil.XmlFile xmlFile = XmlUtil.newXmlFile();
-        xmlFile.setName(filename);
+        xmlFile.setName(fileName);
         Node rootNode = xmlFile.createRoot("doc");
 
         Node coverpageNode = xmlFile.newElement("coverPage");
@@ -149,4 +151,56 @@ public class MetadataServiceImplTest {
         return xmlFile;
     }
 
+    @Test()
+    public void testLookupFieldInfoThrowNotAvailableException() {
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.STATUS.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.COMMISSIONER.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.DELETE_INTERNAL_REFERENCE.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.START_PAGE_NUMBER.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.CLEANUP_HEADER_AND_FOOTER.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.FREEZE_NUMBERING.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.DELETE_COMMENTS.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.DELETE_VERSIONS.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.DELETE_HIDDEN_TEXT.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.DELETE_USER_PROPERTIES.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.CLEAR_MARKER.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.ADJUST_SIGNATURE_LAYOUT.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.REMOVE_SENSITIVITY.toString(), "");
+        });
+        Assertions.assertThrows(MetadataFieldNotAvailableException.class, () -> {
+            metadataService.lookupFieldInfo(MetadataFieldType.UPDATE_COVER_PAGE.toString(), "");
+        });
+    }
+
+    @Test
+    public void testLookupFieldInfoThrowNotSupportedException() {
+        Assertions.assertThrows(MetadataFieldNotSupportedException.class, () -> {
+            metadataService.lookupFieldInfo("Not supported", "XXXX");
+        });
+    }
 }

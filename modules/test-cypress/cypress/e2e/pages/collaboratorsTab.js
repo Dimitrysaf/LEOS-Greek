@@ -9,7 +9,12 @@ class collaboratorsTab {
         role: () => cy.get('#role'),
         editRole: () => cy.get('eui-dropdown-content button').eq(0),
         searchInput: () => cy.get('input.eui-table__filter-input'),
-        collaboratorsRow: () => cy.get('app-proposal-collaborators table tbody tr')
+        collaboratorsRow: () => cy.get('app-proposal-collaborators table tbody tr'),
+        deleteRole:()=>cy.get('eui-dropdown-content button').contains(' Delete ')
+    }
+
+    clickDeleteRole(){
+        this.elements.deleteRole().click();
     }
 
     clickAddBtn() {
@@ -55,5 +60,13 @@ class collaboratorsTab {
     clickThreeVerticalDotsInActionColumn(row) {
         this.elements.collaboratorsRow().eq(row - 1).find('td').eq(3).find('eui-icon-svg').click();
     }
+
+    getRowByName(name) {
+        return this.elements.collaboratorsTable()
+            .find('tbody tr')
+            .filter(`:contains("${name}")`);
+    }
 }
+
+
 export default new collaboratorsTab();

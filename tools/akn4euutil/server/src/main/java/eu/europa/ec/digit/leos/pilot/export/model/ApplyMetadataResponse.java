@@ -49,16 +49,16 @@ public class ApplyMetadataResponse {
 
     public static class DocumentNode {
         private final String sourceURL;
-        private final String filename;
+        private final String fileName;
         private final String mimeType;
         private final String documentId;
 
         public DocumentNode(String sourceURL,
-                            String filename,
+                            String fileName,
                             String mimeType,
                             String documentId){
             this.sourceURL = sourceURL;
-            this.filename = filename;
+            this.fileName = fileName;
             this.mimeType = mimeType;
             this.documentId = documentId;
         }
@@ -67,8 +67,8 @@ public class ApplyMetadataResponse {
             return sourceURL;
         }
 
-        public String getFilename() {
-            return filename;
+        public String getFileName() {
+            return fileName;
         }
 
         public String getMimeType() {
@@ -80,8 +80,8 @@ public class ApplyMetadataResponse {
         }
 
         public String toString(){
-            return String.format("Document(sourceURL: %s / filename: %s / mimeType: %s / documentId %s)",
-                    sourceURL, filename, mimeType, documentId);
+            return String.format("Document(sourceURL: %s / fileName: %s / mimeType: %s / documentId %s)",
+                    sourceURL, fileName, mimeType, documentId);
         }
     }
 

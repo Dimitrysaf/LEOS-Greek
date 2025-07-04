@@ -354,8 +354,10 @@ Feature: Legal Act Page Regression Features
     Then ck editor window is displayed
     When select content from offset 0 till offset 7 in li 1 with data-akn-element "indent" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click delete button from keyboard in edition mode
-    And  select content from offset 0 till offset 8 in li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click backspace from keyboard in edition mode
+    And  select content from offset 0 till offset 8 in li 1 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click delete button from keyboard in edition mode
+    And  click backspace from keyboard in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
     And  num tag of paragraph 1 of article 1 contains "1."
@@ -797,10 +799,10 @@ Feature: Legal Act Page Regression Features
     When mouseover and click on article 3
     Then ck editor window is displayed
     When click on alternative 2 icon present in ck editor panel
-    And click dialog ok button
+    And  click dialog ok button
     Then check content inside ckeditor is of size 3202
     When click source button
-    And click on cancel button in source dialog
+    And  click on dialog cancel button
     Then check content inside ckeditor is of size 3202
     When mouseover and click on article 3
     Then ck editor window is displayed

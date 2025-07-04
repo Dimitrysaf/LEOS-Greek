@@ -14,6 +14,9 @@
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.LeosPrefinalisationException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
@@ -37,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -46,9 +48,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -89,8 +93,10 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
-        CompletableFuture.runAsync(ApplyMetadataRunnable.create(inputFile, callbackUrl, this));
+    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
+        String asyncId = UUID.randomUUID().toString();
+        CompletableFuture.runAsync(ApplyMetadataRunnable.create(asyncId, inputFile, callbackUrl, this));
+        return asyncId;
     }
 
     private ApplyMetadataRequest readContentXml(Map<String, Object> zipContent) throws LeosPrefinalisationException {
@@ -116,7 +122,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             throw new LeosPrefinalisationException("Document not found");
         }
 
-        byte[] documentZipData = objectToByteArray(zipContent.get(document.getFilename()));
+        byte[] documentZipData = objectToByteArray(zipContent.get(document.getFileName()));
         if (documentZipData == null || documentZipData.length == 0) {
             throw new LeosPrefinalisationException("Document file not found");
         }
@@ -153,7 +159,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
     private Map<String, Object> readFurtherDocumentContent(Map<String, Object> documentZipContent){
         Map<String, Object> furtherContent = new HashMap<>();
-        String[] contentNames = (String[]) documentZipContent.keySet().toArray(new String[0]);
+        String[] contentNames = documentZipContent.keySet().toArray(new String[0]);
 
         for (String contentName : contentNames) {
             if (MetadataUtil.isDocumentXmlFilename(contentName)) {
@@ -229,14 +235,19 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
     }
 
-    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles){
+    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles) {
         try {
-            MetadataFieldInfo fieldInfo = metadataService.lookupFieldInfo(field);
-            processMetadataFieldInfo(fieldInfo, documentXmlFiles);
-            return metadataService.getLookupFieldInfoSuccessResult(field);
-        } catch(MetadataUtilsException e) {
-            LOG.error("Lookup field info failed: {}", e);
-            return metadataService.getLookupFieldInfoErrorResult(field, e);
+            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles);
+            return metadataService.getFieldSuccessResult(field.getKey());
+        } catch(MetadataFieldNotAvailableException ex) {
+            LOG.debug("Lookup field info failed: {}", ex);
+            return metadataService.getFieldNotAvailableResult(field.getKey());
+        } catch(MetadataFieldNotSupportedException ex) {
+            LOG.debug("Lookup field info failed: {}", ex);
+            return metadataService.getFieldNotSupportedResult(field.getKey());
+        } catch(MetadataFieldInvalidValueException ex) {
+            LOG.error("Lookup field info '{}' failed: {}", field.getKey(), ex.getReason());
+            return metadataService.getFieldInvalidValueResult(field.getKey(), ex.getReason());
         }
     }
 
@@ -394,14 +405,16 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     }
 
     public static class ApplyMetadataRunnable implements Runnable {
-        private final LeosPrefinalisationService leosPrefinalisationService;
+        private String id;
         private final String callbackUrl;
         private final MultipartFile inputFile;
+        private final LeosPrefinalisationService leosPrefinalisationService;
 
-        public ApplyMetadataRunnable(MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
-            this.leosPrefinalisationService = leosPrefinalisationService;
+        public ApplyMetadataRunnable(String id, MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
+            this.id = id;
             this.inputFile = inputFile;
             this.callbackUrl = callbackUrl;
+            this.leosPrefinalisationService = leosPrefinalisationService;
         }
 
         @Override
@@ -416,18 +429,18 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             HttpUtil.HttpResponse httpResponse = null;
             try {
                 LOG.debug("Send ZIP to callback url ...");
-                httpResponse = httpClient.doPost(this.callbackUrl, new HashMap<>(), requestHeaders, content);
+                httpResponse = httpClient.doPost(this.callbackUrl, Collections.singletonMap("token", this.id), requestHeaders, content);
             } catch(HttpUtil.HttpClientRequestException ex) {
-                LOG.debug("Error sending ZIP to callback url [callbackUrl: {} / statusCode: {} / message: {}]", this.callbackUrl,
+                LOG.debug("Error sending ZIP to callback url [callbackUrl: {} / id: {} / statusCode: {} / message: {}]", this.callbackUrl, this.id,
                         (httpResponse != null) ? httpResponse.getStatusCode() : "unknown",
                         (httpResponse != null) ? httpResponse.getStatusText() : "unknown", ex);
             } catch(Exception ex) {
-                LOG.error("Error sending ZIP to callback url [callbackUrl: {}]", this.callbackUrl, ex);
+                LOG.error("Error sending ZIP to callback url [callbackUrl: {} / id: {}]", this.callbackUrl, this.id, ex);
             }
         }
 
-        public static Runnable create(MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
-            return new ApplyMetadataRunnable(inputFile, callbackUrl, leosPrefinalisationService);
+        public static Runnable create(String id, MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
+            return new ApplyMetadataRunnable(id, inputFile, callbackUrl, leosPrefinalisationService);
         }
     }
 }

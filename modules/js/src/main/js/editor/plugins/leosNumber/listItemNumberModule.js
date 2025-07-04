@@ -482,7 +482,9 @@ define(function listItemNumberModule(require) {
                 var number = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
 
                 var previousItem = listItems[idx-1];
-                if (!!previousItem && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) === numID && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM) === number) {
+                if (!!previousItem
+                    && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) === numID
+                    && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM) && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM) === number) {
                     listItems[idx].removeAttribute("data-akn-num");
                     listItems[idx].removeAttribute("data-akn-num-id");
                     listItems[idx].removeAttribute("data-akn-content-id");

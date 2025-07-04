@@ -616,6 +616,59 @@ define(function elementEditorModule(require) {
         }
         return isSiblingWithContent;
     }
+    function _hasValidLIChildContent(element) {
+        if($(element).is("li")){
+            var hasEmpty = false;
+            var childNodes = $(element)[0].childNodes;
+            for(var node of childNodes){
+                if (node.nodeType === Node.TEXT_NODE) {
+                    if (node.textContent.trim() === '') continue; // skip whitespace
+                    return true; //  visible text is valid
+                }
+
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.nodeName;
+
+                    if (tag === 'BR') continue; // skip <br>
+
+                    if (tag === 'OL' || tag === 'UL') {
+                        //  if list is the first meaningful content
+                        return false;
+                    }
+                    // other tag is valid as first meaningful content
+                    return true;
+                }
+            }
+        }
+       return true; // not LI  no validation needed
+    }
+
+
+    function hasEmptyAllListItem(elementId) {
+
+        const $parentElement = $(`#${elementId}`);
+        const $listItems = $parentElement.find('li');
+        // Return false if there are no list items
+        if ($listItems.length === 0) {
+            return false;
+        }
+
+        let allEmpty = false;
+        $listItems.each(function() {
+            const $li = $(this);
+            // Check if it only has br and no text
+            const hasOnlyBr = $li.contents().length === 1 && $li.children('br').length === 1;
+            const noText = $li.html().trim().length === 0;
+
+            if (hasOnlyBr || noText) {
+                allEmpty = true;
+                return true; // breaks the each loop
+            }
+        });
+
+        return allEmpty;
+    }
+
 
     function _isEmptyContentInElement(elementId) {
         var isEmptyElementFound = false;
@@ -624,6 +677,15 @@ define(function elementEditorModule(require) {
             + ", li[refersto]").find("*").addBack().filter(function() {
             return UTILS.isEmptyElement(this);
         });
+        // Element is completely empty and is the last editable block
+        var $el = $("#" + elementId);
+        if (
+            $el.text().trim() === '' &&             // no text
+            $el.children().length === 0 &&          // no children
+            isLastEditableElement($el)              // passes structural check
+        ) {
+            isEmptyElementFound = true;
+        }
 
         var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
         var sibling;
@@ -648,10 +710,20 @@ define(function elementEditorModule(require) {
 
         var hasOnlyEmptyLines = false;
         for(var ele of emptyElements){
+            var parent = $(ele).parent()[0];
             if(!_hasSiblingWithContent(ele)) {
                 var parent = $(ele).parent()[0];
                 if(($(ele).is("p") && $(ele).attr("data-akn-element") == "subparagraph" && $(parent).attr("data-akn-element") == "level")
-                    || ($(ele).is("li") && $(ele).attr("data-akn-element") == "paragraph" && $(parent).parent()[0].localName == 'article')) {
+                    || ($(ele).is("li") && $(ele).attr("data-akn-element") == "paragraph" && $(parent).parent()[0].localName == 'article')
+                    || ($(ele).is("p") && $(ele).attr("data-akn-name") == "aknParagraph" && $(parent).attr("data-akn-name") == "blockContainer")
+                    || ($(ele).is("li") && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList")))
+                ) {
+                    hasOnlyEmptyLines = true;
+                    break;
+                }
+            }
+            if(!_hasValidLIChildContent(ele)) {
+                if($(ele).is("li") && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList"))){
                     hasOnlyEmptyLines = true;
                     break;
                 }
@@ -683,6 +755,10 @@ define(function elementEditorModule(require) {
             }
         });
 
+        if(hasEmptyAllListItem(elementId)){
+            isEmptyList = true;
+        }
+
 
         var isEmptyRefersToElement = false;
         var aknLists = $("#" + elementId).find("ol[data-akn-name='aknOrderedList'], ul[data-akn-name='aknUnorderedList']");
@@ -710,6 +786,7 @@ define(function elementEditorModule(require) {
                 isEmptyRefersToElement = true;
             }
         });
+
 
         return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement;
     }

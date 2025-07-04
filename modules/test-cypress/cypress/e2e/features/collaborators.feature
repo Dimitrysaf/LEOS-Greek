@@ -93,3 +93,32 @@ Feature: collaborator section regression features
     Then "DEMO Demo" is displayed in row 2 of column name of collaborators tab
     And  "Reviewer" is displayed in row 2 of column role of collaborators tab
     And  total number of row is 2 in collaborators tab
+
+  @deletetRole @local 
+  Scenario: author can delete the role in collaborator section
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "delete role" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on collaborators tab in act view page
+    Then active tab name is "Collaborators"
+    When click on add button in collaborators tab
+    Then "Add users" dialog box window is displayed
+    When provide input "demo" in name field of add users window
+    And  click on row 1 from the user list in name field of add users window
+    And  click on add users button
+    Then "DEMO Demo" is displayed in row 2 of column name of collaborators tab
+    And  "Author" is displayed in row 2 of column role of collaborators tab
+    When click on three vertical dots in column action of row 2 of collaborators tab
+    And  click on delete role button
+    Then "Delete collaborator confirmation" dialog confirm box window is displayed
+    When click on danger button in dialog box window
+    Then "DEMO Demo" is not displayed in collaborators tab
+    And total number of row is 1 in collaborators tab
+    When click on three vertical dots in column action of row 1 of collaborators tab
+    Then delete option is not be visible for the collaborator

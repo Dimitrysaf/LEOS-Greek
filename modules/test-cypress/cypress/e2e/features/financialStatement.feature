@@ -191,3 +191,4 @@ Feature: financial statement page regression features
     When click on delete button in dialog box window
     Then " There is no digital financial statement in this document " is displayed
     And  add button is displayed under financial statement section
+    
