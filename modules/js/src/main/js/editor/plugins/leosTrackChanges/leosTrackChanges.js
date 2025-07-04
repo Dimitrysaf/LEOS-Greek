@@ -47,7 +47,7 @@ define(function leosTrackChangesModule(require) {
         // Style elements tags
         STYLE_ELEMENTS:  ["strong", "em", "sub", "sup"],
 
-        OUTSIDE_EDITOR_ELTS_SELECTOR: {article: 1, citation: 1, recital: 1, paragraph: 1, level: 1, chapter: 1, akntitle: 1, part: 1, section: 1},
+        OUTSIDE_EDITOR_ELTS_SELECTOR: ["article", "citation", "recitals", "recital", "paragraph", "level", "chapter", "akntitle", "part", "section"],
 
         searchTrackChangeElementCheckingParent: function(editor, action) {
             editor.getSelection().getRanges()[0].optimize();
@@ -377,7 +377,9 @@ define(function leosTrackChangesModule(require) {
         isInsideTrackedHigherElement: function(editor, user) {
             var selection = editor.getSelection();
             if (selection) {
-                var el = selection.getRanges()[0]?.getCommonAncestor().getAscendant(this.OUTSIDE_EDITOR_ELTS_SELECTOR);
+                var el = selection.getRanges()[0]?.getCommonAncestor().getAscendant( e =>
+                    this.OUTSIDE_EDITOR_ELTS_SELECTOR.includes(e.$.nodeName.toLowerCase())
+                    || this.OUTSIDE_EDITOR_ELTS_SELECTOR.includes(e.getAttribute(this.DATA_AKN_NAME)));
                 if (!!el) {
                     if ((el.hasAttribute(this.ACTION_ATTR))
                         && (!el.hasAttribute(this.SOFT_ACTION_ATTR) || el.getAttribute(this.SOFT_ACTION_ATTR) != this.LEOS_SOFT_ACTION_MOVE_FROM_VALUE)
