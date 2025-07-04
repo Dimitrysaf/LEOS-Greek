@@ -618,10 +618,6 @@ And('all recitals has {string} tag', (tagName) => {
     });
 });
 
-Then ('the total number of recital is {int}',function (expectedCount){
-    legalActPage.elements.recital().should('have.length',expectedCount)
-});
-
 Then('the document contains {int} recital which does not contain the {string} tag', (expectedCount, tagName) => {
     legalActPage.elements.recital().filter((i, el) => !el.innerText.includes(tagName)).should('have.length', expectedCount);
 });

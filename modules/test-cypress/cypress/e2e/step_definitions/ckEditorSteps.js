@@ -25,6 +25,10 @@ And('click backspace from keyboard in edition mode', function () {
     ckEditorWindow.clickBackspaceFromKeyboardWhenCKEditorOpen();
 });
 
+And(/^click ctrl key and enter key together from keyboard in edition mode$/, function () {
+    ckEditorWindow.clickCtrlAndEnterFromKeyboardWhenCKEditorOpen();
+});
+
 Then('ck editor window is displayed', () => {
     ckEditorWindow.getCkEditableInlineElement().should('exist');
 })
