@@ -1347,8 +1347,8 @@ define(function leosPluginUtilsModule(require) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT || node.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST) {
             return;
         }
-        var point = node.getAscendant(el => el.getName && el.getName() === HTML_POINT && el.getAttribute && el.getAttribute(DATA_AKN_ELEMENT) !== SUBPARAGRAPH,
-            true);
+        var point = node.getAscendant(el => el.getName && (el.getName() === HTML_SUB_POINT
+                || el.getName() === HTML_POINT && el.getAttribute && el.getAttribute(DATA_AKN_ELEMENT) !== SUBPARAGRAPH), true);
         _handleIndentAttributes(point, editor, isIndent);
         if (!node.getAttribute(DATA_AKN_ELEMENT) || node.getAttribute(DATA_AKN_ELEMENT).toLowerCase() !== CROSSHEADING.toLowerCase()) {
             point.removeAttribute(DATA_AKN_NUM);
