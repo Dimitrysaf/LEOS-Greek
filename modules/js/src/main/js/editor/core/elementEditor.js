@@ -630,10 +630,8 @@ define(function elementEditorModule(require) {
         return isSiblingWithContent;
     }
     function hasNoValidLiContent(el) {
-       // const node = el.childNodes[0];
         var parent = $(el).parent()[0];
         if($(el).is("li") && el.hasAttribute('data-akn-num') && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList"))){
-       // if(el.tagName === "LI") {
             for (const node of el.childNodes) {
                 if (node && node.nodeType === Node.TEXT_NODE) {
                     if (node.textContent.trim() !== '') {
@@ -644,40 +642,8 @@ define(function elementEditorModule(require) {
                     return node.nodeName === "BR" || node.nodeName === "OL" || node.nodeName === "UL";
                 }
             }
-                    /*if (node.textContent.trim() !== '') {
-                       return false;
-                        /!* const secondNode = el.childNodes[1];
-                         if (secondNode && secondNode.nodeType === Node.ELEMENT_NODE && secondNode.nodeName !== 'UL' && secondNode.nodeName !== 'OL') {
-                             return secondNode.nodeName === "BR"; // true if <br>, false otherwise
-                         }*!/
-                       // return true; // text node is empty or whitespace only
-                    }*/
-
-                   // return false;
-               // }
-
-            /*if (node && node.nodeType === Node.TEXT_NODE) {
-                if (node.textContent === '' || /^\s*$/.test(node.textContent)) {
-                    continue;
-                   /!* const secondNode = el.childNodes[1];
-                    if (secondNode && secondNode.nodeType === Node.ELEMENT_NODE && secondNode.nodeName !== 'UL' && secondNode.nodeName !== 'OL') {
-                        return secondNode.nodeName === "BR"; // true if <br>, false otherwise
-                    }*!/
-                    return true; // text node is empty or whitespace only
-                }
-                return false;
-            }
-            if (node && node.nodeType === Node.ELEMENT_NODE) {
-                if(node.nodeName ===  "BR" ||  node.nodeName === "OL" || node.nodeName === "UL"){
-                    return true;
-                }
-            }*/
-
-            //return node && node.nodeType === Node.ELEMENT_NODE && node.nodeName ===  "BR"; // true if <br>, false otherwise
-
         }
         return false;
-
     }
 
 
