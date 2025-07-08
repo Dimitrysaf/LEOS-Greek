@@ -350,7 +350,7 @@ public abstract class ApiServiceImpl implements ApiService {
             CollectionContextService context = collectionContextProvider.get();
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
-            List<String> metadata = new ArrayList<>();
+            String proposalComment = generateProposalComment(request);
             if (request.getDocPurpose() != null) {
                 context.usePurpose(request.getDocPurpose());
             } else {
@@ -358,15 +358,6 @@ public abstract class ApiServiceImpl implements ApiService {
             }
             if (request.getCrossReferences() == null) {
                 request.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
-            }
-            for (Field field: request.getClass().getDeclaredFields()) {
-                if (request.getClass().getMethod("get" + StringUtils.capitalize(field.getName())).invoke(request) != null) {
-                    String key = "operation.details.element." + String.join(".", field.getName().split("(?=\\p{Lu})")).toLowerCase();
-                    String message = messageHelper.getMessage(key);
-                    if (!message.equals(key)) {
-                        metadata.add(message);
-                    }
-                }
             }
             context.useEeaRelevance(request.getEeaRelevance());
             if (request.getPackageTitle() != null) {
@@ -384,10 +375,8 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.useCoverPageType(proposal.getMetadata().get().getCoverPageType());
             }
-            String comment = messageHelper.getMessage("operation.details.updated",
-                    String.join(", ", metadata));
-            context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
-            context.useActionComment(comment);
+            context.useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
+            context.useActionComment(proposalComment);
             if (proposal.isClonedProposal()) {
                 legPackage = legService.createLegPackageForClone(proposal.getId(), new ExportLeos());
             } else {
@@ -410,6 +399,21 @@ public abstract class ApiServiceImpl implements ApiService {
             }
             LOG.debug("createLegisWritePackage() end....");
         }
+    }
+
+    private String generateProposalComment(UpdateProposalRequest request) throws Exception {
+        List<String> metadata = new ArrayList<>();
+        for (Field field: request.getClass().getDeclaredFields()) {
+            if (request.getClass().getMethod("get" + StringUtils.capitalize(field.getName())).invoke(request) != null) {
+                String key = "operation.details.element." + String.join(".", field.getName().split("(?=\\p{Lu})")).toLowerCase();
+                String message = messageHelper.getMessage(key);
+                if (!message.equals(key)) {
+                    metadata.add(message);
+                }
+            }
+        }
+        return messageHelper.getMessage("operation.details.updated",
+                String.join(", ", metadata));
     }
 
     protected String getJobFileName(String proposalRef) {
