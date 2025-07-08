@@ -51,6 +51,8 @@ define(function leosTrackChangesModule(require) {
         // Style elements tags
         STYLE_ELEMENTS:  ["strong", "em", "sub", "sup"],
 
+        OUTSIDE_EDITOR_ELTS_SELECTOR: ["article", "citation", "recitals", "recital", "paragraph", "level", "chapter", "akntitle", "part", "section"],
+
         searchTrackChangeElementCheckingParent: function(editor, action) {
             editor.getSelection().getRanges()[0].optimize();
             var range = editor.getSelection().getRanges()[0];
@@ -374,6 +376,28 @@ define(function leosTrackChangesModule(require) {
                 }
             }
             return null;
+        },
+
+        isInsideTrackedHigherElement: function(editor, user) {
+            var selection = editor.getSelection();
+            if (selection) {
+                var el = selection.getRanges()[0]?.getCommonAncestor().getAscendant( e =>
+                    this.OUTSIDE_EDITOR_ELTS_SELECTOR.includes(e.$.nodeName.toLowerCase())
+                    || this.OUTSIDE_EDITOR_ELTS_SELECTOR.includes(e.getAttribute(this.DATA_AKN_NAME)));
+                if (!!el) {
+                    if ((el.hasAttribute(this.ACTION_ATTR))
+                        && (!el.hasAttribute(this.SOFT_ACTION_ATTR) || el.getAttribute(this.SOFT_ACTION_ATTR) != this.LEOS_SOFT_ACTION_MOVE_FROM_VALUE)
+                        && (el.getAttribute(this.UID_ATTR) == user)) {
+                        return true;
+                    }
+                    if ((el.hasAttribute(this.LEOS_ACTION_ATTR))
+                        && (!el.hasAttribute(this.LEOS_SOFT_ACTION_ATTR) || el.getAttribute(this.LEOS_SOFT_ACTION_ATTR) != this.LEOS_SOFT_ACTION_MOVE_FROM_VALUE)
+                        && (el.getAttribute(this.LEOS_UID_ATTR) == user)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         },
 
         setToEditablePosition: function(editor, element, setToEnd) {
@@ -729,7 +753,6 @@ define(function leosTrackChangesModule(require) {
             editor.focus();
         },
 
-<<<<<<< HEAD
         processAllChanges: function (editor, actionName, processedElements, isStructureTooComplex, iterationCount) {
             const MAX_ITERATIONS= 30;
             if(isStructureTooComplex[0]){
@@ -740,10 +763,6 @@ define(function leosTrackChangesModule(require) {
                 isStructureTooComplex[0] = true;
                 return;
             }
-=======
-        processAllChanges: function (editor, actionName) {
-
->>>>>>> e22f21bae (Merge branch '2735-decision-support-for-import-proposal-and-update-with-translation-services' into 'EPIC_autonomous_acts')
             var isElementDeleted = false;
             var element = editor.document.find('.leos-placeholder').getItem(0);
             this.injectTagIdsInNodeIncludingSpan(element);
@@ -795,7 +814,6 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-<<<<<<< HEAD
         finalValidation(editor, isStructureTooComplex){
             // do last check of track changes
             var element = editor.document.find('.leos-placeholder').getItem(0);
@@ -830,8 +848,6 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-=======
->>>>>>> e22f21bae (Merge branch '2735-decision-support-for-import-proposal-and-update-with-translation-services' into 'EPIC_autonomous_acts')
         injectTagIdsInNodeIncludingSpan(element) {
             if (!element){
                 return;
@@ -863,11 +879,7 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-<<<<<<< HEAD
         processOlElement: function (editor, olElementToProcess, processedElements, actionName, isStructureTooComplex) {
-=======
-        processOlElement: function (editor, olElementToProcess, processedElements, actionName) {
->>>>>>> e22f21bae (Merge branch '2735-decision-support-for-import-proposal-and-update-with-translation-services' into 'EPIC_autonomous_acts')
             // Process table rows
             var rowElements = olElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
             for (var i = rowElements.count() - 1; i >= 0; i--) {
@@ -899,17 +911,11 @@ define(function leosTrackChangesModule(require) {
             return !this.isElementPresentInEditor(editor, olElementToProcess);
         },
 
-<<<<<<< HEAD
         processElement: function (editor, element, processedElements, actionName, isStructureTooComplex) {
             this.injectTagIdsInNodeIncludingSpan(element);
             if (this.isElementPresentInEditor(editor, element) && !isStructureTooComplex[0]) {
-                var idToSend = element.getAttribute(core.ID);
-=======
-        processElement: function (editor, element, processedElements, actionName) {
-            if (this.isElementPresentInEditor(editor, element)) {
                 var idToSend = element.getAttribute(core.ID) ? element.getAttribute(core.ID) :
                     (element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) ? element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) : this.findSelector(element)) ;
->>>>>>> e22f21bae (Merge branch '2735-decision-support-for-import-proposal-and-update-with-translation-services' into 'EPIC_autonomous_acts')
                 var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
                 if (!lastTCElement || !processedElements || !lastTCElement.hasAttribute(core.ID)) {
                     return;
