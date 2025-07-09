@@ -21,7 +21,7 @@ class internalReferenceWindow {
     }
 
     clickDocumentTab(tabName){
-        this.elements.documentTab().contains(tabName).click()
+        this.elements.documentTab().contains(tabName).click();
     }
 
     clickParagraphOfArticle(paragraphNumber){

@@ -68,6 +68,12 @@ Feature: cover page Regression Features
         And  navigation pane is minimized
         And  last subversion of recent changes version card contains "0.1.1Document title updated"
         And  last version card header title contains "Version 0.1.0 - Document created"
+        When click on save button in ribbon toolbar
+        Then "Save this version" dialog box window is displayed
+        When provide input "major version" dialog box window
+        And  click on ok button in dialog box window
+        Then "No changes after last version" subtitle is displayed under recent changes version card
+        And  app-versions-pane-group 2 contains card header title "Version 0.2.0 - major version"
         When click on close button present in cover page
         Then user is on act viewer page
         And  title of the act contains "Automation Testing Cover Page" keyword

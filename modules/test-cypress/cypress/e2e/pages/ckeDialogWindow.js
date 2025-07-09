@@ -7,7 +7,12 @@ class ckeDialogWindow {
         dialogOkBtn: () => this.elements.activeDialogBox().find('.cke_dialog_ui_button_ok'),
         dialogCancelBtn: () => this.elements.activeDialogBox().find('.cke_dialog_ui_button_cancel'),
         dialogTextArea: () => cy.get('.cke_dialog_ui_input_textarea textarea'),
-        dialogUIHBoxTable: () => cy.get('.cke_dialog_ui_hbox_first table tbody')
+        dialogUIHBoxTable: () => cy.get('.cke_dialog_ui_hbox_first table tbody'),
+        cancelButton:()=>cy.get("tr.cke_dialog_ui_hbox span").contains("Cancel")
+    }
+
+    clickCancelButton(){
+        this.elements.cancelButton().click();
     }
 
     clickOkBtn() {

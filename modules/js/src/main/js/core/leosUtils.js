@@ -150,28 +150,11 @@ define(function leosUtilsModule(require) {
             if (_containsOnlyEmptyElts(el)) {
                 return true;
             }
-            if (isFirstNodeEmptyTextOrBr(el)) {
+            if (el.childNodes[0].nodeName === LINE_BREAK_TAG) {
                 return true;
             }
         }
         return false;
-    }
-    function isFirstNodeEmptyTextOrBr(el) {
-        const node = el.childNodes[0];
-        if (node && node.nodeType === Node.TEXT_NODE) {
-            if (node.textContent === '' || /^\s*$/.test(node.textContent)) {
-                const secondNode = el.childNodes[1];
-                if (secondNode && secondNode.nodeType === Node.ELEMENT_NODE && secondNode.nodeName !== 'UL' && secondNode.nodeName !== 'OL') {
-                    return secondNode.nodeName === LINE_BREAK_TAG; // true if <br>, false otherwise
-                }
-                return true; // text node is empty or whitespace only
-            }
-            return false; // text node with real content
-        }
-        if (node && node.nodeType === Node.ELEMENT_NODE) {
-            return node.nodeName ===  LINE_BREAK_TAG; // true if <br>, false otherwise
-        }
-        return false; // no child nodes found
     }
 
     function _setItemInStorage(key, value) {

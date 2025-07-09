@@ -1,6 +1,7 @@
 class createActPage {
     elements = {
-        nextBtn: () => cy.contains('Next'),
+        dialogFooterContentButton: () => cy.get('.app-dialog-footer-content button span.eui-label'),
+        nextBtn: () => this.elements.dialogFooterContentButton().contains('Next'),
         collapseAllBtn: () => cy.get("button[title='Collapse All']"),
         // previousBtn: () => cy.contains('Previous'),
         // cancelBtn: () => cy.contains('Cancel'),

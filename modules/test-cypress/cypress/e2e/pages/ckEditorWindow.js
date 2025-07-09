@@ -87,6 +87,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().type(' ');
     }
 
+    clickCtrlAndEnterFromKeyboardWhenCKEditorOpen() {
+        this.elements.ckEditableInline().type('{ctrl}{enter}');
+    }
+
     getCkEditableInlineElement() {
         cy.wait(1000);
         return this.elements.ckEditableInline();

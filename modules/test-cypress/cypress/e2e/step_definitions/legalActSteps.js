@@ -655,3 +655,20 @@ Then ('the document does not contain recital {int}',function (recitalNumber){
 Then(/^recital number (\d+) contains mref tag with attribute "([^"]*)" and value "([^"]*)"$/, function (recitalNumber, attributeName, attributeValue) {
     legalActPage.getRecital(recitalNumber).find('mref').invoke('attr', attributeName).should('eq', attributeValue);
 });
+
+And('all articles has {string} tag', (tagName) => {
+    legalActPage.elements.article().find(tagName).should('exist');
+});
+
+And('{string} tag of article {int} contains {string}', function (tagName, articleNumber, expectedText) {
+    legalActPage.getTagFromArticle(articleNumber, tagName)
+        .should('have.text', expectedText);
+});
+
+Then('the total number of article is {int}', function (expectedCount) {
+    legalActPage.elements.article().should('have.length', expectedCount)
+});
+
+Then('the total number of article is {int}', function (expectedCount) {
+    legalActPage.elements.article().should('have.length', expectedCount)
+});
