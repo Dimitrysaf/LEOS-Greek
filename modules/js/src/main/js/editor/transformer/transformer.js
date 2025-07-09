@@ -41,9 +41,10 @@ define(function transformerModule(require) {
             this._validateRequired("fragment", params);
             this._validateRequired("direction", params);
             this._validateRequired("transformationConfigResolver", params);
-            if(this._isCKEditorWidget(params.fragment) || this._isSpellcheckerContextmenu(params.fragment) || this._skipTransformation(params)) {
+            if(this._isCKEditorWidget(params.fragment) || this._skipTransformation(params)) {
                 return;
             }
+            this._removeSpellcheckerContextmenuContainer(params.fragment);
             this._.direction = params.direction;
             this._.transformationConfigResolver = params.transformationConfigResolver;
             var bindedTransformElement = LODASH.bind(this._transformElement, this);
@@ -54,8 +55,10 @@ define(function transformerModule(require) {
         _isCKEditorWidget : function _isCKEditorWidget(fragment) {
             return this._hasFirstChildWithClass(fragment, "cke_widget_wrapper");
         },
-        _isSpellcheckerContextmenu : function _isSpellcheckerContextmenu(fragment) {
-            return this._hasFirstChildWithClass(fragment, "spellchecker-contextmenu");
+        _removeSpellcheckerContextmenuContainer : function _removeSpellcheckerContextmenuContainer(fragment) {
+            if (this._hasFirstChildWithClass(fragment, "contextmenu-container")) {
+                fragment.getFirst().remove();
+            }
         },
         _hasFirstChildWithClass : function _isClass(fragment, className) {
             if (!fragment || !fragment.children || fragment.children.length == 0) {
