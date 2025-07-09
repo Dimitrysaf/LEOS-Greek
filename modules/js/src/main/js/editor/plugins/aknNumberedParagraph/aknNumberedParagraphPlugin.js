@@ -137,6 +137,9 @@ define(function aknNumberedParagraphPluginModule(require) {
             editor.on('instanceReady', function(event) {
                 blockNumbering(event.editor, paraCommand);
             });
+            editor.on('changeParaModeToUnnumbered', function(event) {
+                _changeParagraphToUnnumbered(event, paraCommand);
+            });
         }
     };
 
@@ -284,6 +287,10 @@ define(function aknNumberedParagraphPluginModule(require) {
         editor.fire("change");
     }
 
+    function _changeParagraphToUnnumbered(event, cmd) {
+        PARA_MODE = UNNUMBERED;
+        cmd.setState(PARA_MODE);
+    }
     /*
      * Resets the numbering of the points depending on nesting level
      */
