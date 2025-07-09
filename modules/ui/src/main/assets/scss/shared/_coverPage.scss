@@ -18,6 +18,8 @@
     container[name=associatedReferences] {
         display: block;
         text-align: center;
+        padding-top: 6pt;
+        padding-bottom: 6pt;
     }
 
     container[name=associatedReferences] aknp:not(:first-child):before {
@@ -30,6 +32,8 @@
     container[name=packageTitle], container[name=authenticLang] {
         display: block;
         text-align: center;
+        padding-top: 6pt;
+        padding-bottom: 6pt;
     }
 
     container[name=eeaRelevance] {
@@ -39,6 +43,9 @@
             display: block;
             font-weight: normal;
         }
+        display: block;
+        padding-top: 6pt;
+        padding-bottom: 6pt;
     }
 
     container[name=disclaimer] {

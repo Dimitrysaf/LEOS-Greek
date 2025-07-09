@@ -40,6 +40,7 @@ import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
@@ -687,16 +688,16 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public DocumentVO applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception {
+    public byte[] applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception {
         MetadataOptions metadataOptions = convertUpdateProposalRequestToMetadataOptions(legPackage.getExportResource().getName() + ".leg", proposal, request);
 
         Map<String, Object> zipContent = metadataService.applyMetadata(legPackage, proposal, metadataOptions);
         for (String fileName : zipContent.keySet()) {
             if (fileName.startsWith(PROPOSAL_NAME_PREFIX)) {
-                proposal = updateProposal(proposal.getId(), (byte[]) zipContent.get(fileName));
+                return (byte[]) zipContent.get(fileName);
             }
         }
-        return new DocumentVO(populateProposalMetadataFromXml(proposal));
+        return proposal.getContent().get().getSource().getBytes();
     }
 
     @Override

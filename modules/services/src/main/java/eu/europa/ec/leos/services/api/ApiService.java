@@ -53,6 +53,8 @@ public interface ApiService {
 
     void deleteAnnex(String proposalRef, String annexRef) throws Exception;
 
+    DocumentVO updateProposalTitleAndEEaRelevance(String proposalRef, String docPurpose, Boolean eeaRelevance) throws Exception;
+
     DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) throws Exception;
 
     void deleteCollection(String proposalRef);

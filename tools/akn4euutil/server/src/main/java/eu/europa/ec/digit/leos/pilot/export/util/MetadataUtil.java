@@ -126,7 +126,8 @@ public class MetadataUtil {
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
             "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
 
-    public static final List<String> orderInCoverPage = Arrays.asList("akn:container[@name='logo']"
+    public static final List<String> orderInCoverPage =
+            Arrays.asList("akn:container[@name='logo']"
             , "akn:container[@name='actingEntity']", "akn:container[@name='mainDoc']", "akn:container[@name='procedureIdentifier']"
             , "akn:container[@name='corrigendum']", "akn:longTitle", "akn:container[@name='authenticLang']"
             , "akn:container[@name='associatedReferences']", "akn:container[@name='eeaRelevance']", "akn:container[@name='mainDocLanguage']");
