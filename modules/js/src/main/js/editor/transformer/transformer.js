@@ -41,7 +41,7 @@ define(function transformerModule(require) {
             this._validateRequired("fragment", params);
             this._validateRequired("direction", params);
             this._validateRequired("transformationConfigResolver", params);
-            if(this._isCKEditorWidget(params.fragment) || this._skipTransformation(params)) {
+            if(this._isCKEditorWidget(params.fragment) || this._isSpellcheckerContextmenu(params.fragment) || this._skipTransformation(params)) {
                 return;
             }
             this._.direction = params.direction;
@@ -52,11 +52,17 @@ define(function transformerModule(require) {
             return transformedProducts;
         },
         _isCKEditorWidget : function _isCKEditorWidget(fragment) {
-            if(!fragment || !fragment.children || fragment.children.length == 0) {
+            return this._hasFirstChildWithClass(fragment, "cke_widget_wrapper");
+        },
+        _isSpellcheckerContextmenu : function _isSpellcheckerContextmenu(fragment) {
+            return this._hasFirstChildWithClass(fragment, "spellchecker-contextmenu");
+        },
+        _hasFirstChildWithClass : function _isClass(fragment, className) {
+            if (!fragment || !fragment.children || fragment.children.length == 0) {
                 return false;
             }
             var rootElement = fragment.children[0];
-            return (rootElement && rootElement.hasClass && rootElement.hasClass("cke_widget_wrapper"));
+            return (rootElement && rootElement.hasClass && rootElement.hasClass(className));
         },
         _skipTransformation : function _skipTransformation(params) {
             if (params.transformationConfigResolver._ && params.transformationConfigResolver._.resolverConfigs) {
