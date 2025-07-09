@@ -442,7 +442,7 @@ public class BillContextService {
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
-            billService.updateBill(billByPackagePath, metadata, VersionType.MAJOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            billService.updateBill(billByPackagePath, metadata, this.versionType, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
             if(isAnnexToBeUpdated) {
                 // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
                 List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
