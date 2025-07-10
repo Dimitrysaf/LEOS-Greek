@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.util;
 
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
-import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
@@ -32,7 +32,7 @@ import java.util.Collections;
  */
 public class MetadataUtilsTests {
     @Test
-    public void testLinkedDocumentsSwdWithDraft() throws MetadataUtilsException {
+    public void testLinkedDocumentsSwdWithDraft() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("{SWD(2012) 1234 draft}");
 
@@ -48,7 +48,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testLinkedDocumentsComWithoutSuffixAndBrackets() throws MetadataUtilsException {
+    public void testLinkedDocumentsComWithoutSuffixAndBrackets() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("COM(2014) 4");
 
@@ -64,7 +64,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testLinkedDocumentsSecIsConvertedToSwdInHref() throws MetadataUtilsException {
+    public void testLinkedDocumentsSecIsConvertedToSwdInHref() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("{SEC(2011) 12 final}");
 
@@ -82,10 +82,9 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testParseMultipleLinkedDocuments() throws MetadataUtilsException {
+    public void testParseMultipleLinkedDocuments() throws MetadataFieldInvalidValueException {
 
-        final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments(
-                "{COM(2014) 4 final}-{SWD(2012) 1111}-{SEC(2016) 248 final}");
+        final MetadataFieldInfo actual = MetadataUtil.parseLinkedDocuments("{COM(2014) 4 final}-{SWD(2012) 1111}-{SEC(2016) 248 final}");
 
         Assertions.assertNotNull(actual);
 
@@ -109,7 +108,7 @@ public class MetadataUtilsTests {
     // verify space tolerance for parsing the "cote"
     //---------------------------
     @Test
-    public void testParseCote_spaceLeft() throws MetadataUtilsException {
+    public void testParseCote_spaceLeft() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013) 2456", MetadataFieldType.COTE);
 
@@ -120,7 +119,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testParseCote_noSpaceLeft() throws MetadataUtilsException {
+    public void testParseCote_noSpaceLeft() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013)2456", MetadataFieldType.COTE);
 
@@ -131,7 +130,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testParseCote_spaceLeftWithSuffix() throws MetadataUtilsException {
+    public void testParseCote_spaceLeftWithSuffix() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013) 2456 final", MetadataFieldType.FINAL_COTE);
 
@@ -142,7 +141,7 @@ public class MetadataUtilsTests {
     }
 
     @Test
-    public void testParseCote_noSpaceLeftWithSuffix() throws MetadataUtilsException {
+    public void testParseCote_noSpaceLeftWithSuffix() throws MetadataFieldInvalidValueException {
 
         final MetadataFieldInfo actual = MetadataUtil.parseCote("COM(2013)2456 final", MetadataFieldType.FINAL_COTE);
 
@@ -205,28 +204,28 @@ public class MetadataUtilsTests {
 
     @Test
     public void testIsDocumentXmlFilename() {
-        String filenameSuffix = "-cm3rbjrge0004si76xfw7zuq7-en.xml";
+        String fileNameSuffix = "-cm3rbjrge0004si76xfw7zuq7-en.xml";
 
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("ANNEX" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("BILL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_MEMORANDUM" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_COUNCIL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("main" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("MEMORANDUM" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_DEL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_IMPL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_DEL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_IMPL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_DEL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_IMPL" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("FINANCIAL_STATEMENT" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_FINANCE" + filenameSuffix));
-        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_DIGIT_FINANCE" + filenameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("ANNEX" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("BILL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_MEMORANDUM" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("EXPL_COUNCIL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("main" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("MEMORANDUM" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_DEL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("REG_IMPL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_DEL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DIR_IMPL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_DEL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("DEC_IMPL" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("FINANCIAL_STATEMENT" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_FINANCE" + fileNameSuffix));
+        Assertions.assertTrue(MetadataUtil.isDocumentXmlFilename("STAT_DIGIT_FINANCE" + fileNameSuffix));
         Assertions.assertFalse(MetadataUtil.isDocumentXmlFilename("main-cm3rbjrge0004si76xfw7zuq7-en.css"));
-        Assertions.assertFalse(MetadataUtil.isDocumentXmlFilename("MY_DOC" + filenameSuffix));
+        Assertions.assertFalse(MetadataUtil.isDocumentXmlFilename("MY_DOC" + fileNameSuffix));
     }
 
     @Test
@@ -278,6 +277,62 @@ public class MetadataUtilsTests {
         XmlUtil.setNodeAttributeValue(rootNode, "name", "");
         rootNode.appendChild(xmlFile.newElement("doc"));
         Assertions.assertFalse(MetadataUtil.isDocumentXmlFile(xmlFile));
+    }
+
+    @Test
+    public void testIsPresidentRole() {
+        for (String spelling : MetadataUtil.ROLE_PRESIDENT){
+            Assertions.assertTrue(MetadataUtil.isRolePresident(spelling));
+        }
+    }
+
+    @Test
+    public void testIsVicePresidentRole() {
+        for (String spelling : MetadataUtil.ROLE_VICE_PRESIDENT){
+            Assertions.assertTrue(MetadataUtil.isRoleVicePresident(spelling));
+        }
+    }
+
+    @Test
+    public void testIsDirectorRole() {
+        for (String spelling : MetadataUtil.ROLE_DIRECTOR){
+            Assertions.assertTrue(MetadataUtil.isRoleDirector(spelling));
+        }
+    }
+
+    @Test
+    public void testIsDirectorGeneralRole() {
+        for (String spelling : MetadataUtil.ROLE_DIRECTOR_GENERAL){
+            Assertions.assertTrue(MetadataUtil.isRoleDirectorGeneral(spelling));
+        }
+    }
+
+    @Test
+    public void testIsHeadOfServiceRole() {
+        for (String spelling : MetadataUtil.ROLE_HEAD_OF_SERVICE){
+            Assertions.assertTrue(MetadataUtil.isRoleHeadOfService(spelling));
+        }
+    }
+
+    @Test
+    public void testIsHeadOfUnitRole() {
+        for (String spelling : MetadataUtil.ROLE_HEAD_OF_UNIT){
+            Assertions.assertTrue(MetadataUtil.isRoleHeadOfUnit(spelling));
+        }
+    }
+
+    @Test
+    public void testIsMemberOfCommissionRole() {
+        for (String spelling : MetadataUtil.ROLE_MEMBER_OF_THE_COMMISSION){
+            Assertions.assertTrue(MetadataUtil.isRoleMemberOfTheCommission(spelling));
+        }
+    }
+
+    @Test
+    public void testIsSecretariesRole() {
+        for (String spelling : MetadataUtil.ROLE_SECRETARIES){
+            Assertions.assertTrue(MetadataUtil.isRoleSecretaries(spelling));
+        }
     }
 
     private ApplyMetadataRequest getDummyMetadataRequest() {

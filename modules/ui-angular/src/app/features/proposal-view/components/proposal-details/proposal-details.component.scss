@@ -147,6 +147,124 @@
   padding-left: 10px !important;
 }
 
+.grid-adoption-info {
+  display: grid;
+  gap: 10px 10px;
+}
+
+.grid-adoption-info-adoption-place {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+}
+
+.grid-adoption-info-adoption-date {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+}
+
+.grid-adoption-info-institutional-reference {
+  grid-row: 2;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  display: grid;
+}
+
+.grid-adoption-info-institutional-reference-version {
+  grid-row: 2;
+  grid-column: 3;
+  display: grid;
+}
+
+.grid-adoption-info-inter-institutional-reference {
+  grid-row: 3;
+  grid-column-start: 1;
+  grid-column-end: 4;
+  display: inline-block;
+}
+
+.grid-adoption-info-inter-institutional-reference2 {
+  grid-row: 4;
+  grid-column-start: 1;
+  grid-column-end: 4;
+  display: grid;
+}
+
+.grid-adoption-info-special-mention {
+  grid-row: 5;
+  grid-column: 1;
+  display: grid;
+}
+
+.grid-adoption-info-signing-commissioner {
+  grid-row: 5;
+  grid-column: 2;
+  display: grid;
+}
+
+.grid-adoption-info-commissioner-title {
+  grid-row: 5;
+  grid-column: 3;
+  display: grid;
+}
+
+.grid-adoption-info-stamp {
+  grid-row: 6;
+  grid-column: 1;
+  display: grid;
+}
+
+.adoption-info-institutional-reference {
+  display: inline-flex;
+  height: 100%;
+  & > {
+    margin-right: 5px;
+  }
+}
+
+.details-tab-inline {
+  display: inline;
+}
+
+.details-tab-block {
+  display: block;
+}
+
+.details-tab-adoption-date {
+  height: 50px;
+  & > mat-form-field > input, & > mat-form-field > mat-datepicker-toggle {
+    width: 50px;
+    height: 100%;
+  }
+}
+
+.details-tab-first-select {
+  margin-right: 10px;
+  width: 150px;
+  height: 50px;
+}
+
+.details-tab-select {
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 150px;
+  height: 50px;
+}
+
+
+.details-tab-first-text {
+  margin-right: 10px;
+  width: 200px;
+  height: 50px;
+}
+
+.details-tab-text {
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 200px;
+  height: 50px;
+}
 
 .year-selector {
   max-height: 150px;
@@ -221,4 +339,6 @@
   color: red;
   font-size: 0.8em;
   margin-top: 4px;
+  padding-right: 10px;
+  padding-left: 5px;
 }

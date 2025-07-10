@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
+import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
 import eu.europa.ec.leos.model.user.Collaborator;
 
 import java.util.*;
@@ -65,6 +66,7 @@ public class DocumentVO {
     private Boolean finalVersion;
     private Boolean allTargetLangSelected;
     private List<String> proposalTargetLang;
+    private DetailsTabExclusions detailsTabExclusions;
 
     public DocumentVO(XmlDocument xmlDocument) {
         if (xmlDocument != null) {
@@ -566,5 +568,13 @@ public class DocumentVO {
 
     public void setAllTargetLangSelected(Boolean allTargetLangSelected) {
         this.allTargetLangSelected = allTargetLangSelected;
+    }
+
+    public DetailsTabExclusions getDetailsTabExclusions() {
+        return detailsTabExclusions;
+    }
+
+    public void setDetailsTabExclusions(DetailsTabExclusions detailsTabExclusions) {
+        this.detailsTabExclusions = detailsTabExclusions;
     }
 }

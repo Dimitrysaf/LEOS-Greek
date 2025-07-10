@@ -1,5 +1,5 @@
 /** AKA `DocumentVO` in Java code */
-import {DocumentRole, Profile, Role} from '@/shared';
+import {DocumentRole, Profile} from '@/shared';
 
 import { TocItem } from './toc.model';
 
@@ -37,6 +37,21 @@ export interface Document {
   proposalTargetLang: string[] | null;
   allTargetLangSelected: boolean;
   finalVersion: boolean;
+  detailsTabExclusions: DetailsTabExclusions | null;
+}
+
+export interface ProposalDetailsLists {
+  proposalRefTypes: string[] | null;
+  institionalRefsTypes: string[] | null;
+  interInstitionalRefsTypes: string[] | null;
+  adoptionPlaces: string[] | null;
+  specialMentions: string[] | null;
+  languages: string[] | null;
+}
+
+export interface ProposalDetails {
+  document: Document;
+  proposalDetailsLists: ProposalDetailsLists;
 }
 
 /** AKA `MetadataVO` in Java code */
@@ -62,6 +77,15 @@ export interface Metadata {
   documentCollectionName: string;
   verticalShift: string;
   crossReferences: string[];
+  adoptionPlace: string | null;
+  adoptionDate: Date | null;
+  institutionalReference: string | null;
+  institutionalReferenceFinalVersion: Boolean | null;
+  interInstitutionalReference: string | null;
+  specialMention: string | null;
+  signingCommissioner: string | null;
+  commissionerTitle: string | null;
+  stamp: boolean | null;
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {
@@ -244,6 +268,12 @@ export type ActType = 'REGULATION' | 'DIRECTIVE' | 'DECISION';
 export type AuthenticLanguage = 'PROPOSAL_LANGUAGE' | 'NON_PROPOSAL_LANGUAGE' | 'FALSE' | 'ALL';
 
 export type CoverPageType = 'STANDARD' | 'EUROPA_EURLEX' | 'COMMITEE_EXPERTS_GROUP';
+
+export interface DetailsTabExclusions {
+  eea?: boolean;
+  coverPageSection?: boolean;
+  coverPageOptions?: CoverPageType[];
+}
 
 export interface Collaborator {
   id: string;

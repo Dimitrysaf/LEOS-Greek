@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.metadata.LeosCoverPageType;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -49,6 +50,16 @@ public class MetadataVO {
     private LeosCoverPageType coverPageType;
     private Float verticalShift;
     private List<String> crossReferences;
+
+    private String adoptionPlace;
+    private Date adoptionDate;
+    private String institutionalReference;
+    private Boolean institutionalReferenceFinalVersion;
+    private String interInstitutionalReference;
+    private String specialMention;
+    private String signingCommissioner;
+    private String commissionerTitle;
+    private Boolean stamp;
 
     public MetadataVO() {
     }// added for early binding
@@ -88,5 +99,14 @@ public class MetadataVO {
         this.setCoverPageType(null);
         this.setVerticalShift(null);
         this.setCrossReferences(null);
+        this.setAdoptionDate(null);
+        this.setAdoptionPlace(null);
+        this.setInstitutionalReference(null);
+        this.setInstitutionalReferenceFinalVersion(null);
+        this.setInterInstitutionalReference(null);
+        this.setSpecialMention(null);
+        this.setSigningCommissioner(null);
+        this.setCommissionerTitle(null);
+        this.setStamp(null);
     }
 }

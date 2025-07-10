@@ -29,6 +29,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.PROP_ACT;
+
 @Service
 public class MetadataServiceImpl implements MetadataService {
 
@@ -67,7 +69,7 @@ public class MetadataServiceImpl implements MetadataService {
             byte[] zipBytes = akn4euService.applyMetadata(legFile);
             Map<String, Object> zipContent = ZipPackageUtil.unzipByteArray(zipBytes);
             for (String fileName : zipContent.keySet()) {
-                if (fileName.startsWith(legPackage.getExportResource().getName())) {
+                if (fileName.endsWith(".leg")) {
                     return ZipPackageUtil.unzipByteArray((byte[]) zipContent.get(fileName));
                 }
             }

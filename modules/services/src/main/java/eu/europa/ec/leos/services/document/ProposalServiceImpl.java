@@ -72,6 +72,9 @@ import org.w3c.dom.Node;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -224,7 +227,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(proposal.getContent().get().getSource().getBytes(),
                 new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,
                         XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE, XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT,
-                        XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION},
+                        XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION, XmlNodeConfigProcessor.ADOPTION_PLACE, XmlNodeConfigProcessor.ADOPTION_DATE, XmlNodeConfigProcessor.COTE,
+                        XmlNodeConfigProcessor.FINAL_COTE, XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE,
+                        XmlNodeConfigProcessor.STAMP},
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         proposal.getMetadata().get().setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
         proposal.getMetadata().get().setInternalRef(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE));
@@ -244,6 +249,13 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         List<String> crossReferences = crossRefs.get(XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES);
         proposal.getMetadata().get().setCrossReferences(crossReferences);
+        String adoptionDateStr = detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_DATE);
+        proposal.getMetadata().get().setAdoptionDate(convertToDate(adoptionDateStr));
+        proposal.getMetadata().get().setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
+        proposal.getMetadata().get().setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
+        proposal.getMetadata().get().setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
+                detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
+        proposal.getMetadata().get().setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         return proposal;
     }
 
@@ -267,7 +279,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, MetadataVO metadataVO) {
         Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(xmlContent,
                 new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE,
-                        XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT, XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION},
+                        XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT, XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION,
+                        XmlNodeConfigProcessor.ADOPTION_PLACE, XmlNodeConfigProcessor.ADOPTION_DATE, XmlNodeConfigProcessor.COTE,
+                        XmlNodeConfigProcessor.FINAL_COTE, XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE,
+                        XmlNodeConfigProcessor.STAMP},
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         metadataVO.setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
         metadataVO.setInternalRef(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE));
@@ -286,7 +301,27 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         List<String> crossReferences = crossRefs.get(XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES);
         metadataVO.setCrossReferences(crossReferences);
+        String adoptionDateStr = detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_DATE);
+        metadataVO.setAdoptionDate(convertToDate(adoptionDateStr));
+        metadataVO.setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
+        metadataVO.setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
+        metadataVO.setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
+                detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
+        metadataVO.setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         return metadataVO;
+    }
+
+    private Date convertToDate(String dateStr) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            if (dateStr != null) {
+                date = df.parse(dateStr);
+            }
+        } catch (ParseException e) {
+            date = null;
+        }
+        return date;
     }
 
     @Override
@@ -719,6 +754,26 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
         if (request.getCrossReferences() != null) {
             fields.add(new MetadataOptions.FieldNode("linkedDocuments", String.join(" - ", request.getCrossReferences())));
+        }
+        if (request.getAdoptionDate() != null) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            fields.add(new MetadataOptions.FieldNode("adoptionDate", dateFormat.format(request.getAdoptionDate())));
+        }
+        if (request.getAdoptionPlace() != null) {
+            fields.add(new MetadataOptions.FieldNode("adoptionLocation", request.getAdoptionPlace()));
+        }
+        if (request.getInstitutionalReference() != null
+                && (request.getInstitutionalReferenceFinalVersion() == null
+                || Boolean.FALSE.equals(request.getInstitutionalReferenceFinalVersion()))) {
+            fields.add(new MetadataOptions.FieldNode("cote", request.getInstitutionalReference()));
+        }
+        if (request.getInstitutionalReference() != null
+                && request.getInstitutionalReferenceFinalVersion() != null
+                && Boolean.TRUE.equals(request.getInstitutionalReferenceFinalVersion())) {
+            fields.add(new MetadataOptions.FieldNode("finalCote", request.getInstitutionalReference()));
+        }
+        if (request.getInterInstitutionalReference() != null) {
+            fields.add(new MetadataOptions.FieldNode("interinstitutionalCote", request.getInterInstitutionalReference()));
         }
         metadataOptions.addTask(legFileName, proposal, fields);
         return metadataOptions;
