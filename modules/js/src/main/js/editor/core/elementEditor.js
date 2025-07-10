@@ -618,7 +618,7 @@ define(function elementEditorModule(require) {
     }
     function hasNoValidLiContent(el) {
         var parent = $(el).parent()[0];
-        if($(el).is("li") && el.hasAttribute('data-akn-num') && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList") || ($(parent).attr("data-akn-name") == "aknUnorderedList"))){
+        if($(el).is("li") && el.hasAttribute('data-akn-num') && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList"))){
             for (const node of el.childNodes) {
                 if (node && node.nodeType === Node.TEXT_NODE) {
                     if (node.textContent.trim() !== '') {
@@ -630,6 +630,25 @@ define(function elementEditorModule(require) {
                 }
             }
         }
+
+        if($(el).is("li") && el.hasAttribute('data-akn-num') && (($(parent).attr("data-akn-name") == "aknUnorderedList"))){
+            for (const node of el.childNodes) {
+                if (node && node.nodeType === Node.TEXT_NODE) {
+                    if (node.textContent.trim() !== '') {
+                        return false;
+                    }
+                }
+                if (node && node.nodeType === Node.ELEMENT_NODE) {
+                    if(node.nodeName === "BR"){
+                        return true;
+                    }
+                    if(node.nodeName === "OL" || node.nodeName === "UL"){
+                        return false
+                    }
+                }
+            }
+        }
+
         return false;
     }
 
