@@ -12,7 +12,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage, CoverPageType
+  User, AuthenticLanguage, CoverPageType, ProposalDetails
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -44,7 +44,7 @@ import {EuiDialogService} from "@eui/components/eui-dialog";
 export class ProposalDetailsService implements OnDestroy {
   collaborators$: Observable<Collaborator[]>;
   userAutocompleteData$: Observable<User[]>;
-  proposalDetails$: Observable<Document>;
+  proposalDetails$: Observable<ProposalDetails>;
   userInputFieldChange$: Observable<string>;
   milestones$: Observable<Milestone[]>;
   exportedDocuments$: Observable<ExportPackageVO[]>;
@@ -196,7 +196,9 @@ export class ProposalDetailsService implements OnDestroy {
   updateProposalMetadata(docPurpose: string, eeaRelevance: boolean, packageTitle?: string, isAuthenticLang?: AuthenticLanguage,
                          authenticLang?: string[], coverPageType?: CoverPageType, verticalShift?: string, showCorrigendumAddendum?: boolean,
                          proposalType?: string, targetProposalReference?: string, targetProposalDate?: string, proposalTargetLang?: string[],
-                         correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[]) {
+                         correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
+                         adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
+                         institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string) {
     const internalRef = null;
     return this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
@@ -215,7 +217,12 @@ export class ProposalDetailsService implements OnDestroy {
         proposalTargetLang,
         correctionInformation,
         finalVersion,
-        crossReferences
+        crossReferences,
+        adoptionPlace,
+        adoptionDate,
+        institutionalReference,
+        institutionalReferenceFinalVersion,
+        interInstitutionalReference
       });
   }
 
@@ -662,9 +669,9 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  public getProposalDetails(loading = true, ref : string): Observable<Document> {
+  public getProposalDetails(loading = true, ref : string): Observable<ProposalDetails> {
     if (loading) this.loadingService.setLoading(true);
-    return this.http.get<Document>(
+    return this.http.get<ProposalDetails>(
       `${apiBaseUrl}/secured/proposals/${ref}`,
     );
   }

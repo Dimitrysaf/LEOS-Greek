@@ -1,0 +1,72 @@
+package eu.europa.ec.leos.services.structure.details;
+/*
+ * Copyright 2024 European Union
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
+import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
+import eu.europa.ec.leos.repository.store.ConfigurationRepository;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ProposalDetailsService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProposalDetailsService.class);
+
+    @Value("${leos.templates.path}")
+    private String proposalDetailsPath;
+
+    @Value("${leos.proposal.details.name}")
+    private String proposalDetailsName;
+
+    ConfigurationRepository configurationRepository;
+    LanguageGroupService languageService;
+
+    @Autowired
+    public ProposalDetailsService(ConfigurationRepository configurationRepository, LanguageGroupService languageService) {
+        this.configurationRepository = configurationRepository;
+        this.languageService = languageService;
+    }
+
+    public ProposalDetailsLists getProposalDetailsLists() {
+        byte[] proposalDetailsDocument = getProposalDetailsDocument();
+        final ProposalDetailsLists propDetails = loadProposalDetailsFromFile(proposalDetailsDocument);
+        propDetails.setLanguages(languageService.getLanguageList());
+        return propDetails;
+    }
+
+    public byte[] getProposalDetailsDocument() {
+        ConfigDocument proposalDetailsDocument = configurationRepository.findConfiguration(proposalDetailsPath, proposalDetailsName);
+        return proposalDetailsDocument.getContent().get().getSource().getBytes();
+    }
+
+    private ProposalDetailsLists loadProposalDetailsFromFile(byte[] fileBytes) {
+        try {
+            String json = new String(fileBytes);
+            ObjectMapper mapper = new ObjectMapper();
+            ProposalDetailsLists propDetails = mapper
+                    .readValue(json, new TypeReference<ProposalDetailsLists>(){});
+            return propDetails;
+        } catch (Exception e) {
+            LOG.debug("Error in loadProposalDetailsFromFile", e);
+            throw new IllegalStateException("Error loading proposal details configurations", e);
+        }
+    }
+}

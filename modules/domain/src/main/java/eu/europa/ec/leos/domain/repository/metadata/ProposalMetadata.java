@@ -4,6 +4,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -14,6 +15,16 @@ public final class ProposalMetadata extends LeosMetadata {
     private LeosCoverPageType coverPageType;
     private Float verticalShift;
     private List<String> crossReferences;
+
+    private String adoptionPlace;
+    private Date adoptionDate;
+    private String institutionalReference;
+    private Boolean institutionalReferenceFinalVersion;
+    private String interInstitutionalReference;
+    private String specialMention;
+    private String signingCommissioner;
+    private String commissionerTitle;
+    private Boolean stamp;
 
     public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance) {
         super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance);
@@ -44,6 +55,15 @@ public final class ProposalMetadata extends LeosMetadata {
         private String internalRef;
         private Float verticalShift;
         private List<String> crossReferences;
+        private String adoptionPlace;
+        private Date adoptionDate;
+        private String institutionalReference;
+        private Boolean institutionalReferenceFinalVersion;
+        private String interInstitutionalReference;
+        private String specialMention;
+        private String signingCommissioner;
+        private String commissionerTitle;
+        private Boolean stamp;
 
         private ProposalMetadataBuilder() {
         }
@@ -68,6 +88,15 @@ public final class ProposalMetadata extends LeosMetadata {
             this.verticalShift = metadata.getVerticalShift();
             this.actType = metadata.getActType();
             this.crossReferences = metadata.getCrossReferences();
+            this.institutionalReference = metadata.getInstitutionalReference();
+            this.institutionalReferenceFinalVersion = metadata.getInstitutionalReferenceFinalVersion();
+            this.interInstitutionalReference = metadata.getInterInstitutionalReference();
+            this.commissionerTitle = metadata.getCommissionerTitle();
+            this.signingCommissioner = metadata.getSigningCommissioner();
+            this.specialMention = metadata.getSpecialMention();
+            this.adoptionPlace = metadata.getAdoptionPlace();
+            this.adoptionDate = metadata.getAdoptionDate();
+            this.stamp = metadata.getStamp();
         }
         public ProposalMetadataBuilder withStage(String stage) {
             this.stage = stage;
@@ -156,6 +185,15 @@ public final class ProposalMetadata extends LeosMetadata {
             metadata.setCoverPageType(coverPageType != null ? coverPageType : null);
             metadata.setVerticalShift(verticalShift);
             metadata.setCrossReferences(crossReferences);
+            metadata.setAdoptionPlace(adoptionPlace);
+            metadata.setAdoptionDate(adoptionDate);
+            metadata.setInstitutionalReference(institutionalReference);
+            metadata.setInstitutionalReferenceFinalVersion(institutionalReferenceFinalVersion);
+            metadata.setInterInstitutionalReference(interInstitutionalReference);
+            metadata.setSpecialMention(specialMention);
+            metadata.setSigningCommissioner(signingCommissioner);
+            metadata.setCommissionerTitle(commissionerTitle);
+            metadata.setStamp(stamp);
             return metadata;
         }
     }

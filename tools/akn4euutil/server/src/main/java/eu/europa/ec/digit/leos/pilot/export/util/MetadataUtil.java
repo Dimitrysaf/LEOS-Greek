@@ -14,9 +14,9 @@
 package eu.europa.ec.digit.leos.pilot.export.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageFormats;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLocationType;
@@ -39,10 +39,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.Collection;
 
 public class MetadataUtil {
     public static final Logger LOG = LoggerFactory.getLogger(MetadataUtil.class);
@@ -57,40 +61,53 @@ public class MetadataUtil {
     public static final String INTERINSTITUTIONAL_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     public static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
     public static final String LINKED_DOCUMENT_PARSE_PATTERN = "([A-Za-z0-9]+)\\((\\d{4})\\)(\\s?)(\\d+)(\\s?)([A-Za-z0-9]*)";
-    public static final String CONCLUSIONS = "conclusions";
-    public static final String CONCLUSIONSNEW = "_" + CONCLUSIONS;
-    public static final String CONCLUSION_NODE_ID = "conclusions__p_1";
-    public static final String CONCLUSION_NODE_IDNEW = "_" + CONCLUSION_NODE_ID;
-    public static final String STATUS_CODE="statusCode";
-    public static final String KEY="key";
-    public static final String DOCUMENT="document";
-    public static final String TASK="task";
-    public static final String TASKID="taskId";
-    public static final String NAME="name";
-    public static final String CLEANUP="cleanup";
-    public static final String FIELD="field";
-    public static final String VERSION="version";
-    public static final String MIMETYPE="mimeType";
-    public static final String FILENAME="filename";
-    public static final String SOURCEURL="sourceURL";
-    public static final String DOCUMENTID="documentId";
-    public static final String ACTION="action";
-    public static final String DATE="date";
-    public static final String ONE="1";
-    public static final String ZERO="0";
+    public static final String ELEMENT_CONCLUSIONS = "conclusions";
+    public static final String ATTRIBUTE_CONCLUSIONSNEW = "_" + ELEMENT_CONCLUSIONS;
+    public static final String VALUE_CONCLUSION_NODE_ID = "conclusions__p_1";
+    public static final String VALUE_CONCLUSION_NODE_IDNEW = "_" + VALUE_CONCLUSION_NODE_ID;
+    public static final String ATTRIBUTE_STATUS_CODE ="statusCode";
+    public static final String ATTRIBUTE_KEY ="key";
+    public static final String ELEMENT_DOCUMENT ="document";
+    public static final String ELEMENT_TASK ="task";
+    public static final String ATTRIBUTE_TASKID ="taskId";
+    public static final String ATTRIBUTE_NAME="name";
+    public static final String ATTRIBUTE_CLEANUP ="cleanup";
+    public static final String ELEMENT_FIELD ="field";
+    public static final String ATTRIBUTE_VERSION ="version";
+    public static final String ATTRIBUTE_MIMETYPE ="mimeType";
+    public static final String ATTRIBUTE_FILENAME ="fileName";
+    public static final String ATTRIBUTE_SOURCE_URL ="sourceURL";
+    public static final String ATTRIBUTE_DOCUMENTID ="documentId";
+    public static final String ELEMENT_ACTION ="action";
+    public static final String ATTRIBUTE_DATE="date";
+    public static final String ELEMENT_DATE="date";
+    public static final String VALUE_ONE ="1";
+    public static final String VALUE_ZERO ="0";
+    public static final String MESSAGE_LOCATION_NOT_SUPPORTED ="Location not supported";
+    public static final String MESSAGE_INVALID_ISO_DATE ="Invalid iso date";
+    public static final String MESSAGE_INVALID_FIELD_VALUE ="Invalid field value";
+    public static final String ATTRIBUTE_XMLID ="xml:id";
+    public static final String ATTRIBUTE_HREF ="href";
+    public static final String ATTRIBUTE_SHOWAS ="showAs";
+    public static final String ATTRIBUTE_SHORTFORM ="shortForm";
+    public static final String ATTRIBUTE_REFERSTO ="refersTo";
+    public static final String ATTRIBUTE_VALUE ="value";
+    public static final String ATTRIBUTE_CLASS ="class";
+    public static final String ELEMENT_COVERPAGE ="coverPage";
+    public static final String ELEMENT_FRBRWORK ="FRBRWork";
+    public static final String ELEMENT_FRBRLANGUAGE ="FRBRlanguage";
+    public static final String ELEMENT_TLCREFERENCE = "TLCReference";
+    public static final String ELEMENT_PRESERVATION ="preservation";
+    public static final String ELEMENT_REFERENCES ="references";
+    public static final String ELEMENT_CONTAINER="container";
+    public static final String ELEMENT_META="meta";
+    public static final String ATTRIBUTE_LANGUAGE ="language";
+    public static final String VALUE_LANGUAGE ="language";
+    public static final String VALUE_LANGUAGE_EN ="EN";
     public static final String FIELD_NOT_SUPPORTED_MESSAGE="Field not supported";
     public static final String LOCATION_NOT_SUPPORTED_MESSAGE="Location not supported";
     public static final String INVALID_ISO_DATE_MESSAGE="Invalid iso date";
     public static final String INVALID_FIELD_VALUE_MESSAGE="Invalid field value";
-    public static final String XMLID="xml:id";
-    public static final String HREF="href";
-    public static final String SHOWAS="showAs";
-    public static final String SHORTFORM="shortForm";
-    public static final String META="meta";
-    public static final String COVERPAGE="coverPage";
-    public static final String REFERSTO="refersTo";
-    public static final String VALUE="value";
-    public static final String CLASS="class";
     public static final String STYLE="style";
     public static final String FRBRWORK="FRBRWork";
     public static final String FRBRLANGUAGE="FRBRlanguage";
@@ -98,26 +115,24 @@ public class MetadataUtil {
     public static final String PRESERVATION="preservation";
     public static final String REFERENCES="references";
     public static final String COVERPAGE_TYPE="coverPageType";
-    public static final String CONTAINER="container";
-    public static final String DISCLAIMER="disclaimer";
-    public static final String LOGO="logo";
+    public static final String ELEMENT_DISCLAIMER ="disclaimer";
+    public static final String ELEMENT_LOGO ="logo";
     public static final String WATERMARK="watermark";
     public static final String VERTICAL_SHIFT="verticalShift";
-    public static final String P="p";
-    public static final String IMG="img";
-    public static final String ORGANIZATION="organization";
-    public static final String LANGUAGE="language";
-    public static final String LANGUAGE_EN="EN";
-    public static final String PACKAGE_TITLE="packageTitle";
-    public static final String AUTHENTIC_LANGUAGES_NAME = "authenticLang";
-    public static final String CROSS_CONFERENCE_NAME = "associatedReferences";
+    public static final String ELEMENT_P ="p";
+    public static final String ELEMENT_IMG ="img";
+    public static final String ELEMENT_ORGANIZATION ="organization";
+    public static final String ATTRIBUTE_PACKAGE_TITLE="packageTitle";
+    public static final String VALUE_AUTHENTIC_LANGUAGES_NAME = "authenticLang";
+    public static final String VALUE_CROSS_CONFERENCE_NAME = "associatedReferences";
     public static final String ACTING_ENTITY_NAME = "actingEntity";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
     public static final String AUTONOMOUS_ACT_VALUE="ACT_AUTO_COM";
-    public static final String FINAL_VALUE = "final";
-    public static final List<MetadataFieldType> PREFINALISATION_FIELDTYPES = Arrays.asList(MetadataFieldType.FINAL_COTE, MetadataFieldType.ADOPTION_DATE,
-            MetadataFieldType.ADOPTION_LOCATION, MetadataFieldType.EMISSION_DATE, MetadataFieldType.INTERINSTITUTIONAL_COTE,
-            MetadataFieldType.LINKED_DOCUMENTS, MetadataFieldType.STAMP, MetadataFieldType.COTE);
+    public static final String VALUE_FINAL = "final";
+    public static final String ELEMENT_TLCROLE = "TLCRole";
+    public static final String ELEMENT_ROLE = "role";
+    public static final String ELEMENT_PERSON = "person";
+    public static final String ELEMENT_SIGNATURE = "signature";
     public static final String AUTHENTIC_LANGUAGES_PATH = "//akn:meta/akn:references/akn:TLCReference[@name='language']";
     public static final String COVERPAGE_TYPE_PATH = "//akn:coverPage/akn:container[@name='disclaimer']";
     public static final String ACTING_ENTITY_PATH = "//akn:coverPage/akn:container[@name='actingEntity']";
@@ -125,6 +140,140 @@ public class MetadataUtil {
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
             "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
+
+    /**
+     * List providing spellings of role "president" in different languages.
+     *
+     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
+     */
+    public static final Set<String> ROLE_PRESIDENT = new LinkedHashSet<>(Arrays.asList("The President",
+                    "Председател", "předseda", "Formand", "Der Präsident",
+                    "Die Präsidentin", "Ο Πρόεδρος", "El Presidente", "eesistuja",
+                    "Puheenjohtaja", "Le président", "An tUachtarán", "Predsjednik",
+                    "Predsjednica", "az elnök", "Il presidente", "Pirmininkas",
+                    "priekšsēdētājs", "Il-President", "De voorzitter", "Przewodniczący",
+                    "O Presidente", "Preşedintele", "predseda", "Predsednik",
+                    "Ordförande")
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toList()));
+
+    /**
+     * List providing spellings of role "vice president" in different languages.
+     *
+     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
+     */
+    public static final Set<String> ROLE_VICE_PRESIDENT = new LinkedHashSet<>(Arrays.asList("Vice-President",
+                    "Заместник-председател", "místopředseda", "místopředsedkyně",  "Næstformand",
+                    "Vizepräsident", "Vizepräsidentin", "Αντιπρόεδρος", "Vicepresidente",
+                    "asepresident", "Varapuheenjohtaja", "Vice-président", "An Leas-Uachtarán",
+                    "Potpredsjednik", "Potpredsjednica", "alelnök", "Vicepresidente",
+                    "Pirmininko pavaduotojas", "priekšsēdētāja vietnieks", "Viċi President", "Vicevoorzitter",
+                    "Wiceprzewodniczący", "Vice-Presidente", "Vicepreşedinte", "podpredseda",
+                    "Podpredsednik", "Vice ordförande")
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toList()));
+
+    /**
+     * List providing spellings of role "Member of the Commission" in different languages.
+     *
+     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
+     */
+    public static final Set<String> ROLE_MEMBER_OF_THE_COMMISSION = new LinkedHashSet<>(Arrays.asList("Member of the Commission",
+                    "Член на Комисията", "člen Komise", "členka Komise", "Medlem af Kommissionen",
+                    "Μέλος της Επιτροπής", "Miembro de la Comisión", "komisjoni liige", "Komission jäsen",
+                    "Membre de la Commission", "Comhalta den Choimisiún", "Član Komisije", "Članica Komisije",
+                    "a Bizottság tagja", "Membro della Commissione", "Komisijos narys", "Komisijas loceklis",
+                    "Membru tal-Kummissjoni", "Lid van de Commissie", "Członek Komisji", "Membro da Comissão",
+                    "Membru al Comisiei", "člen Komisie", "Član Komisije", "Ledamot av kommissionen")
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toList()));
+
+    /**
+     * List providing spellings of role "Director General" in different languages.
+     *
+     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
+     */
+    public static final Set<String> ROLE_DIRECTOR_GENERAL = new LinkedHashSet<>(Arrays.asList("Director General",
+                    "Генерален директор", "generální ředitel", "generální ředitelka", "Generaldirektør",
+                    "Generaldirektor", "Generaldirektorin", "Γενικός διευθυντής", "Director General",
+                    "peadirektor", "Pääjohtaja", "Directeur général", "An tArd-Stiúrthóir",
+                    "Glavni direktor", "Glavna direktorica", "főigazgató", "Direttore generale",
+                    "Generalinis direktorius", "ģenerāldirektors", "Direttur Ġenerali", "Directeur-generaal",
+                    "Dyrektor Generalny", "Diretor-Geral", "Director general", "generálny riaditeľ",
+                    "Generalni direktor", "Generaldirektör")
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toList()));
+
+    /**
+     * List providing spellings of role "Head of Service" in different languages.
+     *
+     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
+     */
+    public static final Set<String> ROLE_HEAD_OF_SERVICE = new LinkedHashSet<>(Arrays.asList("Head of Service",
+                    "Ръководител на служба","vedoucí útvaru","Tjenestechef","Leiter der",
+                    "Leiterin der","Leiter des","Leiterin des","προϊστάμενος υπηρεσίας",
+                    "Jefe de Servicio","talituse juhataja","Toimialajohtaja", "Chef de service",
+                    "Ceann na Seirbhíse","Voditelj službe","Voditeljica službe","szolgálatvezető",
+                    "Caposervizio","Tarnybos vadovas","dienesta vadītājs","Kap tas-Servizz",
+                    "Diensthoofd","Szef Służby","Chefe de Serviço", "Şef de serviciu",
+                    "vedúci útvaru","Vodja službe","Avdelningschef")
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toList()));
+
+    /**
+     * List providing spellings of role "Director" in different languages.
+     *
+     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
+     */
+    public static final Set<String> ROLE_DIRECTOR = new LinkedHashSet<>(Arrays.asList("Director",
+                    "Директор", "ředitel", "ředitelka", "Direktør",
+                    "Direktor","Direktorin","Διευθυντής","Director",
+                    "direktor","Johtaja","Directeur","An Stiúrthóir",
+                    "Direktor","igazgató", "Direktorica","Direttore",
+                    "Direktorius","direktors","Direttur","Directeur",
+                    "Dyrektor","Diretor","Director","riaditeľ",
+                    "Direktor","Direktör")
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toList()));
+
+    /**
+     * List providing spellings of role "Head of Unit" in different languages.
+     *
+     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
+     */
+    public static final Set<String> ROLE_HEAD_OF_UNIT = new LinkedHashSet<>(Arrays.asList("Head of Unit",
+                    "Началник на отдел","vedoucí oddělení","Kontorchef","Referatsleiter",
+                    "Referatsleiterin","Προϊστάμενος Μονάδας","Jefe de Unidad","üksuse juhataja",
+                    "Yksikönpäällikkö","Chef d'unité", "An Ceann Aonaid","Načelnik odjela",
+                    "Načelnica odjela", "egységvezető","Capo unità","Skyriaus vadovas",
+                    "nodaļas vadītājs","Kap tal-Unità","Eenheidshoofd","Kierownik Działu",
+                    "Chefe de Unidade","Şef de unitate","vedúci oddelenia","Vodja enote",
+                    "Enhetschef")
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toList()));
+
+    /**
+     * List providing spellings of role "The secretaries" in different languages.
+     *
+     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
+     */
+    public static final Set<String> ROLE_SECRETARIES = new LinkedHashSet<>(Arrays.asList("The Secretaries",
+                    "Секретари","tajemníci","Sekretærer","Οι Γραμματείς",
+                    "Die Sekretäre","Die Sekretärinnen","της Μεικτής","Los Secretarios",
+                    "del Comité","sekretärid","sekakomitean", "Les secrétaires",
+                    "titkárai","I segretari","sekretoriai","sekretāri",
+                    "Is-Segretarji","De secretarissen","Sekretarze","Os Secretários",
+                    "Secretarii","tajomníci","Sekretarja","sekreterare")
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toList()));
 
     public static final List<String> orderInCoverPage =
             Arrays.asList("akn:container[@name='logo']"
@@ -151,6 +300,34 @@ public class MetadataUtil {
                 "http://publications.europa.eu/resource/authority/place/FRA_SXB",
                 "Strasbourg",
                 "", MetadataFieldType.ADOPTION_LOCATION);
+    }
+
+    public static ReferenceFieldInfo getRolePresidentFieldInfo() {
+        return new ReferenceFieldInfo("PRESID",
+                "http://publications.europa.eu/resource/authority/role/PRESID",
+                "President",
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
+    public static ReferenceFieldInfo getRoleVicePresidentFieldInfo() {
+        return new ReferenceFieldInfo("PRESID_VICE",
+                "http://publications.europa.eu/resource/authority/role/PRESID_VICE",
+                "Vice-President",
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
+    public static ReferenceFieldInfo getRoleMemberOfTheCommissionFieldInfo() {
+        return new ReferenceFieldInfo("MEMBER_COM",
+                "http://publications.europa.eu/resource/authority/role/MEMBER_COM",
+                "Member of the Commission",
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
+    public static ReferenceFieldInfo getRoleDirectorGeneralFieldInfo() {
+        return new ReferenceFieldInfo("DIR_GEN",
+                "http://publications.europa.eu/resource/authority/role/DIR_GEN",
+                "Director General",
+                "", MetadataFieldType.COMMISSIONER);
     }
 
     public static boolean isDocumentXmlFile(final XmlFile xmlFile) {
@@ -195,13 +372,13 @@ public class MetadataUtil {
         return XmlUtil.getNodeAttributeValue(documentNode, "name").length() > 0;
     }
 
-    public static boolean isDocumentXmlFilename(final String filename) {
-        final String lowerCaseFilename = filename.toLowerCase();
-        if (!lowerCaseFilename.endsWith(".xml")) {
+    public static boolean isDocumentXmlFilename(final String fileName) {
+        final String lowerCaseFileName = fileName.toLowerCase();
+        if (!lowerCaseFileName.endsWith(".xml")) {
             return false;
         }
         return MetadataUtil.validXmlDocumentPrefixes.stream()
-                .anyMatch((prefix) -> lowerCaseFilename.startsWith(prefix));
+                .anyMatch((prefix) -> lowerCaseFileName.startsWith(prefix));
     }
 
     public static boolean isMainDocumentFile(XmlFile xmlFile) {
@@ -229,21 +406,20 @@ public class MetadataUtil {
     public static ApplyMetadataResponse.FieldNode getLookupFieldInfoErrorResult(
             ApplyMetadataRequest.FieldNode field,
             MetadataUtilsException e) {
-
-        if(e.getMessage().equals(INVALID_FIELD_VALUE_MESSAGE)) {
-            return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE,
-                    String.format(INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue(), FIELD));
+        if(e.getMessage().equals(MESSAGE_INVALID_FIELD_VALUE)) {
+            return new ApplyMetadataResponse.FieldNode(field.getKey(), VALUE_ONE,
+                    String.format(MESSAGE_INVALID_FIELD_VALUE + " \"%s\"", field.getValue(), ELEMENT_FIELD));
         }
 
-        return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE,
-                String.format("tag not found (field=\"%s\", tag=\"%s\")", field.getKey(), FIELD));
+        return new ApplyMetadataResponse.FieldNode(field.getKey(), VALUE_ONE,
+                String.format("tag not found (field=\"%s\", tag=\"%s\")", field.getKey(), ELEMENT_FIELD));
     }
 
     public static ApplyMetadataResponse.FieldNode getLookupFieldInfoSuccessResult(ApplyMetadataRequest.FieldNode field) {
-        return new ApplyMetadataResponse.FieldNode(field.getKey(), ZERO, "Inserted");
+        return new ApplyMetadataResponse.FieldNode(field.getKey(), VALUE_ZERO, "Inserted");
     }
 
-    public static MetadataFieldInfo parseAdoptionLocation(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseAdoptionLocation(String fieldValue) throws MetadataFieldInvalidValueException {
         try {
             MetadataLocationType locationType = MetadataLocationType.valueOfLocation(fieldValue.toUpperCase());
 
@@ -255,21 +431,25 @@ public class MetadataUtil {
                 case STRASBOURG:
                     return getFieldInfoLocationStrasbourg();
                 default:
-                    throw new MetadataUtilsException(LOCATION_NOT_SUPPORTED_MESSAGE);
+                    throw MetadataFieldInvalidValueException.newException(MetadataFieldType.ADOPTION_LOCATION.toString(), MESSAGE_LOCATION_NOT_SUPPORTED);
             }
         } catch (IllegalArgumentException e){
-            throw new MetadataUtilsException(LOCATION_NOT_SUPPORTED_MESSAGE);
+            throw MetadataFieldInvalidValueException.newException(MetadataFieldType.ADOPTION_LOCATION.toString(), MESSAGE_LOCATION_NOT_SUPPORTED);
         }
     }
 
-    public static MetadataFieldInfo parseAdoptionDate(String fieldValue) throws MetadataUtilsException {
-        return ((ReferenceFieldInfo)parseEmissionDate(fieldValue)).withFieldType(MetadataFieldType.ADOPTION_DATE);
+    public static MetadataFieldInfo parseAdoptionDate(String fieldValue) throws MetadataFieldInvalidValueException {
+        return ((ReferenceFieldInfo)parseEmissionDate(MetadataFieldType.ADOPTION_DATE.toString(), fieldValue)).withFieldType(MetadataFieldType.ADOPTION_DATE);
     }
 
-    public static MetadataFieldInfo parseEmissionDate(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseEmissionDate(String fieldValue) throws MetadataFieldInvalidValueException {
+        return ((ReferenceFieldInfo) parseEmissionDate(MetadataFieldType.EMISSION_DATE.toString(), fieldValue));
+    }
+
+    public static MetadataFieldInfo parseEmissionDate(String fieldName, String fieldValue) throws MetadataFieldInvalidValueException {
         Date parsedDate = stringToDate(fieldValue, EMISSION_DATE_PARSE_PATTERN);
         if (parsedDate == null) {
-            throw new MetadataUtilsException(INVALID_ISO_DATE_MESSAGE);
+            throw MetadataFieldInvalidValueException.newException(fieldName, MESSAGE_INVALID_ISO_DATE);
         };
 
         return new ReferenceFieldInfo(fieldValue, "", "", "", MetadataFieldType.EMISSION_DATE);
@@ -284,9 +464,13 @@ public class MetadataUtil {
         }
     }
 
-    public static MetadataFieldInfo parseInterinstitutionalCote(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseInterinstitutionalCote(String fieldValue) throws MetadataFieldInvalidValueException {
+        if (StringUtil.isEmpty(fieldValue)) {
+            return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.INTERINSTITUTIONAL_COTE);
+        }
+
         if (!fieldValue.matches(INTERINSTITUTIONAL_COTE_PARSE_PATTERN)) {
-            throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
+            throw MetadataFieldInvalidValueException.newException(MetadataFieldType.INTERINSTITUTIONAL_COTE.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
 
         int slashIndex = fieldValue.indexOf("/");
@@ -305,15 +489,19 @@ public class MetadataUtil {
     }
 
     public static String removeTrailingZeros(String value) {
-        while (value.startsWith(ZERO)){
+        while (value.startsWith(VALUE_ZERO)){
             value = value.substring(1);
         }
         return value;
     }
 
-    public static MetadataFieldInfo parseCote(String fieldValue, MetadataFieldType coteType) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseCote(String fieldValue, MetadataFieldType coteType) throws MetadataFieldInvalidValueException {
+        if (StringUtil.isEmpty(fieldValue)) {
+            return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.COTE);
+        }
+
         if (!fieldValue.matches(INSERT_COTE_PARSE_PATTERN)){
-            throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
+            throw MetadataFieldInvalidValueException.newException(MetadataFieldType.COTE.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
 
         int bracketIndex = fieldValue.indexOf("(");
@@ -326,10 +514,6 @@ public class MetadataUtil {
         String id = IdGenerator.generateId();
         String shortValue = String.format(INSERT_COTE_SHORT_VALUE_PATTERN, type, year, number);
         return new ReferenceFieldInfo(id, INSERT_COTE_HREF, fieldValue, shortValue, coteType);
-    }
-
-    public static boolean isPrefinalisationField(MetadataFieldType fieldType) {
-        return PREFINALISATION_FIELDTYPES.contains(fieldType);
     }
 
     public static String readCoteNumber(String value, int startIndex) {
@@ -345,7 +529,7 @@ public class MetadataUtil {
         return coteNumber.trim();
     }
 
-    public static MetadataFieldInfo parseLinkedDocuments(String fieldValue) throws MetadataUtilsException {
+    public static MetadataFieldInfo parseLinkedDocuments(final String fieldValue) throws MetadataFieldInvalidValueException {
         String[] references = StringUtils.hasLength(fieldValue) ? fieldValue.split("-") : new String[0];
         List<ReferenceFieldInfo> referenceFieldInfoList = new ArrayList<>();
 
@@ -356,12 +540,12 @@ public class MetadataUtil {
         return new MultipleReferencesFieldInfo(referenceFieldInfoList, MetadataFieldType.LINKED_DOCUMENTS);
     }
 
-    public static ReferenceFieldInfo parseLinkedDocumentInfo(final String referenceValue) throws MetadataUtilsException
+    public static ReferenceFieldInfo parseLinkedDocumentInfo(final String referenceValue) throws MetadataFieldInvalidValueException
     {
         final String displayValue = referenceValue.replace("{", "").replace("}", "").trim();
 
         if (!displayValue.matches(LINKED_DOCUMENT_PARSE_PATTERN)){
-            throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
+            throw MetadataFieldInvalidValueException.newException(MetadataFieldType.LINKED_DOCUMENTS.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
 
         String regex = "(([A-Z]+)\\(([0-9]+)\\) ([0-9]*)( .*)?)";
@@ -378,7 +562,11 @@ public class MetadataUtil {
 
             return new ReferenceFieldInfo("", href, displayValue, "", MetadataFieldType.LINKED_DOCUMENTS);
         }
-        throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
+        throw MetadataFieldInvalidValueException.newException(MetadataFieldType.LINKED_DOCUMENTS.toString(), MESSAGE_INVALID_FIELD_VALUE);
+    }
+
+    public static MetadataFieldInfo  parseCommissionerValue(String fieldValue) {
+        return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.COMMISSIONER);
     }
 
     public static MetadataFieldInfo parseStamp(String fieldValue) {
@@ -394,8 +582,6 @@ public class MetadataUtil {
         try {
             ObjectMapper mapper = new ObjectMapper();
             values = mapper.readValue(fieldValue, String[].class);
-        } catch (JsonMappingException e) {
-            LOG.debug("Issue parsing json list of authentic languages");
         } catch (JsonProcessingException e) {
             LOG.debug("Issue parsing json list of authentic languages");
         }
@@ -445,25 +631,25 @@ public class MetadataUtil {
 
     public static String parseAlpha3CountryCode(Node nodeLanguageReference) {
         if (nodeLanguageReference == null) { return null; }
-        String hrefAttributeValue = XmlUtil.getNodeAttributeValue(nodeLanguageReference, HREF);
+        String hrefAttributeValue = XmlUtil.getNodeAttributeValue(nodeLanguageReference, ATTRIBUTE_HREF);
         return (hrefAttributeValue != null && hrefAttributeValue.length() >= 3)
                 ? hrefAttributeValue.substring(hrefAttributeValue.length() - 3) : null;
     }
 
     public static Node getLanguageReferenceNode(XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeReferences = xmlFile.getElementByName(REFERENCES);
+        Node xmlNodeReferences = xmlFile.getElementByName(ELEMENT_REFERENCES);
         if (xmlNodeReferences == null) {
             return null;
         }
-        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.LANGUAGE);
+        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.ATTRIBUTE_LANGUAGE);
     }
 
     public static Node getPackageTitleReferenceNode(XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeReferences = xmlFile.getElementByName(REFERENCES);
+        Node xmlNodeReferences = xmlFile.getElementByName(ELEMENT_REFERENCES);
         if (xmlNodeReferences == null) {
             return null;
         }
-        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.PACKAGE_TITLE);
+        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.ATTRIBUTE_PACKAGE_TITLE);
     }
 
     public static Node getXmlNodeDocketNumber(Node xmlNode) {
@@ -492,7 +678,7 @@ public class MetadataUtil {
         while(index < xmlNodesReferences.getLength() && xmlNodeReferenceProcedureReference == null) {
             Node xmlNodeReference = xmlNodesReferences.item(index);
             if (isMetaReferenceXmlNode(xmlNodeReference)
-                    && (XmlUtil.nodeAttributeValueEquals(xmlNodeReference, NAME, nameAttributeValue))) {
+                    && (XmlUtil.nodeAttributeValueEquals(xmlNodeReference, ATTRIBUTE_NAME, nameAttributeValue))) {
                 xmlNodeReferenceProcedureReference = xmlNodeReference;
             }
             index++;
@@ -503,19 +689,19 @@ public class MetadataUtil {
 
     public static boolean isMetaReferenceXmlNode(Node xmlNode) {
         return xmlNode != null
-                && XmlUtil.parentNodeNameEquals(xmlNode, REFERENCES)
+                && XmlUtil.parentNodeNameEquals(xmlNode, ELEMENT_REFERENCES)
                 && XmlUtil.parentNodeNameEquals(xmlNode.getParentNode(), "meta");
     }
 
     public static String readLanguageValue(XmlUtil.XmlFile xmlFile) {
-        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.FRBRLANGUAGE);
+        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBRLANGUAGE);
         if (frbrLanguage == null) {
-            return MetadataUtil.LANGUAGE_EN;
+            return MetadataUtil.VALUE_LANGUAGE_EN;
         }
 
-        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.LANGUAGE);
+        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.ATTRIBUTE_LANGUAGE);
         if (!StringUtils.hasLength(value)) {
-            return MetadataUtil.LANGUAGE_EN;
+            return MetadataUtil.VALUE_LANGUAGE_EN;
         }
         return value.toUpperCase();
     }
@@ -529,7 +715,7 @@ public class MetadataUtil {
     }
 
     public static String buildPrefinalizationLegName(ApplyMetadataRequest.TaskNode task) {
-        final String documentFilename = task.getDocument().getFilename();
+        final String documentFilename = task.getDocument().getFileName();
         Optional<ApplyMetadataRequest.ActionNode> action = task.getActions().stream().findFirst();
         if (!action.isPresent()) {
             return documentFilename;
@@ -553,7 +739,7 @@ public class MetadataUtil {
 
         prefinalisationName = documentFilename.substring(0, pos+1) + coteValue;
         if (finalCote.isPresent()) {
-            prefinalisationName = prefinalisationName + "-" + FINAL_VALUE;
+            prefinalisationName = prefinalisationName + "-" + VALUE_FINAL;
         }
 
         pos = documentFilename.indexOf("-", pos+1);
@@ -564,7 +750,7 @@ public class MetadataUtil {
     }
 
     public static void addRefersToAttribute(Node xmlNode, final String id) {
-        XmlUtil.setNodeAttributeValue(xmlNode, REFERSTO, "~" + id);
+        XmlUtil.setNodeAttributeValue(xmlNode, ATTRIBUTE_REFERSTO, "~" + id);
     }
 
     public static Node getAkomaNtosoNode(XmlFile xmlFile) {
@@ -572,18 +758,18 @@ public class MetadataUtil {
     }
 
     public static void removeClassAttribute(Node xmlNode) {
-        XmlUtil.removeNodeAttributeValue(xmlNode, CLASS);
+        XmlUtil.removeNodeAttributeValue(xmlNode, ATTRIBUTE_CLASS);
     }
 
     public static Element insertElementInCoverPage(XmlFile xmlFile, String elementName) {
         String coverPagePath = "//akn:coverPage/";
         Element containerElement = null;
-        Node xmlCoverPage = xmlFile.getElementByName(COVERPAGE);
+        Node xmlCoverPage = xmlFile.getElementByName(ELEMENT_COVERPAGE);
         String eltXPath = "akn:container[@name='" + elementName + "']";
         if (xmlCoverPage != null) {
-            containerElement = xmlFile.newElement(MetadataUtil.CONTAINER);
-            XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.XMLID, IdGenerator.generateId());
-            XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.NAME, elementName);
+            containerElement = xmlFile.newElement(MetadataUtil.ELEMENT_CONTAINER);
+            XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.ATTRIBUTE_NAME, elementName);
             boolean found = false;
             for (String elementPath : orderInCoverPage) {
                 if (found) {
@@ -598,5 +784,43 @@ public class MetadataUtil {
             xmlCoverPage.appendChild(containerElement);
         }
         return containerElement;
+    }
+
+    public static boolean isRolePresident(final String value) {
+        return valueContainsSpelling(value, ROLE_PRESIDENT);
+    }
+
+    public static boolean isRoleVicePresident(final String value) {
+        return valueContainsSpelling(value, ROLE_VICE_PRESIDENT);
+    }
+
+    public static boolean isRoleMemberOfTheCommission(final String value) {
+        return valueContainsSpelling(value, ROLE_MEMBER_OF_THE_COMMISSION);
+    }
+
+    public static boolean isRoleDirectorGeneral(final String value) {
+        return valueContainsSpelling(value, ROLE_DIRECTOR_GENERAL);
+    }
+
+    public static boolean isRoleDirector(final String value) {
+        return valueContainsSpelling(value, ROLE_DIRECTOR);
+    }
+
+    public static boolean isRoleHeadOfService(final String value) {
+        return valueContainsSpelling(value, ROLE_HEAD_OF_SERVICE);
+    }
+
+    public static boolean isRoleHeadOfUnit(final String value) {
+        return valueContainsSpelling(value, ROLE_HEAD_OF_UNIT);
+    }
+
+    public static boolean isRoleSecretaries(final String value) {
+        return valueContainsSpelling(value, ROLE_SECRETARIES);
+    }
+
+    public static boolean valueContainsSpelling(final String value, final Collection<String> spellings) {
+        return !StringUtil.isEmpty(value) && spellings.stream()
+                .filter((spelling) -> value.toLowerCase().contains(spelling))
+                .findFirst().isPresent();
     }
 }

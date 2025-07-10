@@ -36,7 +36,7 @@ public class ApplyMetadataRequestConverter {
 
     public ApplyMetadataRequest processApplyMetadataRequestNode(Node nodeRequest) {
         if (nodeRequest != null){
-            List<Node> taskNodes = XmlUtil.getChildNodesWithName(nodeRequest, MetadataUtil.TASK);
+            List<Node> taskNodes = XmlUtil.getChildNodesWithName(nodeRequest, MetadataUtil.ELEMENT_TASK);
             List<ApplyMetadataRequest.TaskNode> requestTasks = processApplyMetadataRequestTaskNodes(taskNodes);
             ApplyMetadataRequest applyMetadataRequest = parseApplyMetadataRequestNode(nodeRequest)
                     .setTasks(requestTasks);
@@ -47,10 +47,10 @@ public class ApplyMetadataRequestConverter {
 
     public ApplyMetadataRequest.DocumentNode parseApplyMetadataRequestDocumentNode(Node nodeDocument) {
         if (nodeDocument != null){
-            return new ApplyMetadataRequest.DocumentNode(XmlUtil.getNodeAttributeValue(nodeDocument, MetadataUtil.SOURCEURL),
-                    XmlUtil.getNodeAttributeValue(nodeDocument, MetadataUtil.FILENAME),
-                    XmlUtil.getNodeAttributeValue(nodeDocument, MetadataUtil.MIMETYPE),
-                    XmlUtil.getNodeAttributeValue(nodeDocument, MetadataUtil.DOCUMENTID));
+            return new ApplyMetadataRequest.DocumentNode(XmlUtil.getNodeAttributeValue(nodeDocument, MetadataUtil.ATTRIBUTE_SOURCE_URL),
+                    XmlUtil.getNodeAttributeValue(nodeDocument, MetadataUtil.ATTRIBUTE_FILENAME),
+                    XmlUtil.getNodeAttributeValue(nodeDocument, MetadataUtil.ATTRIBUTE_MIMETYPE),
+                    XmlUtil.getNodeAttributeValue(nodeDocument, MetadataUtil.ATTRIBUTE_DOCUMENTID));
         }
         return null;
     }
@@ -60,7 +60,7 @@ public class ApplyMetadataRequestConverter {
             List<ApplyMetadataRequest.TaskNode> tasks = new ArrayList<>();
             for (int i = 0; i < taskNodes.size(); i++){
                 Node nodeTask = taskNodes.get(i);
-                Node nodeDocument = XmlUtil.getChildNodeWithName(nodeTask, MetadataUtil.DOCUMENT);
+                Node nodeDocument = XmlUtil.getChildNodeWithName(nodeTask, MetadataUtil.ELEMENT_DOCUMENT);
                 ApplyMetadataRequest.DocumentNode requestDocument = parseApplyMetadataRequestDocumentNode(nodeDocument);
                 ApplyMetadataRequest.TaskNode task = parseApplyMetadataRequestTaskNode(nodeTask)
                         .setDocument(requestDocument)
@@ -74,7 +74,7 @@ public class ApplyMetadataRequestConverter {
 
     public ApplyMetadataRequest.TaskNode parseApplyMetadataRequestTaskNode(Node nodeTask) {
         if (nodeTask != null) {
-            return new ApplyMetadataRequest.TaskNode(XmlUtil.getNodeAttributeValue(nodeTask, MetadataUtil.TASKID));
+            return new ApplyMetadataRequest.TaskNode(XmlUtil.getNodeAttributeValue(nodeTask, MetadataUtil.ATTRIBUTE_TASKID));
         }
         return null;
     }
@@ -82,7 +82,7 @@ public class ApplyMetadataRequestConverter {
     public List<ApplyMetadataRequest.ActionNode> processApplyMetadataRequestTaskNode(Node nodeTask) {
         if (nodeTask != null){
             List<ApplyMetadataRequest.ActionNode> actions = new ArrayList<>();
-            List<Node> actionNodes = XmlUtil.getChildNodesWithName(nodeTask, MetadataUtil.ACTION);
+            List<Node> actionNodes = XmlUtil.getChildNodesWithName(nodeTask, MetadataUtil.ELEMENT_ACTION);
             for (int i = 0; i < actionNodes.size(); i++){
                 Node nodeAction = actionNodes.get(i);
                 ApplyMetadataRequest.ActionNode akn4euAction = parseApplyMetadataRequestActionNode(nodeAction)
@@ -96,8 +96,8 @@ public class ApplyMetadataRequestConverter {
 
     public ApplyMetadataRequest.ActionNode parseApplyMetadataRequestActionNode(Node nodeAction) {
         if (nodeAction != null){
-            return new ApplyMetadataRequest.ActionNode(XmlUtil.getNodeAttributeValue(nodeAction, MetadataUtil.NAME),
-                    XmlUtil.getNodeAttributeValue(nodeAction, MetadataUtil.CLEANUP));
+            return new ApplyMetadataRequest.ActionNode(XmlUtil.getNodeAttributeValue(nodeAction, MetadataUtil.ATTRIBUTE_NAME),
+                    XmlUtil.getNodeAttributeValue(nodeAction, MetadataUtil.ATTRIBUTE_CLEANUP));
         }
         return null;
     }
@@ -105,7 +105,7 @@ public class ApplyMetadataRequestConverter {
     public List<ApplyMetadataRequest.FieldNode> processApplyMetadataRequestActionNode(Node nodeAction) {
         if (nodeAction != null){
             List<ApplyMetadataRequest.FieldNode> fields = new ArrayList<>();
-            List<Node> fieldNodes = XmlUtil.getChildNodesWithName(nodeAction, MetadataUtil.FIELD);
+            List<Node> fieldNodes = XmlUtil.getChildNodesWithName(nodeAction, MetadataUtil.ELEMENT_FIELD);
             for (int i = 0; i < fieldNodes.size(); i++){
                 Node nodeField = fieldNodes.get(i);
                 ApplyMetadataRequest.FieldNode akn4euField = parseApplyMetadataRequestFieldNode(nodeField);
@@ -118,7 +118,7 @@ public class ApplyMetadataRequestConverter {
 
     public ApplyMetadataRequest.FieldNode parseApplyMetadataRequestFieldNode(Node nodeField) {
         if (nodeField != null){
-            return new ApplyMetadataRequest.FieldNode(XmlUtil.getNodeAttributeValue(nodeField, MetadataUtil.KEY),
+            return new ApplyMetadataRequest.FieldNode(XmlUtil.getNodeAttributeValue(nodeField, MetadataUtil.ATTRIBUTE_KEY),
                     nodeField.getTextContent());
         }
         return null;
@@ -127,8 +127,8 @@ public class ApplyMetadataRequestConverter {
     public ApplyMetadataRequest parseApplyMetadataRequestNode(Node nodeRequest) {
         if (nodeRequest != null){
             return new ApplyMetadataRequest(XmlUtil.getNodeAttributeValue(nodeRequest, "xmlns"),
-                    XmlUtil.getNodeAttributeValue(nodeRequest, MetadataUtil.VERSION),
-                    XmlUtil.getNodeAttributeValue(nodeRequest, MetadataUtil.DATE),
+                    XmlUtil.getNodeAttributeValue(nodeRequest, MetadataUtil.ATTRIBUTE_VERSION),
+                    XmlUtil.getNodeAttributeValue(nodeRequest, MetadataUtil.ATTRIBUTE_DATE),
                     XmlUtil.getNodeAttributeValue(nodeRequest, "requestId"));
         }
         return null;
