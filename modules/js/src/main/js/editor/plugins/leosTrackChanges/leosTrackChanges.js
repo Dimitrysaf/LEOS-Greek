@@ -23,9 +23,8 @@ define(function leosTrackChangesModule(require) {
 
         // Track changes names and element types
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
-        SOFT_ACTION_ATTR: "data-akn-attr-softaction", LEOS_SOFT_ACTION_ATTR: "leos:softaction", LEOS_SOFT_ACTION_MOVE_FROM_VALUE: "move_from",
-        LEOS_ACTION_ATTR: "leos:action", ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", SIGNATORY:"signatory", ID: "id",
+        ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
+        UID_ATTR: "data-akn-uid", ARTICLE:"article", SIGNATORY:"signatory", ID: "id",
         CITATION:"citation", RECITAL:"recital", LEVEL: "level",
 
         DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_TC_ORIGINAL_INDENT_ACTION: "data-akn-tc-original-indent-action",
@@ -48,8 +47,6 @@ define(function leosTrackChangesModule(require) {
 
         // Style elements tags
         STYLE_ELEMENTS:  ["strong", "em", "sub", "sup"],
-
-        OUTSIDE_EDITOR_ELTS_SELECTOR: ["article", "citation", "recitals", "recital", "paragraph", "level", "chapter", "akntitle", "part", "section"],
 
         searchTrackChangeElementCheckingParent: function(editor, action) {
             editor.getSelection().getRanges()[0].optimize();
@@ -374,28 +371,6 @@ define(function leosTrackChangesModule(require) {
                 }
             }
             return null;
-        },
-
-        isInsideTrackedHigherElement: function(editor, user) {
-            var selection = editor.getSelection();
-            if (selection) {
-                var el = selection.getRanges()[0]?.getCommonAncestor().getAscendant( e =>
-                    this.OUTSIDE_EDITOR_ELTS_SELECTOR.includes(e.$.nodeName.toLowerCase())
-                    || this.OUTSIDE_EDITOR_ELTS_SELECTOR.includes(e.getAttribute(this.DATA_AKN_NAME)));
-                if (!!el) {
-                    if ((el.hasAttribute(this.ACTION_ATTR))
-                        && (!el.hasAttribute(this.SOFT_ACTION_ATTR) || el.getAttribute(this.SOFT_ACTION_ATTR) != this.LEOS_SOFT_ACTION_MOVE_FROM_VALUE)
-                        && (el.getAttribute(this.UID_ATTR) == user)) {
-                        return true;
-                    }
-                    if ((el.hasAttribute(this.LEOS_ACTION_ATTR))
-                        && (!el.hasAttribute(this.LEOS_SOFT_ACTION_ATTR) || el.getAttribute(this.LEOS_SOFT_ACTION_ATTR) != this.LEOS_SOFT_ACTION_MOVE_FROM_VALUE)
-                        && (el.getAttribute(this.LEOS_UID_ATTR) == user)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
         },
 
         setToEditablePosition: function(editor, element, setToEnd) {
