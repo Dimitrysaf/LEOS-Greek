@@ -67,6 +67,22 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
                 Collections.emptyList()));
         proposalConfigMap.put(PROPOSAL_CROSS_REFERENCES, new XmlNodeConfig("//akn:coverPage/akn:container[@name='associatedReferences']/akn:p/akn:ref", false,
                 Collections.emptyList()));
+        proposalConfigMap.put(ADOPTION_PLACE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='placeAndDate']/akn:location",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(ADOPTION_DATE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='placeAndDate']/akn:date/@date",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(COTE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='reference']/akn:docNumber",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(FINAL_COTE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='reference']/akn:docNumber/akn" +
+                ":inline[@name='version']",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(INTERINSTITUTIONAL_COTE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='procedureIdentifier']/akn:p/akn:docketNumber",
+                false,
+                Collections.emptyList()));
 
         return proposalConfigMap;
     }
@@ -87,6 +103,9 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
 
         final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();
         billConfigMap.putAll(otherConfig);
+        billConfigMap.put(STAMP, new XmlNodeConfig("//akn:conclusions/akn:block[@name='stamp']/akn:img/@src",
+                false,
+                Collections.emptyList()));
 
         return billConfigMap;
     }

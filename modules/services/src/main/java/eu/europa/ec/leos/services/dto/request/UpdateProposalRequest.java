@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Getter
@@ -32,6 +34,15 @@ public class UpdateProposalRequest {
     private Boolean showCorrigendumAddendum;
     private Boolean finalVersion;
 
+    private String adoptionPlace;
+    private Date adoptionDate;
+    private String institutionalReference;
+    private Boolean institutionalReferenceFinalVersion;
+    private String interInstitutionalReference;
+    private String specialMention;
+    private String signingCommissioner;
+    private String commissionerTitle;
+
     public void setCrossReferences(List<String> crossReferences) {
         if (crossReferences == null) {
             return;
@@ -48,61 +59,5 @@ public class UpdateProposalRequest {
             newCrossRefs.add(crossReference);
         }
         this.crossReferences = newCrossRefs;
-    }
-
-    public Boolean getShowCorrigendumAddendum() {
-        return showCorrigendumAddendum;
-    }
-
-    public void setShowCorrigendumAddendum(Boolean showCorrigendumAddendum) {
-        this.showCorrigendumAddendum = showCorrigendumAddendum;
-    }
-
-    public String getTargetProposalReference() {
-        return targetProposalReference;
-    }
-
-    public void setTargetProposalReference(String targetProposalReference) {
-        this.targetProposalReference = targetProposalReference;
-    }
-
-    public String getTargetProposalDate() {
-        return targetProposalDate;
-    }
-
-    public void setTargetProposalDate(String targetProposalDate) {
-        this.targetProposalDate = targetProposalDate;
-    }
-
-    public List<String> getProposalTargetLang() {
-        return proposalTargetLang;
-    }
-
-    public void setProposalTargetLang(List<String> proposalTargetLang) {
-        this.proposalTargetLang = proposalTargetLang;
-    }
-
-    public String getCorrectionInformation() {
-        return correctionInformation;
-    }
-
-    public void setCorrectionInformation(String correctionInformation) {
-        this.correctionInformation = correctionInformation;
-    }
-
-    public String getProposalType() {
-        return proposalType;
-    }
-
-    public void setProposalType(String proposalType) {
-        this.proposalType = proposalType;
-    }
-
-    public Boolean getFinalVersion() {
-        return finalVersion;
-    }
-
-    public void setFinalVersion(Boolean finalVersion) {
-        this.finalVersion = finalVersion;
     }
 }

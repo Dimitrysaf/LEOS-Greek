@@ -2,7 +2,7 @@
   <div class="col-md-11">
     <eui-card
       class="eui-u-mt-s eui-u-mb-l"
-      #documentCard
+      #documentGeneralCard
       euiCollapsible
       euiCollapsed="false"
       class="details-cards-common"
@@ -25,15 +25,13 @@
             "></eui-icon-svg>
           </button>
           </span>
-
         </eui-card-header-title>
-
       </eui-card-header>
 
       <eui-card-content>
         <div
           class="eui-u-flex eui-u-pb-m"
-          *ngIf="!documentCard.euiCollapsed "
+          *ngIf="!documentGeneralCard.euiCollapsed "
         >
 
           <div class="col-md-12">
@@ -45,7 +43,7 @@
               <div class="col-sm-6 label-column"></div>
             </div>
 
-            <div class="row details-gen-rows">
+            <div class="row details-gen-rows" *ngIf="!detailsTabExclusions?.eea">
               <div class="col-sm-12 label-column"><input
                 name="checkbox-eea-rel"
                 euiInputCheckBox
@@ -56,9 +54,8 @@
               />
                 <label>{{ 'page.workspace.create-form.document.eea-relevance' | translate }}</label>
               </div>
-
             </div>
-            <div class="row details-gen-rows" *ngIf="isAutononousAct">
+            <div class="row details-gen-rows" *ngIf="isAutonomousAct">
               <div class="col-sm-2">
                 <input
                   name="checkbox-auth-lang"
@@ -68,27 +65,29 @@
                   (ngModelChange)="handleAuthLangChange($event)"
                 />
                 <label
-                  style="display: inline">{{ 'page.workspace.create-form.document.auth-language' | translate }}</label>
+                  class="details-tab-inline">{{ 'page.workspace.create-form.document.auth-language' | translate }}</label>
               </div>
               <div class="col-sm-10">
-
                 <div class="language-checkbox">
                   <input
                     type="checkbox"
                     id="all_lang"
                     [(ngModel)]="allSelected"
-                    (ngModelChange)="handleChange('authenticLang')"
+                    (ngModelChange)="handleChange()"
                     (change)="toggleAllLanguages()"
                     [disabled]="!isAuthenticLang"/>
                   <label>{{ 'page.collection.details.all'
-                    | translate }}</label></div>
+                    | translate }}</label>
+                </div>
                 <div class="language-checkbox"><label>|</label></div>
-
                 <div class="language-checkbox" *ngFor="let lang of languages">
                   <input type="checkbox" [id]="lang" [(ngModel)]="selectedLanguages[lang]"
                          (change)="onLanguageChange()" [disabled]="!isAuthenticLang"/>
                   <label [for]="lang">{{ lang }}</label>
                 </div>
+              </div>
+              <div *ngIf="!isAuthenticLangValid()" class="tooltip">
+                {{ 'page.collection.details.authentic.lang.label' | translate}}
               </div>
             </div>
 
@@ -111,13 +110,12 @@
                 <input
                   id="package-title-input"
                   [(ngModel)]="packageTitle"
-                  (ngModelChange)="handleChange('packageTitle')"
+                  (ngModelChange)="handleChange()"
                   type="text"
                   euiInputText
                   euiClearable
                   class="eui-input-text--clearable eui-input-text"
                 />
-
               </div>
               <div class="col-sm-10"></div>
             </div>
@@ -143,7 +141,6 @@
           </div>
         </div>
       </eui-card-content>
-
     </eui-card>
   </div>
 
@@ -152,16 +149,213 @@
       {{ 'global.actions.save' | translate }}
     </button>
   </div>
-
 </div>
 
-
-<div class="row eui-u-mt-l d-flex align-items-start" *ngIf="isAutononousAct">
-
+<div class="row eui-u-mt-l d-flex align-items-start">
   <div class="col-md-11">
     <eui-card
       class="eui-u-mt-s eui-u-mb-l"
-      #documentCard
+      #documentAdoptionCard
+      euiCollapsible
+      euiCollapsed="false"
+      class="details-cards-common"
+    >
+      <eui-card-header>
+        <eui-card-header-title>
+          <strong>{{'page.collection.details.card.adoption.header.label' | translate}}</strong>
+          <span>
+            <button
+              euiButton
+              euiIconButton
+              euiSecondary
+              euiOutline
+              euiSizeS
+              class="details-tooltip-icon"
+            >
+              <eui-icon-svg icon="eui-question-circle" set="eui" size="m" fillColor="grey-100" [euiTooltip]="
+                'page.collection.details.adoption.tooltip' | translate">
+              </eui-icon-svg>
+            </button>
+          </span>
+        </eui-card-header-title>
+      </eui-card-header>
+
+      <eui-card-content>
+        <div
+          class="eui-u-flex eui-u-pb-m"
+          *ngIf="!documentAdoptionCard.euiCollapsed "
+        >
+          <div class="grid-adoption-info">
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-adoption-place">
+              <label
+                euiLabel
+                euiRequired
+                for="adoptionPlace"
+                translate="page.collection.details.adoption.place"
+              ></label>
+              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="adoptionPlace" name="adoptionPlace" id="adoptionPlace" required>
+                <option *ngFor="let adoptionPlace of adoptionPlaces">{{ adoptionPlace }}</option>
+              </select>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-adoption-date">
+              <label
+                euiLabel
+                euiRequired
+                translate="page.collection.details.adoption.date"
+              ></label>
+              <div class="row" class="details-tab-adoption-date">
+                <mat-form-field appearance="fill" class="date-picker">
+                  <input
+                    matInput
+                    [matDatepicker]="myDatepicker"
+                    [(ngModel)]="adoptionDate"
+                    (ngModelChange)="handleChange()"
+                    readonly
+                  />
+                  <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                  <mat-datepicker #myDatepicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference">
+              <label
+                euiLabel
+                translate="page.collection.details.institutional.reference"
+              ></label>
+              <div class="adoption-info-institutional-reference">
+                <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="institutionalRefActingEntity" name="institutionalRefActingEntity"
+                        id="institutionalRefActingEntity"  class="details-tab-first-select">
+                  <option *ngFor="let institutionalRefActingEntity of institutionalRefActingEntities">{{ institutionalRefActingEntity }}</option>
+                </select>
+                (<select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="institutionalRefYear" name="institutionalRefYear" id="institutionalRefYear"
+                         class="details-tab-select">
+                  <option *ngFor="let institutionalRefYear of years">{{ institutionalRefYear }}</option>
+                </select>)
+                <input type="text"
+                       [(ngModel)]="institutionalRefNumber"
+                       (ngModelChange)="handleChange()"
+                       class="details-tab-text"/>
+                <div *ngIf="invalidInstitutionalNumberInput" class="tooltip">
+                  {{ 'page.collection.details.invalid.number.label' | translate}}
+                </div>
+
+                <input
+                  name="checkbox-final-proposal-"
+                  euiInputCheckBox
+                  label="Final"
+                  [(ngModel)]="institutionalReferenceFinalVersion"
+                  (ngModelChange)="handleChange()"
+                />
+                <label
+                  class="details-tab-inline">{{'page.collection.details.institutional.reference.final' | translate}}</label>
+              </div>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-version">
+              <label
+                euiLabel
+                translate="page.collection.details.institutional.reference.version"
+              ></label>
+              <div class="adoption-info-institutional-reference">
+                <select euiSelect name="institutionalRefVersion" id="institutionalRefVersion"
+                        class="details-tab-first-text" [disabled]="true">
+                  <option *ngFor="let institutionalRefVersion of institutionalRefVersions">{{ institutionalRefVersion }}</option>
+                </select>
+              </div>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference">
+              <span (click)="$event.stopPropagation()">
+                <input
+                  name="checkbox-inter-institutional-ref"
+                  euiInputCheckBox
+                  (change)="handleChange()"
+                  [(ngModel)]="interInstitutionalRef"
+                />
+              </span>
+              <strong>{{'page.collection.details.inter.institutional.reference' | translate}}</strong>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference2">
+              <div class="adoption-info-institutional-reference">
+                <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="interInstitutionalRefYear" name="interInstitutionalRefYear"
+                        id="interInstitutionalRefYear"
+                        class="details-tab-first-select"
+                        [disabled]="!interInstitutionalRef">
+                  <option *ngFor="let interInstitutionalRefYear of years">{{ interInstitutionalRefYear }}</option>
+                </select>/
+                <input type="text"
+                       [(ngModel)]="interInstitutionalRefNumber"
+                       (ngModelChange)="handleChange()"
+                       [disabled]="!interInstitutionalRef"
+                       class="details-tab-text"/>
+                (<select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="interInstitutionalRefType" name="interInstitutionalRefType"
+                         id="interInstitutionalRefType"
+                         class="details-tab-select" [disabled]="!interInstitutionalRef">
+                  <option *ngFor="let interInstitutionalRefType of interInstitutionalRefTypes">{{ interInstitutionalRefType }}</option>
+                </select>)
+                <div *ngIf="invalidInterInstitutionalNumberInput" class="tooltip">
+                  {{ 'page.collection.details.invalid.inter.institional.ref' | translate}}
+                </div>
+              </div>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-special-mention">
+              <label
+                euiLabel
+                for="specialMention"
+                translate="page.collection.details.adoption.special.mention"
+              ></label>
+              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="specialMention" name="specialMention" id="specialMention"
+                      class="details-tab-first-select" [disabled]="true">
+                <option *ngFor="let specialMention of specialMentions">{{ specialMention }}</option>
+              </select>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-signing-commissioner">
+              <label
+                euiLabel
+                euiRequired
+                for="signingCommissioner"
+                translate="page.collection.details.adoption.signing.commissioner"
+              ></label>
+              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="signingCommissioner" name="signingCommissioner" id="signingCommissioner"
+                      class="details-tab-first-select"
+                      required [disabled]="true">
+                <option *ngFor="let signingCommissioner of signingCommissioners">{{ signingCommissioner }}</option>
+              </select>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-commissioner-title">
+              <label
+                euiLabel
+                euiRequired
+                for="signingCommissioner"
+                translate="page.collection.details.adoption.commissioner.title"
+              ></label>
+              <input type="text"
+                     [(ngModel)]="commissionerTitle"
+                     (ngModelChange)="handleChange()"
+                     class="details-tab-first-text" [disabled]="true"/>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-stamp">
+              <input
+                name="checkbox-stamp"
+                euiInputCheckBox
+                label="Insert Stamp"
+                (ngModelChange)="handleChange()"
+                [disabled]="true"
+                [(ngModel)]="stamp"
+              />
+              <label
+                class="details-tab-inline">{{'page.collection.details.stamp' | translate}}</label>
+            </div>
+          </div>
+        </div>
+      </eui-card-content>
+    </eui-card>
+  </div>
+</div>
+
+<div class="row eui-u-mt-l d-flex align-items-start" *ngIf="isAutonomousAct && !detailsTabExclusions?.coverPageSection">
+  <div class="col-md-11">
+    <eui-card
+      class="eui-u-mt-s eui-u-mb-l"
+      #documentCoverPageTypeCard
       euiCollapsible
       euiCollapsed="false"
       class="details-cards-common"
@@ -191,7 +385,7 @@
       <eui-card-content>
         <div
           class="eui-u-flex eui-u-pb-m"
-          *ngIf="!documentCard.euiCollapsed "
+          *ngIf="!documentCoverPageTypeCard.euiCollapsed "
         >
 
           <div class="col-md-12">
@@ -211,7 +405,7 @@
                 </label>
               </div>
             </div>
-            <div class="row details-gen-rows">
+            <div class="row details-gen-rows" *ngIf="!detailsTabExclusions?.coverPageOptions.includes('EUROPA_EURLEX')">
               <div class="col-sm-1 label-column col-sm-1-coverpage-type">
               </div>
               <div class="col-sm-11 label-column">
@@ -221,7 +415,7 @@
                 </label>
               </div>
             </div>
-            <div class="row details-gen-rows">
+            <div class="row details-gen-rows" *ngIf="!detailsTabExclusions?.coverPageOptions.includes('COMMITEE_EXPERTS_GROUP')">
               <div class="col-sm-1 label-column col-sm-1-coverpage-type">
               </div>
               <div class="col-sm-11 label-column">
@@ -243,7 +437,7 @@
                   <input type="text"
                          [disabled]="!isVerticalShift"
                          [(ngModel)]="verticalShift"
-                         (ngModelChange)="handleChange('verticalShift')"
+                         (ngModelChange)="handleChange()"
                          readonly
                          style="width: 60px; text-align: center;"/>
                   <div class="vertical-shift-num-buttons">
@@ -266,182 +460,183 @@
   </div>
 </div>
 
+<div class="row eui-u-mt-l d-flex align-items-start">
+  <div class="col-md-11">
+    <eui-card
+      class="eui-u-mt-s eui-u-mb-l"
+      #documentCorrigendumCard
+      euiCollapsible
+      euiCollapsed="false"
+      class="details-cards-common"
+    >
+      <eui-card-header>
+        <eui-card-header-title>
+          <span (click)="$event.stopPropagation()">
+            <input
+              name="checkbox-corrigendum-addendum"
+              euiInputCheckBox
+              (change)="onToggleCorrigendumAddendum($event)"
+              [(ngModel)]="showCorrigendumAddendum"
+            />
+          </span>
+          <strong>{{'page.collection.details.card.corrigendum.addendum.header.label' | translate}}</strong>
 
-<div class="col-md-11">
-  <eui-card
-    class="eui-u-mt-s eui-u-mb-l"
-    #documentCard
-    euiCollapsible
-    euiCollapsed="false"
-    class="details-cards-common"
-  >
-    <eui-card-header>
-      <eui-card-header-title>
-        <span (click)="$event.stopPropagation()">
-          <input
-            name="checkbox-corrigendum-addendum"
-            euiInputCheckBox
-            (change)="onToggleCorrigendumAddendum($event)"
-            [(ngModel)]="showCorrigendumAddendum"
-          />
-        </span>
-        <strong>{{'page.collection.details.card.corrigendum.addendum.header.label' | translate}}</strong>
+          <span>
+            <button
+              euiButton
+              euiIconButton
+              euiSecondary
+              euiOutline
+              euiSizeS
+              class="details-tooltip-icon"
+            >
+              <eui-icon-svg icon="eui-question-circle" set="eui" size="m" fillColor="grey-100" [euiTooltip]="
+                'page.collection.details.coverpage.corrigendum.addendum.tooltip' | translate">
+              </eui-icon-svg>
+            </button>
+          </span>
+        </eui-card-header-title>
+      </eui-card-header>
 
-        <span>
-          <button
-            euiButton
-            euiIconButton
-            euiSecondary
-            euiOutline
-            euiSizeS
-            class="details-tooltip-icon"
-          >
-            <eui-icon-svg icon="eui-question-circle" set="eui" size="m" fillColor="grey-100" [euiTooltip]="
-              'page.collection.details.coverpage.corrigendum.addendum.tooltip' | translate">
-            </eui-icon-svg>
-          </button>
-        </span>
-      </eui-card-header-title>
-    </eui-card-header>
-
-    <eui-card-content>
-      <div
-        class="eui-u-flex eui-u-pb-m"
-        [class.disabled]="!showCorrigendumAddendum"
-        *ngIf="!documentCard.euiCollapsed"
-      >
-        <div class="col-md-12">
-          <div class="row details-gen-rows">
-            <div class="col-sm-12 label-column">
-              <label class="coverpage-option">{{'page.collection.details.proposal.type.label' | translate}}</label>
-              <label>
-                <input class="proposal-corrigendum-addendum-option"
-                       type="radio" name="proposalType"
-                       [(ngModel)]="proposalType"
-                       (change)="onAnyInputChange()"
-                       [value]="'corrigendum'"
-                       [disabled]="!showCorrigendumAddendum"/>
-                {{'page.collection.details.proposal.corrigendum' | translate}}
-              </label>
-              <label>
-                <input class="proposal-corrigendum-addendum-option"
-                       type="radio"
-                       name="proposalType"
-                       [(ngModel)]="proposalType"
-                       (change)="onAnyInputChange()"
-                       [value]="'addendum'"
-                       [disabled]="!showCorrigendumAddendum"/>
-                {{'page.collection.details.proposal.addendum' | translate}}
-              </label>
-            </div>
-          </div>
-          <div class="row details-gen-rows">
-            <div class="col-sm-2 label-column target-proposal-input-labels">
-              <div style="display: block">
-                <label style="display: block">
-                  {{'page.collection.details.target.proposal.label' | translate}}
+      <eui-card-content>
+        <div
+          class="eui-u-flex eui-u-pb-m"
+          [class.disabled]="!showCorrigendumAddendum"
+          *ngIf="!documentCorrigendumCard.euiCollapsed"
+        >
+          <div class="col-md-12">
+            <div class="row details-gen-rows">
+              <div class="col-sm-12 label-column">
+                <label class="coverpage-option">{{'page.collection.details.proposal.type.label' | translate}}</label>
+                <label>
+                  <input class="proposal-corrigendum-addendum-option"
+                         type="radio" name="proposalType"
+                         [(ngModel)]="proposalType"
+                         (change)="onAnyInputChange()"
+                         [value]="'corrigendum'"
+                         [disabled]="!showCorrigendumAddendum"/>
+                  {{'page.collection.details.proposal.corrigendum' | translate}}
                 </label>
-              </div>
-              <div style="display: block; padding-top: 15px;">
-                <label style="display: block">
-                  {{'page.collection.details.target.proposal.date' | translate}}
+                <label>
+                  <input class="proposal-corrigendum-addendum-option"
+                         type="radio"
+                         name="proposalType"
+                         [(ngModel)]="proposalType"
+                         (change)="onAnyInputChange()"
+                         [value]="'addendum'"
+                         [disabled]="!showCorrigendumAddendum"/>
+                  {{'page.collection.details.proposal.addendum' | translate}}
                 </label>
               </div>
             </div>
-            <div class="col-sm-3 label-column">
-              <div style="display: block">
+            <div class="row details-gen-rows">
+              <div class="col-sm-2 label-column target-proposal-input-labels">
+                <div class="details-tab-block">
+                  <label class="details-tab-block">
+                    {{'page.collection.details.target.proposal.label' | translate}}
+                  </label>
+                </div>
+                <div style="display: block; padding-top: 15px;">
+                  <label class="details-tab-block">
+                    {{'page.collection.details.target.proposal.date' | translate}}
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-3 label-column">
+                <div class="details-tab-block">
+                  <input
+                    id="target-proposal-reference"
+                    [(ngModel)]="targetProposalReference"
+                    (ngModelChange)="onAnyInputChange()"
+                    required
+                    type="text"
+                    euiInputText
+                    class="eui-input-text--clearable eui-input-text target-proposal-ref-input"
+                  />
+                </div>
+                <div class="details-tab-block">
+                  <mat-form-field appearance="fill" class="date-picker">
+                    <input
+                      matInput
+                      [matDatepicker]="picker"
+                      [(ngModel)]="targetProposalDate"
+                      (ngModelChange)="onAnyInputChange()"
+                      [disabled]="!showCorrigendumAddendum"
+                      required
+                      readonly
+                    />
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row details-gen-rows" *ngIf="isAutonomousAct">
+              <div class="col-sm-2">
                 <input
-                  id="target-proposal-reference"
-                  [(ngModel)]="targetProposalReference"
+                  name="checkbox-final-proposal-"
+                  euiInputCheckBox
+                  label="Final"
+                  [(ngModel)]="finalVersion"
+                  (ngModelChange)="handleProposalFinalVersion($event)"
+                />
+                <label
+                  class="details-tab-inline">{{'page.collection.details.proposal.final.version.label' | translate}}</label>
+              </div>
+            </div>
+            <div class="row details-gen-rows" *ngIf="isAutonomousAct">
+              <div class="col-sm-2">
+                <input
+                  name="checkbox-target-proposal-lang"
+                  euiInputCheckBox
+                  label="Target language(s)"
+                  [(ngModel)]="isTargetLang"
+                  (ngModelChange)="handleTargetLangChange($event)"
+                />
+                <label
+                  class="details-tab-inline">{{ 'page.collection.details.target.languages' | translate }}</label>
+              </div>
+              <div class="col-sm-10">
+                <div class="language-checkbox">
+                  <input
+                    type="checkbox"
+                    id="all_target_lang"
+                    [(ngModel)]="allTargetLangSelected"
+                    (change)="toggleAllTargetLanguages()"
+                    [disabled]="!isTargetLang"/>
+                  <label>{{ 'page.collection.details.all'
+                    | translate }}</label></div>
+                <div class="language-checkbox"><label>|</label></div>
+                <div class="language-checkbox" *ngFor="let lang of languages">
+                  <input type="checkbox" [id]="lang" [(ngModel)]="selectedTargetLanguages[lang]"
+                         (change)="onTargetLanguageChange()" [disabled]="!isTargetLang"/>
+                  <label [for]="lang">{{ lang }}</label>
+                </div>
+              </div>
+            </div>
+            <div class="row details-gen-rows">
+              <div class="col-sm-2 label-column target-proposal-input-labels">
+                <label class="details-tab-block">
+                  {{'page.collection.details.proposal.correction.information.label' | translate}}
+                </label>
+              </div>
+              <div class="col-sm-8 label-column">
+                <input
+                  id="correction-information"
+                  [(ngModel)]="correctionInformation"
                   (ngModelChange)="onAnyInputChange()"
+                  type="textarea"
                   required
-                  type="text"
                   euiInputText
                   class="eui-input-text--clearable eui-input-text target-proposal-ref-input"
                 />
               </div>
-              <div style="display: block">
-                <mat-form-field appearance="fill" class="date-picker">
-                  <input
-                    matInput
-                    [matDatepicker]="picker"
-                    [(ngModel)]="targetProposalDate"
-                    (ngModelChange)="onAnyInputChange()"
-                    [disabled]="!showCorrigendumAddendum"
-                    required
-                    readonly
-                  />
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-          <div class="row details-gen-rows" *ngIf="isAutononousAct">
-            <div class="col-sm-2">
-              <input
-                name="checkbox-final-proposal-"
-                euiInputCheckBox
-                label="Final"
-                [(ngModel)]="finalVersion"
-                (ngModelChange)="handleProposalFinalVersion($event)"
-              />
-              <label
-                style="display: inline">{{'page.collection.details.proposal.final.version.label' | translate}}</label>
-            </div>
-          </div>
-          <div class="row details-gen-rows" *ngIf="isAutononousAct">
-            <div class="col-sm-2">
-              <input
-                name="checkbox-target-proposal-lang"
-                euiInputCheckBox
-                label="Target language(s)"
-                [(ngModel)]="isTargetLang"
-                (ngModelChange)="handleTargetLangChange($event)"
-              />
-              <label
-                style="display: inline">{{ 'page.collection.details.target.languages' | translate }}</label>
-            </div>
-            <div class="col-sm-10">
-              <div class="language-checkbox">
-                <input
-                  type="checkbox"
-                  id="all_target_lang"
-                  [(ngModel)]="allTargetLangSelected"
-                  (change)="toggleAllTargetLanguages()"
-                  [disabled]="!isTargetLang"/>
-                <label>{{ 'page.collection.details.all'
-                  | translate }}</label></div>
-              <div class="language-checkbox"><label>|</label></div>
-              <div class="language-checkbox" *ngFor="let lang of languages">
-                <input type="checkbox" [id]="lang" [(ngModel)]="selectedTargetLanguages[lang]"
-                       (change)="onTargetLanguageChange()" [disabled]="!isTargetLang"/>
-                <label [for]="lang">{{ lang }}</label>
-              </div>
-            </div>
-          </div>
-          <div class="row details-gen-rows">
-            <div class="col-sm-2 label-column target-proposal-input-labels">
-              <label style="display: block">
-                {{'page.collection.details.proposal.correction.information.label' | translate}}
-              </label>
-            </div>
-            <div class="col-sm-8 label-column">
-              <input
-                id="correction-information"
-                [(ngModel)]="correctionInformation"
-                (ngModelChange)="onAnyInputChange()"
-                type="textarea"
-                required
-                euiInputText
-                class="eui-input-text--clearable eui-input-text target-proposal-ref-input"
-              />
             </div>
           </div>
         </div>
-      </div>
-    </eui-card-content>
-  </eui-card>
+      </eui-card-content>
+    </eui-card>
+  </div>
 </div>
 
 <div class="row eui-u-mt-l d-flex align-items-start">
@@ -475,30 +670,30 @@
       <eui-card-content>
         <div class="row details-gen-rows">
           <div class="col-sm-8 label-column inline-field-group">
-            <label style="font-weight: bold;">{{'('}}</label>
-            <select [(ngModel)]="selectedProposalRefType">
+            <label style="font-weight: bold;">{{'{'}}</label>
+            <select [(ngModel)]="selectedProposalRefType" class="details-tab-first-select" >
               <option *ngFor="let type of proposalRefTypeList" [value]="type">
                 {{ type }}
               </option>
             </select>
-            <label style="font-weight: bold;">{{'{'}}</label>
+            <label style="font-weight: bold;">{{'('}}</label>
 
-            <select [(ngModel)]="selectedYear" class="year-selector" size="1">
+            <select [(ngModel)]="selectedYear" class="year-selector details-tab-select" size="1">
               <option *ngFor="let year of years" [value]="year">{{ year }}</option>
             </select>
 
-            <label style="font-weight: bold;">{{'}'}}</label>
+            <label style="font-weight: bold;">{{')'}}</label>
 
             <input
               id="cross-ref-number"
               [(ngModel)]="crossReferenceProposalNumber"
               type="text"
-              (keypress)="checkNumberInput($event)"
+              (keypress)="checkCrossRefNumberInput($event)"
               euiInputText
               class="eui-input-text--clearable eui-input-text small-textarea"
             />
-            <div *ngIf="invalidNumberInput" class="tooltip">
-            Numbers only
+            <div *ngIf="invalidCrossRefNumberInput" class="tooltip">
+            {{ 'page.collection.details.invalid.number.label' | translate}}
             </div>
 
             <input
@@ -509,7 +704,7 @@
               class="eui-input-text--clearable eui-input-text small-textarea"
             />
 
-            <label style="font-weight: bold;">{{')'}}</label>
+            <label style="font-weight: bold;">{{'}'}}</label>
 
             <button (click)="addCrossRef()" [disabled]="!enableAddCrossRef()" class="cross-ref-edit-button">
               <span class="eui-icon eui-icon-add"></span>
@@ -523,7 +718,7 @@
                 <li *ngFor="let item of crossReferenceProposalListing; let i = index"
                     [class.selected]="i === selectedIndex"
                     (click)="selectItem(i)">
-                  {{ item }}
+                  {{ '{ ' + item + ' }' }}
                 </li>
               </ul>
             </div>

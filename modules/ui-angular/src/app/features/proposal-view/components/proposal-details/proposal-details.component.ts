@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {Document, Permission, AuthenticLanguage, CoverPageType} from '@leos/shared';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Document, Permission, AuthenticLanguage, CoverPageType, ProposalDetailsLists, Metadata, DetailsTabExclusions} from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
-import {toNumber} from "lodash-es";
+import {cloneDeep, toNumber} from "lodash-es";
 import {EuiGrowlService} from "@eui/core";
 import {TranslateService} from "@ngx-translate/core";
 import moment from 'moment';
@@ -14,6 +14,7 @@ import moment from 'moment';
 })
 export class ProposalDetailsComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
+  @Input() proposalDetails: ProposalDetailsLists;
   permissions: Permission[];
   eeaRelevance: boolean;
   isAuthenticLang: boolean;
@@ -22,9 +23,36 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   authenticLang: string[];
   verticalShift: number;
   proposalLanguage: string;
-  isAutononousAct: boolean;
+  isAutonomousAct: boolean;
   enableSave = false;
+  adoptionPlace: string;
+  adoptionPlaces = [];
+  adoptionDate: any;
+  institutionalRefYear: number | null;
+  institutionalRefActingEntities = [];
+  institutionalRefActingEntity: string | null;
+  institutionalRefVersions = [];
+  institutionalRefNumber: number | null;
+  institutionalReferenceFinalVersion: Boolean;
+  interInstitutionalRef: boolean;
+  interInstitutionalRefYear: number | null;
+  interInstitutionalRefNumber: number | null;
+  interInstitutionalRefType: string | null;
+  interInstitutionalRefTypes = [];
+  specialMention: string | null;
+  specialMentions = [];
+  signingCommissioner: string | null;
+  signingCommissioners: [];
+  commissionerTitle: string | null;
+  stamp: boolean = false;
+  institutionalRefRegEx = /([A-Za-z0-9]+)\(([0-9]{4})\)\s{0,1}([0-9]+)\s{0,1}/;
+  interInstitutionalRefRegEx = /([0-9]{4})\/([0-9]+) \(([A-Za-z0-9]+)\)/;
+
+  years: number[] = [];
   coverPageType: CoverPageType | null;
+
+  proposalMetadata: Metadata;
+
   destroy$: Subject<any> = new Subject();
 
   allSelected = false;
@@ -34,44 +62,36 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   proposalTargetLang: string[];
   showCorrigendumAddendum: boolean;
   targetProposalReference: string;
-  targetProposalDate: string | null;
+  targetProposalDate: Date | null;
   correctionInformation: string;
   finalVersion: boolean;
+  detailsTabExclusions: DetailsTabExclusions;
 
   //TODO To be moved to the backend configuration
-  languages = ['BG', 'CS', 'DA', 'DE', 'EL', 'EN', 'ES', 'ET', 'FI', 'FR','GA', 'HR', 'HU', 'IT', 'LT', 'LV',
-    'MT', 'NL', 'PL', 'PT','RO', 'SK', 'SL', 'SV'];
+  languages = [];
 
   selectedLanguages: { [key: string]: boolean } = {};
-  metadataChanged: { [key: string]: boolean } = {
-    ['eeaRelevance']: false,
-    ['packageTitle']: false,
-    ['isAuthentigLang']: false,
-    ['authenticLang']: false,
-    ['coverPageType']: false,
-    ['verticalShift']: false,
-    ['crossReferences']: false,
-  };
 
   allTargetLangSelected = false;
   selectedTargetLanguages: { [key: string]: boolean } = {};
-  isComponentVisible = true;
 
-  proposalRefTypeList = ['COM', 'SEC', 'C', 'SWD', 'JOIN', 'P'];
+  proposalRefTypeList = [];
   selectedProposalRefType: string = this.proposalRefTypeList[0];
-  years: number[] = [];
   selectedYear: number = new Date().getFullYear();
   crossReferenceProposalNumber: string;
   crossReferenceProposalText: string;
   crossReferenceProposalListing: string[] = [];
   selectedIndex: number | null = null;
-  invalidNumberInput: boolean;
+  invalidCrossRefNumberInput: boolean;
+  invalidInstitutionalNumberInput: boolean;
+  invalidInterInstitutionalNumberInput: boolean;
 
   constructor(
     protected detailsService: ProposalDetailsService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
     ) {
+    this.years = this.getYearsSince(1980);
     this.detailsService.permissions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => (this.permissions = perms));
@@ -79,22 +99,116 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.languages.forEach(lang => this.selectedTargetLanguages[lang] = false);
   }
 
-  ngOnInit(): void {
+  isChanged(): boolean {
+    return (this.isEeaRelevanceChanged()
+      || this.isPackageTitleChanged()
+      || this.isCoverPageTypeChanged()
+      || this.isAuthenticLangChanged()
+      || this.isInstitutionalReferenceChanged()
+      || this.isInterInstitutionalReferenceChanged()
+      || this.isCrossReferencesChanged()
+      || this.isStampChanged()
+      || this.isCommissionerChanged()
+      || this.isAdoptionPlaceChanged()
+      || this.isAdoptionDateChanged());
+  }
+
+  isValid(): boolean {
+    return (this.isAuthenticLangValid()
+      && this.isInstitutionalRefValid()
+      && this.isInterInstitutionalRefValid());
+  }
+
+  isEeaRelevanceChanged() {
+    return this.proposalMetadata.eeaRelevance !== this.eeaRelevance;
+  }
+
+  isPackageTitleChanged() {
+    return this.packageTitle !== this.proposalMetadata.packageTitle;
+  }
+
+  isStampChanged() {
+    return this.proposalMetadata.stamp !== this.stamp;
+  }
+
+  isCommissionerChanged() {
+    return this.specialMention !== this.proposalMetadata.specialMention
+      || this.signingCommissioner !== this.proposalMetadata.signingCommissioner
+      || this.commissionerTitle !== this.proposalMetadata.commissionerTitle;
+  }
+
+  isCoverPageTypeChanged() {
+    return this.coverPageType !== this.proposalMetadata.coverPageType
+      || this.verticalShift.toString() !== this.proposalMetadata.verticalShift;
+  }
+
+  isAuthenticLangChanged() : boolean {
+    let isMetadataAuthenticLang : AuthenticLanguage;
+    if (this.isAuthenticLang) {
+      this.authenticLang = Object.keys(this.selectedLanguages)
+        .filter(lang => this.selectedLanguages[lang]).map(lang => lang.toLowerCase());
+
+      if (this.authenticLang.includes(this.proposalLanguage.toLowerCase())) {
+        isMetadataAuthenticLang = 'PROPOSAL_LANGUAGE';
+      } else {
+        isMetadataAuthenticLang = 'NON_PROPOSAL_LANGUAGE';
+      }
+
+      if (this.authenticLang.length == this.languages.length) {
+        this.authenticLang = [];
+        isMetadataAuthenticLang = 'ALL';
+      }
+    } else {
+      isMetadataAuthenticLang = 'FALSE';
+      this.authenticLang = [];
+    }
+
+    return (this.proposalMetadata.isAuthenticLang !== isMetadataAuthenticLang
+      || JSON.stringify(this.proposalMetadata.authenticLang) !== JSON.stringify(this.authenticLang));
+  }
+
+  isCrossReferencesChanged(): boolean {
+    return (JSON.stringify(this.crossReferenceProposalListing) !== JSON.stringify(this.proposalMetadata.crossReferences));
+  }
+
+  isAdoptionPlaceChanged(): boolean {
+    return this.adoptionPlace !== this.proposalMetadata.adoptionPlace;
+  }
+
+  isAdoptionDateChanged(): boolean {
+    return this.adoptionDate.toDate() !== this.proposalMetadata.adoptionDate;
+  }
+
+  isInstitutionalReferenceChanged(): boolean {
+    return this.getInstitutionalReference() !== this.proposalMetadata.institutionalReference
+      || this.institutionalReferenceFinalVersion !== this.proposalMetadata.institutionalReferenceFinalVersion;
+  }
+
+  isInterInstitutionalReferenceChanged(): boolean {
+    return  this.getInterInstitutionalReference() !== this.proposalMetadata.interInstitutionalReference;
+  }
+
+  initializeLists(): void {
+    this.proposalRefTypeList = this.proposalDetails.proposalRefTypes;
+    this.adoptionPlaces = this.proposalDetails.adoptionPlaces;
+    this.languages = [];
+    for (const lang of this.proposalDetails.languages) {
+      this.languages.push(lang.toUpperCase());
+    }
+    this.institutionalRefActingEntities = this.proposalDetails.institionalRefsTypes;
+    this.interInstitutionalRefTypes = this.proposalDetails.interInstitionalRefsTypes;
+    this.specialMentions = this.proposalDetails.specialMentions;
+    this.proposalMetadata = cloneDeep(this.proposal.metadata);
+  }
+
+  initializeGeneral() {
     this.languages.forEach(lang => {
       this.selectedLanguages[lang] = false;
     });
 
     this.eeaRelevance = this.proposal.metadata.eeaRelevance;
     this.packageTitle = this.proposal.metadata.packageTitle;
-    this.authenticLang = this.proposal.metadata.authenticLang;
-
-    this.coverPageType = this.proposal.metadata.coverPageType;
-    if (this.coverPageType == null) {
-      this.coverPageType = 'STANDARD';
-    }
-    this.isVerticalShift = this.coverPageType !== 'STANDARD';
-    this.verticalShift = this.proposal.metadata.verticalShift != null ? toNumber(this.proposal.metadata.verticalShift) : 6.0;
-    this.isAutononousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
+    this.authenticLang = cloneDeep(this.proposal.metadata.authenticLang);
 
     this.proposalLanguage = this.proposal.metadata.language;
     if (this.proposal.metadata.isAuthenticLang != null) {
@@ -117,25 +231,136 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  initializeCoverPageType() {
+    this.coverPageType = this.proposal.metadata.coverPageType;
+    if (this.coverPageType == null) {
+      this.coverPageType = 'STANDARD';
+    }
+    this.isVerticalShift = this.coverPageType !== 'STANDARD';
+    this.verticalShift = this.proposal.metadata.verticalShift != null ? toNumber(this.proposal.metadata.verticalShift) : 6.0;
+  }
+
+  getInstitutionalReference(): string {
+    if (!!this.institutionalRefActingEntity) {
+      const institutionalRef = this.institutionalRefActingEntity + '(' + this.institutionalRefYear + ')' + this.institutionalRefNumber;
+      if (this.institutionalRefRegEx.test(institutionalRef) && !isNaN(Number(this.institutionalRefNumber))) {
+        return institutionalRef;
+      }
+    }
+    return null;
+  }
+
+  isInstitutionalRefValid(): boolean {
+    const institutionalRef = this.getInstitutionalReference();
+    if (institutionalRef != null) {
+      return true;
+    } else if (!this.institutionalRefActingEntity && !this.institutionalRefYear && !this.institutionalRefNumber) {
+      return true;
+    }
+    return false;
+  }
+
+  getInterInstitutionalReference(): string {
+    let interInstitutionalRef = null;
+    if (this.interInstitutionalRef && this.isInterInstitutionalRefValid()) {
+      interInstitutionalRef = this.interInstitutionalRefYear + '/' + this.interInstitutionalRefNumber + ' (' + this.interInstitutionalRefType + ')';
+    }
+    if (!this.interInstitutionalRef && this.isInterInstitutionalRefValid()) {
+      interInstitutionalRef = '';
+    }
+
+    return interInstitutionalRef;
+  }
+
+  isInterInstitutionalRefValid(): boolean {
+    if (!!this.interInstitutionalRef && !!this.interInstitutionalRefYear
+      && !!this.interInstitutionalRefNumber
+      && !!this.interInstitutionalRefType) {
+      const interInstitutionalRef = this.interInstitutionalRefYear + '/' + this.interInstitutionalRefNumber + ' (' + this.interInstitutionalRefType + ')';
+      return this.interInstitutionalRefRegEx.test(interInstitutionalRef);
+    }
+    return !this.interInstitutionalRef;
+  }
+
+  isAuthenticLangValid(): boolean {
+    return !this.isAuthenticLang || this.isThereSelectedLanguage();
+  }
+
+  initializeAdoptionInfo() {
+    this.adoptionPlace = this.proposal.metadata.adoptionPlace;
+    this.adoptionDate = this.proposal.metadata.adoptionDate != null ? moment(this.proposal.metadata.adoptionDate) : null;
+    let institutionalRef = this.proposal.metadata.institutionalReference;
+    if (institutionalRef != null && this.institutionalRefRegEx.test(institutionalRef)) {
+      let myArray = institutionalRef.match(this.institutionalRefRegEx);
+      this.institutionalRefActingEntity = myArray[1];
+      this.institutionalRefYear = parseInt(myArray[2]);
+      this.institutionalRefNumber = parseInt(myArray[3]);
+    }
+    this.institutionalReferenceFinalVersion = this.proposal.metadata.institutionalReferenceFinalVersion;
+
+    let interInstitutionalRef = this.proposal.metadata.interInstitutionalReference;
+    if (interInstitutionalRef != null && this.interInstitutionalRefRegEx.test(interInstitutionalRef)) {
+      let myArray = interInstitutionalRef.match(this.interInstitutionalRefRegEx);
+      this.interInstitutionalRef = true;
+      this.interInstitutionalRefYear = parseInt(myArray[1]);
+      this.interInstitutionalRefNumber = parseInt(myArray[2]);
+      this.interInstitutionalRefType = myArray[3];
+    }
+    this.specialMention = this.proposal.metadata.specialMention;
+    this.signingCommissioner = this.proposal.metadata.signingCommissioner;
+    this.commissionerTitle = this.proposal.metadata.commissionerTitle;
+    this.stamp = this.proposal.metadata.stamp;
+  }
+
+  ngOnInit(): void {
+    this.detailsService.proposalDetails$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (proposalDetails) => {
+          this.detailsTabExclusions = proposalDetails.document.detailsTabExclusions;
+        },
+        error: (error) => console.log('error'),
+      });
+    this.initializeLists();
+    this.isAutonomousAct = this.proposal.metadata.documentCollectionName != 'ACT_AUTO_COM';
+    this.initializeGeneral();
+    this.initializeCoverPageType();
+    this.initializeAdoptionInfo();
     this.initializeCorrigendumAddendumFields();
     this.initializeCrossReferences();
   }
 
-  handleChange(metadata: string) {
-    this.enableSave = true;
-    if (this.isAuthenticLang && !this.isThereSelectedLanguage()) {
-      this.enableSave = false;
+  private getYearsSince(firstYear: number): number[] {
+    const currentYear = new Date().getFullYear();
+    return Array.from(
+      { length: currentYear - firstYear + 1 },
+      (_, i) => currentYear - i,
+    );
+  }
+
+  handleChange() {
+    this.enableSave = this.isChanged() && this.isValid();
+    if (!this.isInterInstitutionalRefValid()) {
+      this.invalidInterInstitutionalNumberInput = true;
+    } else {
+      this.invalidInterInstitutionalNumberInput = false;
     }
-    this.metadataChanged[metadata] = true;
+    if (!this.isInstitutionalRefValid()) {
+      this.invalidInstitutionalNumberInput = true;
+    } else {
+      this.invalidInstitutionalNumberInput = false;
+    }
   }
 
   handleEEAChange(e: boolean) {
     this.eeaRelevance = e;
-    this.handleChange('eeaRelevance');
+    this.handleChange();
   }
 
   handleAuthLangChange(e: boolean) {
-    this.handleChange('isAuthenticLang');
+    this.handleChange();
     if (!e) {
       this.languages.forEach(lang => {
         this.selectedLanguages[lang] = false;
@@ -153,7 +378,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   handleCoverPageTypeChange(covertype: string) {
-    this.handleChange('coverPageType');
+    this.handleChange();
     this.isVerticalShift = covertype != 'STANDARD';
     if (!this.isVerticalShift) this.verticalShift = 6.0;
   }
@@ -216,20 +441,25 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
     this.detailsService.updateProposalMetadata(
       null,
-      this.metadataChanged['eeaRelevance'] ? this.eeaRelevance : null,
-      this.metadataChanged['packageTitle'] ? this.packageTitle : null,
-      (this.metadataChanged['isAuthenticLang'] || this.metadataChanged['authenticLang']) ? isMetadataAuthenticLang : null,
-      (this.metadataChanged['authenticLang'] || this.metadataChanged['isAuthenticLang']) ? this.authenticLang : null,
-      (this.metadataChanged['coverPageType'] || this.metadataChanged['verticalShift']) ? this.coverPageType : null,
-      (this.metadataChanged['coverPageType'] || this.metadataChanged['verticalShift']) ? verticalShiftMetadata : null,
+      this.isEeaRelevanceChanged() ? this.eeaRelevance : null,
+      this.isPackageTitleChanged() ? this.packageTitle : null,
+      this.isAuthenticLangChanged() ? isMetadataAuthenticLang : null,
+      this.isAuthenticLangChanged() ? this.authenticLang : null,
+      this.isCoverPageTypeChanged() ? this.coverPageType : null,
+      this.isCoverPageTypeChanged() ? verticalShiftMetadata : null,
       this.showCorrigendumAddendum,
       this.proposalType,
       this.targetProposalReference,
-      this.formatTargetProposalDate(),
+      this.targetProposalDate != null ? this.formatTargetProposalDate() : null,
       this.getTargetLanguages(),
       this.correctionInformation,
       this.finalVersion,
-      this.crossReferenceProposalListing
+      this.isCrossReferencesChanged() ? this.crossReferenceProposalListing : null,
+      this.isAdoptionPlaceChanged() ? this.adoptionPlace : null,
+      this.isAdoptionDateChanged() ? this.adoptionDate.toDate() : null,
+      this.isInstitutionalReferenceChanged() ? this.getInstitutionalReference() : null,
+      this.isInstitutionalReferenceChanged() ? this.institutionalReferenceFinalVersion : null,
+      this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null
     ).subscribe({
       next: () => {
         this.detailsService.setProposalRef(this.proposal.ref);
@@ -266,18 +496,18 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   onLanguageChange() {
     const allChecked = this.languages.every(lang => this.selectedLanguages[lang]);
     this.allSelected = allChecked;
-    this.handleChange('authenticLang');
+    this.handleChange();
   }
 
   increase() {
     this.verticalShift = Math.round((this.verticalShift + 0.1) * 10) / 10;
-    this.handleChange('verticalShift');
+    this.handleChange();
   }
 
   decrease() {
     if (this.verticalShift > 0) {
       this.verticalShift = Math.round((this.verticalShift - 0.1) * 10) / 10;
-      this.handleChange('verticalShift');
+      this.handleChange();
     }
   }
 
@@ -291,9 +521,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   formatTargetProposalDate(): string {
-    const formattedDate = moment(this.targetProposalDate).format('YYYY-MM-DD');
-    this.targetProposalDate = formattedDate;
-    return formattedDate;
+    return moment(this.targetProposalDate).format('DD-MM-YYYY');
   }
 
   handleTargetLangChange(e: boolean) {
@@ -341,7 +569,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.proposalType = proposal.proposalType;
       this.targetProposalReference = proposal.targetProposalReference;
       this.finalVersion = proposal.finalVersion;
-      this.targetProposalDate = proposal.targetProposalDate;
+      this.targetProposalDate = this.proposal.targetProposalDate != null ? moment(this.proposal.targetProposalDate, 'DD-MM-YYYY').toDate() : null;
       this.allTargetLangSelected = proposal.allTargetLangSelected;
       this.proposalTargetLang = proposal.proposalTargetLang;
       this.correctionInformation = proposal.correctionInformation;
@@ -372,7 +600,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   private initializeCrossReferences(): void {
-    this.crossReferenceProposalListing = this.proposal.metadata.crossReferences;
+    this.crossReferenceProposalListing = cloneDeep(this.proposal.metadata.crossReferences);
     const currentYear = new Date().getFullYear();
     const startYear = 1960;
     this.years = Array.from({ length: currentYear - startYear + 1 }, (_, i) => startYear + i).reverse();
@@ -424,15 +652,22 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.enableSave = true;
   }
 
-  checkNumberInput(event: KeyboardEvent) {
+  checkCrossRefNumberInput(event: KeyboardEvent) {
+    if (this.checkNumberInput(event)) {
+      this.invalidCrossRefNumberInput = true;
+      setTimeout(() => {
+        this.invalidCrossRefNumberInput = false;
+      }, 1500)
+    }
+  }
+
+  checkNumberInput(event: KeyboardEvent): boolean {
     const char = event.key;
     if (!/^\d$/.test(char)) {
       event.preventDefault();
-      this.invalidNumberInput = true;
-      setTimeout(() => {
-        this.invalidNumberInput = false;
-      }, 1500);
+      return true;
     }
+    return false;
   }
 
   enableAddCrossRef() {

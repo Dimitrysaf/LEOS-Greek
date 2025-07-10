@@ -2,8 +2,10 @@ package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
@@ -17,6 +19,7 @@ import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.util.IdGenerator;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ResourcesUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.metadata.CoverPageTypeMetadata;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +37,21 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.ELEMENT_DATE;
+import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.VALUE_CROSS_CONFERENCE_NAME;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.insertElementInCoverPage;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.deleteElementsByXPath;
+import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getChildNodeWithName;
 
 @Service
 @Slf4j
 public class MetadataServiceImpl implements MetadataService {
     public static final Logger LOG = LoggerFactory.getLogger(MetadataServiceImpl.class);
+
+    public static final String RESPONSE_STATUS_FIELD_SUCCESS = "0";
+    public static final String RESPONSE_STATUS_FIELD_ERROR = "1";
+    public static final String RESPONSE_STATUS_FIELD_NOT_SUPPORTED = "0";
+    public static final String RESPONSE_STATUS_FIELD_NOT_AVAILABLE = "30";
 
     public MetadataServiceImpl(){}
 
@@ -49,31 +60,32 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public ApplyMetadataResponse.FieldNode getLookupFieldInfoErrorResult(
-            ApplyMetadataRequest.FieldNode field,
-            MetadataUtilsException e) {
-
-        if(e.getMessage().equals(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE)) {
-            return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
-                    String.format(MetadataUtil.INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue()));
-        }
-
-        return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ONE,
-                String.format("tag not found (field=\"%s\", tag=\"%s\")", field.getKey(), MetadataUtil.FIELD));
+    public ApplyMetadataResponse.FieldNode getFieldInvalidValueResult(final String fieldName, final String reason) {
+        return new ApplyMetadataResponse.FieldNode(fieldName, RESPONSE_STATUS_FIELD_ERROR, reason);
     }
 
     @Override
-    public ApplyMetadataResponse.FieldNode getLookupFieldInfoSuccessResult(ApplyMetadataRequest.FieldNode field) {
-        return new ApplyMetadataResponse.FieldNode(field.getKey(), MetadataUtil.ZERO, "Inserted");
+    public ApplyMetadataResponse.FieldNode getFieldNotAvailableResult(final String fieldName) {
+        return new ApplyMetadataResponse.FieldNode(fieldName, RESPONSE_STATUS_FIELD_NOT_AVAILABLE, "The command is not available");
     }
 
     @Override
-    public MetadataFieldInfo lookupFieldInfo(ApplyMetadataRequest.FieldNode field) throws MetadataUtilsException {
+    public ApplyMetadataResponse.FieldNode getFieldNotSupportedResult(final String fieldName) {
+        return new ApplyMetadataResponse.FieldNode(fieldName, RESPONSE_STATUS_FIELD_NOT_SUPPORTED, "The command is not supported");
+    }
+
+    @Override
+    public ApplyMetadataResponse.FieldNode getFieldSuccessResult(final String fieldName) {
+        return new ApplyMetadataResponse.FieldNode(fieldName, RESPONSE_STATUS_FIELD_SUCCESS, "Inserted");
+    }
+
+    @Override
+    public MetadataFieldInfo lookupFieldInfo(ApplyMetadataRequest.FieldNode field) throws MetadataFieldInvalidValueException, MetadataFieldNotAvailableException, MetadataFieldNotSupportedException {
         return lookupFieldInfo(field.getKey(), field.getValue());
     }
 
     @Override
-    public MetadataFieldInfo lookupFieldInfo(String field, String fieldValue) throws MetadataUtilsException {
+    public MetadataFieldInfo lookupFieldInfo(String field, String fieldValue) throws MetadataFieldInvalidValueException, MetadataFieldNotAvailableException, MetadataFieldNotSupportedException {
         try {
             MetadataFieldType fieldType = MetadataFieldType.valueOfTypeName(field);
             switch(fieldType){
@@ -93,6 +105,8 @@ public class MetadataServiceImpl implements MetadataService {
                     return MetadataUtil.parseCote(fieldValue, MetadataFieldType.FINAL_COTE);
                 case STAMP:
                     return MetadataUtil.parseStamp(fieldValue);
+                case COMMISSIONER:
+                    return MetadataUtil.parseCommissionerValue(fieldValue);
                 case PACKAGE_TITLE:
                     return MetadataUtil.parsePackageTitle(fieldValue);
                 case INTERNAL_REF:
@@ -102,12 +116,10 @@ public class MetadataServiceImpl implements MetadataService {
                 case COVERPAGE_TYPE:
                     return MetadataUtil.parseCoverPageType(fieldValue);
                 default:
-                    throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
+                    throw MetadataFieldNotAvailableException.newException(field);
             }
-        } catch (IllegalArgumentException e){
-            throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
-        } catch (MetadataUtilsException mue){
-            throw mue;
+        } catch (IllegalArgumentException e) {
+            throw MetadataFieldNotSupportedException.newException(field);
         }
     }
 
@@ -124,6 +136,9 @@ public class MetadataServiceImpl implements MetadataService {
         if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
             addAdoptionDate(fieldInfo, xmlFile);
         }
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            addAdoptionDateToBlock(fieldInfo, xmlFile);
+        }
     }
 
     private void addAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -133,13 +148,35 @@ public class MetadataServiceImpl implements MetadataService {
         final Node pNode = XmlUtil.getChildNodeWithName(longTitle, "p");
         if (pNode == null) return;
 
-        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.DATE);
+        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
         if (dateNode == null) return;
 
 
-        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.DATE, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
         final String displayValue = this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
         dateNode.setTextContent(displayValue);
+    }
+
+    private void addAdoptionDateToBlock(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        if (xmlNodeMainDoc == null) {
+            return;
+        }
+
+        Node xmlPlaceAndDate = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "placeAndDate");
+        if (xmlPlaceAndDate == null) {
+            return;
+        }
+
+        final Node dateNode = XmlUtil.getChildNodeWithName(xmlPlaceAndDate, MetadataUtil.ELEMENT_DATE);
+        if (dateNode == null) return;
+
+        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
     }
 
     private String readAdoptionDateDisplayValue(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -158,13 +195,13 @@ public class MetadataServiceImpl implements MetadataService {
         if (xmlNodeMeta == null) {
             return;
         }
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.XMLID, fieldInfo.getId());
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.HREF, fieldInfo.getHref());
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.SHOWAS, fieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.ATTRIBUTE_XMLID, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.ATTRIBUTE_HREF, fieldInfo.getHref());
+        XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.ATTRIBUTE_SHOWAS, fieldInfo.getDisplayValue());
     }
 
     private void addAdoptionLocationToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
         }
@@ -188,9 +225,9 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addAdoptionLocationToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONSNEW);
+        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ATTRIBUTE_CONCLUSIONSNEW);
         if (xmlNodeConclusions == null) {
-            xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
+            xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ELEMENT_CONCLUSIONS);
         }
         if (xmlNodeConclusions == null) {
             return;
@@ -218,7 +255,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addEmissionDateToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
         }
@@ -233,11 +270,11 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeBlock, MetadataUtil.DATE);
+        Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeBlock, MetadataUtil.ELEMENT_DATE);
         if (xmlNodeDate == null) {
             return;
         }
-        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.DATE, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
 
         String displayValue = readEmissionDataDisplayValue(fieldInfo, xmlFile);
         MetadataUtil.removeClassAttribute(xmlNodeDate);
@@ -246,28 +283,28 @@ public class MetadataServiceImpl implements MetadataService {
 
     private void addEmissionDateToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
 
-        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONSNEW);
+        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ATTRIBUTE_CONCLUSIONSNEW);
         if (xmlNodeConclusions == null) {
-            xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
+            xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ELEMENT_CONCLUSIONS);
         }
         if (xmlNodeConclusions == null) {
             return;
         }
 
-        Node xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, MetadataUtil.CONCLUSION_NODE_IDNEW);
+        Node xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, MetadataUtil.VALUE_CONCLUSION_NODE_IDNEW);
         if (xmlNodeConclusionsP == null) {
-            xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, MetadataUtil.CONCLUSION_NODE_ID);
+            xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, MetadataUtil.VALUE_CONCLUSION_NODE_ID);
         }
         if (xmlNodeConclusionsP == null) {
             return;
         }
 
-        Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeConclusionsP, MetadataUtil.DATE);
+        Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeConclusionsP, MetadataUtil.ELEMENT_DATE);
         if (xmlNodeDate == null) {
             return;
         }
 
-        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.DATE, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
         MetadataUtil.removeClassAttribute(xmlNodeDate);
         String displayValue = this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
         xmlNodeDate.setTextContent(displayValue);
@@ -299,7 +336,7 @@ public class MetadataServiceImpl implements MetadataService {
         final String fileName = xmlFile.getName();
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
             final String[] splitFileName = fileName.split("-");
-            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + MetadataUtil.FINAL_VALUE + "-" + b : a + b + "-");
+            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + MetadataUtil.VALUE_FINAL + "-" + b : a + b + "-");
             xmlFile.setName(newFileName);
         }
     }
@@ -309,13 +346,30 @@ public class MetadataServiceImpl implements MetadataService {
         if (frbrExpression == null) {
             return;
         }
+
+        final Node frbrVersionNumberNode = getChildNodeWithName(frbrExpression, "FRBRversionNumber");
+        if (frbrVersionNumberNode != null) {
+            frbrVersionNumberNode.getParentNode().removeChild(frbrVersionNumberNode);
+        }
         final Element frbrVersionNumber = xmlFile.newElement("FRBRversionNumber");
-        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.VALUE, MetadataUtil.FINAL_VALUE);
+        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.ATTRIBUTE_VALUE, MetadataUtil.VALUE_FINAL);
         frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression,"FRBRlanguage"));
     }
 
+    private void removeFinalToIdentification(XmlUtil.XmlFile xmlFile) {
+        final Node frbrExpression = xmlFile.getElementByName("FRBRExpression");
+        if (frbrExpression == null) {
+            return;
+        }
+
+        final Node frbrVersionNumberNode = getChildNodeWithName(frbrExpression, "FRBRversionNumber");
+        if (frbrVersionNumberNode != null) {
+            frbrVersionNumberNode.getParentNode().removeChild(frbrVersionNumberNode);
+        }
+    }
+
     private void addFinalToCoverPage(XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
         }
@@ -327,25 +381,55 @@ public class MetadataServiceImpl implements MetadataService {
         MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
         xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
         final Element inline = xmlFile.newElement("inline");
-        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.XMLID, IdGenerator.generateId());
-        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.NAME, "version");
-        inline.setTextContent(MetadataUtil.FINAL_VALUE);
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, "version");
+        inline.setTextContent(MetadataUtil.VALUE_FINAL);
         xmlNodeDocNumber.appendChild(inline);
     }
 
+    private void removeFinalToCoverPage(XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeDocNumber = MetadataUtil.getXmlNodeDocNumber(xmlFile);
+        if (xmlNodeDocNumber == null) {
+            return;
+        }
+
+        final Node inline = getChildNodeWithName(xmlNodeDocNumber, "inline");
+        if (inline != null) {
+            inline.getParentNode().removeChild(inline);
+        }
+    }
 
     @Override
     public void processCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        addCoteToMetaIdentification(fieldInfo, xmlFile);
-        addCoteToMetaReference(fieldInfo, xmlFile);
-        addCoteToCoverPage(fieldInfo, xmlFile);
-        addCoteToDocumentFilename(fieldInfo, xmlFile);
+        if (StringUtil.isEmpty(fieldInfo.getDisplayValue())) {
+            removeFinalToCoverPage(xmlFile);
+            removeFinalToIdentification(xmlFile);
+            removeCoteToMetaIdentification(fieldInfo, xmlFile);
+            removeCoteToMetaReference(fieldInfo, xmlFile);
+            removeCoteToCoverPage(fieldInfo, xmlFile);
 
-        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
-            removeMetaPreservation(xmlFile);
+            if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+                removeMetaPreservation(xmlFile);
+            } else {
+                removeDocCuid(xmlFile);
+            }
         } else {
-            removeDocCuid(xmlFile);
-            addCoteToCuid(fieldInfo, xmlFile);
+            addCoteToMetaIdentification(fieldInfo, xmlFile);
+            addCoteToMetaReference(fieldInfo, xmlFile);
+            addCoteToCoverPage(fieldInfo, xmlFile);
+            addCoteToDocumentFilename(fieldInfo, xmlFile);
+
+            if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+                removeMetaPreservation(xmlFile);
+            } else {
+                removeDocCuid(xmlFile);
+                addCoteToCuid(fieldInfo, xmlFile);
+            }
         }
     }
 
@@ -353,12 +437,12 @@ public class MetadataServiceImpl implements MetadataService {
      * Add the cote value to the akn4eu:xxxxCUID nodes.
      * */
     public void addCoteToCuid(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
+        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBRWORK);
         if (frbrWorkNode == null) {
             return;
         }
 
-        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.PRESERVATION);
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.ELEMENT_PRESERVATION);
         if (preservationNode == null) {
             return;
         }
@@ -396,7 +480,7 @@ public class MetadataServiceImpl implements MetadataService {
         final Node identificationNode = xmlFile.getElementByName("identification");
         if (identificationNode == null) return;
 
-        final Node frbrWorkNode = XmlUtil.getChildNodeWithName(identificationNode, MetadataUtil.FRBRWORK);
+        final Node frbrWorkNode = XmlUtil.getChildNodeWithName(identificationNode, MetadataUtil.ELEMENT_FRBRWORK);
         if (frbrWorkNode == null) return;
 
         final Node prescriptiveNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRprescriptive");
@@ -404,12 +488,34 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
+        final Node frbrNumberNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRnumber");
+        if (frbrNumberNode != null) {
+            frbrNumberNode.getParentNode().removeChild(frbrNumberNode);
+        }
         final Element frbrNumber = xmlFile.newElement("FRBRnumber");
-        XmlUtil.setNodeAttributeValue(frbrNumber, MetadataUtil.VALUE, fieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(frbrNumber, MetadataUtil.ATTRIBUTE_VALUE, fieldInfo.getDisplayValue());
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
             MetadataUtil.addRefersToAttribute(frbrNumber, fieldInfo.getId());
         }
         frbrWorkNode.insertBefore(frbrNumber, prescriptiveNode);
+    }
+
+    public void removeCoteToMetaIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node identificationNode = xmlFile.getElementByName("identification");
+        if (identificationNode == null) return;
+
+        final Node frbrWorkNode = XmlUtil.getChildNodeWithName(identificationNode, MetadataUtil.ELEMENT_FRBRWORK);
+        if (frbrWorkNode == null) return;
+
+        final Node prescriptiveNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRprescriptive");
+        if(prescriptiveNode == null) {
+            return;
+        }
+
+        final Node frbrNumberNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRnumber");
+        if (frbrNumberNode != null) {
+            frbrNumberNode.getParentNode().removeChild(frbrNumberNode);
+        }
     }
 
     public void addCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -418,13 +524,19 @@ public class MetadataServiceImpl implements MetadataService {
         }
     }
 
+    public void removeCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if(MetadataUtil.isMainDocumentFile(xmlFile)) {
+            removeTLCReference(xmlFile, "identifier");
+        }
+    }
+
     public void removeMetaPreservation(XmlUtil.XmlFile xmlFile) {
-        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
+        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBRWORK);
         if (frbrWorkNode == null) {
             return;
         }
 
-        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.PRESERVATION);
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.ELEMENT_PRESERVATION);
         if (preservationNode == null) {
             return;
         }
@@ -432,12 +544,12 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     public void removeDocCuid(XmlUtil.XmlFile xmlFile) {
-        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.FRBRWORK);
+        final Node frbrWorkNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBRWORK);
         if (frbrWorkNode == null) {
             return;
         }
 
-        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.PRESERVATION);
+        final Node preservationNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.ELEMENT_PRESERVATION);
         if (preservationNode == null) {
             return;
         }
@@ -450,7 +562,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     public void addCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
         }
@@ -475,13 +587,45 @@ public class MetadataServiceImpl implements MetadataService {
         xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
     }
 
+    public void removeCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        if (xmlNodeMainDoc == null) {
+            return;
+        }
+
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "reference");
+        if (xmlNodeBlock == null) {
+            return;
+        }
+
+        Node xmlNodeDocNumber = XmlUtil.getChildNodeWithName(xmlNodeBlock, "docNumber");
+        if (xmlNodeDocNumber == null) {
+            return;
+        }
+        MetadataUtil.removeClassAttribute(xmlNodeBlock);
+        MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
+        MetadataUtil.addRefersToAttribute(xmlNodeDocNumber, "");
+        xmlNodeDocNumber.setTextContent("");
+    }
+
     @Override
     public void processInterinstitutionalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        final String langValue = MetadataUtil.readLanguageValue(xmlFile);
-        ReferenceFieldInfo langFieldInfo = fieldInfo.withHref(fieldInfo.getHref().replace(MetadataUtil.INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER, langValue));
-        addInterinstitutionalCoteToMetaReference(langFieldInfo, xmlFile);
-        addInterinstitutionalCoteToCoverPage(langFieldInfo, xmlFile);
-        addInterinstitutionalCoteToPreface(langFieldInfo, xmlFile);
+        if (StringUtil.isEmpty(fieldInfo.getDisplayValue())) {
+            removeInterinstitutionalCoteToMetaReference(xmlFile);
+            removeInterinstitutionalCoteToCoverPage(xmlFile);
+            removeInterinstitutionalCoteToPreface(xmlFile);
+        } else {
+            final String langValue = MetadataUtil.readLanguageValue(xmlFile);
+            ReferenceFieldInfo langFieldInfo = fieldInfo.withHref(fieldInfo.getHref().replace(MetadataUtil.INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER, langValue));
+            addInterinstitutionalCoteToMetaReference(langFieldInfo, xmlFile);
+            addInterinstitutionalCoteToCoverPage(langFieldInfo, xmlFile);
+            addInterinstitutionalCoteToPreface(langFieldInfo, xmlFile);
+        }
     }
 
     private void addInterinstitutionalCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -490,34 +634,60 @@ public class MetadataServiceImpl implements MetadataService {
         }
     }
 
+    private void removeInterinstitutionalCoteToMetaReference(XmlUtil.XmlFile xmlFile) {
+        if(MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillDocumentFile(xmlFile)) {
+            removeTLCReference(xmlFile, "procedureReference");
+        }
+    }
+
     private void addTLCReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, String name) {
         final Node references = xmlFile.getElementByName("references");
         if (references == null)
             return;
 
-        Node tlcReference = XmlUtil.getChildNodeWithName(references, name);
+        Node tlcReference = XmlUtil.getXmlChildNodeWithNameAttributeValue(references, name);
         final boolean isTlcReferenceFound = (tlcReference != null);
         if (!isTlcReferenceFound) {
-            tlcReference = xmlFile.newElement(MetadataUtil.TLCREFERENCE);
+            tlcReference = xmlFile.newElement(MetadataUtil.ELEMENT_TLCREFERENCE);
         }
 
-        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.NAME, name);
-        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.XMLID, fieldInfo.getId());
-        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.HREF, fieldInfo.getHref());
-        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.SHOWAS, fieldInfo.getDisplayValue());
-        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.SHORTFORM, fieldInfo.getShortValue());
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.ATTRIBUTE_NAME, name);
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.ATTRIBUTE_XMLID, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.ATTRIBUTE_HREF, fieldInfo.getHref());
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.ATTRIBUTE_SHOWAS, fieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(tlcReference, MetadataUtil.ATTRIBUTE_SHORTFORM, fieldInfo.getShortValue());
 
         if (!isTlcReferenceFound) {
             references.appendChild(tlcReference);
         }
     }
 
+    private void removeTLCReference(XmlUtil.XmlFile xmlFile, String name) {
+        final Node references = xmlFile.getElementByName("references");
+        if (references == null)
+            return;
+
+        Node tlcReference = XmlUtil.getXmlChildNodeWithNameAttributeValue(references, name);
+        final boolean isTlcReferenceFound = (tlcReference != null);
+        if (isTlcReferenceFound) {
+            tlcReference.getParentNode().removeChild(tlcReference);
+        }
+    }
+
     private void addInterinstitutionalCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
         }
         addInterinstitutionalCoteToDocketNumber(fieldInfo, xmlNodeCoverpage);
+    }
+
+    private void removeInterinstitutionalCoteToCoverPage(XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+        removeInterinstitutionalCoteToDocketNumber(xmlNodeCoverpage);
     }
 
     private void addInterinstitutionalCoteToPreface(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -526,6 +696,14 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
         addInterinstitutionalCoteToDocketNumber(fieldInfo, xmlNodePreface);
+    }
+
+    private void removeInterinstitutionalCoteToPreface(XmlUtil.XmlFile xmlFile) {
+        Node xmlNodePreface = xmlFile.getElementByName("preface");
+        if (xmlNodePreface == null) {
+            return;
+        }
+        removeInterinstitutionalCoteToDocketNumber(xmlNodePreface);
     }
 
     public void addInterinstitutionalCoteToDocketNumber(ReferenceFieldInfo fieldInfo, Node xmlParentNode) {
@@ -544,14 +722,30 @@ public class MetadataServiceImpl implements MetadataService {
         xmlNodeDocketNumber.setTextContent(fieldInfo.getDisplayValue());
     }
 
+    public void removeInterinstitutionalCoteToDocketNumber(Node xmlParentNode) {
+        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlParentNode, "procedureIdentifier");
+        if (xmlNodeContainer == null) {
+            return;
+        }
+
+        Node xmlNodeDocketNumber = MetadataUtil.getXmlNodeDocketNumber(xmlNodeContainer);
+        if (xmlNodeDocketNumber == null) {
+            return;
+        }
+        MetadataUtil.removeClassAttribute(xmlNodeContainer);
+        MetadataUtil.removeClassAttribute(xmlNodeDocketNumber);
+        MetadataUtil.addRefersToAttribute(xmlNodeDocketNumber, "");
+        xmlNodeDocketNumber.setTextContent("");
+    }
+
     @Override
     public void processLinkedDocuments(MultipleReferencesFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
         }
 
-        Node xmlNodeAssociatedReferences = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "associatedReferences");
+        Node xmlNodeAssociatedReferences = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, MetadataUtil.VALUE_CROSS_CONFERENCE_NAME);
         if (xmlNodeAssociatedReferences != null) {
             if (fieldInfo.getReferences().isEmpty()) {
                 xmlNodeCoverpage.removeChild(xmlNodeAssociatedReferences);
@@ -566,7 +760,7 @@ public class MetadataServiceImpl implements MetadataService {
                     xmlNodeAssociatedReferences.removeChild(children.item(i));
             }
         } else if (!fieldInfo.getReferences().isEmpty()) {
-            xmlNodeAssociatedReferences = insertElementInCoverPage(xmlFile, MetadataUtil.CROSS_CONFERENCE_NAME);
+            xmlNodeAssociatedReferences = insertElementInCoverPage(xmlFile, MetadataUtil.VALUE_CROSS_CONFERENCE_NAME);
         } else {
             return;
         }
@@ -579,33 +773,35 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        if (!MetadataUtil.ONE.equals(fieldInfo.getDisplayValue())) return;
+        if (!MetadataUtil.VALUE_ONE.equals(fieldInfo.getDisplayValue())) return;
         if (MetadataUtil.isMainDocumentFile(xmlFile)) return;
 
-        final Node conclusions = xmlFile.getElementByName(MetadataUtil.CONCLUSIONS);
+        final Node conclusions = xmlFile.getElementByName(MetadataUtil.ELEMENT_CONCLUSIONS);
         if (conclusions == null) return;
 
         final Node blockNode = xmlFile.newElement("block");
-        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.NAME, "stamp");
+        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.ATTRIBUTE_NAME, "stamp");
 
         final String language = readLanguageValue(xmlFile);
         final String b64Stamp = getLanguageStampAsBase64(language);
 
         final Node imgNode = xmlFile.newElement("img");
+        XmlUtil.setNodeAttributeValue(imgNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
         blockNode.appendChild(imgNode);
         conclusions.appendChild(blockNode);
     }
 
     private String readLanguageValue(XmlUtil.XmlFile xmlFile) {
-        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.FRBRLANGUAGE);
+        final Node frbrLanguage = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBRLANGUAGE);
         if (frbrLanguage == null) {
-            return MetadataUtil.LANGUAGE_EN;
+            return MetadataUtil.VALUE_LANGUAGE_EN;
         }
 
-        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.LANGUAGE);
+        final String value = XmlUtil.getNodeAttributeValue(frbrLanguage, MetadataUtil.ATTRIBUTE_LANGUAGE);
         if (!StringUtils.hasLength(value)) {
-            return MetadataUtil.LANGUAGE_EN;
+            return MetadataUtil.VALUE_LANGUAGE_EN;
         }
         return value.toUpperCase();
     }
@@ -619,111 +815,202 @@ public class MetadataServiceImpl implements MetadataService {
     private Element createLinkedDocumentElement(final ReferenceFieldInfo reference, XmlUtil.XmlFile xmlFile) {
         final Element refElement = xmlFile.newElement("ref");
 
-        XmlUtil.setNodeAttributeValue(refElement, MetadataUtil.XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(refElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         refElement.setTextContent(reference.getDisplayValue());
-        refElement.setAttribute(MetadataUtil.HREF, reference.getHref());
+        refElement.setAttribute(MetadataUtil.ATTRIBUTE_HREF, reference.getHref());
 
         final Element referenceElement = xmlFile.newElement("p");
-        XmlUtil.setNodeAttributeValue(referenceElement, MetadataUtil.XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(referenceElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         referenceElement.appendChild(xmlFile.createTextNode("{"));
         referenceElement.appendChild(refElement);
         referenceElement.appendChild(xmlFile.createTextNode("}"));
         return referenceElement;
     }
 
-    //  <container name="packageTitle">
-    //      <p>Package Title</p>
-    //  </container>
-    public void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
-        if (xmlNodeCoverpage == null) {
+    @Override
+    public void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, int pos) {
+        if (!MetadataUtil.isBillXmlDocument(xmlFile)) return;
+        final Node signatureNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_SIGNATURE);
+        final int roleIndex = XmlUtil.indexOfChildNode(signatureNode, MetadataUtil.ELEMENT_ROLE);
+        final int personIndex = XmlUtil.indexOfChildNode(signatureNode, MetadataUtil.ELEMENT_PERSON);
+        if (roleIndex < 0 || personIndex < 0) {
             return;
         }
 
-        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, MetadataUtil.PACKAGE_TITLE);
-        if (xmlNodeBlock != null) {
-            xmlNodeCoverpage.removeChild(xmlNodeBlock);
+        // Check wether role or person is first set in xml
+        // Depending on the index, the commission values are set accordingly
+        switch(pos) {
+            case 0:
+                if (roleIndex < personIndex) {
+                    processCommissionerRole(fieldInfo, signatureNode, xmlFile);
+                } else {
+                    processCommissionerPerson(fieldInfo, signatureNode);
+                }
+                break;
+            case 1:
+                if (roleIndex < personIndex) {
+                    processCommissionerPerson(fieldInfo, signatureNode);
+                } else {
+                    processCommissionerRole(fieldInfo, signatureNode, xmlFile);
+                }
+                break;
+            default:
+                break;
         }
-        createPackageTitleElement(fieldInfo, xmlFile);
+    }
+
+    private void processCommissionerRole(ReferenceFieldInfo fieldInfo, Node signatureNode, XmlUtil.XmlFile xmlFile) {
+        this.addRoleToReferences(fieldInfo, xmlFile);
+        final Node roleNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_ROLE);
+        if (roleNode == null) return;
+
+        roleNode.setTextContent(fieldInfo.getDisplayValue());
+
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
+    }
+
+    private void addRoleToReferences(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node referencesNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_REFERENCES);
+        boolean appendNode = false;
+        if (referencesNode == null) return;
+
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
+        if (roleFieldInfo == null) return;
+
+        Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
+        if (tlcRoleNode == null) {
+            tlcRoleNode = xmlFile.newElement(MetadataUtil.ELEMENT_TLCROLE);
+            appendNode = true;
+        }
+
+        XmlUtil.setNodeAttributeValue(tlcRoleNode, MetadataUtil.ATTRIBUTE_HREF, roleFieldInfo.getHref());
+        XmlUtil.setNodeAttributeValue(tlcRoleNode, MetadataUtil.ATTRIBUTE_SHOWAS, roleFieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(tlcRoleNode, MetadataUtil.ATTRIBUTE_XMLID, roleFieldInfo.getId());
+        if (appendNode) {
+            referencesNode.appendChild(tlcRoleNode);
+        }
+    }
+
+    private ReferenceFieldInfo getRoleFieldInfo(String commissionerValue) {
+        if (MetadataUtil.isRolePresident(commissionerValue)) {
+            return MetadataUtil.getRolePresidentFieldInfo();
+        }
+        if (MetadataUtil.isRoleVicePresident(commissionerValue)) {
+            return MetadataUtil.getRoleVicePresidentFieldInfo();
+        }
+        if (MetadataUtil.isRoleMemberOfTheCommission(commissionerValue)) {
+            return MetadataUtil.getRoleMemberOfTheCommissionFieldInfo();
+        }
+        if (MetadataUtil.isRoleDirectorGeneral(commissionerValue)) {
+            return MetadataUtil.getRoleDirectorGeneralFieldInfo();
+        }
+        return null;
+    }
+
+    private void processCommissionerPerson(ReferenceFieldInfo fieldInfo, Node signatureNode) {
+        final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
+        if (personNode == null) return;
+        personNode.setTextContent(fieldInfo.getDisplayValue());
+    }
+
+    @Override
+    public void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+            if (xmlNodeCoverpage == null) {
+                return;
+            }
+
+            Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, MetadataUtil.ATTRIBUTE_PACKAGE_TITLE);
+            if (xmlNodeBlock != null) {
+                xmlNodeCoverpage.removeChild(xmlNodeBlock);
+            }
+            createPackageTitleElement(fieldInfo, xmlFile);
+        }
     }
 
     private void createPackageTitleElement(final SimpleFieldInfo packageTitle, XmlUtil.XmlFile xmlFile) {
-        final Element containerElement = insertElementInCoverPage(xmlFile, MetadataUtil.PACKAGE_TITLE);
+        final Element containerElement = insertElementInCoverPage(xmlFile, MetadataUtil.ATTRIBUTE_PACKAGE_TITLE);
 
-        final Element packageTitleElement = xmlFile.newElement("p");
-        XmlUtil.setNodeAttributeValue(packageTitleElement, MetadataUtil.XMLID, IdGenerator.generateId());
+        final Element packageTitleElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+        XmlUtil.setNodeAttributeValue(packageTitleElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         packageTitleElement.setTextContent(packageTitle.getValue());
         containerElement.appendChild(packageTitleElement);
     }
 
+    @Override
     public void processInternalRef(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
 
     }
 
-    public void processCoverPageType(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) throws XmlUtilException {
-        final String language = readLanguageValue(xmlFile);
-        ObjectMapper objectMapper = new ObjectMapper();
-        CoverPageTypeMetadata coverPageTypeMetadata;
-        try {
-            coverPageTypeMetadata = objectMapper.readValue(fieldInfo.getValue(), CoverPageTypeMetadata.class);
-        } catch (JsonProcessingException e) {
-            return;
-        }
-        Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
-        if (xmlNodeCoverPage == null) {
-            return;
-        }
-        String coverPageType = coverPageTypeMetadata.getCoverPageType().name();
-        boolean disclaimer = coverPageTypeMetadata.isDisclaimer();
-        boolean logo = coverPageTypeMetadata.isLogo();
-        boolean watermark = coverPageTypeMetadata.isWatermark();
-        Float verticalShift = coverPageTypeMetadata.getVerticalShift();
-        deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.COVERPAGE_TYPE_PATH, true);
-        if (disclaimer) {
-            Element coverPageTypeElement = insertElementInCoverPage(xmlFile, MetadataUtil.DISCLAIMER);
-            if (verticalShift != null) {
-                XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("margin-top: %scm", verticalShift));
+    @Override
+    public void processCoverPageType(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            final String language = readLanguageValue(xmlFile);
+            ObjectMapper objectMapper = new ObjectMapper();
+            CoverPageTypeMetadata coverPageTypeMetadata;
+            try {
+                coverPageTypeMetadata = objectMapper.readValue(fieldInfo.getValue(), CoverPageTypeMetadata.class);
+            } catch (JsonProcessingException e) {
+                return;
             }
-            Element coverPageTypePElement = xmlFile.newElement(MetadataUtil.P);
-            XmlUtil.setNodeAttributeValue(coverPageTypePElement, MetadataUtil.XMLID, IdGenerator.generateId());
-            if (coverPageType.contains("EUROPA")) {
-                coverPageTypePElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.disclaimer.europa"));
-            } else {
-                coverPageTypePElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.disclaimer.expert"));
+            Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+            if (xmlNodeCoverPage == null) {
+                return;
             }
-            coverPageTypeElement.appendChild(coverPageTypePElement);
-        }
-        Node xmlNodeContainerLogo = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverPage, MetadataUtil.LOGO);
-        if (xmlNodeContainerLogo == null && logo) {
-            deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.ACTING_ENTITY_PATH, true);
-            Element containerLogoElement = insertElementInCoverPage(xmlFile, MetadataUtil.LOGO);
-            Element containerLogoPElement = xmlFile.newElement(MetadataUtil.P);
-            XmlUtil.setNodeAttributeValue(containerLogoPElement, MetadataUtil.XMLID, IdGenerator.generateId());
-            containerLogoElement.appendChild(containerLogoPElement);
-            Element containerLogoImgElement = xmlFile.newElement(MetadataUtil.IMG);
-            XmlUtil.setNodeAttributeValue(containerLogoImgElement, MetadataUtil.XMLID, IdGenerator.generateId());
-            XmlUtil.setNodeAttributeValue(containerLogoImgElement, "alt", ResourcesUtil.getMessage(language, "coverpage.logo.ec.title"));
-            XmlUtil.setNodeAttributeValue(containerLogoImgElement, "src", "data:image/png;base64," + getEcLogoAsBase64());
-            XmlUtil.setNodeAttributeValue(containerLogoImgElement, "title", ResourcesUtil.getMessage(language, "coverpage.logo.ec.title"));
-            containerLogoPElement.appendChild(containerLogoImgElement);
+            String coverPageType = coverPageTypeMetadata.getCoverPageType().name();
+            boolean disclaimer = coverPageTypeMetadata.isDisclaimer();
+            boolean logo = coverPageTypeMetadata.isLogo();
+            boolean watermark = coverPageTypeMetadata.isWatermark();
+            Float verticalShift = coverPageTypeMetadata.getVerticalShift();
+            deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.COVERPAGE_TYPE_PATH, true);
+            if (disclaimer) {
+                Element coverPageTypeElement = insertElementInCoverPage(xmlFile, MetadataUtil.ELEMENT_DISCLAIMER);
+                if (verticalShift != null) {
+                    XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("margin-top: %scm", verticalShift));
+                }
+                Element coverPageTypePElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+                XmlUtil.setNodeAttributeValue(coverPageTypePElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+                if (coverPageType.contains("EUROPA")) {
+                    coverPageTypePElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.disclaimer.europa"));
+                } else {
+                    coverPageTypePElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.disclaimer.expert"));
+                }
+                coverPageTypeElement.appendChild(coverPageTypePElement);
+            }
+            Node xmlNodeContainerLogo = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverPage, MetadataUtil.ELEMENT_LOGO);
+            if (xmlNodeContainerLogo == null && logo) {
+                deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.ACTING_ENTITY_PATH, true);
+                Element containerLogoElement = insertElementInCoverPage(xmlFile, MetadataUtil.ELEMENT_LOGO);
+                Element containerLogoPElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+                XmlUtil.setNodeAttributeValue(containerLogoPElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+                containerLogoElement.appendChild(containerLogoPElement);
+                Element containerLogoImgElement = xmlFile.newElement(MetadataUtil.ELEMENT_IMG);
+                XmlUtil.setNodeAttributeValue(containerLogoImgElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+                XmlUtil.setNodeAttributeValue(containerLogoImgElement, "alt", ResourcesUtil.getMessage(language, "coverpage.logo.ec.title"));
+                XmlUtil.setNodeAttributeValue(containerLogoImgElement, "src", "data:image/png;base64," + getEcLogoAsBase64());
+                XmlUtil.setNodeAttributeValue(containerLogoImgElement, "title", ResourcesUtil.getMessage(language, "coverpage.logo.ec.title"));
+                containerLogoPElement.appendChild(containerLogoImgElement);
 
-            Element containerActingEntityElement = insertElementInCoverPage(xmlFile, MetadataUtil.ACTING_ENTITY_NAME);
-            Element containerActingPElement = xmlFile.newElement(MetadataUtil.P);
-            XmlUtil.setNodeAttributeValue(containerActingPElement, MetadataUtil.XMLID, IdGenerator.generateId());
-            containerActingEntityElement.appendChild(containerActingPElement);
-            Element containerActingEntityOrgElement = xmlFile.newElement(MetadataUtil.ORGANIZATION);
-            XmlUtil.setNodeAttributeValue(containerActingEntityOrgElement, MetadataUtil.XMLID, IdGenerator.generateId());
-            XmlUtil.setNodeAttributeValue(containerActingEntityOrgElement, MetadataUtil.REFERSTO, "~COM");
-            containerActingEntityOrgElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.logo.acting.entity.ec"));
-            containerActingPElement.appendChild(containerActingEntityOrgElement);
-        } else if (xmlNodeContainerLogo != null && !logo) {
-            deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.ACTING_ENTITY_PATH, true);
-            xmlNodeContainerLogo.getParentNode().removeChild(xmlNodeContainerLogo);
-        }
-        if (watermark) {
-            XmlUtil.setNodeAttributeValue(xmlNodeCoverPage, MetadataUtil.CLASS, "watermark");
-        } else {
-            XmlUtil.removeNodeAttributeValue(xmlNodeCoverPage, MetadataUtil.CLASS);
+                Element containerActingEntityElement = insertElementInCoverPage(xmlFile, MetadataUtil.ACTING_ENTITY_NAME);
+                Element containerActingPElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+                XmlUtil.setNodeAttributeValue(containerActingPElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+                containerActingEntityElement.appendChild(containerActingPElement);
+                Element containerActingEntityOrgElement = xmlFile.newElement(MetadataUtil.ELEMENT_ORGANIZATION);
+                XmlUtil.setNodeAttributeValue(containerActingEntityOrgElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+                XmlUtil.setNodeAttributeValue(containerActingEntityOrgElement, MetadataUtil.ATTRIBUTE_REFERSTO, "~COM");
+                containerActingEntityOrgElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.logo.acting.entity.ec"));
+                containerActingPElement.appendChild(containerActingEntityOrgElement);
+            } else if (xmlNodeContainerLogo != null && !logo) {
+                deleteElementsByXPath(xmlNodeCoverPage, MetadataUtil.ACTING_ENTITY_PATH, true);
+                xmlNodeContainerLogo.getParentNode().removeChild(xmlNodeContainerLogo);
+            }
+            if (watermark) {
+                XmlUtil.setNodeAttributeValue(xmlNodeCoverPage, MetadataUtil.ATTRIBUTE_CLASS, "watermark");
+            } else {
+                XmlUtil.removeNodeAttributeValue(xmlNodeCoverPage, MetadataUtil.ATTRIBUTE_CLASS);
+            }
         }
     }
 
@@ -733,31 +1020,33 @@ public class MetadataServiceImpl implements MetadataService {
         return Base64.getEncoder().encodeToString(logoBytes);
     }
 
+    @Override
     public void processAuthenticLanguages(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         final String language = readLanguageValue(xmlFile);
-        Node xmlNodeMeta = xmlFile.getElementByName(MetadataUtil.META);
+        Node xmlNodeMeta = xmlFile.getElementByName(MetadataUtil.ELEMENT_META);
         if (xmlNodeMeta == null) {
             return;
         }
-        Node xmlNodeRef = xmlFile.getElementByName(MetadataUtil.REFERENCES);
+        Node xmlNodeRef = xmlFile.getElementByName(MetadataUtil.ELEMENT_REFERENCES);
         if (xmlNodeRef == null) {
             return;
         }
         deleteElementsByXPath(xmlNodeRef, MetadataUtil.AUTHENTIC_LANGUAGES_PATH, true);
         Element authLangeElement = xmlFile.newElement(MetadataUtil.TLCREFERENCE);
-        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.XMLID, IdGenerator.generateId());
-        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.NAME, MetadataUtil.LANGUAGE);
-        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.HREF, String.format(MetadataUtil.ATHENTIC_LANGUAGE_HREF_PATTERN, language.toUpperCase()));
-        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.SHOWAS, language.toLowerCase());
+        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_LANGUAGE);
+        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.ATTRIBUTE_HREF, String.format(MetadataUtil.ATHENTIC_LANGUAGE_HREF_PATTERN,
+                language.toUpperCase()));
+        XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.ATTRIBUTE_SHOWAS, language.toLowerCase());
         xmlNodeRef.appendChild(authLangeElement);
         List<String> authenticLang = new ArrayList<>(fieldInfo.getValue());
         authenticLang.remove(language.toLowerCase());
         for (String lang: authenticLang) {
-            authLangeElement = xmlFile.newElement(MetadataUtil.TLCREFERENCE);
-            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.XMLID, IdGenerator.generateId());
-            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.NAME, MetadataUtil.LANGUAGE);
-            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.HREF, String.format(MetadataUtil.ATHENTIC_LANGUAGE_HREF_PATTERN, lang.toUpperCase()));
-            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.SHOWAS, lang.toLowerCase());
+            authLangeElement = xmlFile.newElement(MetadataUtil.ELEMENT_TLCREFERENCE);
+            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_LANGUAGE);
+            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.ATTRIBUTE_HREF, String.format(MetadataUtil.ATHENTIC_LANGUAGE_HREF_PATTERN, lang.toUpperCase()));
+            XmlUtil.setNodeAttributeValue(authLangeElement, MetadataUtil.ATTRIBUTE_SHOWAS, lang.toLowerCase());
             xmlNodeRef.appendChild(authLangeElement);
         }
         processAuthenticLanguagesInCoverPage(fieldInfo.getValue(), xmlFile);
@@ -765,18 +1054,18 @@ public class MetadataServiceImpl implements MetadataService {
 
     public void processAuthenticLanguagesInCoverPage(List<String> authenticLang, XmlUtil.XmlFile xmlFile) {
         final String language = readLanguageValue(xmlFile);
-        Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.COVERPAGE);
+        Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
         if (xmlNodeCoverPage == null) {
             return;
         }
-        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverPage, MetadataUtil.AUTHENTIC_LANGUAGES_NAME);
+        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverPage, MetadataUtil.VALUE_AUTHENTIC_LANGUAGES_NAME);
         if (xmlNodeContainer != null) {
             xmlNodeContainer.getParentNode().removeChild(xmlNodeContainer);
         }
 
         if (!authenticLang.isEmpty()) {
-            final Element authContainerElement = insertElementInCoverPage(xmlFile, MetadataUtil.AUTHENTIC_LANGUAGES_NAME);
-            final Element authPElement = xmlFile.newElement(MetadataUtil.P);
+            final Element authContainerElement = insertElementInCoverPage(xmlFile, MetadataUtil.VALUE_AUTHENTIC_LANGUAGES_NAME);
+            final Element authPElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
             List<String> langArray = new ArrayList();
 
             for (String lang: authenticLang) {
@@ -784,7 +1073,7 @@ public class MetadataServiceImpl implements MetadataService {
             }
             langArray = langArray.stream().sorted().collect(Collectors.toList());
             final String langStr = String.join(", ", langArray);
-            XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
             authPElement.setTextContent(String.format(ResourcesUtil.getMessage(language, "authentic.languages.text.template"), langStr));
             authContainerElement.appendChild(authPElement);
         }

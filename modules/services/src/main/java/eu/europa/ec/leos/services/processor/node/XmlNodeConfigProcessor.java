@@ -79,6 +79,13 @@ public interface XmlNodeConfigProcessor {
     String PROPOSAL_VERTICAL_SHIFT = "proposalVerticalShift";
     String PROPOSAL_CROSS_REFERENCES = "proposalCrossReferences";
 
+    String ADOPTION_PLACE = "adoptionLocation";
+    String ADOPTION_DATE = "adoptionDate";
+    String COTE = "cote";
+    String FINAL_COTE = "finalCote";
+    String INTERINSTITUTIONAL_COTE = "interinstitutionalCote";
+    String STAMP = "stamp";
+
     List<String> docEEATagList = Arrays.asList(DOC_EEA_RELEVANCE_COVER, DOC_EEA_RELEVANCE_PREFACE, DOC_EEA_RELEVANCE_META);
 
     Map<String, XmlNodeConfig> getConfig(LeosCategory proposal);

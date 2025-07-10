@@ -33,7 +33,7 @@ ns_prefixes={}>
             <#assign document = task.getDocument()>
             <#assign actions = task.getActions()>
             <task taskId="${task.getTaskId()}">
-                <document sourceURL="${document.getSourceURL()}" filename="${document.getFilename()}" mimeType="${document.getMimeType()}"
+                <document sourceURL="${document.getSourceURL()}" fileName="${document.getFilename()}" mimeType="${document.getMimeType()}"
                           documentId="${document.getDocumentId()}">
                 </document>
                 <#list actions as action>

@@ -14,6 +14,8 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
@@ -43,9 +45,11 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.ErrorVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
+import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
@@ -82,7 +86,6 @@ import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.LegPackage;
-import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -92,6 +95,9 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
+import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
@@ -187,8 +193,10 @@ public abstract class ApiServiceImpl implements ApiService {
     protected NotificationService notificationService;
     protected LegService legService;
     private final CoverPageApiService coverPageApiService;
+    private final ProposalDetailsService proposalDetailsService;
     private LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
+    private final TemplateConfigurationService templateConfigurationService;
 
     private DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
@@ -221,7 +229,9 @@ public abstract class ApiServiceImpl implements ApiService {
                           ExportPackageService exportPackageService, NotificationService notificationService,
                           LegService legService, UserHelper userHelper, LeosRepository leosRepository,
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
-                          GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService) {
+                          GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
+                          ProposalDetailsService proposalDetailsService,
+                          TemplateConfigurationService templateConfigurationService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -254,6 +264,8 @@ public abstract class ApiServiceImpl implements ApiService {
         this.documentViewService = documentViewService;
         this.genericDocumentTocApiService = genericDocumentTocApiService;
         this.coverPageApiService = coverPageApiService;
+        this.proposalDetailsService = proposalDetailsService;
+        this.templateConfigurationService = templateConfigurationService;
     }
 
     private static String readFileToString(File file) throws IOException {
@@ -611,8 +623,11 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public Optional<DocumentVO> getProposalDetails(String proposalRef, String userId) {
+    public Optional<ProposalDetailsVO> getProposalDetails(String proposalRef, String userId) {
         LOG.trace(proposalRef);
+        ProposalDetailsVO proposalDetails = new ProposalDetailsVO();
+        ProposalDetailsLists proposalDetailsLists = proposalDetailsService.getProposalDetailsLists();
+        proposalDetails.setProposalDetailsLists(proposalDetailsLists);
         Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDateAsDate).reversed());
         Proposal proposal = null;
         byte[] proposalXmlContent = new byte[0];
@@ -671,13 +686,42 @@ public abstract class ApiServiceImpl implements ApiService {
                 } finally {
                     milestonesVOsLock.unlockWrite(stamp);
                 }
-                return Optional.of(proposalVO);
+                proposalVO.setDetailsTabExclusions(getDetailsTabExclusions(proposal));
+                proposalDetails.setDocument(proposalVO);
+                return Optional.of(proposalDetails);
             } catch (Exception e) {
                 LOG.error("Package not found for proposal {}", proposalRef);
                 return Optional.empty();
             }
         }
         return Optional.empty();
+    }
+
+    private DetailsTabExclusions getDetailsTabExclusions(Proposal proposal) {
+        String detailsConf;
+
+        try {
+            detailsConf = templateConfigurationService.getElementFromTemplateConfiguration(
+                    proposal.getMetadata().get().getDocTemplate(), "detailsTabExclusions");
+        }
+        catch(IllegalArgumentException e){
+            return null;
+        }
+
+        if (detailsConf == null || detailsConf.trim().isEmpty()) {
+            return null;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+
+        try {
+            return mapper.readValue(detailsConf, DetailsTabExclusions.class);
+        } catch (Exception e) {
+            LOG.warn("Failed to parse JSON: {}", detailsConf, e);
+            return null;
+        }
     }
 
     private ExportPackageVO getExportPackageVO(ExportDocument exportDocument) {

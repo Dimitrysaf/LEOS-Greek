@@ -17,12 +17,12 @@ import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutputList;
-import eu.europa.ec.digit.leos.pilot.export.service.LeosMetadataService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.rest.Akn4EUUtilRestClient;
+import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -40,17 +41,16 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
 
     private final LeosLegDocumentService leosLegDocumentService;
     private final XmlDocumentService xmlDocumentService;
-    private final LeosMetadataService leosMetadataService;
+    private final LeosPrefinalisationService leosPrefinalisationService;
     private final Akn4EUUtilRestClient restClient;
 
     @Autowired
     public LeosDocumentServiceImpl(LeosLegDocumentService leosLegDocumentService,
                                    XmlDocumentService xmlDocumentService,
-                                   LeosMetadataService metadataService,
-                                   Akn4EUUtilRestClient restClient) {
+                                   LeosPrefinalisationService metadataService, Akn4EUUtilRestClient restClient) {
         this.leosLegDocumentService = leosLegDocumentService;
         this.xmlDocumentService = xmlDocumentService;
-        this.leosMetadataService = metadataService;
+        this.leosPrefinalisationService = metadataService;
         this.restClient = restClient;
     }
 
@@ -89,11 +89,13 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return outputList.getLeosRenditionOutputs();
     }
 
-    public byte[] applyMetadata(MultipartFile inputFile) {
-        return leosMetadataService.applyMetadata(inputFile);
+    public byte[] applyMetadata(MultipartFile inputFile) throws IOException {
+        Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
+        return this.leosPrefinalisationService.applyMetadata(zipContent);
     }
 
-    public void applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
-        this.leosMetadataService.applyMetadataAsync(inputFile, callbackUrl);
+    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) throws IOException {
+        Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
+        return this.leosPrefinalisationService.applyMetadataAsync(zipContent, callbackUrl);
     }
 }
