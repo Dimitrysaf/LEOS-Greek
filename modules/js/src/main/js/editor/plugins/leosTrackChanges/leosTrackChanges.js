@@ -38,6 +38,8 @@ define(function leosTrackChangesModule(require) {
         DATA_AKN_SOFTACTION: "data-akn-attr-softaction", DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
         SOFTACTION_MOVE_FROM: "move_from", SOFTACTION_MOVE_TO: "move_to",
 
+        BULLET: "•",
+
         // Caret definitions
         CARET_START: false, CARET_END: true,
 
@@ -716,14 +718,16 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptAllChanges: function(editor) {
-            this.processAllChanges(editor, 'acceptElement');
+            var processedElements = [];
+            this.processAllChanges(editor, 'acceptElement', processedElements);
         },
 
         rejectAllChanges: function(editor) {
-            this.processAllChanges(editor, 'rejectElement');
+            var processedElements = [];
+            this.processAllChanges(editor, 'rejectElement', processedElements);
         },
 
-        processAllChanges: function (editor, actionName) {
+        processAllChanges: function (editor, actionName, processedElements) {
 
             var isElementDeleted = false;
             var element = editor.document.find('.leos-placeholder').getItem(0);
@@ -734,7 +738,6 @@ define(function leosTrackChangesModule(require) {
                     var olElements = this.findOlElementsByDepth(element, i);
                     for (var j = olElements.length - 1; j >= 0; j--) {
                         var olElementToProcess = olElements[j];
-                        var processedElements = [];
                         isElementDeleted = this.processOlElement(editor, olElementToProcess, processedElements, actionName);
                         if (isElementDeleted) {
                             break;
@@ -745,7 +748,7 @@ define(function leosTrackChangesModule(require) {
                     }
                 }
                 if (isElementDeleted) {
-                    this.processAllChanges(editor, actionName);
+                    this.processAllChanges(editor, actionName, processedElements);
                 }
             }
 
@@ -768,7 +771,7 @@ define(function leosTrackChangesModule(require) {
                 }
             }
             if (isElementDeleted) {
-                this.processAllChanges(editor, actionName);
+                this.processAllChanges(editor, actionName, processedElements);
             }
         },
 
@@ -1109,6 +1112,89 @@ define(function leosTrackChangesModule(require) {
                     } else {
                         this.indentList(element, editor, true);
                     }
+                } else { // case of reject action when is newly inserted
+                    var blockContainer = element.getAscendant(function(elem) {
+                        return elem && typeof elem['is'] === 'function' && elem.is('div') &&
+                            elem.getAttribute('data-akn-name') === 'blockContainer' &&
+                            elem.getAttribute('leos:editable') === 'true';
+                    }, true); // block container context Explanatory Memorandum
+                    var articleAscendant = element.getAscendant(function(elem) {
+                        return elem && typeof elem['is'] === 'function' && elem.is('article') &&
+                            elem.getAttribute('data-akn-name') === 'article';
+                    }, true); // block container context Explanatory Memorandum
+                    if(!!blockContainer && element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)){
+                        if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.UNNUMBERED) {
+                            // remove data-akn-action-number data-akn-tc-original-number data-akn-uid-number data-akn-num
+                            var tcAttributes = ["data-akn-action-number", "data-akn-tc-original-number", "data-akn-uid-number", "data-akn-num",
+                                         "title-number", "data-akn-tc-original-number", "NEW"];
+                            for (var attrName of tcAttributes) {
+                                element.removeAttribute(attrName);
+                            }
+                            element.renameNode('p');
+
+                            // Find the parent list (<ul> or <ol>)
+                            var parentList = element.getAscendant(function(element) {
+                                return element.is('ul') || element.is('ol');
+                            }, true);
+
+                            if (!parentList) {
+                                console.log('No parent list (<ul> or <ol>) found.');
+                                return;
+                            }
+
+                            // Remove the <list> element from its parent
+                            element.remove();
+
+                            // Insert the <list> element after the parent list
+                            element.insertAfter(parentList);
+                            // Check if the parent list is empty (no children) and remove it if so
+                            if (parentList.getChildCount() === 0) {
+                                parentList.remove();
+                            }
+                        }else{
+                            // case when the type of list is changed from numbered to unnumbered or the other way.
+                            element.setAttribute('data-akn-num', element.getAttribute('data-akn-tc-original-number'));
+
+                            if(element.getAttribute('data-akn-tc-original-number') == core.BULLET){
+                                element.getParent().renameNode('ul');
+                                element.getParent().setAttribute("data-akn-name","UnNumberedBlockList");
+                            }else{
+                                element.getParent().renameNode('ol');
+                                element.getParent().setAttribute("data-akn-name","NumberedBlockList");
+                            }
+                            var tcAttributes = ["data-akn-action-number", "data-akn-tc-original-number", "data-akn-uid-number",
+                                "title-number",  "NEW"];
+                            for (var attrName of tcAttributes) {
+                                element.removeAttribute(attrName);
+                            }
+                        }
+                    }
+
+                    // article case of reject action when is newly inserted paragraph
+                    if(!!articleAscendant){
+                        var canFireParagraphChange = false;
+                        for (var elementSibling of element.getParent().$.children) {
+                            if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER)
+                                && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM)
+                                && !elementSibling.getAttribute(core.ACTION_ATTR)
+                                && /^\d+\.$/.test(elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {// is number ending in point
+
+                                canFireParagraphChange = true;
+                                core.removeTrackChangesAttributes(elementSibling);
+                                if(elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
+                                    core.removeTrackChangesAttributesForNumberingDelete(elementSibling);
+                                }
+                                core.removeTrackChangesAttributesForNumbering(elementSibling);
+                                core.removeSoftAttributes(elementSibling);
+                                if (!elementSibling.getAttribute(leosPluginUtils.ID)) {
+                                    elementSibling.setAttribute(leosPluginUtils.ID, "XtempXtcX" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                                }
+                            }
+                        }
+                        if(canFireParagraphChange){//in aknNumberedParagraphPlugin.js, change status to PARA_MODE to UNNUMBERED
+                            editor.fire('changeParaModeToUnnumbered');
+                        }
+                    }
                 }
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
                 if(element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) && element.hasAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
@@ -1120,6 +1206,8 @@ define(function leosTrackChangesModule(require) {
                 }else{
                     element.remove();
                 }
+            } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.DELETE_ACTION && element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
+                core.removeTrackChangesAttributesForNumbering(element);
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 if(parentElem && parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
