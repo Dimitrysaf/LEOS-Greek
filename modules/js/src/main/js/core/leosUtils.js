@@ -41,6 +41,7 @@ define(function leosUtilsModule(require) {
     var HEADING = "heading";
     var NUM = "num";
     var PARAGRAPH = "paragraph";
+    var BLOCKCONTAINER = "blockcontainer";
     var LEVEL = "level";
     var DOCPURPOSE = "docPurpose";
     var ID = "id";
@@ -426,6 +427,7 @@ define(function leosUtilsModule(require) {
         ID: ID,
         HEADING: HEADING,
         SPELLCHECKER: SPELLCHECKER,
+        BLOCKCONTAINER: BLOCKCONTAINER,
         LEVEL: LEVEL,
         DOCPURPOSE: DOCPURPOSE
     };
