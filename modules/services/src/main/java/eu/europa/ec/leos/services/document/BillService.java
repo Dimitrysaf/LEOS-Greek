@@ -56,6 +56,8 @@ public interface BillService {
 
     Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest);
 
+    Bill updateBill(Bill bill, BillMetadata updatedMetadata, byte[] updatedContent, VersionType versionType, String comment, boolean updateInternalRefs);
+
     Bill updateBillWithMilestoneComments(Bill bill, List<String> milestoneComments, VersionType versionType, String comment);
 
     Bill updateBillWithMilestoneComments(String ref, String billId, List<String> milestoneComments);

@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.collection.document;
 
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -27,10 +28,12 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.services.api.BillApiService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.importoj.ImportService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
@@ -50,6 +53,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -82,6 +86,8 @@ public class BillContextService {
     private final CollectionUrlBuilder urlBuilder;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final PostProcessingDocumentService postProcessingDocumentService;
+    private final ImportService importService;
+    private final BillApiService billApiService;
     private XPathCatalog xPathCatalog;
 
     private final Provider<AnnexContextService> annexContextProvider;
@@ -112,6 +118,8 @@ public class BillContextService {
     private boolean translated;
     private String packageRef = null;
     private boolean isAnnexToBeUpdated;
+    private byte[] sourceContent = null;
+    private byte[] sourceAnnexContent = null;
 
     @Autowired
     BillContextService(BillService billService,
@@ -126,7 +134,9 @@ public class BillContextService {
                        PostProcessingDocumentService postProcessingDocumentService, Provider<AnnexContextService> annexContextProvider,
                        XPathCatalog xPathCatalog,
                        RepositoryPropertiesMapper repositoryPropertiesMapper,
-                       DocumentLanguageContext documentLanguageContext) {
+                       DocumentLanguageContext documentLanguageContext,
+                       ImportService importService,
+                       BillApiService billApiService) {
         this.billService = billService;
         this.packageService = packageService;
         this.proposalService = proposalService;
@@ -143,6 +153,20 @@ public class BillContextService {
         this.xPathCatalog = xPathCatalog;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.documentLanguageContext = documentLanguageContext;
+        this.importService = importService;
+        this.billApiService = billApiService;
+    }
+
+    public void useSourceContent(byte[] sourceContent) {
+        Validate.notNull(sourceContent, "Source content must not be null!");
+        LOG.trace("Using Bill source content...");
+        this.sourceContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
+    }
+
+    public void useSourceAnnexContent(byte[] sourceAnnexContent) {
+        Validate.notNull(sourceContent, "Source content must not be null!");
+        LOG.trace("Using Bill Annex source content...");
+        this.sourceAnnexContent = xmlContentProcessor.cleanTrackChanges(sourceAnnexContent);
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -285,6 +309,13 @@ public class BillContextService {
 
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
                 getContent(bill));
+
+        if (sourceContent != null) {
+            byte[] newContent =  importService.insertSelectedElements(billCreated, sourceContent, xmlContentProcessor.extractElementIdsFromBill(sourceContent),
+                    billApiService.getToc(billCreated.getMetadata().get().getRef(), TocMode.NOT_SIMPLIFIED, null));
+            billService.updateBill(billCreated, billCreated.getMetadata().get(), newContent, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
+        }
+
         return billService.createVersion(billCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -512,6 +543,10 @@ public class BillContextService {
         annexContext.useCloneProposal(cloneProposal);
         annexContext.useOriginRef(originRef);
         annexContext.usePackageRef(packageRef);
+
+        if (sourceAnnexContent != null){
+            annexContext.useSourceContent(sourceAnnexContent);
+        }
         Annex annex = annexContext.executeCreateAnnex();
 
         String href = annex.getName();

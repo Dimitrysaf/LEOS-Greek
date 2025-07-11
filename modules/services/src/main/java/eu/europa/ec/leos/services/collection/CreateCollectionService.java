@@ -1,10 +1,13 @@
 package eu.europa.ec.leos.services.collection;
 
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 public interface CreateCollectionService {
 
@@ -15,6 +18,15 @@ public interface CreateCollectionService {
      * @return The collection creation result containing the proposal view url.
      */
     CreateCollectionResult createCollection(DocumentVO documentVO)throws CreateCollectionException;
+
+    /**
+     * Create a collection from document vo
+     *
+     * @param documentVO
+     * @param documents
+     * @return The collection creation result containing the proposal view url.
+     */
+    CreateCollectionResult createCollectionFromExisting(DocumentVO documentVO, List<XmlDocument> documents)throws CreateCollectionException;
 
     /**
      * Create a collection from a Leg document file

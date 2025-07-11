@@ -268,4 +268,61 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
             LOG.error("Error deleting the folder {}", e);
         }
     }
+//
+//    public DocumentVO createProposalFromContent(Map<String, Object> files, boolean canModifySource) throws XmlValidationException {
+//        DocumentVO proposal = new DocumentVO(LeosCategory.PROPOSAL);
+//        String proposalFileKey = files.keySet().stream()
+//                .filter(x -> x.startsWith(PROPOSAL_FILE) && x.endsWith(XML_DOC_EXT))
+//                .findFirst()
+//                .orElse("");
+//
+//        if (!files.containsKey(proposalFileKey)) {
+//            throw new XmlValidationException(messageHelper.getMessage("wizard.document.upload.error.document.proposal.not.found"),
+//                    ErrorCode.DOCUMENT_NOT_FOUND);
+//        }
+//
+//        List<DocumentVO> propChildDocs = new ArrayList<>();
+//        File proposalFile = (File) files.get(proposalFileKey);
+//        updateSource(proposal, proposalFile, canModifySource);
+//        updateDocIdFromXml(proposal, LeosCategory.PROPOSAL, proposalFileKey);
+//        updateMetadataVO(proposal);
+//
+//        List<DocumentVO> billChildDocs = new ArrayList<>();
+//        DocumentVO billDoc = null;
+//        HashMap<Integer, DocumentVO> annexes = new HashMap<>();
+//
+//        for (String docName : files.keySet()) {
+//            if (docName.startsWith(PROPOSAL_FILE)) {
+//                continue;
+//            }
+//            File docFile = (File) files.get(docName);
+//            if (!doc.getCategory() == LeosCategory.BILL) {
+//                DocumentVO doc = createDocument(docName, docFile, canModifySource);
+//                if (doc != null) {
+//                    if (doc.getCategory() == LeosCategory.ANNEX) {
+//                        annexes.put(new Integer(doc.getMetadata().getIndex()), doc);
+//                    } else if (doc.getCategory() == LeosCategory.MEDIA) {
+//                        billChildDocs.add(doc);
+//                    } else {
+//                        propChildDocs.add(doc);
+//                    }
+//                }
+//            } else {
+//
+//                DocumentVO doc = createDocument(docName, docFile, canModifySource);
+//
+//                // add logic of import OJ to copy the content from original to the new one after creating the new bill doc
+//                // replace metadata of new document by metadata of original
+//            }
+//        }
+//
+//        billChildDocs.addAll(annexes.values());
+//        if (billDoc != null) {
+//            billDoc.setChildDocuments(billChildDocs);
+//            propChildDocs.add(billDoc);
+//        }
+//        proposal.setChildDocuments(propChildDocs);
+//
+//        return proposal;
+//    }
 }

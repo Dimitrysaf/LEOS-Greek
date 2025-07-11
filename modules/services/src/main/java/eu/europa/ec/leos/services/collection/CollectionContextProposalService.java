@@ -13,13 +13,11 @@
  */
 package eu.europa.ec.leos.services.collection;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Bill;
-import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
-import eu.europa.ec.leos.domain.repository.document.Memorandum;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -41,6 +39,7 @@ import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
@@ -49,13 +48,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
-import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
-import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.*;
 
 @Service
+@Scope("prototype")
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})
 public class CollectionContextProposalService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextProposalService.class);
@@ -119,6 +117,13 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.useType(metadata.getType());
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
+
+            //Copy Act
+            List<XmlDocument> doc = categorySourceDocuments.get(MEMORANDUM);
+            if (doc != null && !doc.isEmpty() && doc.get(0).getContent().isDefined()) {
+                memorandumContext.useSourceContent(doc.get(0).getContent().get().getSource().getBytes());
+            }
+
             Memorandum memorandumCreated = memorandumContext.executeCreateMemorandum();
             proposal = proposalService.addComponentRef(proposal, memorandumCreated.getName(), LeosCategory.MEMORANDUM);
         }
@@ -131,7 +136,25 @@ public class CollectionContextProposalService extends CollectionContextService {
             billContext.usePurpose(purpose);
             billContext.useActionMessageMap(actionMsgMap);
             billContext.usePackageRef(proposal.getMetadata().get().getRef());
+
+            //Copy Act
+            List<XmlDocument> doc = categorySourceDocuments.get(BILL);
+            if (doc != null && !doc.isEmpty() && doc.get(0).getContent().isDefined()) {
+//                bill
+                billContext.useSourceContent(doc.get(0).getContent().get().getSource().getBytes());
+            }
+
             Bill billCreated = billContext.executeCreateBill();
+
+            List<XmlDocument> annex = categorySourceDocuments.get(ANNEX);
+            if (annex != null && !annex.isEmpty()) {
+                for (XmlDocument xmlDocument : annex) {
+                    billContext.useAnnexTemplate(xmlDocument.getMetadata().get().getTemplate());
+                    billContext.useSourceAnnexContent(xmlDocument.getContent().get().getSource().getBytes());
+                    billContext.executeCreateBillAnnex();
+                }
+            }
+
             proposal = proposalService.addComponentRef(proposal, billCreated.getName(), LeosCategory.BILL);
         }
 
@@ -148,6 +171,13 @@ public class CollectionContextProposalService extends CollectionContextService {
             financialStatementContext.usePackageTemplate(metadata.getTemplate());
             financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
             financialStatementContext.useCollaborators(proposal.getCollaborators());
+
+            //Copy Act
+            List<XmlDocument> doc = categorySourceDocuments.get(STAT_DIGIT_FINANC_LEGIS);
+            if (doc != null && !doc.isEmpty() && doc.get(0).getContent().isDefined()) {
+                financialStatementContext.useSourceContent(doc.get(0).getContent().get().getSource().getBytes());
+            }
+
             FinancialStatement financialStatementCreated = financialStatementContext.executeCreateFinancialStatement();
             proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_DIGIT_FINANC_LEGIS);
         }
