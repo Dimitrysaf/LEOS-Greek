@@ -2,10 +2,13 @@ package eu.europa.ec.leos.services.collection;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Provider;
 
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,6 +126,38 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useLanguage(documentVO.getMetadata().getLanguage());
             context.useTranslated(false);
             context.useTemplateKey(documentVO.getMetadata().getTemplate());
+            //create proposal
+            Proposal proposal = context.executeCreateProposal();
+
+            String proposalId = proposal.getMetadata().get().getRef();
+            String proposalUrl = urlBuilder.buildProposalViewUrl(proposalId);
+            idsAndUrlsHolder.setProposalId(proposalId);
+            idsAndUrlsHolder.setProposalUrl(proposalUrl);
+            LOG.info("New document of type {} created in {} milliseconds ({} sec)", documentVO.getCategory(),
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            return new CreateCollectionResult(idsAndUrlsHolder, true, null);
+        }
+        CreateCollectionError error = new CreateCollectionError(0,
+                messageHelper.getMessage("repository.create.proposal.error"));
+        throw new CreateCollectionException(error.getMessage());
+    }
+
+    @Override
+    public CreateCollectionResult createCollectionFromExisting(DocumentVO documentVO, List<XmlDocument> documents) throws CreateCollectionException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        LOG.debug("Handling create document request event... [category={}]", documentVO.getCategory());
+        CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
+        if (LeosCategory.PROPOSAL.equals(documentVO.getCategory())) {
+            CollectionContextService context = proposalContextProvider.get();
+            context.usePurpose(documentVO.getMetadata().getDocPurpose());
+            context.useEeaRelevance(documentVO.getMetadata().getEeaRelevance());
+            context.useActionMessage(ContextActionService.COPY_CONTENT, messageHelper.getMessage("operation.copy.content"));
+            context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
+            context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
+            context.useLanguage(documentVO.getMetadata().getLanguage());
+            context.useTranslated(false);
+            context.useTemplateKey(documentVO.getMetadata().getTemplate());
+            context.useSourceDocuments(documents);
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 
