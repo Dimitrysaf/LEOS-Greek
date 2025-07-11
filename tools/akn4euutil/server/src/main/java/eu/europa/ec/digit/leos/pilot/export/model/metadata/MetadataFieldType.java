@@ -55,6 +55,9 @@ public enum MetadataFieldType {
         if (MetadataFieldType.ADOPTION_LOCATION.getTypeName().equals(typeName)){
             return MetadataFieldType.ADOPTION_LOCATION;
         }
+        if (MetadataFieldType.ADOPTION_DATE.getTypeName().equals(typeName)){
+            return MetadataFieldType.ADOPTION_DATE;
+        }
         if (MetadataFieldType.EMISSION_DATE.getTypeName().equals(typeName)){
             return MetadataFieldType.EMISSION_DATE;
         }
