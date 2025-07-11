@@ -294,6 +294,8 @@ public abstract class CollectionContextService {
         // use template
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
+        useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
+        useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
 
         // get metadata from template
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
