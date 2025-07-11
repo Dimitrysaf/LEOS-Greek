@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.collection;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -49,6 +50,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.*;
 
