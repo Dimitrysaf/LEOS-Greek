@@ -65,7 +65,13 @@ define(function leosPluginUtilsModule(require) {
     var SUBPARAGRAPH = "subparagraph";
     var PARAGRAPH = "paragraph";
     var RECITAL = "recital";
-    var SUBFLOW_NAME = "structuredContent"
+    var SUBFLOW_NAME = "structuredContent";
+    var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
+    var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
+    var HCONTAINER_TABLE = "BLOCK_TAB";
+    var SUB_HCONTAINER_TABLE = "TAB";
+    var HCONTAINER_IMAGE = "FGR";
+    var SUB_HCONTAINER_IMAGE = "IMG";
     var ARTICLE = "article";
     var LEVEL = "level";
     var CROSSHEADING = "crossHeading";
@@ -1933,6 +1939,12 @@ define(function leosPluginUtilsModule(require) {
         BOGUS: BOGUS,
         TD: TD,
         WRP: WRP,
-        SUBFLOW_NAME: SUBFLOW_NAME
+        SUBFLOW_NAME: SUBFLOW_NAME,
+        DATA_AKN_HCONTAINER: DATA_AKN_HCONTAINER,
+        DATA_AKN_SUB_HCONTAINER: DATA_AKN_SUB_HCONTAINER,
+        HCONTAINER_TABLE: HCONTAINER_TABLE,
+        SUB_HCONTAINER_TABLE: SUB_HCONTAINER_TABLE,
+        HCONTAINER_IMAGE: HCONTAINER_IMAGE,
+        SUB_HCONTAINER_IMAGE: SUB_HCONTAINER_IMAGE
     };
 });
