@@ -27,6 +27,7 @@ import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -57,6 +58,7 @@ public class AnnexContextService {
     private final SecurityService securityService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final PostProcessingDocumentService postProcessingDocumentService;
+    private final XmlContentProcessor xmlContentProcessor;
 
     private LeosPackage leosPackage;
     private Annex annex = null;
@@ -78,11 +80,13 @@ public class AnnexContextService {
     private String language;
     private String packageRef = null;
     private Map<String, String> mapOldAndNewRefs;
+    private byte[] sourceContent = null;
 
     public AnnexContextService(
             TemplateService templateService,
             AnnexService annexService,
-            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper, PostProcessingDocumentService postProcessingDocumentService) {
+            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
+            PostProcessingDocumentService postProcessingDocumentService, XmlContentProcessor xmlContentProcessor) {
         this.templateService = templateService;
         this.annexService = annexService;
         this.proposalService = proposalService;
@@ -90,6 +94,13 @@ public class AnnexContextService {
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.xmlContentProcessor = xmlContentProcessor;
+    }
+
+    public void useSourceContent(byte[] sourceContent) {
+        Validate.notNull(sourceContent, "Source content must not be null!");
+        LOG.trace("Using Annex source content...");
+        this.sourceContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
     }
 
     public void useTemplate(String template) {
@@ -233,6 +244,10 @@ public class AnnexContextService {
         } else {
             annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED),
                     getContent(annex));
+
+            if (sourceContent != null) {
+                annex = annexService.updateAnnex(annex, sourceContent, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
+            }
         }
 
         annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);

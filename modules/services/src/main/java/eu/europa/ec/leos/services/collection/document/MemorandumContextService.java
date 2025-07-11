@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
@@ -56,6 +57,7 @@ public class MemorandumContextService {
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final PostProcessingDocumentService postProcessingDocumentService;
+    private final XmlContentProcessor xmlContentProcessor;
 
     private LeosPackage leosPackage = null;
     private Memorandum memorandum = null;
@@ -75,16 +77,25 @@ public class MemorandumContextService {
     private boolean translated;
     private String packageRef = null;
     private Map<String, String> mapOldAndNewRefs;
+    private byte[] sourceContent = null;
 
     @Autowired
     MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
-                             XmlNodeConfigProcessor xmlNodeConfigProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper, PostProcessingDocumentService postProcessingDocumentService) {
+                             XmlNodeConfigProcessor xmlNodeConfigProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper,
+                             PostProcessingDocumentService postProcessingDocumentService, XmlContentProcessor xmlContentProcessor) {
         this.memorandumService = memorandumService;
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.xmlContentProcessor = xmlContentProcessor;
+    }
+
+    public void useSourceContent(byte[] sourceContent) {
+        Validate.notNull(sourceContent, "Source content must not be null!");
+        LOG.trace("Using Memorandum source content...");
+        this.sourceContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -182,7 +193,12 @@ public class MemorandumContextService {
                 .build();
 
         Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
-                getContent(memorandum));
+                getContent(memorandum, sourceContent));
+
+        if (sourceContent != null) {
+            memorandumService.updateMemorandum(memorandumCreated, memorandumCreated.getMetadata().get(), VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT));
+        }
+
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -286,7 +302,11 @@ public class MemorandumContextService {
         this.originRef = originRef;
     }
 
-    private byte[] getContent(Memorandum memorandum) {
+    private byte[] getContent(Memorandum memorandum, byte[] sourceContent) {
+        if(sourceContent != null) {
+            return sourceContent;
+        }
+
         final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
         return content.getSource().getBytes();
     }
