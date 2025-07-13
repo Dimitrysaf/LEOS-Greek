@@ -163,8 +163,18 @@
 			}
 		}
 
+
+
         @extend %xmlLongTitle;
 
+    }
+
+    container[name=corrigendum],
+    container[name=addendum] {
+        display: block;
+        > aknp {
+            display: block;
+        }
     }
 
 }

@@ -691,12 +691,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public byte[] applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception {
         MetadataOptions metadataOptions = convertUpdateProposalRequestToMetadataOptions(legPackage.getExportResource().getName() + ".leg", proposal, request);
 
-        Map<String, Object> zipContent = metadataService.applyMetadata(legPackage, proposal, metadataOptions);
+        /*Map<String, Object> zipContent = metadataService.applyMetadata(legPackage, proposal, metadataOptions);
         for (String fileName : zipContent.keySet()) {
             if (fileName.startsWith(PROPOSAL_NAME_PREFIX)) {
                 return (byte[]) zipContent.get(fileName);
             }
-        }
+        }*/
         return proposal.getContent().get().getSource().getBytes();
     }
 
