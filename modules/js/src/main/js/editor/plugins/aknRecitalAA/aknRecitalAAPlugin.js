@@ -127,7 +127,7 @@ define(function aknRecitalAAPluginModule(require) {
             startElement = startElement.getLast().getLast();
         }
         var div = startElement?.getAscendant("div", true);
-        if (div?.getAttribute(leosPluginUtils.DATA_AKN_NAME) !== leosPluginUtils.SUBFLOW_NAME || div.getAttribute("data-akn-hcontainer")) {
+        if (div?.getAttribute(leosPluginUtils.DATA_AKN_NAME) !== leosPluginUtils.SUBFLOW_NAME || div.getAttribute(leosPluginUtils.DATA_AKN_HCONTAINER)) {
             context.event.cancel();
         }
     }
@@ -154,7 +154,19 @@ define(function aknRecitalAAPluginModule(require) {
             }
         }
 
-        function isAllTextInDivSelected() {
+        function removeFullySelectedTables() {
+            let endElement = range.endContainer;
+            while (endElement.getAttribute && endElement.getAttribute(leosPluginUtils.DATA_AKN_HCONTAINER) === leosPluginUtils.HCONTAINER_TABLE
+                && range.endOffset === 1 && !endElement.equals(range.getCommonAncestor())) {
+                range.setEndAt(endElement.getPrevious(), CKEDITOR.POSITION_BEFORE_END);
+                range.select();
+                endElement.remove();
+                endElement = range.endContainer;
+            }
+        }
+
+        function isAllTextInFirstDivSelected() {
+            range.optimize();
             var startElement = range.startContainer,
                 endElement = range.endContainer;
             return startElement.type === CKEDITOR.NODE_ELEMENT && endElement.type === CKEDITOR.NODE_ELEMENT && startElement.getId() === endElement.getId() &&
@@ -211,7 +223,8 @@ define(function aknRecitalAAPluginModule(require) {
                     event.cancel();
                     return false;
                 } else if (!editor.LEOS.isTrackChangesEnabled) {
-                    if (isAllTextInDivSelected()) {
+                    removeFullySelectedTables();
+                    if (isAllTextInFirstDivSelected()) {
                         range.deleteContents();
                         range.startContainer.appendBogus();
                         event.cancel();
@@ -235,7 +248,7 @@ define(function aknRecitalAAPluginModule(require) {
             startElement = startElement.getLast().getLast();
         }
         if (startElement?.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME &&
-            startElement?.getAttribute("data-akn-hcontainer") &&
+            startElement?.getAttribute(leosPluginUtils.DATA_AKN_HCONTAINER) &&
             !ARROW_KEYS.includes(e.keyCode) && e.keyCode !== BACKSPACE && e.keyCode !== DELETE) {
             //Cancel the event
             e.stopImmediatePropagation();

@@ -141,8 +141,8 @@ define(function leosTablePluginModule(require) {
                     parentElem = parentElem.getAscendant(leosPluginUtils.DIV, true);
                     var newBlock = new CKEDITOR.dom.element(leosPluginUtils.DIV);
                     newBlock.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
-                    newBlock.setAttribute('data-akn-hcontainer', 'BLOCK_TAB');
-                    newBlock.setAttribute('data-akn-sub-hcontainer', 'TAB');
+                    newBlock.setAttribute(leosPluginUtils.DATA_AKN_HCONTAINER, leosPluginUtils.HCONTAINER_TABLE);
+                    newBlock.setAttribute(leosPluginUtils.DATA_AKN_SUB_HCONTAINER, leosPluginUtils.SUB_HCONTAINER_TABLE);
                     newBlock.insertAfter(parentElem);
                     setToPosition(editor, newBlock, CKEDITOR.POSITION_AFTER_START);
                 }

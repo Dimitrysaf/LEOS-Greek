@@ -182,10 +182,10 @@ define(function leosBase64ImageDialog(require) {
             selectedElement = selectedElement.getAscendant(leosPluginUtils.DIV, true);
             img.insertAfter(selectedElement);
             range.setStartAfter(selectedElement);
-            range.fixBlock(true, 'div');
+            range.fixBlock(true, leosPluginUtils.DIV);
             range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
-            range.startContainer.setAttribute('data-akn-hcontainer', 'FGR');
-            range.startContainer.setAttribute('data-akn-sub-hcontainer', 'IMG');
+            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_HCONTAINER, leosPluginUtils.HCONTAINER_IMAGE);
+            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_SUB_HCONTAINER, leosPluginUtils.SUB_HCONTAINER_IMAGE);
             leosPluginUtils.setFocus(img, editor);
         }
 
