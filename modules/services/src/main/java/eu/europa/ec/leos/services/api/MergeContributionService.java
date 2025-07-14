@@ -128,10 +128,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.LS;
 import static eu.europa.ec.leos.services.support.XmlHelper.MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.P;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.REF;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX;
@@ -2723,13 +2723,20 @@ public class MergeContributionService {
     }
 
     private byte[] updateInternalReferences(byte[] xmlContent, List<InternalRefMap> map) {
-        String xmlContentStr = new String(xmlContent, UTF_8);
         for (InternalRefMap internalRefMap : map) {
             if (internalRefMap.getClonedRef() != null) {
+                Document document = createXercesDocument(xmlContent);
+                Node clonedProposalRefNode = XercesUtils.getFirstElementByXPath(document, "//akn:clonedProposalRef[@ref='" + internalRefMap.getClonedRef() + "']");
+                String valorOriginalClonedProposalRefNode = clonedProposalRefNode.getAttributes().getNamedItem(REF).getNodeValue();
+                clonedProposalRefNode.getAttributes().getNamedItem(REF).setNodeValue("__TO_BE_REPLACED__");
+                xmlContent = nodeToByteArray(document);
+                String xmlContentStr = new String(xmlContent, UTF_8);
                 xmlContentStr = xmlContentStr.replaceAll(internalRefMap.getClonedRef(), internalRefMap.getRef());
+                xmlContentStr = xmlContentStr.replaceAll("__TO_BE_REPLACED__", valorOriginalClonedProposalRefNode);
+                xmlContent = xmlContentStr.getBytes(StandardCharsets.UTF_8);
             }
         }
-        return xmlContentStr.getBytes(StandardCharsets.UTF_8);
+        return xmlContent;
     }
 
     private boolean isNodeAdded(Node node) {
