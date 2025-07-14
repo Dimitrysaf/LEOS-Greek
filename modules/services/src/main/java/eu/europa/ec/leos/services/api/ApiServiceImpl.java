@@ -186,6 +186,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private ExportPackageService exportPackageService;
     protected NotificationService notificationService;
     protected LegService legService;
+    private final CoverPageApiService coverPageApiService;
     private LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
 
@@ -220,7 +221,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           ExportPackageService exportPackageService, NotificationService notificationService,
                           LegService legService, UserHelper userHelper, LeosRepository leosRepository,
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
-                          GenericDocumentTocApiService genericDocumentTocApiService) {
+                          GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -252,6 +253,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.trackChangesContext = trackChangesContext;
         this.documentViewService = documentViewService;
         this.genericDocumentTocApiService = genericDocumentTocApiService;
+        this.coverPageApiService = coverPageApiService;
     }
 
     private static String readFileToString(File file) throws IOException {
@@ -387,7 +389,15 @@ public abstract class ApiServiceImpl implements ApiService {
             context.useProposalContent(proposalContent);
             proposal = context.executeUpdateMetadataProposal();
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
-            return new DocumentVO(proposal);
+            DocumentVO updatedProposalVO = new DocumentVO(proposal);
+            //CA start
+            coverPageApiService.updateCorrigendumAddendum(proposalRef, request);
+            //updatedProposalVO.setProposalType(request.getProposalType());
+            //updatedProposalVO.setTargetProposalReference( request.getTargetProposalReference());
+            //updatedProposalVO.setTargetProposalDate(request.getTargetProposalDate());
+            //updatedProposalVO.setCorrectionInformation(request.getCorrectionInformation());
+            //CA end
+            return updatedProposalVO;
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;
@@ -709,7 +719,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposalVO.setSource(proposalXmlContent);
                     proposalVO.setRef(proposal.getMetadata().get().getRef());
                     proposalVO.setFavourite(isFavourite);
-
+                    proposalVO = coverPageApiService.getCoverPageCorrigendumAddendumDetails(proposalXmlContent, proposalVO);
                     if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO, proposal.getOriginRef()));
                     }

@@ -98,12 +98,12 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext,
             DocumentViewService documentViewService, ConValidatorService conValidatorService,
-                                  GenericDocumentTocApiService genericDocumentTocApiService) {
+                                  GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService, genericDocumentTocApiService);
+                documentViewService, genericDocumentTocApiService, coverPageApiService);
         this.conValidatorService = conValidatorService;
     }
 

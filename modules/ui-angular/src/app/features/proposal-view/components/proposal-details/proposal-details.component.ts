@@ -5,6 +5,7 @@ import {Subject, takeUntil} from "rxjs";
 import {toNumber} from "lodash-es";
 import {EuiGrowlService} from "@eui/core";
 import {TranslateService} from "@ngx-translate/core";
+import moment from 'moment';
 
 @Component({
   selector: 'app-proposal-details',
@@ -28,6 +29,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   allSelected = false;
 
+  proposalType: string | null;
+  isTargetLang: boolean;
+  proposalTargetLang: string[];
+  showCorrigendumAddendum: boolean;
+  targetProposalReference: string;
+  targetProposalDate: string | null;
+  correctionInformation: string;
+  finalVersion: boolean;
+
   //TODO To be moved to the backend configuration
   languages = ['BG', 'CS', 'DA', 'DE', 'EL', 'EN', 'ES', 'ET', 'FI', 'FR','GA', 'HR', 'HU', 'IT', 'LT', 'LV',
     'MT', 'NL', 'PL', 'PT','RO', 'SK', 'SL', 'SV'];
@@ -43,6 +53,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     ['crossReferences']: false,
   };
 
+  allTargetLangSelected = false;
+  selectedTargetLanguages: { [key: string]: boolean } = {};
+  isComponentVisible = true;
+
   constructor(
     protected detailsService: ProposalDetailsService,
     private growlService: EuiGrowlService,
@@ -52,6 +66,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => (this.permissions = perms));
     this.languages.forEach(lang => this.selectedLanguages[lang] = false);
+    this.languages.forEach(lang => this.selectedTargetLanguages[lang] = false);
   }
 
   ngOnInit(): void {
@@ -69,7 +84,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     }
     this.isVerticalShift = this.coverPageType !== 'STANDARD';
     this.verticalShift = this.proposal.metadata.verticalShift != null ? toNumber(this.proposal.metadata.verticalShift) : 6.0;
-    this.isAutononousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
+    this.isAutononousAct = true;//this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
 
     this.proposalLanguage = this.proposal.metadata.language;
     if (this.proposal.metadata.isAuthenticLang != null) {
@@ -92,6 +107,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         }
       });
     }
+    this.initializeCorrigendumAddendumFields();
   }
 
   handleChange(metadata: string) {
@@ -160,6 +176,24 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     if (this.isVerticalShift) {
       verticalShiftMetadata = this.verticalShift.toString();
     }
+
+    if(this.showCorrigendumAddendum) {
+      if (!this.targetProposalReference || this.targetProposalReference.trim() === '') {
+        alert('Proposal reference is required.');
+        return;
+      }
+
+      if (!this.correctionInformation || this.correctionInformation.trim() === '') {
+        alert('Correction information is required.');
+        return;
+      }
+
+      if (!this.targetProposalDate || this.targetProposalDate.trim() === '') {
+        alert('Correction information is required.');
+        return;
+      }
+    }
+
     this.detailsService.updateProposalMetadata(
       null,
       this.metadataChanged['eeaRelevance'] ? this.eeaRelevance : null,
@@ -167,10 +201,20 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       (this.metadataChanged['isAuthenticLang'] || this.metadataChanged['authenticLang']) ? isMetadataAuthenticLang : null,
       (this.metadataChanged['authenticLang'] || this.metadataChanged['isAuthenticLang']) ? this.authenticLang : null,
       (this.metadataChanged['coverPageType'] || this.metadataChanged['verticalShift']) ? this.coverPageType : null,
-      (this.metadataChanged['coverPageType'] || this.metadataChanged['verticalShift']) ? verticalShiftMetadata : null
+      (this.metadataChanged['coverPageType'] || this.metadataChanged['verticalShift']) ? verticalShiftMetadata : null,
+      this.showCorrigendumAddendum,
+      this.proposalType,
+      this.targetProposalReference,
+      this.formatTargetProposalDate(),
+      this.getTargetLanguages(),
+      this.correctionInformation,
+      this.finalVersion
     ).subscribe({
       next: () => {
         this.detailsService.setProposalRef(this.proposal.ref);
+        if (!this.showCorrigendumAddendum) {
+          this.resetCorrigendumAddendumFields();
+        }
         this.enableSave = false;
         this.growlService.growl({
           severity: 'success',
@@ -212,5 +256,95 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.verticalShift = Math.round((this.verticalShift - 0.1) * 10) / 10;
       this.handleChange('verticalShift');
     }
+  }
+
+  onToggleCorrigendumAddendum(event: Event): void {
+    this.enableSave = true;
+    if (this.showCorrigendumAddendum) {
+      this.proposalType = 'corrigendum';
+    } else {
+      this.proposalType = '';
+    }
+  }
+
+  formatTargetProposalDate(): string {
+    const formattedDate = moment(this.targetProposalDate).format('YYYY-MM-DD');
+    this.targetProposalDate = formattedDate;
+    return formattedDate;
+  }
+
+  handleTargetLangChange(e: boolean) {
+    if (!e) {
+      this.languages.forEach(lang => {
+        this.selectedTargetLanguages[lang] = false;
+      });
+    }
+    this.enableSave = true;
+  }
+
+  onTargetLanguageChange() {
+    const allTargetLangSelected = this.languages.every(lang => this.selectedTargetLanguages[lang]);
+    this.allTargetLangSelected = allTargetLangSelected;
+    this.enableSave = true;
+  }
+
+  toggleAllTargetLanguages() {
+    this.languages.forEach(lang => {
+      this.selectedTargetLanguages[lang] = this.allTargetLangSelected;
+    });
+    this.enableSave = true;
+  }
+
+  handleProposalFinalVersion(inputChangeEvent: Event) {
+    this.enableSave = true;
+    this.finalVersion = (inputChangeEvent.target as HTMLInputElement).checked ? true : false;
+  }
+
+  getTargetLanguages() {
+    this.proposalTargetLang = Object.keys(this.selectedTargetLanguages)
+      .filter(lang => this.selectedTargetLanguages[lang]).map(lang => lang.toLowerCase());
+    if (this.proposalTargetLang.length == this.languages.length) {
+      this.proposalTargetLang = ['ALL'];
+    } else if (this.proposalTargetLang.length == 0) {
+      this.proposalTargetLang = ['NONE'];
+    }
+    return this.proposalTargetLang;
+  }
+
+  private initializeCorrigendumAddendumFields(): void {
+    if (this.proposal.showCorrigendumAddendum) {
+      const proposal = this.proposal;
+      this.showCorrigendumAddendum = proposal.showCorrigendumAddendum;
+      this.proposalType = proposal.proposalType;
+      this.targetProposalReference = proposal.targetProposalReference;
+      this.finalVersion = proposal.finalVersion;
+      this.targetProposalDate = proposal.targetProposalDate;
+      this.allTargetLangSelected = proposal.allTargetLangSelected;
+      this.proposalTargetLang = proposal.proposalTargetLang;
+      this.correctionInformation = proposal.correctionInformation;
+      this.proposalTargetLang && this.proposalTargetLang.forEach(lang => {
+        this.selectedTargetLanguages[lang.toUpperCase()] = true;
+      });
+      this.allTargetLangSelected && this.languages.forEach(lang => {
+        this.selectedTargetLanguages[lang.toUpperCase()] = true;
+      });
+      this.isTargetLang = proposal.allTargetLangSelected || this.proposalTargetLang[0].toUpperCase()  != 'NONE';
+    }
+  }
+
+  private resetCorrigendumAddendumFields(): void {
+    this.proposalType = null;
+    this.targetProposalReference = '';
+    this.targetProposalDate = null;
+    this.correctionInformation = '';
+    this.finalVersion = false;
+    this.isTargetLang = false;
+    this.allTargetLangSelected = false;
+    this.proposalTargetLang = [];
+    this.selectedTargetLanguages = {};
+  }
+
+  onAnyInputChange() {
+    this.enableSave = true;
   }
 }

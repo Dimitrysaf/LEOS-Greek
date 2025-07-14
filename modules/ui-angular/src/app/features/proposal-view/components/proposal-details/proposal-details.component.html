@@ -266,3 +266,180 @@
   </div>
 </div>
 
+
+<div class="col-md-11">
+  <eui-card
+    class="eui-u-mt-s eui-u-mb-l"
+    #documentCard
+    euiCollapsible
+    euiCollapsed="false"
+    class="details-cards-common"
+  >
+    <eui-card-header>
+      <eui-card-header-title>
+        <span (click)="$event.stopPropagation()">
+          <input
+            name="checkbox-corrigendum-addendum"
+            euiInputCheckBox
+            (change)="onToggleCorrigendumAddendum($event)"
+            [(ngModel)]="showCorrigendumAddendum"
+          />
+        </span>
+        <strong>{{'page.collection.details.card.corrigendum.addendum.header.label' | translate}}</strong>
+
+        <span>
+          <button
+            euiButton
+            euiIconButton
+            euiSecondary
+            euiOutline
+            euiSizeS
+            class="details-tooltip-icon"
+          >
+            <eui-icon-svg icon="eui-question-circle" set="eui" size="m" fillColor="grey-100" [euiTooltip]="
+              'page.collection.details.coverpage.tooltip' | translate">
+            </eui-icon-svg>
+          </button>
+        </span>
+      </eui-card-header-title>
+    </eui-card-header>
+
+    <eui-card-content>
+      <div
+        class="eui-u-flex eui-u-pb-m"
+        [class.disabled]="!showCorrigendumAddendum"
+        *ngIf="!documentCard.euiCollapsed"
+      >
+        <div class="col-md-12">
+          <div class="row details-gen-rows">
+            <div class="col-sm-12 label-column">
+              <label class="coverpage-option">{{'page.collection.details.proposal.type.label' | translate}}</label>
+              <label>
+                <input class="proposal-corrigendum-addendum-option"
+                       type="radio" name="proposalType"
+                       [(ngModel)]="proposalType"
+                       (change)="onAnyInputChange()"
+                       [value]="'corrigendum'"
+                       [disabled]="!showCorrigendumAddendum"/>
+                {{'page.collection.details.proposal.corrigendum' | translate}}
+              </label>
+              <label>
+                <input class="proposal-corrigendum-addendum-option"
+                       type="radio"
+                       name="proposalType"
+                       [(ngModel)]="proposalType"
+                       (change)="onAnyInputChange()"
+                       [value]="'addendum'"
+                       [disabled]="!showCorrigendumAddendum"/>
+                {{'page.collection.details.proposal.addendum' | translate}}
+              </label>
+            </div>
+          </div>
+          <div class="row details-gen-rows">
+            <div class="col-sm-2 label-column target-proposal-input-labels">
+              <div style="display: block">
+                <label style="display: block">
+                  {{'page.collection.details.target.proposal.label' | translate}}
+                </label>
+              </div>
+              <div style="display: block; padding-top: 15px;">
+                <label style="display: block">
+                  {{'page.collection.details.target.proposal.date' | translate}}
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-3 label-column">
+              <div style="display: block">
+                <input
+                  id="target-proposal-reference"
+                  [(ngModel)]="targetProposalReference"
+                  (ngModelChange)="onAnyInputChange()"
+                  required
+                  type="text"
+                  euiInputText
+                  class="eui-input-text--clearable eui-input-text target-proposal-ref-input"
+                />
+              </div>
+              <div style="display: block">
+                <mat-form-field appearance="fill" class="date-picker">
+                  <input
+                    matInput
+                    [matDatepicker]="picker"
+                    [(ngModel)]="targetProposalDate"
+                    (ngModelChange)="onAnyInputChange()"
+                    [disabled]="!showCorrigendumAddendum"
+                    required
+                    readonly
+                  />
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row details-gen-rows" *ngIf="isAutononousAct">
+            <div class="col-sm-2">
+              <input
+                name="checkbox-final-proposal-"
+                euiInputCheckBox
+                label="Final"
+                [(ngModel)]="finalVersion"
+                (ngModelChange)="handleProposalFinalVersion($event)"
+              />
+              <label
+                style="display: inline">{{'page.collection.details.proposal.final.version.label' | translate}}</label>
+            </div>
+          </div>
+          <div class="row details-gen-rows" *ngIf="isAutononousAct">
+            <div class="col-sm-2">
+              <input
+                name="checkbox-target-proposal-lang"
+                euiInputCheckBox
+                label="Target language(s)"
+                [(ngModel)]="isTargetLang"
+                (ngModelChange)="handleTargetLangChange($event)"
+              />
+              <label
+                style="display: inline">{{ 'page.collection.details.target.languages' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+              <div class="language-checkbox">
+                <input
+                  type="checkbox"
+                  id="all_target_lang"
+                  [(ngModel)]="allTargetLangSelected"
+                  (change)="toggleAllTargetLanguages()"
+                  [disabled]="!isTargetLang"/>
+                <label>{{ 'page.collection.details.all'
+                  | translate }}</label></div>
+              <div class="language-checkbox"><label>|</label></div>
+              <div class="language-checkbox" *ngFor="let lang of languages">
+                <input type="checkbox" [id]="lang" [(ngModel)]="selectedTargetLanguages[lang]"
+                       (change)="onTargetLanguageChange()" [disabled]="!isTargetLang"/>
+                <label [for]="lang">{{ lang }}</label>
+              </div>
+            </div>
+          </div>
+          <div class="row details-gen-rows">
+            <div class="col-sm-2 label-column target-proposal-input-labels">
+              <label style="display: block">
+                {{'page.collection.details.proposal.correction.information.label' | translate}}
+              </label>
+            </div>
+            <div class="col-sm-8 label-column">
+              <input
+                id="correction-information"
+                [(ngModel)]="correctionInformation"
+                (ngModelChange)="onAnyInputChange()"
+                type="textarea"
+                required
+                euiInputText
+                class="eui-input-text--clearable eui-input-text target-proposal-ref-input"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </eui-card-content>
+  </eui-card>
+</div>

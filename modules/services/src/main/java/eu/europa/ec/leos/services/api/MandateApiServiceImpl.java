@@ -82,12 +82,12 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
             NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-            DocumentViewService documentViewService, GenericDocumentTocApiService genericDocumentTocApiService) {
+            DocumentViewService documentViewService, GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService, genericDocumentTocApiService);
+                documentViewService, genericDocumentTocApiService, coverPageApiService);
     }
 
     @Override

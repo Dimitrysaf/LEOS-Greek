@@ -293,6 +293,8 @@ public class XmlHelper {
     public static final String PARA_OPEN_TAG = "<paragraph";
     public static final String SUBPARA_END = "</subparagraph>";
     public static final String SUBPARA_REGEX = "<subparagraph[^>]*(?:>)";
+    public static final String CORRIGENDUM = "corrigendum";
+    public static final String ADDENDUM = "addendum";
 
     public static String extractContentFromTocItem(TableOfContentItemVO tocItem) {
         if (tocItem.getContent() == null) {

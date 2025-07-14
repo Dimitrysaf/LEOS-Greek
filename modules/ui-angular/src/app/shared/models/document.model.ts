@@ -29,6 +29,14 @@ export interface Document {
   category: DocumentType; //??
   translatedProposals: Document[];
   creationOptions: string;
+  targetProposalReference: string | null;
+  targetProposalDate: string | null;
+  correctionInformation: string | null;
+  showCorrigendumAddendum : boolean;
+  proposalType: string | null;
+  proposalTargetLang: string[] | null;
+  allTargetLangSelected: boolean;
+  finalVersion: boolean;
 }
 
 /** AKA `MetadataVO` in Java code */

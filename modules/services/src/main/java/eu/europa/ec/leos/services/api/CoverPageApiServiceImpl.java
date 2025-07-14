@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
@@ -43,6 +44,7 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
+import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveCoverPageElementResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
@@ -61,6 +63,8 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -74,16 +78,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlHelper.ADDENDUM;
+import static eu.europa.ec.leos.services.support.XmlHelper.CORRIGENDUM;
 
 @Service("coverPage")
 public class CoverPageApiServiceImpl implements CoverPageApiService {
@@ -110,6 +126,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     RepositoryPropertiesMapper repositoryPropertiesMapper;
     TrackChangesContext trackChangesContext;
     GenericDocumentApiService genericDocumentApiService;
+    XPathCatalog xPathCatalog;
 
     private Provider<CloneContext> cloneContext;
     private Provider<CollectionContextService> proposalContextProvider;
@@ -128,7 +145,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             RepositoryPropertiesMapper repositoryPropertiesMapper, TrackChangesContext trackChangesContext,
             Provider<CloneContext> cloneContext, Provider<BillContextService> billContextServiceProvider,
             Provider<StructureContext> structureContext, Provider<CollectionContextService> proposalContextProvider,
-            Provider<MemorandumContextService> memorandumContextServiceProvider) {
+            Provider<MemorandumContextService> memorandumContextServiceProvider, XPathCatalog xPathCatalog) {
         this.proposalService = proposalService;
         this.documentViewService = documentViewService;
         this.documentContentService = documentContentService;
@@ -152,6 +169,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         this.structureContext = structureContext;
         this.proposalContextProvider = proposalContextProvider;
         this.memorandumContextServiceProvider = memorandumContextServiceProvider;
+        this.xPathCatalog = xPathCatalog;
     }
 
     @Override
@@ -544,6 +562,216 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
             cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
+    }
+
+    @Override
+    public DocumentVO getCoverPageCorrigendumAddendumDetails(byte[] proposalXMLContent, DocumentVO documentVO) {
+
+        Document document = createXercesDocument(proposalXMLContent);
+        String xPathCorrigendum = xPathCatalog.getXPathCorrigendum();
+        String xPathAddendum = xPathCatalog.getXPathAddendum();
+        Node corrigendum = XercesUtils.getFirstElementByXPath(document, xPathCorrigendum);
+        Node addendum = XercesUtils.getFirstElementByXPath(document, xPathAddendum);
+        Node existingNode = corrigendum != null ? corrigendum : addendum != null ? addendum : null;
+        NodeList nodeList = existingNode != null ? existingNode.getChildNodes() : null;
+
+        if (nodeList != null) {
+            String containerName = nodeList.item(0).getTextContent();
+            Node docNumberNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/akn:docNumber", true).item(0);
+            String docNumberText = getTextOfElement(docNumberNode);
+            Node inlineVersionNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/akn:docNumber/akn:inline[@name=\"version\"]", true).item(0);
+            String version = getTextOfElement(inlineVersionNode);
+            Node dateNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/akn:date", true).item(0);
+            String dateText = getTextOfElement(dateNode);
+            Node correctionInfoNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p/akn:inline[@name=\"correctionInfo\"]", true).item(0);
+            String correctionInfoText = getTextOfElement(correctionInfoNode);
+            Node targetLanguageNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p[@name=\"targetLanguages\"]", true).item(0);
+
+            documentVO.setProposalType(containerName.toLowerCase(Locale.ROOT));
+            documentVO.setTargetProposalReference(docNumberText);
+            documentVO.setFinalVersion("final".equals(version) ? true : false);
+            documentVO.setTargetProposalDate(dateText);
+            documentVO.setCorrectionInformation(correctionInfoText);
+            documentVO.setShowCorrigendumAddendum(true);
+            if (targetLanguageNode != null) {
+                NodeList targetLangInlineNodes = XercesUtils.getElementsByName(targetLanguageNode, "inline");
+                if (targetLangInlineNodes != null && targetLangInlineNodes.getLength() > 0) {
+                    List<String> proposalTargetLang = new ArrayList<>();
+                    for (int i = 0; i < targetLangInlineNodes.getLength(); i++) {
+                        proposalTargetLang.add(targetLangInlineNodes.item(i).getTextContent());
+                    }
+                    documentVO.setProposalTargetLang(proposalTargetLang);
+                } else {
+                    documentVO.setAllTargetLangSelected(true);
+                }
+            }
+        }
+        return documentVO;
+    }
+
+    private String getTextOfElement(Node docNumberNode) {
+        String directText = null;
+        if (docNumberNode != null) {
+            for (int i = 0; i < docNumberNode.getChildNodes().getLength(); i++) {
+                Node child = docNumberNode.getChildNodes().item(i);
+                if (child.getNodeType() == Node.TEXT_NODE) {
+                    directText = child.getTextContent().trim();
+                    break;
+                }
+            }
+        }
+        System.out.println(directText);
+        return directText;
+    }
+
+    /*@Override
+    public void updateCorrigendumAddendum(String proposalRef, UpdateProposalRequest request) {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
+        Document document = createXercesDocument(xmlContent);
+        if (request.getShowCorrigendumAddendum() == null || !request.getShowCorrigendumAddendum()) {
+            Node corrigendumNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathCorrigendum());
+            Node addendumNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathAddendum());
+            if (corrigendumNode != null) {
+                XercesUtils.deleteElement(corrigendumNode);
+            } else if (addendumNode != null) {
+                XercesUtils.deleteElement(addendumNode);
+            }
+            proposalService.updateProposal(proposal.getId(), XercesUtils.nodeToByteArray(document));
+        }
+        if (request.getProposalType() != null) {
+            String proposalType = request.getProposalType();
+            String xPath = CORRIGENDUM.equals(proposalType)
+                    ? xPathCatalog.getXPathCorrigendum()
+                    : ADDENDUM.equals(proposalType)
+                    ? xPathCatalog.getXPathAddendum()
+                    : null;
+            if (xPath != null) {
+                Node existingNode = XercesUtils.getFirstElementByXPath(document, xPath);
+                if (request.getShowCorrigendumAddendum()) {
+                    if (existingNode != null) {
+                        XercesUtils.deleteElement(existingNode);
+                    }
+                    document = populateCorrigendumAddendumContainer(document, request);
+                }
+                proposalService.updateProposal(proposal.getId(), XercesUtils.nodeToByteArray(document));
+            }
+        }
+    }*/
+
+    @Override
+    public void updateCorrigendumAddendum(String proposalRef, UpdateProposalRequest request) {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
+        Document document = createXercesDocument(xmlContent);
+
+        Node corrigendumNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathCorrigendum());
+        Node addendumNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathAddendum());
+
+        if (corrigendumNode != null) {
+            XercesUtils.deleteElement(corrigendumNode);
+        }
+        if (addendumNode != null) {
+            XercesUtils.deleteElement(addendumNode);
+        }
+
+        if (Boolean.TRUE.equals(request.getShowCorrigendumAddendum()) && request.getProposalType() != null) {
+            document = populateCorrigendumAddendumContainer(document, request);
+        }
+
+        proposalService.updateProposal(proposal.getId(), XercesUtils.nodeToByteArray(document));
+    }
+
+
+    private Document populateCorrigendumAddendumContainer(Document document, UpdateProposalRequest request) {
+        Node longTitleNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathLongTitle());
+        Node containerNode = XercesUtils.createElementWithAknNS(document, "container", "");
+        XercesUtils.addAttribute(containerNode, "class", "template");
+        XercesUtils.addAttribute(containerNode, "name", request.getProposalType());
+        XercesUtils.addSibling(containerNode, longTitleNode, true);
+        createCAContainerNameElement(document, containerNode, request.getProposalType().toUpperCase(Locale.ROOT));
+        createCAContainerTargetDocumentDateAndReference(document, containerNode, request);
+        createCAContainerTargetLanguages(document, containerNode, request.getProposalTargetLang());
+        createCAContainerCorrectionInfo(document, containerNode, request);
+        createCAContainerWrapperText(document, containerNode);
+        return document;
+    }
+
+    private void createCAContainerNameElement(Document document, Node container, String content) {
+        Node containerChildNode = createCAContainerChildElement(document, content, true);
+        XercesUtils.addChild(containerChildNode, container);
+    }
+
+    private void createCAContainerTargetDocumentDateAndReference(Document document, Node container, UpdateProposalRequest request) {
+        Node containerChildNode = createCAContainerChildElement(document, messageHelper.getMessage("details.affected.document.intro")+" ", false);
+        Node affectedDocNode = XercesUtils.createElementWithAknNS(document, "affectedDocument", "");
+        XercesUtils.addAttribute(affectedDocNode, "href", "");
+        Node docNumberNode = XercesUtils.createElementWithAknNS(document, "docNumber", " " + request.getTargetProposalReference() + " ");
+        Node inlineNode = XercesUtils.createElementWithAknNS(document, "inline", checkIfFinalVersion(request.getFinalVersion()));
+        XercesUtils.addAttribute(inlineNode, "name", "version");
+        Node dateNode = XercesUtils.createElementWithAknNS(document, "date", " " + request.getTargetProposalDate() + " ");
+        XercesUtils.addAttribute(dateNode, "date", request.getTargetProposalDate());
+        XercesUtils.addFirstChild(inlineNode, docNumberNode);
+        XercesUtils.addFirstChild(docNumberNode, affectedDocNode);
+        affectedDocNode = XercesUtils.appendContentToNode(affectedDocNode, " "+messageHelper.getMessage("details.affected.document.reference.date.separator")+" ");
+        XercesUtils.addLastChild(dateNode, affectedDocNode);
+        XercesUtils.addLastChild(affectedDocNode, containerChildNode);
+        XercesUtils.addChild(containerChildNode, container);
+    }
+
+    private String checkIfFinalVersion(Boolean isFinalVersion ) {
+       return isFinalVersion != null && isFinalVersion ? " "+messageHelper.getMessage("details.affected.document.reference.version") : "";
+    }
+
+    private void createCAContainerTargetLanguages(Document document, Node container, List<String> targetLanguages) {
+        if(!targetLanguages.isEmpty() && targetLanguages.get(0) != "NONE") {
+            Node containerChildNode;
+            if(targetLanguages.get(0).equals("ALL")) {
+                containerChildNode = createCAContainerChildElement(document, messageHelper.getMessage("details.target.document.all.language"), true);
+            } else {
+                containerChildNode = createCAContainerChildElement(document, messageHelper.getMessage("details.target.document.selected.language")+" ", true);
+                for(int i =0 ; i < targetLanguages.size(); i++) {
+                    String lang = targetLanguages.get(i);
+                    Node inline = XercesUtils.createElementWithAknNS(document, "inline", "");
+                    XercesUtils.addAttribute(inline, "name", lang);
+                    XercesUtils.addAttribute(inline, "refersTo", "~"+lang);
+                    //XercesUtils.appendContentToNode(inline, lang);
+                    inline.appendChild(document.createTextNode(lang));
+                    XercesUtils.addLastChild(inline, containerChildNode);
+                    if (i < targetLanguages.size() - 2) {
+                        containerChildNode.appendChild(document.createTextNode(", "));
+                    } else if (i == targetLanguages.size() - 2) {
+                        containerChildNode.appendChild(document.createTextNode(" and "));
+                    } else {
+                        containerChildNode.appendChild(document.createTextNode("."));
+                    }
+                }
+            }
+            XercesUtils.addAttribute(containerChildNode, "name", "targetLanguages");
+            XercesUtils.addChild(containerChildNode, container);
+        }
+    }
+
+    private void createCAContainerCorrectionInfo(Document document, Node container, UpdateProposalRequest request) {
+        Node containerChildNode = createCAContainerChildElement(document, "", true);
+        Node inlineNode = XercesUtils.createElementWithAknNS(document, "inline", request.getCorrectionInformation());
+        XercesUtils.addAttribute(inlineNode, "name", "correctionInfo");
+        XercesUtils.addChild(inlineNode, containerChildNode);
+        XercesUtils.addChild(containerChildNode, container);
+    }
+
+    private void createCAContainerWrapperText(Document document, Node container) {
+        Node containerChildNode = createCAContainerChildElement(document, "The text should read as follows:", true);
+        XercesUtils.addChild(containerChildNode, container);
+    }
+
+    private Node createCAContainerChildElement(Document document, String nodeContent, boolean addEditableDeletableAttrs) {
+        Node containerChildNode = XercesUtils.createElementWithAknNS(document, "p", nodeContent);
+        if (addEditableDeletableAttrs) {
+            XercesUtils.addAttribute(containerChildNode, "leos:deletable", "false");
+            XercesUtils.addAttribute(containerChildNode, "leos:editable", "false");
+        }
+        return containerChildNode;
     }
 
 }
