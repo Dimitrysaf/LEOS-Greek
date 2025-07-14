@@ -13,11 +13,11 @@
  */
 package eu.europa.ec.leos.services.collection;
 
-import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.*;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -48,7 +48,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.*;
 
@@ -119,9 +118,9 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
 
             //Copy Act
-            List<XmlDocument> doc = categorySourceDocuments.get(MEMORANDUM);
+            List<XmlDocument> doc = categoryExistingDocuments.get(MEMORANDUM);
             if (doc != null && !doc.isEmpty() && doc.get(0).getContent().isDefined()) {
-                memorandumContext.useSourceContent(doc.get(0).getContent().get().getSource().getBytes());
+                memorandumContext.useExistingContent(doc.get(0).getContent().get().getSource().getBytes(), true);
             }
 
             Memorandum memorandumCreated = memorandumContext.executeCreateMemorandum();
@@ -137,32 +136,47 @@ public class CollectionContextProposalService extends CollectionContextService {
             billContext.useActionMessageMap(actionMsgMap);
             billContext.usePackageRef(proposal.getMetadata().get().getRef());
 
-            //Copy Act
-            List<XmlDocument> doc = categorySourceDocuments.get(BILL);
-            if (doc != null && !doc.isEmpty() && doc.get(0).getContent().isDefined()) {
-//                bill
-                billContext.useSourceContent(doc.get(0).getContent().get().getSource().getBytes());
+            // Repetitive Acts
+            List<XmlDocument> sourceDocuments = categoryExistingDocuments.get(BILL);
+            if (sourceDocuments != null && !sourceDocuments.isEmpty()) {
+                XmlDocument firstDocument = sourceDocuments.get(0);
+                if (firstDocument != null && firstDocument.getContent().isDefined()) {
+                    billContext.useExistingContent(firstDocument.getContent().get().getSource().getBytes(), true);
+                }
             }
 
             Bill billCreated = billContext.executeCreateBill();
 
-            List<XmlDocument> annex = categorySourceDocuments.get(ANNEX);
+            // Repetitive Acts - Annexes
+            List<XmlDocument> annex = categoryExistingDocuments.get(ANNEX);
             if (annex != null && !annex.isEmpty()) {
+                BillMetadata billMetadata = billCreated.getMetadata().getOrError(() -> "Bill metadata is required!");
+                billContext.useTemplate(billCreated);
                 for (XmlDocument xmlDocument : annex) {
-                    billContext.useAnnexTemplate(xmlDocument.getMetadata().get().getTemplate());
-                    billContext.useSourceAnnexContent(xmlDocument.getContent().get().getSource().getBytes());
-                    billContext.executeCreateBillAnnex();
+                    CatalogItem templateItem;
+                    try {
+                        templateItem = templateService.getTemplateItem(billMetadata.getDocTemplate());
+                        billContext.useAnnexTemplate(templateItem.getItems().get(0).getId());
+                        billContext.useExistingAnnexContent(xmlDocument.getContent().get().getSource().getBytes(), true);
+                        billContext.executeCreateBillAnnex();
+                    } catch (IOException e) {
+                        LOG.error("Error occurred while retrieving template " + metadata.getDocTemplate());
+                    }
                 }
             }
 
             proposal = proposalService.addComponentRef(proposal, billCreated.getName(), LeosCategory.BILL);
         }
 
+        // Financial Statement
         FinancialStatement financialStatement = cast(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS));
-        if (financialStatement != null && isToCreateDocument(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName(), templatePropertiesMap)) {
+        List<XmlDocument> sourceFinancialDocuments = categoryExistingDocuments.get(STAT_DIGIT_FINANC_LEGIS);
+
+        if ((sourceFinancialDocuments != null && !sourceFinancialDocuments.isEmpty() && canDocumentBeAdded(sourceFinancialDocuments.get(0).getMetadata().get().getDocTemplate(), templatePropertiesMap))
+                || (financialStatement != null && isToCreateDocument(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName(), templatePropertiesMap))) {
             FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
             financialStatementContext.usePackage(leosPackage);
-            String financialStatementTemplate = categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName();
+            String financialStatementTemplate = financialStatement == null ? sourceFinancialDocuments.get(0).getMetadata().get().getDocTemplate() : categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName();
             financialStatementContext.useDocTemplate(financialStatementTemplate);
             financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + financialStatementTemplate));
             financialStatementContext.usePurpose(purpose);
@@ -172,10 +186,13 @@ public class CollectionContextProposalService extends CollectionContextService {
             financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
             financialStatementContext.useCollaborators(proposal.getCollaborators());
 
-            //Copy Act
-            List<XmlDocument> doc = categorySourceDocuments.get(STAT_DIGIT_FINANC_LEGIS);
-            if (doc != null && !doc.isEmpty() && doc.get(0).getContent().isDefined()) {
-                financialStatementContext.useSourceContent(doc.get(0).getContent().get().getSource().getBytes());
+            // Repetitive Act
+            List<XmlDocument> sourceDocuments = categoryExistingDocuments.get(STAT_DIGIT_FINANC_LEGIS);
+            if (sourceDocuments != null && !sourceDocuments.isEmpty()) {
+                XmlDocument firstDocument = sourceDocuments.get(0);
+                if (firstDocument != null && firstDocument.getContent().isDefined()) {
+                    financialStatementContext.useExistingContent(firstDocument.getContent().get().getSource().getBytes(), true);
+                }
             }
 
             FinancialStatement financialStatementCreated = financialStatementContext.executeCreateFinancialStatement();
@@ -189,6 +206,19 @@ public class CollectionContextProposalService extends CollectionContextService {
             return true;
         }
         if (templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES).contains(templateName)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean canDocumentBeAdded(String templateName, Map<String, String> templatePropertiesMap) {
+        if (templatePropertiesMap.get(DOCUMENT_MANDATORY_TEMPLATES).contains(templateName)) {
+            return true;
+        }
+        if (templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES).contains(templateName)) {
+            return true;
+        }
+        if (templatePropertiesMap.get(DOCUMENT_DEFAULT_FALSE_TEMPLATES).contains(templateName)) {
             return true;
         }
         return false;

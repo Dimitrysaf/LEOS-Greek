@@ -77,7 +77,7 @@ public class MemorandumContextService {
     private boolean translated;
     private String packageRef = null;
     private Map<String, String> mapOldAndNewRefs;
-    private byte[] sourceContent = null;
+    private byte[] existingContent = null;
 
     @Autowired
     MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
@@ -92,10 +92,10 @@ public class MemorandumContextService {
         this.xmlContentProcessor = xmlContentProcessor;
     }
 
-    public void useSourceContent(byte[] sourceContent) {
-        Validate.notNull(sourceContent, "Source content must not be null!");
+    public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
+        Validate.notNull(sourceContent, "Exsting content must not be null!");
         LOG.trace("Using Memorandum source content...");
-        this.sourceContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
+        this.existingContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceContent) : sourceContent;
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -193,9 +193,9 @@ public class MemorandumContextService {
                 .build();
 
         Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
-                getContent(memorandum, sourceContent));
+                getContent(memorandum, existingContent));
 
-        if (sourceContent != null) {
+        if (existingContent != null) {
             memorandumService.updateMemorandum(memorandumCreated, memorandumCreated.getMetadata().get(), VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT));
         }
 
