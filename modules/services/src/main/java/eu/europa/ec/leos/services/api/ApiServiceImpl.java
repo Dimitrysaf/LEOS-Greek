@@ -275,7 +275,7 @@ public abstract class ApiServiceImpl implements ApiService {
                                                  String docPurpose, boolean eeaRelevance, String templateKey, List<XmlDocument> documents) throws CreateCollectionException {
         DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
         documentVO.getMetadata().setDocTemplate(templateId);
-        documentVO.getMetadata().setTemplateName("LULA");
+        documentVO.getMetadata().setTemplateName(templateName);
         documentVO.getMetadata().setLanguage(langCode);
         documentVO.getMetadata().setDocPurpose(docPurpose);
         documentVO.getMetadata().setEeaRelevance(eeaRelevance);

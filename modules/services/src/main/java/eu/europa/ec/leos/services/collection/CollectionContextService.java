@@ -95,7 +95,7 @@ public abstract class CollectionContextService {
     protected final Provider<AnnexContextService> annexContextProvider;
     private SecurityContext securityContext;
     protected final Map<LeosCategory, XmlDocument> categoryTemplateMap;
-    protected final Map<LeosCategory, List<XmlDocument>> categorySourceDocuments;
+    protected final Map<LeosCategory, List<XmlDocument>> categoryExistingDocuments;
     protected final Map<ContextActionService, String> actionMsgMap;
     protected Proposal proposal = null;
     protected String purpose;
@@ -137,7 +137,7 @@ public abstract class CollectionContextService {
         this.annexContextProvider = annexContextProvider;
         this.securityContext = securityContext;
         this.categoryTemplateMap = new EnumMap<>(LeosCategory.class);
-        this.categorySourceDocuments = new EnumMap<>(LeosCategory.class);
+        this.categoryExistingDocuments = new EnumMap<>(LeosCategory.class);
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.messageHelper = messageHelper;
     }
@@ -151,13 +151,13 @@ public abstract class CollectionContextService {
         categoryTemplateMap.put(template.getCategory(), template);
     }
 
-    public void useSourceDocuments(List<XmlDocument> copiedDocuments) {
+    public void useExistingDocuments(List<XmlDocument> copiedDocuments) {
         Validate.notNull(copiedDocuments, "Source documents are required!");
 
         Map<LeosCategory, List<XmlDocument>> groupedByCategory = copiedDocuments.stream()
                 .collect(Collectors.groupingBy(XmlDocument::getCategory));
 
-        categorySourceDocuments.putAll(groupedByCategory);
+        categoryExistingDocuments.putAll(groupedByCategory);
     }
 
     public void useActionMessage(ContextActionService action, String actionMsg) {

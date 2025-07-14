@@ -3,7 +3,6 @@ package eu.europa.ec.leos.services.collection;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Provider;
@@ -38,8 +37,6 @@ import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import io.atlassian.fugue.Pair;
-
-import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 
 @Service
 public class CreateCollectionServiceImpl implements CreateCollectionService {
@@ -157,7 +154,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useLanguage(documentVO.getMetadata().getLanguage());
             context.useTranslated(false);
             context.useTemplateKey(documentVO.getMetadata().getTemplate());
-            context.useSourceDocuments(documents);
+            context.useExistingDocuments(documents);
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 
