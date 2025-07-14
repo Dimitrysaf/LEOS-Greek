@@ -84,7 +84,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     }
     this.isVerticalShift = this.coverPageType !== 'STANDARD';
     this.verticalShift = this.proposal.metadata.verticalShift != null ? toNumber(this.proposal.metadata.verticalShift) : 6.0;
-    this.isAutononousAct = true;//this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
+    this.isAutononousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
 
     this.proposalLanguage = this.proposal.metadata.language;
     if (this.proposal.metadata.isAuthenticLang != null) {

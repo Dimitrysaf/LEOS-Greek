@@ -138,6 +138,7 @@
   "page.collection.details.general.tooltip": "General details",
   "page.collection.details.card.coverpage.type.header.label": "COVER PAGE TYPE",
   "page.collection.details.coverpage.tooltip": "Change type of cover page",
+  "page.collection.details.coverpage.corrigendum.addendum.tooltip": "Update proposal corrigendum/addendum",
   "page.collection.details.switch.coverpage.label": "Switch cover page",
   "page.collection.details.switch.coverpage.option1": "Standard cover page (logo, no disclaimer, no watermark)",
   "page.collection.details.switch.coverpage.option2": "Europa/Eur-lex (logo, disclaimer, watermark)",
