@@ -80,7 +80,7 @@ public class AnnexContextService {
     private String language;
     private String packageRef = null;
     private Map<String, String> mapOldAndNewRefs;
-    private byte[] sourceContent = null;
+    private byte[] existingContent = null;
 
     public AnnexContextService(
             TemplateService templateService,
@@ -97,10 +97,10 @@ public class AnnexContextService {
         this.xmlContentProcessor = xmlContentProcessor;
     }
 
-    public void useSourceContent(byte[] sourceContent) {
-        Validate.notNull(sourceContent, "Source content must not be null!");
+    public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
+        Validate.notNull(sourceContent, "Existing content must not be null!");
         LOG.trace("Using Annex source content...");
-        this.sourceContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
+        this.existingContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceContent) : sourceContent;
     }
 
     public void useTemplate(String template) {
@@ -245,8 +245,8 @@ public class AnnexContextService {
             annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED),
                     getContent(annex));
 
-            if (sourceContent != null) {
-                annex = annexService.updateAnnex(annex, sourceContent, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
+            if (existingContent != null) {
+                annex = annexService.updateAnnex(annex, existingContent, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
             }
         }
 

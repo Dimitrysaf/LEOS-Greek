@@ -53,7 +53,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -118,8 +117,8 @@ public class BillContextService {
     private boolean translated;
     private String packageRef = null;
     private boolean isAnnexToBeUpdated;
-    private byte[] sourceContent = null;
-    private byte[] sourceAnnexContent = null;
+    private byte[] existingContent = null;
+    private byte[] existingAnnexContent = null;
 
     @Autowired
     BillContextService(BillService billService,
@@ -157,16 +156,16 @@ public class BillContextService {
         this.billApiService = billApiService;
     }
 
-    public void useSourceContent(byte[] sourceContent) {
-        Validate.notNull(sourceContent, "Source content must not be null!");
+    public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
+        Validate.notNull(sourceContent, "Existing content must not be null!");
         LOG.trace("Using Bill source content...");
-        this.sourceContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
+        this.existingContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceContent) : sourceContent;
     }
 
-    public void useSourceAnnexContent(byte[] sourceAnnexContent) {
-        Validate.notNull(sourceContent, "Source content must not be null!");
+    public void useExistingAnnexContent(byte[] sourceAnnexContent, boolean cleanTrackChanges) {
+        Validate.notNull(sourceAnnexContent, "Existing content must not be null!");
         LOG.trace("Using Bill Annex source content...");
-        this.sourceAnnexContent = xmlContentProcessor.cleanTrackChanges(sourceAnnexContent);
+        this.existingAnnexContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceAnnexContent) : sourceAnnexContent;
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -310,8 +309,8 @@ public class BillContextService {
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
                 getContent(bill));
 
-        if (sourceContent != null) {
-            byte[] newContent =  importService.insertSelectedElements(billCreated, sourceContent, xmlContentProcessor.extractElementIdsFromBill(sourceContent),
+        if (existingContent != null) {
+            byte[] newContent =  importService.insertSelectedElements(billCreated, existingContent, xmlContentProcessor.extractElementIdsFromBill(existingContent),
                     billApiService.getToc(billCreated.getMetadata().get().getRef(), TocMode.NOT_SIMPLIFIED, null));
             billService.updateBill(billCreated, billCreated.getMetadata().get(), newContent, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
         }
@@ -544,8 +543,8 @@ public class BillContextService {
         annexContext.useOriginRef(originRef);
         annexContext.usePackageRef(packageRef);
 
-        if (sourceAnnexContent != null){
-            annexContext.useSourceContent(sourceAnnexContent);
+        if (existingAnnexContent != null){
+            annexContext.useExistingContent(existingAnnexContent, true);
         }
         Annex annex = annexContext.executeCreateAnnex();
 
