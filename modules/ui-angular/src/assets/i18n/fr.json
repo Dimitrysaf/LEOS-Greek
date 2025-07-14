@@ -143,6 +143,7 @@
   "page.collection.details.general.tooltip": "Détails généraux",
   "page.collection.details.card.coverpage.type.header.label": "TYPE DE PAGE DE COUVERTURE",
   "page.collection.details.coverpage.tooltip": "Changer le type de page de couverture",
+  "page.collection.details.coverpage.corrigendum.addendum.tooltip": "Mettre à jour le corrigendum/addendum de la proposition",
   "page.collection.details.switch.coverpage.label": "Changer de page de couverture",
   "page.collection.details.switch.coverpage.option1": "Page de couverture standard (avec logo, sans clause de non-responsabilité, sans filigrane)",
   "page.collection.details.switch.coverpage.option2": "Europa/Eur-lex (avec logo, avec clause de non-responsabilité, avec filigrane)",

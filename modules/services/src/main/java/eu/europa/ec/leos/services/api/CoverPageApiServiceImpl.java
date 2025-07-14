@@ -84,10 +84,7 @@ import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,8 +95,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XmlHelper.ADDENDUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.CORRIGENDUM;
 
 @Service("coverPage")
 public class CoverPageApiServiceImpl implements CoverPageApiService {
@@ -623,41 +618,6 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         System.out.println(directText);
         return directText;
     }
-
-    /*@Override
-    public void updateCorrigendumAddendum(String proposalRef, UpdateProposalRequest request) {
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
-        Document document = createXercesDocument(xmlContent);
-        if (request.getShowCorrigendumAddendum() == null || !request.getShowCorrigendumAddendum()) {
-            Node corrigendumNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathCorrigendum());
-            Node addendumNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathAddendum());
-            if (corrigendumNode != null) {
-                XercesUtils.deleteElement(corrigendumNode);
-            } else if (addendumNode != null) {
-                XercesUtils.deleteElement(addendumNode);
-            }
-            proposalService.updateProposal(proposal.getId(), XercesUtils.nodeToByteArray(document));
-        }
-        if (request.getProposalType() != null) {
-            String proposalType = request.getProposalType();
-            String xPath = CORRIGENDUM.equals(proposalType)
-                    ? xPathCatalog.getXPathCorrigendum()
-                    : ADDENDUM.equals(proposalType)
-                    ? xPathCatalog.getXPathAddendum()
-                    : null;
-            if (xPath != null) {
-                Node existingNode = XercesUtils.getFirstElementByXPath(document, xPath);
-                if (request.getShowCorrigendumAddendum()) {
-                    if (existingNode != null) {
-                        XercesUtils.deleteElement(existingNode);
-                    }
-                    document = populateCorrigendumAddendumContainer(document, request);
-                }
-                proposalService.updateProposal(proposal.getId(), XercesUtils.nodeToByteArray(document));
-            }
-        }
-    }*/
 
     @Override
     public void updateCorrigendumAddendum(String proposalRef, UpdateProposalRequest request) {
