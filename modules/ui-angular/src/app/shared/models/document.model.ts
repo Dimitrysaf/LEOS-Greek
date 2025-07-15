@@ -61,6 +61,7 @@ export interface Metadata {
   coverPageType: CoverPageType | null;
   documentCollectionName: string;
   verticalShift: string;
+  crossReferences: string[];
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {

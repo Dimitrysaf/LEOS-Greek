@@ -156,6 +156,8 @@
   "page.collection.details.proposal.final.version.label": "Version finale",
   "page.collection.details.target.languages": "Cible Langue(s)",
   "page.collection.details.proposal.correction.information.label": "Informations sur les corrections",
+  "page.collection.details.card.coverpage.cross.reference.header.label": "Référence croisée",
+  "page.collection.details.coverpage.cross.reference.tooltip": "Référence croisée",
   "page.collection.milestone-view-dialog.title": "Explorateur du Milestone",
   "page.collection.milestone-view-dialog.description": "Consulter les documents et les annotations inclus dans le milestone - <b>Créé le:</b> {{ date }} par {{ user }} | <b>Type:</b> {{ type }}",
   "page.collection.milestone-view-dialog.tab-title.ANNEX": "Annexe {{ number }}",

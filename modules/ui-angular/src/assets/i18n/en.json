@@ -153,6 +153,8 @@
   "page.collection.details.proposal.final.version.label": "Final version",
   "page.collection.details.target.languages": "Target Language(s)",
   "page.collection.details.proposal.correction.information.label": "Correction information",
+  "page.collection.details.card.coverpage.cross.reference.header.label": "Cross reference",
+  "page.collection.details.coverpage.cross.reference.tooltip": "Cross reference",
   "page.collection.tabs.drafts": "Drafts",
   "page.collection.tabs.milestones": "Milestones",
   "page.collection.tabs.e-consilium": "Exports",

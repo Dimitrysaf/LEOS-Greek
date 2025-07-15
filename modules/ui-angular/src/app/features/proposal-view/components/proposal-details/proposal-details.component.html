@@ -443,3 +443,105 @@
     </eui-card-content>
   </eui-card>
 </div>
+
+<div class="row eui-u-mt-l d-flex align-items-start">
+  <div class="col-md-11">
+    <eui-card
+      class="eui-u-mt-s eui-u-mb-l"
+      #documentCard
+      euiCollapsible
+      euiCollapsed="false"
+      class="details-cards-common"
+    >
+      <eui-card-header>
+        <eui-card-header-title>
+          <strong>{{'page.collection.details.card.coverpage.cross.reference.header.label' | translate}}</strong>
+          <span>
+            <button
+              euiButton
+              euiIconButton
+              euiSecondary
+              euiOutline
+              euiSizeS
+              class="details-tooltip-icon"
+            >
+            <eui-icon-svg icon="eui-question-circle" set="eui" size="m" fillColor="grey-100" [euiTooltip]="
+              'page.collection.details.coverpage.cross.reference.tooltip' | translate">
+            </eui-icon-svg>
+          </button>
+          </span>
+        </eui-card-header-title>
+      </eui-card-header>
+      <eui-card-content>
+        <div class="row details-gen-rows">
+          <div class="col-sm-8 label-column inline-field-group">
+            <label style="font-weight: bold;">{{'('}}</label>
+            <select [(ngModel)]="selectedProposalRefType">
+              <option *ngFor="let type of proposalRefTypeList" [value]="type">
+                {{ type }}
+              </option>
+            </select>
+            <label style="font-weight: bold;">{{'{'}}</label>
+
+            <select [(ngModel)]="selectedYear" class="year-selector" size="1">
+              <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+            </select>
+
+            <label style="font-weight: bold;">{{'}'}}</label>
+
+            <input
+              id="cross-ref-number"
+              [(ngModel)]="crossReferenceProposalNumber"
+              type="text"
+              (keypress)="checkNumberInput($event)"
+              euiInputText
+              class="eui-input-text--clearable eui-input-text small-textarea"
+            />
+            <div *ngIf="invalidNumberInput" class="tooltip">
+            Numbers only
+            </div>
+
+            <input
+              id="cross-ref-text"
+              [(ngModel)]="crossReferenceProposalText"
+              type="text"
+              euiInputText
+              class="eui-input-text--clearable eui-input-text small-textarea"
+            />
+
+            <label style="font-weight: bold;">{{')'}}</label>
+
+            <button (click)="deleteItem()" [disabled]="!enableAddCrossRef()" class="cross-ref-edit-button">
+              <span class="eui-icon eui-icon-add" (click)="addCrossRef()"></span>
+            </button>
+          </div>
+        </div>
+        <div class="row details-gen-rows">
+          <div class="col-sm-8 label-column inline-field-group">
+            <div class="textarea-like">
+              <ul>
+                <li *ngFor="let item of crossReferenceProposalListing; let i = index"
+                    [class.selected]="i === selectedIndex"
+                    (click)="selectItem(i)">
+                  {{ item }}
+                </li>
+              </ul>
+            </div>
+
+            <button (click)="deleteItem()" [disabled]="selectedIndex === null" class="cross-ref-edit-button">
+              <span class="eui-icon eui-icon-delete"></span>
+            </button>
+
+            <button (click)="moveUp()" [disabled]="selectedIndex === null" class="cross-ref-edit-button">
+              <span class="eui-icon eui-icon-caret-up"></span>
+            </button>
+
+            <button (click)="moveDown()" [disabled]="selectedIndex === null" class="cross-ref-edit-button">
+              <span class="eui-icon eui-icon-caret-down"></span>
+            </button>
+          </div>
+        </div>
+      </eui-card-content>
+    </eui-card>
+  </div>
+</div>
