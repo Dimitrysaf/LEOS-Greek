@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.*;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
@@ -157,6 +158,8 @@ public class CollectionContextProposalService extends CollectionContextService {
                     try {
                         templateItem = templateService.getTemplateItem(billMetadata.getDocTemplate());
                         billContext.useAnnexTemplate(templateItem.getItems().get(0).getId());
+                        billContext.useExistingAnnexTitle(((AnnexMetadata) xmlDocument.getMetadata().get()).getTitle());
+                        billContext.useExistingAnnexOrder(((AnnexMetadata) xmlDocument.getMetadata().get()).getIndex());
                         billContext.useExistingAnnexContent(xmlDocument.getContent().get().getSource().getBytes(), true);
                         billContext.executeCreateBillAnnex();
                     } catch (IOException e) {
