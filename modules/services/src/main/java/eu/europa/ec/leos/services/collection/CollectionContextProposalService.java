@@ -118,7 +118,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
 
-            //Copy Act
+            //Repetitive Acts
             List<XmlDocument> doc = categoryExistingDocuments.get(MEMORANDUM);
             if (doc != null && !doc.isEmpty() && doc.get(0).getContent().isDefined()) {
                 memorandumContext.useExistingContent(doc.get(0).getContent().get().getSource().getBytes(), true);
