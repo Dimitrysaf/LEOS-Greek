@@ -17,7 +17,6 @@ public class CreateProposalCopyRequest {
     private String langCode;
     private String docPurpose;
     private boolean eeaRelevance;
-    private boolean isChangeType;
     private String key;
     private String proposalRef;
 
