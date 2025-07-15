@@ -119,6 +119,8 @@ public class BillContextService {
     private boolean isAnnexToBeUpdated;
     private byte[] existingContent = null;
     private byte[] existingAnnexContent = null;
+    private String existingAnnexTitle = null;
+    private Integer existingAnnexOrder = null;
 
     @Autowired
     BillContextService(BillService billService,
@@ -160,6 +162,18 @@ public class BillContextService {
         Validate.notNull(sourceContent, "Existing content must not be null!");
         LOG.trace("Using Bill source content...");
         this.existingContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceContent) : sourceContent;
+    }
+
+    public void useExistingAnnexOrder(Integer order) {
+        Validate.notNull(order, "Existing order must not be null!");
+        LOG.trace("Using existing order...");
+        this.existingAnnexOrder = order;
+    }
+
+    public void useExistingAnnexTitle(String title) {
+        Validate.notNull(title, "Existing title must not be null!");
+        LOG.trace("Using existing title...");
+        this.existingAnnexTitle = title;
     }
 
     public void useExistingAnnexContent(byte[] sourceAnnexContent, boolean cleanTrackChanges) {
@@ -544,6 +558,8 @@ public class BillContextService {
         annexContext.usePackageRef(packageRef);
 
         if (existingAnnexContent != null){
+            annexContext.useExistingOrder(existingAnnexOrder);
+            annexContext.useExistingTitle(existingAnnexTitle);
             annexContext.useExistingContent(existingAnnexContent, true);
         }
         Annex annex = annexContext.executeCreateAnnex();

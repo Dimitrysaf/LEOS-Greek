@@ -81,6 +81,8 @@ public class AnnexContextService {
     private String packageRef = null;
     private Map<String, String> mapOldAndNewRefs;
     private byte[] existingContent = null;
+    private String existingTitle = null;
+    private Integer existingOrder = null;
 
     public AnnexContextService(
             TemplateService templateService,
@@ -95,6 +97,18 @@ public class AnnexContextService {
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.xmlContentProcessor = xmlContentProcessor;
+    }
+
+    public void useExistingOrder(Integer order) {
+        Validate.notNull(order, "Order must not be null!");
+        LOG.trace("Using Existing Order...");
+        this.existingOrder = order;
+    }
+
+    public void useExistingTitle(String title) {
+        Validate.notNull(title, "Title must not be null!");
+        LOG.trace("Using Existing Title...");
+        this.existingTitle = title;
     }
 
     public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
@@ -246,6 +260,7 @@ public class AnnexContextService {
                     getContent(annex));
 
             if (existingContent != null) {
+                metadata = metadata.builder().withTitle(existingTitle).withIndex(existingOrder).build();
                 annex = annexService.updateAnnex(annex, existingContent, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
             }
         }
