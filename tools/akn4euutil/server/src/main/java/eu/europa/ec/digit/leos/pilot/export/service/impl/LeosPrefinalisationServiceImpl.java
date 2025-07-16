@@ -17,7 +17,6 @@ import eu.europa.ec.digit.leos.pilot.export.exception.LeosPrefinalisationExcepti
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
-import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
@@ -39,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -66,12 +64,11 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         this.metadataService = metadataService;
     }
 
-    public byte[] applyMetadata(MultipartFile inputFile) {
+    public byte[] applyMetadata(Map<String, Object> zipContent) {
         ApplyMetadataRequest request = null;
 
         try {
             LOG.debug("Start applying meta data ...");
-            Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
             request = readContentXml(zipContent);
 
             Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, getFirstTaskDocument(request));
@@ -93,9 +90,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
+    public String applyMetadataAsync(Map<String, Object> zipContent, String callbackUrl) {
         String asyncId = UUID.randomUUID().toString();
-        CompletableFuture.runAsync(ApplyMetadataRunnable.create(asyncId, inputFile, callbackUrl, this));
+        CompletableFuture.runAsync(ApplyMetadataRunnable.create(asyncId, zipContent, callbackUrl, this));
         return asyncId;
     }
 
@@ -407,12 +404,12 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     public static class ApplyMetadataRunnable implements Runnable {
         private String id;
         private final String callbackUrl;
-        private final MultipartFile inputFile;
+        private final Map<String, Object> zipContent;
         private final LeosPrefinalisationService leosPrefinalisationService;
 
-        public ApplyMetadataRunnable(String id, MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
+        public ApplyMetadataRunnable(String id, Map<String, Object> zipContent, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
             this.id = id;
-            this.inputFile = inputFile;
+            this.zipContent = zipContent;
             this.callbackUrl = callbackUrl;
             this.leosPrefinalisationService = leosPrefinalisationService;
         }
@@ -420,7 +417,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         @Override
         public void run() {
             LOG.debug("Start apply metadata async ...");
-            final byte[] content = this.leosPrefinalisationService.applyMetadata(this.inputFile);
+            final byte[] content = this.leosPrefinalisationService.applyMetadata(this.zipContent);
 
             final HttpUtil.HttpClient httpClient = HttpUtil.createHttpClient();
             final Map<String,String> requestHeaders = new HashMap<>();
@@ -439,8 +436,8 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             }
         }
 
-        public static Runnable create(String id, MultipartFile inputFile, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
-            return new ApplyMetadataRunnable(id, inputFile, callbackUrl, leosPrefinalisationService);
+        public static Runnable create(String id, Map<String, Object> zipContent, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
+            return new ApplyMetadataRunnable(id, zipContent, callbackUrl, leosPrefinalisationService);
         }
     }
 }
