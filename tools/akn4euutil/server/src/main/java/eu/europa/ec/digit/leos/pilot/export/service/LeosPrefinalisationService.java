@@ -13,9 +13,9 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.util.Map;
 
 public interface LeosPrefinalisationService {
-    byte[] applyMetadata(MultipartFile inputFile);
-    String applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
+    byte[] applyMetadata(Map<String, Object> zipContent);
+    String applyMetadataAsync(Map<String, Object> zipContent, String callbackUrl);
 }

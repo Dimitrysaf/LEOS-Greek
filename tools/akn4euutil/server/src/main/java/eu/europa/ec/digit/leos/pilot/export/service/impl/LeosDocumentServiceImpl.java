@@ -22,6 +22,7 @@ import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.rest.Akn4EUUtilRestClient;
+import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -87,11 +89,13 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return outputList.getLeosRenditionOutputs();
     }
 
-    public byte[] applyMetadata(MultipartFile inputFile) {
-        return leosPrefinalisationService.applyMetadata(inputFile);
+    public byte[] applyMetadata(MultipartFile inputFile) throws IOException {
+        Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
+        return this.leosPrefinalisationService.applyMetadata(zipContent);
     }
 
-    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) {
-        return this.leosPrefinalisationService.applyMetadataAsync(inputFile, callbackUrl);
+    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) throws IOException {
+        Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
+        return this.leosPrefinalisationService.applyMetadataAsync(zipContent, callbackUrl);
     }
 }
