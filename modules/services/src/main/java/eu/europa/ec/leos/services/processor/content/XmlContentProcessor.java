@@ -412,5 +412,5 @@ public interface XmlContentProcessor {
     byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
                                                     String title);
 
-    List<String> extractElementIdsFromBill(byte[] documentBytes);
+    List<String> extractElementIdsFromXml(byte[] documentBytes);
 }
