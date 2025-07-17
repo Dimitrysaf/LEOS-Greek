@@ -324,7 +324,7 @@ public class BillContextService {
                 getContent(bill));
 
         if (existingContent != null) {
-            byte[] newContent =  importService.insertSelectedElements(billCreated, existingContent, xmlContentProcessor.extractElementIdsFromBill(existingContent),
+            byte[] newContent =  importService.insertSelectedElements(billCreated, existingContent, xmlContentProcessor.extractElementIdsFromXml(existingContent),
                     billApiService.getToc(billCreated.getMetadata().get().getRef(), TocMode.NOT_SIMPLIFIED, null));
             billService.updateBill(billCreated, billCreated.getMetadata().get(), newContent, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
         }

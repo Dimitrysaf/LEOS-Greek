@@ -121,8 +121,7 @@ public class ImportServiceImpl implements ImportService {
                 updatedElement = this.numberService.renumberImportedRecital(updatedElement);
             }
             updatedElement = addLeosAttributes(updatedElement);
-//            updatedElement = XercesUtils.removeXmlDefinition(updatedElement).replaceFirst(">", " leos:editable=\"true\" leos:deletable=\"true\">");
-
+            
             // Insert selected element to the document
             if (elementId != null) {
                 documentContent = xmlContentProcessor.insertElementByTagNameAndId(documentContent, updatedElement,
