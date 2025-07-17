@@ -806,7 +806,7 @@ Feature: Legal Act Page Regression Features
     Then user is on legal act page
     When mouseover and click on article 3
     Then ck editor window is displayed
-    When click on alternative 2 icon present in ck editor panel
+    When click on alternative2 icon present in ck editor panel
     And  click dialog ok button
     Then check content inside ckeditor is of size 3202
     When click source button
@@ -821,7 +821,7 @@ Feature: Legal Act Page Regression Features
     Then enable track changes
     When mouseover and click on article 5
     Then ck editor window is displayed
-    When click on alternative 2 icon present in ck editor panel
+    When click on alternative2 icon present in ck editor panel
     And click dialog ok button
     Then check content inside ckeditor is greater than 100
     When click save and close button of ck editor
@@ -1050,6 +1050,15 @@ Feature: Legal Act Page Regression Features
       | A higher division must contain at least one sub-element                                                |
       | A lower division cannot exist outside a higher division element                                        |
       | Only elements of the same type can be selected together.                                               |
+    When click on cancel button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  wait for 5000 milliseconds
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
+    When click on toc edit button
     When click on ngContent "Article 1 - Definitions Text..." from navigation pane
     And  click on ngContent "Article 2 - Article heading... 1.Text..." from navigation pane along with control button from keyboard
     And  drag node label "Article 1 - Definitions Text..." and drop to node label "Section 1 Section heading..." in navigation pane
@@ -1058,6 +1067,7 @@ Feature: Legal Act Page Regression Features
       | warning                                                                                                |
       | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
       | A higher division must contain at least one sub-element                                                |
+    And  node label "Section 1 Section heading..." contains node label "Article 1 -"
     And  node label "Section 1 Section heading..." contains node label "Article 2 -"
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled
@@ -1068,3 +1078,44 @@ Feature: Legal Act Page Regression Features
       | A lower division cannot exist outside a higher division element                                        |
     And  node label "Section 1 - Section heading..." contains node label "Article 1 -"
     And  node label "Section 1 - Section heading..." contains node label "Article 2 -"
+
+  @switchingAlternativeArticle @local
+  Scenario: user is able to switch alternative article
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing Alternative Article" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in all Member States."
+    When mouseover and click on clause 1
+    Then ck editor window is displayed
+    When alternative1 is selected in ck editor panel
+    And  click on alternative2 icon present in ck editor panel
+    Then cke dialog window is displayed with title "Confirm alternative change"
+    And  cke dialog window is displayed with body "If any changes were made to the default content, selecting an alternative will discard them. Are you sure to continue?"
+    When click on ok button in cke dialog window
+    Then content of clause is "This Regulation shall be binding in its entirety and directly applicable in the Member States in accordance with the Treaties." in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in the Member States in accordance with the Treaties."
+    When mouseover and click on clause 1
+    Then ck editor window is displayed
+    When alternative2 is selected in ck editor panel
+    And  click on alternative1 icon present in ck editor panel
+    Then cke dialog window is displayed with title "Confirm alternative change"
+    And  cke dialog window is displayed with body "If any changes were made to the default content, selecting an alternative will discard them. Are you sure to continue?"
+    When click on ok button in cke dialog window
+    Then content of clause is "This Regulation shall be binding in its entirety and directly applicable in all Member States." in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in all Member States."
+    When click on close button present in legal act page
+    Then user is on act viewer page

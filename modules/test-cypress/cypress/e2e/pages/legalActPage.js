@@ -4,7 +4,9 @@ class legalActPage {
         bill: () => cy.get('bill'),
         citation: () => cy.xpath('//citation'),
         recital: () => cy.xpath('//recital'),
-        article: () => cy.xpath('//article'),
+        article: () => cy.get('article'),
+        clause: () => cy.get('clause'),
+        clauseContent: () => this.elements.clause().find('content').find('aknp'),
         preface: () => this.elements.bill().find('preface'),
         longTitle: () => this.elements.preface().find('longtitle'),
         docPurpose: () => this.elements.longTitle().find('docpurpose'),
@@ -43,7 +45,11 @@ class legalActPage {
     }
 
     getArticle(articleNumber) {
-        return cy.get('article').eq(articleNumber-1);
+        return this.elements.article().eq(articleNumber-1);
+    }
+
+    getClause(clauseNumber) {
+        return this.elements.clause().eq(clauseNumber-1);
     }
 
     getNumTagOfArticle(articleNumber) {
@@ -68,6 +74,10 @@ class legalActPage {
 
     mouseHoverOnArticle(articleNumber) {
         this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }));
+    }
+
+    mouseHoverAndClickOnClause(clauseNumber) {
+        this.getClause(clauseNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).realClick({ position: "topLeft" }));
     }
 
     mouseHoverAndClickOnCitation(citationNumber) {

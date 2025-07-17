@@ -51,6 +51,10 @@ When('mouseover and click on article {int}', articleNumber => {
     legalActPage.mouseHoverAndClickOnArticle(articleNumber);
 })
 
+When(/^mouseover and click on clause (\d+)$/, function (clauseNumber) {
+    legalActPage.mouseHoverAndClickOnClause(clauseNumber);
+});
+
 When('click on edit icon of article {int}', articleNumber => {
     legalActPage.clickEditIconOfArticle(articleNumber);
 })
@@ -671,4 +675,8 @@ Then('the total number of article is {int}', function (expectedCount) {
 
 Then('the total number of article is {int}', function (expectedCount) {
     legalActPage.elements.article().should('have.length', expectedCount)
+});
+
+And(/^content of clause (\d+) is "([^"]*)"$/, function (clauseNumber, content) {
+    legalActPage.elements.clauseContent().should('have.text', content);
 });
