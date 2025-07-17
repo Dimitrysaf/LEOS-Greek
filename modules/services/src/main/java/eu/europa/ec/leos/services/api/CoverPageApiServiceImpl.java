@@ -615,7 +615,6 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 }
             }
         }
-        System.out.println(directText);
         return directText;
     }
 
@@ -684,9 +683,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     private void createCAContainerTargetLanguages(Document document, Node container, List<String> targetLanguages) {
-        if(!targetLanguages.isEmpty() && targetLanguages.get(0) != "NONE") {
+        if(!targetLanguages.isEmpty() && !targetLanguages.get(0).equalsIgnoreCase("NONE")) {
             Node containerChildNode;
-            if(targetLanguages.get(0).equals("ALL")) {
+            if(targetLanguages.get(0).equalsIgnoreCase("ALL")) {
                 containerChildNode = createCAContainerChildElement(document, messageHelper.getMessage("details.target.document.all.language"), true);
             } else {
                 containerChildNode = createCAContainerChildElement(document, messageHelper.getMessage("details.target.document.selected.language")+" ", true);
