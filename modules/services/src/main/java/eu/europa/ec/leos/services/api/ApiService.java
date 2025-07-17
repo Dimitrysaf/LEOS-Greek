@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.request.CreateProposalCopyRequest;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -43,6 +44,8 @@ public interface ApiService {
     <T extends LeosDocument> WorkspaceProposalResponse listDocumentsWithFilter(FilterProposalsRequest request);
 
     List<CatalogItem> getTemplates() throws IOException;
+
+    CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException;
 
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
                                           boolean eeaRelevance, String template) throws CreateCollectionException;

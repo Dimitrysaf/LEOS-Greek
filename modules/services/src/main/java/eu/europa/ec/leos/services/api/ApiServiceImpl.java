@@ -67,6 +67,7 @@ import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.request.CreateProposalCopyRequest;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -261,6 +262,31 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public List<CatalogItem> getTemplates() throws IOException {
         return templateService.getTemplatesCatalog();
+    }
+
+    @Override
+    public CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException {
+        List<XmlDocument> documents = getAllDocuments(request.getProposalRef());
+        return createProposalFromExisting(request.getTemplateId(), request.getTemplateName(),
+                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.getKey(), documents);
+    }
+
+    private CreateCollectionResult createProposalFromExisting(String templateId, String templateName, String langCode,
+                                                 String docPurpose, boolean eeaRelevance, String templateKey, List<XmlDocument> documents) throws CreateCollectionException {
+        DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
+        documentVO.getMetadata().setDocTemplate(templateId);
+        documentVO.getMetadata().setTemplateName(templateName);
+        documentVO.getMetadata().setLanguage(langCode);
+        documentVO.getMetadata().setDocPurpose(docPurpose);
+        documentVO.getMetadata().setEeaRelevance(eeaRelevance);
+        documentVO.getMetadata().setTemplate(templateKey);
+        return createCollectionService.createCollectionFromExisting(documentVO, documents);
+    }
+
+    private List<XmlDocument> getAllDocuments(String proposalRef) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        List<XmlDocument> documents = packageService.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, true);
+        return documents;
     }
 
     @Override
