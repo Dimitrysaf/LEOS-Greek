@@ -37,3 +37,11 @@ When('click on close button on explanatory memorandum page', function () {
 When('mouseover and click on block container {int} in explanatory memorandum page', (blockContainerNumber) => {
     expMemoPage.mouseHoverAndClickOnBlockContainer(blockContainerNumber);
 });
+
+Then(/^num of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount, blockListCount, blockContainerCount, text) {
+    expMemoPage.getItem(itemCount, blockListCount, blockContainerCount).find('num').should('have.text', text);
+});
+
+Then(/^content of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount, blockListCount, blockContainerCount, content) {
+    expMemoPage.getItem(itemCount, blockListCount, blockContainerCount).find('aknp').should('have.text', content);
+});

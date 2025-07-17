@@ -1478,11 +1478,16 @@ Feature: Track Changes Feature
     When click on insert after icon of citation 4
     Then citation 5 contains attribute "leos:action" with value "insert"
     And  total citation count is 7
+    When click on toc refresh icon
+    When click on right angle icon of preamble link
+    Then citations section contains new element in navigation pane
     When click on insert before icon of recital 2
     Then recital 2 contains attribute "leos:action" with value "insert"
     And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 3 contains value "(2)"
     And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of recital 3 contains value "(3)"
     And  total recital count is 3
+    When click on toc refresh icon
+    Then recitals section contains new element in navigation pane
     When click on insert after icon of article 1
     Then article 2 contains attribute "leos:action" with value "insert"
     And  del tag of num tag of article 3 contains value "Article 2"
@@ -1490,15 +1495,20 @@ Feature: Track Changes Feature
     And  del tag of num tag of article 4 contains value "Article 3"
     And  ins tag of num tag of article 4 contains value "Article 4"
     And  total article count is 11
+    When click on toc refresh icon
+    Then enacting terms contains new element in navigation pane
     When right click on citation 5
     And  click on reject this change option under track changes action
     Then total citation count is 6
+    And  citations section doesn't contain new element in navigation pane
     When right click on recital 2
     And  click on reject this change option under track changes action
     Then total recital count is 2
+    And  recitals section doesn't contain new element in navigation pane
     When right click on article 2
     And  click on reject this change option under track changes action
     Then total article count is 10
+    And  enacting terms doesn't contain new element in navigation pane
     When click on close button present in legal act page
     Then user is on act viewer page
     When click on add button in annexes section
@@ -1819,7 +1829,6 @@ Feature: Track Changes Feature
     Then sole recital doesn't contain num tag
     And  recital 1 contains "Recital..."
 
-
   @soleArticle @local
   Scenario: Verify numbering remains correct when last article is deleted
     Given navigate to edit drafting application with "User1"
@@ -1888,30 +1897,36 @@ Feature: Track Changes Feature
     Then  "num" tag of article 1 contains "Sole Article"
     When click on insert before icon of article 1
     Then article 1 contains attribute "leos:action" with value "insert"
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click close button of ck editor
+    Then ck editor window is not displayed
     When right click on article 1
     And  click on accept this change option under track changes action
     And  "num" tag of article 1 contains "Article 1"
     And  "num" tag of article 2 contains "Article 2"
 
     When disable track changes
-    And mouseover and click on article 2
+    And  mouseover and click on article 2
     Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     When click on internal reference icon present in ck editor panel
     Then cke dialog window is displayed with title "Internal reference"
-    And enacting terms contains following articles in internal reference window
+    And  enacting terms contains following articles in internal reference window
       | Article 1 - Article heading... 1.Text... |
       | Article 2 - Article heading... 1.Text... |
-    And click on cancel button in cke dialog window
+    And  click on cancel button in cke dialog window
     And  click close button of ck editor
     When mouseover on article 2
     When click on delete icon of article 2
     Then "Delete Element: confirmation" dialog confirm box window is displayed
     When click on ok button in dialog box window
-    And mouseover and click on article 1
+    And  mouseover and click on article 1
     Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     When click on internal reference icon present in ck editor panel
     Then cke dialog window is displayed with title "Internal reference"
-    And enacting terms contains following articles in internal reference window
+    And  enacting terms contains following articles in internal reference window
       | Sole Article - Article heading... 1.Text... |
+    When click on cancel button in cke dialog window
+    And  click close button of ck editor

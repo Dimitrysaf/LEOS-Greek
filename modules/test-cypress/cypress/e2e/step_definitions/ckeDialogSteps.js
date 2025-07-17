@@ -6,6 +6,10 @@ Then(`cke dialog window is displayed with title {string}`, (title) => {
     ckeDialogWindow.elements.dialogTitle().should('have.text', title);
 });
 
+Then(`cke dialog window is displayed with body {string}`, function (content) {
+    ckeDialogWindow.elements.dialogContent().should('have.text', content);
+});
+
 When(`click on ok button in cke dialog window`, () => {
     ckeDialogWindow.clickOkBtn();
 });
