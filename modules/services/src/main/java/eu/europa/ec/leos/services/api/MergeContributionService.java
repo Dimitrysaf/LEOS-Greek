@@ -2727,12 +2727,17 @@ public class MergeContributionService {
             if (internalRefMap.getClonedRef() != null) {
                 Document document = createXercesDocument(xmlContent);
                 Node clonedProposalRefNode = XercesUtils.getFirstElementByXPath(document, "//akn:clonedProposalRef[@ref='" + internalRefMap.getClonedRef() + "']");
-                String valorOriginalClonedProposalRefNode = clonedProposalRefNode.getAttributes().getNamedItem(REF).getNodeValue();
-                clonedProposalRefNode.getAttributes().getNamedItem(REF).setNodeValue("__TO_BE_REPLACED__");
-                xmlContent = nodeToByteArray(document);
+                String valorOriginalClonedProposalRefNode = "";
+                if (clonedProposalRefNode != null) {
+                    valorOriginalClonedProposalRefNode = clonedProposalRefNode.getAttributes().getNamedItem(REF).getNodeValue();
+                    clonedProposalRefNode.getAttributes().getNamedItem(REF).setNodeValue("__TO_BE_REPLACED__");
+                    xmlContent = nodeToByteArray(document);
+                }
                 String xmlContentStr = new String(xmlContent, UTF_8);
                 xmlContentStr = xmlContentStr.replaceAll(internalRefMap.getClonedRef(), internalRefMap.getRef());
-                xmlContentStr = xmlContentStr.replaceAll("__TO_BE_REPLACED__", valorOriginalClonedProposalRefNode);
+                if (!StringUtils.isEmpty(valorOriginalClonedProposalRefNode)) {
+                    xmlContentStr = xmlContentStr.replaceAll("__TO_BE_REPLACED__", valorOriginalClonedProposalRefNode);
+                }
                 xmlContent = xmlContentStr.getBytes(StandardCharsets.UTF_8);
             }
         }
