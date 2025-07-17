@@ -1,3 +1,38 @@
+<div *ngIf="isCopyChangeAct">
+  <!-- Keep type act -->
+  <form [formGroup]="createForm">
+    <div>
+      <input
+        type="radio"
+        euiInputRadio
+        id="keep-type-true"
+        formControlName="changeCopyAct"
+        name="changeCopyAct"
+        value="true"
+        (change)="handleKeepCopyRadioChange($event)"
+      />
+      <label euiLabel for="keep-type-true" class="eui-u-mt-none">{{
+          ('page.workspace.create-form.document.keep-type-act' ) | translate
+        }}</label>
+    </div>
+    <!-- Change type of act -->
+    <div>
+      <input
+        type="radio"
+        euiInputRadio
+        id="keep-type-false"
+        formControlName="changeCopyAct"
+        name="changeCopyAct"
+        value="false"
+        (change)="handleKeepCopyRadioChange($event)"
+      />
+      <label euiLabel for="keep-type-false" class="eui-u-mt-none">{{
+          ('page.workspace.create-form.document.change-type-act') | translate
+        }}</label>
+    </div>
+  </form>
+</div>
+
 <eui-wizard
   (selectStep)="onSelectStepRemoteNav($event)"
   [activeStepIndex]="currentStepIndex"
@@ -8,6 +43,7 @@
     [isCompleted]="!!(selectedTemplate && selectedLanguage)"
   >
       <app-proposal-create-template-selector
+        [isCopyChangeAct]="isCopyChangeAct"
         #templateSelector
         (navigationClick)="onNavigation(+1)"
         (selectTemplate)="handleSelectTemplate($event)"

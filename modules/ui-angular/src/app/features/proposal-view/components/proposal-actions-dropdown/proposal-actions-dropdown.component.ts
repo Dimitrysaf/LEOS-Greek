@@ -22,6 +22,8 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   @Input() isClonedProposal: boolean;
   @Input() originRef: string | null;
   @Input() proposalState: string;
+  @Input() proposalTemplate!: string;
+  @Input() proposalLanguage!: string;
 
   mailtoHeader = 'mailto:?';
   subjectProp = 'subject=';
@@ -33,6 +35,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   proposalDeleteCannotConf: ConfirmDialogComponent;
   canExportLW = false;
   canValidate = false;
+  canUpdate = false;
   translated = false;
 
   private destroy$: Subject<any> = new Subject();
@@ -44,6 +47,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
     proposalDetailsService.permissions$.subscribe((permissions) => {
       this.canExportLW = permissions.includes('CAN_EXPORT_LW');
       this.canValidate = permissions.includes('CAN_VALIDATE');
+      this.canUpdate = permissions.includes('CAN_UPDATE');
     });
     this.translated = proposalDetailsService.getTranslated();
   }
@@ -68,6 +72,10 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
 
   handleValidation() {
     this.proposalDetailsService.validateProposal().finally();
+  }
+
+  handleCopyChange() {
+    this.proposalDetailsService.openProposalChangeCopyDialog(this.nonEditablePartOfTitle, this.editableTitle, this.proposalTemplate, this.proposalLanguage);
   }
 
   handleShare() {
