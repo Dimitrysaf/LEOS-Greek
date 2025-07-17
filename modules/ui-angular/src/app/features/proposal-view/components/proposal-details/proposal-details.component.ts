@@ -199,8 +199,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         return;
       }
 
-      if (!this.targetProposalDate || this.targetProposalDate.trim() === '') {
-        alert('Correction information is required.');
+      if (!this.targetProposalDate) {
+        alert('Target proposal date is required.');
         return;
       }
     }
