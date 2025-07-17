@@ -27,7 +27,6 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleRef
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
-import eu.europa.ec.digit.leos.pilot.export.util.HttpUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
@@ -37,7 +36,14 @@ import eu.europa.ec.digit.leos.pilot.export.util.metadata.ApplyMetadataResponseC
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -46,7 +52,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -419,20 +424,23 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             LOG.debug("Start apply metadata async ...");
             final byte[] content = this.leosPrefinalisationService.applyMetadata(this.zipContent);
 
-            final HttpUtil.HttpClient httpClient = HttpUtil.createHttpClient();
-            final Map<String,String> requestHeaders = new HashMap<>();
-            requestHeaders.put("Content-Type", ZipUtil.APPLICATION_ZIP_VALUE);
+            LOG.debug("Send ZIP to callback url ...");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-            HttpUtil.HttpResponse httpResponse = null;
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("token", this.id);
+            body.add("inputFile", new ByteArrayResource(content) {
+                @Override
+                public String getFilename() {
+                    return "inputFile.zip"; // Filename has to be returned in order to be able to POST
+                }
+            });
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
             try {
-                LOG.debug("Send ZIP to callback url ...");
-                httpResponse = httpClient.doPost(this.callbackUrl, Collections.singletonMap("token", this.id), requestHeaders, content);
-            } catch(HttpUtil.HttpClientRequestException ex) {
-                LOG.debug("Error sending ZIP to callback url [callbackUrl: {} / id: {} / statusCode: {} / message: {}]", this.callbackUrl, this.id,
-                        (httpResponse != null) ? httpResponse.getStatusCode() : "unknown",
-                        (httpResponse != null) ? httpResponse.getStatusText() : "unknown", ex);
+                new RestTemplate().postForObject(callbackUrl, requestEntity, Void.class);
             } catch(Exception ex) {
-                LOG.error("Error sending ZIP to callback url [callbackUrl: {} / id: {}]", this.callbackUrl, this.id, ex);
+                LOG.info("Error sending ZIP to callback url [callbackUrl: {} / id: {}]", this.callbackUrl, this.id, ex);
             }
         }
 
