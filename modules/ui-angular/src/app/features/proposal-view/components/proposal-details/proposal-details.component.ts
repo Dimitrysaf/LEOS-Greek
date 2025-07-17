@@ -57,6 +57,16 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   selectedTargetLanguages: { [key: string]: boolean } = {};
   isComponentVisible = true;
 
+  proposalRefTypeList = ['COM', 'SEC', 'C', 'SWD', 'JOIN', 'P'];
+  selectedProposalRefType: string = this.proposalRefTypeList[0];
+  years: number[] = [];
+  selectedYear: number = new Date().getFullYear();
+  crossReferenceProposalNumber: string;
+  crossReferenceProposalText: string;
+  crossReferenceProposalListing: string[] = [];
+  selectedIndex: number | null = null;
+  invalidNumberInput: boolean;
+
   constructor(
     protected detailsService: ProposalDetailsService,
     private growlService: EuiGrowlService,
@@ -108,6 +118,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       });
     }
     this.initializeCorrigendumAddendumFields();
+    this.initializeCrossReferences();
   }
 
   handleChange(metadata: string) {
@@ -208,13 +219,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.formatTargetProposalDate(),
       this.getTargetLanguages(),
       this.correctionInformation,
-      this.finalVersion
+      this.finalVersion,
+      this.crossReferenceProposalListing
     ).subscribe({
       next: () => {
         this.detailsService.setProposalRef(this.proposal.ref);
         if (!this.showCorrigendumAddendum) {
           this.resetCorrigendumAddendumFields();
         }
+        this.crossReferenceProposalListing = this.proposal.metadata.crossReferences;
         this.enableSave = false;
         this.growlService.growl({
           severity: 'success',
@@ -232,6 +245,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         ),);
       },
     });
+
+
   }
 
   toggleAllLanguages() {
@@ -347,4 +362,81 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   onAnyInputChange() {
     this.enableSave = true;
   }
+
+  private initializeCrossReferences(): void {
+    this.crossReferenceProposalListing = this.proposal.metadata.crossReferences;
+    const currentYear = new Date().getFullYear();
+    const startYear = 1960;
+    this.years = Array.from({ length: currentYear - startYear + 1 }, (_, i) => startYear + i).reverse();
+    this.selectedProposalRefType = this.proposalRefTypeList[0];
+    this.selectedYear = this.years[0];
+  }
+
+
+  addCrossRef() {
+    const ref = `${this.selectedProposalRefType}(${this.selectedYear}) ${this.crossReferenceProposalNumber}` +
+      (this.crossReferenceProposalText ? ` ${this.crossReferenceProposalText}` : '');
+    if (ref.trim()) {
+      this.crossReferenceProposalListing.push(ref);
+      this.crossReferenceProposalNumber = '';
+      this.crossReferenceProposalText = '';
+    }
+    this.enableSave = true;
+  }
+
+  selectItem(index: number) {
+    this.selectedIndex = index;
+  }
+
+  deleteItem() {
+    if (this.selectedIndex !== null) {
+      this.crossReferenceProposalListing.splice(this.selectedIndex, 1);
+      this.selectedIndex = null; // reset selection or adjust as needed
+    }
+    this.enableSave = true;
+  }
+
+  moveUp() {
+    if (this.selectedIndex > 0) {
+      const temp = this.crossReferenceProposalListing[this.selectedIndex];
+      this.crossReferenceProposalListing[this.selectedIndex] = this.crossReferenceProposalListing[this.selectedIndex - 1];
+      this.crossReferenceProposalListing[this.selectedIndex - 1] = temp;
+      this.selectedIndex--;
+    }
+    this.enableSave = true;
+  }
+
+  moveDown() {
+    if (this.selectedIndex !== null && this.selectedIndex < this.crossReferenceProposalListing.length - 1) {
+      const temp = this.crossReferenceProposalListing[this.selectedIndex];
+      this.crossReferenceProposalListing[this.selectedIndex] = this.crossReferenceProposalListing[this.selectedIndex + 1];
+      this.crossReferenceProposalListing[this.selectedIndex + 1] = temp;
+      this.selectedIndex++;
+    }
+    this.enableSave = true;
+  }
+
+  checkNumberInput(event: KeyboardEvent) {
+    const char = event.key;
+    if (!/^\d$/.test(char)) {
+      event.preventDefault();
+      this.invalidNumberInput = true;
+      setTimeout(() => {
+        this.invalidNumberInput = false;
+      }, 1500);
+    }
+  }
+
+  enableAddCrossRef() {
+    if (
+      !this.selectedProposalRefType ||
+      !this.crossReferenceProposalNumber ||
+      !this.selectedYear
+    ) {
+      return false;
+    }
+    return true;
+  }
+
 }
+

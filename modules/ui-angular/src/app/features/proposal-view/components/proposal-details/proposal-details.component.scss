@@ -146,3 +146,79 @@
 ::ng-deep .date-picker input.mat-mdc-input-element {
   padding-left: 10px !important;
 }
+
+
+.year-selector {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.small-textarea {
+  display: inline;
+  width: 177px;
+  font-size: 14px;
+  padding: 4px 8px;
+  resize: none;
+}
+
+.large-textarea {
+  display: inline;
+  width: 350px;
+  height: 350px;
+  font-size: 14px;
+  padding: 4px 8px;
+  resize: none;
+}
+
+.inline-field-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.textarea-like {
+  border: 1px solid #ccc;
+  height: 200px;
+  width: 300px;
+  overflow-y: auto;
+  font-family: monospace;
+  white-space: pre;
+}
+
+.textarea-like ul {
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+}
+
+.textarea-like li {
+  padding: 3px 5px;
+  cursor: pointer;
+}
+
+.textarea-like li.selected {
+  background-color: #004494;
+  color: white;
+}
+
+.cross-ref-edit-button {
+  border: none;
+  padding: 0;
+}
+
+.cross-ref-edit-button .eui-icon::before {
+  background: #004494;
+  color: white;
+}
+
+.cross-ref-edit-button:disabled .eui-icon::before {
+  background: grey;
+  color: white;
+}
+
+.tooltip {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 4px;
+}

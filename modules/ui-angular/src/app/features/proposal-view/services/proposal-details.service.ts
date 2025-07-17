@@ -196,7 +196,7 @@ export class ProposalDetailsService implements OnDestroy {
   updateProposalMetadata(docPurpose: string, eeaRelevance: boolean, packageTitle?: string, isAuthenticLang?: AuthenticLanguage,
                          authenticLang?: string[], coverPageType?: CoverPageType, verticalShift?: string, showCorrigendumAddendum?: boolean,
                          proposalType?: string, targetProposalReference?: string, targetProposalDate?: string, proposalTargetLang?: string[],
-                         correctionInformation?: string, finalVersion?: boolean) {
+                         correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[]) {
     const internalRef = null;
     return this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
@@ -214,7 +214,8 @@ export class ProposalDetailsService implements OnDestroy {
         targetProposalDate,
         proposalTargetLang,
         correctionInformation,
-        finalVersion
+        finalVersion,
+        crossReferences
       });
   }
 
