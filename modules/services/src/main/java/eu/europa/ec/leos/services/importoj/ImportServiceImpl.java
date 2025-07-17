@@ -121,7 +121,7 @@ public class ImportServiceImpl implements ImportService {
                 updatedElement = this.numberService.renumberImportedRecital(updatedElement);
             }
             updatedElement = addLeosAttributes(updatedElement);
-            
+
             // Insert selected element to the document
             if (elementId != null) {
                 documentContent = xmlContentProcessor.insertElementByTagNameAndId(documentContent, updatedElement,
