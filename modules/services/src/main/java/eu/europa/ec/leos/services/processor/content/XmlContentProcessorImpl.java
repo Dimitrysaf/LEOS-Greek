@@ -2567,7 +2567,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public List<String> extractElementIdsFromBill(byte[] xmlContent) {
+    public List<String> extractElementIdsFromXml(byte[] xmlContent) {
         List<String> allIds = new ArrayList<>();
 
         try {
