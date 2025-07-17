@@ -32,6 +32,16 @@ export type CreateProposalBody = {
   key: string;
 };
 
+export type CreateProposalCopy = {
+  templateId: string;
+  templateName: string;
+  langCode: string;
+  docPurpose: string;
+  eeaRelevance: boolean;
+  key: string;
+  proposalRef: string;
+};
+
 export interface CreateExplanatoryDocument {
   templateId: string;
   docPurpose: string;

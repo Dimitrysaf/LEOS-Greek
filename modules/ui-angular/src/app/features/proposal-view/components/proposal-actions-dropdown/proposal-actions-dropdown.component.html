@@ -26,6 +26,9 @@
         <button euiDropdownItem (click)="handleValidation()" *ngIf="canValidate">
           {{ 'page.collection.actions-dropdown.validate' | translate }}
         </button>
+        <button euiDropdownItem (click)="handleCopyChange()" *ngIf="canUpdate">
+          {{ 'page.collection.actions-dropdown.copyChange' | translate }}
+        </button>
       </ng-container>
       <a euiDropdownItem target="_blank" [href]="getStringifiedMailTo()">{{
           'page.collection.actions-dropdown.share' | translate

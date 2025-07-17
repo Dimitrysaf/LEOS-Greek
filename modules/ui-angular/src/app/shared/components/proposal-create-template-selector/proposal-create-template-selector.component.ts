@@ -37,6 +37,8 @@ export class ProposalCreateTemplateSelectorComponent
   implements OnInit, OnDestroy
 {
   @Input() translationKey: 'document' | 'draft' = 'document';
+  @Input() disabled: boolean = false;
+  @Input() isCopyChangeAct!: boolean;
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
@@ -61,12 +63,7 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   ngOnInit() {
-    this.proposalService.templateCatalog$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((catalog) => {
-        this.loadTemplates(catalog);
-        this.cd.detectChanges(); // trigger `treeComponent` update
-      });
+    this.initialize(this.isCopyChangeAct); // if isCopyChangeAct then default true for disabling the tree selection
   }
 
   ngOnDestroy() {
@@ -119,6 +116,7 @@ export class ProposalCreateTemplateSelectorComponent
   //   }
   // }
 
+
   onNodeClick(event: EuiTreeSelectionChanges) {
     const selectedNode = event.selection[0];
     if (
@@ -134,6 +132,21 @@ export class ProposalCreateTemplateSelectorComponent
     } else {
       this.unsetTemplate();
     }
+  }
+
+  resetInit(disabled: boolean){
+    this.reset();
+    this.initialize(disabled);
+  }
+
+  initialize(disabled:boolean) {
+    this.disabled = disabled;
+    this.proposalService.templateCatalog$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((catalog) => {
+        this.loadTemplates(catalog);
+        this.cd.detectChanges(); // trigger `treeComponent` update
+      });
   }
 
   private loadTemplates(catalogItems: CatalogItem[] | null) {
@@ -175,7 +188,7 @@ export class ProposalCreateTemplateSelectorComponent
 
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate,
+      selectable: isTemplate && !this.disabled,
       treeContentBlock: {
         id,
         key,

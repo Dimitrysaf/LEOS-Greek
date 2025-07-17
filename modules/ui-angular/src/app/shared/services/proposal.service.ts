@@ -4,7 +4,7 @@ import { GLOBAL_CONFIG_TOKEN, GlobalConfig, I18nService } from '@eui/core';
 import {
   CatalogItem,
   CreateExplanatoryDocument,
-  CreateProposalBody,
+  CreateProposalBody, CreateProposalCopy,
   CreateProposalResponse,
   Document,
   GetTemplatesResponse,
@@ -213,6 +213,13 @@ export class ProposalService {
     this.loadingService.setLoading(true);
     return this.http
       .post<CreateProposalResponse>(`${apiBaseUrl}/secured/createPackage`, data)
+      .pipe(finalize(() => this.loadingService.setLoading(false)));
+  }
+
+  copyProposal(data: CreateProposalCopy) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .post<CreateProposalResponse>(`${apiBaseUrl}/secured/proposal/copyAct`, data)
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
