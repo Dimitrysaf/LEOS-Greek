@@ -279,6 +279,62 @@ public class MetadataUtilsTests {
         Assertions.assertFalse(MetadataUtil.isDocumentXmlFile(xmlFile));
     }
 
+    @Test
+    public void testIsPresidentRole() {
+        for (String spelling : MetadataUtil.ROLE_PRESIDENT){
+            Assertions.assertTrue(MetadataUtil.isRolePresident(spelling));
+        }
+    }
+
+    @Test
+    public void testIsVicePresidentRole() {
+        for (String spelling : MetadataUtil.ROLE_VICE_PRESIDENT){
+            Assertions.assertTrue(MetadataUtil.isRoleVicePresident(spelling));
+        }
+    }
+
+    @Test
+    public void testIsDirectorRole() {
+        for (String spelling : MetadataUtil.ROLE_DIRECTOR){
+            Assertions.assertTrue(MetadataUtil.isRoleDirector(spelling));
+        }
+    }
+
+    @Test
+    public void testIsDirectorGeneralRole() {
+        for (String spelling : MetadataUtil.ROLE_DIRECTOR_GENERAL){
+            Assertions.assertTrue(MetadataUtil.isRoleDirectorGeneral(spelling));
+        }
+    }
+
+    @Test
+    public void testIsHeadOfServiceRole() {
+        for (String spelling : MetadataUtil.ROLE_HEAD_OF_SERVICE){
+            Assertions.assertTrue(MetadataUtil.isRoleHeadOfService(spelling));
+        }
+    }
+
+    @Test
+    public void testIsHeadOfUnitRole() {
+        for (String spelling : MetadataUtil.ROLE_HEAD_OF_UNIT){
+            Assertions.assertTrue(MetadataUtil.isRoleHeadOfUnit(spelling));
+        }
+    }
+
+    @Test
+    public void testIsMemberOfCommissionRole() {
+        for (String spelling : MetadataUtil.ROLE_MEMBER_OF_THE_COMMISSION){
+            Assertions.assertTrue(MetadataUtil.isRoleMemberOfTheCommission(spelling));
+        }
+    }
+
+    @Test
+    public void testIsSecretariesRole() {
+        for (String spelling : MetadataUtil.ROLE_SECRETARIES){
+            Assertions.assertTrue(MetadataUtil.isRoleSecretaries(spelling));
+        }
+    }
+
     private ApplyMetadataRequest getDummyMetadataRequest() {
         return new ApplyMetadataRequest("http://example.com/test",
                 "1.0.0", "1900-01-01T00:00:01.000+02:00", "12345");
