@@ -35,17 +35,13 @@ import org.w3c.dom.Node;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFragment;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
-import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
-import static eu.europa.ec.leos.services.support.XmlHelper.HIGHER_ELEMENTS;
-import static eu.europa.ec.leos.services.support.XmlHelper.OJ_IMPORT_ELEMENTS;
-import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
-import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
-import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
 public class ImportServiceImpl implements ImportService {
@@ -124,8 +120,8 @@ public class ImportServiceImpl implements ImportService {
             } else if (elementType.equalsIgnoreCase(RECITAL)) {
                 updatedElement = this.numberService.renumberImportedRecital(updatedElement);
             }
-            updatedElement = XercesUtils.removeXmlDefinition(updatedElement).replaceFirst(">", " leos:editable=\"true\" leos:deletable=\"true\">");
-
+            updatedElement = addLeosAttributes(updatedElement);
+            
             // Insert selected element to the document
             if (elementId != null) {
                 documentContent = xmlContentProcessor.insertElementByTagNameAndId(documentContent, updatedElement,
@@ -137,6 +133,8 @@ public class ImportServiceImpl implements ImportService {
                 documentContent = xmlContentProcessor.appendElementToTag(documentContent, BODY, updatedElement, true);
             } else if (elementType.equalsIgnoreCase(RECITAL)) {
                 documentContent = xmlContentProcessor.appendElementToTag(documentContent, RECITALS, updatedElement, true);
+            } else if (elementType.equalsIgnoreCase(CITATION)) {
+                documentContent = xmlContentProcessor.appendElementToTag(documentContent, CITATIONS, updatedElement, true);
             }
         }
         long endTime = System.currentTimeMillis();
@@ -157,6 +155,42 @@ public class ImportServiceImpl implements ImportService {
 
         LOG.info("{} elements imported. insertTime {} ms ({} secs), numberingTime {} ms, postProcessingTime {} ms", elementIds.size(), insertTime, insertTime/1000, numberingTime, postProcessingTime);
         return documentContent;
+    }
+
+    private String addLeosAttributes(String xmlElement) {
+        String updatedElement = XercesUtils.removeXmlDefinition(xmlElement);
+
+        // Check if leos:editable exists and its value
+        boolean needsEditable = !hasAttributeWithValue(updatedElement, "leos:editable", "true");
+        boolean needsDeletable = !hasAttributeWithValue(updatedElement, "leos:deletable", "true");
+
+        StringBuilder attributesToAdd = new StringBuilder();
+        if (needsEditable) {
+            attributesToAdd.append(" leos:editable=\"true\"");
+        }
+        if (needsDeletable) {
+            attributesToAdd.append(" leos:deletable=\"true\"");
+        }
+
+        if (attributesToAdd.length() > 0) {
+            updatedElement = updatedElement.replaceFirst(">", attributesToAdd.toString() + ">");
+        }
+
+        return updatedElement;
+    }
+
+    private boolean hasAttributeWithValue(String xmlElement, String attributeName, String expectedValue) {
+        Pattern pattern = Pattern.compile(
+                "\\s+" + Pattern.quote(attributeName) + "\\s*=\\s*[\"']([^\"']*)[\"']",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        Matcher matcher = pattern.matcher(xmlElement);
+        if (matcher.find()) {
+            String currentValue = matcher.group(1);
+            return expectedValue.equals(currentValue);
+        }
+        return false;
     }
 
     private void removeUnselectedChildNodes(Node elementNode, List<String> selectedElementIds) {
