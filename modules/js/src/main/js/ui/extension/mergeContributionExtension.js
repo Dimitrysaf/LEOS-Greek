@@ -73,7 +73,12 @@ define(function mergeContributionExtensionModule(require) {
                 var nbParagraphs = $element.find('paragraph');
                 var nbParagraphsNbToUnb = $element.find('paragraph[leos\\:action-number="delete"]');
                 var nbParagraphsUnbToNb = $element.find('paragraph[leos\\:action-number="insert"]');
+                var pargraphHasSplit = $element.find('paragraph[leos\\:split-content="parent"],paragraph[leos\\:split-content="child"]');
                 if (nbParagraphsUnbToNb.length === nbParagraphs.length || nbParagraphsNbToUnb.length === nbParagraphs.length) {
+                    changed_element.push($articles[i]);
+                    impactedArticles.push($element.attr(UTILS.ID));
+                    $articles[i].setAttribute(PARENT_AFFECTED, "true");
+                }if(pargraphHasSplit && pargraphHasSplit.length > 0 && !changed_element.includes($articles[i])){
                     changed_element.push($articles[i]);
                     impactedArticles.push($element.attr(UTILS.ID));
                     $articles[i].setAttribute(PARENT_AFFECTED, "true");
