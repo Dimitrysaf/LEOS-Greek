@@ -126,6 +126,7 @@ public class LeosDocumentApiController {
     @PostMapping(value = "/prefinalization-callback", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(ACCEPTED)
     public void processPrefinalization(final @RequestParam(name = "token") String token, @RequestParam MultipartFile inputFile) throws IOException {
+        // This is just for callback testing purposes
         LOG.info("Received callback call on prefinalization service!!!");
         LOG.info("Token =>"  + token);
         LOG.info("inputFile length =>" + inputFile.getBytes().length);

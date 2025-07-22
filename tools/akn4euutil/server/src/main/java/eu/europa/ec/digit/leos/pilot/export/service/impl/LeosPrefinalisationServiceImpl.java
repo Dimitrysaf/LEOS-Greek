@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -421,10 +422,10 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
         @Override
         public void run() {
-            LOG.debug("Start apply metadata async ...");
+            LOG.debug("Start apply metadata async");
             final byte[] content = this.leosPrefinalisationService.applyMetadata(this.zipContent);
 
-            LOG.debug("Send ZIP to callback url ...");
+            LOG.debug("Send ZIP to callback url");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -435,12 +436,17 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                 public String getFilename() {
                     return "inputFile.zip"; // Filename has to be returned in order to be able to POST
                 }
+                @Override
+                public long contentLength() {
+                    return -1;
+                }
             });
+
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
             try {
-                new RestTemplate().postForObject(callbackUrl, requestEntity, Void.class);
-            } catch(Exception ex) {
-                LOG.info("Error sending ZIP to callback url [callbackUrl: {} / id: {}]", this.callbackUrl, this.id, ex);
+                new RestTemplate().exchange(callbackUrl, HttpMethod.POST, requestEntity, Void.class);
+            } catch (Exception ex) {
+                LOG.info("Error sending ZIP to callback url {} with token {}", this.callbackUrl, this.id, ex);
             }
         }
 
