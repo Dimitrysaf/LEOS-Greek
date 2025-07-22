@@ -2516,7 +2516,7 @@ public class MergeContributionService {
             Node node = nodes.item(i);
             XercesUtils.removeAttribute(node, LEOS_MERGE_ACTION_ATTR);
         }
-        // check xpath to revert back the track so next time same merge will not appear in UI
+        //TODO check on  to revert back the track so next time same merge will not appear in UI
         String xpath= "//*[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or "+ "@" +LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
         NodeList splitElts = XercesUtils.getElementsByXPath(document,xpath);
         for (int i = 0; i < splitElts.getLength(); i++) {
