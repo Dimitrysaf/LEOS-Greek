@@ -203,6 +203,14 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         alert('Target proposal date is required.');
         return;
       }
+
+      if (this.isTargetLang) {
+        const targetLangs = this.getTargetLanguages();
+        if ((targetLangs && targetLangs.length == 0) || (targetLangs[0] === 'NONE')) {
+          alert('Target proposal language is checked, select any languages(s)');
+          return;
+        }
+      }
     }
 
     this.detailsService.updateProposalMetadata(
