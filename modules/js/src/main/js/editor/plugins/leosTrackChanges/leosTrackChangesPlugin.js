@@ -24,6 +24,7 @@ define(function leosTrackChangesPluginModule(require) {
     var UTILS = require("core/leosUtils");
     var numberModule = require("plugins/leosNumber/listItemNumberModule");
     var unumberModule = require("plugins/leosUnumber/listUnumberModule");
+    var dialogDefinition = require("./leosTrackChangesWarningDialog");
     var pluginName = "leosTrackChanges";
 
     var pluginDefinition = {
@@ -40,6 +41,11 @@ define(function leosTrackChangesPluginModule(require) {
             var deleteTcStyle = new CKEDITOR.style({ element: core.TRACKCHANGES_ELEMENT, attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION) });
             var originalSelectedElement, selectedElement, handleMutations = false;
             var handleMutationsDoneBySpellChecker = false, spellCheckerOriginalText, spellCheckerReplacementText;
+
+            // adds dialog
+            pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
+            //creates dialog command
+            var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -467,6 +473,11 @@ define(function leosTrackChangesPluginModule(require) {
                     core.setOriginalNumber(element, previousNumber);
                 }
             });
+            editor.on("handleTcComplexStructure", function (event) {
+                if (isTrackChangesEnabled) {
+                    dialogCommand.exec();
+                }
+            }, null, null, 100);
 
             // Update toggle display state when editor has focus
             editor.on("focus", function () {
