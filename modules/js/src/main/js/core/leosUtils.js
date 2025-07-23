@@ -29,6 +29,7 @@ define(function leosUtilsModule(require) {
 
     var PARAGRAPH_POINT_TAG = "LI";
     var SUBPARAGRAPH_SUBPOINT_TAG = "P";
+    var UNORDERED_LIST_TAG = "UL";
     var DIV_TAG = "DIV";
     var TABLE_TAG = "TABLE";
     var TABLE_CELL_TAG = "TD";
@@ -129,6 +130,8 @@ define(function leosUtilsModule(require) {
             }
         } else if (el.tagName === DIV_TAG && el.parentElement?.getAttribute("data-akn-name") === "recital") {
             elementsToBeChecked.push(DIV_TAG);
+        } else if (el.tagName === UNORDERED_LIST_TAG && el.parentElement?.getAttribute("data-akn-name") === "structuredContent") {
+            elementsToBeChecked.push(UNORDERED_LIST_TAG);
         }
         if (elementsToBeChecked.includes(el.tagName)) {
             var trimmedInnerText = $.trim(el.innerText);
