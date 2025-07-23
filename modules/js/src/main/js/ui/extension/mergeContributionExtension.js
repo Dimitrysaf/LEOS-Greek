@@ -78,7 +78,7 @@ define(function mergeContributionExtensionModule(require) {
                     changed_element.push($articles[i]);
                     impactedArticles.push($element.attr(UTILS.ID));
                     $articles[i].setAttribute(PARENT_AFFECTED, "true");
-                }if(pargraphHasSplit && pargraphHasSplit.length > 0 && !changed_element.includes($articles[i])){
+                } if (pargraphHasSplit && pargraphHasSplit.length > 0 && !changed_element.includes($articles[i])) {
                     changed_element.push($articles[i]);
                     impactedArticles.push($element.attr(UTILS.ID));
                     $articles[i].setAttribute(PARENT_AFFECTED, "true");
