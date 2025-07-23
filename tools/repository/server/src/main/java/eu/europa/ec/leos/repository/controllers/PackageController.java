@@ -13,43 +13,14 @@
  */
 package eu.europa.ec.leos.repository.controllers;
 
-import static com.sun.jndi.toolkit.url.UrlUtil.decode;
-
-import java.math.BigDecimal;
-import java.net.MalformedURLException;
-
-import javax.validation.Valid;
-
-import eu.europa.ec.leos.repository.model.LinkedPackage;
-import eu.europa.ec.leos.repository.model.LinkedPackageList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import eu.europa.ec.leos.repository.controllers.requests.CreatePackageRequest;
 import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.Collaborator;
-import eu.europa.ec.leos.repository.model.LeosDocumentList;
+import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
+import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
+import eu.europa.ec.leos.repository.model.*;
 import eu.europa.ec.leos.repository.model.Package;
 import eu.europa.ec.leos.repository.services.CollaboratorsService;
 import eu.europa.ec.leos.repository.services.PackageService;
@@ -59,9 +30,21 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
-import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 
 
 @RestController
@@ -86,7 +69,7 @@ public class PackageController {
     public ResponseEntity<Package> createPackage(@PathVariable("name") String name,
                                                  @Valid @RequestBody CreatePackageRequest createPackageRequest) throws Exception
     {
-        name = decode(name);
+        name = URLDecoder.decode(name, StandardCharsets.UTF_8);
         String originRef = createPackageRequest.getOriginRef();
         Package originPkg;
         try {
@@ -110,7 +93,7 @@ public class PackageController {
             @ApiResponse(responseCode = "200", description = "Package Deleted", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity deletePackage(@PathVariable("name") String packageName) throws Exception {
-        packageName = decode(packageName);
+        packageName = URLDecoder.decode(packageName, StandardCharsets.UTF_8);
         packageService.deletePackage(packageName);
         return ResponseEntity.ok().build();
     }
@@ -121,7 +104,7 @@ public class PackageController {
             @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getPackageByName(@PathVariable("name") String name) throws MalformedURLException, RepositoryException{
-        name = decode(name);
+        name = URLDecoder.decode(name, StandardCharsets.UTF_8);
         Package pkg = packageService.getPackageByName(name);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
         return ResponseEntity.ok(pkg);
@@ -133,7 +116,7 @@ public class PackageController {
             @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getLinkedPackagesByPkgId(@PathVariable("pkgId") String pkgId) throws MalformedURLException, RepositoryException{
-        pkgId = decode(pkgId);
+        pkgId = URLDecoder.decode(pkgId, StandardCharsets.UTF_8);
         List<LinkedPackage> linkedPackages = packageService.getLinkedPackagesByPkgId(pkgId);
         return ResponseEntity.ok(new LinkedPackageList(linkedPackages));
     }
@@ -144,7 +127,7 @@ public class PackageController {
             @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getLinkedPackagesByLinkedPkgId(@PathVariable("linkedPkgId") String linkedPkgId) throws MalformedURLException, RepositoryException{
-        linkedPkgId = decode(linkedPkgId);
+        linkedPkgId = URLDecoder.decode(linkedPkgId, StandardCharsets.UTF_8);
         List<LinkedPackage> linkedPackages = packageService.getLinkedPackagesByLinkedPkgId(linkedPkgId);
         return ResponseEntity.ok(new LinkedPackageList(linkedPackages));
     }
@@ -183,7 +166,7 @@ public class PackageController {
                                                                    @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
                                                                        @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
                                                                   @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) throws Exception {
-        name = decode(name);
+        name = URLDecoder.decode(name, StandardCharsets.UTF_8);
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageName(name, findDocumentsRequest.getCategories(),
                 descendants, fetchContent));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
@@ -228,21 +211,6 @@ public class PackageController {
         Package pkg = packageService.findPackageByDocumentRef(docRef);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"No packages found");
         return ResponseEntity.ok(pkg);
-    }
-
-    @RequestMapping(value = {"/test"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> test() {
-        ObjectNode response = new ObjectMapper().createObjectNode();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-            response.put("username", userDetails.getUsername());
-            response.put("description", "Test RESTful service. User authenticated.");
-        } else {
-            response.put("description", "Test RESTful service. No user authenticated.");
-        }
-        response.put("timestamp", System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(path = "/package/find-recent-packages-by-user/{userName}/{numberOfRecentPackages}")

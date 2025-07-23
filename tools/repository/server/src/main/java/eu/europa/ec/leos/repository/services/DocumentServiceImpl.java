@@ -51,8 +51,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -833,6 +833,11 @@ public class DocumentServiceImpl implements DocumentService {
                     queryBuild.append("LOWER(").append(columnName).append(")");
                     queryBuild.append(" ").append(filter.operator).append(" ");
                     queryBuild.append("LOWER(:keyValue_").append(i).append(")");
+
+                    // BUG - https://hibernate.atlassian.net/browse/HHH-16277
+                    if (filter.operator.equalsIgnoreCase("LIKE")){
+                        queryBuild.append("ESCAPE '\\'");
+                    }
                 }
                 if (filter.nullCheck) {
                     queryBuild.append(")");

@@ -20,9 +20,11 @@ import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,6 +44,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -189,6 +192,7 @@ public class DocumentIntegrationTests {
         pkg = new eu.europa.ec.leos.repository.model.Package(pkgEntity);
     }
 
+    @WithMockUser
     @Before
     public void instantiateTestDocs() {
         createPackage();
@@ -211,6 +215,7 @@ public class DocumentIntegrationTests {
         xmlDoc.setVersionType(VersionType.MAJOR);
     }
 
+    @WithMockUser
     @Test
     public void test_createDocumentFromContent() throws Exception {
         CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest();
@@ -233,7 +238,7 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/create-with-content").contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.createdBy", is(USER)))
@@ -243,6 +248,7 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void test_createDocumentFromContentNotValidRequest() throws Exception {
         CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest();
@@ -258,10 +264,11 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/create-with-content").contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isBadRequest()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void test_createDocumentFromSource() throws Exception {
         CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest();
@@ -284,7 +291,7 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/create-with-source").contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.createdBy", is(USER)))
@@ -294,6 +301,7 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void test_createDocumentFromSourceNonValidRequest() throws Exception {
         CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest();
@@ -308,26 +316,29 @@ public class DocumentIntegrationTests {
         String json = mapper.writeValueAsString(createDocumentRequest);
         mockMvc.perform(put("/document/create-with-source").contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isBadRequest()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void test_deleteDocumentById() throws Exception {
-        mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()))
+        mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()).with(csrf()))
                 .andExpect(status().isOk()).andDo(print());
         verify(documentService).deleteDocumentByVersionId(ArgumentMatchers.eq(xmlDoc.getVersionId()));
     }
 
+    @WithMockUser
     @Test
     public void test_deleteDocumentByIdWithError() throws Exception {
         Mockito.doThrow(new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                 "Document Not Found")).when(documentService).deleteDocumentByVersionId(ArgumentMatchers.eq(xmlDoc.getVersionId()));
 
-        mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()).accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().is5xxServerError()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void test_updateDocument() throws Exception {
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
@@ -346,7 +357,7 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/update-content/{versionId}", xmlDoc.getVersionId()).contentType(MediaType.APPLICATION_JSON)
                 .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.createdBy", is(USER)))
@@ -357,6 +368,7 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void test_updateDocumentWithContentBadRequest() throws Exception {
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
@@ -369,10 +381,11 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/update-content/{docRef}", xmlDoc.getRef()).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isBadRequest()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void test_updateDocumentMetadata() throws Exception {
         String newTitle = "New Title";
@@ -390,7 +403,7 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/update-metadata/{docRef}/{versionId}?latest={latest}", xmlDoc.getRef(), xmlDoc.getVersionId(), latest).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.updatedBy", is(USER)))
@@ -399,6 +412,7 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void findDocumentsByUserId() throws Exception {
         String role = "OWNER";
@@ -419,6 +433,7 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void findDocumentsByName() throws Exception {
         String name = "catalog";
@@ -437,6 +452,7 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void findDocumentsWithFilter() throws Exception {
         QueryFilter filter = new QueryFilter();
@@ -463,11 +479,12 @@ public class DocumentIntegrationTests {
         mockMvc.perform(post("/documents/find-by-filter?packageName={packageName}&startIndex={startIndex}&maxResults={maxResults}",
                         encodeUriVariables(PKG_NAME)[0],
                         startIndex, maxResults).contentType(MediaType.APPLICATION_JSON)
-                        .content(json).accept(MediaType.APPLICATION_JSON))
+                        .content(json).accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void countDocumentsWithFilter() throws Exception {
         QueryFilter filter = new QueryFilter();
@@ -489,11 +506,12 @@ public class DocumentIntegrationTests {
                 .thenReturn(1L);
 
         mockMvc.perform(post("/documents/count-by-filter?packageName={packageName}", encodeUriVariables(PKG_NAME)[0]).contentType(MediaType.APPLICATION_JSON)
-                        .content(json).accept(MediaType.APPLICATION_JSON))
+                        .content(json).accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(content().string("1"))
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void findDocumentById() throws Exception {
         Boolean latest = true;
@@ -509,6 +527,7 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void findAllVersionsByRef() throws Exception {
         Boolean latest = true;

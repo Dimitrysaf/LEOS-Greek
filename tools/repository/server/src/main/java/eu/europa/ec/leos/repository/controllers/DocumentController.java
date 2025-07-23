@@ -38,12 +38,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 
 @RestController
 @Tag(name = "Document API", description = "Document API")
@@ -174,19 +174,6 @@ public class DocumentController {
     public ResponseEntity findDocumentsByUserName(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
                                                   @PathVariable("userName") String userName) {
         List<LeosDocument> xmlDocs = documentService.findDocumentsByUserId(userName, role, category);
-        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
-    }
-
-    @GetMapping(path = "/documents/find-by-collaborator/{userName}/{entities}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Find Xml documents by collaborator")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity findDocumentsByUserNameOrEntityName(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
-                                                  @PathVariable("userName") String userName, @PathVariable("entities") String entities) {
-        List<LeosDocument> xmlDocs = documentService.findDocumentsByUserIdOrEntity(userName, entities, role, category);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
@@ -408,7 +395,7 @@ public class DocumentController {
                                                            @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults,
                                                            @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent)
             throws MalformedURLException {
-        packageName = decode(packageName);
+        packageName = URLDecoder.decode(packageName, StandardCharsets.UTF_8);
         List<LeosDocument> xmlDocs = documentService.findDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(),
                 findDocumentsRequest.getQueryFilter(), startIndex, maxResults, fetchContent);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
@@ -423,7 +410,7 @@ public class DocumentController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> countDocumentsUsingFilter(@RequestParam(value="packageName", required=false, defaultValue="%25") String packageName,
                                                             @RequestBody FindDocumentsRequest findDocumentsRequest) throws MalformedURLException {
-        packageName = decode(packageName);
+        packageName = URLDecoder.decode(packageName, StandardCharsets.UTF_8);
         Long count = documentService.countDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(), findDocumentsRequest.getQueryFilter());
         return ResponseEntity.ok(RestPreconditions.checkFound(count, HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting"));
     }

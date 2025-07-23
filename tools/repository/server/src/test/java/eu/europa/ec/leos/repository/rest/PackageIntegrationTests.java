@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +40,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -212,6 +214,7 @@ public class PackageIntegrationTests {
         xmlDoc.setVersionType(VersionType.MAJOR);
     }
 
+    @WithMockUser
     @Test
     public void createPackage() throws Exception {
         CreatePackageRequest createPackageRequest = new CreatePackageRequest();
@@ -223,7 +226,7 @@ public class PackageIntegrationTests {
 
         mockMvc.perform(post("/package/create/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                 .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.id", is(PKG_ID.toString())))
                 .andExpect(jsonPath("$.name", is(PKG_NAME)))
                 .andExpect(jsonPath("$.createdBy", is(USER)))
@@ -236,16 +239,18 @@ public class PackageIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void deletePackage() throws Exception {
         Mockito.doThrow(new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                 "Package Not Found")).when(packageService).deletePackage( PKG_NAME);
 
         mockMvc.perform(delete("/package/delete/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().is5xxServerError()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void findDocumentsByPackageName() throws Exception {
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
@@ -259,7 +264,7 @@ public class PackageIntegrationTests {
 
         mockMvc.perform(post("/package/find-by-name/documents?name={name}", encodeUriVariables(TEST_PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))
@@ -269,6 +274,7 @@ public class PackageIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
     public void findDocumentsByPackageId() throws Exception {
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
@@ -282,7 +288,7 @@ public class PackageIntegrationTests {
 
         mockMvc.perform(post("/package/find-by-id/{id}/documents", PKG_ID).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))
