@@ -1359,7 +1359,9 @@ public class MergeContributionService {
             if (!addedElt.getReallyImpactedNode().equals(addedElt.getNode())) {
                 newAddedElement = getElementById(newElement, getId(addedElt.getNode()));
             }
-            undoAllTrackChangesForElement(newAddedElement, true);
+            if (!withTrackChanges) {
+                undoAllTrackChangesForElement(newAddedElement, true);
+            }
             checkNum(newAddedElement, null, ADD, withTrackChanges, false, tocItemsList);
             if (!withTrackChanges) {
                 resolveTrackChangesInEntireNode(newElement, tocItemsList);
