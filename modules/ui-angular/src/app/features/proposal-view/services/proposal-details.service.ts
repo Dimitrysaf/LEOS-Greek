@@ -733,7 +733,8 @@ export class ProposalDetailsService implements OnDestroy {
     return [...new Set(permissions)];
   }
 
-  openProposalChangeCopyDialog(nonEditablePartOfTitle: string, editableTitle: string, proposalTemplate: string, proposalLanguage: string) {
+  openProposalChangeCopyDialog(nonEditablePartOfTitle: string, editableTitle: string, proposalTemplate: string,
+                               proposalLanguage: string, documentCollectionName:string) {
     const dialog = this.dialogService.openDialog(
       new EuiDialogConfig({
         dialogId: 'change-copy-dialog',
@@ -748,6 +749,7 @@ export class ProposalDetailsService implements OnDestroy {
             proposalTemplate: proposalTemplate,
             proposalRef: this.proposalRef,
             proposalLanguage: proposalLanguage,
+            documentCollectionName:documentCollectionName,
           },
         },
         hasFooter: false,

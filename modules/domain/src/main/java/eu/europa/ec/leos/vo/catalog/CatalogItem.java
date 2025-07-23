@@ -28,6 +28,7 @@ public class CatalogItem {
 
     private ItemType type;
     private String id;
+    private String documentCollection;
     private Boolean enabled;
     private Boolean hidden;
     private String key;
@@ -115,5 +116,7 @@ public class CatalogItem {
     public void setDefaultDocument(Boolean defaultDocument) {
         this.defaultDocument = defaultDocument;
     }
+    public String getDocumentCollection() { return documentCollection; }
 
+    public void setDocumentCollection(String documentCollection) { this.documentCollection = documentCollection; }
 }

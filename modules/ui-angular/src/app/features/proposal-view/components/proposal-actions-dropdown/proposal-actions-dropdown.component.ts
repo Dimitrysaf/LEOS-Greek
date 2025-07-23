@@ -24,6 +24,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   @Input() proposalState: string;
   @Input() proposalTemplate!: string;
   @Input() proposalLanguage!: string;
+  @Input() documentCollectionName!: string;
 
   mailtoHeader = 'mailto:?';
   subjectProp = 'subject=';
@@ -75,7 +76,8 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   }
 
   handleCopyChange() {
-    this.proposalDetailsService.openProposalChangeCopyDialog(this.nonEditablePartOfTitle, this.editableTitle, this.proposalTemplate, this.proposalLanguage);
+    this.proposalDetailsService.openProposalChangeCopyDialog(this.nonEditablePartOfTitle, this.editableTitle,
+      this.proposalTemplate, this.proposalLanguage, this.documentCollectionName);
   }
 
   handleShare() {

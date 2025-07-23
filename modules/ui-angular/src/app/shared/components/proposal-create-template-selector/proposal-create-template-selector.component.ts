@@ -39,6 +39,7 @@ export class ProposalCreateTemplateSelectorComponent
   @Input() translationKey: 'document' | 'draft' = 'document';
   @Input() disabled: boolean = false;
   @Input() isCopyChangeAct!: boolean;
+  @Input() documentCollectionName!: string;
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
@@ -172,11 +173,11 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
-    const { id, key, names, type, enabled, items, hidden } = item;
+    const { id, documentCollection, key, names, type, enabled, items, hidden } = item;
     const label = this.proposalService.getTranslation(names);
     const iconClass =
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
-    const disabled = !enabled;
+    let disabled = !enabled;
     const children =
       type === 'CATEGORY' && !hidden && enabled
         ? items
@@ -185,10 +186,11 @@ export class ProposalCreateTemplateSelectorComponent
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
     const isTemplate = type !== 'CATEGORY';
-
+    const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
+    disabled = disabled || this.disabled || !isSameDocCollection;
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate && !this.disabled,
+      selectable: isTemplate && !this.disabled && isSameDocCollection,
       treeContentBlock: {
         id,
         key,
@@ -198,7 +200,7 @@ export class ProposalCreateTemplateSelectorComponent
         tooltipLabel: isEmptyCategory
           ? 'empty-category'
           : isTemplate
-          ? 'template'
+          ? (this.disabled || !isSameDocCollection ? 'Invalid selection': 'template')
           : '', // Adjust tooltipLabel based on conditions
         // Add other properties as needed
       },
