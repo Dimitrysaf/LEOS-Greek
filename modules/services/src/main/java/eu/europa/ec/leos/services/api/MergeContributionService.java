@@ -1359,7 +1359,11 @@ public class MergeContributionService {
             if (!addedElt.getReallyImpactedNode().equals(addedElt.getNode())) {
                 newAddedElement = getElementById(newElement, getId(addedElt.getNode()));
             }
-            if (!withTrackChanges) {
+            if (hasAttribute(contributionNode, LEOS_SPLIT_CONTENT_ATTR)) {
+                if (!withTrackChanges) {
+                    undoAllTrackChangesForElement(newAddedElement, true);
+                }
+            }else{
                 undoAllTrackChangesForElement(newAddedElement, true);
             }
             checkNum(newAddedElement, null, ADD, withTrackChanges, false, tocItemsList);
