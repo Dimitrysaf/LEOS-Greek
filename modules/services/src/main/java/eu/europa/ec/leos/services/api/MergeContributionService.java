@@ -1363,7 +1363,7 @@ public class MergeContributionService {
                 if (!withTrackChanges) {
                     undoAllTrackChangesForElement(newAddedElement, true);
                 }
-            }else{
+            } else {
                 undoAllTrackChangesForElement(newAddedElement, true);
             }
             checkNum(newAddedElement, null, ADD, withTrackChanges, false, tocItemsList);
