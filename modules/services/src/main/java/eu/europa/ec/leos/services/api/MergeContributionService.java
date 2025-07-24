@@ -990,7 +990,7 @@ public class MergeContributionService {
 
             // Adding element in xml content
             if (insertedElement.getTagName().equals(LEOS_TC_INSERT_ELEMENT_NAME)) {
-                xmlContent = mergeInsertedOrDeletedText(xmlContent, insertedElement.getNode(), withTrackChanges, true, mergingCompletelySuccessfull);
+                xmlContent = mergeInsertedOrDeletedText(xmlContent, insertedElement.getNode(), insertedElement.getId(), withTrackChanges, true, mergingCompletelySuccessfull, impactedElements);
                 impactedElements.add(insertedElement.getId());
             } else {
                 Node tmp = insertedElement.getReallyImpactedNode();
@@ -1045,7 +1045,7 @@ public class MergeContributionService {
                 continue;
             }
             if (deletedElement.getTagName().equals(LEOS_TC_DELETE_ELEMENT_NAME)) {
-                xmlContent = mergeInsertedOrDeletedText(xmlContent, deletedElement.getReallyImpactedNode(), withTrackChanges, false, mergingCompletelySuccessfull);
+                xmlContent = mergeInsertedOrDeletedText(xmlContent, deletedElement.getReallyImpactedNode(), deletedElement.getId(), withTrackChanges, false, mergingCompletelySuccessfull, impactedElements);
                 impactedElements.add(deletedElement.getId());
             } else {
                 Node originalNodeToBeRemoved = XercesUtils.getElementById(xmlContent, deletedElement.getId());
@@ -1497,9 +1497,11 @@ public class MergeContributionService {
     private byte[] mergeInsertedOrDeletedText(
             byte[] xmlContent,
             Node nodeToBeAddedOrRemoved,
+            String nodeToBeAddedOrRemovedId,
             boolean withTrackChanges,
             boolean isIns,
-            AtomicBoolean mergingCompletelySuccessfull
+            AtomicBoolean mergingCompletelySuccessfull,
+            List<String> impactedElements
     ) {
         Node originalRemovedOrInsertedNode = XercesUtils.getElementById(xmlContent, getId(nodeToBeAddedOrRemoved));
         boolean checkPrevious = true;
@@ -1511,11 +1513,11 @@ public class MergeContributionService {
                 refOriginalParentNode = originalUpdatedNode.getParentNode();
                 String contentToBeAddedOrRemoved = getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved);
 
-                Node previousNode = getSibling(nodeToBeAddedOrRemoved, true);
+                Node previousNode = getSiblingAndNotImpacted(nodeToBeAddedOrRemoved, true, impactedElements, nodeToBeAddedOrRemovedId);
                 String prevContent = getContent(previousNode);
                 Node previousNodeParent = previousNode!=null ? XercesUtils.getElementById(originalUpdatedNode, getId(previousNode.getParentNode())) : null;
 
-                Node nextNode = getSibling(nodeToBeAddedOrRemoved, false);
+                Node nextNode = getSiblingAndNotImpacted(nodeToBeAddedOrRemoved, false, impactedElements, nodeToBeAddedOrRemovedId);
                 String nextContent = getContent(nextNode);
                 Node nextNodeParent = nextNode != null ? XercesUtils.getElementById(originalUpdatedNode, getId(nextNode.getParentNode())) : null;
 
@@ -2737,9 +2739,24 @@ public class MergeContributionService {
                 && XercesUtils.getAttributeValue(node, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION))));
     }
 
+    private boolean isNodeAddedAndNotImpacted(Node node, List<String> impactedElements, String nodeToBeAddedOrRemovedId) {
+        return ((node.getNodeType() == Node.ELEMENT_NODE) && (node.getNodeName().equals(LEOS_TC_INSERT_ELEMENT_NAME)
+                || (XercesUtils.hasAttribute(node, LEOS_ACTION_ATTR)
+                && XercesUtils.getAttributeValue(node, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION)))
+                && impactedElements.contains(nodeToBeAddedOrRemovedId));
+    }
+
     private Node getSibling(Node node, boolean before) {
         Node siblingNode = before ? node.getPreviousSibling() : node.getNextSibling();
         while (siblingNode != null && isNodeAdded(siblingNode)) {
+            siblingNode = before ? siblingNode.getPreviousSibling() : siblingNode.getNextSibling();
+        }
+        return siblingNode;
+    }
+
+    private Node getSiblingAndNotImpacted(Node node, boolean before, List<String> impactedElements, String nodeToBeAddedOrRemovedId) {
+        Node siblingNode = before ? node.getPreviousSibling() : node.getNextSibling();
+        while (siblingNode != null && isNodeAddedAndNotImpacted(siblingNode, impactedElements, nodeToBeAddedOrRemovedId)) {
             siblingNode = before ? siblingNode.getPreviousSibling() : siblingNode.getNextSibling();
         }
         return siblingNode;
