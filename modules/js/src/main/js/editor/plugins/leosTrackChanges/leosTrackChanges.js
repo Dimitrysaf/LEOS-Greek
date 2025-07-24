@@ -273,7 +273,7 @@ define(function leosTrackChangesModule(require) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
             var range = editor.getSelection().getRanges()[0];
-            if(selectedElement.getName() === 'div') {
+            if(selectedElement.getName() === 'div' && !leosPluginUtils.isRecitalAA(selectedElement)) {
                 let lastEditable = leosPluginUtils.findLastEditable(selectedElement);
                 if (lastEditable) {
                     // Create a range for the last <li> or <p>

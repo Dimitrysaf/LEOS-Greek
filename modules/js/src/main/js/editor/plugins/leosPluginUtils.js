@@ -1763,7 +1763,7 @@ define(function leosPluginUtilsModule(require) {
             if (node.getName && (node.getName() === 'p' || node.getName() === 'li'
                 || (node.getName() === 'div' &&
                     (!!node.getAttribute(DATA_AKN_NAME) && node.getAttribute(DATA_AKN_NAME).toLowerCase() === BLOCKCONTAINER
-                    || node.getParent()?.getAttribute(DATA_AKN_NAME) === RECITAL && node.getAttribute(DATA_AKN_NAME) !== SUBFLOW_NAME)))) {
+                    || _isRecitalAA(node) && node.getAttribute(DATA_AKN_NAME) !== SUBFLOW_NAME)))) {
                 result = node;
             }
 
