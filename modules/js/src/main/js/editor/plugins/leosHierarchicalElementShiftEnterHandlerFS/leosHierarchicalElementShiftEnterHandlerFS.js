@@ -158,6 +158,13 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
         // if the current inline content is not wrap in p, wrap it if it is not heading
         var wrappingP = startElementName === 'h2' ? startElement : wrapCurrentInlineContent(startElement, editor);
 
+        if (editor.LEOS.isTrackChangesEnabled) {
+            contentAfterShiftEnter.setAttribute('data-akn-split-content', 'child');
+            if(!wrappingP.hasAttribute('data-akn-split-content')){
+                wrappingP.setAttribute('data-akn-split-content', 'parent');
+            }
+        }
+
         // insert new subparagraph with extracted content in the next line
         contentAfterShiftEnter.insertAfter(wrappingP);
         // make selection at the beginning of the new subparagraph
