@@ -64,11 +64,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
-import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDateWithoutOrigin;
-import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndOriginAndDummyDate;
-import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlRemoveNumValue;
-import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlWithoutIdsAndDummyDate;
+import static eu.europa.ec.leos.services.util.TestUtils.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -160,6 +156,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     private ContributionVO contribution5;
     private ContributionVO contribution6;
     private ContributionVO contribution7;
+    private ContributionVO contribution8;
     private XmlDocument xmlDoc;
     private byte[] docContent;
     protected byte[] contributionContent;
@@ -181,6 +178,9 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     private byte[] docContent7;
     private XmlDocument xmlDoc7;
     protected byte[] contributionContent7;
+    private byte[] docContent8;
+    private XmlDocument xmlDoc8;
+    protected byte[] contributionContent8;
 
     private final String FILE_PREFIX = "/merge";
 
@@ -219,6 +219,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         docContent5 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest5.xml");
         docContent6 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest6.xml");
         docContent7 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest7.xml");
+        docContent8 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest8.xml");
         contributionContent = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest.xml");
         contributionContent2 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest2.xml");
         contributionContent3 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest3.xml");
@@ -226,6 +227,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         contributionContent5 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest5.xml");
         contributionContent6 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest6.xml");
         contributionContent7 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest7.xml");
+        contributionContent8 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest8.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(docContent)));
         this.xmlDoc = getMockedBill(content);
@@ -247,6 +249,9 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         content = new ContentImpl("billMergeTest7.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(docContent7)));
         this.xmlDoc7 = getMockedBill(content);
+        content = new ContentImpl("billMergeTest8.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(docContent8)));
+        this.xmlDoc8 = getMockedBill(content);
         this.contribution = new ContributionVO();
         this.contribution.setCollaborators(Arrays.asList());
         this.contribution.setCheckinCommentVO(new CheckinCommentVO());
@@ -310,12 +315,23 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         this.contribution7 = new ContributionVO();
         this.contribution7.setCollaborators(Arrays.asList());
         this.contribution7.setCheckinCommentVO(new CheckinCommentVO());
-        this.contribution7.setDocumentId("454");
+        this.contribution7.setDocumentId("564");
         this.contribution7.setUpdatedDate(Instant.now());
         this.contribution7.setXmlContent(contributionContent7);
         this.contribution7.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
         this.contribution7.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
         this.contribution7.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
+
+        this.contribution8 = new ContributionVO();
+        this.contribution8.setCollaborators(Arrays.asList());
+        this.contribution8.setCheckinCommentVO(new CheckinCommentVO());
+        this.contribution8.setDocumentId("564");
+        this.contribution8.setUpdatedDate(Instant.now());
+        this.contribution8.setXmlContent(contributionContent8);
+        this.contribution8.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
+        this.contribution8.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
+        this.contribution8.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
+
         numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor,
                 documentLanguageContext);
         mergeContributionService = Mockito.spy(new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext,
@@ -2873,5 +2889,25 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateMergeUpdateArticleWithIndentWithoutTC.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+    }
+
+
+    @Test
+    public void testMergeUpdateArticleWithSplitParagraph() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecbfE4fteMDyM2SrP");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution8);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc8, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateMergeUpdateArticleWithSplitParagraph.xml"));
+        assertEquals(squeezeXmlAndRemoveAllNS(expected), squeezeXmlAndRemoveAllNS(resultStr));
     }
 }

@@ -901,7 +901,18 @@ define(function leosArticleListPluginModule(require) {
 
         // Make fresh selection.
         cursor.select();
-
+        var selection = editor.getSelection();
+        if (selection) {
+            var range = selection.getRanges()[0];
+            if(range) {
+                var currentLi = range.startContainer.getAscendant('li', true);
+                if(currentLi && currentLi.getName() === 'li'){
+                    if (currentLi.getAttribute('data-akn-split-content') === 'parent') {
+                        currentLi.removeAttribute('data-akn-split-content');
+                    }
+                }
+            }
+        }
         editor.fire( 'saveSnapshot' );
     }
 

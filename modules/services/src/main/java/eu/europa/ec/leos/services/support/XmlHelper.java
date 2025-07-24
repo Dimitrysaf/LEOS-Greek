@@ -235,6 +235,9 @@ public class XmlHelper {
     public static final String LEOS_INDENT_UNUMBERED_PARAGRAPH = "leos:indent-unumbered-paragraph";
     public static final String LEOS_AUTO_NUM_OVERWRITE = "leos:auto-num-overwrite";
     public static final String LEOS_RENUMBERED = "leos:renumbered";
+    public static final String LEOS_SPLIT_CONTENT_ATTR = "leos:split-content";
+    public static final String LEOS_SPLIT_PARENT = "parent";
+    public static final String LEOS_SPLIT_CHILD = "child";
 
     public static final String EMPTY_STRING = "";
     public static final String NON_BREAKING_SPACE = "\u00A0";
