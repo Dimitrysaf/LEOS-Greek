@@ -940,7 +940,7 @@ define(function leosArticleListPluginModule(require) {
     }
     function removeSplitContentAttr(sel) {
         var range = sel.getRanges()[ 0 ];
-        if(range && range.collapsed && range.startOffset === 0 && range.endOffset === 0) {
+        if (range && range.collapsed && range.startOffset === 0 && range.endOffset === 0) {
             var currentP = range.startContainer.getAscendant('p', true);
             if (!currentP || currentP.getName() !== 'p') return;
             var li = currentP.getAscendant('li', true);
