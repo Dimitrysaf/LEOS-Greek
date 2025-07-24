@@ -43,6 +43,7 @@
     [isCompleted]="!!(selectedTemplate && selectedLanguage)"
   >
       <app-proposal-create-template-selector
+        [documentCollectionName]="documentCollectionName"
         [isCopyChangeAct]="isCopyChangeAct"
         #templateSelector
         (navigationClick)="onNavigation(+1)"

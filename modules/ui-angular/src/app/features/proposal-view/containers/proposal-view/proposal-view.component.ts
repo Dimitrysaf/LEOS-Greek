@@ -37,6 +37,7 @@ export class ProposalViewComponent
   isClonedProposal = false;
   originRef: string | null = null;
   proposalRef: string;
+  documentCollectionName:string;
   @ViewChild('tabs') tabs: EuiTabsComponent;
   milestoneTabSelected = false;
   legFileName: string = null;
@@ -96,6 +97,7 @@ export class ProposalViewComponent
           };
           this.proposalTemplate =  proposal.metadata.template;
           this.proposalLanguage = proposal.metadata.language;
+          this.documentCollectionName = proposal.metadata.documentCollectionName;
           // Manually trigger change detection
           this.cdr.detectChanges();
         },

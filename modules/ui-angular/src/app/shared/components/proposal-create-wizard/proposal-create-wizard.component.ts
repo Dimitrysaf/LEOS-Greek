@@ -47,6 +47,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   isStepOneCompleted = false;
   private proposalRef:string;
   private proposalLanguage: string;
+  documentCollectionName: string;
   private destroy$ = new Subject();
 
 
@@ -74,7 +75,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     this.proposalTemplate =  this.config.proposalTemplate;
     this.proposalRef =  this.config.proposalRef;
     this.proposalLanguage =  this.config.proposalLanguage;
-
+    this.documentCollectionName =  this.config.documentCollectionName;
     this.initCreateForm();
     if(this.isKeepAct){
       this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
