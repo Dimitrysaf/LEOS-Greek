@@ -1349,24 +1349,24 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
-    function _handleNodeOnIndent(node, editor, isIndent) {
+    function _handleNodeOnIndent(node, editor, isIndent, isChild) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT || node.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST) {
             return;
         }
         var point = node.getAscendant(el => el.getName && (el.getName() === HTML_SUB_POINT
                 || el.getName() === HTML_POINT && el.getAttribute && el.getAttribute(DATA_AKN_ELEMENT) !== SUBPARAGRAPH), true);
-        _handleIndentAttributes(point, editor, isIndent);
+        _handleIndentAttributes(point, editor, isIndent, isChild);
         if (!node.getAttribute(DATA_AKN_ELEMENT) || node.getAttribute(DATA_AKN_ELEMENT).toLowerCase() !== CROSSHEADING.toLowerCase()) {
             point.removeAttribute(DATA_AKN_NUM);
         }
         point.findOne(LIST_ELEMENTS)?.getChildren().toArray().forEach((child) => {
             if (_getElementName(child) === HTML_POINT && !_isListIntro(child)) {
-                _handleNodeOnIndent(child, editor, isIndent);
+                _handleNodeOnIndent(child, editor, isIndent, true);
             }
         });
     }
 
-    function _handleIndentAttributes(node, editor, isIndent) {
+    function _handleIndentAttributes(node, editor, isIndent, isChild) {
         if (editor.LEOS.isTrackChangesEnabled && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
             var elementName = node.getAttribute(DATA_AKN_ELEMENT).toUpperCase();
             switch(elementName) {
@@ -1399,7 +1399,7 @@ define(function leosPluginUtilsModule(require) {
             if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
                 node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
             }
-            if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
+            if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
                 node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
             }
             if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL)) {
@@ -1761,8 +1761,9 @@ define(function leosPluginUtilsModule(require) {
 
             // If node is <p> or <li>, remember it
             if (node.getName && (node.getName() === 'p' || node.getName() === 'li'
-                || (node.getName() === 'div' && !!node.getAttribute(DATA_AKN_NAME)
-                    && node.getAttribute(DATA_AKN_NAME).toLowerCase() === BLOCKCONTAINER ))) {
+                || (node.getName() === 'div' &&
+                    (!!node.getAttribute(DATA_AKN_NAME) && node.getAttribute(DATA_AKN_NAME).toLowerCase() === BLOCKCONTAINER
+                    || node.getParent()?.getAttribute(DATA_AKN_NAME) === RECITAL && node.getAttribute(DATA_AKN_NAME) !== SUBFLOW_NAME)))) {
                 result = node;
             }
 

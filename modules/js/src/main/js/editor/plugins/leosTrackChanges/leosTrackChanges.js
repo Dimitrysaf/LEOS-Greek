@@ -714,10 +714,10 @@ define(function leosTrackChangesModule(require) {
             var maxDepth = this.findMaximusDepth(element);
             if(maxDepth > 0) {
                 for (var i = maxDepth; i > 0; i--) {
-                    var olElements = this.findOlElementsByDepth(element, i);
-                    for (var j = olElements.length - 1; j >= 0; j--) {
-                        var olElementToProcess = olElements[j];
-                        isElementDeleted = this.processOlElement(editor, olElementToProcess, processedElements, actionName);
+                    var listElements = this.findListElementsByDepth(element, i);
+                    for (var j = listElements.length - 1; j >= 0; j--) {
+                        var listElementToProcess = listElements[j];
+                        isElementDeleted = this.processListElement(editor, listElementToProcess, processedElements, actionName);
                         if (isElementDeleted) {
                             break;
                         }
@@ -744,7 +744,7 @@ define(function leosTrackChangesModule(require) {
             for (var j = editableElements.count() - 1; j >= 0; j--) {
                 var edElementToProcess = editableElements.getItem(j);
                 var processedElements = [];
-                isElementDeleted = this.processOlElement(editor, edElementToProcess, processedElements, actionName);
+                isElementDeleted = this.processListElement(editor, edElementToProcess, processedElements, actionName);
                 if (isElementDeleted) {
                     break;
                 }
@@ -785,16 +785,16 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        processOlElement: function (editor, olElementToProcess, processedElements, actionName) {
+        processListElement: function (editor, listElementToProcess, processedElements, actionName) {
             // Process table rows
-            var rowElements = olElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
+            var rowElements = listElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
             for (var i = rowElements.count() - 1; i >= 0; i--) {
                 var rowElementToProcess = rowElements.getItem(i);
                 this.processElement(editor, rowElementToProcess, processedElements, actionName);
             }
 
             // Process Soft Enter Inserts
-            var softEnterElements = olElementToProcess.find(`p[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_NUMBER}]`);
+            var softEnterElements = listElementToProcess.find(`p[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_NUMBER}]`);
             for (var j = softEnterElements.count() - 1; j >= 0; j--) {
                 var softEnterElementToProcess = softEnterElements.getItem(j);
                 if (!softEnterElementToProcess.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
@@ -802,9 +802,9 @@ define(function leosTrackChangesModule(require) {
                 }
             }
 
-            this.processElement(editor, olElementToProcess, processedElements, actionName);
+            this.processElement(editor, listElementToProcess, processedElements, actionName);
 
-            return !this.isElementPresentInEditor(editor, olElementToProcess);
+            return !this.isElementPresentInEditor(editor, listElementToProcess);
         },
 
         processElement: function (editor, element, processedElements, actionName) {
@@ -821,12 +821,12 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        findOlElementsByDepth: function (root, targetDepth) {
+        findListElementsByDepth: function (root, targetDepth) {
             const result = [];
 
             function traverse(node, currentDepth) {
-                if (node.getName && node.getName().toLowerCase() === 'ol' && node.getAttribute && !!node.getAttribute(core.ID)) {
-                    currentDepth++; // Entering a deeper ol
+                if (node.getName && ['ol', 'ul'].includes(node.getName().toLowerCase()) && node.getAttribute && !!node.getAttribute(core.ID)) {
+                    currentDepth++; // Entering a deeper ol or ul
                     if (currentDepth === targetDepth) {
                         result.push(node);
                     }
@@ -849,8 +849,8 @@ define(function leosTrackChangesModule(require) {
             let maxDepth = 0;
 
             function traverse(node, depth) {
-                if (node.getName && node.getName().toLowerCase() === 'ol' && node.getAttribute && !!node.getAttribute(core.ID)) {
-                    depth++; // Increase depth when encountering an <ol>
+                if (node.getName && ['ol', 'ul'].includes(node.getName().toLowerCase()) && node.getAttribute && !!node.getAttribute(core.ID)) {
+                    depth++; // Increase depth when encountering an <ol> or <ul>
                     if (depth > maxDepth) {
                         maxDepth = depth;
                     }
@@ -907,13 +907,13 @@ define(function leosTrackChangesModule(require) {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                     var liParentElement = element.getParent();
-                    var pParentElement = element.getAscendant("p");
-                    element.remove();
+                    var pOrDivParentElement = element.getAscendant({ p:1, div:1 });
+                    this.removeElementAndEmptySubflow(element);
 
-                    if (pParentElement && !pParentElement.getText().trim()) {
-                        let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
-                        if(!!lastEditable && lastEditable.getId() == pParentElement.getId()){
-                            pParentElement.appendBogus();
+                    if (pOrDivParentElement && !pOrDivParentElement.getText().trim()) {
+                        let lastEditable = leosPluginUtils.findLastEditable(pOrDivParentElement.getAscendant("div"));
+                        if(!!lastEditable && lastEditable.getId() == pOrDivParentElement.getId()){
+                            pOrDivParentElement.appendBogus();
                             var range = editor.createRange();
                             range.selectNodeContents(lastEditable);
                             range.collapse(true);
@@ -1270,7 +1270,7 @@ define(function leosTrackChangesModule(require) {
             if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 var table = element.getAscendant("table");
                 if (table.$.rows.length == 1) {
-                    table.remove();
+                    this.removeElementAndEmptySubflow(table);
                 } else {
                     element.remove();
                 }
@@ -1285,7 +1285,7 @@ define(function leosTrackChangesModule(require) {
                 var pParentElement = element.getAscendant("p");
                 var table = element.getAscendant("table");
                 if (table.$.rows.length == 1) {
-                    table.remove();
+                    this.removeElementAndEmptySubflow(table);
                 } else {
                     element.remove();
                 }
@@ -1301,7 +1301,17 @@ define(function leosTrackChangesModule(require) {
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributes(element);
             }
-        }
+        },
+
+        removeElementAndEmptySubflow(element) {
+            var parent = element.getParent();
+            if (parent.getName && parent.getName() === "div" && parent.getAttribute && parent.getAttribute(core.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME
+                && parent.getChildCount() === 1) {
+                parent.remove();
+            } else {
+                element.remove();
+            }
+        },
 
     };
 
