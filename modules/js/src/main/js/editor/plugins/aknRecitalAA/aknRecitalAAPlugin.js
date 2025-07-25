@@ -163,6 +163,8 @@ define(function aknRecitalAAPluginModule(require) {
                 endElement.remove();
                 endElement = range.endContainer;
             }
+            // To avoid full recital from getting deleted when there's a subflow before the table
+            range.shrink(CKEDITOR.SHRINK_ELEMENT, true);
         }
 
         function isAllTextInFirstDivSelected() {
