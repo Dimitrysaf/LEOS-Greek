@@ -17,23 +17,32 @@ import eu.europa.ec.digit.leos.pilot.export.exception.LeosDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildErrorResponse;
 import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildValidZipResponse;
+import static org.springframework.http.HttpStatus.ACCEPTED;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class LeosDocumentApiController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LeosDocumentApiController.class);
     private final LeosDocumentService leosDocumentService;
 
     public LeosDocumentApiController(LeosDocumentService leosDocumentService) {
@@ -94,7 +103,7 @@ public class LeosDocumentApiController {
         }
     }
 
-    @RequestMapping(value = "/applyMetadata/async", method = RequestMethod.POST)
+    @RequestMapping(value = "/applyMetadataAsync", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile,
                                                 @RequestParam("callbackUrl") String callbackUrl) {
@@ -112,5 +121,14 @@ public class LeosDocumentApiController {
     @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
     public ResponseEntity<?> handleOptionsRequest() {
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/prefinalization-callback", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(ACCEPTED)
+    public void processPrefinalization(final @RequestParam(name = "token") String token, @RequestParam MultipartFile inputFile) throws IOException {
+        // This is just for callback testing purposes
+        LOG.info("Received callback call on prefinalization service!!!");
+        LOG.info("Token =>"  + token);
+        LOG.info("inputFile length =>" + inputFile.getBytes().length);
     }
 }

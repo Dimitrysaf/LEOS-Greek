@@ -11,9 +11,9 @@ public enum MetadataFieldType {
     FINAL_COTE("finalCote"),
     LINKED_DOCUMENTS("linkedDocuments"),
     STAMP("stamp"),
+    COMMISSIONER("commissioner"),
     // Following keys will be ignored at the moment
     STATUS("status"),
-    COMMISSIONER("commissioner"),
     DELETE_INTERNAL_REFERENCE("deleteInternalReference"),
     START_PAGE_NUMBER("startPageNumber"),
     CLEANUP_HEADER_AND_FOOTER("cleanupHeaderAndFooter"),
@@ -47,6 +47,14 @@ public enum MetadataFieldType {
             MetadataFieldType.valueOfTypeName(typeName);
             return true;
         } catch(IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public static boolean isCommissioner(final String value) {
+        try {
+            return valueOfTypeName(value).equals(MetadataFieldType.COMMISSIONER);
+        } catch(IllegalArgumentException ex) {
             return false;
         }
     }

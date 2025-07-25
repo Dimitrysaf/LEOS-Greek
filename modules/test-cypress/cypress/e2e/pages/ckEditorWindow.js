@@ -27,14 +27,18 @@ class ckEditorWindow {
         boldIcon: () => cy.get('.cke_button__bold'),
         italicIcon: () => cy.get('.cke_button__italic'),
         changeTextCaseIcon: () => cy.get('.cke_button__transformtextswitcher'),
-        //backgroundColorBtn: () => cy.get('.cke_button__bgcolor'),
+        numberedListIcon: () => cy.get('.cke_button__numberedlist'),
         ckEditorBtn: () => cy.get('a.cke_button'),
         docPurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
         pTag: () => this.elements.ckEditableInline().find('p'),
         refTag: () => this.elements.ckEditableInline().find('ref'),
+        blockContainer: () => this.elements.ckEditableInline().find("div[data-akn-name='blockContainer']"),
+        pTagFromBlockContainer: () => this.elements.blockContainer().find('p'),
+        olTagFromBlockContainer: () => this.elements.blockContainer().find('ol'),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
         ckEditorLeosAlternative1Btn: () => cy.get('.cke_button__leosalternatives1'),
-        ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2')
+        ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2'),
+        clauseContent: () => this.elements.ckEditableInline().find("#clause1 p[data-akn-mp-id='clause1ContentP']")
     }
 
     uploadImageFile(location, iframeClass) {
@@ -49,6 +53,10 @@ class ckEditorWindow {
 
     getCkEditorDialogHtml() {
         return this.elements.ckEditorDialogHtml();
+    }
+
+    clickCkEditorLeosAlternative1Btn() {
+        this.elements.ckEditorLeosAlternative1Btn().click();
     }
 
     clickCkEditorLeosAlternative2Btn() {
@@ -193,6 +201,10 @@ class ckEditorWindow {
         this.elements.cutBtn().click();
     }
 
+    clickNumberedListIcon() {
+        this.elements.numberedListIcon().click();
+    }
+
     /*    clickBackgroundColorIcon() {
             this.elements.backgroundColorBtn().click();
         }*/
@@ -229,6 +241,10 @@ class ckEditorWindow {
         return this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1);
     }
 
+    getLiTagFromOlOfBlockContainer(attributeName, attributeValue){
+        return this.elements.olTagFromBlockContainer().find("li["+attributeName+"='"+attributeValue+"']");
+    }
+
     moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
     }
@@ -251,6 +267,10 @@ class ckEditorWindow {
 
     clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("p[data-akn-element='" + pTagDataAknElement + "'").eq(pTagNumber - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
+    }
+
+    clickAtSpecificOffsetOfLiTagOfOlOfBlockContainer(offSet, attributeName, attributeValue) {
+        this.getLiTagFromOlOfBlockContainer(attributeName, attributeValue).invoke('attr', 'id').then(id => this.moveCursor(offSet, "#" + id));
     }
 
     moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
@@ -335,6 +355,10 @@ class ckEditorWindow {
 
     selectContentInLevel(offsetStart, offsetEnd, pTagNumber) {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.selectContent(offsetStart, offsetEnd, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
+    }
+
+    selectContentInLiOfOlOfBlockContainer(offSetStart, offSetEnd, attributeName, attributeValue){
+        this.getLiTagFromOlOfBlockContainer(attributeName, attributeValue).invoke('attr', 'id').then(id => this.selectContent(offSetStart, offSetEnd, "#" + id));
     }
 
     moveCursorToSpecificOffsetInLevel(offset, pTagNumber) {

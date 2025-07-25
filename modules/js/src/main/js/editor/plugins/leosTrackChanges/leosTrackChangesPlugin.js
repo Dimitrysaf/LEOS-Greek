@@ -750,6 +750,7 @@ define(function leosTrackChangesPluginModule(require) {
 
             editor.on("afterCommandExec", function(event) {
                 if (event.data.name === "enter") {
+                    addSplitAttrLiIfTextBeforeAnyTag(event);
                     var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
                     var newParagraph = null;
                     if (!elementToRemoveAttribute) {
@@ -1178,6 +1179,66 @@ define(function leosTrackChangesPluginModule(require) {
             return charCode;
         }
     };
+
+    function addSplitAttrLiIfTextBeforeAnyTag(event) {
+
+        var selection = event.editor.getSelection();
+        if (!selection) return;
+
+        var range = selection.getRanges()[0];
+        var currentLi = range.startContainer.getAscendant('li', true);
+        if (!currentLi || currentLi.getName() !== 'li') return;
+        currentLi.removeAttribute('data-akn-split-content');
+        var children = currentLi.getChildren();
+        if (children.count() === 0) return;
+
+        var firstTextIndex = -1;
+        var firstElementIndex = -1;
+
+        for (var i = 0; i < children.count(); i++) {
+            var child = children.getItem(i);
+
+            if (child.type === CKEDITOR.NODE_TEXT) {
+                if (child.getText().length > 0 && firstTextIndex === -1) {
+                    firstTextIndex = i;
+                }
+            } else if (child.type === CKEDITOR.NODE_ELEMENT) {
+                if (child.getName() !== 'br' && child.getName() !== 'em' && firstElementIndex === -1) {
+                    firstElementIndex = i;
+                }
+            }
+        }
+
+        if (firstTextIndex !== -1 && (firstElementIndex === -1 || firstTextIndex < firstElementIndex)) {
+            var prevLi = currentLi.getPrevious();
+            var currentText = currentLi.getText() ? currentLi.getText().trim() : '';
+            if (prevLi) {
+                var prevText =  prevLi.getText() ? prevLi.getText().trim() : '';
+                if (prevText.length > 0 && currentText.length > 0) {
+                    if(event.editor.LEOS.isTrackChangesEnabled){
+                        console.log(" Split detected  part of the content stayed above, part moved down.", currentLi.getId());
+                        currentLi.setAttribute('data-akn-split-content', 'child');
+                        if(!prevLi.hasAttribute('data-akn-split-content')){
+                            prevLi.setAttribute('data-akn-split-content', 'parent');
+                        }
+                    }
+                } else if (prevText.length > 0 && currentText.length === 0) {
+                     console.log("Just a blank new line after Enter.");
+                } else if (prevText.length === 0 && currentText.length > 0) {
+                    console.log(" Content was fully moved to new line.");
+                } else {
+                    console.log(" Both lines are empty unclear action.");
+                }
+            } else {
+                console.log(" This is the first <li>, no previous sibling to compare.");
+            }
+
+
+        } else {
+            currentLi.removeAttribute('data-akn-split-content');
+            console.log(" Skipped <li>: first text does not come before any valid element (excluding <br>)");
+        }
+    }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 

@@ -90,6 +90,8 @@ public class MetadataServiceImpl implements MetadataService {
                     return MetadataUtil.parseCote(fieldValue, MetadataFieldType.FINAL_COTE);
                 case STAMP:
                     return MetadataUtil.parseStamp(fieldValue);
+                case COMMISSIONER:
+                    return MetadataUtil.parseCommissionerValue(fieldValue);
                 default:
                     throw MetadataFieldNotAvailableException.newException(field);
             }
@@ -616,5 +618,92 @@ public class MetadataServiceImpl implements MetadataService {
         referenceElement.appendChild(refElement);
         referenceElement.appendChild(xmlFile.createTextNode("}"));
         return referenceElement;
+    }
+
+    @Override
+    public void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, int pos) {
+        if (!MetadataUtil.isBillXmlDocument(xmlFile)) return;
+        final Node signatureNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_SIGNATURE);
+        final int roleIndex = XmlUtil.indexOfChildNode(signatureNode, MetadataUtil.ELEMENT_ROLE);
+        final int personIndex = XmlUtil.indexOfChildNode(signatureNode, MetadataUtil.ELEMENT_PERSON);
+        if (roleIndex < 0 || personIndex < 0) {
+            return;
+        }
+
+        // Check wether role or person is first set in xml
+        // Depending on the index, the commission values are set accordingly
+        switch(pos) {
+            case 0:
+                if (roleIndex < personIndex) {
+                    processCommissionerRole(fieldInfo, signatureNode, xmlFile);
+                } else {
+                    processCommissionerPerson(fieldInfo, signatureNode);
+                }
+                break;
+            case 1:
+                if (roleIndex < personIndex) {
+                    processCommissionerPerson(fieldInfo, signatureNode);
+                } else {
+                    processCommissionerRole(fieldInfo, signatureNode, xmlFile);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void processCommissionerRole(ReferenceFieldInfo fieldInfo, Node signatureNode, XmlUtil.XmlFile xmlFile) {
+        this.addRoleToReferences(fieldInfo, xmlFile);
+        final Node roleNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_ROLE);
+        if (roleNode == null) return;
+
+        roleNode.setTextContent(fieldInfo.getDisplayValue());
+
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
+    }
+
+    private void addRoleToReferences(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        final Node referencesNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_REFERENCES);
+        boolean appendNode = false;
+        if (referencesNode == null) return;
+
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
+        if (roleFieldInfo == null) return;
+
+        Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
+        if (tlcRoleNode == null) {
+            tlcRoleNode = xmlFile.newElement(MetadataUtil.ELEMENT_TLCROLE);
+            appendNode = true;
+        }
+
+        XmlUtil.setNodeAttributeValue(tlcRoleNode, MetadataUtil.ATTRIBUTE_HREF, roleFieldInfo.getHref());
+        XmlUtil.setNodeAttributeValue(tlcRoleNode, MetadataUtil.ATTRIBUTE_SHOWAS, roleFieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(tlcRoleNode, MetadataUtil.ATTRIBUTE_XMLID, roleFieldInfo.getId());
+        if (appendNode) {
+            referencesNode.appendChild(tlcRoleNode);
+        }
+    }
+
+    private ReferenceFieldInfo getRoleFieldInfo(String commissionerValue) {
+        if (MetadataUtil.isRolePresident(commissionerValue)) {
+            return MetadataUtil.getRolePresidentFieldInfo();
+        }
+        if (MetadataUtil.isRoleVicePresident(commissionerValue)) {
+            return MetadataUtil.getRoleVicePresidentFieldInfo();
+        }
+        if (MetadataUtil.isRoleMemberOfTheCommission(commissionerValue)) {
+            return MetadataUtil.getRoleMemberOfTheCommissionFieldInfo();
+        }
+        if (MetadataUtil.isRoleDirectorGeneral(commissionerValue)) {
+            return MetadataUtil.getRoleDirectorGeneralFieldInfo();
+        }
+        return null;
+    }
+
+    private void processCommissionerPerson(ReferenceFieldInfo fieldInfo, Node signatureNode) {
+        final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
+        if (personNode == null) return;
+        personNode.setTextContent(fieldInfo.getDisplayValue());
     }
 }

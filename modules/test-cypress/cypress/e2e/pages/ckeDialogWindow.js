@@ -2,6 +2,7 @@ class ckeDialogWindow {
     elements = {
         ckeEditorDialog: () => cy.get("div[role='dialog']:not([style='display: none;'])"),
         dialogTitle: () => this.elements.ckeEditorDialog().find('.cke_dialog_title'),
+        dialogContent: () => this.elements.ckeEditorDialog().find('span.cke_dialog_ui_html'),
         okBtn: () => cy.get('.cke_dialog_footer_buttons').contains('OK'),
         activeDialogBox: () => cy.get("div[role='dialog'][style='display: block;'],div[role='dialog']:not([style])"),
         dialogOkBtn: () => this.elements.activeDialogBox().find('.cke_dialog_ui_button_ok'),

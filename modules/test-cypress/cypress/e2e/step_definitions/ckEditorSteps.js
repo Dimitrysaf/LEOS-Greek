@@ -65,6 +65,10 @@ And('click on add subparagraph icon present in ck editor panel', () => {
     ckEditorWindow.clickAddSubParagraphIcon();
 })
 
+When(/^click on numbered list icon present in ck editor panel$/, function () {
+    ckEditorWindow.clickNumberedListIcon();
+});
+
 Then('decrease indent icon is disabled in ck editor panel', () => {
     ckEditorWindow.elements.decreaseIndentIcon().should('have.class', 'cke_button_disabled');
 })
@@ -433,7 +437,11 @@ When('click on undo icon present in ck editor panel', function () {
     ckEditorWindow.clickUndoIcon();
 });
 
-When('click on alternative 2 icon present in ck editor panel', function () {
+When('click on alternative1 icon present in ck editor panel', function () {
+    ckEditorWindow.clickCkEditorLeosAlternative1Btn();
+});
+
+When('click on alternative2 icon present in ck editor panel', function () {
     ckEditorWindow.clickCkEditorLeosAlternative2Btn();
 });
 
@@ -599,4 +607,36 @@ When(/^double click on internal reference link (\d+) in edition mode$/, function
 
 Then(/^innerText of internal reference link (\d+) is "([^"]*)" in edition mode$/, function (count, innerText) {
     ckEditorWindow.getRefTag(count).should('have.text', innerText);
+});
+
+Then(/^p tag is present inside blockContainer in edition mode$/, function () {
+    ckEditorWindow.elements.pTagFromBlockContainer().should('exist');
+});
+
+Then(/^ol tag of blockContainer contains attribute "([^"]*)" with value "([^"]*)" in edition mode$/, function (attributeName, attributeValue) {
+    ckEditorWindow.elements.olTagFromBlockContainer().should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+When(/^click at offset (\d+) in li with attribute "([^"]*)" with value "([^"]*)" of ol tag of blockContainer in edition mode$/, function (offSet, attributeName, attributeValue) {
+    ckEditorWindow.clickAtSpecificOffsetOfLiTagOfOlOfBlockContainer(offSet, attributeName, attributeValue);
+});
+
+When(/^select content from offset (\d+) till offset (\d+) in li with attribute "([^"]*)" with value "([^"]*)" of ol tag of blockContainer in edition mode$/, function (offSetStart, offSetEnd, attributeName, attributeValue) {
+    ckEditorWindow.selectContentInLiOfOlOfBlockContainer(offSetStart, offSetEnd, attributeName, attributeValue);
+});
+
+Then(/^content of li with attribute "([^"]*)" with value "([^"]*)" of ol tag of blockContainer contains "([^"]*)" in edition mode$/, function (attributeName, attributeValue, content) {
+    ckEditorWindow.getLiTagFromOlOfBlockContainer(attributeName, attributeValue).should('have.text', content);
+});
+
+When(/^alternative1 is selected in ck editor panel$/, function () {
+    ckEditorWindow.elements.ckEditorLeosAlternative1Btn().should('have.class', 'cke_button_on');
+});
+
+When(/^alternative2 is selected in ck editor panel$/, function () {
+    ckEditorWindow.elements.ckEditorLeosAlternative2Btn().should('have.class', 'cke_button_on');
+});
+
+Then(/^content of clause is "([^"]*)" in edition mode$/, function (content) {
+    ckEditorWindow.elements.clauseContent().should('have.text', content);
 });
