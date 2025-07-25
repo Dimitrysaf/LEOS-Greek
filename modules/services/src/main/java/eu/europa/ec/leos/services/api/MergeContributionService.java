@@ -3020,7 +3020,7 @@ public class MergeContributionService {
                 } else if (ADD.equals(mergeAction)) {
                     Node refInsNode = getFirstChild(numNode, "ins");
                     if (refInsNode != null) {
-                        String oldNumLabel = numNode.getTextContent().trim();
+                        String oldNumLabel = refInsNode.getTextContent().trim();
                         numNode.setTextContent(null);
                         Node insertNum = createElementAsLastChildOfNode(refNode.getOwnerDocument(), numNode, "ins", oldNumLabel);
                         addAttribute(insertNum, LEOS_UID, XercesUtils.getAttributeValue(refInsNode, LEOS_UID));

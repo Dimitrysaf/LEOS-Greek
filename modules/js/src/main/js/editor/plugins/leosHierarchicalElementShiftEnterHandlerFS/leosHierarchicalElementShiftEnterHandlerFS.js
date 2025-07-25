@@ -159,9 +159,11 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
         var wrappingP = startElementName === 'h2' ? startElement : wrapCurrentInlineContent(startElement, editor);
 
         if (editor.LEOS.isTrackChangesEnabled) {
-            contentAfterShiftEnter.setAttribute('data-akn-split-content', 'child');
-            if(!wrappingP.hasAttribute('data-akn-split-content')){
-                wrappingP.setAttribute('data-akn-split-content', 'parent');
+            var range = selection.getRanges()[0];
+            var currentLi = range.startContainer.getAscendant('li', true);
+            if (!currentLi || currentLi.getName() !== 'li') return;
+            if (!currentLi.hasAttribute('data-akn-split-content')) {
+                currentLi.setAttribute('data-akn-split-content', 'parent');
             }
         }
 
