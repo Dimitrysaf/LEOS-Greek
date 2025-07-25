@@ -235,7 +235,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         if (!this.showCorrigendumAddendum) {
           this.resetCorrigendumAddendumFields();
         }
-        this.crossReferenceProposalListing = this.proposal.metadata.crossReferences;
         this.enableSave = false;
         this.growlService.growl({
           severity: 'success',
