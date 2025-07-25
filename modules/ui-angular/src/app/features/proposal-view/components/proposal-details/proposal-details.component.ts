@@ -155,6 +155,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   handleCoverPageTypeChange(covertype: string) {
     this.handleChange('coverPageType');
     this.isVerticalShift = covertype != 'STANDARD';
+    if (!this.isVerticalShift) this.verticalShift = 6.0;
   }
 
   ngOnDestroy(): void {
