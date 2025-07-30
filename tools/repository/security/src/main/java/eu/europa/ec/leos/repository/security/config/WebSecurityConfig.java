@@ -44,10 +44,10 @@ public class WebSecurityConfig {
 		return new JwtAuthenticationEntryPoint();
 	}
 
-	@Bean
-	public UserDetailsService JwtUserDetailsService() {
-		return new JwtUserDetailsService();
-	}
+//	@Bean
+//	public UserDetailsService JwtUserDetailsService() {
+//		return new JwtUserDetailsService();
+//	}
 
 	@Bean
 	UserCache JwtUserCache() {
@@ -59,8 +59,8 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
-	public UserDetailsService CachingUserDetailsService() {
-		CachingUserDetailsService cachingUserDetailsService = new CachingUserDetailsService(JwtUserDetailsService());
+	public UserDetailsService CachingUserDetailsService(JwtUserDetailsService userDetailsService) {
+		CachingUserDetailsService cachingUserDetailsService = new CachingUserDetailsService(userDetailsService);
 		cachingUserDetailsService.setUserCache(JwtUserCache());
 		return cachingUserDetailsService;
 	}
