@@ -69,7 +69,7 @@ public class MetadataServiceImpl implements MetadataService {
             byte[] zipBytes = akn4euService.applyMetadata(legFile);
             Map<String, Object> zipContent = ZipPackageUtil.unzipByteArray(zipBytes);
             for (String fileName : zipContent.keySet()) {
-                if (fileName.startsWith(PROP_ACT)) {
+                if (fileName.endsWith(".leg")) {
                     return ZipPackageUtil.unzipByteArray((byte[]) zipContent.get(fileName));
                 }
             }
