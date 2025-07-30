@@ -38,7 +38,10 @@ import { downloadBlob } from '@/shared/utils';
 
 import { ExportPackageVO } from '../models/export-package.model';
 import { Milestone } from '../models/milestone.model';
-import {EuiDialogService} from "@eui/components/eui-dialog";
+import { EuiDialogConfig, EuiDialogService } from "@eui/components/eui-dialog";
+import {
+  ProposalCreateWizardComponent
+} from "@/shared/components/proposal-create-wizard/proposal-create-wizard.component";
 
 @Injectable({ providedIn: 'root' })
 export class ProposalDetailsService implements OnDestroy {
@@ -749,5 +752,29 @@ export class ProposalDetailsService implements OnDestroy {
     const roles = [...config.user.roles, ...docRoles, config.contextRole];
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];
+  }
+
+  openProposalChangeCopyDialog(nonEditablePartOfTitle: string, editableTitle: string, proposalTemplate: string,
+                               proposalLanguage: string, documentCollectionName:string) {
+    const dialog = this.dialogService.openDialog(
+      new EuiDialogConfig({
+        dialogId: 'change-copy-dialog',
+        title: this.translateService.instant('page.workspace.create-title'),
+        bodyComponent: {
+          component: ProposalCreateWizardComponent,
+          config: {
+            closeDialog: () => this.dialogService.closeDialog(dialog.id),
+            isCopyChangeAct: true,
+            nonEditablePartOfTitle: nonEditablePartOfTitle,
+            editableTitle: editableTitle,
+            proposalTemplate: proposalTemplate,
+            proposalRef: this.proposalRef,
+            proposalLanguage: proposalLanguage,
+            documentCollectionName:documentCollectionName,
+          },
+        },
+        hasFooter: false,
+      }),
+    );
   }
 }

@@ -13,12 +13,16 @@ import { Subject } from 'rxjs';
 import {
   CatalogItem,
   CreateProposalBody,
+  CreateProposalCopy,
   CreateProposalResponse,
 } from '@/shared/models';
 import { ProposalService } from '@/shared/services/proposal.service';
 import { createPromise } from '@/shared/utils';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 import { EuiWizardStep } from '@eui/components/eui-wizard';
+import {
+  ProposalCreateTemplateSelectorComponent
+} from "@/shared/components/proposal-create-template-selector/proposal-create-template-selector.component";
 
 @Component({
   selector: 'app-proposal-create-wizard',
@@ -26,6 +30,7 @@ import { EuiWizardStep } from '@eui/components/eui-wizard';
   styleUrls: ['./proposal-create-wizard.component.scss'],
 })
 export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
+  @ViewChild('templateSelector') templateSelector: ProposalCreateTemplateSelectorComponent;
   stepSelected: any;
   isNavigationAllowed = false;
   currentStepIndex = 1;
@@ -34,9 +39,17 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   createForm: FormGroup;
   selectedTemplate: CatalogItem | null;
   selectedLanguage: string;
-
+  isCopyChangeAct = false;
+  nonEditablePartOfTitle: string;
+  editableTitle: string;
+  isKeepAct = false;
+  private proposalTemplate: string;
   isStepOneCompleted = false;
+  private proposalRef:string;
+  private proposalLanguage: string;
+  documentCollectionName: string;
   private destroy$ = new Subject();
+
 
   constructor(
     @Inject(DIALOG_COMPONENT_CONFIG) private config,
@@ -54,7 +67,20 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isCopyChangeAct = this.config.isCopyChangeAct;
+    this.isKeepAct = this.isCopyChangeAct;
+    this.isNavigationAllowed = this.isKeepAct;
+    this.nonEditablePartOfTitle =  this.config.nonEditablePartOfTitle;
+    this.editableTitle =  this.config.editableTitle;
+    this.proposalTemplate =  this.config.proposalTemplate;
+    this.proposalRef =  this.config.proposalRef;
+    this.proposalLanguage =  this.config.proposalLanguage;
+    this.documentCollectionName =  this.config.documentCollectionName;
     this.initCreateForm();
+    if(this.isKeepAct){
+      this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
+      this.createForm.get('docPurpose').enable();
+    }
   }
 
   ngAfterViewInit() {
@@ -140,16 +166,27 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   async onCreate() {
     const { resolve, reject, promise } =
       createPromise<CreateProposalResponse>();
-
-    this.proposalService.createProposal(this.getDataForCreate()).subscribe({
-      next: async (response) => {
-        this.config.closeDialog();
-        this.resetInitials();
-        await this.router.navigate([`collection/${response.proposalId}`]);
-        resolve(response);
-      },
-      error: reject,
-    });
+    if (this.isCopyChangeAct) {
+        this.proposalService.copyProposal(this.getDataForCopyChange()).subscribe({
+          next: async (response) => {
+            this.config.closeDialog();
+            this.resetInitials();
+            await this.router.navigate([`collection/${response.proposalId}`]);
+            resolve(response);
+          },
+          error: reject,
+        });
+    } else {
+      this.proposalService.createProposal(this.getDataForCreate()).subscribe({
+        next: async (response) => {
+          this.config.closeDialog();
+          this.resetInitials();
+          await this.router.navigate([`collection/${response.proposalId}`]);
+          resolve(response);
+        },
+        error: reject,
+      });
+    }
 
     return await promise;
   }
@@ -167,6 +204,32 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     return this.currentStepIndex === 2;
   }
 
+  handleKeepCopyRadioChange(event: any) {
+    const { value } = event.target;
+    this.isKeepAct = (value === 'true');
+    // Reset or reload the template selector component
+    if (this.templateSelector) {
+      // Option 1: Reset internal state of the component
+      this.templateSelector.resetInit(this.isCopyChangeAct && this.isKeepAct); // Implement this method in ProposalCreateTemplateSelectorComponent
+      // Option 2: Reset selected template/language to force reload
+      this.selectedTemplate = null;
+      this.selectedLanguage = null;
+    }
+
+    if(this.isKeepAct){
+      this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
+      this.createForm.get('docPurpose').enable();
+      this.selectedTemplate=null;
+      this.selectedLanguage=null;
+      this.updateTemplateAndLanguage();
+      this.isNavigationAllowed = true;
+    }else{
+      this.createForm.get('docPurpose').setValue(this.editableTitle);
+      this.createForm.get('docPurpose').disable();
+      this.isNavigationAllowed = false;
+    }
+  }
+
   private getDataForCreate(): CreateProposalBody {
     const { templateId, templateName, langCode, docPurpose, eeaRelevance, key } =
       this.createForm.getRawValue();
@@ -180,6 +243,30 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     };
   }
 
+  private getDataForCopyChange(): CreateProposalCopy {
+    let { templateId, templateName, langCode, docPurpose, eeaRelevance, key } = this.createForm.getRawValue();
+    if(this.isKeepAct){
+      return {
+        templateId,
+        templateName: this.proposalTemplate,
+        langCode: this.proposalLanguage,
+        docPurpose: docPurpose.trim(),
+        eeaRelevance,
+        key: this.proposalTemplate,
+        proposalRef: this.proposalRef,
+      };
+    }else{
+      return {
+        templateId,
+        templateName,
+        langCode,
+        docPurpose: docPurpose.trim(),
+        eeaRelevance,
+        key,
+        proposalRef: this.proposalRef,
+      };
+    }
+  }
   private initCreateForm() {
     this.createForm = this.fb.group({
       templateName: new FormControl(
@@ -193,7 +280,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         ),
         disabled: true,
       }),
-      docPurpose: new FormControl(
+      docPurpose: new FormControl(  this.isCopyChangeAct ? this.editableTitle :
         this.translateService.instant(
           'page.workspace.create-form.document.document-title-predefined-value',
         ),
@@ -222,6 +309,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       packageTitle: new FormControl({ value: '', disabled: true }),
       eeaRelevance: new FormControl(false, { validators: Validators.required }),
       eeaRelevanceText: new FormControl({ value: '', disabled: true }),
+      changeCopyAct:  new FormControl({value: 'true' as 'true' | 'false', disabled: false, }),
     });
   }
 
@@ -231,5 +319,9 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     this.currentStepIndex = 1;
     this.initCreateForm();
     this.isNavigationAllowed = false;
+    if(this.isCopyChangeAct){
+      this.isKeepAct = true;
+      this.createForm.get('changeCopyAct').setValue('true');
+    }
   }
 }

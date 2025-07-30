@@ -22,6 +22,9 @@
       [editableTitle]="proposalTitleEditablePart"
       [isClonedProposal]="isClonedProposal"
       [originRef]="originRef"
+      [proposalTemplate]="proposalTemplate"
+      [proposalLanguage]="proposalLanguage"
+      [documentCollectionName]="documentCollectionName"
     ></app-proposal-header>
 
     <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs *ngIf="!translatedDocs || translatedDocs.length === 0">

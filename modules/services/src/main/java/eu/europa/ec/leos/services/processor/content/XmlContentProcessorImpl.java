@@ -62,6 +62,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2568,6 +2571,33 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
 
         return buildSplittedElementPair(xmlContent, splitElement);
+    }
+
+    @Override
+    public List<String> extractElementIdsFromXml(byte[] xmlContent) {
+        List<String> allIds = new ArrayList<>();
+
+        try {
+            Document document = createXercesDocument(xmlContent);
+
+            String[] elementNames = {"citation", "recital", "article"};
+
+            for (String elementName : elementNames) {
+                NodeList nodeList = document.getElementsByTagName(elementName);
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    Node node = nodeList.item(i);
+                    String id = getId(node);
+                    if (id != null && !id.trim().isEmpty()) {
+                        allIds.add(id);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error extracting IDs: {}", e.getMessage(), e);
+        }
+
+        return allIds;
     }
 
     protected byte[] removeElement(byte[] xmlContent, Element element, String currentOrigin, boolean isTrackChangesEnabled) {

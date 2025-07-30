@@ -33,9 +33,12 @@ export class ProposalViewComponent
   proposalErrorCode: number | null = null;
   proposalTitleEditablePart: string;
   proposalTitleNonEditablePart: string;
+  proposalTemplate: string;
+  proposalLanguage: string;
   isClonedProposal = false;
   originRef: string | null = null;
   proposalRef: string;
+  documentCollectionName:string;
   @ViewChild('tabs') tabs: EuiTabsComponent;
   milestoneTabSelected = false;
   legFileName: string = null;
@@ -96,6 +99,9 @@ export class ProposalViewComponent
             proposalRef: this.proposalRef,
             legFileName: this.legFileName
           };
+          this.proposalTemplate =  proposal.metadata.template;
+          this.proposalLanguage = proposal.metadata.language;
+          this.documentCollectionName = proposal.metadata.documentCollectionName;
           // Manually trigger change detection
           this.cdr.detectChanges();
         },

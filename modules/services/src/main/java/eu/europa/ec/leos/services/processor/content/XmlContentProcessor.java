@@ -417,4 +417,5 @@ public interface XmlContentProcessor {
 
     public SpecificDocumentInformationDTO getSpecificDocumentInformation(byte xmlContent[]);
 
+    List<String> extractElementIdsFromXml(byte[] xmlContent);
 }

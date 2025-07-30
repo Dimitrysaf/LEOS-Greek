@@ -31,6 +31,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
@@ -115,12 +116,19 @@ public class XercesUtils {
     public static Document createXercesDocument(byte[] xmlContent, boolean namespaceEnabled) {
         try {
             DocumentBuilder builder = getDocumentBuilder(namespaceEnabled);
-            Document doc = builder.parse(new ByteArrayInputStream(xmlContent));
+            Document doc = builder.parse(new ByteArrayInputStream(fixUtf8Bytes(xmlContent)));
             doc.getDocumentElement().normalize();
             return doc;
         } catch (Exception e) {
             throw new IllegalStateException("Wrong XML Structure!", e);
         }
+    }
+
+    private static byte[] fixUtf8Bytes(byte[] originalBytes) {
+        if (originalBytes == null) return null;
+
+        String content = new String(originalBytes, StandardCharsets.UTF_8);
+        return content.getBytes(StandardCharsets.UTF_8);
     }
 
     public static Document createXercesDocument(byte[] xmlContent) {

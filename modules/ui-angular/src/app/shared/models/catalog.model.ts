@@ -1,6 +1,7 @@
 export interface CatalogItem {
   type: CatalogItemType;
   id: string;
+  documentCollection:string;
   enabled: boolean;
   hidden: true | null;
   key: string;

@@ -37,6 +37,9 @@ export class ProposalCreateTemplateSelectorComponent
   implements OnInit, OnDestroy
 {
   @Input() translationKey: 'document' | 'draft' = 'document';
+  @Input() disabled: boolean = false;
+  @Input() isCopyChangeAct!: boolean;
+  @Input() documentCollectionName!: string;
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
@@ -61,12 +64,7 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   ngOnInit() {
-    this.proposalService.templateCatalog$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((catalog) => {
-        this.loadTemplates(catalog);
-        this.cd.detectChanges(); // trigger `treeComponent` update
-      });
+    this.initialize(this.isCopyChangeAct); // if isCopyChangeAct then default true for disabling the tree selection
   }
 
   ngOnDestroy() {
@@ -119,6 +117,7 @@ export class ProposalCreateTemplateSelectorComponent
   //   }
   // }
 
+
   onNodeClick(event: EuiTreeSelectionChanges) {
     const selectedNode = event.selection[0];
     if (
@@ -134,6 +133,21 @@ export class ProposalCreateTemplateSelectorComponent
     } else {
       this.unsetTemplate();
     }
+  }
+
+  resetInit(disabled: boolean){
+    this.reset();
+    this.initialize(disabled);
+  }
+
+  initialize(disabled:boolean) {
+    this.disabled = disabled;
+    this.proposalService.templateCatalog$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((catalog) => {
+        this.loadTemplates(catalog);
+        this.cd.detectChanges(); // trigger `treeComponent` update
+      });
   }
 
   private loadTemplates(catalogItems: CatalogItem[] | null) {
@@ -159,11 +173,11 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
-    const { id, key, names, type, enabled, items, hidden } = item;
+    const { id, documentCollection, key, names, type, enabled, items, hidden } = item;
     const label = this.proposalService.getTranslation(names);
     const iconClass =
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
-    const disabled = !enabled;
+    let disabled = !enabled;
     const children =
       type === 'CATEGORY' && !hidden && enabled
         ? items
@@ -172,10 +186,11 @@ export class ProposalCreateTemplateSelectorComponent
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
     const isTemplate = type !== 'CATEGORY';
-
+    const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
+    disabled = disabled || this.disabled || !isSameDocCollection;
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate,
+      selectable: isTemplate && !this.disabled && isSameDocCollection,
       treeContentBlock: {
         id,
         key,
@@ -185,7 +200,7 @@ export class ProposalCreateTemplateSelectorComponent
         tooltipLabel: isEmptyCategory
           ? 'empty-category'
           : isTemplate
-          ? 'template'
+          ? (this.disabled || !isSameDocCollection ? 'Invalid selection': 'template')
           : '', // Adjust tooltipLabel based on conditions
         // Add other properties as needed
       },
