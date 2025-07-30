@@ -938,6 +938,31 @@ define(function leosArticleListPluginModule(require) {
         }
         event.editor.fire('unlockSnapshot');
     }
+    function removeSplitContentAttr(sel) {
+        var range = sel.getRanges()[ 0 ];
+        if (range && range.collapsed && range.startOffset === 0 && range.endOffset === 0) {
+            var currentP = range.startContainer.getAscendant('p', true);
+            if (!currentP || currentP.getName() !== 'p') return;
+            var li = currentP.getAscendant('li', true);
+            if (!li || li.getName() !== 'li') return;
+
+            // Get all direct children of <li> that are <p>
+            var pChildren = [];
+            for (var i = 0; i < li.getChildCount(); i++) {
+                var child = li.getChild(i);
+                if (child.getName && child.getName() === 'p') {
+                    pChildren.push(child);
+                }
+            }
+            if (pChildren.length === 2 && li.hasAttribute('data-akn-split-content')) {
+                li.removeAttribute('data-akn-split-content');
+            }
+
+        }
+
+            //.removeAttribute('data-akn-split-content');
+
+    }
 
     var pluginDefinition = {
         hidpi: true, // %REMOVE_LINE_CORE%
@@ -996,6 +1021,9 @@ define(function leosArticleListPluginModule(require) {
 
                     if ( isBackspace ) {
                         var previous, joinWith;
+                        if (editor.LEOS.isTrackChangesEnabled) {
+                            removeSplitContentAttr(sel);
+                        }
 
                         // Join a sub list's first line, with the previous visual line in parent.
                         if (

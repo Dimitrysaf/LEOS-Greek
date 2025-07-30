@@ -1359,7 +1359,7 @@ public class MergeContributionService {
             if (!addedElt.getReallyImpactedNode().equals(addedElt.getNode())) {
                 newAddedElement = getElementById(newElement, getId(addedElt.getNode()));
             }
-            if (hasAttribute(contributionNode, LEOS_SPLIT_CONTENT_ATTR)) {
+            if (hasAttribute(newAddedElement, LEOS_SPLIT_CONTENT_ATTR)) {
                 if (!withTrackChanges) {
                     undoAllTrackChangesForElement(newAddedElement, true);
                 }
@@ -3020,7 +3020,7 @@ public class MergeContributionService {
                 } else if (ADD.equals(mergeAction)) {
                     Node refInsNode = getFirstChild(numNode, "ins");
                     if (refInsNode != null) {
-                        String oldNumLabel = numNode.getTextContent().trim();
+                        String oldNumLabel = refInsNode.getTextContent().trim();
                         numNode.setTextContent(null);
                         Node insertNum = createElementAsLastChildOfNode(refNode.getOwnerDocument(), numNode, "ins", oldNumLabel);
                         addAttribute(insertNum, LEOS_UID, XercesUtils.getAttributeValue(refInsNode, LEOS_UID));

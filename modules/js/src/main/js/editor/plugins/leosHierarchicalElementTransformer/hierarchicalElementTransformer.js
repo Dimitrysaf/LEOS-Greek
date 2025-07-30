@@ -795,6 +795,10 @@ define(function hierarchicalElementTransformer(require) {
                                             from: "leos:softdate",
                                             to: DATA_AKN_SOFTDATE,
                                             action: "passAttributeTransformer"
+                                        },{
+                                            from: "leos:split-content",
+                                            to: "data-akn-split-content",
+                                            action: "passAttributeTransformer"
                                         }, {
                                             from: "leos:softmove_to",
                                             to: DATA_AKN_SOFTMOVE_TO,
@@ -1199,6 +1203,11 @@ define(function hierarchicalElementTransformer(require) {
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:softdate", element),
                                         action: "passAttributeTransformer"
                                     }, {
+                                        to: "data-akn-split-content",
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:split-content", element),
+                                        action: "passAttributeTransformer"
+                                    },
+                                        {
                                         to: DATA_AKN_SOFTMOVE_TO,
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:softmove_to", element),
                                         action: "passAttributeTransformer"
@@ -1440,6 +1449,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_SOFTDATE,
                                                 to: "leos:softdate",
                                                 action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-split-content",
+                                                to: "leos:split-content",
+                                                action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_SOFTMOVE_TO,
                                                 to: "leos:softmove_to",
@@ -1594,6 +1607,10 @@ define(function hierarchicalElementTransformer(require) {
                                             }, {
                                                 from: DATA_AKN_SOFTDATE,
                                                 to: "leos:softdate",
+                                                action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-split-content",
+                                                to: "leos:split-content",
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_SOFTMOVE_TO,
@@ -1863,6 +1880,10 @@ define(function hierarchicalElementTransformer(require) {
                                             from: DATA_AKN_SOFTDATE,
                                             to: "leos:softdate",
                                             action: "passAttributeTransformer"
+                                        },{
+                                            from: "data-akn-split-content",
+                                            to: "leos:split-content",
+                                            action: "passAttributeTransformer"
                                         }, {
                                             from: DATA_AKN_SOFTMOVE_TO,
                                             to: "leos:softmove_to",
@@ -2006,6 +2027,10 @@ define(function hierarchicalElementTransformer(require) {
                                             }, {
                                                 from: DATA_AKN_SOFTDATE,
                                                 to: "leos:softdate",
+                                                action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-split-content",
+                                                to: "leos:split-content",
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_SOFTMOVE_TO,
@@ -2262,10 +2287,14 @@ define(function hierarchicalElementTransformer(require) {
                                                 to: "leos:softdate",
                                                 action: "passAttributeTransformer"
                                             }, {
+                                                from: "data-akn-split-content",
+                                                to: "leos:split-content",
+                                                action: "passAttributeTransformer"
+                                            }, {
                                                 from: DATA_AKN_SOFTMOVE_TO,
                                                 to: "leos:softmove_to",
                                                 action: "passAttributeTransformer"
-                                            }, {
+                                            },{
                                                 from: DATA_AKN_SOFTMOVE_FROM,
                                                 to: "leos:softmove_from",
                                                 action: "passAttributeTransformer"
