@@ -40,6 +40,7 @@ export class ProposalCreateTemplateSelectorComponent
   @Input() disabled: boolean = false;
   @Input() isCopyChangeAct!: boolean;
   @Input() documentCollectionName!: string;
+  @Input() proposalTemplate!: string;
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
@@ -186,22 +187,32 @@ export class ProposalCreateTemplateSelectorComponent
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
     const isTemplate = type !== 'CATEGORY';
+    const sameTemplate = (this.proposalTemplate && key === this.proposalTemplate);
     const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
-    disabled = disabled || this.disabled || !isSameDocCollection;
+    disabled = disabled || this.disabled || !isSameDocCollection || sameTemplate;
+
+    let tooltipLabel = '';
+    if(isEmptyCategory){
+      tooltipLabel = 'empty-category';
+    }else if(isTemplate){
+      if(this.disabled){
+        tooltipLabel = 'Invalid selection';
+      }else if(!isSameDocCollection) {
+        tooltipLabel = 'Invalid selection. Different category type';
+      }else if(sameTemplate){
+        tooltipLabel = 'Invalid selection. Cannot choose same template type';
+      }
+    }
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate && !this.disabled && isSameDocCollection,
+      selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate,
       treeContentBlock: {
         id,
         key,
         label,
         disabled,
         iconSvgName: iconClass,
-        tooltipLabel: isEmptyCategory
-          ? 'empty-category'
-          : isTemplate
-          ? (this.disabled || !isSameDocCollection ? 'Invalid selection': 'template')
-          : '', // Adjust tooltipLabel based on conditions
+        tooltipLabel: tooltipLabel, // Adjust tooltipLabel based on conditions
         // Add other properties as needed
       },
     };
