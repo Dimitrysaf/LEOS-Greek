@@ -13,34 +13,40 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageFormats;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLocationType;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ListFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.SimpleFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.Collection;
 
 public class MetadataUtil {
     public static final Logger LOG = LoggerFactory.getLogger(MetadataUtil.class);
@@ -51,6 +57,7 @@ public class MetadataUtil {
     public static final String INTERINSTITUTIONAL_COTE_PARSE_PATTERN = "([0-9]{4})/([0-9]+) \\(([A-Za-z0-9]+)\\)";
     public static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "procedure_%s_%s";
     public static final String INTERINSTITUTIONAL_COTE_HREF_PATTERN = "http://eur-lex.europa.eu/procedure/__LANG__/%s_%s";
+    public static final String ATHENTIC_LANGUAGE_HREF_PATTERN = "http://publications.europa.eu/resource/authority/language/%s";
     public static final String INTERINSTITUTIONAL_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
     public static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
     public static final String LINKED_DOCUMENT_PARSE_PATTERN = "([A-Za-z0-9]+)\\((\\d{4})\\)(\\s?)(\\d+)(\\s?)([A-Za-z0-9]*)";
@@ -83,17 +90,42 @@ public class MetadataUtil {
     public static final String ATTRIBUTE_HREF ="href";
     public static final String ATTRIBUTE_SHOWAS ="showAs";
     public static final String ATTRIBUTE_SHORTFORM ="shortForm";
-    public static final String ELEMENT_COVERPAGE ="coverPage";
     public static final String ATTRIBUTE_REFERSTO ="refersTo";
     public static final String ATTRIBUTE_VALUE ="value";
     public static final String ATTRIBUTE_CLASS ="class";
+    public static final String ELEMENT_COVERPAGE ="coverPage";
     public static final String ELEMENT_FRBRWORK ="FRBRWork";
     public static final String ELEMENT_FRBRLANGUAGE ="FRBRlanguage";
     public static final String ELEMENT_TLCREFERENCE = "TLCReference";
     public static final String ELEMENT_PRESERVATION ="preservation";
     public static final String ELEMENT_REFERENCES ="references";
+    public static final String ELEMENT_CONTAINER="container";
+    public static final String ELEMENT_META="meta";
     public static final String ATTRIBUTE_LANGUAGE ="language";
+    public static final String VALUE_LANGUAGE ="language";
     public static final String VALUE_LANGUAGE_EN ="EN";
+    public static final String FIELD_NOT_SUPPORTED_MESSAGE="Field not supported";
+    public static final String LOCATION_NOT_SUPPORTED_MESSAGE="Location not supported";
+    public static final String INVALID_ISO_DATE_MESSAGE="Invalid iso date";
+    public static final String INVALID_FIELD_VALUE_MESSAGE="Invalid field value";
+    public static final String STYLE="style";
+    public static final String FRBRWORK="FRBRWork";
+    public static final String FRBRLANGUAGE="FRBRlanguage";
+    public static final String TLCREFERENCE = "TLCReference";
+    public static final String PRESERVATION="preservation";
+    public static final String REFERENCES="references";
+    public static final String COVERPAGE_TYPE="coverPageType";
+    public static final String ELEMENT_DISCLAIMER ="disclaimer";
+    public static final String ELEMENT_LOGO ="logo";
+    public static final String WATERMARK="watermark";
+    public static final String VERTICAL_SHIFT="verticalShift";
+    public static final String ELEMENT_P ="p";
+    public static final String ELEMENT_IMG ="img";
+    public static final String ELEMENT_ORGANIZATION ="organization";
+    public static final String ATTRIBUTE_PACKAGE_TITLE="packageTitle";
+    public static final String VALUE_AUTHENTIC_LANGUAGES_NAME = "authenticLang";
+    public static final String VALUE_CROSS_CONFERENCE_NAME = "associatedReferences";
+    public static final String ACTING_ENTITY_NAME = "actingEntity";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
     public static final String AUTONOMOUS_ACT_VALUE="ACT_AUTO_COM";
     public static final String VALUE_FINAL = "final";
@@ -101,6 +133,9 @@ public class MetadataUtil {
     public static final String ELEMENT_ROLE = "role";
     public static final String ELEMENT_PERSON = "person";
     public static final String ELEMENT_SIGNATURE = "signature";
+    public static final String AUTHENTIC_LANGUAGES_PATH = "//akn:meta/akn:references/akn:TLCReference[@name='language']";
+    public static final String COVERPAGE_TYPE_PATH = "//akn:coverPage/akn:container[@name='disclaimer']";
+    public static final String ACTING_ENTITY_PATH = "//akn:coverPage/akn:container[@name='actingEntity']";
 
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
@@ -240,6 +275,12 @@ public class MetadataUtil {
             .map(String::toLowerCase)
             .collect(Collectors.toList()));
 
+    public static final List<String> orderInCoverPage =
+            Arrays.asList("akn:container[@name='logo']"
+            , "akn:container[@name='actingEntity']", "akn:container[@name='mainDoc']", "akn:container[@name='procedureIdentifier']"
+            , "akn:container[@name='corrigendum']", "akn:longTitle", "akn:container[@name='authenticLang']"
+            , "akn:container[@name='associatedReferences']", "akn:container[@name='eeaRelevance']", "akn:container[@name='mainDocLanguage']");
+
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
         return new ReferenceFieldInfo("BEL_BRU",
                 "http://publications.europa.eu/resource/authority/place/BEL_BRU",
@@ -365,7 +406,6 @@ public class MetadataUtil {
     public static ApplyMetadataResponse.FieldNode getLookupFieldInfoErrorResult(
             ApplyMetadataRequest.FieldNode field,
             MetadataUtilsException e) {
-
         if(e.getMessage().equals(MESSAGE_INVALID_FIELD_VALUE)) {
             return new ApplyMetadataResponse.FieldNode(field.getKey(), VALUE_ONE,
                     String.format(MESSAGE_INVALID_FIELD_VALUE + " \"%s\"", field.getValue(), ELEMENT_FIELD));
@@ -382,6 +422,7 @@ public class MetadataUtil {
     public static MetadataFieldInfo parseAdoptionLocation(String fieldValue) throws MetadataFieldInvalidValueException {
         try {
             MetadataLocationType locationType = MetadataLocationType.valueOfLocation(fieldValue.toUpperCase());
+
             switch (locationType){
                 case BRUSSELS:
                     return getFieldInfoLocationBrussels();
@@ -392,7 +433,7 @@ public class MetadataUtil {
                 default:
                     throw MetadataFieldInvalidValueException.newException(MetadataFieldType.ADOPTION_LOCATION.toString(), MESSAGE_LOCATION_NOT_SUPPORTED);
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e){
             throw MetadataFieldInvalidValueException.newException(MetadataFieldType.ADOPTION_LOCATION.toString(), MESSAGE_LOCATION_NOT_SUPPORTED);
         }
     }
@@ -402,14 +443,15 @@ public class MetadataUtil {
     }
 
     public static MetadataFieldInfo parseEmissionDate(String fieldValue) throws MetadataFieldInvalidValueException {
-        return ((ReferenceFieldInfo)parseEmissionDate(MetadataFieldType.EMISSION_DATE.toString(), fieldValue));
+        return ((ReferenceFieldInfo) parseEmissionDate(MetadataFieldType.EMISSION_DATE.toString(), fieldValue));
     }
 
-    private static MetadataFieldInfo parseEmissionDate(String fieldName, String fieldValue) throws MetadataFieldInvalidValueException {
+    public static MetadataFieldInfo parseEmissionDate(String fieldName, String fieldValue) throws MetadataFieldInvalidValueException {
         Date parsedDate = stringToDate(fieldValue, EMISSION_DATE_PARSE_PATTERN);
         if (parsedDate == null) {
             throw MetadataFieldInvalidValueException.newException(fieldName, MESSAGE_INVALID_ISO_DATE);
-        }
+        };
+
         return new ReferenceFieldInfo(fieldValue, "", "", "", MetadataFieldType.EMISSION_DATE);
     }
 
@@ -423,6 +465,10 @@ public class MetadataUtil {
     }
 
     public static MetadataFieldInfo parseInterinstitutionalCote(String fieldValue) throws MetadataFieldInvalidValueException {
+        if (StringUtil.isEmpty(fieldValue)) {
+            return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.INTERINSTITUTIONAL_COTE);
+        }
+
         if (!fieldValue.matches(INTERINSTITUTIONAL_COTE_PARSE_PATTERN)) {
             throw MetadataFieldInvalidValueException.newException(MetadataFieldType.INTERINSTITUTIONAL_COTE.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
@@ -450,6 +496,10 @@ public class MetadataUtil {
     }
 
     public static MetadataFieldInfo parseCote(String fieldValue, MetadataFieldType coteType) throws MetadataFieldInvalidValueException {
+        if (StringUtil.isEmpty(fieldValue)) {
+            return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.COTE);
+        }
+
         if (!fieldValue.matches(INSERT_COTE_PARSE_PATTERN)){
             throw MetadataFieldInvalidValueException.newException(MetadataFieldType.COTE.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
@@ -497,29 +547,53 @@ public class MetadataUtil {
         if (!displayValue.matches(LINKED_DOCUMENT_PARSE_PATTERN)){
             throw MetadataFieldInvalidValueException.newException(MetadataFieldType.LINKED_DOCUMENTS.toString(), MESSAGE_INVALID_FIELD_VALUE);
         }
-        int bracketIndex = displayValue.indexOf("(");
-        final String abbreviation = displayValue.substring(0, bracketIndex).trim();
 
-        int closingBracketIndex = displayValue.indexOf(")");
-        final String year = displayValue.substring(bracketIndex+1, closingBracketIndex).trim();
+        String regex = "(([A-Z]+)\\(([0-9]+)\\) ([0-9]*)( .*)?)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(displayValue);
+        while (matcher.find()) {
+            String crossRef = matcher.group(1);
+            String abbreviation = matcher.group(2);
+            String year = matcher.group(3);
+            String number = matcher.group(4);
+            final String href = String.format(LINKED_DOCUMENT_HREF_PATTERN,
+                    abbreviation.toLowerCase().replace("sec",  "swd"), // SEC documents are published under SWD
+                    year, number);
 
-        int wordPos = displayValue.indexOf(VALUE_FINAL);
-        if(wordPos < 0) wordPos = displayValue.lastIndexOf("draft");
-        if(wordPos < 0) wordPos = displayValue.length();
-        final String number = displayValue.substring(closingBracketIndex+1, wordPos).trim();
-        final String href = String.format(LINKED_DOCUMENT_HREF_PATTERN,
-                abbreviation.toLowerCase().replace("sec",  "swd"), // SEC documents are published under SWD
-                year, number);
+            return new ReferenceFieldInfo("", href, displayValue, "", MetadataFieldType.LINKED_DOCUMENTS);
+        }
+        throw MetadataFieldInvalidValueException.newException(MetadataFieldType.LINKED_DOCUMENTS.toString(), MESSAGE_INVALID_FIELD_VALUE);
+    }
 
-        return new ReferenceFieldInfo("", href, displayValue, "", MetadataFieldType.LINKED_DOCUMENTS);
+    public static MetadataFieldInfo  parseCommissionerValue(String fieldValue) {
+        return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.COMMISSIONER);
     }
 
     public static MetadataFieldInfo parseStamp(String fieldValue) {
         return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.STAMP);
     }
 
-    public static MetadataFieldInfo  parseCommissionerValue(String fieldValue) {
-        return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.COMMISSIONER);
+    public static MetadataFieldInfo parsePackageTitle(String fieldValue) {
+        return new SimpleFieldInfo(fieldValue, MetadataFieldType.PACKAGE_TITLE);
+    }
+
+    public static MetadataFieldInfo parseAuthenticLanguages(String fieldValue) {
+        String[] values = {};
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            values = mapper.readValue(fieldValue, String[].class);
+        } catch (JsonProcessingException e) {
+            LOG.debug("Issue parsing json list of authentic languages");
+        }
+        return new ListFieldInfo(Arrays.asList(values), MetadataFieldType.AUTHENTIC_LANG);
+    }
+
+    public static MetadataFieldInfo parseCoverPageType(String fieldValue) {
+        return new SimpleFieldInfo(fieldValue, MetadataFieldType.COVERPAGE_TYPE);
+    }
+
+    public static MetadataFieldInfo parseInternalRef(String fieldValue) {
+        return new SimpleFieldInfo(fieldValue, MetadataFieldType.INTERNAL_REF);
     }
 
     public static Node getXmlNodeMetaReference(XmlFile xmlFile, String referenceNodeName) {
@@ -568,6 +642,14 @@ public class MetadataUtil {
             return null;
         }
         return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.ATTRIBUTE_LANGUAGE);
+    }
+
+    public static Node getPackageTitleReferenceNode(XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeReferences = xmlFile.getElementByName(ELEMENT_REFERENCES);
+        if (xmlNodeReferences == null) {
+            return null;
+        }
+        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, MetadataUtil.ATTRIBUTE_PACKAGE_TITLE);
     }
 
     public static Node getXmlNodeDocketNumber(Node xmlNode) {
@@ -633,16 +715,16 @@ public class MetadataUtil {
     }
 
     public static String buildPrefinalizationLegName(ApplyMetadataRequest.TaskNode task) {
-        final String documentFileName = task.getDocument().getFileName();
+        final String documentFilename = task.getDocument().getFileName();
         Optional<ApplyMetadataRequest.ActionNode> action = task.getActions().stream().findFirst();
         if (!action.isPresent()) {
-            return documentFileName;
+            return documentFilename;
         }
 
         Optional<ApplyMetadataRequest.FieldNode> coteField = action.get().getFieldWithKey(MetadataFieldType.COTE.toString());
         Optional<ApplyMetadataRequest.FieldNode> finalCote = action.get().getFieldWithKey(MetadataFieldType.FINAL_COTE.toString());
         if (!coteField.isPresent() && !finalCote.isPresent()) {
-            return documentFileName;
+            return documentFilename;
         }
         if (finalCote.isPresent()) {
             coteField = finalCote;
@@ -650,21 +732,21 @@ public class MetadataUtil {
 
         final String coteValue = coteField.get().getValue().replace(" ", "_");
         String prefinalisationName = "";
-        int pos = documentFileName.indexOf("-");
+        int pos = documentFilename.indexOf("-");
         if (pos == -1) {
-            return documentFileName;
+            return documentFilename;
         }
 
-        prefinalisationName = documentFileName.substring(0, pos+1) + coteValue;
+        prefinalisationName = documentFilename.substring(0, pos+1) + coteValue;
         if (finalCote.isPresent()) {
             prefinalisationName = prefinalisationName + "-" + VALUE_FINAL;
         }
 
-        pos = documentFileName.indexOf("-", pos+1);
+        pos = documentFilename.indexOf("-", pos+1);
         if (pos == -1) {
-            return documentFileName;
+            return documentFilename;
         }
-        return prefinalisationName + documentFileName.substring(pos);
+        return prefinalisationName + documentFilename.substring(pos);
     }
 
     public static void addRefersToAttribute(Node xmlNode, final String id) {
@@ -677,6 +759,31 @@ public class MetadataUtil {
 
     public static void removeClassAttribute(Node xmlNode) {
         XmlUtil.removeNodeAttributeValue(xmlNode, ATTRIBUTE_CLASS);
+    }
+
+    public static Element insertElementInCoverPage(XmlFile xmlFile, String elementName) {
+        String coverPagePath = "//akn:coverPage/";
+        Element containerElement = null;
+        Node xmlCoverPage = xmlFile.getElementByName(ELEMENT_COVERPAGE);
+        String eltXPath = "akn:container[@name='" + elementName + "']";
+        if (xmlCoverPage != null) {
+            containerElement = xmlFile.newElement(MetadataUtil.ELEMENT_CONTAINER);
+            XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.ATTRIBUTE_NAME, elementName);
+            boolean found = false;
+            for (String elementPath : orderInCoverPage) {
+                if (found) {
+                    NodeList node = XmlUtil.getElementsByXPath(xmlCoverPage, coverPagePath + elementPath, true);
+                    if (node.getLength() > 0) {
+                        xmlCoverPage.insertBefore(containerElement, node.item(0));
+                        return containerElement;
+                    }
+                }
+                found = found || (elementPath.equals(eltXPath));
+            }
+            xmlCoverPage.appendChild(containerElement);
+        }
+        return containerElement;
     }
 
     public static boolean isRolePresident(final String value) {

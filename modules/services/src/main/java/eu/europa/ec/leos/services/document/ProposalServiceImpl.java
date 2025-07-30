@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -23,9 +24,12 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.CoverPageTypeMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.ExternalSystemACLService;
 import eu.europa.ec.leos.integration.dto.AccessDTO;
@@ -36,8 +40,13 @@ import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
+import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
+import eu.europa.ec.leos.services.export.LegPackage;
+import eu.europa.ec.leos.services.metadata.MetadataOptions;
+import eu.europa.ec.leos.services.metadata.MetadataService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -61,9 +70,15 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
@@ -97,6 +112,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     protected WorkflowCollaboratorService workflowCollaboratorService;
     protected ExternalSystemACLService externalSystemACLService;
     protected PackageService packageService;
+    protected MetadataService metadataService;
 
     protected static final String PROPOSAL_NAME_PREFIX = "main";
 
@@ -201,22 +217,115 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
     }
 
-    @Override
-    public Proposal populateProposalMetadataFromXml(Proposal proposal) {
-        Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(proposal.getContent().get().getSource().getBytes(),
-                new String[]{XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION},
-                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
-        proposal.getMetadata().get().setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
-        return proposal;
-    }
-
     protected byte[] updateDataInXml(final byte[] content, ProposalMetadata dataObject) {
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
         return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
     }
 
     @Override
-    public Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory, String refersToOfDocument, String showAs){
+    public Proposal populateProposalMetadataFromXml(Proposal proposal) {
+        Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(proposal.getContent().get().getSource().getBytes(),
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,
+                        XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE, XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT,
+                        XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION, XmlNodeConfigProcessor.ADOPTION_PLACE, XmlNodeConfigProcessor.ADOPTION_DATE, XmlNodeConfigProcessor.COTE,
+                        XmlNodeConfigProcessor.FINAL_COTE, XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE,
+                        XmlNodeConfigProcessor.STAMP},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        proposal.getMetadata().get().setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
+        proposal.getMetadata().get().setInternalRef(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE));
+        Map<String, List<String>> authenticLanguages = xmlNodeProcessor.getMultipleValuesFromXml(proposal.getContent().get().getSource().getBytes(),
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_AUTHENTIC_LANGUAGES},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        List<String> authLangList = authenticLanguages.get(XmlNodeConfigProcessor.PROPOSAL_AUTHENTIC_LANGUAGES);
+        if (authLangList != null && proposal.getMetadata().get().getIsAuthenticLang() != null
+                && proposal.getMetadata().get().getIsAuthenticLang().equals(LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE)) {
+            authLangList.remove(proposal.getMetadata().get().getLanguage().toLowerCase());
+        }
+        proposal.getMetadata().get().setAuthenticLang(authLangList);
+        proposal.getMetadata().get().setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
+        proposal.getMetadata().get().setVerticalShift(extractVerticalShift(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT)));
+        Map<String, List<String>> crossRefs = xmlNodeProcessor.getMultipleValuesFromXml(proposal.getContent().get().getSource().getBytes(),
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        List<String> crossReferences = crossRefs.get(XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES);
+        proposal.getMetadata().get().setCrossReferences(crossReferences);
+        String adoptionDateStr = detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_DATE);
+        proposal.getMetadata().get().setAdoptionDate(convertToDate(adoptionDateStr));
+        proposal.getMetadata().get().setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
+        proposal.getMetadata().get().setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
+        proposal.getMetadata().get().setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
+                detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
+        proposal.getMetadata().get().setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
+        return proposal;
+    }
+
+    private Float extractVerticalShift(String styleStr) {
+        if (styleStr == null) {
+            return null;
+        }
+        String regex="([0-9]+[.]*[0-9]*)cm";
+
+        Pattern pattern=Pattern.compile(regex);
+        Matcher matcher=pattern.matcher(styleStr);
+
+        while(matcher.find())
+        {
+            return Float.parseFloat(matcher.group().replaceAll("cm", ""));
+        }
+        return null;
+    }
+
+    @Override
+    public MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, MetadataVO metadataVO) {
+        Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(xmlContent,
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE,
+                        XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT, XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION,
+                        XmlNodeConfigProcessor.ADOPTION_PLACE, XmlNodeConfigProcessor.ADOPTION_DATE, XmlNodeConfigProcessor.COTE,
+                        XmlNodeConfigProcessor.FINAL_COTE, XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE,
+                        XmlNodeConfigProcessor.STAMP},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        metadataVO.setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
+        metadataVO.setInternalRef(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE));
+        Map<String, List<String>> authenticLanguages = xmlNodeProcessor.getMultipleValuesFromXml(xmlContent,
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_AUTHENTIC_LANGUAGES},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        List<String> authLangList = authenticLanguages.get(XmlNodeConfigProcessor.PROPOSAL_AUTHENTIC_LANGUAGES);
+        if (authLangList != null && metadataVO.getIsAuthenticLang() != null && metadataVO.getIsAuthenticLang().equals(LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE)) {
+            authLangList.remove(metadataVO.getLanguage().toLowerCase());
+        }
+        metadataVO.setAuthenticLang(authLangList);
+        metadataVO.setVerticalShift(extractVerticalShift(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT)));
+        metadataVO.setDocumentCollectionName(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION));
+        Map<String, List<String>> crossRefs = xmlNodeProcessor.getMultipleValuesFromXml(xmlContent,
+                new String[]{XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES},
+                xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        List<String> crossReferences = crossRefs.get(XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES);
+        metadataVO.setCrossReferences(crossReferences);
+        String adoptionDateStr = detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_DATE);
+        metadataVO.setAdoptionDate(convertToDate(adoptionDateStr));
+        metadataVO.setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
+        metadataVO.setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
+        metadataVO.setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
+                detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
+        metadataVO.setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
+        return metadataVO;
+    }
+
+    private Date convertToDate(String dateStr) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            if (dateStr != null) {
+                date = df.parse(dateStr);
+            }
+        } catch (ParseException e) {
+            date = null;
+        }
+        return date;
+    }
+
+    @Override
+    public Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory, String refersToOfDocument, String showAs) {
         LOG.trace("Add component in Proposal ... [id={}, href={}, leosCategory={}]", proposal.getId(), href, leosCategory.name());
         Stopwatch stopwatch = Stopwatch.createStarted();
 
@@ -584,6 +693,73 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Proposal proposal = proposalRepository.createProposalFromContent(path, ref + XML_DOC_EXT, metadata, updateDataInXml(proposalDocument.getSource(), metadata));
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
+    }
+
+    @Override
+    public byte[] applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception {
+        MetadataOptions metadataOptions = convertUpdateProposalRequestToMetadataOptions(legPackage.getExportResource().getName() + ".leg", proposal, request);
+
+        Map<String, Object> zipContent = metadataService.applyMetadata(legPackage, proposal, metadataOptions);
+        for (String fileName : zipContent.keySet()) {
+            if (fileName.startsWith(PROPOSAL_NAME_PREFIX)) {
+                return (byte[]) zipContent.get(fileName);
+            }
+        }
+        return proposal.getContent().get().getSource().getBytes();
+    }
+
+    @Override
+    public MetadataOptions convertUpdateProposalRequestToMetadataOptions(String legFileName, Proposal proposal, UpdateProposalRequest request) {
+        MetadataOptions metadataOptions = new MetadataOptions();
+        List<MetadataOptions.FieldNode> fields = new ArrayList();
+        if (request.getPackageTitle() != null) {
+            fields.add(new MetadataOptions.FieldNode("packageTitle", StringUtils.normalizeSpace(request.getPackageTitle())));
+        }
+        if (request.getInternalRef() != null) {
+            fields.add(new MetadataOptions.FieldNode("internalRef", StringUtils.normalizeSpace(request.getInternalRef())));
+        }
+        if (request.getAuthenticLang() != null) {
+            fields.add(new MetadataOptions.FieldNode("authenticLang", listToJson(request.getAuthenticLang())));
+        }
+        if (request.getCoverPageType() != null) {
+            fields.add(new MetadataOptions.FieldNode("coverPageType",
+                    listToJson(new CoverPageTypeMetadata(request.getCoverPageType(), request.getVerticalShift()))));
+        }
+        if (request.getCrossReferences() != null) {
+            fields.add(new MetadataOptions.FieldNode("linkedDocuments", String.join(" - ", request.getCrossReferences())));
+        }
+        if (request.getAdoptionDate() != null) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            fields.add(new MetadataOptions.FieldNode("adoptionDate", dateFormat.format(request.getAdoptionDate())));
+        }
+        if (request.getAdoptionPlace() != null) {
+            fields.add(new MetadataOptions.FieldNode("adoptionLocation", request.getAdoptionPlace()));
+        }
+        if (request.getInstitutionalReference() != null
+                && (request.getInstitutionalReferenceFinalVersion() == null
+                || Boolean.FALSE.equals(request.getInstitutionalReferenceFinalVersion()))) {
+            fields.add(new MetadataOptions.FieldNode("cote", request.getInstitutionalReference()));
+        }
+        if (request.getInstitutionalReference() != null
+                && request.getInstitutionalReferenceFinalVersion() != null
+                && Boolean.TRUE.equals(request.getInstitutionalReferenceFinalVersion())) {
+            fields.add(new MetadataOptions.FieldNode("finalCote", request.getInstitutionalReference()));
+        }
+        if (request.getInterInstitutionalReference() != null) {
+            fields.add(new MetadataOptions.FieldNode("interinstitutionalCote", request.getInterInstitutionalReference()));
+        }
+        metadataOptions.addTask(legFileName, proposal, fields);
+        return metadataOptions;
+    }
+
+    private String listToJson(Object values) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(values);
+        }
+        catch (Exception e) {
+            return "";
+        }
     }
 
     protected String generateProposalReference(String language) {

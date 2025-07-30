@@ -14,6 +14,8 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
@@ -43,9 +45,11 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.ErrorVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
+import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
@@ -77,9 +81,11 @@ import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -89,6 +95,9 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
+import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
@@ -108,6 +117,7 @@ import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -131,6 +141,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
+import static eu.europa.ec.leos.services.metadata.MetadataServiceImpl.FILE_NOT_DELETED;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
@@ -181,8 +192,11 @@ public abstract class ApiServiceImpl implements ApiService {
     private ExportPackageService exportPackageService;
     protected NotificationService notificationService;
     protected LegService legService;
+    private final CoverPageApiService coverPageApiService;
+    private final ProposalDetailsService proposalDetailsService;
     private LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
+    private final TemplateConfigurationService templateConfigurationService;
 
     private DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
@@ -215,7 +229,9 @@ public abstract class ApiServiceImpl implements ApiService {
                           ExportPackageService exportPackageService, NotificationService notificationService,
                           LegService legService, UserHelper userHelper, LeosRepository leosRepository,
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
-                          GenericDocumentTocApiService genericDocumentTocApiService) {
+                          GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
+                          ProposalDetailsService proposalDetailsService,
+                          TemplateConfigurationService templateConfigurationService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -247,6 +263,9 @@ public abstract class ApiServiceImpl implements ApiService {
         this.trackChangesContext = trackChangesContext;
         this.documentViewService = documentViewService;
         this.genericDocumentTocApiService = genericDocumentTocApiService;
+        this.coverPageApiService = coverPageApiService;
+        this.proposalDetailsService = proposalDetailsService;
+        this.templateConfigurationService = templateConfigurationService;
     }
 
     private static String readFileToString(File file) throws IOException {
@@ -311,19 +330,19 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) {
+    public DocumentVO updateProposalTitleAndEEaRelevance(String proposalRef, String docPurpose, Boolean eeaRelevance) throws Exception {
         LOG.trace("Saving proposal metadata...");
         try {
             CollectionContextService context = collectionContextProvider.get();
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             context.useProposal(proposal);
-            if (request.getDocPurpose() != null) {
-                context.usePurpose(request.getDocPurpose());
+            if (docPurpose != null) {
+                context.usePurpose(docPurpose);
             } else {
                 context.usePurpose(proposal.getMetadata().get().getPurpose());
             }
-            if (request.isEeaRelevance() != null) {
-                context.useEeaRelevance(request.isEeaRelevance());
+            if (eeaRelevance != null) {
+                context.useEeaRelevance(eeaRelevance);
             } else {
                 context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
             }
@@ -335,6 +354,82 @@ public abstract class ApiServiceImpl implements ApiService {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;
         }
+    }
+
+    @Override
+    public DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) throws Exception {
+        LOG.trace("Saving proposal metadata...");
+        LegPackage legPackage = null;
+        try {
+            CollectionContextService context = collectionContextProvider.get();
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            proposal = proposalService.populateProposalMetadataFromXml(proposal);
+            String proposalComment = generateProposalComment(request);
+            if (request.getDocPurpose() != null) {
+                context.usePurpose(request.getDocPurpose());
+            } else {
+                context.usePurpose(proposal.getMetadata().get().getPurpose());
+            }
+            if (request.getCrossReferences() == null) {
+                request.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
+            }
+            context.useEeaRelevance(request.getEeaRelevance());
+            if (request.getPackageTitle() != null) {
+                context.usePackageTitle(request.getPackageTitle());
+            } else {
+                context.usePackageTitle(proposal.getMetadata().get().getPackageTitle());
+            }
+            if (request.getIsAuthenticLang() != null) {
+                context.useIsAuthenticLang(request.getIsAuthenticLang());
+            } else {
+                context.useIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
+            }
+            if (request.getCoverPageType() != null) {
+                context.useCoverPageType(request.getCoverPageType());
+            } else {
+                context.useCoverPageType(proposal.getMetadata().get().getCoverPageType());
+            }
+            context.useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
+            context.useActionComment(proposalComment);
+            if (proposal.isClonedProposal()) {
+                legPackage = legService.createLegPackageForClone(proposal.getId(), new ExportLeos());
+            } else {
+                legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
+            }
+            byte[] proposalContent = proposalService.applyMetadata(legPackage, proposal, request);
+            context.useProposal(proposal);
+            context.useProposalContent(proposalContent);
+            proposal = context.executeUpdateMetadataProposal();
+            proposal = proposalService.populateProposalMetadataFromXml(proposal);
+            DocumentVO updatedProposalVO = new DocumentVO(proposal);
+            coverPageApiService.updateCorrigendumAddendum(proposalRef, request);
+            return updatedProposalVO;
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating proposal metadata ", e);
+            throw e;
+        } finally {
+            if (legPackage != null && legPackage.getFile() != null && legPackage.getFile().exists()) {
+                if (!legPackage.getFile().delete()) {
+                    LOG.info(FILE_NOT_DELETED, legPackage.getFile().toPath());
+                }
+            }
+            LOG.debug("createLegisWritePackage() end....");
+        }
+    }
+
+    private String generateProposalComment(UpdateProposalRequest request) throws Exception {
+        List<String> metadata = new ArrayList<>();
+        for (Field field: request.getClass().getDeclaredFields()) {
+            if (request.getClass().getMethod("get" + StringUtils.capitalize(field.getName())).invoke(request) != null) {
+                String key = "operation.details.element." + String.join(".", field.getName().split("(?=\\p{Lu})")).toLowerCase();
+                String message = messageHelper.getMessage(key);
+                if (!message.equals(key)) {
+                    metadata.add(message);
+                }
+            }
+        }
+        return messageHelper.getMessage("operation.details.updated",
+                String.join(", ", metadata));
     }
 
     protected String getJobFileName(String proposalRef) {
@@ -528,8 +623,11 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public Optional<DocumentVO> getProposalDetails(String proposalRef, String userId) {
+    public Optional<ProposalDetailsVO> getProposalDetails(String proposalRef, String userId) {
         LOG.trace(proposalRef);
+        ProposalDetailsVO proposalDetails = new ProposalDetailsVO();
+        ProposalDetailsLists proposalDetailsLists = proposalDetailsService.getProposalDetailsLists();
+        proposalDetails.setProposalDetailsLists(proposalDetailsLists);
         Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDateAsDate).reversed());
         Proposal proposal = null;
         byte[] proposalXmlContent = new byte[0];
@@ -588,13 +686,42 @@ public abstract class ApiServiceImpl implements ApiService {
                 } finally {
                     milestonesVOsLock.unlockWrite(stamp);
                 }
-                return Optional.of(proposalVO);
+                proposalVO.setDetailsTabExclusions(getDetailsTabExclusions(proposal));
+                proposalDetails.setDocument(proposalVO);
+                return Optional.of(proposalDetails);
             } catch (Exception e) {
                 LOG.error("Package not found for proposal {}", proposalRef);
                 return Optional.empty();
             }
         }
         return Optional.empty();
+    }
+
+    private DetailsTabExclusions getDetailsTabExclusions(Proposal proposal) {
+        String detailsConf;
+
+        try {
+            detailsConf = templateConfigurationService.getElementFromTemplateConfiguration(
+                    proposal.getMetadata().get().getDocTemplate(), "detailsTabExclusions");
+        }
+        catch(IllegalArgumentException e){
+            return null;
+        }
+
+        if (detailsConf == null || detailsConf.trim().isEmpty()) {
+            return null;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+
+        try {
+            return mapper.readValue(detailsConf, DetailsTabExclusions.class);
+        } catch (Exception e) {
+            LOG.warn("Failed to parse JSON: {}", detailsConf, e);
+            return null;
+        }
     }
 
     private ExportPackageVO getExportPackageVO(ExportDocument exportDocument) {
@@ -620,7 +747,7 @@ public abstract class ApiServiceImpl implements ApiService {
                                 : new byte[0];
                     }
                     MetadataVO metadataVO = createMetadataVO(proposal);
-                    proposalVO.setMetaData(metadataVO);
+                    proposalVO.setMetaData(proposalService.populateProposalMetadataFromXml(proposalXmlContent, metadataVO));
                     proposalVO.addCollaborators(proposal.getCollaborators());
                     proposalVO.setUpdatedBy(userHelper.convertToPresentation(proposal.getLastModifiedBy()));
                     proposalVO.setCreatedBy(userHelper.convertToPresentation(proposal.getCreatedBy()));
@@ -630,6 +757,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposalVO.setSource(proposalXmlContent);
                     proposalVO.setRef(proposal.getMetadata().get().getRef());
                     proposalVO.setFavourite(isFavourite);
+                    proposalVO = coverPageApiService.getCoverPageCorrigendumAddendumDetails(proposalXmlContent, proposalVO);
                     if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO, proposal.getOriginRef()));
                     }
@@ -794,7 +922,15 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private MetadataVO createMetadataVO(Proposal proposal) {
         ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
-        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(), metadata.getEeaRelevance());
+        MetadataVO metadataVO = new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(),
+            metadata.getEeaRelevance());
+        metadataVO.setAuthenticLang(proposal.getMetadata().get().getAuthenticLang());
+        metadataVO.setIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
+        metadataVO.setPackageTitle(proposal.getMetadata().get().getPackageTitle());
+        metadataVO.setInternalRef(proposal.getMetadata().get().getInternalRef());
+        metadataVO.setCoverPageType(proposal.getMetadata().get().getCoverPageType());
+        metadataVO.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
+        return metadataVO;
     }
 
     private LegDocument getLegDocument(String legFileName, LeosPackage leosPackage) {

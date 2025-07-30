@@ -1,3 +1,12 @@
+.details-cards-common {
+  border: none !important;
+  box-shadow: none
+}
+
+.details-gen-rows {
+  padding-bottom: 10px;
+}
+
 .label-column label {
   font-weight: bold;
   padding-right: 0;
@@ -19,4 +28,317 @@
     flex-direction: column;
     width: 100%;
   }
+}
+
+.language-checkbox {
+  display: inline;
+  padding: 5px;
+}
+
+.package-title {
+  display: block;
+}
+
+.details-tooltip-icon {
+  border: none;
+  padding-bottom: 2px;
+}
+
+.col-sm-1-coverpage-type {
+  width: 3px;
+}
+
+.vertical-shift-disclaimer-label {
+  width: 225px;
+}
+
+.vertical-shift-num {
+  display: flex;
+  align-items: center;
+  border: 1px;
+}
+
+.vertical-shift-num-buttons {
+  display: flex;
+  flex-direction: column;
+  margin-left: 4px;
+  border: 1px;
+}
+
+.number-input {
+  width: 60px;
+  padding: 4px;
+  font-size: 14px;
+}
+
+.number-up-down-button {
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  height: 12px;
+  width: 5px;
+}
+
+.number-up-down-button-icon {
+  padding-bottom: 3px;
+}
+
+.coverpage-option {
+  font-weight: normal;
+}
+
+.proposal-corrigendum-addendum-option {
+  margin-right: 6px;
+  margin-left: 6px;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.target-proposal-input-labels {
+  padding-top: 15px;
+}
+
+.target-proposal-ref-input {
+  padding: 2px 6px;
+  font-size: 14px;
+  width: 70%;
+  height: 80%;
+}
+
+.target-proposal-date-input {
+  margin-top: 5px;
+  padding: 2px 6px;
+  font-size: 14px;
+  width: 70%;
+  height: 80%;
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  padding: 0 !important;
+  background: white !important;
+  border: solid 1px !important;
+  margin-top: 5px !important;
+}
+
+::ng-deep .mat-mdc-form-field-infix {
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep .mat-mdc-form-field-infix input {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+::ng-deep .date-picker input.mat-mdc-input-element {
+  padding-left: 10px !important;
+}
+
+.grid-adoption-info {
+  display: grid;
+  gap: 10px 10px;
+}
+
+.grid-adoption-info-adoption-place {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+}
+
+.grid-adoption-info-adoption-date {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+}
+
+.grid-adoption-info-institutional-reference {
+  grid-row: 2;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  display: grid;
+}
+
+.grid-adoption-info-institutional-reference-version {
+  grid-row: 2;
+  grid-column: 3;
+  display: grid;
+}
+
+.grid-adoption-info-inter-institutional-reference {
+  grid-row: 3;
+  grid-column-start: 1;
+  grid-column-end: 4;
+  display: inline-block;
+}
+
+.grid-adoption-info-inter-institutional-reference2 {
+  grid-row: 4;
+  grid-column-start: 1;
+  grid-column-end: 4;
+  display: grid;
+}
+
+.grid-adoption-info-special-mention {
+  grid-row: 5;
+  grid-column: 1;
+  display: grid;
+}
+
+.grid-adoption-info-signing-commissioner {
+  grid-row: 5;
+  grid-column: 2;
+  display: grid;
+}
+
+.grid-adoption-info-commissioner-title {
+  grid-row: 5;
+  grid-column: 3;
+  display: grid;
+}
+
+.grid-adoption-info-stamp {
+  grid-row: 6;
+  grid-column: 1;
+  display: grid;
+}
+
+.adoption-info-institutional-reference {
+  display: inline-flex;
+  height: 100%;
+  & > {
+    margin-right: 5px;
+  }
+}
+
+.details-tab-inline {
+  display: inline;
+}
+
+.details-tab-block {
+  display: block;
+}
+
+.details-tab-adoption-date {
+  height: 50px;
+  & > mat-form-field > input, & > mat-form-field > mat-datepicker-toggle {
+    width: 50px;
+    height: 100%;
+  }
+}
+
+.details-tab-first-select {
+  margin-right: 10px;
+  width: 150px;
+  height: 50px;
+}
+
+.details-tab-select {
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 150px;
+  height: 50px;
+}
+
+
+.details-tab-first-text {
+  margin-right: 10px;
+  width: 200px;
+  height: 50px;
+}
+
+.details-tab-text {
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 200px;
+  height: 50px;
+}
+
+.year-selector {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.small-textarea {
+  display: inline;
+  width: 177px;
+  font-size: 14px;
+  padding: 4px 8px;
+  resize: none;
+}
+
+.large-textarea {
+  display: inline;
+  width: 350px;
+  height: 350px;
+  font-size: 14px;
+  padding: 4px 8px;
+  resize: none;
+}
+
+.inline-field-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.textarea-like {
+  border: 1px solid #ccc;
+  height: 200px;
+  width: 300px;
+  overflow-y: auto;
+  font-family: monospace;
+  white-space: pre;
+}
+
+.textarea-like ul {
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+}
+
+.textarea-like li {
+  padding: 3px 5px;
+  cursor: pointer;
+}
+
+.textarea-like li.selected {
+  background-color: #004494;
+  color: white;
+}
+
+.cross-ref-edit-button {
+  border: none;
+  padding: 0;
+}
+
+.cross-ref-edit-button .eui-icon::before {
+  background: #004494;
+  color: white;
+}
+
+.cross-ref-edit-button:disabled .eui-icon::before {
+  background: grey;
+  color: white;
+}
+
+.tooltip {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 4px;
+  padding-right: 10px;
+  padding-left: 5px;
 }

@@ -13,15 +13,17 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.service;
 
+import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
-import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ListFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.SimpleFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 
 public interface MetadataService {
@@ -71,6 +73,10 @@ public interface MetadataService {
      * */
     ApplyMetadataResponse.FieldNode getFieldNotSupportedResult(String fieldName);
 
+    /**
+     * Return a response field for successfully processed field.
+     * @param fieldName Name / Key of the field that passed processing
+     * */
     /**
      * Return a response field for successfully processed field.
      * @param fieldName Name / Key of the field that passed processing
@@ -140,4 +146,32 @@ public interface MetadataService {
      * @param pos
      * */
     void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, int pos);
+
+    /**
+     * Process the package title field and add the data to the xml
+     * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param xmlFile XML file to add the adoption date
+     * */
+    void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+
+    /**
+     * Process the internal reference field and add the data to the xml
+     * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param xmlFile XML file to add the adoption date
+     * */
+    void processInternalRef(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+
+    /**
+     * Process the authentic languages field and add the data to the xml
+     * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param xmlFile XML file to add the adoption date
+     * */
+    void processAuthenticLanguages(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+
+    /**
+     * Process the caver page type field and add the data to the xml
+     * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param xmlFile XML file to add the adoption date
+     * */
+    void processCoverPageType(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 }

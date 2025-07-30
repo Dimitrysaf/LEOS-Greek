@@ -2,6 +2,7 @@ package eu.europa.ec.leos.domain.repository.metadata;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 
+import java.util.List;
 import java.util.Objects;
 
 public abstract class LeosMetadata {
@@ -17,6 +18,8 @@ public abstract class LeosMetadata {
     protected final String objectId;
     protected final String docVersion;
     protected final boolean eeaRelevance;
+    protected String packageTitle;
+    protected List<String> authenticLang;
     private String procedureType;
     private String actType;
     private String callbackAddress;
@@ -135,6 +138,22 @@ public abstract class LeosMetadata {
 
     public String getPackageRef() {
         return packageRef;
+    }
+
+    public String getPackageTitle() {
+        return packageTitle;
+    }
+
+    public List<String> getAuthenticLang() {
+        return authenticLang;
+    }
+
+    public void setPackageTitle(String packageTitle) {
+        this.packageTitle = packageTitle;
+    }
+
+    public void setAuthenticLang(List<String> authenticLang) {
+        this.authenticLang = authenticLang;
     }
 
     public String getDocumentCollectionName() {

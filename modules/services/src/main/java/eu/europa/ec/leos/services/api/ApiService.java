@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
+import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
@@ -53,7 +54,9 @@ public interface ApiService {
 
     void deleteAnnex(String proposalRef, String annexRef) throws Exception;
 
-    DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request);
+    DocumentVO updateProposalTitleAndEEaRelevance(String proposalRef, String docPurpose, Boolean eeaRelevance) throws Exception;
+
+    DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) throws Exception;
 
     void deleteCollection(String proposalRef);
 
@@ -79,7 +82,7 @@ public interface ApiService {
 
     byte[] exportProposalDownload(String proposalRef, String outputType) throws Exception;
 
-    Optional<DocumentVO> getProposalDetails(String proposalRef, String userId);
+    Optional<ProposalDetailsVO> getProposalDetails(String proposalRef, String userId);
 
     byte[] downloadProposal(String proposalRef) throws Exception;
 

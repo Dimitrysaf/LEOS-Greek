@@ -46,6 +46,8 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
@@ -66,28 +68,33 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(MandateApiServiceImpl.class);
 
     public MandateApiServiceImpl(TemplateService templateService,
-            WorkspaceService workspaceService,
-            UserService userService, CreateCollectionService createCollectionService,
-            ProposalService proposalService, SecurityContext securityContext,
-            LeosPermissionAuthorityMap authorityMap, ExportService exportService,
-            Provider<CollectionContextService> collectionContextProvider,
-            DocumentContentService documentContentService, MessageHelper messageHelper,
-            Provider<BillContextService> billContextProvider, PackageService packageService,
-            BillService billService, XmlContentProcessor xmlContentProcessor,
-            ArchiveService archiveService, AnnexService annexService,
-            CloneContext cloneContext, MilestoneService milestoneService,
-            ProposalConverterService proposalConverterService,
-            PostProcessingDocumentService postProcessingDocumentService,
-            ValidationService validationService, Properties applicationProperties,
-            ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
-            NotificationService notificationService, LegService legService, UserHelper userHelper,
-            LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-            DocumentViewService documentViewService, GenericDocumentTocApiService genericDocumentTocApiService) {
+                                 WorkspaceService workspaceService,
+                                 UserService userService, CreateCollectionService createCollectionService,
+                                 ProposalService proposalService, SecurityContext securityContext,
+                                 LeosPermissionAuthorityMap authorityMap, ExportService exportService,
+                                 Provider<CollectionContextService> collectionContextProvider,
+                                 DocumentContentService documentContentService, MessageHelper messageHelper,
+                                 Provider<BillContextService> billContextProvider, PackageService packageService,
+                                 BillService billService, XmlContentProcessor xmlContentProcessor,
+                                 ArchiveService archiveService, AnnexService annexService,
+                                 CloneContext cloneContext, MilestoneService milestoneService,
+                                 ProposalConverterService proposalConverterService,
+                                 PostProcessingDocumentService postProcessingDocumentService,
+                                 ValidationService validationService, Properties applicationProperties,
+                                 ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
+                                 NotificationService notificationService, LegService legService, UserHelper userHelper,
+                                 LeosRepository leosRepository, TrackChangesContext trackChangesContext,
+                                 DocumentViewService documentViewService,
+                                 GenericDocumentTocApiService genericDocumentTocApiService,
+                                 CoverPageApiService coverPageApiService,
+                                 ProposalDetailsService proposalDetailsService,
+                                 TemplateConfigurationService templateConfigurationService) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
-                applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService, genericDocumentTocApiService);
+                applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
+                trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
+                templateConfigurationService);
     }
 
     @Override

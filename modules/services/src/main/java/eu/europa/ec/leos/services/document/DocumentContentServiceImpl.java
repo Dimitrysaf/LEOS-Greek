@@ -658,6 +658,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
         context.useActionMessage(ContextActionService.METADATA_UPDATED, message);
         context.useActionComment(message);
+        context.useVersionType(VersionType.MINOR);
         context.executeUpdateDocumentsAssociatedToProposal();
     }
 

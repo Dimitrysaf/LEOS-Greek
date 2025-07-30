@@ -13,9 +13,17 @@
  */
 package eu.europa.ec.leos.domain.vo;
 
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
+import eu.europa.ec.leos.domain.repository.metadata.LeosCoverPageType;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Date;
+import java.util.List;
+
+@Getter
+@Setter
 public class MetadataVO {
-
     private String docStage;
     private String docType;
     private String docPurpose;
@@ -34,8 +42,24 @@ public class MetadataVO {
     private String number;
     private String callbackAddress;
     private boolean imported;
+    private String docCollectionName;
 
+    private List<String> authenticLang;
     private String documentCollectionName;
+    private LeosAuthenticLanguage isAuthenticLang;
+    private LeosCoverPageType coverPageType;
+    private Float verticalShift;
+    private List<String> crossReferences;
+
+    private String adoptionPlace;
+    private Date adoptionDate;
+    private String institutionalReference;
+    private Boolean institutionalReferenceFinalVersion;
+    private String interInstitutionalReference;
+    private String specialMention;
+    private String signingCommissioner;
+    private String commissionerTitle;
+    private Boolean stamp;
 
     public MetadataVO() {
     }// added for early binding
@@ -49,162 +73,9 @@ public class MetadataVO {
         this.eeaRelevance = eeaRelevance;
     }
 
-    public String getDocStage() {
-        return docStage;
-    }
-
-    public void setDocStage(String docStage) {
-        this.docStage = docStage;
-    }
-
-    public String getDocType() {
-        return docType;
-    }
-
-    public void setDocType(String docType) {
-        this.docType = docType;
-    }
-
-    public String getDocPurpose() {
-        return docPurpose;
-    }
-
-    public void setDocPurpose(String docPurpose) {
-        this.docPurpose = docPurpose;
-    }
-
-    public String getDocVersion() {
-        return docVersion;
-    }
-
-    public void setDocVersion(String docVersion) {
-        this.docVersion = docVersion;
-    }
-
-    public String getPackageTitle() {
-        return packageTitle;
-    }
-
-    public void setPackageTitle(String packageTitle) {
-        this.packageTitle = packageTitle;
-    }
-
-    public String getInternalRef() {
-        return internalRef;
-    }
-
-    public void setInternalRef(String internalRef) {
-        this.internalRef = internalRef;
-    }
-
-    public SecurityLevel getSecurityLevel() {
-        return securityLevel;
-    }
-
-    public void setSecurityLevel(SecurityLevel securityLevel) {
-        this.securityLevel = securityLevel;
-    }
-
-    public boolean getEeaRelevance() {
-        return eeaRelevance;
-    }
-
-    public void setEeaRelevance(boolean eeaRelevance) {
-        this.eeaRelevance = eeaRelevance;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String languageCode) {
-        this.language = languageCode;
-    }
-
     public enum SecurityLevel {
         STANDARD, SENSITIVE;
     }
-
-    public String getTemplateName() {
-        return templateName;
-    }
-
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getIndex() {
-        return index;
-    }
-
-    public void setIndex(String index) {
-        this.index = index;
-    }
-    
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getDocTemplate() {
-        return docTemplate;
-    }
-
-    public void setDocTemplate(String docTemplate) {
-        this.docTemplate = docTemplate;
-    }
-
-    public String getDocTemplateCategory() {
-        return docTemplateCategory;
-    }
-
-    public void setDocTemplateCategory(String docTemplateCategory) {
-        this.docTemplateCategory = docTemplateCategory;
-    }
-
-    public String getCallbackAddress() {
-        return callbackAddress;
-    }
-
-    public void setCallbackAddress(String callbackAddress) {
-        this.callbackAddress = callbackAddress;
-    }
-
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
-    }
-
-    public String getDocumentCollectionName() {
-        return documentCollectionName;
-    }
-
-    public void setDocumentCollectionName(String documentCollectionName) {
-        this.documentCollectionName = documentCollectionName;
-    }
-
 
     public void clean() {
         this.setDocStage(null);
@@ -224,5 +95,19 @@ public class MetadataVO {
         this.setEeaRelevance(false);
         this.setCallbackAddress(null);
         this.setImported(false);
+        this.setAuthenticLang(null);
+        this.setIsAuthenticLang(null);
+        this.setCoverPageType(null);
+        this.setVerticalShift(null);
+        this.setCrossReferences(null);
+        this.setAdoptionDate(null);
+        this.setAdoptionPlace(null);
+        this.setInstitutionalReference(null);
+        this.setInstitutionalReferenceFinalVersion(null);
+        this.setInterInstitutionalReference(null);
+        this.setSpecialMention(null);
+        this.setSigningCommissioner(null);
+        this.setCommissionerTitle(null);
+        this.setStamp(null);
     }
 }

@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.services.api.ApiService;
+import eu.europa.ec.leos.services.api.CoverPageApiService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,6 +20,8 @@ public class ProposalApiControllerTest {
     private ApiService apiService;
     @Mock
     private ConValidatorService conValidatorService;
+    @Mock
+    private CoverPageApiService coverPageApiService;
     @InjectMocks
     private ProposalApiController proposalApiController;
 

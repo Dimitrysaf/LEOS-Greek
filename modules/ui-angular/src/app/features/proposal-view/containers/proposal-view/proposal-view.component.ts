@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import {EuiTabComponent, EuiTabsComponent} from '@eui/components/eui-tabs';
 import { EuiBreadcrumbService } from '@eui/components/layout';
-import { Document } from '@leos/shared';
+import {Document, ProposalDetailsLists} from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -27,6 +27,7 @@ export class ProposalViewComponent
   implements OnDestroy, OnInit, AfterViewChecked
 {
   proposal: Document | null = null;
+  proposalDetails: ProposalDetailsLists | null = null;
   proposalState: 'loading' | 'done' | 'error' | 'active' = 'loading';
   proposalError: unknown = null;
   proposalErrorCode: number | null = null;
@@ -73,7 +74,9 @@ export class ProposalViewComponent
     this.proposalDetailsService.proposalDetails$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (proposal) => {
+        next: (proposalDetails) => {
+          const proposal = proposalDetails.document;
+          this.proposalDetails = proposalDetails.proposalDetailsLists;
           this.proposalTitleNonEditablePart = `${proposal.metadata.docStage} ${proposal.metadata.docType}`;
           this.proposalTitleEditablePart = `${proposal.metadata.docPurpose}`;
           this.isClonedProposal = Boolean(
@@ -121,13 +124,6 @@ export class ProposalViewComponent
       this.tabs.changeTab(1);
       this.milestoneTabSelected = true;
     }
-  }
-
-  onSaveEEA(eea: boolean) {
-    this.proposalDetailsService.updateProposalMetadata(
-      this.proposal.metadata.docPurpose,
-      eea,
-    );
   }
 
   ngOnDestroy() {

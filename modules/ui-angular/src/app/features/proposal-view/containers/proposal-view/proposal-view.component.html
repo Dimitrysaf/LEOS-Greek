@@ -72,7 +72,7 @@
         <eui-tab-content>
           <app-proposal-details
             [proposal]="proposal"
-            (eeaRelevanceChanged)="onSaveEEA($event)"
+            [proposalDetails]="proposalDetails"
           ></app-proposal-details>
         </eui-tab-content>
       </eui-tab>
@@ -132,7 +132,7 @@
               <eui-tab-content>
                 <app-proposal-details
                   [proposal]="proposal"
-                  (eeaRelevanceChanged)="onSaveEEA($event)"
+                  [proposalDetails]="proposalDetails"
                 ></app-proposal-details>
               </eui-tab-content>
             </eui-tab>
@@ -191,7 +191,7 @@
               <eui-tab-content>
                 <app-proposal-details
                   [proposal]="doc"
-                  (eeaRelevanceChanged)="onSaveEEA($event)"
+                  [proposalDetails]="proposalDetails"
                 ></app-proposal-details>
               </eui-tab-content>
             </eui-tab>

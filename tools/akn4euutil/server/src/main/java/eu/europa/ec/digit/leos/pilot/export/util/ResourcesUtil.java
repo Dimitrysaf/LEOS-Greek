@@ -16,6 +16,8 @@ package eu.europa.ec.digit.leos.pilot.export.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class ResourcesUtil {
     public static byte[] readResourceFile(final String path) {
@@ -43,5 +45,10 @@ public class ResourcesUtil {
             outputStream.write(read);
         }
         return outputStream.toByteArray();
+    }
+
+    public static String getMessage(final String language, final String key) {
+        ResourceBundle messages = ResourceBundle.getBundle("messages/messages", Locale.forLanguageTag(language.toLowerCase()));
+        return messages.getString(key);
     }
 }
