@@ -147,7 +147,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         if (LeosCategory.PROPOSAL.equals(documentVO.getCategory())) {
             CollectionContextService context = proposalContextProvider.get();
             context.usePurpose(documentVO.getMetadata().getDocPurpose());
-            context.useEeaRelevance(documentVO.getMetadata().getEeaRelevance());
+            context.useEeaRelevance(documentVO.getMetadata().isEeaRelevance());
             context.useActionMessage(ContextActionService.COPY_CONTENT, messageHelper.getMessage("operation.copy.content"));
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
