@@ -93,6 +93,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
       tc.addEventListener('contextmenu', (e) => {
         if (this.seeTrackChanges()) {
           e.preventDefault();
+          e.stopPropagation();
           this.showMenu(e);
         }
       });
