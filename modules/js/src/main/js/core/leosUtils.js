@@ -48,6 +48,8 @@ define(function leosUtilsModule(require) {
     var LEVEL = "level";
     var DOCPURPOSE = "docPurpose";
     var ID = "id";
+    var ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR =
+        'article, citation, recitals, recital, :not(article) paragraph, level, chapter, akntitle, part, section, subparagraph';
     var KEYS = {
         "KEY_DELETE": 46,
         "KEY_ENTER": 13,
@@ -344,11 +346,12 @@ define(function leosUtilsModule(require) {
             tcShowStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +
                 "[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:before { color: " + userColors[0] + " !important; &:hover, span." +
                 (isDocTcStyle ? "MathJax_CHTML" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } " +
-                "  &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):hover:not([id*=revision]) { background-color: white; }" +
-                " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover):not([id*=revision]) { background-color:" +
-                " white;  }"+
+                " &:has(:is(" + ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR + "):hover):hover:not([id*=revision]) { background-color: white; }" +
+                " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover):not([id*=revision]) { background-color: white;  }"+
                 " &:not(:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover)):not(&:hover):not([id*=revision]) { background-color: white;  }" +
                 "}\n";
+            tcShowStyle += ":is(" + ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR + "):not([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'])" +
+                " { background-color: white; }\n";
             tcShowStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
         }
         var tcHiddenStyle = "";

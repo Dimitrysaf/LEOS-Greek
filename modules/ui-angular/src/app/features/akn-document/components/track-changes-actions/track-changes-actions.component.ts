@@ -44,6 +44,8 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject();
 
   private mouseLocation: { left: number; top: number } = { left: 0, top: 0 };
+  private ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR: string =
+    'article, citation, recitals, recital, :not(article) paragraph, level, chapter, akntitle, part, section, subparagraph';
 
   constructor(
     private http: HttpClient,
@@ -91,7 +93,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   addTrackChangesEvents() {
     this.trackChangesDr?.forEach((tc) => {
       tc.addEventListener('contextmenu', (e) => {
-        if (this.seeTrackChanges()) {
+        if (this.seeTrackChanges() && e.target instanceof Element && e.target.closest(this.ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR) === e.currentTarget) {
           e.preventDefault();
           e.stopPropagation();
           this.showMenu(e);

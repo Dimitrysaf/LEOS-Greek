@@ -110,7 +110,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 
 public abstract class BillApiServiceImpl implements BillApiService {
 
@@ -419,7 +419,11 @@ public abstract class BillApiServiceImpl implements BillApiService {
         this.structureContext.get().useDocumentTemplate(bill.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
         List<TocItem> tocItemsList = this.structureContext.get().getTocItems();
         String language = documentLanguageContext.getDocumentLanguage();
-        newXmlContent = this.numberService.renumberHigherSubDivisions(newXmlContent, language, elementTagName, tocItemsList);
+        if (RECITALS.equals(elementTagName)) {
+            newXmlContent = this.numberService.renumberRecitalSections(newXmlContent);
+        } else {
+            newXmlContent = this.numberService.renumberHigherSubDivisions(newXmlContent, language, elementTagName, tocItemsList);
+        }
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
         newXmlContent = billProcessor.handleTrackChangeForSoleNumberedElements(newXmlContent, elementTagName);
 
