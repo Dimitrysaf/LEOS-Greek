@@ -868,6 +868,18 @@ define(function leosAnnexListPluginModule(require) {
 
         // Make fresh selection.
         cursor.select();
+        var selection = editor.getSelection();
+        if (selection) {
+            var range = selection.getRanges()[0];
+            if(range) {
+                var currentLi = range.startContainer.getAscendant('li', true);
+                if(currentLi && currentLi.getName() === 'li'){
+                    if (currentLi.getAttribute('data-akn-split-content') === 'parent') {
+                        currentLi.removeAttribute('data-akn-split-content');
+                    }
+                }
+            }
+        }
 
         editor.fire( 'saveSnapshot' );
     }
@@ -934,7 +946,7 @@ define(function leosAnnexListPluginModule(require) {
 
                     if ( isBackspace ) {
                         var previous, joinWith;
-
+                        removeSplitContentAttr(sel);
                         // Join a sub list's first line, with the previous visual line in parent.
                         if (
                             ( previous = path.contains( listNodeNames ) ) &&
@@ -1275,7 +1287,28 @@ define(function leosAnnexListPluginModule(require) {
             editor.on('change', leosPluginUtils.changedContent);
         }
     };
+    function removeSplitContentAttr(sel) {
+        var range = sel.getRanges()[ 0 ];
+        if (range && range.collapsed && range.startOffset === 0 && range.endOffset === 0) {
+            var currentP = range.startContainer.getAscendant('p', true);
+            if (!currentP || currentP.getName() !== 'p') return;
+            var li = currentP.getAscendant('li', true);
+            if (!li || li.getName() !== 'li') return;
 
+            // Get all direct children of <li> that are <p>
+            var pChildren = [];
+            for (var i = 0; i < li.getChildCount(); i++) {
+                var child = li.getChild(i);
+                if (child.getName && child.getName() === 'p' && child.getAttribute('data-akn-action-enter') === 'insert') {
+                    pChildren.push(child);
+                }
+            }
+            if (pChildren.length <= 1 && li.hasAttribute('data-akn-split-content')) {
+                li.removeAttribute('data-akn-split-content');
+            }
+
+        }
+    }
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
     // return plugin module

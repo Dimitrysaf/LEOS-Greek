@@ -321,7 +321,9 @@ public class MergeContributionService {
                                                                               List<TocItem> tocItemsList,
                                                                               List<MergeActionVO> currentMergeActions) {
         LinkedHashSet<ElementToBeProcessed> elementsToBeProcessed = new LinkedHashSet<>();
-        String xpath= "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or "+ "@" +LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
+        String xpathSelf ="//*[@" + XMLID + " = '" + elementId + "']" + "[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or @" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
+        String xpathChild = "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or "+ "@" +LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
+        String xpath = xpathSelf + " | " + xpathChild;
         NodeList splitElts = XercesUtils.getElementsByXPath(contributionNode,xpath);
         for (int i = 0; i < splitElts.getLength(); i++) {
             Node elt = splitElts.item(i);
@@ -1789,7 +1791,9 @@ public class MergeContributionService {
         return xmlContent;
     }
     private void processUndoSplitContent(Node contributionNode, String elementId, AtomicBoolean mergingCompletelySuccessfull){
-        String xpath= "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or "+ "@" +LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
+        String xpathSelf ="//*[@" + XMLID + " = '" + elementId + "']" + "[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or @" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
+        String xpathChild = "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or "+ "@" +LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
+        String xpath = xpathSelf + " | " + xpathChild;
         NodeList splitContentElements = XercesUtils.getElementsByXPath(contributionNode,xpath);
         if (splitContentElements != null && splitContentElements.getLength() > 0) {
             mergingCompletelySuccessfull.set(false);

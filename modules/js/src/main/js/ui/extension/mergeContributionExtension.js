@@ -63,6 +63,20 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _registerActionTriggers(connector) {
+        const $levels = $('level')
+        for (let i = 0; i < $levels.length; i++) {
+            const $element = $levels.eq(i);
+            if ($element.attr(UTILS.ID).includes(REVISION_PREFIX)) {
+                var hasSplitAttr =
+                    $element.is('[leos\\:split-content="parent"]') ||
+                    $element.find('[leos\\:split-content="parent"], [leos\\:split-content="child"]').length > 0;
+                if (hasSplitAttr) {
+                    $element.attr(PARENT_AFFECTED, "true");
+                    _attachWrapperActionEvents(connector, $element);
+                }
+            }
+        }
+
         let changed_element = $.makeArray($("[leos\\:indent-origin-type], [leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins," +
             " [leos\\:softaction='" + MOVE_FROM + "']"));
         let impactedArticles = [];
@@ -73,7 +87,7 @@ define(function mergeContributionExtensionModule(require) {
                 var nbParagraphs = $element.find('paragraph');
                 var nbParagraphsNbToUnb = $element.find('paragraph[leos\\:action-number="delete"]');
                 var nbParagraphsUnbToNb = $element.find('paragraph[leos\\:action-number="insert"]');
-                var hasSplitContentAttr = $element.find('[leos\\:split-content="parent"],paragraph[leos\\:split-content="child"]');
+                var hasSplitContentAttr = $element.find('[leos\\:split-content="parent"],[leos\\:split-content="child"]');
                 if (nbParagraphsUnbToNb.length === nbParagraphs.length || nbParagraphsNbToUnb.length === nbParagraphs.length) {
                     changed_element.push($articles[i]);
                     impactedArticles.push($element.attr(UTILS.ID));
