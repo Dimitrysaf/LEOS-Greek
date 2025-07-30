@@ -132,6 +132,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
         try {
             Map<String, Object> documentZipContent = ZipUtil.unzipByteArray(documentZipData);
+            documentZipContent.entrySet().removeIf(entry -> entry.getKey().startsWith("renditions")); // Remove all files inside renditions folder
             return documentZipContent;
         } catch (IOException e) {
             throw new LeosPrefinalisationException("Error unzip document", e);
