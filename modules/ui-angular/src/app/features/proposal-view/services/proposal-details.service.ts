@@ -198,7 +198,7 @@ export class ProposalDetailsService implements OnDestroy {
 
   updateProposalMetadata(docPurpose: string, eeaRelevance: boolean, packageTitle?: string, isAuthenticLang?: AuthenticLanguage,
                          authenticLang?: string[], coverPageType?: CoverPageType, verticalShift?: string, showCorrigendumAddendum?: boolean,
-                         proposalType?: string, targetProposalReference?: string, targetProposalDate?: string, proposalTargetLang?: string[],
+                         proposalType?: string, targetProposalReference?: string, targetProposalDate?: Date, proposalTargetLang?: string[],
                          correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
                          institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string) {

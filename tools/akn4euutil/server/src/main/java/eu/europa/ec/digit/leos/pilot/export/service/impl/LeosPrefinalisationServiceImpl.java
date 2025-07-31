@@ -300,6 +300,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                         metadataService.processCommissioner((ReferenceFieldInfo) fieldInfo, xmlFile, commissionerPos);
                     }
                     break;
+                case CORRIGENDUM_ADDENDUM:
+                    metadataService.processCorrigendumAddendum((SimpleFieldInfo) fieldInfo, xmlFile);
+                    break;
                 case PACKAGE_TITLE:
                     metadataService.processPackageTitle((SimpleFieldInfo)fieldInfo, xmlFile);
                     break;

@@ -27,7 +27,7 @@ public class UpdateProposalRequest {
     private Float verticalShift;
     private List<String> crossReferences;
     private String targetProposalReference;
-    private String targetProposalDate;
+    private Date targetProposalDate;
     private List<String> proposalTargetLang;
     private String correctionInformation;
     private String proposalType;

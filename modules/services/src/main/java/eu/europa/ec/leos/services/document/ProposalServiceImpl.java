@@ -24,6 +24,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.CorrigendumAddendumMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.CoverPageTypeMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
@@ -747,6 +748,18 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
         if (request.getInterInstitutionalReference() != null) {
             fields.add(new MetadataOptions.FieldNode("interinstitutionalCote", request.getInterInstitutionalReference()));
+        }
+        if (request.getShowCorrigendumAddendum() != null) {
+            CorrigendumAddendumMetadata corrigendumAddendumMetadata = new CorrigendumAddendumMetadata();
+            corrigendumAddendumMetadata.setShowCorrigendumAddendum(request.getShowCorrigendumAddendum());
+            corrigendumAddendumMetadata.setCorrectionInformation(request.getCorrectionInformation());
+            corrigendumAddendumMetadata.setProposalType(request.getProposalType());
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            corrigendumAddendumMetadata.setTargetProposalDate(dateFormat.format(request.getTargetProposalDate()));
+            corrigendumAddendumMetadata.setTargetProposalReference(request.getTargetProposalReference());
+            corrigendumAddendumMetadata.setProposalTargetLang(request.getProposalTargetLang());
+            corrigendumAddendumMetadata.setFinalVersion(request.getFinalVersion());
+            fields.add(new MetadataOptions.FieldNode("corrigendumAddendum", listToJson(corrigendumAddendumMetadata)));
         }
         metadataOptions.addTask(legFileName, proposal, fields);
         return metadataOptions;

@@ -427,9 +427,7 @@ public abstract class ApiServiceImpl implements ApiService {
             context.useProposalContent(proposalContent);
             proposal = context.executeUpdateMetadataProposal();
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
-            DocumentVO updatedProposalVO = new DocumentVO(proposal);
-            coverPageApiService.updateCorrigendumAddendum(proposalRef, request);
-            return updatedProposalVO;
+            return new DocumentVO(proposal);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;

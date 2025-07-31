@@ -19,7 +19,6 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 
 public interface CoverPageApiService extends BaseDocumentService<XmlDocument> {
-    void updateCorrigendumAddendum(String proposalRef, UpdateProposalRequest request);
 
     DocumentVO getCoverPageCorrigendumAddendumDetails(byte[] proposalXMLContent, DocumentVO documentVO);
 
