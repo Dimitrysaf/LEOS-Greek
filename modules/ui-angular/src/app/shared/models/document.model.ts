@@ -30,7 +30,7 @@ export interface Document {
   translatedProposals: Document[];
   creationOptions: string;
   targetProposalReference: string | null;
-  targetProposalDate: string | null;
+  targetProposalDate: Date | null;
   correctionInformation: string | null;
   showCorrigendumAddendum : boolean;
   proposalType: string | null;

@@ -60,7 +60,7 @@ public class DocumentVO {
     private String creationOptions;
     private String proposalType;
     private String targetProposalReference;
-    private String targetProposalDate;
+    private Date targetProposalDate;
     private String correctionInformation;
     private Boolean showCorrigendumAddendum;
     private Boolean finalVersion;
@@ -83,7 +83,7 @@ public class DocumentVO {
         }
     }
 
-    public DocumentVO(XmlDocument xmlDocument, String proposalType, String targetProposalReference, String targetProposalDate, String correctionInformation ) {
+    public DocumentVO(XmlDocument xmlDocument, String proposalType, String targetProposalReference, Date targetProposalDate, String correctionInformation ) {
         this(xmlDocument);
         this.proposalType = proposalType;
         this.targetProposalReference = targetProposalReference;
@@ -421,11 +421,11 @@ public class DocumentVO {
         this.targetProposalReference = targetProposalReference;
     }
 
-    public String getTargetProposalDate() {
+    public Date getTargetProposalDate() {
         return targetProposalDate;
     }
 
-    public void setTargetProposalDate(String targetProposalDate) {
+    public void setTargetProposalDate(Date targetProposalDate) {
         this.targetProposalDate = targetProposalDate;
     }
 

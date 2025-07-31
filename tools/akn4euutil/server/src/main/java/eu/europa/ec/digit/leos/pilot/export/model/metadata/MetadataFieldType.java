@@ -1,6 +1,7 @@
 package eu.europa.ec.digit.leos.pilot.export.model.metadata;
 
 import java.lang.IllegalArgumentException;
+import java.util.List;
 
 public enum MetadataFieldType {
     PACKAGE_TITLE("packageTitle"),
@@ -16,6 +17,8 @@ public enum MetadataFieldType {
     LINKED_DOCUMENTS("linkedDocuments"),
     STAMP("stamp"),
     COMMISSIONER("commissioner"),
+    CORRIGENDUM_ADDENDUM("corrigendumAddendum"),
+
     // Following keys will be ignored at the moment
     STATUS("status"),
     DELETE_INTERNAL_REFERENCE("deleteInternalReference"),
@@ -105,6 +108,9 @@ public enum MetadataFieldType {
         }
         if(MetadataFieldType.COMMISSIONER.getTypeName().equals(typeName)){
             return MetadataFieldType.COMMISSIONER;
+        }
+        if(MetadataFieldType.CORRIGENDUM_ADDENDUM.getTypeName().equals(typeName)){
+            return MetadataFieldType.CORRIGENDUM_ADDENDUM;
         }
         if(MetadataFieldType.DELETE_INTERNAL_REFERENCE.getTypeName().equals(typeName)){
             return MetadataFieldType.DELETE_INTERNAL_REFERENCE;
