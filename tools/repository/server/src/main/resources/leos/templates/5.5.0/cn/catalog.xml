@@ -36,7 +36,7 @@
                         <description lang="EN">Regulation to be adopted by the European Parliament and the Council</description>
                         <description lang="FR">Règlement à adopter conjointement par le Parlement Européen et le Conseil</description>
                     </descriptions>
-                    <item type="TEMPLATE" enabled="true" key="SJ-023">
+                    <item type="TEMPLATE" documentCollection="PROP_ACT" enabled="true" key="SJ-023">
                         <names>
                             <name lang="EN">SJ-023 - Proposal for a Regulation of the European Parliament and of the Council</name>
                             <name lang="FR">SJ-023 - Proposition de règlement du Parlement européen et du Conseil</name>
@@ -49,7 +49,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="PR-023" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="PROP_ACT" id="PR-023" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-023 - ....</name>
                             </names>
@@ -100,7 +100,7 @@
                         <description lang="EN">Directive to be adopted by the European Parliament and the Council</description>
                         <description lang="FR">Directive à adopter conjointement par le Parlement Européen et le Conseil</description>
                     </descriptions>
-                    <item type="TEMPLATE" enabled="true" key="SJ-024">
+                    <item type="TEMPLATE" documentCollection="PROP_ACT" enabled="true" key="SJ-024">
                         <names>
                             <name lang="EN">SJ-024 - Proposal for a Directive of the European Parliament and of the Council</name>
                             <name lang="FR">SJ-024 - Proposition de directive du Parlement européen et du Conseil</name>
@@ -113,7 +113,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="PR-024" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="PROP_ACT" id="PR-024" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-024 - ....</name>
                             </names>
@@ -168,7 +168,7 @@
                         <language lang="EN">English</language>
                         <language lang="FR">Français</language>
                     </languages>
-                    <item type="TEMPLATE" enabled="true" key="SJ-025">
+                    <item type="TEMPLATE" documentCollection="PROP_ACT" enabled="true" key="SJ-025">
                         <names>
                             <name lang="EN">SJ-025 - Proposal for a Decision of the European Parliament and of the Council</name>
                             <name lang="FR">SJ-025 - Proposition de décision du Parlement européen et du Conseil</name>
@@ -181,7 +181,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="PR-025" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="PROP_ACT" id="PR-025" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-025 - ....</name>
                             </names>
@@ -222,7 +222,7 @@
                             </item>
                         </item>
                     </item>
-                    <item type="TEMPLATE" enabled="true" key="SJ-019">
+                    <item type="TEMPLATE" documentCollection="PROP_ACT" enabled="true" key="SJ-019">
                         <names>
                             <name lang="EN">SJ-019 - Proposal for a Council Decision</name>
                             <name lang="FR">SJ-019 - Proposition de décision du Conseil</name>
@@ -235,7 +235,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="PR-019" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="PROP_ACT" id="PR-019" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-019 - ....</name>
                             </names>
@@ -276,7 +276,7 @@
                             </item>
                         </item>
                     </item>
-                    <item type="TEMPLATE" enabled="true" key="SJ-026">
+                    <item type="TEMPLATE" documentCollection="PROP_ACT" enabled="true" key="SJ-026">
                         <names>
                             <name lang="EN">SJ-026 - Proposal for a Decision of the European Parliament and of the Council (without addressees)</name>
                             <name lang="FR">SJ-026 - Proposition de décision du Parlement européen et du Conseil (sans destinataires)</name>
@@ -289,7 +289,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="PR-026" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="PROP_ACT" id="PR-026" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-026 - ....</name>
                             </names>

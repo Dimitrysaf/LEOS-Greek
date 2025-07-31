@@ -43,7 +43,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   nonEditablePartOfTitle: string;
   editableTitle: string;
   isKeepAct = false;
-  private proposalTemplate: string;
+  proposalTemplate: string;
   isStepOneCompleted = false;
   private proposalRef:string;
   private proposalLanguage: string;
@@ -148,6 +148,13 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       this.currentStepIndex = newIndex;
       this.isStepOneCompleted = this.currentStepIndex >= 2;
     }
+    if(this.isStepOneCompleted){
+      this.createForm.get('changeCopyAct').disable();
+    }else{
+      this.createForm.get('changeCopyAct').enable();
+    }
+
+
   }
 
   onSelectStepRemoteNav(event: any) {
