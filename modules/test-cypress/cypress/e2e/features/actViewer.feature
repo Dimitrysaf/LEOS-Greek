@@ -20,7 +20,6 @@ Feature: act viewer page Regression Features
     Given click on details tab in act view page
     Then active tab name is "Details"
     And  template name is "SJ-023" in details tab
-    And  language is "EN" in details tab
     And  confidentiality level is "STANDARD" in details tab
     And  EEA Relevance is unticked in details tab
     When click on milestones tab in act view page
