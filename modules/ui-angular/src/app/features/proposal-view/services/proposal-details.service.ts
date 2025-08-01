@@ -54,6 +54,7 @@ export class ProposalDetailsService implements OnDestroy {
   permissions$: Observable<Permission[]>;
   clonedProposalCount: number;
   exceptionResponseVO: ExceptionResponseVO = null;
+  private repetitiveActsEnabled: boolean;
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
@@ -102,6 +103,7 @@ export class ProposalDetailsService implements OnDestroy {
       .subscribe(([collaborators, config]) => {
         const permissions = this.resolvePermissions(collaborators, config);
         this.permissionsBS.next(permissions);
+        this.repetitiveActsEnabled = config.repetitiveActsEnabled;
       });
 
     this.clonedProposalCount = 0;
@@ -131,6 +133,9 @@ export class ProposalDetailsService implements OnDestroy {
 
   getTranslated(): boolean {
     return this.translated;
+  }
+  isRepetitiveActsEnabled(): boolean{
+    return this.repetitiveActsEnabled;
   }
 
   createAnnex() {

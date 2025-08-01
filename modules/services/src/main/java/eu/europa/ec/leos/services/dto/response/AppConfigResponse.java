@@ -49,6 +49,7 @@ public class AppConfigResponse {
     private boolean leosSwitchLevelArticle;
     private int searchOnMinimumCharacter;
     private int maxSearchLimit;
+    private boolean repetitiveActsEnabled;
 
     public AppConfigResponse() {
     }
@@ -259,4 +260,8 @@ public class AppConfigResponse {
     public void setMaxSearchLimit(int maxSearchLimit) {
         this.maxSearchLimit = maxSearchLimit;
     }
+
+    public boolean isRepetitiveActsEnabled() { return repetitiveActsEnabled; }
+
+    public void setRepetitiveActsEnabled(boolean repetitiveActsEnabled) { this.repetitiveActsEnabled = repetitiveActsEnabled; }
 }
