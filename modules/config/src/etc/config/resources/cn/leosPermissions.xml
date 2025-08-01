@@ -129,4 +129,26 @@
         <default-doc-creation-role>false</default-doc-creation-role>
         <message-key>leos.doc.collaborator.type4</message-key>
     </role>
+    <role name="TEMPLATE_MANAGER">
+        <permissions>
+            <permission>CAN_CREATE_TEMPLATE</permission>
+            <permission>CAN_READ</permission>
+            <permission>CAN_UPDATE</permission>
+            <permission>CAN_DELETE</permission>
+            <permission>CAN_COMMENT</permission>
+            <permission>CAN_SUGGEST</permission>
+            <permission>CAN_EXPORT_LW</permission>
+            <permission>CAN_CREATE_MILESTONE</permission>
+            <permission>CAN_RESTORE_PREVIOUS_VERSION</permission>
+            <permission>CAN_ADD_REMOVE_COLLABORATOR</permission>
+            <permission>CAN_UPLOAD</permission>
+            <permission>CAN_ACTIVATE_TRACK_CHANGES</permission>
+            <permission>CAN_ACCEPT_CHANGES</permission>
+            <permission>CAN_REJECT_CHANGES</permission>
+        </permissions>
+        <application-role>false</application-role>
+        <collaborator>true</collaborator>
+        <default-doc-creation-role>true</default-doc-creation-role>
+        <message-key>leos.doc.collaborator.type1</message-key>
+    </role>
 </roles>
