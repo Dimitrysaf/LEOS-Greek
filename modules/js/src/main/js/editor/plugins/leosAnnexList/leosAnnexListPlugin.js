@@ -998,8 +998,9 @@ define(function leosAnnexListPluginModule(require) {
                                 return;
                             }
                             joinNextLineToCursor( editor, cursor, range );
-                            var parentOfPreviousIsParagraph = previous.getParent() && previous.getParent().getAttribute("data-akn-element") === leosPluginUtils.PARAGRAPH;
-                            var parentOfPreviousIsNumbered = previous.getParent() && previous.getParent().getAttribute("data-akn-num");
+                            var parentOfPreviousIsParagraph = previous?.getParent()?.getAttribute("data-akn-element") === leosPluginUtils.PARAGRAPH;
+                            var parentOfPreviousIsNumbered = previous?.getParent()?.hasAttribute("data-akn-num");
+
                             /*
                              * This if was created, because the first level of Point (a)
                              * cannot become a paragraph in case of unnumbered paragraphs.

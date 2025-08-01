@@ -704,6 +704,7 @@ define(function leosTrackChangesModule(require) {
             if(isStructureTooComplex[0]){
                 editor.fire("handleTcComplexStructure");
             }
+            editor.focus();
         },
 
         rejectAllChanges: function(editor) {
@@ -716,6 +717,7 @@ define(function leosTrackChangesModule(require) {
             if(isStructureTooComplex[0]){
                 editor.fire("handleTcComplexStructure");
             }
+            editor.focus();
         },
 
         processAllChanges: function (editor, actionName, processedElements, isStructureTooComplex, iterationCount) {
@@ -753,7 +755,7 @@ define(function leosTrackChangesModule(require) {
                     return;
                 }
             }
-
+            this.injectTagIdsInNodeIncludingSpan(element);
             var editableElements = element.find("[data-akn-attr-editable='true']");
             if(editableElements.count() == 0){
                 editableElements = element.find("[leos\\:editable='true']");
@@ -801,9 +803,7 @@ define(function leosTrackChangesModule(require) {
                 if(editableElements.count() == 0){ //HigherDivision
                     editableElements = element.find("h2[data-akn-name='aknHeading']");
                 }
-                if(editableElements.count() > 0){
-                    editableElements = [editableElements.getItem(0)];
-                }
+                editableElements = editableElements.count() > 0 ? [editableElements.getItem(0)] : [];
             }
             if(editableElements.length > 0){
                 edElementToProcess = editableElements[0];
@@ -879,6 +879,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         processElement: function (editor, element, processedElements, actionName, isStructureTooComplex) {
+            this.injectTagIdsInNodeIncludingSpan(element);
             if (this.isElementPresentInEditor(editor, element) && !isStructureTooComplex[0]) {
                 var idToSend = element.getAttribute(core.ID);
                 var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
@@ -1004,6 +1005,7 @@ define(function leosTrackChangesModule(require) {
                     element.$.outerHTML = element.$.innerHTML;
                 }
             }
+            editor.focus();
         },
 
         checkIfAcceptIsProcessedInBackend: function (editor, element, numberModule) {
@@ -1307,6 +1309,7 @@ define(function leosTrackChangesModule(require) {
                     element.$.outerHTML = element.$.innerHTML;
                 }
             }
+            editor.focus();
         },
 
         checkIfRejectIsProcessedInBackend: function (editor, element, numberModule) {
