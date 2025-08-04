@@ -231,6 +231,10 @@
   display: block;
 }
 
+.details-tab-flex {
+  display: flex;
+}
+
 .details-tab-adoption-date {
   height: 50px;
   & > mat-form-field > input, & > mat-form-field > mat-datepicker-toggle {

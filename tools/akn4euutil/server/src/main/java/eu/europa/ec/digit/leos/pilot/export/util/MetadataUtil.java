@@ -573,6 +573,10 @@ public class MetadataUtil {
         return new ReferenceFieldInfo("", "", fieldValue, "", MetadataFieldType.STAMP);
     }
 
+    public static MetadataFieldInfo parseCorrigendumAddendum(String fieldValue) {
+        return new SimpleFieldInfo(fieldValue, MetadataFieldType.CORRIGENDUM_ADDENDUM);
+    }
+
     public static MetadataFieldInfo parsePackageTitle(String fieldValue) {
         return new SimpleFieldInfo(fieldValue, MetadataFieldType.PACKAGE_TITLE);
     }

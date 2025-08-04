@@ -149,29 +149,36 @@ public interface MetadataService {
 
     /**
      * Process the package title field and add the data to the xml
-     * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param fieldInfo {@link SimpleFieldInfo} providing the data to set
      * @param xmlFile XML file to add the adoption date
      * */
     void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 
     /**
      * Process the internal reference field and add the data to the xml
-     * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param fieldInfo {@link SimpleFieldInfo} providing the data to set
      * @param xmlFile XML file to add the adoption date
      * */
     void processInternalRef(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 
     /**
      * Process the authentic languages field and add the data to the xml
-     * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param fieldInfo {@link ListFieldInfo} providing the data to set
      * @param xmlFile XML file to add the adoption date
      * */
     void processAuthenticLanguages(ListFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 
     /**
      * Process the caver page type field and add the data to the xml
-     * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param fieldInfo {@link SimpleFieldInfo} providing the data to set
      * @param xmlFile XML file to add the adoption date
      * */
     void processCoverPageType(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+
+    /**
+     * Process the correngendum/addendum fields and add the data to the xml
+     * @param fieldInfo {@link SimpleFieldInfo} providing the data to set
+     * @param xmlFile XML file to add the adoption date
+     * */
+    void processCorrigendumAddendum(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 }
