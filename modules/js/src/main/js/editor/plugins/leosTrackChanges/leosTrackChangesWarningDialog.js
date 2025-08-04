@@ -52,7 +52,7 @@ define(function leosTrackChangesWarningDialog(require) {
                 CKEDITOR.dialog.okButton
             ],
             onOk: function(event) {
-                event.sender._.editor.fire('focus');
+                event.sender._.editor.focus();
             }
             
 
