@@ -2,7 +2,6 @@ package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
@@ -21,12 +20,14 @@ import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ResourcesUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.metadata.CorrigendumAddendumMetadata;
 import eu.europa.ec.digit.leos.pilot.export.util.metadata.CoverPageTypeMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -35,13 +36,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.ELEMENT_DATE;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.VALUE_CROSS_CONFERENCE_NAME;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.insertElementInCoverPage;
+import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isMainDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.deleteElementsByXPath;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getChildNodeWithName;
+import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getXmlChildNodeWithNameAttributeValue;
+import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.newXmlFile;
 
 @Service
 @Slf4j
@@ -107,6 +112,8 @@ public class MetadataServiceImpl implements MetadataService {
                     return MetadataUtil.parseStamp(fieldValue);
                 case COMMISSIONER:
                     return MetadataUtil.parseCommissionerValue(fieldValue);
+                case CORRIGENDUM_ADDENDUM:
+                    return MetadataUtil.parseCorrigendumAddendum(fieldValue);
                 case PACKAGE_TITLE:
                     return MetadataUtil.parsePackageTitle(fieldValue);
                 case INTERNAL_REF:
@@ -1077,5 +1084,157 @@ public class MetadataServiceImpl implements MetadataService {
             authPElement.setTextContent(String.format(ResourcesUtil.getMessage(language, "authentic.languages.text.template"), langStr));
             authContainerElement.appendChild(authPElement);
         }
+    }
+
+    @Override
+    public void processCorrigendumAddendum(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        if (isMainDocumentFile(xmlFile)) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            CorrigendumAddendumMetadata corrigendumAddendumMetadata;
+            try {
+                corrigendumAddendumMetadata = objectMapper.readValue(fieldInfo.getValue(), CorrigendumAddendumMetadata.class);
+                updateCorrigendumAddendum(xmlFile, corrigendumAddendumMetadata);
+            } catch (JsonProcessingException e) {
+                return;
+            }
+        }
+    }
+
+    private void removeCorrigendumAddendum(XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverPage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+        if (xmlNodeCoverPage == null) {
+            return;
+        }
+
+        Node corrigendumNode = getXmlChildNodeWithNameAttributeValue(xmlNodeCoverPage, "corrigendum");
+        if (corrigendumNode != null) {
+            corrigendumNode.getParentNode().removeChild(corrigendumNode);
+        }
+        Node addendumNode = getXmlChildNodeWithNameAttributeValue(xmlNodeCoverPage, "addendum");
+        if (addendumNode != null) {
+            addendumNode.getParentNode().removeChild(addendumNode);
+        }
+    }
+
+
+    private void updateCorrigendumAddendum(XmlUtil.XmlFile xmlFile, CorrigendumAddendumMetadata corrigendumAddendumMetadata) {
+        Node xmlNodeLongTitle = xmlFile.getElementByName("longTitle");
+        if (xmlNodeLongTitle == null) {
+            return;
+        }
+
+        removeCorrigendumAddendum(xmlFile);
+
+        if (Boolean.TRUE.equals(corrigendumAddendumMetadata.getShowCorrigendumAddendum()) && corrigendumAddendumMetadata.getProposalType() != null) {
+            final String language = readLanguageValue(xmlFile);
+            populateCorrigendumAddendumContainer(xmlFile, xmlNodeLongTitle, corrigendumAddendumMetadata, language);
+        }
+    }
+
+    private void populateCorrigendumAddendumContainer(XmlUtil.XmlFile xmlFile, Node xmlNodeLongTitle,
+                                                      CorrigendumAddendumMetadata corrigendumAddendumMetadata,
+                                                      String language) {
+        Element containerElement = xmlFile.newElement(MetadataUtil.ELEMENT_CONTAINER);
+        XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.ATTRIBUTE_CLASS, "template");
+        XmlUtil.setNodeAttributeValue(containerElement, MetadataUtil.ATTRIBUTE_NAME, corrigendumAddendumMetadata.getProposalType());
+        xmlNodeLongTitle.getParentNode().insertBefore(containerElement, xmlNodeLongTitle);
+
+        addPElement(xmlFile, containerElement, corrigendumAddendumMetadata.getProposalType().toUpperCase(Locale.ROOT));
+        createCAContainerTargetDocumentDateAndReference(xmlFile, containerElement, corrigendumAddendumMetadata, language);
+        createCAContainerTargetLanguages(xmlFile, containerElement, corrigendumAddendumMetadata.getProposalTargetLang(), language);
+        createCAContainerCorrectionInfo(xmlFile, containerElement, corrigendumAddendumMetadata);
+        createCAContainerWrapperText(xmlFile, containerElement, language);
+    }
+
+    private void addPElement(XmlUtil.XmlFile xmlFile, Node container, String content) {
+        Element pElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+        XmlUtil.setNodeAttributeValue(pElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        container.appendChild(pElement);
+        pElement.setTextContent(content);
+    }
+
+    private void createCAContainerTargetDocumentDateAndReference(XmlUtil.XmlFile xmlFile, Node container,
+                                                                 CorrigendumAddendumMetadata corrigendumAddendumMetadata, String language) {
+        Element pElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+        XmlUtil.setNodeAttributeValue(pElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        pElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.corrigendum.addendum.affected.document.intro") + " ");
+        Element affectedDocNode = xmlFile.newElement("affectedDocument");
+        XmlUtil.setNodeAttributeValue(affectedDocNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        // TODO fill href
+        XmlUtil.setNodeAttributeValue(affectedDocNode, MetadataUtil.ATTRIBUTE_HREF, "");
+        Element docNumber = xmlFile.newElement("docNumber");
+        XmlUtil.setNodeAttributeValue(docNumber, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        docNumber.setTextContent(" " + corrigendumAddendumMetadata.getTargetProposalReference() + " ");
+        if (checkIfFinalVersion(corrigendumAddendumMetadata.getFinalVersion())) {
+            Element inline = xmlFile.newElement("inline");
+            XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, "version");
+            inline.setTextContent(" " + ResourcesUtil.getMessage(language, "coverpage.corrigendum.addendum.affected.document.final"));
+            docNumber.appendChild(inline);
+        }
+        Element dateElement = xmlFile.newElement(ELEMENT_DATE);
+        XmlUtil.setNodeAttributeValue(dateElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(dateElement, MetadataUtil.ATTRIBUTE_DATE, corrigendumAddendumMetadata.getTargetProposalDate());
+        final MetadataLanguageFormats metadataLanguageFormats = getMetadataLanguageDateFormat(xmlFile);
+        final String dateDisplayValue = metadataLanguageFormats.formatDate(MetadataUtil.convertIsoDateToLanguageDateFormat(corrigendumAddendumMetadata.getTargetProposalDate(), metadataLanguageFormats));
+        dateElement.setTextContent(dateDisplayValue);
+        affectedDocNode.appendChild(docNumber);
+        affectedDocNode.appendChild(xmlFile.createTextNode(" " + ResourcesUtil.getMessage(language,"coverpage.corrigendum.addendum.affected.document.reference.date.separator") + " "));
+        affectedDocNode.appendChild(dateElement);
+        pElement.appendChild(affectedDocNode);
+        container.appendChild(pElement);
+    }
+
+    private boolean checkIfFinalVersion(Boolean isFinalVersion) {
+        return isFinalVersion != null && isFinalVersion;
+    }
+
+    private void createCAContainerTargetLanguages(XmlUtil.XmlFile xmlFile, Node container, List<String> targetLanguages, String language) {
+        if(!targetLanguages.isEmpty() && !targetLanguages.get(0).equalsIgnoreCase("NONE")) {
+            Element pElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+            if(targetLanguages.get(0).equalsIgnoreCase("ALL")) {
+                pElement.appendChild(xmlFile.createTextNode(ResourcesUtil.getMessage(language,"coverpage.corrigendum.addendum.target.document.all.language")));
+            } else {
+                pElement.appendChild(xmlFile.createTextNode(ResourcesUtil.getMessage(language,"coverpage.corrigendum.addendum.target.document.selected.language") + " "));
+                for(int i =0 ; i < targetLanguages.size(); i++) {
+                    String lang = targetLanguages.get(i);
+                    Element inline = xmlFile.newElement("inline");
+                    XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+                    XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, lang.toUpperCase());
+                    XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_REFERSTO, "~"+lang.toUpperCase());
+                    inline.setTextContent(ResourcesUtil.getMessage(language,"authentic.language." + lang.toUpperCase()));
+                    pElement.appendChild(inline);
+                    if (i < targetLanguages.size() - 2) {
+                        pElement.appendChild(xmlFile.createTextNode(", "));
+                    } else if (i == targetLanguages.size() - 2) {
+                        pElement.appendChild(xmlFile.createTextNode(" " + ResourcesUtil.getMessage(language,"coverpage.separator") + " "));
+                    } else {
+                        pElement.appendChild(xmlFile.createTextNode("."));
+                    }
+                }
+            }
+            //XmlUtil.setNodeAttributeValue(pElement, MetadataUtil.ATTRIBUTE_NAME, "targetLanguages");
+            container.appendChild(pElement);
+        }
+    }
+
+    private void createCAContainerCorrectionInfo(XmlUtil.XmlFile xmlFile, Node container,
+                                                 CorrigendumAddendumMetadata corrigendumAddendumMetadata) {
+        Element pElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+        XmlUtil.setNodeAttributeValue(pElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        Element inline = xmlFile.newElement("inline");
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, "correctionInfo");
+        inline.setTextContent(corrigendumAddendumMetadata.getCorrectionInformation());
+        pElement.appendChild(inline);
+        container.appendChild(pElement);
+    }
+
+    private void createCAContainerWrapperText(XmlUtil.XmlFile xmlFile, Node container, String language) {
+        Element pElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+        XmlUtil.setNodeAttributeValue(pElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        pElement.setTextContent(ResourcesUtil.getMessage(language,"coverpage.corrigendum.addendum.text.conclusion"));
+        container.appendChild(pElement);
     }
 }

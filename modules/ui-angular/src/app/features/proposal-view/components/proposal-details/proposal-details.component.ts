@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Document, Permission, AuthenticLanguage, CoverPageType, ProposalDetailsLists, Metadata, DetailsTabExclusions} from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
@@ -6,6 +6,8 @@ import {cloneDeep, toNumber} from "lodash-es";
 import {EuiGrowlService} from "@eui/core";
 import {TranslateService} from "@ngx-translate/core";
 import moment from 'moment';
+import {EuiSelectComponent} from "@eui/components/eui-select";
+import {EuiInputTextComponent} from "@eui/components/eui-input-text";
 
 @Component({
   selector: 'app-proposal-details',
@@ -62,7 +64,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   proposalTargetLang: string[];
   showCorrigendumAddendum: boolean;
   targetProposalReference: string;
-  targetProposalDate: Date | null;
+  targetProposalReferenceYear: number | null;
+  targetProposalReferenceActingEntity: string | null;
+  targetProposalReferenceNumber: number | null;
+  targetProposalDate: any;
   correctionInformation: string;
   finalVersion: boolean;
   detailsTabExclusions: DetailsTabExclusions;
@@ -85,6 +90,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   invalidCrossRefNumberInput: boolean;
   invalidInstitutionalNumberInput: boolean;
   invalidInterInstitutionalNumberInput: boolean;
+  invalidTargetProposalReferenceInput: boolean;
 
   constructor(
     protected detailsService: ProposalDetailsService,
@@ -262,6 +268,26 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  getTargetProposalReference(): string {
+    if (!!this.targetProposalReferenceActingEntity && this.showCorrigendumAddendum) {
+      const targetProposalReference = this.targetProposalReferenceActingEntity + '(' + this.targetProposalReferenceYear + ')' + this.targetProposalReferenceNumber;
+      if (this.institutionalRefRegEx.test(targetProposalReference) && !isNaN(Number(this.targetProposalReferenceNumber))) {
+        return targetProposalReference;
+      }
+    }
+    return null;
+  }
+
+  isTargetProposalReferenceValid(): boolean {
+    const targetProposalReference = this.getTargetProposalReference();
+    if (targetProposalReference != null) {
+      return true;
+    } else if (!this.targetProposalReferenceActingEntity && !this.targetProposalReferenceYear && !this.targetProposalReferenceNumber) {
+      return true;
+    }
+    return false;
+  }
+
   getInterInstitutionalReference(): string {
     let interInstitutionalRef = null;
     if (this.interInstitutionalRef && this.isInterInstitutionalRefValid()) {
@@ -286,6 +312,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   isAuthenticLangValid(): boolean {
     return !this.isAuthenticLang || this.isThereSelectedLanguage();
+  }
+
+  isTargetLangValid(): boolean {
+    return !this.isTargetLang || this.isThereSelectedTargetLanguage();
   }
 
   initializeAdoptionInfo() {
@@ -324,7 +354,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         error: (error) => console.log('error'),
       });
     this.initializeLists();
-    this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
+    this.isAutonomousAct = this.proposal.metadata.documentCollectionName != 'ACT_AUTO_COM';
     this.initializeGeneral();
     this.initializeCoverPageType();
     this.initializeAdoptionInfo();
@@ -352,6 +382,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     } else {
       this.invalidInstitutionalNumberInput = false;
     }
+    if (!this.isTargetProposalReferenceValid()) {
+      this.invalidTargetProposalReferenceInput = true;
+    } else {
+      this.invalidTargetProposalReferenceInput = false;
+    }
   }
 
   handleEEAChange(e: boolean) {
@@ -371,6 +406,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   isThereSelectedLanguage(): boolean {
     for (let lang of this.languages) {
       if (this.selectedLanguages[lang]) {
+        return true;
+      }
+    }
+    return this.allSelected;
+  }
+
+  isThereSelectedTargetLanguage(): boolean {
+    for (let lang of this.languages) {
+      if (this.selectedTargetLanguages[lang]) {
         return true;
       }
     }
@@ -414,6 +458,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       verticalShiftMetadata = this.verticalShift.toString();
     }
 
+    this.targetProposalReference = this.getTargetProposalReference();
     if(this.showCorrigendumAddendum) {
       if (!this.targetProposalReference || this.targetProposalReference.trim() === '') {
         alert('Proposal reference is required.');
@@ -450,7 +495,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.showCorrigendumAddendum,
       this.proposalType,
       this.targetProposalReference,
-      this.targetProposalDate != null ? this.formatTargetProposalDate() : null,
+      this.targetProposalDate != null ? this.targetProposalDate.toDate() : null,
       this.getTargetLanguages(),
       this.correctionInformation,
       this.finalVersion,
@@ -512,6 +557,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   onToggleCorrigendumAddendum(event: Event): void {
+    this.handleChange();
     this.enableSave = true;
     if (this.showCorrigendumAddendum) {
       this.proposalType = 'corrigendum';
@@ -568,8 +614,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.showCorrigendumAddendum = proposal.showCorrigendumAddendum;
       this.proposalType = proposal.proposalType;
       this.targetProposalReference = proposal.targetProposalReference;
+      if (this.targetProposalReference != null && this.institutionalRefRegEx.test(this.targetProposalReference)) {
+        let myArray = this.targetProposalReference.match(this.institutionalRefRegEx);
+        this.targetProposalReferenceActingEntity = myArray[1];
+        this.targetProposalReferenceYear = parseInt(myArray[2]);
+        this.targetProposalReferenceNumber = parseInt(myArray[3]);
+      }
+
       this.finalVersion = proposal.finalVersion;
-      this.targetProposalDate = this.proposal.targetProposalDate != null ? moment(this.proposal.targetProposalDate, 'DD-MM-YYYY').toDate() : null;
+      this.targetProposalDate = this.proposal.targetProposalDate != null ? moment(this.proposal.targetProposalDate) : null;
       this.allTargetLangSelected = proposal.allTargetLangSelected;
       this.proposalTargetLang = proposal.proposalTargetLang;
       this.correctionInformation = proposal.correctionInformation;
