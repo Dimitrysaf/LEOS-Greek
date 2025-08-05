@@ -90,6 +90,7 @@ public class ConfigServiceImpl implements ConfigService {
         boolean leosSwitchLevelArticle = Boolean.parseBoolean(applicationProperties.getProperty("leos.switch.level.article"));
         int minSearchChar = Integer.parseInt(applicationProperties.getProperty("leos.search.on.minimum.characters"));
         int maxSearchLimit = Integer.parseInt(applicationProperties.getProperty("leos.maximum.search.limit"));
+        boolean repetitiveActsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.repetitive.acts.enabled"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -116,6 +117,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setLeosSwitchLevelArticle(leosSwitchLevelArticle);
         appConfigResponse.setSearchOnMinimumCharacter(minSearchChar);
         appConfigResponse.setMaxSearchLimit(maxSearchLimit);
+        appConfigResponse.setRepetitiveActsEnabled(repetitiveActsEnabled);
 
         return appConfigResponse;
     }

@@ -66,6 +66,7 @@ export type LeosConfig = {
   leosSwitchLevelArticle: boolean;
   searchOnMinimumCharacter: number;
   maxSearchLimit: number;
+  repetitiveActsEnabled: boolean;
 };
 
 export type LeosAppConfig = LeosConfig & {

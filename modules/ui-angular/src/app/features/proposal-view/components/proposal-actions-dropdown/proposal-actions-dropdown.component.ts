@@ -38,6 +38,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   canValidate = false;
   canUpdate = false;
   translated = false;
+  repetitiveActsEnabled= false;
 
   private destroy$: Subject<any> = new Subject();
 
@@ -51,6 +52,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
       this.canUpdate = permissions.includes('CAN_UPDATE');
     });
     this.translated = proposalDetailsService.getTranslated();
+    this.repetitiveActsEnabled = proposalDetailsService.isRepetitiveActsEnabled();
   }
 
   ngOnDestroy(): void {
