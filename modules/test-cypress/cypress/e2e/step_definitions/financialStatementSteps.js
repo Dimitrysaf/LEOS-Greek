@@ -32,8 +32,8 @@ When('click on edit icon of level {int} in financial statement page', function (
     financialStatementPage.clickEditIconOfLevel(levelNumber);
 });
 
-When('click on edit icon of subparagraph {int} of level {int} in financial statement page', function (subparagraphNumber, levelNumber) {
-    financialStatementPage.clickEditIconOfSubparagraphOfLevel(subparagraphNumber, levelNumber);
+When('click on edit icon of subparagraph {int} of landscape level {int} in financial statement page', function (subparagraphNumber, levelNumber) {
+    financialStatementPage.clickEditIconOfSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber);
 });
 
 Then('content of level {int} has below content', (levelNumber, datatable) => {
@@ -80,4 +80,9 @@ When('click on insert group before icon of repeatable subparagraph', () => {
 
 Then('repeated subparagraph group before should exist', () => {
     financialStatementPage.elements.repeatedSubparagraphGroupBefore().first().should('exist');
+});
+
+Then('content of subparagraph {int} of level {int} contains a table with {int} row and {int} column in financial statement document', function (subparagraphNumber, levelNumber, rowNumber, columnNumber) {
+    financialStatementPage.getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', rowNumber);
+    financialStatementPage.getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', columnNumber);
 });

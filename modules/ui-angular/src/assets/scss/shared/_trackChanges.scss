@@ -44,7 +44,7 @@
     z-index: 1;
   }
 
-  [leos\:uid]:has(:is([leos\:uid], article, citation, recitals, recital, :not(article) paragraph, level, chapter, akntitle, part, section, subparagraph):hover):hover::before {
+  [leos\:uid]:has(:is([leos\:uid], article, citation, recitals, recital, :not(article) > paragraph, level, chapter, akntitle, part, section, subparagraph):hover):hover::before {
     display: none;
   }
 

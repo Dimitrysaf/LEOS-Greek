@@ -39,9 +39,17 @@ When('mouseover and click on block container {int} in explanatory memorandum pag
 });
 
 Then(/^num of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount, blockListCount, blockContainerCount, text) {
-    expMemoPage.getItem(itemCount, blockListCount, blockContainerCount).find('num').should('have.text', text);
+    expMemoPage.getItemFirstLayer(itemCount, blockListCount, blockContainerCount).children('num').should('have.text', text);
 });
 
 Then(/^content of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount, blockListCount, blockContainerCount, content) {
-    expMemoPage.getItem(itemCount, blockListCount, blockContainerCount).find('aknp').should('have.text', content);
+    expMemoPage.getItemFirstLayer(itemCount, blockListCount, blockContainerCount).children('aknp').should('have.text', content);
+});
+
+Then(/^num of item (\d+) of blockList (\d+) of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount2, blockListCount2, itemCount, blockListCount, blockContainerCount, text) {
+    expMemoPage.getItemSecondLayer(itemCount2, blockListCount2, itemCount, blockListCount, blockContainerCount).children('num').should('have.text', text);
+});
+
+Then(/^content of item (\d+) of blockList (\d+) of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount2, blockListCount2, itemCount, blockListCount, blockContainerCount, content) {
+    expMemoPage.getItemSecondLayer(itemCount2, blockListCount2, itemCount, blockListCount, blockContainerCount).children('aknp').should('have.text', content);
 });
