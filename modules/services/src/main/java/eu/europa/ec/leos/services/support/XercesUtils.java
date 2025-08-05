@@ -44,54 +44,7 @@ import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_N
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_URI;
-import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_END_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_NEW_CLASS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_REMOVED_CLASS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
-import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
-import static eu.europa.ec.leos.services.support.XmlHelper.ID;
-import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
-import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ENTER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_NUMBER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ELEMENT_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_ORIGINAL_NUMBER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE_ENTER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE_NUMBER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID_ENTER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID_NUMBER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
-import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_END_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_ACTIONS_PREFIXES;
-import static eu.europa.ec.leos.services.support.XmlHelper.STYLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.convertStringDateToCalendar;
-import static eu.europa.ec.leos.services.support.XmlHelper.findString;
-import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
-import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
-import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 public class XercesUtils {
     private static final String XML_DEFINITION_REGEX = "^<\\?xml *version=[\"\']1\\.[01][\"\'] *encoding=([\"\'])UTF-8([\"\'])?( *standalone=([\"\'])((yes)|(no))([\"\']))? *\\?>";
@@ -1604,7 +1557,7 @@ public class XercesUtils {
             } else {
                 removeTrackChangesAttributes(node);
             }
-        } else if(hasAttribute(node, LEOS_ACTION_NUMBER) || hasAttribute(node, LEOS_ACTION_ENTER)) {
+        } else if(hasAttribute(node, LEOS_ACTION_NUMBER) || hasAttribute(node, LEOS_ACTION_ENTER) || hasAttribute(node, LEOS_SPLIT_CONTENT_ATTR)) {
             removeTrackChangesAttributes(node);
         }
         return isNodeDeleted;
@@ -1623,6 +1576,7 @@ public class XercesUtils {
         XercesUtils.removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
         XercesUtils.removeAttribute(node, LEOS_SOFT_USER_ATTR);
         XercesUtils.removeAttribute(node, LEOS_SOFT_DATE_ATTR);
+        XercesUtils.removeAttribute(node, LEOS_SPLIT_CONTENT_ATTR);
     }
 
 

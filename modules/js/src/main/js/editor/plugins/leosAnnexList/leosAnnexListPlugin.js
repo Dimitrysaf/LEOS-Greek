@@ -877,6 +877,13 @@ define(function leosAnnexListPluginModule(require) {
                     if (currentLi.getAttribute('data-akn-split-content') === 'parent') {
                         currentLi.removeAttribute('data-akn-split-content');
                     }
+                    // Get the first *element* child
+                    var firstElement = currentLi.getFirst(function (node) {
+                        return node.type === CKEDITOR.NODE_ELEMENT && node.getName() === 'p';
+                    });
+                    if (firstElement) {
+                        firstElement.removeAttribute('data-akn-split-content');
+                    }
                 }
             }
         }

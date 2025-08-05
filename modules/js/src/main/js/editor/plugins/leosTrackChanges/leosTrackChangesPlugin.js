@@ -1214,8 +1214,13 @@ define(function leosTrackChangesPluginModule(require) {
                     if(event.editor.LEOS.isTrackChangesEnabled){
                         console.log(" Split detected  part of the content stayed above, part moved down.", currentLi.getId());
                         currentLi.setAttribute('data-akn-split-content', 'child');
-                        if(!prevLi.hasAttribute('data-akn-split-content')){
-                            prevLi.setAttribute('data-akn-split-content', 'parent');
+                        prevLi.setAttribute('data-akn-split-content', 'parent');
+                        var parentOl = prevLi.getParent();
+                        if (parentOl && parentOl.getName() === 'ol') {
+                            var outerLi = parentOl.getParent();
+                            if (outerLi && outerLi.getName() === 'li') {
+                               outerLi.setAttribute('data-akn-split-content', 'parent');
+                            }
                         }
                     }
                 } else if (prevText.length > 0 && currentText.length === 0) {
