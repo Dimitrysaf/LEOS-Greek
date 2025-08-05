@@ -12,20 +12,11 @@
     {
       "targets": [
         {
-          "destinationPath": "//recitals/recital[3]",
+          "destinationPath": "//recitals/recital[4]",
           "position": "AFTER-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-recital-3\" class=\"guidance-green-block\"><span id=\"clause-recital-3\">[That recital is optional in accordance with the guidance note on explanatory documents available at:https://myintracomm.ec.europa.eu/corp/sg/fr/droit_comm/infractions/Documents/guidance_explanatory_documents_en.pdf. Please note that a thorough justification must be reflected in the summary record of the committee meeting on whether or not the Commission considers such explanatory documents to be justified.]</span></guidance>"
-    },
-    {
-      "targets": [
-        {
-          "destinationPath": "//recitals/recital[5]",
-          "position": "AFTER-WRAPPER"
-        }
-      ],
-      "content": "<guidance id=\"guidance-recital-5\" class=\"guidance-green-block\"><span id=\"clause-recital-5\">[for acts adopted after consultation of a committee under the examination procedure]</span></guidance>"
+      "content": "<guidance id=\"guidance-recital-4\" class=\"guidance-green-block\"><span id=\"clause-recital-4\">[for acts adopted after consultation of a committee under the examination procedure]</span></guidance>"
     },
     {
       "targets": [
