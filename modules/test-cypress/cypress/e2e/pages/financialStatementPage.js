@@ -18,8 +18,13 @@ class financialStatementPage {
     }
 
     getLevel(levelNumber){
-        return cy.xpath("//mainbody//level[" + levelNumber + "]");
+        return cy.xpath("(//mainbody//level)[" + levelNumber + "]");
     }
+
+    getLandscapeLevel(levelNumber){
+        return cy.get('mainbody div.landscape level');
+    }
+
     getContentOfLevel(levelNumber) {
         return this.getLevel(levelNumber).find('content aknp');
     }
@@ -32,6 +37,10 @@ class financialStatementPage {
         return this.getLevel(levelNumber).find('subparagraph').eq(subparagraphNumber-1);
     }
 
+    getSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber) {
+        return this.getLandscapeLevel(levelNumber).find('subparagraph').eq(subparagraphNumber-1);
+    }
+
     getContentOfSubparagraphOfLevel(subparagraphNumber, levelNumber) {
         return this.getSubparagraphOfLevel(subparagraphNumber, levelNumber) .find('content aknp');
     }
@@ -40,8 +49,8 @@ class financialStatementPage {
         this.getLevel(levelNumber).realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(2000).find("span[data-widget-type='edit']").click({force:true}));
     }
 
-    clickEditIconOfSubparagraphOfLevel(subparagraphNumber, levelNumber) {
-        this.getSubparagraphOfLevel(subparagraphNumber, levelNumber).realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(2000).find("span[data-widget-type='edit']").click({force: true}));
+    clickEditIconOfSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber) {
+        this.getSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber).realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(2000).find("span[data-widget-type='edit']").click({force: true}));
     }
 
     duplicateRepeatableSubparagraph() {
@@ -58,6 +67,18 @@ class financialStatementPage {
 
     duplicateRepeatableSubparagraphGroupBefore() {
         this.elements.repeatableSubparagraphGroup().first().invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.group.before']").click({ force: true }).wait(500));
+    }
+
+    getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
+        return this.getSubparagraphFromLevel(subparagraphNumber, levelNumber).find('table tbody tr');
+    }
+
+    getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
+        return this.getSubparagraphFromLevel(subparagraphNumber,  levelNumber).find('table tbody tr').eq(0).find('td');
+    }
+
+    getSubparagraphFromLevel(subparagraphNumber, levelNumber) {
+        return this.getLevel(levelNumber).children('subparagraph').eq(subparagraphNumber-1);
     }
 }
 export default new financialStatementPage();

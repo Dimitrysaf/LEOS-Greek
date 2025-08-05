@@ -1625,7 +1625,7 @@ Feature: Track Changes Feature
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "Automation Testing Soft Enter in Level with Track Changes" in create document page
+    And  provide document title "Automation Testing Enter in Level with Track Changes" in create document page
     And  click on create button
     Then user is on act viewer page
     When click on add button in annexes section
