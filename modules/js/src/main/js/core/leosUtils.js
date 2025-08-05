@@ -49,7 +49,7 @@ define(function leosUtilsModule(require) {
     var DOCPURPOSE = "docPurpose";
     var ID = "id";
     var ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR =
-        'article, citation, recitals, recital, :not(article) paragraph, level, chapter, akntitle, part, section, subparagraph';
+        'article, citation, recitals, recital, :not(article) > paragraph, level, chapter, akntitle, part, section, subparagraph';
     var KEYS = {
         "KEY_DELETE": 46,
         "KEY_ENTER": 13,

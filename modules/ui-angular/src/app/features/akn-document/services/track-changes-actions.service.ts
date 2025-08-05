@@ -34,7 +34,7 @@ export class TrackChangesActionsService {
     'citation',
     'recitals',
     'recital',
-    ':not(article) paragraph',
+    ':not(article) > paragraph',
     'level',
     'chapter',
     'akntitle',
