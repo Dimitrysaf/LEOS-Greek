@@ -354,7 +354,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         error: (error) => console.log('error'),
       });
     this.initializeLists();
-    this.isAutonomousAct = this.proposal.metadata.documentCollectionName != 'ACT_AUTO_COM';
+    this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
     this.initializeGeneral();
     this.initializeCoverPageType();
     this.initializeAdoptionInfo();
