@@ -127,7 +127,7 @@ Then('ins tag with attribute {string} and value {string} of num tag of level {in
 
 Then('attribute {string} of subparagraph {int} of list {int} of level {int} should not be equal to same attribute in subparagraph {int} of same level', function (attributeName, subparagraphNumber1, listNumber, levelNumber, subparagraphNumber2) {
     annexPage.getSubparagraphOfListOfLevel(levelNumber, listNumber, subparagraphNumber1).invoke('attr', attributeName).then((attributeValue) => {
-        annexPage.getSubparagraphOfLevel(levelNumber, subparagraphNumber2).should('not.have.attr', attributeName, attributeValue);
+        annexPage.getSubparagraphOfLevel(subparagraphNumber2, levelNumber).should('not.have.attr', attributeName, attributeValue);
     })
 });
 
@@ -192,18 +192,18 @@ And(/^del tag with attribute "([^"]*)" and value "([^"]*)" of num tag of subpara
 });
 
 Then('subparagraph {int} of level {int} contains an attribute with name {string} and value {string}', function (subParagraphNumber, levelNumber, attributeName, attributeValue) {
-    annexPage.getSubparagraphOfLevel(levelNumber, subParagraphNumber).should('have.attr', attributeName).and('equal', attributeValue);
+    annexPage.getSubparagraphOfLevel(subParagraphNumber, levelNumber).should('have.attr', attributeName).and('equal', attributeValue);
 });
 
 Then(/^content of computed style before of subparagraph (\d+) of level (\d+) contains "([^"]*)"$/, function (subParagraphNumber, levelNumber, content) {
-    annexPage.getSubparagraphOfLevel(levelNumber, subParagraphNumber).then(($el) => {
+    annexPage.getSubparagraphOfLevel(subParagraphNumber, levelNumber).then(($el) => {
         const before = window.getComputedStyle($el[0], '::before');
         expect(before.content).to.contain(content);
     });
 });
 
 Then(/^ins tag of content of subparagraph (\d+) of level (\d+) is "([^"]*)"$/, function (subParagraphNumber, levelNumber, content) {
-    annexPage.getSubparagraphOfLevel(levelNumber, subParagraphNumber).find('content aknp').find('ins').should('have.text', content);
+    annexPage.getSubparagraphOfLevel(subParagraphNumber, levelNumber).find('content aknp').find('ins').should('have.text', content);
 });
 
 When(`click on internal reference link {int} of level {int}`, (mReferenceNumber, levelNumber) => {
@@ -212,4 +212,92 @@ When(`click on internal reference link {int} of level {int}`, (mReferenceNumber,
 
 Then(`level {int} of annex is displayed`, (levelNumber) => {
     annexPage.getLevel(levelNumber).should('be.visible');
+});
+
+Then(/^content of paragraph (\d+) is "([^"]*)"$/, function (paragraphNumber, content) {
+    annexPage.getContentOfParagraph(paragraphNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph with attribute name "([^"]*)" and value "([^"]*)" of paragraph (\d+) is "([^"]*)"$/, function (attributeName, attributeValue, paragraphNumber, content) {
+    annexPage.getContentOfSubparagraphOfParagraph(attributeName, attributeValue, paragraphNumber).should('have.text', content);
+});
+
+Then(/^content of point (\d+) of paragraph (\d+) is "([^"]*)"$/, function (firstLayerPointNumber, paragraphNumber, content) {
+    annexPage.getContentOfPointOfParagraph(firstLayerPointNumber, paragraphNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph with attribute name "([^"]*)" and value "([^"]*)" of list of point (\d+) of paragraph (\d+) is "([^"]*)"$/, function (attributeName, attributeValue, firstLayerPointNumber, paragraphNumber, content) {
+    annexPage.getContentOfSubparagraphOfFirstLayerPointOfParagraph(attributeName, attributeValue, firstLayerPointNumber, paragraphNumber).should('have.text', content);
+});
+
+Then(/^content of point (\d+) of point (\d+) of paragraph (\d+) is "([^"]*)"$/, function (secondLayerPointNumber, firstLayerPointNumber, paragraphNumber, content) {
+    annexPage.getContentOfSecondLayerPointOfParagraph(secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph with attribute name "([^"]*)" and value "([^"]*)" of list of point (\d+) of point (\d+) of paragraph (\d+) is "([^"]*)"$/, function (attributeName, attributeValue, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber, content) {
+    annexPage.getContentOfSubparagraphOfSecondLayerPointOfParagraph(attributeName, attributeValue, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).should('have.text', content);
+});
+
+Then(/^content of point (\d+) of point (\d+) of point (\d+) of paragraph (\d+) is "([^"]*)"$/, function (thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber, content) {
+    annexPage.getContentOfThirdLayerPointOfParagraph(thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph with attribute name "([^"]*)" and value "([^"]*)" of list of point (\d+) of point (\d+) of point (\d+) of paragraph (\d+) is "([^"]*)"$/, function (attributeName, attributeValue, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber, content) {
+    annexPage.getContentOfSubparagraphOfThirdLayerPointOfParagraph(attributeName, attributeValue, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).should('have.text', content);
+});
+
+Then(/^content of point (\d+) of point (\d+) of point (\d+) of point (\d+) of paragraph (\d+) is "([^"]*)"$/, function (fourthLayerPointNumber, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber, content) {
+    annexPage.getContentOfFourthLayerPointOfParagraph(fourthLayerPointNumber, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).should('have.text', content);
+});
+
+Then('content of subparagraph {int} of level {int} is {string}', function (subparagraphNumber, levelNumber, content) {
+    annexPage.getContentOfSubparagraphOfLevel(subparagraphNumber, levelNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph with attribute name "([^"]*)" and value "([^"]*)" of list (\d+) of level (\d+) is "([^"]*)"$/, function (attributeName, attributeValue, listNumber, levelNumber, content) {
+    annexPage.getContentOfSubparagraphWithAttributeOfLevel(attributeName, attributeValue, listNumber, levelNumber).should('have.text', content);
+});
+
+Then(/^content of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (firstLayerPointNumber, ListNumber, levelNumber, content) {
+    annexPage.getContentOfFirstLayerPointOfLevel(firstLayerPointNumber, ListNumber, levelNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (subparagraphNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfSubparagraphOfFirstLayerPointOfLevel(subparagraphNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of point (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfSecondLayerPointOfLevel(secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph with attribute name "([^"]*)" and value "([^"]*)" of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (attributeName, attributeValue, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfSubparagraphWithAttributeOfFirstLayerPointOfLevel(attributeName, attributeValue, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (subparagraphNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfSubparagraphOfSecondLayerPointOfLevel(subparagraphNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph with attribute name "([^"]*)" and value "([^"]*)" of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (attributeName, attributeValue, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfSubparagraphWithAttributeOfSecondLayerPointOfLevel(attributeName, attributeValue, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of point (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfThirdLayerPointOfLevel(thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (subparagraphNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfSubparagraphOfThirdLayerPointOfLevel(subparagraphNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph with attribute name "([^"]*)" and value "([^"]*)" of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (attributeName, attributeValue, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfSubparagraphWithAttributeOfThirdLayerPointOfLevel(attributeName, attributeValue, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of indent (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfFourthLayerIndentOfLevel(fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
+});
+
+Then(/^content of subparagraph (\d+) of list (\d+) of indent (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of point (\d+) of list (\d+) of level (\d+) is "([^"]*)"$/, function (subparagraphNumber, ListNumber5, fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber, content) {
+    annexPage.getContentOfSubparagraphOfFourthLayerIndentOfLevel(subparagraphNumber, ListNumber5, fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).should('have.text', content);
 });

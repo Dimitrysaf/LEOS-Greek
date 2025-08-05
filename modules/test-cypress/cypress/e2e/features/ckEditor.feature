@@ -309,8 +309,8 @@ Feature: CK Editor Regression Features
         Then user is on financial statement page
         And  doctype is "LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT"
         And  annotation side bar is present
-        And  content of subparagraph 3 of level 26 contains a table with 5 row and 4 column
-        When click on edit icon of subparagraph 3 of level 2 in financial statement page
+        And  content of subparagraph 3 of level 26 contains a table with 5 row and 4 column in financial statement document
+        When click on edit icon of subparagraph 3 of landscape level 2 in financial statement page
         Then ck editor window is displayed
         And  table icon is disabled in ck editor
 
@@ -631,3 +631,513 @@ Feature: CK Editor Regression Features
         When click close button of ck editor
         Then ck editor window is not displayed
         And  total number of paragraph is 2
+
+    @trackChangesPlugin @local
+    Scenario: Verify the TC plugin
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        And  collapse all button is displayed in create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation Testing Accept All and Reject All Plugin" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on explanatory memorandum link present in act viewer page
+        Then user is on explanatory memorandum page
+        When enable track changes
+        When mouseover and click on block container 1 in explanatory memorandum page
+        Then ck editor window is displayed
+        And  content of p tag 1 with attribute "data-akn-name" with value "aknParagraph" of blockContainer contains "Not Applicable" in edition mode
+        When click at offset 14 in p with attribute "data-akn-name" with value "aknParagraph" of blockContainer in edition mode
+        And  click on numberedList icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add "test2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "test3" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "test4" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "test5" at current cursor position in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  click on bulletedList icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add "test6" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "test7" at current cursor position in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add "test8" at current cursor position in edition mode
+        And  user clicks on the track changes action plugin
+        Then track changes action dropdown displays the following options:
+            | Accept All |
+            | Reject All |
+        When click on reject all changes dropdown button
+        Then content of p tag 1 with attribute "data-akn-name" with value "aknParagraph" of blockContainer contains "Not Applicable" in edition mode
+        When click at offset 14 in p with attribute "data-akn-name" with value "aknParagraph" of blockContainer in edition mode
+        And  click on numberedList icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add "test2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "test3" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "test4" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "test5" at current cursor position in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  click on bulletedList icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add "test6" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "test7" at current cursor position in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add "test8" at current cursor position in edition mode
+        When user clicks on the track changes action plugin
+        When click on accept all changes dropdown button
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num of item 1 of blockList 1 of blockContainer 1 contains value "1."
+        And  content of item 1 of blockList 1 of blockContainer 1 contains value "Not Applicable"
+        And  num of item 2 of blockList 1 of blockContainer 1 contains value "2."
+        And  content of item 2 of blockList 1 of blockContainer 1 contains value "test2"
+        And  num of item 1 of blockList 1 of item 2 of blockList 1 of blockContainer 1 contains value "1."
+        And  content of item 1 of blockList 1 of item 2 of blockList 1 of blockContainer 1 contains value "test3"
+        And  num of item 2 of blockList 1 of item 2 of blockList 1 of blockContainer 1 contains value "2."
+        And  content of item 2 of blockList 1 of item 2 of blockList 1 of blockContainer 1 contains value "test4"
+        And  num of item 1 of blockList 2 of blockContainer 1 contains value "•"
+        And  content of item 1 of blockList 2 of blockContainer 1 contains value "test5"
+        And  num of item 2 of blockList 2 of blockContainer 1 contains value "•"
+        And  content of item 2 of blockList 2 of blockContainer 1 contains value "test6"
+        And  num of item 1 of blockList 1 of item 2 of blockList 2 of blockContainer 1 contains value "•"
+        And  content of item 1 of blockList 1 of item 2 of blockList 2 of blockContainer 1 contains value "test7"
+        And  num of item 2 of blockList 1 of item 2 of blockList 2 of blockContainer 1 contains value "•"
+        And  content of item 2 of blockList 1 of item 2 of blockList 2 of blockContainer 1 contains value "test8"
+        And  click on close button on explanatory memorandum page
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        When enable track changes
+        When mouseover and click on citation 2
+        Then ck editor window is displayed
+        And  citation contains text "Having regard to the proposal from the European Commission," in edition mode
+        When click at offset 0 of child 0 of citation in edition mode
+        When add "Text..." at current cursor position in edition mode
+        Then citation contains span tag with attribute name "data-akn-action" with value "insert" in edition mode
+        When user clicks on the track changes action plugin
+        Then track changes action dropdown displays the following options:
+            | Accept All |
+            | Reject All |
+        When click on reject all changes dropdown button
+        Then citation should not contain a span tag in edition mode
+        And  citation contains text "Having regard to the proposal from the European Commission," in edition mode
+        When click at offset 0 of child 0 of citation in edition mode
+        When add "Text..." at current cursor position in edition mode
+        Then citation contains span tag with attribute name "data-akn-action" with value "insert" in edition mode
+        When user clicks on the track changes action plugin
+        When click on accept all changes dropdown button
+        Then citation should not contain a span tag in edition mode
+        And  citation contains text "Text...Having regard to the proposal from the European Commission," in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  citation 2 contains "Text...Having regard to the proposal from the European Commission,"
+        When mouseover and click on recital 1
+        Then ck editor window is displayed
+        And  recital contains text "Recital..." in edition mode
+        When click at offset 0 of child 0 of recital in edition mode
+        When add "Text..." at current cursor position in edition mode
+        Then recital contains span tag with attribute name "data-akn-action" with value "insert" in edition mode
+        When user clicks on the track changes action plugin
+        When click on reject all changes dropdown button
+        Then recital should not contain a span tag in edition mode
+        And  recital contains text "Recital..." in edition mode
+        When click at offset 0 of child 0 of recital in edition mode
+        When add "Text..." at current cursor position in edition mode
+        Then recital contains span tag with attribute name "data-akn-action" with value "insert" in edition mode
+        When user clicks on the track changes action plugin
+        When click on accept all changes dropdown button
+        Then recital should not contain a span tag in edition mode
+        And  recital contains text "Text...Recital..." in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  recital 1 contains "Text...Recital..."
+        When mouseover and click on article 1
+        And  ck editor window is displayed
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point 3 sub point 3" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point iii sub point iii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point c sub point c" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "second paragraph" at current cursor position in edition mode
+        And  append "First Paragraph" at offset 7 in numbered paragraph 1 of article in edition mode
+        And  append "last Paragraph" at offset 7 in numbered paragraph 3 of article in edition mode
+#        And  user clicks on the track changes action plugin
+#        And  click on reject all changes dropdown button
+#        Then article should not contain a span tag in edition mode
+#        Then numbered paragraph 1 of article contains "Text..." in edition mode
+#        And  numbered paragraph 2 of article contains "Text..." in edition mode
+#        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point a sub point a" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point b sub point b" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point i sub point i" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point ii sub point ii" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point 1 sub point 1" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point 2 sub point 2" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point - sub point -" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point -- sub point --" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
+#        And  add "point 3 sub point 3" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
+#        And  add "point iii sub point iii" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
+#        And  add "point c sub point c" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
+#        And  add "second paragraph" at current cursor position in edition mode
+#        And  append "First Paragraph" at offset 7 in numbered paragraph 1 of article in edition mode
+#        And  append "last Paragraph" at offset 7 in numbered paragraph 3 of article in edition mode
+        And  user clicks on the track changes action plugin
+        And  click on accept all changes dropdown button
+        Then article should not contain a span tag in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text...First Paragraph"
+        And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a sub point a"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point b sub point b"
+        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point i sub point i"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point ii sub point ii"
+        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point 1 sub point 1"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point 2 sub point 2"
+        And  content of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point - sub point -"
+        And  content of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point -- sub point --"
+        And  content of point 3 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point 3 sub point 3"
+        And  content of point 3 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point iii sub point iii"
+        And  content of point 3 of list 1 of paragraph 1 of article 1 contains "point c sub point c"
+        And  content of paragraph 2 of article 1 contains "second paragraph"
+        And  content of paragraph 3 of article 1 contains "Text...last Paragraph"
+        When click on close button present in legal act page
+        Then user is on act viewer page
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 1
+        When click on annex 1 link
+        Then user is on annex page
+        When click on toc edit button
+        Then cancel button is displayed and enabled in navigation pane
+        When drag element "Paragraph" from element tree list and drop after node label "2. Text..." in navigation pane
+        Then success message "Paragraph has been added successfully!" is displayed in navigation pane
+        And  success message disappears from table of content
+        When click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled
+        And  total number of paragraph is 1
+        When enable track changes
+        When mouseover and click on level 1
+        Then ck editor window is displayed
+#        When click enter from keyboard in edition mode
+#        And  add "new paragraph" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point a sub point a" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point b sub point b" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point i sub point i" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point ii sub point ii" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point 1 sub point 1" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point 2 sub point 2" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point - sub point -" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point -- sub point --" at current cursor position in edition mode
+#        And  user clicks on the track changes action plugin
+#        And  click on reject all changes dropdown button
+#        Then level should not contain a span tag in edition mode
+#        Then pTag 1 of level contains "Text..." in edition mode
+#        When click at offset 7 of pTag 1 of level in edition mode
+        When click enter from keyboard in edition mode
+        And  add "new paragraph" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        When mouseover and click on level 1
+        Then ck editor window is displayed
+        When click at offset 8 of span tag with attribute name "data-akn-action" and value "insert" of li tag 1 with attribute name "data-akn-element" and value "subparagraph" of ol tag of li tag 3 of ol tag of level in edition mode
+        And  click on soft enter icon present in ck editor panel
+        When click at offset 8 of span tag with attribute name "data-akn-action" and value "insert" of li tag 1 with attribute name "data-akn-element" and value "point" of ol tag of li tag 3 of ol tag of level in edition mode
+        And  click on soft enter icon present in ck editor panel
+        When click at offset 8 of span tag with attribute name "data-akn-action" and value "insert" of li tag 1 with attribute name "data-akn-element" and value "subparagraph" of ol tag of li tag 3 of ol tag of li tag 2 of ol tag of li tag 3 of ol tag of level in edition mode
+        And  click on soft enter icon present in ck editor panel
+        When click at offset 8 of span tag with attribute name "data-akn-action" and value "insert" of li tag 2 with attribute name "data-akn-element" and value "point" of ol tag of li tag 3 of ol tag of li tag 2 of ol tag of li tag 3 of ol tag of level in edition mode
+        And  click on soft enter icon present in ck editor panel
+        When user clicks on the track changes action plugin
+        And  click on reject all changes dropdown button
+        Then level should not contain a span tag in edition mode
+        Then pTag 1 of level contains "Text..." in edition mode
+        When click enter from keyboard in edition mode
+        And  add "new paragraph" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        When mouseover and click on level 1
+        Then ck editor window is displayed
+#        When click at offset 8 of span tag with attribute name "data-akn-action" and value "insert" of li tag 1 with attribute name "data-akn-element" and value "subparagraph" of ol tag of li tag 3 of ol tag of level in edition mode
+#        And  click on soft enter icon present in ck editor panel
+#        When click at offset 8 of span tag with attribute name "data-akn-action" and value "insert" of li tag 1 with attribute name "data-akn-element" and value "point" of ol tag of li tag 3 of ol tag of level in edition mode
+#        And  click on soft enter icon present in ck editor panel
+#        When click at offset 8 of span tag with attribute name "data-akn-action" and value "insert" of li tag 1 with attribute name "data-akn-element" and value "subparagraph" of ol tag of li tag 3 of ol tag of li tag 2 of ol tag of li tag 3 of ol tag of level in edition mode
+#        And  click on soft enter icon present in ck editor panel
+#        When click at offset 8 of span tag with attribute name "data-akn-action" and value "insert" of li tag 2 with attribute name "data-akn-element" and value "point" of ol tag of li tag 3 of ol tag of li tag 2 of ol tag of li tag 3 of ol tag of level in edition mode
+#        And  click on soft enter icon present in ck editor panel
+        When user clicks on the track changes action plugin
+        And  click on accept all changes dropdown button
+        Then level should not contain a span tag in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  content of subparagraph 1 of level 1 is "Text..."
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of list 1 of level 1 is "new paragraph"
+        And  content of point 1 of list 1 of level 1 is "point a sub point a"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of level 1 is "point b sub point b"
+#        And  content of subparagraph with attribute name "refersto" and value "~INP" of list 1 of point 2 of list 1 of level 1 is "sub point b"
+        And  content of point 1 of list 1 of point 2 of list 1 of level 1 is "point i sub point i"
+#        And  content of subparagraph 2 of point 1 of list 1 of point 2 of list 1 of level 1 is "sub point i"
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of list 1 of point 2 of list 1 of point 2 of list 1 of level 1 is "point ii sub point ii"
+        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of level 1 is "point 1 sub point 1"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of level 1 is "point 2 sub point 2"
+#        And  content of subparagraph with attribute name "refersto" and value "~INP" of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of level 1 is "sub point 2"
+        And  content of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of level 1 is "point - sub point -"
+        And  content of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of level 1 is "point -- sub point --"
+#        And  content of subparagraph 2 of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of level 1 is "sub point --"
+        When mouseover and click on paragraph 1
+        Then ck editor window is displayed
+#        When click enter from keyboard in edition mode
+#        And  add "second paragraph" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point a sub point a" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point b sub point b" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point i sub point i" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point ii sub point ii" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point 1 sub point 1" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point 2 sub point 2" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
+#        And  add "point - sub point -" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  add "point -- sub point --" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
+#        And  add "point 3 sub point 3" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
+#        And  add "point iii sub point iii" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
+#        And  add "point c sub point c" at current cursor position in edition mode
+#        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
+#        And  add "wrapper paragraph" at current cursor position in edition mode
+#        And  user clicks on the track changes action plugin
+#        And  click on reject all changes dropdown button
+#        And  user clicks on the track changes action plugin
+#        And  click on reject all changes dropdown button
+#        Then paragraph should not contain a span tag in edition mode
+#        When click save and close button of ck editor
+#        Then ck editor window is not displayed
+#        When mouseover and click on paragraph 1
+#        Then ck editor window is displayed
+#        Then paragraph contains "Text..." in edition mode
+#        When click at offset 7 of paragraph in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point 3 sub point 3" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point iii sub point iii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point c sub point c" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "wrapper paragraph" at current cursor position in edition mode
+        And click save and close button of ck editor
+        Then ck editor window is not displayed
+        When refresh the browser
+        Then user is on annex page
+        When click on edit icon of paragraph 1
+        Then ck editor window is displayed
+        When user clicks on the track changes action plugin
+        And  click on reject all changes dropdown button
+        Then paragraph should not contain a span tag in edition mode
+        Then paragraph contains "Text..." in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "intro subparagraph" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point 3 sub point 3" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point iii sub point iii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point c sub point c" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "wrapper subparagraph" at current cursor position in edition mode
+        And  user clicks on the track changes action plugin
+        And  click on accept all changes dropdown button
+        Then paragraph should not contain a span tag in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        When refresh the browser
+        Then user is on annex page
+        And  total number of paragraph is 2
+        And  content of paragraph 1 is "Text..."
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of paragraph 2 is "intro subparagraph"
+        And  content of point 1 of paragraph 2 is "point a sub point a"
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of paragraph 2 is "point b sub point b"
+        And  content of point 1 of point 2 of paragraph 2 is "point i sub point i"
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of point 2 of paragraph 2 is "point ii sub point ii"
+        And  content of point 1 of point 2 of point 2 of paragraph 2 is "point 1 sub point 1"
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of point 2 of point 2 of paragraph 2 is "point 2 sub point 2"
+        And  content of point 1 of point 2 of point 2 of point 2 of paragraph 2 is "point - sub point -"
+        And  content of point 2 of point 2 of point 2 of point 2 of paragraph 2 is "point -- sub point --"
+        And  content of point 3 of point 2 of point 2 of paragraph 2 is "point 3 sub point 3"
+        And  content of point 3 of point 2 of paragraph 2 is "point iii sub point iii"
+        And  content of point 3 of point 2 of paragraph 2 is "point iii sub point iii"
+        And  content of point 3 of paragraph 2 is "point c sub point c"
+        And  content of subparagraph with attribute name "refersto" and value "~WRP" of paragraph 2 is "wrapper subparagraph"
