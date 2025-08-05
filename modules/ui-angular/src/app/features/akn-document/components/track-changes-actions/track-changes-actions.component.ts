@@ -15,7 +15,7 @@ import {
 } from '@/features/akn-document/services/track-changes-actions.service';
 import { DocumentConfig, LeosConfig, Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
-import {EuiDialogService} from "@eui/components/eui-dialog";
+import {EuiDialogConfig, EuiDialogService} from "@eui/components/eui-dialog";
 import {TranslateService} from "@ngx-translate/core";
 
 @Component({
@@ -45,7 +45,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
 
   private mouseLocation: { left: number; top: number } = { left: 0, top: 0 };
   private ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR: string =
-    'article, citation, recitals, recital, :not(article) paragraph, level, chapter, akntitle, part, section, subparagraph';
+    'article, citation, recitals, recital, :not(article) > paragraph, level, chapter, akntitle, part, section, subparagraph';
 
   constructor(
     private http: HttpClient,
@@ -165,19 +165,33 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
         hasDismissButton: false,
         accept: () => { },
       });
+    } else if (this.trackChangeAction === TrackChangeAction.DEL && this.currentElement.querySelector(this.ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR)) {
+      this.openDeleteDialog(this.acceptTrackChange);
     } else {
-      this.trackChangesActionsService.applyTrackChangeAction(
-        this.trackChangeAction,
-        {
-          elementType: this.currentElement.tagName.toLowerCase(),
-          elementId: this.currentElement.id,
-        },
-        this.doc,
-      );
+      this.acceptTrackChange();
     }
   }
 
   onReject() {
+    if (this.trackChangeAction === TrackChangeAction.ADD && this.currentElement.querySelector(this.ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR)) {
+      this.openDeleteDialog(this.rejectTrackChange);
+    } else {
+      this.rejectTrackChange();
+    }
+  }
+
+  private acceptTrackChange() {
+    this.trackChangesActionsService.applyTrackChangeAction(
+      this.trackChangeAction,
+      {
+        elementType: this.currentElement.tagName.toLowerCase(),
+        elementId: this.currentElement.id,
+      },
+      this.doc,
+    );
+  }
+
+  private rejectTrackChange() {
     this.trackChangesActionsService.rejectTrackChangeAction(
       this.trackChangeAction,
       {
@@ -185,6 +199,23 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
         elementId: this.currentElement.id,
       },
       this.doc,
+    );
+  }
+
+  private openDeleteDialog(action: Function) {
+    this.dialogService.openDialog(
+      new EuiDialogConfig({
+        dialogId: 'delete-dialog-id',
+        title: this.translateService.instant(
+          'toc.edit.window.item.selected.delete-dialog.title',
+        ),
+        content: this.translateService.instant(
+          'toc.edit.window.item.selected.delete-dialog.desc',
+        ),
+        acceptLabel: this.translateService.instant('global.actions.delete'),
+        typeClass: 'danger',
+        accept: () => action,
+      }),
     );
   }
 

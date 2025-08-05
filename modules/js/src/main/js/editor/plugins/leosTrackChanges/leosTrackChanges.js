@@ -544,7 +544,7 @@ define(function leosTrackChangesModule(require) {
             if(element) {
                 for (var i = element.getChildCount()-1; i >= 0; i--) {
                     var childElement = element.getChild(i);
-                    if (!childElement || childElement.type === CKEDITOR.NODE_TEXT || (processedElements && processedElements.includes(childElement.getAttribute(this.ID)))) {
+                    if (!childElement || childElement.type === CKEDITOR.NODE_TEXT || (processedElements && processedElements.has(childElement.getAttribute(this.ID)))) {
                         continue;
                     }
                     if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
@@ -610,7 +610,7 @@ define(function leosTrackChangesModule(require) {
             editor.getSelection().getRanges()[0].optimize();
             var tcElement = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
             if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor))
-                    && !tcElement[0].getId()) {
+                && !tcElement[0].getId()) {
                 if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
                     return false;
                 } else if (tcElement[1] === core.CARET_START) {
@@ -645,7 +645,7 @@ define(function leosTrackChangesModule(require) {
                     selectedNode = deleteKey ? selectedNode.getNext() : selectedNode.getPrevious();
                 }
                 if (selectedNode && (selectedNode.$.textContent.replace(/\u200B/g,'') === '') && ((selectedNode.type !== CKEDITOR.NODE_ELEMENT) ||
-                        ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
+                    ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
                     selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextEditableNode() :
                         editor.getSelection().getRanges()[0].getPreviousEditableNode();
                 }
@@ -697,17 +697,41 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptAllChanges: function(editor) {
-            var processedElements = [];
-            this.processAllChanges(editor, 'acceptElement', processedElements);
+            var processedElements = new Set();
+            var isStructureTooComplex = [false];
+            this.processAllChanges(editor, 'acceptElement', processedElements, isStructureTooComplex, 0);
+            if(!isStructureTooComplex[0]){
+                this.finalValidation(editor, isStructureTooComplex);
+            }
+            if(isStructureTooComplex[0]){
+                editor.fire("handleTcComplexStructure");
+            }
+            editor.focus();
         },
 
         rejectAllChanges: function(editor) {
-            var processedElements = [];
-            this.processAllChanges(editor, 'rejectElement', processedElements);
+            var processedElements = new Set();
+            var isStructureTooComplex= [false];
+            this.processAllChanges(editor, 'rejectElement', processedElements, isStructureTooComplex, 0);
+            if(!isStructureTooComplex[0]){
+                this.finalValidation(editor, isStructureTooComplex);
+            }
+            if(isStructureTooComplex[0]){
+                editor.fire("handleTcComplexStructure");
+            }
+            editor.focus();
         },
 
-        processAllChanges: function (editor, actionName, processedElements) {
-
+        processAllChanges: function (editor, actionName, processedElements, isStructureTooComplex, iterationCount) {
+            const MAX_ITERATIONS= 30;
+            if(isStructureTooComplex[0]){
+                return;
+            }
+            if (iterationCount >= MAX_ITERATIONS) {
+                console.warn("processAllChanges: max iterations reached, stopping to avoid infinite loop");
+                isStructureTooComplex[0] = true;
+                return;
+            }
             var isElementDeleted = false;
             var element = editor.document.find('.leos-placeholder').getItem(0);
             this.injectTagIdsInNodeIncludingSpan(element);
@@ -717,20 +741,23 @@ define(function leosTrackChangesModule(require) {
                     var listElements = this.findListElementsByDepth(element, i);
                     for (var j = listElements.length - 1; j >= 0; j--) {
                         var listElementToProcess = listElements[j];
-                        isElementDeleted = this.processListElement(editor, listElementToProcess, processedElements, actionName);
-                        if (isElementDeleted) {
+                        isElementDeleted = this.processListElement(editor, listElementToProcess, processedElements, actionName, isStructureTooComplex);
+                        if (isElementDeleted || isStructureTooComplex[0]) {
                             break;
                         }
                     }
-                    if (isElementDeleted) {
+                    if (isElementDeleted || isStructureTooComplex[0]) {
                         break;
                     }
                 }
-                if (isElementDeleted) {
-                    this.processAllChanges(editor, actionName, processedElements);
+                if (isElementDeleted && !isStructureTooComplex[0]) {
+                    this.processAllChanges(editor, actionName, processedElements, isStructureTooComplex, iterationCount + 1);
+                }
+                if(isStructureTooComplex[0]){
+                    return;
                 }
             }
-
+            this.injectTagIdsInNodeIncludingSpan(element);
             var editableElements = element.find("[data-akn-attr-editable='true']");
             if(editableElements.count() == 0){
                 editableElements = element.find("[leos\\:editable='true']");
@@ -741,16 +768,53 @@ define(function leosTrackChangesModule(require) {
             if(editableElements.count() == 0){ //LFDS
                 editableElements = element.find("ol[data-akn-name='aknAnnexList']");
             }
+            if(editableElements.count() == 0){ //HigherDivision
+                editableElements = element.find("h2[data-akn-name='aknHeading']");
+            }
             for (var j = editableElements.count() - 1; j >= 0; j--) {
                 var edElementToProcess = editableElements.getItem(j);
                 var processedElements = [];
-                isElementDeleted = this.processListElement(editor, edElementToProcess, processedElements, actionName);
-                if (isElementDeleted) {
+                isElementDeleted = this.processListElement(editor, edElementToProcess, processedElements, actionName, isStructureTooComplex);
+                if (isElementDeleted || isStructureTooComplex[0]) {
                     break;
                 }
             }
-            if (isElementDeleted) {
-                this.processAllChanges(editor, actionName, processedElements);
+            if (isElementDeleted && !isStructureTooComplex[0]) {
+                this.processAllChanges(editor, actionName, processedElements, isStructureTooComplex, iterationCount + 1);
+            }
+        },
+
+        finalValidation(editor, isStructureTooComplex){
+            // do last check of track changes
+            var element = editor.document.find('.leos-placeholder').getItem(0);
+            var edElementToProcess;
+            var maxDepth = this.findMaximusDepth(element);
+            var editableElements;
+            if(maxDepth > 0) {
+                editableElements = this.findListElementsByDepth(element, 1);
+            }else{
+                editableElements = element.find("[data-akn-attr-editable='true']");
+                if(editableElements.count() == 0){
+                    editableElements = element.find("[leos\\:editable='true']");
+                }
+                if(editableElements.count() == 0){ //signature
+                    editableElements = element.find("td[data-akn-name='signature']");
+                }
+                if(editableElements.count() == 0){ //LFDS
+                    editableElements = element.find("ol[data-akn-name='aknAnnexList']");
+                }
+                if(editableElements.count() == 0){ //HigherDivision
+                    editableElements = element.find("h2[data-akn-name='aknHeading']");
+                }
+                editableElements = editableElements.count() > 0 ? [editableElements.getItem(0)] : [];
+            }
+            if(editableElements.length > 0){
+                edElementToProcess = editableElements[0];
+                var idToSend = edElementToProcess.getAttribute(core.ID);
+                var lastTCElement = core.getLastTCElement(idToSend, editor, new Set());
+                if(lastTCElement){
+                    isStructureTooComplex[0]=true;
+                }
             }
         },
 
@@ -785,12 +849,15 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        processListElement: function (editor, listElementToProcess, processedElements, actionName) {
+        processListElement: function (editor, listElementToProcess, processedElements, actionName, isStructureTooComplex) {
             // Process table rows
             var rowElements = listElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
             for (var i = rowElements.count() - 1; i >= 0; i--) {
                 var rowElementToProcess = rowElements.getItem(i);
-                this.processElement(editor, rowElementToProcess, processedElements, actionName);
+                this.processElement(editor, rowElementToProcess, processedElements, actionName, isStructureTooComplex);
+                if(isStructureTooComplex[0]){
+                    break;
+                }
             }
 
             // Process Soft Enter Inserts
@@ -798,25 +865,37 @@ define(function leosTrackChangesModule(require) {
             for (var j = softEnterElements.count() - 1; j >= 0; j--) {
                 var softEnterElementToProcess = softEnterElements.getItem(j);
                 if (!softEnterElementToProcess.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
-                    this.processElement(editor, softEnterElementToProcess, processedElements, actionName);
+                    this.processElement(editor, softEnterElementToProcess, processedElements, actionName, isStructureTooComplex);
+                    if(isStructureTooComplex[0]){
+                        break;
+                    }
                 }
             }
-
-            this.processElement(editor, listElementToProcess, processedElements, actionName);
+            if(!isStructureTooComplex[0]){
+                this.processElement(editor, olElementToProcess, processedElements, actionName, isStructureTooComplex);
+            }else{
+                return true;
+            }
 
             return !this.isElementPresentInEditor(editor, listElementToProcess);
         },
 
-        processElement: function (editor, element, processedElements, actionName) {
-            if (this.isElementPresentInEditor(editor, element)) {
+        processElement: function (editor, element, processedElements, actionName, isStructureTooComplex) {
+            this.injectTagIdsInNodeIncludingSpan(element);
+            if (this.isElementPresentInEditor(editor, element) && !isStructureTooComplex[0]) {
                 var idToSend = element.getAttribute(core.ID);
                 var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
-                if(lastTCElement) {
+                if (!lastTCElement || !processedElements || !lastTCElement.hasAttribute(core.ID)) {
+                    return;
+                }
+                var id = lastTCElement.getAttribute(core.ID);
+
+                if (!processedElements.has(id)) {
                     editor.execCommand(actionName, lastTCElement);
-                    if (lastTCElement.hasAttribute(core.ID)){
-                        processedElements.push(lastTCElement.getAttribute(core.ID));
-                    }
-                    this.processElement(editor, element, processedElements, actionName);
+                    processedElements.add(id);
+                    this.processElement(editor, element, processedElements, actionName, isStructureTooComplex);
+                } else {
+                    isStructureTooComplex[0] = true;
                 }
             }
         },
@@ -928,6 +1007,7 @@ define(function leosTrackChangesModule(require) {
                     element.$.outerHTML = element.$.innerHTML;
                 }
             }
+            editor.focus();
         },
 
         checkIfAcceptIsProcessedInBackend: function (editor, element, numberModule) {
@@ -1034,10 +1114,10 @@ define(function leosTrackChangesModule(require) {
             if(element.hasAttribute(core.DATA_AKN_ACTION_ENTER) && !element.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                 editor.fire('handleTcEnter', {data: element});
             } else {
-            if(element.getParent()) {
-                core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
-            }
-            editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
+                if(element.getParent()) {
+                    core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
+                }
+                editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
             }
         },
 
@@ -1079,7 +1159,7 @@ define(function leosTrackChangesModule(require) {
                 }
                 element.remove();
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION) {
-               this.removeEnterInsert(element, editor, numberModule);
+                this.removeEnterInsert(element, editor, numberModule);
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributesForEnter(element);
             } else if(element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
@@ -1106,7 +1186,7 @@ define(function leosTrackChangesModule(require) {
                         if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.UNNUMBERED) {
                             // remove data-akn-action-number data-akn-tc-original-number data-akn-uid-number data-akn-num
                             var tcAttributes = ["data-akn-action-number", "data-akn-tc-original-number", "data-akn-uid-number", "data-akn-num",
-                                         "title-number", "data-akn-tc-original-number", "NEW"];
+                                "title-number", "data-akn-tc-original-number", "NEW"];
                             for (var attrName of tcAttributes) {
                                 element.removeAttribute(attrName);
                             }
@@ -1157,9 +1237,12 @@ define(function leosTrackChangesModule(require) {
                             if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER)
                                 && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM)
                                 && !elementSibling.getAttribute(core.ACTION_ATTR)
-                                && /^\d+\.$/.test(elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {// is number ending in point
+                                // && /^\d+\.$/.test(elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM))// is number ending in point
+                            ) {
+                                if(/^\d+\.$/.test(elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM))){
+                                    canFireParagraphChange = true;
+                                }
 
-                                canFireParagraphChange = true;
                                 core.removeTrackChangesAttributes(elementSibling);
                                 if(elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
                                     core.removeTrackChangesAttributesForNumberingDelete(elementSibling);
@@ -1229,6 +1312,7 @@ define(function leosTrackChangesModule(require) {
                     element.$.outerHTML = element.$.innerHTML;
                 }
             }
+            editor.focus();
         },
 
         checkIfRejectIsProcessedInBackend: function (editor, element, numberModule) {

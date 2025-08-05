@@ -493,7 +493,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
     newTree: TableOfContentItemVO[],
     item: TableOfContentItemVO,
   ) {
-    if (checkIfConfirmDeletion(newTree, item)) {
+    if (checkIfConfirmDeletion(item)) {
       this.onTocDeleteWithChildren(newTree, item);
     } else {
       this.deleteItem(newTree, item);

@@ -3,8 +3,8 @@ class annexPage {
         containerBlockNum: () => cy.get("container[name='headerOfAnnex'] block[name='num']"),
         prefaceContainerBlockHeading: () => cy.get("container[name='headerOfAnnex'] block[name='heading']"),
         closeBtn: () => cy.xpath("//button[text()='Close']"),
-        level: () => cy.xpath("//level"),
-        paragraph: () => cy.xpath("//paragraph")
+        level: () => cy.get('mainbody level'),
+        paragraph: () => cy.xpath("(//div[contains(@class, 'orientation')]//paragraph)")
     }
 
     clickCloseBtn() {
@@ -46,6 +46,10 @@ class annexPage {
 
     getContentOfAnnex(levelNumber) {
         return cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]//content//aknp");
+    }
+
+    getContentOfParagraph(paragraphNumber) {
+        return this.getParagraph(paragraphNumber).find('content aknp');
     }
 
     getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
@@ -112,9 +116,172 @@ class annexPage {
         return this.getLevel(levelNumber).children('list').eq(listNumber - 1).children("subparagraph").eq(subparagraphNumber - 1);
     }
 
-    getSubparagraphOfLevel(levelNumber, subparagraphNumber) {
+    getSubparagraphOfLevel(subparagraphNumber, levelNumber) {
         return this.getLevel(levelNumber).children("subparagraph").eq(subparagraphNumber - 1);
     }
 
+    getSubparagraphWithAttributeOfLevel(attributeName, attributeValue, listNumber, levelNumber) {
+        return this.getLevel(levelNumber).children('list').eq(listNumber-1).children("subparagraph["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getSubparagraphOfParagraph(attributeName, attributeValue, paragraphNumber) {
+        return this.getParagraph(paragraphNumber).children('list').children("subparagraph["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getContentOfSubparagraphOfParagraph(attributeName, attributeValue, paragraphNumber){
+        return this.getSubparagraphOfParagraph(attributeName, attributeValue, paragraphNumber).find('content aknp');
+    }
+
+    getPointOfParagraph(firstLayerPointNumber, paragraphNumber) {
+        return this.getParagraph(paragraphNumber).children('list').children('point').eq(firstLayerPointNumber-1);
+    }
+
+    getContentOfPointOfParagraph(firstLayerPointNumber, paragraphNumber) {
+        return this.getPointOfParagraph(firstLayerPointNumber, paragraphNumber).find('content aknp');
+    }
+
+    getSubparagraphOfFirstLayerPointOfParagraph(attributeName, attributeValue, firstLayerPointNumber, paragraphNumber) {
+        return this.getPointOfParagraph(firstLayerPointNumber, paragraphNumber).children('list').children("subparagraph["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getContentOfSubparagraphOfFirstLayerPointOfParagraph(attributeName, attributeValue, firstLevelPointNumber, paragraphNumber) {
+        return this.getSubparagraphOfFirstLayerPointOfParagraph(attributeName, attributeValue, firstLevelPointNumber, paragraphNumber).find('content aknp');
+    }
+
+    getSecondLayerPointOfParagraph(secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getPointOfParagraph(firstLayerPointNumber, paragraphNumber).children('list').children('point').eq(secondLayerPointNumber-1);
+    }
+
+    getContentOfSecondLayerPointOfParagraph(secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getSecondLayerPointOfParagraph(secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).find('content aknp');
+    }
+
+    getSubparagraphOfSecondLayerPointOfParagraph(attributeName, attributeValue, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getSecondLayerPointOfParagraph(secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).children('list').children("subparagraph["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getContentOfSubparagraphOfSecondLayerPointOfParagraph(attributeName, attributeValue, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getSubparagraphOfSecondLayerPointOfParagraph(attributeName, attributeValue, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).find('content aknp');
+    }
+
+    getThirdLayerPointOfParagraph(thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getSecondLayerPointOfParagraph(secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).children('list').children('point').eq(thirdLayerPointNumber-1);
+    }
+
+    getContentOfThirdLayerPointOfParagraph(thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getThirdLayerPointOfParagraph(thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).find('content aknp');
+    }
+
+    getSubparagraphOfThirdLayerPointOfParagraph(attributeName, attributeValue, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getThirdLayerPointOfParagraph(thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).children('list').children("subparagraph["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getContentOfSubparagraphOfThirdLayerPointOfParagraph(attributeName, attributeValue, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getSubparagraphOfThirdLayerPointOfParagraph(attributeName, attributeValue, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).find('content aknp');
+    }
+
+    getFourthLayerPointOfParagraph(fourthLayerPointNumber, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getThirdLayerPointOfParagraph(thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).children('list').children('indent').eq(fourthLayerPointNumber-1);
+    }
+
+    getContentOfFourthLayerPointOfParagraph(fourthLayerPointNumber, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber) {
+        return this.getFourthLayerPointOfParagraph(fourthLayerPointNumber, thirdLayerPointNumber, secondLayerPointNumber, firstLayerPointNumber, paragraphNumber).find('content aknp');
+    }
+
+    getContentOfSubparagraphOfLevel(subparagraphNumber, levelNumber) {
+        return this.getSubparagraphOfLevel(subparagraphNumber, levelNumber).find('content aknp');
+    }
+
+    getContentOfSubparagraphWithAttributeOfLevel(attributeName, attributeValue, listNumber, levelNumber) {
+        return this.getSubparagraphWithAttributeOfLevel(attributeName, attributeValue, listNumber, levelNumber).find('content aknp');
+    }
+
+    getFirstLayerPointOfLevel(firstLayerPointNumber, ListNumber, levelNumber) {
+        return this.getLevel(levelNumber).children('list').eq(ListNumber-1).children('point').eq(firstLayerPointNumber-1);
+    }
+
+    getSecondLayerPointOfLevel(secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getFirstLayerPointOfLevel(firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber2-1).children('point').eq(secondLayerPointNumber-1);
+    }
+
+    getThirdLayerPointOfLevel(thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSecondLayerPointOfLevel(secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber3-1).children('point').eq(thirdLayerPointNumber-1);
+    }
+
+    getFourthLayerIndentOfLevel(fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getThirdLayerPointOfLevel(thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber4-1).children('indent').eq(fourthLayerIndentNumber-1);
+    }
+
+    getContentOfFirstLayerPointOfLevel(firstLayerPointNumber, ListNumber, levelNumber) {
+        return this.getFirstLayerPointOfLevel(firstLayerPointNumber, ListNumber, levelNumber).find('content aknp');
+    }
+
+    getContentOfSecondLayerPointOfLevel(secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSecondLayerPointOfLevel(secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getSubparagraphOfFirstLayerPointOfLevel(subparagraphNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getFirstLayerPointOfLevel(firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber2-1).children('subparagraph').eq(subparagraphNumber-1);
+    }
+
+    getSubparagraphWithAttributeOfFirstLayerPointOfLevel(attributeName, attributeValue, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getFirstLayerPointOfLevel(firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber2-1).children("subparagraph["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getSubparagraphOfSecondLayerPointOfLevel(subparagraphNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSecondLayerPointOfLevel(secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber3-1).children('subparagraph').eq(subparagraphNumber-1);
+    }
+
+    getSubparagraphWithAttributeOfSecondLayerPointOfLevel(attributeName, attributeValue, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSecondLayerPointOfLevel(secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber3-1).children("subparagraph["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getSubparagraphOfThirdLayerPointOfLevel(subparagraphNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getThirdLayerPointOfLevel(thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber4-1).children('subparagraph').eq(subparagraphNumber-1);
+    }
+
+    getSubparagraphWithAttributeOfThirdLayerPointOfLevel(attributeName, attributeValue, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getThirdLayerPointOfLevel(thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber4-1).children("subparagraph["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getSubparagraphOfFourthLayerIndentOfLevel(subparagraphNumber, ListNumber5, fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getFourthLayerIndentOfLevel(fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).children('list').eq(ListNumber5-1).children('subparagraph').eq(subparagraphNumber-1);
+    }
+
+    getContentOfSubparagraphOfFirstLayerPointOfLevel(subparagraphNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSubparagraphOfFirstLayerPointOfLevel(subparagraphNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getContentOfSubparagraphWithAttributeOfFirstLayerPointOfLevel(attributeName, attributeValue, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSubparagraphWithAttributeOfFirstLayerPointOfLevel(attributeName, attributeValue, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getContentOfSubparagraphOfSecondLayerPointOfLevel(subparagraphNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSubparagraphOfSecondLayerPointOfLevel(subparagraphNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getContentOfSubparagraphWithAttributeOfSecondLayerPointOfLevel(attributeName, attributeValue, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSubparagraphWithAttributeOfSecondLayerPointOfLevel(attributeName, attributeValue, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getContentOfThirdLayerPointOfLevel(thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getThirdLayerPointOfLevel(thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getContentOfSubparagraphOfThirdLayerPointOfLevel(subparagraphNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSubparagraphOfThirdLayerPointOfLevel(subparagraphNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getContentOfSubparagraphWithAttributeOfThirdLayerPointOfLevel(attributeName, attributeValue, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSubparagraphWithAttributeOfThirdLayerPointOfLevel(attributeName, attributeValue, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getContentOfFourthLayerIndentOfLevel(fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getFourthLayerIndentOfLevel(fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
+
+    getContentOfSubparagraphOfFourthLayerIndentOfLevel(subparagraphNumber, ListNumber5, fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
+        return this.getSubparagraphOfFourthLayerIndentOfLevel(subparagraphNumber, ListNumber5, fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
+    }
 }
 export default new annexPage();

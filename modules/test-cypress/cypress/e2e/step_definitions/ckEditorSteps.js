@@ -1,4 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
 import ckEditorWindow from "../pages/ckEditorWindow";
 
 And('click delete button from keyboard in edition mode', () => {
@@ -65,8 +65,12 @@ And('click on add subparagraph icon present in ck editor panel', () => {
     ckEditorWindow.clickAddSubParagraphIcon();
 })
 
-When(/^click on numbered list icon present in ck editor panel$/, function () {
+When(/^click on numberedList icon present in ck editor panel$/, function () {
     ckEditorWindow.clickNumberedListIcon();
+});
+
+When(/^click on bulletedList icon present in ck editor panel$/, function () {
+    ckEditorWindow.clickBulletedListIcon();
 });
 
 Then('decrease indent icon is disabled in ck editor panel', () => {
@@ -234,7 +238,7 @@ Then(`numbered paragraph {int} of article contains {string} in edition mode`, (p
 });
 
 When(`append {string} at p tag {int} of level in edition mode`, (text, pTagNumber) => {
-    ckEditorWindow.appendInCkEditorLevel(text,pTagNumber);
+    ckEditorWindow.appendInCkEditorLevel(text, pTagNumber);
 });
 
 When(`select content from offset {int} to {int} of p tag {int} of level in edition mode`, (offsetStart, offsetEnd, pTagNumber) => {
@@ -341,20 +345,44 @@ When('move the cursor position to offset {int} in pTag {int} of fs level in edit
     ckEditorWindow.moveCursorToSpecificOffsetInFSLevel(offset, pTagNumber);
 });
 
-Then('pTag {int} of level contains {string} in edition mode', (pTagNumber, text) =>{
+Then('pTag {int} of level contains {string} in edition mode', (pTagNumber, text) => {
     ckEditorWindow.getElementPTagOfLevel(pTagNumber).should('include.text', text);
 });
 
-When('append {string} to p tag {int} with data akn element subparagraph of level in edition mode', (content, pTagNumber) =>{
+Then('paragraph contains {string} in edition mode', (text) => {
+    ckEditorWindow.getParagraph().should('include.text', text);
+});
+
+When(/^click at offset (\d+) of paragraph in edition mode$/, function (offSet) {
+    ckEditorWindow.moveCursorToSpecificOffsetInParagraph(offSet);
+});
+
+When('append {string} to p tag {int} with data akn element subparagraph of level in edition mode', (content, pTagNumber) => {
     ckEditorWindow.addContentInSubParagraphOfLevel(content, pTagNumber);
 });
 
-When('click at offset {int} in pTag {int} with data-akn-element {string} of li with data-akn-element {string} of ol with data-akn-element {string} in edition mode',  (offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3) => {
+When('click at offset {int} in pTag {int} with data-akn-element {string} of li with data-akn-element {string} of ol with data-akn-element {string} in edition mode', (offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3) => {
     ckEditorWindow.clickAtSpecificOffsetInSubparagraphOfLevel(offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3);
 });
 
-When('click at offset {int} of li {int} with data-akn-element {string} in edition mode',  (offSet, paragraphLi, dataAknElement) => {
+When('click at offset {int} of li {int} with data-akn-element {string} in edition mode', (offSet, paragraphLi, dataAknElement) => {
     ckEditorWindow.clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement);
+});
+
+When('click at offset {int} of span tag with attribute name {string} and value {string} of li tag {int} with attribute name {string} and value {string} of ol tag of level in edition mode', function (offSet, spanAttributeName, spanAttributeValue, LiTag1Number, LiTag1AttributeName, LiTag1AttributeValue) {
+    ckEditorWindow.clickAtSpecificOffsetInSpanOfFirstLayerPointInLevel(offSet, spanAttributeName, spanAttributeValue, LiTag1Number, LiTag1AttributeName, LiTag1AttributeValue);
+});
+
+When('click at offset {int} of span tag with attribute name {string} and value {string} of li tag {int} with attribute name {string} and value {string} of ol tag of li tag {int} of ol tag of level in edition mode', function (offSet, spanAttributeName, spanAttributeValue, LiTag2Number, LiTag2AttributeName, LiTag2AttributeValue, LiTag1Number) {
+    ckEditorWindow.clickAtSpecificOffsetInSpanOfSecondLayerPointInLevel(offSet, spanAttributeName, spanAttributeValue, LiTag2Number, LiTag2AttributeName, LiTag2AttributeValue, LiTag1Number);
+});
+
+When('click at offset {int} of span tag with attribute name {string} and value {string} of li tag {int} with attribute name {string} and value {string} of ol tag of li tag {int} of ol tag of li tag {int} of ol tag of level in edition mode', function (offSet, spanAttributeName, spanAttributeValue, LiTag3Number, LiTag3AttributeName, LiTag3AttributeValue, LiTag2Number, LiTag1Number) {
+    ckEditorWindow.clickAtSpecificOffsetInSpanOfThirdLayerPointInLevel(offSet, spanAttributeName, spanAttributeValue, LiTag3Number, LiTag3AttributeName, LiTag3AttributeValue, LiTag2Number, LiTag1Number);
+});
+
+When('click at offset {int} of span tag with attribute name {string} and value {string} of li tag {int} with attribute name {string} and value {string} of ol tag of li tag {int} of ol tag of li tag {int} of ol tag of li tag {int} of ol tag of level in edition mode', function (offSet, spanAttributeName, spanAttributeValue, LiTag4Number, LiTag4AttributeName, LiTag4AttributeValue, LiTag3Number, LiTag2Number, LiTag1Number) {
+    ckEditorWindow.clickAtSpecificOffsetInSpanOfFourthLayerPointInLevel(offSet, spanAttributeName, spanAttributeValue, LiTag4Number, LiTag4AttributeName, LiTag4AttributeValue, LiTag3Number, LiTag2Number, LiTag1Number);
 });
 
 When(`click at cell {int} of row {int} of table {int} of li {int} with data-akn-element {string} in edition mode`, (cell, row, table, paragraphLi, dataAknElement) => {
@@ -374,11 +402,11 @@ Then('{int} paragraphs are present in article in edition mode', function (paragr
 });
 
 When('do right click in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).rightclick({force:true});
+    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).rightclick({force: true});
 });
 
 When('do right click in li {int} with data-akn-element {string} of article in edition mode', function (paragraphLi, paragraphDataAknElement) {
-    ckEditorWindow.getParagraphElementOfArticle(paragraphLi, paragraphDataAknElement).rightclick({force:true});
+    ckEditorWindow.getParagraphElementOfArticle(paragraphLi, paragraphDataAknElement).rightclick({force: true});
 });
 
 And("li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, attributeName) {
@@ -534,7 +562,7 @@ Then("numbered paragraph {int} of article doesn't contain {string} tag in editio
 });
 
 Then('numbered paragraph {int} of article contains authorial note with marker {string} and title {string} in edition mode', function (paragraphNumber, markerNumber, title) {
-    ckEditorWindow.getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, markerNumber).should('have.attr','title', title);
+    ckEditorWindow.getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, markerNumber).should('have.attr', 'title', title);
 });
 
 When('click at offset {int} of child {int} of recital in edition mode', function (offset, child) {
@@ -597,6 +625,10 @@ When('click at offset {int} of pTag {int} with data-akn-element {string} of li {
     ckEditorWindow.clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement);
 });
 
+When(/^click at offset (\d+) of pTag (\d+) of level in edition mode$/, function (offSet, pTagNumber) {
+    ckEditorWindow.clickAtSpecificOffsetInPTagOfLevel(offSet, pTagNumber);
+});
+
 Then('level contains attribute name {string} with attribute value {string} in edition mode', function (attributeName, attributeValue) {
     ckEditorWindow.getElementLiTagOfLevel().should('have.attr', attributeName).and('equal', attributeValue);
 });
@@ -639,4 +671,67 @@ When(/^alternative2 is selected in ck editor panel$/, function () {
 
 Then(/^content of clause is "([^"]*)" in edition mode$/, function (content) {
     ckEditorWindow.elements.clauseContent().should('have.text', content);
+});
+
+Then('content of p tag {int} with attribute {string} with value {string} of blockContainer contains {string} in edition mode', function (pTagCount, attributeName, attributeValue, content) {
+    ckEditorWindow.getPTagFromBlockContainer(attributeName, attributeValue).eq(pTagCount-1).should('include.text', content);
+});
+
+When(/^click at offset (\d+) in p with attribute "([^"]*)" with value "([^"]*)" of blockContainer in edition mode$/, function (offSet, attributeName, attributeValue) {
+    ckEditorWindow.clickAtSpecificOffsetOfPTagOfBlockContainer(offSet, attributeName, attributeValue);
+});
+
+When('user clicks on the track changes action plugin', () => {
+    ckEditorWindow.clickTrackChangesActionPlugin();
+});
+
+Then('track changes action dropdown displays the following options:', (dataTable) => {
+    const expectedActionList = dataTable.raw().flat();
+    ckEditorWindow.getCkePanelListItem()
+        .should('have.length', expectedActionList.length)
+        .each(($el, index) => {
+            cy.wrap($el).find('a').invoke('text').then(text => {
+                expect(text.trim()).to.equal(expectedActionList[index]);
+            });
+        });
+});
+
+When('click on accept all changes dropdown button', () => {
+    ckEditorWindow.getIframeBodyTcPlugin().within(() => {
+        ckEditorWindow.clickAcceptAll();
+    });
+});
+
+When('click on reject all changes dropdown button', () => {
+    ckEditorWindow.getIframeBodyTcPlugin().within(() => {
+        ckEditorWindow.clickRejectAll();
+    });
+});
+
+Then('citation should not contain a span tag in edition mode', () => {
+    ckEditorWindow.elements.pTag().find('span').should('not.exist');
+});
+
+Then('recital should not contain a span tag in edition mode', () => {
+    ckEditorWindow.elements.pTag().find('span').should('not.exist');
+});
+
+Then(/^article should not contain a span tag in edition mode$/, function () {
+    ckEditorWindow.elements.article().find('span').should('not.exist');
+});
+
+Then(/^level should not contain a span tag in edition mode$/, function () {
+    ckEditorWindow.elements.level().find('span').should('not.exist');
+});
+
+Then(/^paragraph should not contain a span tag in edition mode$/, function () {
+    ckEditorWindow.elements.paragraph().find('span').should('not.exist');
+});
+
+Then(/^citation contains span tag with attribute name "([^"]*)" with value "([^"]*)" in edition mode$/, function (attributeName, attributeValue) {
+    ckEditorWindow.elements.pTag().find('span').should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then(/^recital contains span tag with attribute name "([^"]*)" with value "([^"]*)" in edition mode$/, function (attributeName, attributeValue) {
+    ckEditorWindow.elements.pTag().find('span').should('have.attr', attributeName).and('equal', attributeValue);
 });
