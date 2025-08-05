@@ -855,7 +855,7 @@ define(function leosArticleListPluginModule(require) {
                     sublist.remove();
                 }
                 // Migrate the sub list to current list item.
-                else {
+                else if(!sublist.contains(currentBlock)){
                     currentBlock.append( sublist );
                 }
             }
@@ -897,6 +897,7 @@ define(function leosArticleListPluginModule(require) {
         if ( next && next.type == CKEDITOR.NODE_ELEMENT && next.getName() in CKEDITOR.dtd.$list )
             mergeListSiblings( next );
 
+        bm.normalized = ( !!bm.normalized ? bm.normalized : true);
         cursor.moveToBookmark( bm );
 
         // Make fresh selection.

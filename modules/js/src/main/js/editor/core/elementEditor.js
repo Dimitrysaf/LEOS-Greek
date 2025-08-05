@@ -741,8 +741,8 @@ define(function elementEditorModule(require) {
             if(newRefersToElement
                 && newRefersToElement.nodeType === Node.ELEMENT_NODE
                 && newRefersToElement.tagName.toLowerCase() == "br" ){
-                var beforeBr = newRefersToElement.previousSibling;
-                brElementIsFirstChild = !beforeBr || (!!beforeBr && isEmpty(beforeBr));
+
+                brElementIsFirstChild = areAllPreviousSiblingsEmpty(newRefersToElement);
             }
 
             var containsNewRefersToElement = !containsRefersToElement
@@ -757,6 +757,21 @@ define(function elementEditorModule(require) {
 
 
         return isEmptyElementFound || isEmptyList || hasOnlyEmptyLines || isEmptyRefersToElement;
+    }
+
+    function areAllPreviousSiblingsEmpty(newRefersToElement) {
+        let node = newRefersToElement.previousSibling;
+        // Check all previous siblings (both elements and text nodes)
+        while (node) {
+            if (node.nodeType === CKEDITOR.NODE_ELEMENT) { // Element node
+                if (!isEmpty(node)) return false;
+            } else if (node.nodeType === CKEDITOR.NODE_TEXT && node.textContent.trim() !== "") { // Text node
+                return false;
+            }
+            node = node.previousSibling;
+        }
+
+        return true;
     }
 
     function isEmpty(element) {

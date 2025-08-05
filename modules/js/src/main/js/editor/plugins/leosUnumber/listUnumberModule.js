@@ -298,8 +298,8 @@ define(function listUnumberModule(require) {
                 }
             } else if (!!numberingConfig.levels && !!numberingConfig.levels.levels && currentNestingLevel>0) {
                 var foundNumberingType = numberingConfig.levels.levels[currentNestingLevel-1];
-                var foundNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType.numberingType);
-                if (!!foundNumberingConfig.sequence && numValue == foundNumberingConfig.sequence) {
+                var foundNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType?.numberingType);
+                if (foundNumberingConfig && !!foundNumberingConfig.sequence && numValue == foundNumberingConfig.sequence) {
                     if (currentNestingLevel == LOCAL_MAX_LEVEL_LIST_DEPTH) {
                         var parentIndent = _getParentIndent(firstListItem);
                         if (!!parentIndent && !!parentIndent.attributes[leosPluginUtils.DATA_AKN_NUM]) {
@@ -315,16 +315,16 @@ define(function listUnumberModule(require) {
                 // Check for indent
                 if (currentNestingLevel > 1) {
                     foundNumberingType = numberingConfig.levels.levels[currentNestingLevel - 2];
-                    var indentNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType.numberingType);
-                    if (!!indentNumberingConfig.sequence && numValue == indentNumberingConfig.sequence) {
+                    var indentNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType?.numberingType);
+                    if (!!indentNumberingConfig && !!indentNumberingConfig.sequence && numValue == indentNumberingConfig.sequence) {
                         return numberingConfig;
                     }
                 }
                 // Check for outdent
                 if (currentNestingLevel < numberingConfig.levels.levels.length) {
                     foundNumberingType = numberingConfig.levels.levels[currentNestingLevel];
-                    var indentNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType.numberingType);
-                    if (!!indentNumberingConfig.sequence && numValue == indentNumberingConfig.sequence) {
+                    var indentNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType?.numberingType);
+                    if (!!indentNumberingConfig && !!indentNumberingConfig.sequence && numValue == indentNumberingConfig.sequence) {
                         return numberingConfig;
                     }
                 }

@@ -57,7 +57,7 @@ Feature: explanatory memorandum page regression features
     When mouseover and click on block container 1 in explanatory memorandum page
     Then ck editor window is displayed
     And  p tag is present inside blockContainer in edition mode
-    When click on numbered list icon present in ck editor panel
+    When click on numberedList icon present in ck editor panel
     Then ol tag of blockContainer contains attribute "data-akn-name" with value "NumberedBlockList" in edition mode
     And  content of li with attribute "data-akn-num" with value "1." of ol tag of blockContainer contains "Not Applicable" in edition mode
     When click enter from keyboard in edition mode
