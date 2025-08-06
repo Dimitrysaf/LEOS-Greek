@@ -149,6 +149,10 @@ define(function hierarchicalElementTransformer(require) {
                         to: "leos:softdate",
                         action: "passAttributeTransformer"
                     }, {
+                        from: "data-akn-split-content",
+                        to:"leos:split-content",
+                        action: "passAttributeTransformer"
+                    },{
                         from: DATA_AKN_SOFTMOVE_TO,
                         to: "leos:softmove_to",
                         action: "passAttributeTransformer"

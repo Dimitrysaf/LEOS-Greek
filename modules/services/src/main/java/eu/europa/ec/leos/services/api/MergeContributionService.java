@@ -548,7 +548,10 @@ public class MergeContributionService {
             }
             Node newNodeFromContribution = createNodeFromXmlFragment(destDocument, newFragment);
             // Undo all track changes inside new content
-            undoAllTrackChangesForElement(newNodeFromContribution, true);
+            Boolean hasSplitAttr = XercesUtils.getDescendantsWithAttribute(newNodeFromContribution,LEOS_SPLIT_CONTENT_ATTR).size() > 0 ;
+            if (!hasSplitAttr) {
+                undoAllTrackChangesForElement(newNodeFromContribution, true);
+            }
             resolveTrackChangesInEntireNode(newNodeFromContribution, tocItemsList);
             xmlContent = mergeInsertedEltInXml(xmlContent, contributionNode, nodeToString(newNodeFromContribution),
                     elementId, false, false, false, tocItemsList, mergingCompletelySuccessfull);
@@ -1720,7 +1723,7 @@ public class MergeContributionService {
         Node elementInDestDocument = getElementById(xmlContent, elementId);
         Boolean elementToBeAdded = (DELETE.equals(elementState));
 
-        processUndoSplitContent(contributionNode,elementId,mergingCompletelySuccessfull);
+        boolean hasSplitAttr = processUndoSplitContent(contributionNode,elementId,mergingCompletelySuccessfull);
 
         // If an element is added, first add new content in the document and clean all track changes
         if (elementToBeAdded) {
@@ -1739,12 +1742,13 @@ public class MergeContributionService {
 
         String cleanedElementId = removesPrefixFromElementId(elementId);
 
-        // Undo merging from inside main element
-        xmlContent = undoTrackChangesInContributionNode(
-                xmlContent,
-                cleanedElementId,
-                contributionNode, impactedElements, tocItemsList, mergingCompletelySuccessfull, currentMergeActions);
-
+        if (!hasSplitAttr) {
+            // Undo merging from inside main element
+            xmlContent = undoTrackChangesInContributionNode(
+                    xmlContent,
+                    cleanedElementId,
+                    contributionNode, impactedElements, tocItemsList, mergingCompletelySuccessfull, currentMergeActions);
+        }
         Node originalUpdatedNode = XercesUtils.getElementById(xmlContent, cleanedElementId);
         String refIdForNumbering;
         if (originalUpdatedNode == null) {
@@ -1760,7 +1764,7 @@ public class MergeContributionService {
         }
 
         // Processes main element
-        if (ADD.equals(elementState)) {
+        if (ADD.equals(elementState) && !hasSplitAttr) {
             xmlContent = xmlContentProcessor.removeElementById(xmlContent, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + cleanedElementId, false);
             xmlContent = xmlContentProcessor.removeElementById(xmlContent, cleanedElementId, false);
             xmlContent = manageOnElementDeletion(xmlContent, getId(originalUpdatedNode.getParentNode()), null);
@@ -1790,14 +1794,16 @@ public class MergeContributionService {
         }
         return xmlContent;
     }
-    private void processUndoSplitContent(Node contributionNode, String elementId, AtomicBoolean mergingCompletelySuccessfull){
+    private boolean processUndoSplitContent(Node contributionNode, String elementId, AtomicBoolean mergingCompletelySuccessfull){
         String xpathSelf ="//*[@" + XMLID + " = '" + elementId + "']" + "[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or @" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
         String xpathChild = "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_PARENT + "' or "+ "@" +LEOS_SPLIT_CONTENT_ATTR + " = '" + LEOS_SPLIT_CHILD + "']";
         String xpath = xpathSelf + " | " + xpathChild;
         NodeList splitContentElements = XercesUtils.getElementsByXPath(contributionNode,xpath);
         if (splitContentElements != null && splitContentElements.getLength() > 0) {
             mergingCompletelySuccessfull.set(false);
+            return true;
         }
+        return false;
     }
 
     // Undo merging from inside main element
@@ -2533,8 +2539,9 @@ public class MergeContributionService {
         NodeList splitElts = XercesUtils.getElementsByXPath(document,xpath);
         for (int i = 0; i < splitElts.getLength(); i++) {
             Node elt = splitElts.item(i);
-            XercesUtils.removeAttribute(elt, LEOS_SPLIT_CONTENT_ATTR);
-
+            if(!hasAttribute(elt, LEOS_ACTION_ATTR)){
+                XercesUtils.removeAttribute(elt, LEOS_SPLIT_CONTENT_ATTR);
+            }
         }
         return nodeToByteArray(document);
     }
