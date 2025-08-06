@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 import {
+  ApplicationRole,
   CatalogItem,
   CreateProposalBody,
   CreateProposalResponse,
@@ -34,9 +35,11 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   createForm: FormGroup;
   selectedTemplate: CatalogItem | null;
   selectedLanguage: string;
+  userRoles: ApplicationRole[];
 
   isStepOneCompleted = false;
   private destroy$ = new Subject();
+
 
   constructor(
     @Inject(DIALOG_COMPONENT_CONFIG) private config,
@@ -54,6 +57,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userRoles =  this.config.userRoles;
     this.initCreateForm();
   }
 
