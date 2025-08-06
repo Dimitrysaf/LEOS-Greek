@@ -42,7 +42,7 @@ public class XmlDocumentMetadata {
     private String language;
     private String ref;
     private Boolean eeaRelevance;
-    private Boolean isCustomTemplateAct;
+    private Boolean customTemplateAct;
     private String authenticLanguage;
     private String templateName;
     private String template;
@@ -67,7 +67,7 @@ public class XmlDocumentMetadata {
         this.template = doc.getTemplate();
         this.language = doc.getLanguage();
         this.eeaRelevance = doc.getEeaRelevance();
-        this.isCustomTemplateAct = doc.getCustomTemplateAct();
+        this.customTemplateAct = doc.getCustomTemplateAct();
         this.title = doc.getTitle();
         this.category = doc.getCategoryCode();
         this.docTemplate = doc.getDocTemplate();
@@ -123,7 +123,7 @@ public class XmlDocumentMetadata {
             metadataMap.put("eeaRelevance", this.getEeaRelevance());
         }
         if (this.getCustomTemplateAct() != null) {
-            metadataMap.put("isCustomTemplateAct", this.getCustomTemplateAct());
+            metadataMap.put("customTemplateAct", this.getCustomTemplateAct());
         }
         if (this.getTitle() != null) {
             metadataMap.put("title", this.getTitle());
@@ -381,10 +381,10 @@ public class XmlDocumentMetadata {
     }
 
     public Boolean getCustomTemplateAct() {
-        return isCustomTemplateAct;
+        return customTemplateAct;
     }
 
     public void setCustomTemplateAct(Boolean customTemplateAct) {
-        isCustomTemplateAct = customTemplateAct;
+        this.customTemplateAct = customTemplateAct;
     }
 }

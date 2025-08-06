@@ -287,11 +287,11 @@ public abstract class ApiServiceImpl implements ApiService {
     public CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException {
         List<XmlDocument> documents = getAllDocuments(request.getProposalRef());
         return createProposalFromExisting(request.getTemplateId(), request.getTemplateName(),
-                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.getKey(), documents);
+                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey(), documents);
     }
 
     private CreateCollectionResult createProposalFromExisting(String templateId, String templateName, String langCode,
-                                                 String docPurpose, boolean eeaRelevance, String templateKey, List<XmlDocument> documents) throws CreateCollectionException {
+                                                 String docPurpose, boolean eeaRelevance, boolean customTemplate, String templateKey, List<XmlDocument> documents) throws CreateCollectionException {
         DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
         documentVO.getMetadata().setDocTemplate(templateId);
         documentVO.getMetadata().setTemplateName(templateName);
@@ -299,6 +299,7 @@ public abstract class ApiServiceImpl implements ApiService {
         documentVO.getMetadata().setDocPurpose(docPurpose);
         documentVO.getMetadata().setEeaRelevance(eeaRelevance);
         documentVO.getMetadata().setTemplate(templateKey);
+        documentVO.getMetadata().setCustomTemplateAct(customTemplate);
         return createCollectionService.createCollectionFromExisting(documentVO, documents);
     }
 
@@ -310,7 +311,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Override
     public CreateCollectionResult createProposal(String templateId, String templateName, String langCode,
-                                                 String docPurpose, boolean eeaRelevance, boolean isCustomTemplateAct,
+                                                 String docPurpose, boolean eeaRelevance, boolean customTemplateAct,
                                                  String templateKey) throws CreateCollectionException {
         DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
         documentVO.getMetadata().setDocTemplate(templateId);
@@ -319,7 +320,7 @@ public abstract class ApiServiceImpl implements ApiService {
         documentVO.getMetadata().setDocPurpose(docPurpose);
         documentVO.getMetadata().setEeaRelevance(eeaRelevance);
         documentVO.getMetadata().setTemplate(templateKey);
-        documentVO.getMetadata().setCustomTemplateAct(isCustomTemplateAct);
+        documentVO.getMetadata().setCustomTemplateAct(customTemplateAct);
         return createCollectionService.createCollection(documentVO);
     }
 

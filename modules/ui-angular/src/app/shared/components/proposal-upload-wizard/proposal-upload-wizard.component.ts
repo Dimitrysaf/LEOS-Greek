@@ -232,7 +232,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
         { validators: Validators.required },
       ),
       eeaRelevanceText: new FormControl({ value: '', disabled: true }),
-      isCustomTemplateAct: new FormControl(
+      customTemplateAct: new FormControl(
         { value: false, disabled: true },
         { validators: Validators.required },
       )
@@ -253,9 +253,9 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDataForCreate(): CreateProposalBody {
-    const { templateId, templateName, langCode, docPurpose, eeaRelevance, isCustomTemplateAct, key } =
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } =
       this.uploadForm.getRawValue();
-    return { templateId, templateName, langCode, docPurpose, eeaRelevance, isCustomTemplateAct, key };
+    return { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key };
   }
 
   private validateLegFile() {
@@ -284,7 +284,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
               res.documentToBeCreated.metadata.docPurpose,
             ),
             eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
-            isCustomTemplateAct: res.documentToBeCreated.metadata.customTemplateAct,
+            customTemplateAct: res.documentToBeCreated.metadata.customTemplateAct,
             packageTitle: res.documentToBeCreated.metadata.packageTitle,
             internalReference: res.documentToBeCreated.metadata.internalRef,
             documentLanguage: this.getLanguage(

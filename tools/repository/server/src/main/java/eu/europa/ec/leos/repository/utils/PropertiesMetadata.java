@@ -10,7 +10,7 @@ public enum PropertiesMetadata {
     TEMPLATE("template", false),
     DOC_TYPE("docType", false),
     EEA_RELEVANCE("eeaRelevance", false),
-    IS_CUSTOM_TEMPLATE_ACT("isCustomTemplateAct", false),
+    CUSTOM_TEMPLATE_ACT("customTemplateAct", false),
     AUTHENTIC_LANGUAGE("authenticLanguage", false),
     COVERPAGE_TYPE("coverPageType", false),
     CREATED_BY("initialCreatedBy", false),

@@ -18,7 +18,7 @@ public abstract class LeosMetadata {
     protected final String objectId;
     protected final String docVersion;
     protected final boolean eeaRelevance;
-    protected final boolean isCustomTemplateAct;
+    protected final boolean customTemplateAct;
     protected String packageTitle;
     protected List<String> authenticLang;
     private String procedureType;
@@ -32,7 +32,7 @@ public abstract class LeosMetadata {
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion,
-                           boolean eeaRelevance, boolean isCustomTemplateAct) {
+                           boolean eeaRelevance, boolean customTemplateAct) {
         this.category = category;
         this.stage = stage;
         this.type = type;
@@ -44,14 +44,14 @@ public abstract class LeosMetadata {
         this.objectId = objectId;
         this.docVersion = docVersion;
         this.eeaRelevance = eeaRelevance;
-        this.isCustomTemplateAct = isCustomTemplateAct;
+        this.customTemplateAct = customTemplateAct;
         this.packageRef = packageRef;
     }
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String objectId, String docVersion,
-                           boolean eeaRelevance, boolean isCustomTemplateAct) {
-        this(category, stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance, isCustomTemplateAct);
+                           boolean eeaRelevance, boolean customTemplateAct) {
+        this(category, stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance, customTemplateAct);
     }
 
     public String getCreationOptions() {
@@ -167,7 +167,7 @@ public abstract class LeosMetadata {
     }
 
     public boolean isCustomTemplateAct() {
-        return isCustomTemplateAct;
+        return customTemplateAct;
     }
 
     @Override

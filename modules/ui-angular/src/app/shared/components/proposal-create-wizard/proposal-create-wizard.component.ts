@@ -238,7 +238,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDataForCreate(): CreateProposalBody {
-    const { templateId, templateName, langCode, docPurpose, eeaRelevance, isCustomTemplateAct, key } =
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } =
       this.createForm.getRawValue();
     return {
       templateId,
@@ -246,13 +246,13 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       langCode,
       docPurpose: docPurpose.trim(),
       eeaRelevance,
-      isCustomTemplateAct,
+      customTemplateAct,
       key
     };
   }
 
   private getDataForCopyChange(): CreateProposalCopy {
-    let { templateId, templateName, langCode, docPurpose, eeaRelevance, isCustomTemplateAct, key } = this.createForm.getRawValue();
+    let { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } = this.createForm.getRawValue();
     if(this.isKeepAct){
       return {
         templateId,
@@ -260,7 +260,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         langCode: this.proposalLanguage,
         docPurpose: docPurpose.trim(),
         eeaRelevance,
-        isCustomTemplateAct,
+        customTemplateAct,
         key: this.proposalTemplate,
         proposalRef: this.proposalRef,
       };
@@ -271,7 +271,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         langCode,
         docPurpose: docPurpose.trim(),
         eeaRelevance,
-        isCustomTemplateAct,
+        customTemplateAct,
         key,
         proposalRef: this.proposalRef,
       };
@@ -319,7 +319,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       packageTitle: new FormControl({ value: '', disabled: true }),
       eeaRelevance: new FormControl(false, { validators: Validators.required }),
       eeaRelevanceText: new FormControl({ value: '', disabled: true }),
-      isCustomTemplateAct: new FormControl(false, { validators: Validators.required }),
+      customTemplateAct: new FormControl(false, { validators: Validators.required }),
       changeCopyAct:  new FormControl({value: 'true' as 'true' | 'false', disabled: false, }),
     });
   }

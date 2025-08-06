@@ -104,7 +104,7 @@ public class BillContextService {
     private String annexRef;
     private boolean cloneProposal;
     private boolean eeaRelevance;
-    private boolean isCustomTemplateAct;
+    private boolean customTemplateAct;
     private String originRef;
     private Map<String, String> mapOldAndNewRefs;
     private HashMap<String, XmlDocument> refsMatching;
@@ -290,9 +290,9 @@ public class BillContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
-    public void useIsCustomTemplateAct(boolean isCustomTemplateAct) {
-        LOG.trace("Using Proposal isCustomTemplateAct... [isCustomTemplateAct={}]", isCustomTemplateAct);
-        this.isCustomTemplateAct = isCustomTemplateAct;
+    public void useCustomTemplateAct(boolean customTemplateAct) {
+        LOG.trace("Using Proposal customTemplateAct... [CustomTemplateAct={}]", customTemplateAct);
+        this.customTemplateAct = customTemplateAct;
     }
 
     public void usePackageRef(String packageRef) {
@@ -330,7 +330,7 @@ public class BillContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withPackageRef(packageRef)
-                .withIsCustomTemplateAct(isCustomTemplateAct)
+                .withCustomTemplateAct(customTemplateAct)
                 .build();
 
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
@@ -555,7 +555,7 @@ public class BillContextService {
         annexContext.usePackage(leosPackage);
         annexContext.usePurpose(purpose);
         annexContext.useTemplate(annexTemplate);
-        annexContext.useIsCustomTemplateAct(isCustomTemplateAct);
+        annexContext.useCustomTemplateAct(customTemplateAct);
         // we are using the same template for the annexes for sj-23 and sj19, the only change is this type. that's why we get it form the bill.
         Option<BillMetadata> metadataOption = bill.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);

@@ -69,7 +69,7 @@ public class FinancialStatementContextService {
     private String milestoneComment;
     private String financialStatementId;
     private boolean eeaRelevance;
-    private boolean isCustomTemplateAct;
+    private boolean customTemplateAct;
     private boolean cloneProposal = false;
     private String originRef;
     private String language;
@@ -232,7 +232,7 @@ public class FinancialStatementContextService {
                 .withDocTemplate(docTemplate)
                 .withTitle(title)
                 .withPackageRef(packageRef)
-                .withIsCustomTemplateAct(isCustomTemplateAct)
+                .withCustomTemplateAct(customTemplateAct)
                 .build();
 
         if (cloneProposal) {
@@ -386,9 +386,9 @@ public class FinancialStatementContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
-    public void useIsCustomTemplateAct(boolean isCustomTemplateAct) {
-        LOG.trace("Using Proposal isCustomTemplateAct... [isCustomTemplateAct={}]", isCustomTemplateAct);
-        this.isCustomTemplateAct = isCustomTemplateAct;
+    public void useCustomTemplateAct(boolean customTemplateAct) {
+        LOG.trace("Using Proposal customTemplateAct... [customTemplateAct={}]", customTemplateAct);
+        this.customTemplateAct = customTemplateAct;
     }
 
     public void useOriginRef(String originRef) {

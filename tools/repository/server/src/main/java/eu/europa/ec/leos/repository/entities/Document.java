@@ -111,8 +111,8 @@ public class Document implements Serializable {
 
     @Column(name = "CATEGORY_CODE", nullable = false, length = 20)
     private String categoryCode;
-    @Column(name = "IS_CUSTOM_TEMPLATE_ACT")
-    private Boolean isCustomTemplateAct;
+    @Column(name = "CUSTOM_TEMPLATE_ACT")
+    private Boolean customTemplateAct;
 
     public Document() {
     }
@@ -318,11 +318,11 @@ public class Document implements Serializable {
     }
 
     public Boolean getCustomTemplateAct() {
-        return isCustomTemplateAct;
+        return customTemplateAct;
     }
 
     public void setCustomTemplateAct(Boolean customTemplateAct) {
-        isCustomTemplateAct = customTemplateAct;
+        this.customTemplateAct = customTemplateAct;
     }
 
     @Override

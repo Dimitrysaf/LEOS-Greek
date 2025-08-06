@@ -36,7 +36,7 @@ export class ProposalViewComponent
   proposalTemplate: string;
   proposalLanguage: string;
   isClonedProposal = false;
-  isCustomTemplateAct = false;
+  customTemplateAct = false;
   originRef: string | null = null;
   proposalRef: string;
   documentCollectionName:string;
@@ -86,7 +86,7 @@ export class ProposalViewComponent
           this.isClonedProposal = Boolean(
             proposal.cloneProposalMetadataVO?.clonedProposal,
           );
-          this.isCustomTemplateAct = proposal.metadata.customTemplateAct;
+          this.customTemplateAct = proposal.metadata.customTemplateAct;
           this.documentService.setIsClonedProposal(this.isClonedProposal);
           this.documentService.setDocumentCollectionName(proposal.metadata?.documentCollectionName);
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;

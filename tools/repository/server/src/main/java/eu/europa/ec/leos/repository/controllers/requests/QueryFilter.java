@@ -52,7 +52,7 @@ public class QueryFilter {
     public enum FilterType {
         actType("actType"),
         procedureType("procedureType"),
-        customTemplates("isCustomTemplateAct"),
+        customTemplates("customTemplateAct"),
         docType("docType"),
         ref("ref"),
         template("template"),

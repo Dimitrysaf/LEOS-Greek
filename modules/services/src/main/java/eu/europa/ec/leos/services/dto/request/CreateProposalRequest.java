@@ -8,7 +8,7 @@ public class CreateProposalRequest {
     private String langCode;
     private String docPurpose;
     private boolean eeaRelevance;
-    private boolean isCustomTemplateAct;
+    private boolean customTemplateAct;
     private String key;
 
     public String getTemplateId() {
@@ -52,11 +52,11 @@ public class CreateProposalRequest {
     }
 
     public boolean isCustomTemplateAct() {
-        return isCustomTemplateAct;
+        return customTemplateAct;
     }
 
-    public void setIsCustomTemplateAct(boolean customTemplateAct) {
-        this.isCustomTemplateAct = customTemplateAct;
+    public void setCustomTemplateAct(boolean customTemplateAct) {
+        this.customTemplateAct = customTemplateAct;
     }
 
     public String getKey() {
@@ -75,7 +75,7 @@ public class CreateProposalRequest {
                 ", langCode='" + langCode + '\'' +
                 ", docPurpose='" + docPurpose + '\'' +
                 ", eeaRelevance=" + eeaRelevance +
-                ", isCustomTemplateAct=" + isCustomTemplateAct +
+                ", customTemplateAct=" + customTemplateAct +
                 ", key=" + key +
                 '}';
     }

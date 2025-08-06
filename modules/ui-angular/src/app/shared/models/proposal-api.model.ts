@@ -30,7 +30,7 @@ export type CreateProposalBody = {
   langCode: string;
   docPurpose: string;
   eeaRelevance: boolean;
-  isCustomTemplateAct: boolean;
+  customTemplateAct: boolean;
   key: string;
 };
 
@@ -40,7 +40,7 @@ export type CreateProposalCopy = {
   langCode: string;
   docPurpose: string;
   eeaRelevance: boolean;
-  isCustomTemplateAct: boolean;
+  customTemplateAct: boolean;
   key: string;
   proposalRef: string;
 };

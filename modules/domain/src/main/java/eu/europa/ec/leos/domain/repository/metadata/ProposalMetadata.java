@@ -26,8 +26,8 @@ public final class ProposalMetadata extends LeosMetadata {
     private String commissionerTitle;
     private Boolean stamp;
 
-    public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance, boolean isCustomTemplateAct) {
-        super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance, isCustomTemplateAct);
+    public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
+        super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance, customTemplateAct);
     }
     public static ProposalMetadataBuilder builder(ProposalMetadata metadata) {
         return new ProposalMetadataBuilder(metadata);
@@ -48,7 +48,7 @@ public final class ProposalMetadata extends LeosMetadata {
         private String procedureType;
         private String actType;
         private boolean eeaRelevance;
-        private boolean isCustomTemplateAct;
+        private boolean customTemplateAct;
         private String packageTitle;
         private List<String> authenticLang;
         private LeosAuthenticLanguage isAuthenticLang;
@@ -79,7 +79,7 @@ public final class ProposalMetadata extends LeosMetadata {
             this.objectId= metadata.objectId;
             this.docVersion= metadata.docVersion;
             this.eeaRelevance= metadata.eeaRelevance;
-            this.isCustomTemplateAct= metadata.isCustomTemplateAct;
+            this.customTemplateAct = metadata.customTemplateAct;
             this.procedureType = metadata.getProcedureType();
             this.packageTitle = metadata.packageTitle;
             this.internalRef = metadata.internalRef;
@@ -138,8 +138,8 @@ public final class ProposalMetadata extends LeosMetadata {
             this.eeaRelevance = eeaRelevance;
             return this;
         }
-        public ProposalMetadataBuilder withIsCustomTemplateAct(boolean isCustomTemplateAct) {
-            this.isCustomTemplateAct = isCustomTemplateAct;
+        public ProposalMetadataBuilder withCustomTemplateAct(boolean customTemplateAct) {
+            this.customTemplateAct = customTemplateAct;
             return this;
         }
         public ProposalMetadataBuilder withPackageTitle(String packageTitle) {
@@ -178,7 +178,7 @@ public final class ProposalMetadata extends LeosMetadata {
         public ProposalMetadata build() {
             ProposalMetadata metadata = new ProposalMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref,
                     this.objectId,
-                this.docVersion, this.eeaRelevance, this.isCustomTemplateAct);
+                this.docVersion, this.eeaRelevance, this.customTemplateAct);
             metadata.setProcedureType(procedureType);
             metadata.setActType(actType);
             metadata.setPackageTitle(packageTitle);

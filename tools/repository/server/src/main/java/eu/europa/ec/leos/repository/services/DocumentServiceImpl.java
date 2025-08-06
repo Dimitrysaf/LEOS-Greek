@@ -181,7 +181,7 @@ public class DocumentServiceImpl implements DocumentService {
             if (metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) != null) {
                 doc.setContributionStatus((String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()));
             }
-            doc.setCustomTemplateAct((Boolean) metadata.get(PropertiesMetadata.IS_CUSTOM_TEMPLATE_ACT.getLeosName()));
+            doc.setCustomTemplateAct((Boolean) metadata.get(PropertiesMetadata.CUSTOM_TEMPLATE_ACT.getLeosName()));
             doc = documentRepository.save(doc);
 
             Tika tika = new Tika();

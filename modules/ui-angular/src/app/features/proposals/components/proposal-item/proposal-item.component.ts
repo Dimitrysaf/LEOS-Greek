@@ -19,14 +19,14 @@ export class ProposalItemComponent implements OnInit {
   @Input() status: string | null;
   @Input() originRef: string | null;
 
-  isCustomTemplateAct = false;
+  customTemplateAct = false;
   title: string;
 
   constructor(private translateService: TranslateService, private domSanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.setItemTitle(this.proposal.title);
-    this.isCustomTemplateAct = this.proposal.metadata.customTemplateAct;
+    this.customTemplateAct = this.proposal.metadata.customTemplateAct;
   }
 
   getStatus(status: string) {
