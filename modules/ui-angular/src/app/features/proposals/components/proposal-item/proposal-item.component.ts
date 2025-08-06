@@ -27,7 +27,6 @@ export class ProposalItemComponent implements OnInit {
   ngOnInit() {
     this.setItemTitle(this.proposal.title);
     this.isCustomTemplateAct = this.proposal.metadata.customTemplateAct;
-    console.log(this.proposal)
   }
 
   getStatus(status: string) {
