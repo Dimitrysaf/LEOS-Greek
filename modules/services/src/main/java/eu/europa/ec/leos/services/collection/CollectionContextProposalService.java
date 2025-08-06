@@ -48,6 +48,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +161,11 @@ public class CollectionContextProposalService extends CollectionContextService {
             if (annex != null && !annex.isEmpty()) {
                 BillMetadata billMetadata = billCreated.getMetadata().getOrError(() -> "Bill metadata is required!");
                 billContext.useTemplate(billCreated);
+
+                annex.sort(Comparator.comparingInt(doc ->
+                        ((AnnexMetadata) doc.getMetadata().get()).getIndex()
+                ));
+
                 for (XmlDocument xmlDocument : annex) {
                     CatalogItem templateItem;
                     try {
@@ -167,7 +173,7 @@ public class CollectionContextProposalService extends CollectionContextService {
                         billContext.useAnnexTemplate(templateItem.getItems().get(0).getId());
                         billContext.useExistingAnnexTitle(((AnnexMetadata) xmlDocument.getMetadata().get()).getTitle());
                         billContext.useExistingAnnexOrder(((AnnexMetadata) xmlDocument.getMetadata().get()).getIndex());
-                        billContext.useExistingAnnexContent(xmlDocument.getContent().get().getSource().getBytes(), true);
+                        billContext.useExistingAnnexContent(xmlDocument.getContent().get().getSource().getBytes());
                         billContext.executeCreateBillAnnex();
                     } catch (IOException e) {
                         LOG.error("Error occurred while retrieving template " + metadata.getDocTemplate());

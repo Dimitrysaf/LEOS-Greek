@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -59,6 +60,7 @@ public class AnnexContextService {
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final PostProcessingDocumentService postProcessingDocumentService;
     private final XmlContentProcessor xmlContentProcessor;
+    private final AnnexApiService annexApiService;
 
     private LeosPackage leosPackage;
     private VersionType versionType = VersionType.MINOR;
@@ -89,7 +91,7 @@ public class AnnexContextService {
             TemplateService templateService,
             AnnexService annexService,
             ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
-            PostProcessingDocumentService postProcessingDocumentService, XmlContentProcessor xmlContentProcessor) {
+            PostProcessingDocumentService postProcessingDocumentService, XmlContentProcessor xmlContentProcessor, AnnexApiService annexApiService) {
         this.templateService = templateService;
         this.annexService = annexService;
         this.proposalService = proposalService;
@@ -98,6 +100,7 @@ public class AnnexContextService {
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.annexApiService = annexApiService;
     }
 
     public void useExistingOrder(Integer order) {
@@ -115,7 +118,14 @@ public class AnnexContextService {
     public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
         Validate.notNull(sourceContent, "Existing content must not be null!");
         LOG.trace("Using Annex source content...");
-        this.existingContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceContent) : sourceContent;
+
+        if (cleanTrackChanges){
+            this.existingContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
+            this.existingContent = annexApiService.renumberAnnexContent(annex, this.existingContent);
+        }
+        else{
+            this.existingContent = sourceContent;
+        }
     }
 
     public void useTemplate(String template) {

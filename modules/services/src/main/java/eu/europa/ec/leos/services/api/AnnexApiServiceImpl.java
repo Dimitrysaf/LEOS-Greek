@@ -527,6 +527,13 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         return this.documentViewService.updateDocumentView(updatedAnnex);
     }
 
+
+    public byte[] renumberAnnexContent(Annex annex, byte[] xmlContent){
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
+        String language = annex.getMetadata().get().getLanguage();
+        return annexProcessor.renumberingAndPostProcessing(xmlContent, language);
+    }
+
     @Override
     public DocumentViewResponse renumberAnnex(String documentRef) {
 

@@ -34,6 +34,7 @@ import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.importoj.ImportService;
+import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
@@ -177,10 +178,10 @@ public class BillContextService {
         this.existingAnnexTitle = title;
     }
 
-    public void useExistingAnnexContent(byte[] sourceAnnexContent, boolean cleanTrackChanges) {
+    public void useExistingAnnexContent(byte[] sourceAnnexContent) {
         Validate.notNull(sourceAnnexContent, "Existing content must not be null!");
         LOG.trace("Using Bill Annex source content...");
-        this.existingAnnexContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceAnnexContent) : sourceAnnexContent;
+        this.existingAnnexContent = sourceAnnexContent;
     }
 
     public void usePackage(LeosPackage leosPackage) {
