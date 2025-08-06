@@ -86,6 +86,7 @@ export interface Metadata {
   signingCommissioner: string | null;
   commissionerTitle: string | null;
   stamp: boolean | null;
+  customTemplateAct: boolean;
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {

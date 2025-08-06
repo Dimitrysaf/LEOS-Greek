@@ -159,6 +159,8 @@ public class DocumentV implements Serializable {
     private int numProps;
     @Column(name = "IS_VERSION_ARCHIVED", updatable = false)
     private Boolean isVersionArchived;
+    @Column(name = "IS_CUSTOM_TEMPLATE_ACT", updatable = false)
+    private Boolean isCustomTemplateAct;
 
     public DocumentV() {
     }
@@ -485,5 +487,13 @@ public class DocumentV implements Serializable {
 
     public void setVersionArchived(Boolean versionArchived) {
         isVersionArchived = versionArchived;
+    }
+
+    public Boolean getCustomTemplateAct() {
+        return isCustomTemplateAct;
+    }
+
+    public void setCustomTemplateAct(Boolean customTemplateAct) {
+        isCustomTemplateAct = customTemplateAct;
     }
 }

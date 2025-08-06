@@ -109,6 +109,7 @@ public abstract class CollectionContextService {
     private String versionComment;
     private String milestoneComment;
     protected Boolean eeaRelevance;
+    protected Boolean isCustomTemplateAct;
     protected String packageTitle;
     protected List<String> authenticLang;
     protected LeosAuthenticLanguage isAuthenticLang;
@@ -222,6 +223,11 @@ public abstract class CollectionContextService {
     public void useEeaRelevance(Boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
+    }
+
+    public void useIsCustomTemplateAct(Boolean isCustomTemplateAct) {
+        LOG.trace("Using Proposal isCustomTemplateAct... [isCustomTemplateAct={}]", isCustomTemplateAct);
+        this.isCustomTemplateAct = isCustomTemplateAct;
     }
 
     public void usePackageTitle(String packageTitle) {

@@ -18,6 +18,7 @@ public abstract class LeosMetadata {
     protected final String objectId;
     protected final String docVersion;
     protected final boolean eeaRelevance;
+    protected final boolean isCustomTemplateAct;
     protected String packageTitle;
     protected List<String> authenticLang;
     private String procedureType;
@@ -31,7 +32,7 @@ public abstract class LeosMetadata {
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion,
-                           boolean eeaRelevance) {
+                           boolean eeaRelevance, boolean isCustomTemplateAct) {
         this.category = category;
         this.stage = stage;
         this.type = type;
@@ -43,13 +44,14 @@ public abstract class LeosMetadata {
         this.objectId = objectId;
         this.docVersion = docVersion;
         this.eeaRelevance = eeaRelevance;
+        this.isCustomTemplateAct = isCustomTemplateAct;
         this.packageRef = packageRef;
     }
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String objectId, String docVersion,
-                           boolean eeaRelevance) {
-        this(category, stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance);
+                           boolean eeaRelevance, boolean isCustomTemplateAct) {
+        this(category, stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance, isCustomTemplateAct);
     }
 
     public String getCreationOptions() {
@@ -162,6 +164,10 @@ public abstract class LeosMetadata {
 
     public void setDocumentCollectionName(String documentCollectionName) {
         this.documentCollectionName = documentCollectionName;
+    }
+
+    public boolean isCustomTemplateAct() {
+        return isCustomTemplateAct;
     }
 
     @Override

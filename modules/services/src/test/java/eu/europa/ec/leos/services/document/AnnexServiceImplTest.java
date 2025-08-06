@@ -167,7 +167,7 @@ public class AnnexServiceImplTest extends LeosTest {
     private AnnexMetadata getMockedMetadata() {
         return new AnnexMetadata("... at this stage", "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL", "on ...",
                 "CE-001", "EN", "CE-001", "annex", 1, "I", "Working Party cover page", "555",
-                "0.1.0", false, "");
+                "0.1.0", false, false, "");
     }
 
 }

@@ -1,10 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit,
-} from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {ChangeDetectionStrategy, Component, Input, OnInit,} from '@angular/core';
+import {FormGroup} from '@angular/forms';
+import {AppConfigService} from "@/core/services/app-config.service";
 
 @Component({
   selector: 'app-proposal-create-form',
@@ -15,8 +11,14 @@ import { FormGroup } from '@angular/forms';
 export class ProposalCreateFormComponent implements OnInit {
   @Input() createForm: FormGroup;
   @Input() translationKey: 'document' | 'draft' = 'document';
+  canCreateTemplate = false;
 
-  constructor() {}
+  constructor(private appConfig: AppConfigService) {}
 
-  ngOnInit() {}
+
+  ngOnInit() {
+    this.appConfig.config.subscribe((config) => {
+      this.canCreateTemplate = config.userAppPermissions.includes('CAN_CREATE_TEMPLATE');
+    });
+  }
 }

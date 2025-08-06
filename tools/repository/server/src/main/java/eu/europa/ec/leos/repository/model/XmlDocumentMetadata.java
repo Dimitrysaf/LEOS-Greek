@@ -42,6 +42,7 @@ public class XmlDocumentMetadata {
     private String language;
     private String ref;
     private Boolean eeaRelevance;
+    private Boolean isCustomTemplateAct;
     private String authenticLanguage;
     private String templateName;
     private String template;
@@ -66,6 +67,7 @@ public class XmlDocumentMetadata {
         this.template = doc.getTemplate();
         this.language = doc.getLanguage();
         this.eeaRelevance = doc.getEeaRelevance();
+        this.isCustomTemplateAct = doc.getCustomTemplateAct();
         this.title = doc.getTitle();
         this.category = doc.getCategoryCode();
         this.docTemplate = doc.getDocTemplate();
@@ -119,6 +121,9 @@ public class XmlDocumentMetadata {
         }
         if (this.getEeaRelevance() != null) {
             metadataMap.put("eeaRelevance", this.getEeaRelevance());
+        }
+        if (this.getCustomTemplateAct() != null) {
+            metadataMap.put("isCustomTemplateAct", this.getCustomTemplateAct());
         }
         if (this.getTitle() != null) {
             metadataMap.put("title", this.getTitle());
@@ -373,5 +378,13 @@ public class XmlDocumentMetadata {
 
     public void setCoverPageType(String coverPageType) {
         this.coverPageType = coverPageType;
+    }
+
+    public Boolean getCustomTemplateAct() {
+        return isCustomTemplateAct;
+    }
+
+    public void setCustomTemplateAct(Boolean customTemplateAct) {
+        isCustomTemplateAct = customTemplateAct;
     }
 }

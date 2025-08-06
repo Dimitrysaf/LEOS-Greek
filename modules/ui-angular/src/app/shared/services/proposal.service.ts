@@ -83,6 +83,12 @@ export class ProposalService {
         value: [formFilters.searchTerm],
       });
     }
+    if (formFilters.customTemplates) {
+      reqFilters.push({
+        type: 'customTemplates',
+        value: [formFilters.customTemplates],
+      });
+    }
 
     return reqFilters;
   }

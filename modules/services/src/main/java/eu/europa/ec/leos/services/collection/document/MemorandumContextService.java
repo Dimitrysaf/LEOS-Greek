@@ -67,6 +67,7 @@ public class MemorandumContextService {
     private String type = null;
     private String template = null;
     private boolean eeaRelevance;
+    private boolean isCustomTemplateAct;
     private boolean cloneProposal = false;
     private String originRef;
 
@@ -154,6 +155,11 @@ public class MemorandumContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void useIsCustomTemplateAct(boolean isCustomTemplateAct) {
+        LOG.trace("Using Proposal isCustomTemplateAct... [isCustomTemplateAct={}]", isCustomTemplateAct);
+        this.isCustomTemplateAct = isCustomTemplateAct;
+    }
+
     public void useCloneProposal(boolean cloneProposal) {
         this.cloneProposal = cloneProposal;
     }
@@ -190,6 +196,7 @@ public class MemorandumContextService {
                 .withType(type)
                 .withTemplate(template)
                 .withPackageRef(packageRef)
+                .withIsCustomTemplateAct(isCustomTemplateAct)
                 .build();
 
         Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),

@@ -40,6 +40,7 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
   @Input() proposalTemplate!: string;
   @Input() proposalLanguage!: string;
   @Input() documentCollectionName!: string;
+  @Input() isCustomTemplateAct: boolean;
 
   title: string;
   createForm: FormGroup;

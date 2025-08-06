@@ -52,6 +52,7 @@ public class QueryFilter {
     public enum FilterType {
         actType("actType"),
         procedureType("procedureType"),
+        customTemplates("isCustomTemplateAct"),
         docType("docType"),
         ref("ref"),
         template("template"),
@@ -110,6 +111,7 @@ public class QueryFilter {
         public String[] value;
         public String operator;
         public boolean nullCheck;
+        public boolean isBoolean;
 
         public Filter() {
             value = new String[0];
@@ -120,6 +122,15 @@ public class QueryFilter {
             this.value = value;
             this.operator = operator;
             this.nullCheck = nullCheck;
+            this.isBoolean = false;
+        }
+
+        public Filter(String key, String operator, boolean nullCheck, boolean isBoolean, String... value) {
+            this.key = key;
+            this.value = value;
+            this.operator = operator;
+            this.nullCheck = nullCheck;
+            this.isBoolean = isBoolean;
         }
 
         public String getKey() {

@@ -155,6 +155,6 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 
     private ExplanatoryMetadata getMockedMetadata() {
         return new ExplanatoryMetadata("... at this stage", "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL", "on ...",
-                "CE-001", "EN", "CE-001", "explanatory", "Working Party cover page", "555", "0.1.0", false);
+                "CE-001", "EN", "CE-001", "explanatory", "Working Party cover page", "555", "0.1.0", false, false);
     }
 }

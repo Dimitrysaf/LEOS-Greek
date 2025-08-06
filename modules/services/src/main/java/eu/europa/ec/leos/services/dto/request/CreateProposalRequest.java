@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.dto.request;
 
+
 public class CreateProposalRequest {
 
     private String templateId;
@@ -7,6 +8,7 @@ public class CreateProposalRequest {
     private String langCode;
     private String docPurpose;
     private boolean eeaRelevance;
+    private boolean isCustomTemplateAct;
     private String key;
 
     public String getTemplateId() {
@@ -49,6 +51,14 @@ public class CreateProposalRequest {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public boolean isCustomTemplateAct() {
+        return isCustomTemplateAct;
+    }
+
+    public void setIsCustomTemplateAct(boolean customTemplateAct) {
+        this.isCustomTemplateAct = customTemplateAct;
+    }
+
     public String getKey() {
         return key;
     }
@@ -65,6 +75,7 @@ public class CreateProposalRequest {
                 ", langCode='" + langCode + '\'' +
                 ", docPurpose='" + docPurpose + '\'' +
                 ", eeaRelevance=" + eeaRelevance +
+                ", isCustomTemplateAct=" + isCustomTemplateAct +
                 ", key=" + key +
                 '}';
     }

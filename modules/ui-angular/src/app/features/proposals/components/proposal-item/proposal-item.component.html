@@ -28,6 +28,11 @@
       >
         {{ originRef }}
       </div>
+      <div *ngIf="isCustomTemplateAct">
+        <div class="eui-u-font-l eui-u-font-bold eui-u-color-grey-100">
+          {{ 'page.workspace.proposal-item.custom-template' | translate }}
+        </div>
+      </div>
       <div *ngIf="status">
         <div class="eui-u-font-l eui-u-font-bold eui-u-color-grey-100">
           {{ 'page.workspace.proposal-item.contribution-status' | translate }}

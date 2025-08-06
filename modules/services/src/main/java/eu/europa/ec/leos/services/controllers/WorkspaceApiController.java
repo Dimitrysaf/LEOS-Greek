@@ -32,7 +32,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/secured")
@@ -41,6 +43,7 @@ public class WorkspaceApiController {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceApiController.class);
 
     private final ApiService apiService;
+    private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
 
     @Autowired
     public WorkspaceApiController(ApiService apiService) {
@@ -70,7 +73,7 @@ public class WorkspaceApiController {
         CreateCollectionResult createCollectionResult;
         try {
             createCollectionResult = apiService.createProposal(request.getTemplateId(), request.getTemplateName(),
-                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.getKey());
+                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey());
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
         } catch (CreateCollectionException ex) {
             LOG.error("Error occurred while creating proposal " + ex.getMessage());

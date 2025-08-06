@@ -61,7 +61,18 @@ public class WorkspaceOptions {
         } else {
             initRoleFilter();
         }
+        initDefaultFilters(filters);
         initSortOrder();
+
+    }
+
+    private void initDefaultFilters(FilterProposalsRequest.Filter[] filters){
+        if ((filters == null || filters.length == 0) || !Arrays.stream(filters)
+                .anyMatch(filter -> "customTemplates".equals(filter.getType()))){
+            workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
+                    "=", false, true,
+                    "false"));
+        }
     }
 
     private void initFilter(FilterProposalsRequest.Filter[] filters) {
@@ -92,6 +103,14 @@ public class WorkspaceOptions {
                     workspaceFilter.addFilter(new QueryFilter.Filter(id, "IN", false, roleCondition.toArray(new String[]{})));
                 } else {
                     initRoleFilter();
+                }
+            } else if (id.equalsIgnoreCase(FilterType.customTemplates.name()) && securityContext.getUser() != null
+                    && securityContext.getUser().getRoles() != null
+                    && securityContext.getUser().getRoles().contains("TEMPLATE_MANAGER")) {
+                if (!values.isEmpty()) {
+                    workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
+                            "=", false, true,
+                            values.get(0)));
                 }
             } else if(id.equalsIgnoreCase(FilterType.title.name())) {
                 workspaceFilter.removeFilter(FilterType.title.name());

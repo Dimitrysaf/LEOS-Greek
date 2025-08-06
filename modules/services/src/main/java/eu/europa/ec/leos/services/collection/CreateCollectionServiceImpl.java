@@ -123,6 +123,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useLanguage(documentVO.getMetadata().getLanguage());
             context.useTranslated(false);
             context.useTemplateKey(documentVO.getMetadata().getTemplate());
+            context.useIsCustomTemplateAct(documentVO.getMetadata().isCustomTemplateAct());
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 
