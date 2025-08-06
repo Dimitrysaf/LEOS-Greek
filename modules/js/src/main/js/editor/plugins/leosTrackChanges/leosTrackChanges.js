@@ -773,7 +773,6 @@ define(function leosTrackChangesModule(require) {
             }
             for (var j = editableElements.count() - 1; j >= 0; j--) {
                 var edElementToProcess = editableElements.getItem(j);
-                var processedElements = [];
                 isElementDeleted = this.processListElement(editor, edElementToProcess, processedElements, actionName, isStructureTooComplex);
                 if (isElementDeleted || isStructureTooComplex[0]) {
                     break;
@@ -872,7 +871,7 @@ define(function leosTrackChangesModule(require) {
                 }
             }
             if(!isStructureTooComplex[0]){
-                this.processElement(editor, olElementToProcess, processedElements, actionName, isStructureTooComplex);
+                this.processElement(editor, listElementToProcess, processedElements, actionName, isStructureTooComplex);
             }else{
                 return true;
             }
