@@ -213,7 +213,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             var currentLi = range.startContainer.getAscendant('li', true);
             if (!currentLi || currentLi.getName() !== 'li') return;
             if (!currentLi.hasAttribute('data-akn-split-content')) {
-               currentLi.setAttribute('data-akn-split-content', 'parent');
+                currentLi.setAttribute('data-akn-split-content', 'parent');
                 // Get the first *element* child
                 var firstElement = currentLi.getFirst(function (node) {
                     return node.type === CKEDITOR.NODE_ELEMENT && node.getName() === 'p';
