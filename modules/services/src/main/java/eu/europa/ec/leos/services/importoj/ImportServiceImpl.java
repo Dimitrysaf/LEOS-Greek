@@ -161,8 +161,8 @@ public class ImportServiceImpl implements ImportService {
         String updatedElement = XercesUtils.removeXmlDefinition(xmlElement);
 
         // Check if leos:editable exists and its value
-        boolean needsEditable = !hasAttributeWithValue(updatedElement, "leos:editable", "true");
-        boolean needsDeletable = !hasAttributeWithValue(updatedElement, "leos:deletable", "true");
+        boolean needsEditable = !hasAttribute(updatedElement, "leos:editable");
+        boolean needsDeletable = !hasAttribute(updatedElement, "leos:deletable");
 
         StringBuilder attributesToAdd = new StringBuilder();
         if (needsEditable) {
@@ -179,18 +179,14 @@ public class ImportServiceImpl implements ImportService {
         return updatedElement;
     }
 
-    private boolean hasAttributeWithValue(String xmlElement, String attributeName, String expectedValue) {
+    private boolean hasAttribute(String xmlElement, String attributeName) {
         Pattern pattern = Pattern.compile(
                 "\\s+" + Pattern.quote(attributeName) + "\\s*=\\s*[\"']([^\"']*)[\"']",
                 Pattern.CASE_INSENSITIVE
         );
 
         Matcher matcher = pattern.matcher(xmlElement);
-        if (matcher.find()) {
-            String currentValue = matcher.group(1);
-            return expectedValue.equals(currentValue);
-        }
-        return false;
+        return matcher.find();
     }
 
     private void removeUnselectedChildNodes(Node elementNode, List<String> selectedElementIds) {

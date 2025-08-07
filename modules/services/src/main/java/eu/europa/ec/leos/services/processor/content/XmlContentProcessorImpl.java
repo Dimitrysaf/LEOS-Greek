@@ -2580,11 +2580,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         try {
             Document document = createXercesDocument(xmlContent);
 
-            String[] elementNames = {"citation", "recital", "part", "title", "chapter", "section", "article"};
+            String[] elementNames = {"citation", "recitals", "recital", "part", "title", "chapter", "section", "article"};
 
             for (String elementName : elementNames) {
                 NodeList nodeList = document.getElementsByTagName(elementName);
                 for (int i = 0; i < nodeList.getLength(); i++) {
+
+                    if (elementName.equals("recitals") && i == 0){
+                        continue;
+                    }
+
                     Node node = nodeList.item(i);
                     String id = getId(node);
                     if (id != null && !id.trim().isEmpty()) {
