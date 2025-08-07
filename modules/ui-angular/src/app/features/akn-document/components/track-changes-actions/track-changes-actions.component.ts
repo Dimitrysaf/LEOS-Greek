@@ -180,7 +180,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private acceptTrackChange() {
+  private acceptTrackChange = () => {
     this.trackChangesActionsService.applyTrackChangeAction(
       this.trackChangeAction,
       {
@@ -191,7 +191,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private rejectTrackChange() {
+  private rejectTrackChange = () => {
     this.trackChangesActionsService.rejectTrackChangeAction(
       this.trackChangeAction,
       {
@@ -214,7 +214,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
         ),
         acceptLabel: this.translateService.instant('global.actions.delete'),
         typeClass: 'danger',
-        accept: () => action,
+        accept: () => action(),
       }),
     );
   }
