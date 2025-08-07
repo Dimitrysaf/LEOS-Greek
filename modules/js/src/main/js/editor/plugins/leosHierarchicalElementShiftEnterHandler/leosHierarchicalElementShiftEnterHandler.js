@@ -214,6 +214,17 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             if (!currentLi || currentLi.getName() !== 'li') return;
             if (!currentLi.hasAttribute('data-akn-split-content')) {
                 currentLi.setAttribute('data-akn-split-content', 'parent');
+                // Get the first *element* child
+                var firstElement = currentLi.getFirst(function (node) {
+                    return node.type === CKEDITOR.NODE_ELEMENT && node.getName() === 'p';
+                });
+
+                if (firstElement) {
+                    firstElement.setAttribute('data-akn-split-content', 'parent');
+                     if (contentAfterShiftEnter && contentAfterShiftEnter.getName() === 'p') {
+                        contentAfterShiftEnter.setAttribute('data-akn-split-content', 'child');
+                    }
+                }
             }
         }
         // insert new subparagraph with extracted content in the next line

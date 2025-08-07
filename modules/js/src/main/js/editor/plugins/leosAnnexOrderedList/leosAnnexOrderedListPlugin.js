@@ -490,7 +490,12 @@ define(function leosAnnexOrderedListPluginModule(require) {
             }, {
                 akn : "class",
                 html : "data-akn-class"
-            } ]
+            },
+            {
+                akn : "leos:action",
+                html : "data-akn-action"
+            }
+            ]
         },
         rootElementsForFrom : [ "list", { elementTags : ["point", "indent", "subparagraph", "crossheading"], elementTagIndexProvider :
          elementTagIndexProvider }],
