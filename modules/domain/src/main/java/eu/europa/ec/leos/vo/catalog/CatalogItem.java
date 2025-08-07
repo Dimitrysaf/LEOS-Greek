@@ -32,6 +32,7 @@ public class CatalogItem {
     private Boolean enabled;
     private Boolean hidden;
     private String key;
+    private String visibleTo;
     private String category;
     private Boolean mandatory;
     private Boolean defaultDocument;
@@ -119,4 +120,9 @@ public class CatalogItem {
     public String getDocumentCollection() { return documentCollection; }
 
     public void setDocumentCollection(String documentCollection) { this.documentCollection = documentCollection; }
+
+    public String getVisibleTo() {  return visibleTo; }
+
+    public void setVisibleTo(String visibleTo) { this.visibleTo = visibleTo; }
+
 }

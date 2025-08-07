@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 import {
+  ApplicationRole,
   CatalogItem,
   CreateProposalBody,
   CreateProposalCopy,
@@ -44,6 +45,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   editableTitle: string;
   isKeepAct = false;
   proposalTemplate: string;
+  userRoles: ApplicationRole[];
   isStepOneCompleted = false;
   private proposalRef:string;
   private proposalLanguage: string;
@@ -76,6 +78,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     this.proposalRef =  this.config.proposalRef;
     this.proposalLanguage =  this.config.proposalLanguage;
     this.documentCollectionName =  this.config.documentCollectionName;
+    this.userRoles =  this.config.userRoles;
     this.initCreateForm();
     if(this.isKeepAct){
       this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
