@@ -8,6 +8,7 @@ import { ProposalCreateWizardComponent } from '@/shared/components/proposal-crea
 import { ProposalUploadWizardComponent } from '@/shared/components/proposal-upload-wizard/proposal-upload-wizard.component';
 
 import { EnvironmentService } from './enviroment.service';
+import {ApplicationRole} from "@/shared";
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +42,7 @@ export class CreateProposalService {
     );
   }
 
-  openProposalCreateDialog() {
+  openProposalCreateDialog(userRoles: ApplicationRole[]) {
     const dialog = this.euiDialogService.openDialog(
       new EuiDialogConfig({
         dialogId: 'create-dialog',
@@ -50,6 +51,7 @@ export class CreateProposalService {
           component: ProposalCreateWizardComponent,
           config: {
             closeDialog: () => this.euiDialogService.closeDialog(dialog.id),
+            userRoles: userRoles,
           },
         },
         hasFooter: false,

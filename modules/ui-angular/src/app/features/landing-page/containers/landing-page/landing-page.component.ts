@@ -25,7 +25,7 @@ import {
   DEFAULT_SORT_ORDER,
   ProposalFilter,
 } from '@/features/proposals/models';
-import { Document, ProcedureType } from '@/shared';
+import {ApplicationRole, Document, ProcedureType} from '@/shared';
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { ProposalService } from '@/shared/services/proposal.service';
@@ -64,6 +64,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   isNotificationShown$: Observable<boolean>;
   isNotificationShown = true;
   userName: string;
+  userRoles: ApplicationRole[];
   protected readonly homeUrl = document.baseURI;
   public searchTerm: string;
   private destroy$: Subject<any> = new Subject();
@@ -125,7 +126,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   }
 
   handleCreate() {
-    this.createProposalService.openProposalCreateDialog();
+    this.createProposalService.openProposalCreateDialog(this.userRoles);
   }
 
   handleUpload() {
@@ -167,6 +168,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
       this.canCreateMandate = CN;
       this.canCreateProposal = !CN;
       this.canUpload = CAN_UPLOAD;
+      this.userRoles =  config.user.roles;
     });
   }
 
