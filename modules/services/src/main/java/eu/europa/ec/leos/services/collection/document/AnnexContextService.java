@@ -121,6 +121,7 @@ public class AnnexContextService {
 
         if (cleanTrackChanges){
             this.existingContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
+            this.existingContent = xmlContentProcessor.cleanSoftActions(this.existingContent);
             this.existingContent = annexApiService.renumberAnnexContent(annex, this.existingContent);
         }
         else{

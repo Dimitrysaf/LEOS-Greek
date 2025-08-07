@@ -97,7 +97,13 @@ public class FinancialStatementContextService {
         Validate.notNull(sourceContent, "Source content must not be null!");
         LOG.trace("Using FinancialStatement source content...");
 
-        this.existingContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceContent) : sourceContent;
+        if (cleanTrackChanges){
+            byte[] cleaned = xmlContentProcessor.cleanTrackChanges(sourceContent);
+            this.existingContent = xmlContentProcessor.cleanSoftActions(cleaned);
+        }
+        else {
+            this.existingContent = sourceContent;
+        }
     }
 
     public void useDocTemplate(String docTemplate) {

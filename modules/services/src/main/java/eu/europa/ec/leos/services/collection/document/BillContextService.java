@@ -163,7 +163,13 @@ public class BillContextService {
     public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
         Validate.notNull(sourceContent, "Existing content must not be null!");
         LOG.trace("Using Bill source content...");
-        this.existingContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceContent) : sourceContent;
+        if (cleanTrackChanges){
+            byte[] cleaned = xmlContentProcessor.cleanTrackChanges(sourceContent);
+            this.existingContent = xmlContentProcessor.cleanSoftActions(cleaned);
+        }
+        else {
+            this.existingContent = sourceContent;
+        }
     }
 
     public void useExistingAnnexOrder(Integer order) {

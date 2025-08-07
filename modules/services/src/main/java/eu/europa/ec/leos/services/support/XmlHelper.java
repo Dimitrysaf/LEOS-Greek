@@ -595,6 +595,11 @@ public class XmlHelper {
     }
 
     public static String addLeosNamespace(String str) {
+        String namespace = "xmlns:leos=\"urn:eu:europa:ec:leos\"";
+        if (str.contains(namespace)) {
+            return str; // already present, no change needed
+        }
+
         return str.replaceFirst(">", " xmlns:leos=\"urn:eu:europa:ec:leos\">");
     }
 

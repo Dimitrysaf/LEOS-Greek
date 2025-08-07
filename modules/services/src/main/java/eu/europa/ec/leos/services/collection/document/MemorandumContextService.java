@@ -95,7 +95,13 @@ public class MemorandumContextService {
     public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
         Validate.notNull(sourceContent, "Exsting content must not be null!");
         LOG.trace("Using Memorandum source content...");
-        this.existingContent = cleanTrackChanges ? xmlContentProcessor.cleanTrackChanges(sourceContent) : sourceContent;
+        if (cleanTrackChanges){
+            byte[] cleaned = xmlContentProcessor.cleanTrackChanges(sourceContent);
+            this.existingContent = xmlContentProcessor.cleanSoftActions(cleaned);
+        }
+        else {
+            this.existingContent = sourceContent;
+        }
     }
 
     public void usePackage(LeosPackage leosPackage) {
