@@ -967,7 +967,6 @@ define(function leosArticleListPluginModule(require) {
 
     var pluginDefinition = {
         hidpi: true, // %REMOVE_LINE_CORE%
-        requires: 'leosArticleIndentlist',
         init: function( editor ) {
             if ( editor.blockless )
                 return;
