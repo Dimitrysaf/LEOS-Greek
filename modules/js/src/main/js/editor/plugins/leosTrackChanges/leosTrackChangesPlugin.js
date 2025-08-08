@@ -244,7 +244,13 @@ define(function leosTrackChangesPluginModule(require) {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
-                        } else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
+                        } else if (editor.getSelection().isCollapsed() && (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)
+                            && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_TO)) {
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
+                        }else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
                             tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                             if (tcElement) {
                                 editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
