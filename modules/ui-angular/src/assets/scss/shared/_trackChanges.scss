@@ -52,7 +52,7 @@
     white-space: break-spaces;
   }
 
-  ins, [leos\:action="insert"]:not(recitals), recitals[leos\:action="insert"] num, recitals[leos\:action="insert"] heading, recitals[leos\:action="insert"] h2 {
+  ins, [leos\:action="insert"] {
     text-decoration: underline;
     white-space: break-spaces;
     mref, authorialnote, span.MathJax_CHTML {
@@ -67,7 +67,7 @@
         background-color: hsl(120, 100%, 35%);
       }
     }
-     article:not([leos\:action="insert"]),
+     article:not([leos\:action="insert"]), recitals:not([leos\:action="insert"]), recital:not([leos\:action="insert"]),
      article:not([leos\:action="insert"]) [leos\:action="insert"]{
       text-decoration: none !important;
       white-space: break-spaces;
@@ -75,17 +75,6 @@
       display: inline-block;
       width: 100%;
     }
-  }
-
-  recitals:not([leos\:action="insert"]):not([leos\:action="delete"]) > num, recitals:not([leos\:action="insert"]):not([leos\:action="delete"]) > heading,
-  recitals:not([leos\:action="insert"]):not([leos\:action="delete"]) > div > h2 {
-    text-decoration: none !important;
-    color: black !important;
-  }
-
-  recital:not([leos\:action="insert"]):not([leos\:action="delete"]) aknp, recital:not([leos\:action="insert"]):not([leos\:action="delete"]) num {
-    text-decoration: none !important;
-    color: black !important;
   }
 
   del, [leos\:action="delete"], [leos\:action="delete"] num {
