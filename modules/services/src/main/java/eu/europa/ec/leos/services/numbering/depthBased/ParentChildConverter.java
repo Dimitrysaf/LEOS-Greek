@@ -4,6 +4,7 @@ import eu.europa.ec.leos.services.support.XercesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -127,39 +128,10 @@ public class ParentChildConverter {
 
     private static List<ParentChildNode> groupByHierarchicalDepth(List<ParentChildNode> nodeList) {
         List<ParentChildNode> basedOnDepthList = new ArrayList<>();
-        ParentChildNode lastNode = null;
+        ParentChildNode lastNode = CollectionUtils.firstElement(nodeList);
         int elementsToProcess = nodeList.size();
         for (int i = 0; i < elementsToProcess; i++) {
-            if (i == 0) {
-                lastNode = nodeList.get(i);
-            }
-            if (isNodeRemoved(lastNode)) {
-                // A deleted node cannot be parent
-                ParentChildNode prevLastNode = lastNode;
-                if (!nodeList.isEmpty()) {
-                    if (i == 0) {
-                        addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
-                        nodeList.remove(0);
-                        i++;
-                    }
-                    lastNode = nodeList.remove(0);
-                    if (lastNode.getDepth() > prevLastNode.getDepth() || isNodeRemoved(lastNode)) {
-                        addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
-                        lastNode.setDepth(prevLastNode.getDepth() != null ? prevLastNode.getDepth() : 1);
-                    } else if (!nodeList.isEmpty()) {
-                        if (lastNode.getDepth() == prevLastNode.getDepth()) {
-                            addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
-                        } else {
-                            addChildAtHierarchicalDepth(basedOnDepthList, lastNode);
-                        }
-                        // As we treat it here, we have to skip one
-                        i++;
-                        lastNode = findChildrenHierarchicallyForNode(basedOnDepthList, nodeList, lastNode);
-                    }
-                }
-            } else {
-                lastNode = findChildrenHierarchicallyForNode(basedOnDepthList, nodeList, lastNode);
-            }
+            lastNode = findChildrenHierarchicallyForNode(basedOnDepthList, nodeList, lastNode);
         }
         return basedOnDepthList;
     }
@@ -205,12 +177,7 @@ public class ParentChildConverter {
         } else if (depth - lastDepth == 0) {
             addSiblingOrInRoot(basedOnDepthList, lastNode, node); // add as sibling
         } else {
-            if(lastDepth < depth) { // decreasing
-                node.setDepth(lastDepth + 1);
-                lastNode.addChild(node);
-            } else {
-                addChildAtHierarchicalDepth(basedOnDepthList, node);
-            }
+            addChildAtHierarchicalDepth(basedOnDepthList, node);
         }
         return node;
     }
