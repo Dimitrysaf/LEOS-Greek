@@ -596,11 +596,21 @@ public class XmlHelper {
 
     public static String addLeosNamespace(String str) {
         String namespace = "xmlns:leos=\"urn:eu:europa:ec:leos\"";
-        if (str.contains(namespace)) {
-            return str; // already present, no change needed
+
+        // Find the first element start tag
+        int firstTagEnd = str.indexOf(">");
+        if (firstTagEnd == -1) {
+            return str; // malformed, nothing to do
         }
 
-        return str.replaceFirst(">", " xmlns:leos=\"urn:eu:europa:ec:leos\">");
+        String openingTag = str.substring(0, firstTagEnd);
+
+        // Only add if the namespace is NOT in the opening tag
+        if (openingTag.contains(namespace)) {
+            return str; // already present on root element
+        }
+
+        return openingTag + " " + namespace + str.substring(firstTagEnd);
     }
 
     public static String addDummyNamespace(String str) {
