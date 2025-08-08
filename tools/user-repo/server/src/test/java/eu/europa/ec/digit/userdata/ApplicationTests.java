@@ -66,7 +66,7 @@ public class ApplicationTests {
         User user = userRepository.findByLogin("jane");
         assertNotNull(user);
         assertEquals(user.getLogin(), "jane");
-        assertEquals(user.getRoles().get(0), "TEMPLATE_MANAGER");
+        assertEquals(user.getRoles().get(0), "SUPPORT");
         assertEquals(user.getPerId(), Long.valueOf(3)); // from data-h2.sql
         assertEquals(user.getEntities().get(0).getName(), "DGT.R.3");
     }
