@@ -24,7 +24,9 @@ import { EuiWizardStep } from '@eui/components/eui-wizard';
 import {
   ProposalCreateTemplateSelectorComponent
 } from "@/shared/components/proposal-create-template-selector/proposal-create-template-selector.component";
-
+import {appConfig} from "../../../../config";
+const defaultLanguage =
+  appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
 @Component({
   selector: 'app-proposal-create-wizard',
   templateUrl: './proposal-create-wizard.component.html',
@@ -82,7 +84,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     this.initCreateForm();
     if(this.isKeepAct){
       this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
-      this.createForm.get('docPurpose').enable();
     }
   }
 
@@ -153,6 +154,27 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     }
     if(this.isStepOneCompleted){
       this.createForm.get('changeCopyAct').disable();
+      if (this.isCopyChangeAct && this.isKeepAct){
+        let catalogTemplates = this.templateSelector.catalogTemplates;
+        let template = catalogTemplates.get(this.proposalTemplate);
+        const templateName = this.proposalService.getTranslation(
+          template.names,
+          defaultLanguage,
+        );
+        const documentLanguage = this.proposalService.getTranslation(
+          template.languages,
+          defaultLanguage,
+        );
+        this.createForm.patchValue({
+          templateId: template.id,
+          templateName,
+          langCode: defaultLanguage,
+          documentLanguage,
+          key: template.key,
+        });
+      }
+
+
     }else{
       this.createForm.get('changeCopyAct').enable();
     }
@@ -228,14 +250,12 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
 
     if(this.isKeepAct){
       this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
-      this.createForm.get('docPurpose').enable();
       this.selectedTemplate=null;
       this.selectedLanguage=null;
       this.updateTemplateAndLanguage();
       this.isNavigationAllowed = true;
     }else{
       this.createForm.get('docPurpose').setValue(this.editableTitle);
-      this.createForm.get('docPurpose').disable();
       this.isNavigationAllowed = false;
     }
   }

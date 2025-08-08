@@ -317,4 +317,8 @@ export class ProposalCreateTemplateSelectorComponent
       return acc;
     }, []);
   }
+
+  get catalogTemplates(): Map<string, CatalogItem> {
+    return this.templates;
+  }
 }
