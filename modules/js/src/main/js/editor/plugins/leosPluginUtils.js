@@ -241,7 +241,16 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isSubParaButNotListIntroOrFirstSubparaOfPointOrPara(element) {
-        return _isSubparagraph(element) && (!_isListIntroAndFirstSubparaOfPointOrPara(element) || !(element.getPrevious()));
+        return _isSubparagraph(element) && (!_isListIntro(element) || !(element.getPrevious()));
+    }
+
+    function _isSubParaAndFirst(element) {
+        return _isSubparagraph(element) && !element.getPrevious();
+    }
+
+    function _isSubParaAndNextIsPorINP(element) {
+        return _isSubparagraph(element) && (element.getNext().$.nodeName === 'P' ||
+            (element.getNext().$.nodeName === 'OL' && element.getNext().getFirst() && element.getNext().getFirst().getAttribute('refersto') === '~INP'));
     }
 
     function _isListIntro(element) {
@@ -1388,12 +1397,6 @@ define(function leosPluginUtilsModule(require) {
         if (!liOrp(element)) {
              newElement = element.getAscendant(liOrp);
         }
-        if (_isSubparagraph(newElement) && !indent) {
-            var parentElement = !_isInsideList(newElement) ? newElement.getParent() : newElement.getParent().getParent();
-            if (_isPointOrIndent(parentElement) || _isParagraph(parentElement)) {
-                return parentElement.getFirst();
-            }
-        }
         return !!newElement ? newElement : element;
     }
 
@@ -1672,6 +1675,13 @@ define(function leosPluginUtilsModule(require) {
         return result;
     }
 
+    function _isLeaf(element) {
+        return element.$.nodeName === 'LI'
+            && element.find('ol').count() === 0
+            && element.find('p').count() === 0
+            && (element.getAttribute('data-akn-element') === 'point' || element.getAttribute('data-akn-element') === 'indent' || element.getAttribute('data-akn-element') === 'paragraph');
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1753,6 +1763,10 @@ define(function leosPluginUtilsModule(require) {
         isEmpty: _isEmpty,
         isInsideTable: _isInsideTable,
         findLastEditable: _findLastEditable,
+        isParagraph: _isParagraph,
+        isSubParaAndFirst: _isSubParaAndFirst,
+        isSubParaAndNextIsPorINP: _isSubParaAndNextIsPorINP,
+        isLeaf: _isLeaf,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
@@ -1800,6 +1814,7 @@ define(function leosPluginUtilsModule(require) {
         DELETED: DELETED,
         MOVED: MOVED,
         REFERS_TO: REFERS_TO,
+        INP: INP,
         DATA_AKN_CONTENT_ID: DATA_AKN_CONTENT_ID,
         CROSSHEADING_LIST_ATTR: CROSSHEADING_LIST_ATTR,
         DATA_INDENT_LEVEL_ATTR: DATA_INDENT_LEVEL_ATTR,
@@ -1810,6 +1825,7 @@ define(function leosPluginUtilsModule(require) {
         INLINE_FROM_MATCH: INLINE_FROM_MATCH,
         BOGUS: BOGUS,
         TD: TD,
-        WRP: WRP
+        WRP: WRP,
+        AKN_ORDERED_LIST: AKN_ORDERED_LIST
     };
 });
