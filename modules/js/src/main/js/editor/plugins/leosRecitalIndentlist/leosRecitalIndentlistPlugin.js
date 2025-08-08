@@ -48,8 +48,8 @@ define(function leosRecitalIndentListPluginModule(require) {
             function commandDefinition(editor) {
                 globalHelpers.specificDefinition.apply( this, arguments );
 
-                // Require ul OR ol list.
-                this.requiredContent = ['ul', 'ol'];
+                // Require ul list.
+                this.requiredContent = ['ul'];
 
                 // Indent and outdent lists with TAB/SHIFT+TAB key. Indenting can
                 // be done for any list item that isn't the first child of the parent.
@@ -146,7 +146,7 @@ define(function leosRecitalIndentListPluginModule(require) {
             CKEDITOR.tools.extend(commandDefinition.prototype, globalHelpers.specificDefinition.prototype, {
                 // Elements that, if in an elementpath, will be handled by this
                 // command. They restrict the scope of the plugin.
-                context: {ol: 1, ul: 1}
+                context: {ul: 1}
             });
 
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
@@ -239,13 +239,8 @@ define(function leosRecitalIndentListPluginModule(require) {
             if (!that.isIndent) {
                 var parentLiElement;
                 if ((parentLiElement = listNode.getParent()) && parentLiElement.is('li')) {
-                    var children = newList.listNode.getChildren(), pendingLis = [], count = children.count(), child;
-
-                    for (i = count - 1; i >= 0; i--) {
-                        if ((child = children.getItem(i)) && child.is && child.is('li')) {
-                            pendingLis = _handleListOutdent(child, range.document, parentLiElement, pendingLis);
-                        }
-                    }
+                    var children = newList.listNode.getChildren(),
+                        pendingLis = children.toArray().filter(child => child.is && child.is('li'));
                 }
             }
 
@@ -265,19 +260,6 @@ define(function leosRecitalIndentListPluginModule(require) {
                             li.append(range.document.createText('\u00a0'));
 
                         li.append(followingList);
-                    }
-
-                    // Correction on outdent to avoid subparagraphs or alinea being moved before indented li
-                    if ($(li.$).next("p").length>0) {
-                        li.$.innerHTML = "<p>" + li.$.innerHTML + "</p>";
-                        leosPluginUtils.copyContentAndMpAttributeToElement(li, li.getFirst());
-                        var next;
-                        while (next = li.getNext()) {
-                            if (!!next.is && next.is('p')) {
-                                li.append(next);
-                            }
-                        }
-
                     }
 
                     li.insertAfter(parentLiElement);
@@ -354,22 +336,12 @@ define(function leosRecitalIndentListPluginModule(require) {
                 if (leosPluginUtils.isSubParaButNotListIntroOrFirstSubparaOfPointOrPara(range.startContainer)) {
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     range.startContainer.renameNode('li');
-                    // Check if point has an ol as parent, if not add it
-                    if (!range.startContainer.getParent().is('ol')) {
-                        var doc = range.startContainer.getParent().getDocument();
-                        var newOl = doc.createElement('ol');
-                        range.startContainer.getParent().$.insertBefore(newOl.$, range.startContainer.$);
-                        newOl.append(range.startContainer);
-                    }
                     result = true;
                 } else {
                     var result = indent(nearestListBlock);
                 }
                 leosPluginUtils.manageEmptyLists(editor);
                 leosPluginUtils.managePoints(editor);
-                leosPluginUtils.manageEmptySubparagraphs(editor);
-                leosPluginUtils.manageCrossheadings(editor);
-                leosPluginUtils.manageSiblingLists(editor);
                 return result;
             }
         }
@@ -377,7 +349,7 @@ define(function leosRecitalIndentListPluginModule(require) {
     }
 
     /**
-     * Returns true if the depth of the whole tree (ol structure) is more than the threshold maxLevel.
+     * Returns true if the depth of the whole tree (ul structure) is more than the threshold maxLevel.
      * The total tree depth is given by the level upside + level downside of the selected element.
      */
     function _isListDepthMoreThanThreshold(startSelection, endSelection, maxLevel) {
@@ -403,71 +375,8 @@ define(function leosRecitalIndentListPluginModule(require) {
         }
     }
 
-    function _handleListOutdent(child, document, parentLiElement, pendingLis) {
-        // Check if list has more than one child item and is outdenting to top level, but only as an un-numbered paragraph - LEOS-5980, LEOS-6109
-        var newLiArray = [];
-        if(child.getChildCount() > 1 && parentLiElement.getParent().getParent().is(leosPluginUtils.ARTICLE) && (parentLiElement.$.attributes.getNamedItem(leosPluginUtils.DATA_AKN_NUM) === null
-            || parentLiElement.$.attributes.getNamedItem(leosPluginUtils.DATA_AKN_NUM) === undefined
-            || (!!parentLiElement.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && parentLiElement.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).includes("deletedX")))) {
-            newLiArray = [child];
-            // Move list children into new lists with one item per list
-            //  to avoid multi-subparagraphs inside paragraphs when outdenting
-            if ($(child.$).children("p[" + leosPluginUtils.DATA_AKN_ELEMENT + "=" + leosPluginUtils.ALINEA + "]").length > 0
-                || $(child.$).children("p[" + leosPluginUtils.DATA_AKN_ELEMENT + "=" + leosPluginUtils.SUBPARAGRAPH + "]").length > 0) {
-                for (var k = 1; k < child.getChildCount(); k++) {
-                    var innerItem = child.getChild(k);
-                    if (innerItem.getText() === null || innerItem.getText() === undefined || innerItem.getText().length === 0
-                        || !innerItem.is) {
-                        continue;
-                    }
-                    if (innerItem.is('p') && innerItem.hasAttribute(leosPluginUtils.DATA_AKN_ELEMENT)
-                        && (innerItem.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) == leosPluginUtils.ALINEA
-                            || innerItem.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) == leosPluginUtils.SUBPARAGRAPH)) {
-                        innerItem.renameNode('li');
-                        innerItem.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
-                        innerItem.$.innerHTML = "<p>" + innerItem.$.innerHTML + "</p>";
-                        innerItem.remove();
-                        k--;
-                        innerItem.insertAfter(newLiArray[newLiArray.length - 1]);
-                        leosPluginUtils.copyContentAndMpAttributeToElement(innerItem, innerItem.getFirst());
-                        newLiArray.push(innerItem);
-                    }
-                }
-            }
-            for (var j = newLiArray.length-1; j >= 0 ; j-- ) {
-                pendingLis.push( newLiArray[j] );
-            }
-        } else {
-            pendingLis.push(child);
-        }
-        return pendingLis;
-    }
-
     /**
      * Returns true if the depth of any of child of the selected element reach stopLevel.
-     * Html Structure:
-     *     <ol>
-     *        <li> ... </li>
-     *        <li>
-     *            <p/>                     (1, 2, 3 items)  (cursor here, actual depth level 1)
-     *            <ol>
-     *               <li> ... </li>
-     *               <li>
-     *                    <p/>             (a, b, c items)  (cursor here, actual depth level 2)
-     *                    <ol>
-     *                       <li> ... </li>
-     *                       <li>
-     *                           <p/>      (i, ii items)    (cursor here, actual depth level 3)
-     *                           <ol>
-     *                               <li/> (- items)        (cursor here, actual depth level 4)
-     *                               <li/>
-     *                          </ol>
-     *                       </li>
-     *                    </ol>
-     *               </li>
-     *            <ol>
-     *        </li>
-     *     </ol>
      */
     function _isDownsideDepthMoreThanThreshold(element, stopLevel) {
         var level = 0;
@@ -476,8 +385,8 @@ define(function leosRecitalIndentListPluginModule(require) {
             for (var child_idx = 0; child_idx < childList.count(); child_idx++) {
                 var child = childList.getItem(child_idx);
                 var child_name = leosPluginUtils.getElementName(child);
-                // only if we find an order_list_element (ol) or UNORDERED_LIST_ELEMENT (ul) it means we found another depth level
-                if (child_name === leosPluginUtils.ORDER_LIST_ELEMENT || child_name === leosPluginUtils.UNORDERED_LIST_ELEMENT) {
+                // only if we find an UNORDERED_LIST_ELEMENT (ul) it means we found another depth level
+                if (child_name === leosPluginUtils.UNORDERED_LIST_ELEMENT) {
                     level = 1;
                     //LOG.debug(child_idx+"-th child found: " + child_name + ", calculated level: " + level + ", stopLevel: " + stopLevel);
                     if (level >= stopLevel) {
