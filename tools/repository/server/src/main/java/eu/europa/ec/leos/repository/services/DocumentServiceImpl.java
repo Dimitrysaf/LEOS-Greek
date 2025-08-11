@@ -630,6 +630,9 @@ public class DocumentServiceImpl implements DocumentService {
         } else if (!"0".equals(str.remove(str.size() - 1))) {
             throw new IllegalArgumentException("CMIS Version number should be in the format of a major version x...0");
         } else {
+            if (str.size() > 2){
+                str.remove(str.size() - 1);
+            }
             return str;
         }
     }
