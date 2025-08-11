@@ -367,7 +367,12 @@ define(function leosArticleIndentListPluginModule(require) {
                 var result = true;
                 var previousOfParent = range.startContainer.getParent().getPrevious();
                 var isLeaf = leosPluginUtils.isLeaf(range.startContainer);
-                if (!this.isIndent && leosPluginUtils.isSubParaAndFirst(range.startContainer) && range.startContainer.$.nodeName === 'P' && previousOfParent && previousOfParent.getAttribute('refersto') === '~INP') {
+                var isNumberedParagraph = leosPluginUtils.isNumberedHtmlParagraph(range.startContainer);
+                if (!isNumberedParagraph && leosPluginUtils.calculateListLevel(range.startContainer) === 1 && this.isIndent) {
+                    result = indent(nearestListBlock);
+                } else if (!isNumberedParagraph && leosPluginUtils.calculateListLevel(range.startContainer) === 2 && !this.isIndent && !(leosPluginUtils.isSubParaAndFirst(range.startContainer) && range.startContainer.$.nodeName === 'P')) {
+                    result = indent(nearestListBlock);
+                } else if (!this.isIndent && leosPluginUtils.isSubParaAndFirst(range.startContainer) && range.startContainer.$.nodeName === 'P' && previousOfParent && previousOfParent.getAttribute('refersto') === '~INP') {
                     // To outdent point to subparagraph when previous is intro, for example, a) point to be outdented to be a sub of previous level
                     previousOfParent.renameNode('p');
                     previousOfParent.removeAttribute(leosPluginUtils.REFERS_TO);
@@ -446,7 +451,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
                     var parentOl = range.startContainer.getParent();
-                    if (leosPluginUtils.calculateListLevel(range.startContainer) === 2) {
+                    if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
                     range.startContainer.renameNode('p');

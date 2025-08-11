@@ -164,7 +164,7 @@ define(function leosPluginUtilsModule(require) {
         var level = 0;
         var actualEL = selected;
         while (_isListElement(actualEL)) {
-            if (!_isListIntro(actualEL)) {
+            if (!_isListIntro(actualEL) && !_isListWrapper(actualEL)) {
                 level++;
             }
             actualEL = actualEL.getAscendant(ORDER_LIST_ELEMENT);
@@ -257,6 +257,14 @@ define(function leosPluginUtilsModule(require) {
         if (!!element && element instanceof CKEDITOR.dom.element
             && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
             && element.getParent().getFirst(liOrp).equals(element)) {
+            return _isSubparagraph(element);
+        }
+    }
+
+    function _isListWrapper(element) {
+        if (!!element && element instanceof CKEDITOR.dom.element
+            && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
+            && element.getParent().getLast(liOrp).equals(element)) {
             return _isSubparagraph(element);
         }
     }
@@ -1003,6 +1011,19 @@ define(function leosPluginUtilsModule(require) {
         } else {
             return (paragraph && paragraph.attr(DATA_AKN_ELEMENT) && paragraph.attr(DATA_AKN_ELEMENT).toLocaleLowerCase() == PARAGRAPH && !_hasHtmlNum(paragraph));
         }
+    }
+
+    function _isNumberedHtmlParagraph(element) {
+        var paragraphElement = element.getAscendant(function(el) {
+            return el.is(LIST_ELEMENT) && el.hasAttribute(DATA_AKN_ELEMENT) && el.getAttribute(DATA_AKN_ELEMENT) === PARAGRAPH
+        }, true);
+        if (paragraphElement) {
+            var elementToCheck = paragraphElement.getParent().getFirst();
+            if (elementToCheck && elementToCheck.getAttribute(DATA_AKN_NUM) && !elementToCheck.getAttribute('data-akn-action-number') !== 'delete') {
+                return true;
+            }
+        }
+        return false;
     }
 
     function _isUnumberedparagraph(paragraph) {
@@ -1767,6 +1788,7 @@ define(function leosPluginUtilsModule(require) {
         isSubParaAndFirst: _isSubParaAndFirst,
         isSubParaAndNextIsPorINP: _isSubParaAndNextIsPorINP,
         isLeaf: _isLeaf,
+        isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
