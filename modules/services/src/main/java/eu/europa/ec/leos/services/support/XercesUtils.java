@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.support;
 
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.util.LeosDomainUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.jaxen.dom.DOMXPath;
@@ -1632,4 +1633,30 @@ public class XercesUtils {
         return (xmlFragment != null ? xmlFragment.replaceAll(XML_DEFINITION_REGEX,"") : "");
     }
 
+    public static Node regenerateIds(Node node) {
+        if(node == null){
+            return null;
+        }
+        // Check if the node is an element (since only elements can have attributes)
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Element element = (Element) node;
+                // Generate a new ID
+            element.setAttribute(XMLID, IdGenerator.generateId());
+        }
+
+        // Recursively process all child nodes
+        List<Node> children = getChildren(node);
+        for (int i = 0; i < children.size(); i++) {
+            regenerateIds(children.get(i));
+        }
+        return node;
+    }
+
+    public static String generateNewIds(String purposeFromXml) {
+        Document doc = createXercesDocument(LeosDomainUtil.wrapXmlFragment(purposeFromXml).getBytes());
+        regenerateIds(doc.getDocumentElement());
+        purposeFromXml = XercesUtils.nodeToString(doc);
+        purposeFromXml = LeosDomainUtil.unWrapXmlFragment(purposeFromXml);
+        return purposeFromXml;
+    }
 }

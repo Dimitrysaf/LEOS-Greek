@@ -121,7 +121,8 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
                 if(node.getNodeName().toLowerCase().contains("docpurpose")
                     && ((value.contains("<del ") && value.contains("</del>"))
                         || (value.contains("<ins ") && value.contains("</ins>")))){
-                    XercesUtils.addContentToNode(node, value);
+                    String newValue = XercesUtils.generateNewIds(value);
+                    XercesUtils.addContentToNode(node, newValue);
                 } else {
                     updateNode(node, value);
                 }
