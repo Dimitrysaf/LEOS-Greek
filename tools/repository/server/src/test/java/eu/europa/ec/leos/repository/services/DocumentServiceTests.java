@@ -795,10 +795,10 @@ public class DocumentServiceTests {
                 "Third Version", pkg.getName());
         doc = documentService.updateDocument(doc.getVersionId(), properties, VersionType.INTERMEDIATE, "BILL", doc.getSource(),
                 "Fourth Version", pkg.getName());
-        List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0",0, 10);
+        List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0.0",0, 10);
         assertEquals(docs.size(), 2);
-        assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
-        assertEquals(docs.get(1).getVersionLabel(), "0.1.1");
+        assertEquals(docs.get(0).getVersionLabel(), "0.1.2.0");
+        assertEquals(docs.get(1).getVersionLabel(), "0.1.1.0");
     }
 
     @Ignore
@@ -871,7 +871,7 @@ public class DocumentServiceTests {
                 "Third Version", pkg.getName());
         doc = documentService.updateDocument(doc.getVersionId(), properties, VersionType.INTERMEDIATE, "BILL", doc.getSource(),
                 "Fourth Version", pkg.getName());
-        long minorsCount = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0");
+        long minorsCount = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0.0");
         assertEquals(minorsCount, 2);
     }
 
