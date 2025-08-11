@@ -632,7 +632,7 @@ Feature: CK Editor Regression Features
         Then ck editor window is not displayed
         And  total number of paragraph is 2
 
-    @trackChangesPlugin @local @focus
+    @trackChangesPlugin @local
     Scenario: Verify the TC plugin
         Given navigate to edit drafting application with "User1"
         Then user is on home page
