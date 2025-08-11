@@ -120,9 +120,11 @@ public class AnnexContextService {
         LOG.trace("Using Annex source content...");
 
         if (cleanTrackChanges){
-            this.existingContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
-            this.existingContent = xmlContentProcessor.cleanSoftActions(this.existingContent);
-            this.existingContent = annexApiService.renumberAnnexContent(annex, this.existingContent);
+//            To be replaced by https://code.europa.eu/leos/core/-/issues/2364
+//            this.existingContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
+//            this.existingContent = xmlContentProcessor.cleanSoftActions(this.existingContent);
+//            this.existingContent = annexApiService.renumberAnnexContent(annex, this.existingContent);
+            this.existingContent = sourceContent;
         }
         else{
             this.existingContent = sourceContent;

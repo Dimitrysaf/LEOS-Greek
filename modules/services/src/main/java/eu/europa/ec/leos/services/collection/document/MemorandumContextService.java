@@ -96,8 +96,10 @@ public class MemorandumContextService {
         Validate.notNull(sourceContent, "Exsting content must not be null!");
         LOG.trace("Using Memorandum source content...");
         if (cleanTrackChanges){
-            byte[] cleaned = xmlContentProcessor.cleanTrackChanges(sourceContent);
-            this.existingContent = xmlContentProcessor.cleanSoftActions(cleaned);
+//            To be replaced by https://code.europa.eu/leos/core/-/issues/2364
+//            byte[] cleaned = xmlContentProcessor.cleanTrackChanges(sourceContent);
+//            this.existingContent = xmlContentProcessor.cleanSoftActions(cleaned);
+            this.existingContent = sourceContent;
         }
         else {
             this.existingContent = sourceContent;
