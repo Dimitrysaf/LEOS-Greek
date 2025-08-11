@@ -229,7 +229,7 @@ public class DocumentServiceImpl implements DocumentService {
                 return milestoneDocumentService.updateMilestone(legDoc, contentBytes, metadata, userId);
 
             default:
-                boolean isMajor = !versionType.equals(VersionType.MINOR);
+                boolean isMajor = !versionType.equals(VersionType.MINOR) && !versionType.equals(VersionType.TECHNICAL);
                 Optional<DocumentV> docView = documentVRepository.findVersionByVersionId(versionId);
                 Document doc = documentRepository.findDocumentByRef(docView.get().getRef()).orElseThrow(() ->
                         new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
@@ -492,11 +492,14 @@ public class DocumentServiceImpl implements DocumentService {
     public String getNextVersionLabel(VersionType versionType, String oldVersion) {
         if (StringUtils.isEmpty(oldVersion)) {
             if (versionType.equals(VersionType.MAJOR)) {
-                return "1.0.0";
+                return "1.0.0.0";
             } else if (versionType.equals(VersionType.INTERMEDIATE)) {
-                return "0.1.0";
-            } else {
-                return "0.0.1";
+                return "0.1.0.0";
+            } else if (versionType.equals(VersionType.MINOR)){
+                return "0.0.1.0";
+            }
+            else {
+                return "0.0.0.1";
             }
         }
 
@@ -505,13 +508,18 @@ public class DocumentServiceImpl implements DocumentService {
             newVersion[0] = Integer.parseInt(newVersion[0]) + 1 + "";
             newVersion[1] = "0";
             newVersion[2] = "0";
+            newVersion[3] = "0";
         } else if (versionType.equals(VersionType.INTERMEDIATE)) {
             newVersion[1] = Integer.parseInt(newVersion[1]) + 1 + "";
             newVersion[2] = "0";
-        } else {
+            newVersion[3] = "0";
+        } else if (versionType.equals(VersionType.MINOR)) {
             newVersion[2] = Integer.parseInt(newVersion[2]) + 1 + "";
+            newVersion[3] = "0";
+        } else {
+            newVersion[3] = Integer.parseInt(newVersion[3]) + 1 + "";
         }
-        return newVersion[0] + "." + newVersion[1] + "." + newVersion[2];
+        return newVersion[0] + "." + newVersion[1] + "." + newVersion[2] + "." + newVersion[3];
     }
 
     private Document updateDocumentMetadata(Document doc, DocumentVersion docVersion, Map<String, Object> metadata, String userId) throws Exception {
@@ -1049,8 +1057,8 @@ public class DocumentServiceImpl implements DocumentService {
         docVersion.setDocumentId(doc.getId());
         docVersion.setComments(comments);
         docVersion.setIsLatestVersion(true);
-        docVersion.setIsLatestMajorVersion(versionType != VersionType.MINOR.value());
-        docVersion.setIsMajorVersion(versionType != VersionType.MINOR.value());
+        docVersion.setIsLatestMajorVersion(versionType != VersionType.MINOR.value() && versionType != VersionType.TECHNICAL.value());
+        docVersion.setIsMajorVersion(versionType != VersionType.MINOR.value() && versionType != VersionType.TECHNICAL.value());
 
         // These values are not used
         docVersion.setIsVersionSeriesCheckedOut(false);

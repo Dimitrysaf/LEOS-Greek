@@ -2,7 +2,7 @@ package eu.europa.ec.leos.domain.repository.common;
 
 public enum VersionType {
 
-    MAJOR(1), INTERMEDIATE(2), MINOR(3);
+    MAJOR(1), INTERMEDIATE(2), MINOR(3), TECHNICAL(4);
     private final int value;
 
     VersionType(int v) {
