@@ -504,6 +504,14 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         String[] newVersion = oldVersion.split("\\.");
+        // Handle existing 3-part versions by adding .0
+        if (newVersion.length == 3) {
+            String[] temp = new String[4];
+            System.arraycopy(newVersion, 0, temp, 0, 3);
+            temp[3] = "0";
+            newVersion = temp;
+        }
+        
         if (versionType.equals(VersionType.MAJOR)) {
             newVersion[0] = Integer.parseInt(newVersion[0]) + 1 + "";
             newVersion[1] = "0";
@@ -628,7 +636,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     private String buildSearchVersionRegularExp(List<String> str, boolean allIntermediateVersions) {
         StringBuilder versionRegularExp = new StringBuilder();
-        versionRegularExp.append(String.join(".", str));
+        // Only use first 3 levels, ignore 4th level
+        List<String> first3Levels = str.size() > 3 ? str.subList(0, 2) : str;
+        versionRegularExp.append(String.join(".", first3Levels));
         if (allIntermediateVersions) {
             versionRegularExp.append(".%");
         } else {
@@ -647,7 +657,7 @@ public class DocumentServiceImpl implements DocumentService {
         PageRequest pageRequest =
                 PageRequest.of(startIndex, maxResults < 1 ? MAX_RESULT_DEFAULT : maxResults, Sort.Direction.DESC, "updatedOn");
         Optional<DocumentV> prevMajorVersionDoc = documentVRepository.findPreviousMajorVersion(docRef, currIntVersion);
-        String prevMajorVersion = prevMajorVersionDoc.isPresent() ? prevMajorVersionDoc.get().getVersionLabel() : "0.0.0";
+        String prevMajorVersion = prevMajorVersionDoc.isPresent() ? prevMajorVersionDoc.get().getVersionLabel() : "0.0.0.0";
 
         String lastMajorVersion = buildMinorVersionsGreaterThanMajorRegularExp(prevMajorVersion, true);
         Page<DocumentV> docViews = documentVRepository.findRecentMinorVersions(docRef, lastMajorVersion, pageRequest);
