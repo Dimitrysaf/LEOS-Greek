@@ -1301,7 +1301,9 @@ define(function leosTrackChangesModule(require) {
                         }
                     }
                     if(liParentElement) {
-                        editor.getSelection().fake(liParentElement);
+                        if(liParentElement.getParent()){
+                            editor.getSelection().fake(liParentElement);
+                        }
                         if (this.checkIfEmptyListElement(liParentElement)) {
                             this.removeEmptyElement(liParentElement, numberModule, editor);
                         }
