@@ -106,7 +106,8 @@ public class WorkspaceOptions {
                 }
             } else if (id.equalsIgnoreCase(FilterType.customTemplates.name()) && securityContext.getUser() != null
                     && securityContext.getUser().getRoles() != null
-                    && securityContext.getUser().getRoles().contains("TEMPLATE_MANAGER")) {
+                    && (securityContext.getUser().getRoles().contains("TEMPLATE_MANAGER")
+            || securityContext.getUser().getRoles().contains("SUPPORT"))) {
                 if (!values.isEmpty()) {
                     workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
                             "=", false, true,
