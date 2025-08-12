@@ -48,3 +48,13 @@
     <span euiLabel>{{ originRef }}</span>
   </eui-chip>
 </header>
+<header
+  *ngIf="customTemplateAct"
+  class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-l"
+>
+  <eui-chip euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+    <span euiLabel>{{
+        'page.collection.proposal-header.custom-template-act' | translate
+      }}</span>
+  </eui-chip>
+</header>

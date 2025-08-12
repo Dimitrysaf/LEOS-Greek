@@ -149,7 +149,7 @@ public class ProposalServiceImplTest {
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
         Content.Source proposalSource = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content proposalContent = new ContentImpl("PR-00.xml", "mime type", xmlContent.length, proposalSource);
-        ProposalMetadata proposalMetadata = new ProposalMetadata("", "REGULATION for EC", "", "PR-00.xml", "EN", "", "proposal-id", "", "0.1.0", false);
+        ProposalMetadata proposalMetadata = new ProposalMetadata("", "REGULATION for EC", "", "PR-00.xml", "EN", "", "proposal-id", "", "0.1.0", false, false);
         Proposal leosProposal = new Proposal(proposalId, "Proposal", "login", Instant.now(), "login", Instant.now(), "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", collaborators,
                 Arrays.asList(""), "login", Instant.now(), Option.some(proposalContent), Option.some(proposalMetadata), true, "", "", "", null,

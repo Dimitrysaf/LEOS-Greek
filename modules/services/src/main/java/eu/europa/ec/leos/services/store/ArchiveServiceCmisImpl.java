@@ -39,7 +39,7 @@ public class ArchiveServiceCmisImpl implements ArchiveService {
                 documentVO.getMetadata().getDocType(), documentVO.getMetadata().getDocPurpose(), documentVO.getMetadata().getTemplate(),
                 documentVO.getMetadata().getLanguage(), documentVO.getMetadata().getDocTemplate(), documentVO.getMetadata().getInternalRef(),
                 0, documentVO.getMetadata().getNumber(), documentVO.getMetadata().getTitle(),
-                documentVO.getId(), documentVO.getVersionSeriesId(), false, null);
+                documentVO.getId(), documentVO.getVersionSeriesId(), false, documentVO.getMetadata().isCustomTemplateAct(), null);
         try {
             leosRepository.findFolderByPath(path);
         } catch (CmisObjectNotFoundException exception) {

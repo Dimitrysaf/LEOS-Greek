@@ -16,16 +16,11 @@ package eu.europa.ec.leos.repository.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -159,6 +154,8 @@ public class DocumentV implements Serializable {
     private int numProps;
     @Column(name = "IS_VERSION_ARCHIVED", updatable = false)
     private Boolean isVersionArchived;
+    @Column(name = "CUSTOM_TEMPLATE_ACT", updatable = false)
+    private Boolean customTemplateAct;
 
     public DocumentV() {
     }
@@ -485,5 +482,13 @@ public class DocumentV implements Serializable {
 
     public void setVersionArchived(Boolean versionArchived) {
         isVersionArchived = versionArchived;
+    }
+
+    public Boolean getCustomTemplateAct() {
+        return customTemplateAct;
+    }
+
+    public void setCustomTemplateAct(Boolean customTemplateAct) {
+        this.customTemplateAct = customTemplateAct;
     }
 }

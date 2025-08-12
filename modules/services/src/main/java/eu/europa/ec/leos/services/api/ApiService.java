@@ -49,7 +49,7 @@ public interface ApiService {
     CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException;
 
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
-                                          boolean eeaRelevance, String template) throws CreateCollectionException;
+                                          boolean eeaRelevance, boolean customTemplateAct, String template) throws CreateCollectionException;
 
     CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException;
 

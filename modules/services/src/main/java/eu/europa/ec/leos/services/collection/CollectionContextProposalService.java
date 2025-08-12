@@ -103,6 +103,7 @@ public class CollectionContextProposalService extends CollectionContextService {
                 .withActType(templatePropertiesMap.get(ACT_TYPE))
                 .withProcedureType(templatePropertiesMap.get(PROCEDURE_TYPE))
                 .withEeaRelevance(eeaRelevance)
+                .withCustomTemplateAct(customTemplateAct)
                 .build();
 
         String creationOptions = createJsonCreationOptions(templatePropertiesMap);
@@ -120,6 +121,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.useType(metadata.getType());
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
+            memorandumContext.useCustomTemplateAct(customTemplateAct);
 
             //Repetitive Acts
             List<XmlDocument> doc = categoryExistingDocuments.get(MEMORANDUM);
@@ -141,6 +143,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             billContext.useTemplate(bill);
             billContext.usePurpose(purpose);
             billContext.useActionMessageMap(actionMsgMap);
+            billContext.useCustomTemplateAct(customTemplateAct);
             billContext.usePackageRef(proposal.getMetadata().get().getRef());
 
             // Repetitive Acts
@@ -201,6 +204,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             financialStatementContext.usePackageTemplate(metadata.getTemplate());
             financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
             financialStatementContext.useCollaborators(proposal.getCollaborators());
+            financialStatementContext.useCustomTemplateAct(customTemplateAct);
 
             // Repetitive Act
             List<XmlDocument> sourceDocuments = categoryExistingDocuments.get(STAT_DIGIT_FINANC_LEGIS);

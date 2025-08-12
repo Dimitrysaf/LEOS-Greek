@@ -254,7 +254,7 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
 
     private Explanatory getMockedExplanatory(Content content) {
         ExplanatoryMetadata explanatoryMetadata = new ExplanatoryMetadata("... at this stage", "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL", "on ...",
-                "CE-001", "EN", "CE-001", "explanatory", "Working Party cover page", "555", "0.1.0", false);
+                "CE-001", "EN", "CE-001", "explanatory", "Working Party cover page", "555", "0.1.0", false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("test", "OWNER", "SG"));
         return new Explanatory("555", "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(),

@@ -29,20 +29,20 @@ class CmisMetadataExtensions {
 
     private static class CommonMetadataProperties {
         String stage, type, purpose, template, language, docTemplate, ref;
-        Boolean eeaRelevance;
+        Boolean eeaRelevance, customTemplateAct;
     }
 
     // FIXME add check for leos:proposal secondary type???
     static Option<ProposalMetadata> getProposalMetadataOption(Document document) {
         return buildMetadata(document, props -> Option.some(
                 new ProposalMetadata(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
+                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance, props.customTemplateAct)));
     }
 
     static Option<StructureMetaData> getStructureMetadataOption(Document document) {
         return buildMetadata(document, props -> Option.some(
                 new StructureMetaData(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
+                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance, props.customTemplateAct)));
     }
 
     // FIXME add check for leos:memorandum secondary type???
@@ -50,21 +50,21 @@ class CmisMetadataExtensions {
         String title = getExplanatoryTitle(document);
         return buildMetadata(document, props -> Option.some(
                 new ExplanatoryMetadata(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance)));
+                        props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance, props.customTemplateAct)));
     }
 
     // FIXME add check for leos:memorandum secondary type???
     static Option<MemorandumMetadata> getMemorandumMetadataOption(Document document) {
         return buildMetadata(document, props -> Option.some(
                 new MemorandumMetadata(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
+                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance, props.customTemplateAct)));
     }
 
     // FIXME add check for leos:bill secondary type???
     static Option<BillMetadata> getBillMetadataOption(Document document) {
         return buildMetadata(document, props -> Option.some(
                 new BillMetadata(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
+                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance, props.customTemplateAct)));
     }
 
     // FIXME add check for leos:annex secondary type???
@@ -79,7 +79,7 @@ class CmisMetadataExtensions {
             if (index != null && number != null) {
                 return Option.some(
                         new AnnexMetadata(props.stage, props.type, props.purpose, props.template,
-                                props.language, props.docTemplate, props.ref, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, clonedRef));
+                                props.language, props.docTemplate, props.ref, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, props.customTemplateAct, clonedRef));
             } else {
                 return Option.none();
             }
@@ -93,7 +93,7 @@ class CmisMetadataExtensions {
             Option<FinancialStatementMetadata> fin =
              Option.some(
                     new FinancialStatementMetadata(props.stage, props.type, props.purpose, props.template,
-                            props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance));
+                            props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance, props.customTemplateAct));
             return fin;
         });
     }
@@ -108,6 +108,7 @@ class CmisMetadataExtensions {
         props.docTemplate = getMetadataDocTemplate(doc);
         props.ref = getMetadataRef(doc);
         props.eeaRelevance = getMetadataEeaRelevance(doc);
+        props.customTemplateAct = getMetadataCustomTemplateAct(doc);
 
         Option<T> result;
         if (props.stage != null && props.type != null && props.purpose != null && props.template != null && props.language != null && props.docTemplate != null) {
@@ -141,6 +142,11 @@ class CmisMetadataExtensions {
     private static boolean getMetadataEeaRelevance(Document document) {
         Boolean eeaRelevance = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE));
         return eeaRelevance != null ? (boolean) eeaRelevance : false;
+    }
+
+    private static boolean getMetadataCustomTemplateAct(Document document) {
+        Boolean customTemplateAct = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT));
+        return customTemplateAct != null ? customTemplateAct : false;
     }
 
     // FIXME make this property mandatory???

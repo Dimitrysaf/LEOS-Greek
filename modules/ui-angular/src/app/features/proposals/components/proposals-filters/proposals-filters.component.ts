@@ -34,6 +34,7 @@ import {
   ProposalFilter,
   ProposalFilterGroup,
 } from '../../models';
+import {AppConfigService} from "@/core/services/app-config.service";
 
 @Component({
   selector: 'app-proposals-filters',
@@ -60,12 +61,14 @@ export class ProposalsFiltersComponent
   private resizeObserver: ResizeObserver;
   private formChangesSub: Subscription;
   private destroy$ = new Subject<void>();
+  private canCreateTemplate: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private translateService: TranslateService,
     private store: Store<any>,
+    private appConfig: AppConfigService
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +93,10 @@ export class ProposalsFiltersComponent
 
       i18nState$.pipe(skip(1)).subscribe(() => this.setupFilterGroups(catalog));
       filters$.pipe(skip(1)).subscribe((filters) => this.patchForm(filters));
+    });
+
+    this.appConfig.config.subscribe((config) => {
+      this.canCreateTemplate = config.userAppPermissions.includes('CAN_CREATE_TEMPLATE');
     });
   }
 
@@ -141,7 +148,7 @@ export class ProposalsFiltersComponent
       checked: false,
     });
     const groups = this.groupFilterCatalogItems(catalog);
-    return [
+    let response = [
       {
         title: this.translateService.instant(
           'page.workspace.filter.procedures',
@@ -169,6 +176,29 @@ export class ProposalsFiltersComponent
         ].map(roleToOption),
       },
     ];
+
+    if (this.canCreateTemplate){
+      const templateOptions = {
+        title: this.translateService.instant(
+          'page.workspace.filter.custom-templates',
+        ),
+        filterOptions: [
+          {
+            id: `custom-template-act`,
+            fieldName: `custom-template-act`,
+            label: this.translateService.instant(
+              `page.workspace.filter.custom-templates.option`,
+            ),
+            value: 'custom-false',
+            checked: false,
+          }
+        ],
+      };
+
+      response.unshift(templateOptions);
+    }
+
+    return response;
   }
 
   private groupFilterCatalogItems(catalog: CatalogItem[]) {
@@ -265,6 +295,7 @@ export class ProposalsFiltersComponent
       .map((name) => filterOptions.find((opt) => opt.fieldName === name))
       .filter(Boolean)
       .reduce((fs, filterOption) => {
+        console.log(filterOption.value.match(/^([^-]+)-(.*)/));
         const [_, filterKey, filterVal] =
           filterOption.value.match(/^([^-]+)-(.*)/);
         switch (filterKey) {
@@ -280,12 +311,19 @@ export class ProposalsFiltersComponent
           case 'roles':
             fs.roles.push(filterVal as Role);
             break;
+          case 'custom':
+            fs.customTemplates = String(!filterOption.checked);
+            break;
           default:
             break;
         }
         return fs;
       }, ProposalsFiltersComponent.emptyFilterParams);
     filters.searchTerm = formValue.searchTerm as string;
+
+    if (!checkedFormControlNames.includes('custom-template-act')) {
+      filters.customTemplates = undefined;
+    }
 
     return filters;
   }

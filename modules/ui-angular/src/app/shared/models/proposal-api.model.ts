@@ -14,6 +14,7 @@ export type ListProposalsWithFilterBodyFilter =
   | { type: 'template'; value: string[] }
   | { type: 'role'; value: Role[] }
   | { type: 'docType'; value: string[] }
+  | { type: 'customTemplates'; value: string[] }
   | { type: 'title'; value: string[] };
 
 export interface ListProposalsWithFilterResponse {
@@ -29,6 +30,7 @@ export type CreateProposalBody = {
   langCode: string;
   docPurpose: string;
   eeaRelevance: boolean;
+  customTemplateAct: boolean;
   key: string;
 };
 
@@ -38,6 +40,7 @@ export type CreateProposalCopy = {
   langCode: string;
   docPurpose: string;
   eeaRelevance: boolean;
+  customTemplateAct: boolean;
   key: string;
   proposalRef: string;
 };

@@ -139,4 +139,33 @@
       />
     </div>
   </div>
+
+  <div class="eui-u-mt-l eui-u-mb-m" *ngIf="canCreateTemplate">
+    <hr class="eui-u-mt-xs" />
+    <p>
+      {{ 'page.workspace.create-form.' + translationKey + '.custom-template-section' | translate }}
+    </p>
+  </div>
+
+  <!-- Custom Template section -->
+  <div euiInputGroup class="row" *ngIf="canCreateTemplate">
+    <div class="col-md-3">
+      <label euiLabel for="customTemplateAct">{{
+          'page.workspace.create-form.' + translationKey + '.custom-template-act'
+            | translate
+        }}</label>
+    </div>
+    <div class="col-md-1">
+      <input
+        euiInputCheckBox
+        formControlName="customTemplateAct"
+        title="Custom Template checkbox"
+        aria-label="Custom Template checkbox"
+        id="customTemplateAct"
+      />
+    </div>
+    <div class="col-md-8">
+      <!-- Empty column to maintain alignment -->
+    </div>
+  </div>
 </form>
