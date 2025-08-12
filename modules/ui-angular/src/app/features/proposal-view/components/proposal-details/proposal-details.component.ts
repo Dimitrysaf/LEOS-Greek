@@ -1,11 +1,12 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Document, Permission, AuthenticLanguage, CoverPageType, ProposalDetailsLists, Metadata, DetailsTabExclusions} from '@leos/shared';
+import {Document, Permission, AuthenticLanguage, CoverPageType, ProposalDetailsLists, Metadata, DetailsTabExclusions, LeosConfig} from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
 import {cloneDeep, toNumber} from "lodash-es";
 import {EuiGrowlService} from "@eui/core";
 import {TranslateService} from "@ngx-translate/core";
 import moment from 'moment';
+import { AppConfigService } from '@/core/services/app-config.service';
 import {EuiSelectComponent} from "@eui/components/eui-select";
 import {EuiInputTextComponent} from "@eui/components/eui-input-text";
 
@@ -17,6 +18,7 @@ import {EuiInputTextComponent} from "@eui/components/eui-input-text";
 export class ProposalDetailsComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
   @Input() proposalDetails: ProposalDetailsLists;
+  leosConfig: LeosConfig;
   permissions: Permission[];
   eeaRelevance: boolean;
   isAuthenticLang: boolean;
@@ -94,9 +96,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   invalidTargetProposalReferenceInput: boolean;
   invalidTargetProposalDateInput: boolean;
   invalidCorrectionInfoInput: boolean;
+  greffeUser: boolean;
 
 
   constructor(
+    private appConfigService: AppConfigService,
     protected detailsService: ProposalDetailsService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
@@ -444,6 +448,12 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         },
         error: (error) => console.log('error'),
       });
+    this.appConfigService.config
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((config) => {
+        this.leosConfig = config;
+      });
+    this.greffeUser = this.leosConfig.user.greffeUser;
     this.initializeLists();
     this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
     this.initializeGeneral();
