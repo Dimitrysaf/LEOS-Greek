@@ -1229,30 +1229,42 @@ define(function leosTrackChangesModule(require) {
 
                     // article case of reject action when is newly inserted paragraph
                     if(!!articleAscendant){
-                        var canFireParagraphChange = false;
-                        for (var elementSibling of element.getParent().$.children) {
-                            if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER)
-                                && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM)
-                                && !elementSibling.getAttribute(core.ACTION_ATTR)
-                                // && /^\d+\.$/.test(elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM))// is number ending in point
-                            ) {
-                                if(/^\d+\.$/.test(elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM))){
-                                    canFireParagraphChange = true;
-                                }
+                        if(element.hasAttribute(leosPluginUtils.DATA_AKN_NUM) && element.hasAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)
+                            && element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)
+                            && element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED){
+                            //test case of newly inserted element as 4. before 5. which has sublists
+                            element.setAttribute(leosPluginUtils.DATA_AKN_NUM, element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER));
+                            var tcAttributes = ["data-akn-action-number", "data-akn-tc-original-number", "data-akn-uid-number",
+                                "title-number",  "NEW"];
+                            for (var attrName of tcAttributes) {
+                                element.removeAttribute(attrName);
+                            }
 
-                                core.removeTrackChangesAttributes(elementSibling);
-                                if(elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
-                                    core.removeTrackChangesAttributesForNumberingDelete(elementSibling);
-                                }
-                                core.removeTrackChangesAttributesForNumbering(elementSibling);
-                                core.removeSoftAttributes(elementSibling);
-                                if (!elementSibling.getAttribute(leosPluginUtils.ID)) {
-                                    elementSibling.setAttribute(leosPluginUtils.ID, "XtempXtcX" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                        }else {
+                            var canFireParagraphChange = false;
+                            for (var elementSibling of element.getParent().$.children) {
+                                if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER)
+                                    && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM)
+                                    && !elementSibling.getAttribute(core.ACTION_ATTR)
+                                ) {
+                                    if (/^\d+\.$/.test(elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
+                                         canFireParagraphChange = true;
+                                    }
+
+                                    core.removeTrackChangesAttributes(elementSibling);
+                                    if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
+                                        core.removeTrackChangesAttributesForNumberingDelete(elementSibling);
+                                    }
+                                    core.removeTrackChangesAttributesForNumbering(elementSibling);
+                                    core.removeSoftAttributes(elementSibling);
+                                    if (!elementSibling.getAttribute(leosPluginUtils.ID)) {
+                                        elementSibling.setAttribute(leosPluginUtils.ID, "XtempXtcX" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                                    }
                                 }
                             }
-                        }
-                        if(canFireParagraphChange){//in aknNumberedParagraphPlugin.js, change status to PARA_MODE to UNNUMBERED
-                            editor.fire('changeParaModeToUnnumbered');
+                            if (canFireParagraphChange) {//in aknNumberedParagraphPlugin.js, change status to PARA_MODE to UNNUMBERED
+                                editor.fire('changeParaModeToUnnumbered');
+                            }
                         }
                     }
                 }
