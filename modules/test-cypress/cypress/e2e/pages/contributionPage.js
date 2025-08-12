@@ -1,7 +1,8 @@
 class contributionPage {
     elements = {
         appMergeActions: () => cy.get('app-merge-actions'),
-        applyChanges: () => cy.get('button#apply-id')
+        applyChanges: () => cy.get('button#apply-id'),
+        contributionViewContainer: () => cy.get('#contributionViewContainer ')
     }
 
     getElementInContribution(eltName, eltNumber) {
