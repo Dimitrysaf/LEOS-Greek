@@ -640,9 +640,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         }
     }
     private void removeTrackChanges(Node node) {
-        // This is your existing method call to process attributes on the current node.
         MergeUtils.removeTrackChangesAttributes(node, false);
-
         List<Node> children = XercesUtils.getChildren(node);
 
         // This loop now includes the logic to handle <ins> elements.
@@ -653,11 +651,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 if (LEOS_TC_INSERT_ELEMENT_NAME.equals(child.getNodeName())) {
                     Node parent = child.getParentNode();
                     String textContent = child.getTextContent();
-
                     if (textContent != null && !textContent.trim().isEmpty()) {
                         // Create a new text node with the content.
                         Text newTextNode = parent.getOwnerDocument().createTextNode(textContent);
-
                         // Insert the new text node before the <ins> element.
                         parent.insertBefore(newTextNode, child);
                     }
