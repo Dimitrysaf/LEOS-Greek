@@ -86,6 +86,7 @@
             <permission>CAN_ACCEPT_CHANGES</permission>
             <permission>CAN_REJECT_CHANGES</permission>
             <permission>CAN_ARCHIVE_VERSION</permission>
+            <permission>CAN_CREATE_TEMPLATE</permission>
         </permissions>
         <application-role>true</application-role>
         <collaborator>false</collaborator>
