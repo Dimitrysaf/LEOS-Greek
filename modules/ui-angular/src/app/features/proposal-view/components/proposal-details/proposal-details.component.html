@@ -151,7 +151,7 @@
   </div>
 </div>
 
-<div class="row eui-u-mt-l d-flex align-items-start">
+<div class="row eui-u-mt-l d-flex align-items-start" *ngIf="!greffeUser">
   <div class="col-md-11">
     <eui-card
       class="eui-u-mt-s eui-u-mb-l"
@@ -468,7 +468,7 @@
   </div>
 </div>
 
-<div class="row eui-u-mt-l d-flex align-items-start">
+<div class="row eui-u-mt-l d-flex align-items-start" *ngIf="greffeUser">
   <div class="col-md-11">
     <eui-card
       class="eui-u-mt-s eui-u-mb-l"
