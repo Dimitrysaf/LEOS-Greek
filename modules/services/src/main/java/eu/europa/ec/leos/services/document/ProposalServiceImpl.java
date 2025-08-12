@@ -752,13 +752,15 @@ public abstract class ProposalServiceImpl implements ProposalService {
         if (request.getShowCorrigendumAddendum() != null) {
             CorrigendumAddendumMetadata corrigendumAddendumMetadata = new CorrigendumAddendumMetadata();
             corrigendumAddendumMetadata.setShowCorrigendumAddendum(request.getShowCorrigendumAddendum());
-            corrigendumAddendumMetadata.setCorrectionInformation(request.getCorrectionInformation());
-            corrigendumAddendumMetadata.setProposalType(request.getProposalType());
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            corrigendumAddendumMetadata.setTargetProposalDate(dateFormat.format(request.getTargetProposalDate()));
-            corrigendumAddendumMetadata.setTargetProposalReference(request.getTargetProposalReference());
-            corrigendumAddendumMetadata.setProposalTargetLang(request.getProposalTargetLang());
-            corrigendumAddendumMetadata.setFinalVersion(request.getFinalVersion());
+            if (request.getShowCorrigendumAddendum().equals(Boolean.TRUE)) {
+                corrigendumAddendumMetadata.setCorrectionInformation(request.getCorrectionInformation());
+                corrigendumAddendumMetadata.setProposalType(request.getProposalType());
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                corrigendumAddendumMetadata.setTargetProposalDate(dateFormat.format(request.getTargetProposalDate()));
+                corrigendumAddendumMetadata.setTargetProposalReference(request.getTargetProposalReference());
+                corrigendumAddendumMetadata.setProposalTargetLang(request.getProposalTargetLang());
+                corrigendumAddendumMetadata.setFinalVersion(request.getFinalVersion());
+            }
             fields.add(new MetadataOptions.FieldNode("corrigendumAddendum", listToJson(corrigendumAddendumMetadata)));
         }
         metadataOptions.addTask(legFileName, proposal, fields);
