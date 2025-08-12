@@ -41,7 +41,6 @@ import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
-import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
@@ -68,10 +67,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -82,7 +79,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_CREATION_DATE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_PROPOSAL_REF;
