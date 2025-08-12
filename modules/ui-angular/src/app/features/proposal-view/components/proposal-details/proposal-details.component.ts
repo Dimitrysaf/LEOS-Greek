@@ -30,6 +30,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   adoptionPlace: string;
   adoptionPlaces = [];
   adoptionDate: any;
+  institutionalRef: boolean;
   institutionalRefYear: number | null;
   institutionalRefActingEntities = [];
   institutionalRefActingEntity: string | null;
@@ -91,6 +92,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   invalidInstitutionalNumberInput: boolean;
   invalidInterInstitutionalNumberInput: boolean;
   invalidTargetProposalReferenceInput: boolean;
+  invalidTargetProposalDateInput: boolean;
+  invalidCorrectionInfoInput: boolean;
+
 
   constructor(
     protected detailsService: ProposalDetailsService,
@@ -122,7 +126,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   isValid(): boolean {
     return (this.isAuthenticLangValid()
       && this.isInstitutionalRefValid()
-      && this.isInterInstitutionalRefValid());
+      && this.isInterInstitutionalRefValid()
+      && this.isTargetProposalReferenceValid()
+      && this.isTargetProposalDateValid()
+      && this.isCorrectionInfoValid());
   }
 
   isEeaRelevanceChanged() {
@@ -191,7 +198,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isInterInstitutionalReferenceChanged(): boolean {
-    return  this.getInterInstitutionalReference() !== this.proposalMetadata.interInstitutionalReference;
+    return this.getInterInstitutionalReference() !== this.proposalMetadata.interInstitutionalReference;
   }
 
   initializeLists(): void {
@@ -249,27 +256,46 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   getInstitutionalReference(): string {
-    if (!!this.institutionalRefActingEntity) {
+    if (this.institutionalRef && !!this.institutionalRefActingEntity && !!this.institutionalRefYear && !!this.institutionalRefNumber) {
       const institutionalRef = this.institutionalRefActingEntity + '(' + this.institutionalRefYear + ')' + this.institutionalRefNumber;
       if (this.institutionalRefRegEx.test(institutionalRef) && !isNaN(Number(this.institutionalRefNumber))) {
         return institutionalRef;
       }
+    } else if (!this.institutionalRef) {
+      return '';
     }
     return null;
   }
 
   isInstitutionalRefValid(): boolean {
     const institutionalRef = this.getInstitutionalReference();
-    if (institutionalRef != null) {
+    if (this.institutionalRef && !!institutionalRef) {
       return true;
-    } else if (!this.institutionalRefActingEntity && !this.institutionalRefYear && !this.institutionalRefNumber) {
+    } else if (!this.institutionalRef) {
       return true;
     }
     return false;
   }
 
+  getInstitutionalRefNonValidMsg(): string {
+    if (!this.isInstitutionalRefValid()) {
+      if (this.institutionalRefActingEntity == null || this.institutionalRefActingEntity == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.institutional.ref.type");
+      }
+      if (this.institutionalRefYear == null || this.institutionalRefYear == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.institutional.ref.year");
+      }
+      if (this.institutionalRefNumber == null || this.institutionalRefNumber == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.institutional.ref.number.empty");
+      }
+    }
+    return null;
+  }
+
   getTargetProposalReference(): string {
-    if (!!this.targetProposalReferenceActingEntity && this.showCorrigendumAddendum) {
+    if (this.showCorrigendumAddendum
+      && this.targetProposalReferenceActingEntity != null
+      && this.targetProposalReferenceActingEntity != undefined && !isNaN(this.targetProposalReferenceNumber) && !isNaN(this.targetProposalReferenceYear)) {
       const targetProposalReference = this.targetProposalReferenceActingEntity + '(' + this.targetProposalReferenceYear + ')' + this.targetProposalReferenceNumber;
       if (this.institutionalRefRegEx.test(targetProposalReference) && !isNaN(Number(this.targetProposalReferenceNumber))) {
         return targetProposalReference;
@@ -282,10 +308,59 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     const targetProposalReference = this.getTargetProposalReference();
     if (targetProposalReference != null) {
       return true;
-    } else if (!this.targetProposalReferenceActingEntity && !this.targetProposalReferenceYear && !this.targetProposalReferenceNumber) {
+    } else if (!this.showCorrigendumAddendum) {
       return true;
     }
     return false;
+  }
+
+  getTargetProposalRefNonValidMsg(): string {
+    if (!this.isTargetProposalReferenceValid() && this.showCorrigendumAddendum) {
+      if (this.targetProposalReferenceYear == null || this.targetProposalReferenceYear == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.target.proposal.ref.year");
+      }
+      if (this.targetProposalReferenceNumber == null || this.targetProposalReferenceNumber == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.target.proposal.ref.number.empty");
+      }
+      if (this.targetProposalReferenceActingEntity == null || this.targetProposalReferenceActingEntity == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.target.proposal.ref.type");
+      }
+    }
+    return null;
+  }
+
+  isTargetProposalDateValid(): boolean {
+    if (this.showCorrigendumAddendum) {
+      if (this.targetProposalDate == null || this.targetProposalDate == undefined) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  getTargetProposalDateNonValidMsg(): string {
+    if (this.showCorrigendumAddendum) {
+      if (this.targetProposalDate == null || this.targetProposalDate == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.proposal.date");
+      }
+    }
+    return null;
+  }
+
+  isCorrectionInfoValid(): boolean {
+    if (this.showCorrigendumAddendum) {
+      if (this.correctionInformation == null || this.correctionInformation == undefined || this.correctionInformation == '') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  getCorrectionInfoNonValidMsg(): string {
+    if (!this.isCorrectionInfoValid()) {
+      return this.translateService.instant("page.collection.details.invalid.correction.info");
+    }
+    return null;
   }
 
   getInterInstitutionalReference(): string {
@@ -293,7 +368,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     if (this.interInstitutionalRef && this.isInterInstitutionalRefValid()) {
       interInstitutionalRef = this.interInstitutionalRefYear + '/' + this.interInstitutionalRefNumber + ' (' + this.interInstitutionalRefType + ')';
     }
-    if (!this.interInstitutionalRef && this.isInterInstitutionalRefValid()) {
+    if (!this.interInstitutionalRef) {
       interInstitutionalRef = '';
     }
 
@@ -310,6 +385,21 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     return !this.interInstitutionalRef;
   }
 
+  getInterInstitutionalRefNonValidMsg(): string {
+    if (!this.isInterInstitutionalRefValid()) {
+      if (this.interInstitutionalRefYear == null || this.interInstitutionalRefYear == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.year");
+      }
+      if (this.interInstitutionalRefNumber == null || this.interInstitutionalRefNumber == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.number.empty");
+      }
+      if (this.interInstitutionalRefType == null || this.interInstitutionalRefType == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.type");
+      }
+    }
+    return null;
+  }
+
   isAuthenticLangValid(): boolean {
     return !this.isAuthenticLang || this.isThereSelectedLanguage();
   }
@@ -324,6 +414,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     let institutionalRef = this.proposal.metadata.institutionalReference;
     if (institutionalRef != null && this.institutionalRefRegEx.test(institutionalRef)) {
       let myArray = institutionalRef.match(this.institutionalRefRegEx);
+      this.institutionalRef = true;
       this.institutionalRefActingEntity = myArray[1];
       this.institutionalRefYear = parseInt(myArray[2]);
       this.institutionalRefNumber = parseInt(myArray[3]);
@@ -386,6 +477,16 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.invalidTargetProposalReferenceInput = true;
     } else {
       this.invalidTargetProposalReferenceInput = false;
+    }
+    if (!this.isTargetProposalDateValid()) {
+      this.invalidTargetProposalDateInput = true;
+    } else {
+      this.invalidTargetProposalDateInput = false;
+    }
+    if (!this.isCorrectionInfoValid()) {
+      this.invalidCorrectionInfoInput = true;
+    } else {
+      this.invalidCorrectionInfoInput = false;
     }
   }
 
@@ -558,7 +659,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   onToggleCorrigendumAddendum(event: Event): void {
     this.handleChange();
-    this.enableSave = true;
     if (this.showCorrigendumAddendum) {
       this.proposalType = 'corrigendum';
     } else {
@@ -571,29 +671,29 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   handleTargetLangChange(e: boolean) {
+    this.handleChange();
     if (!e) {
       this.languages.forEach(lang => {
         this.selectedTargetLanguages[lang] = false;
       });
     }
-    this.enableSave = true;
   }
 
   onTargetLanguageChange() {
+    this.handleChange();
     const allTargetLangSelected = this.languages.every(lang => this.selectedTargetLanguages[lang]);
     this.allTargetLangSelected = allTargetLangSelected;
-    this.enableSave = true;
   }
 
   toggleAllTargetLanguages() {
     this.languages.forEach(lang => {
       this.selectedTargetLanguages[lang] = this.allTargetLangSelected;
     });
-    this.enableSave = true;
+    this.handleChange();
   }
 
   handleProposalFinalVersion(inputChangeEvent: Event) {
-    this.enableSave = true;
+    this.handleChange();
     this.finalVersion = (inputChangeEvent.target as HTMLInputElement).checked ? true : false;
   }
 
@@ -648,10 +748,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.selectedTargetLanguages = {};
   }
 
-  onAnyInputChange() {
-    this.enableSave = true;
-  }
-
   private initializeCrossReferences(): void {
     this.crossReferenceProposalListing = cloneDeep(this.proposal.metadata.crossReferences);
     const currentYear = new Date().getFullYear();
@@ -670,7 +766,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.crossReferenceProposalNumber = '';
       this.crossReferenceProposalText = '';
     }
-    this.enableSave = true;
+    this.handleChange();
   }
 
   selectItem(index: number) {
@@ -682,7 +778,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.crossReferenceProposalListing.splice(this.selectedIndex, 1);
       this.selectedIndex = null; // reset selection or adjust as needed
     }
-    this.enableSave = true;
+    this.handleChange();
   }
 
   moveUp() {
@@ -692,7 +788,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.crossReferenceProposalListing[this.selectedIndex - 1] = temp;
       this.selectedIndex--;
     }
-    this.enableSave = true;
+    this.handleChange();
   }
 
   moveDown() {
@@ -702,7 +798,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.crossReferenceProposalListing[this.selectedIndex + 1] = temp;
       this.selectedIndex++;
     }
-    this.enableSave = true;
+    this.handleChange();
   }
 
   checkCrossRefNumberInput(event: KeyboardEvent) {
