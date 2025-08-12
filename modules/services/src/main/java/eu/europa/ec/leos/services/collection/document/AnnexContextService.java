@@ -300,7 +300,7 @@ public class AnnexContextService {
                 .withIndex(index)
                 .withNumber(annexNumber)
                 .build();
-        annex = annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), false);
+        annex = annexService.updateAnnex(annex, annexMetadata, VersionType.TECHNICAL, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), false);
     }
 
     public void executeUpdateAnnexStructure() {

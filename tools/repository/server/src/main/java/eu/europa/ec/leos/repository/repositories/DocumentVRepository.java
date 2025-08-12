@@ -60,6 +60,9 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.IS_LATEST_MAJOR_VERSION = 1 and d.REF = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
     Optional<DocumentV> findLatestMajorVersionByRef(String ref);
 
+    @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.VERSION_TYPE = '1' and d.REF = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
+    Optional<DocumentV> findLatestMajorMilestoneVersionByRef(String ref);
+
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.VERSION_ID IN (SELECT MIN(VERSION_ID) FROM DOCUMENT_V WHERE REF = ?1)",
             nativeQuery = true)
     Optional<DocumentV> findFirstVersion(String docRef);

@@ -279,7 +279,7 @@ public abstract class BillServiceImpl implements BillService {
         byte[] updatedBytes = attachmentProcessor.updateAttachmentsInBill(xmlBytes, attachmentsElements);
 
         //save updated xml
-        bill = billRepository.updateBill(bill.getId(), bill.getMetadata().get(), updatedBytes, VersionType.MINOR, actionMsg);
+        bill = billRepository.updateBill(bill.getId(), bill.getMetadata().get(), updatedBytes, VersionType.TECHNICAL, actionMsg);
 
         LOG.trace("Update attachments in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());

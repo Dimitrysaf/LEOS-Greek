@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -235,7 +236,7 @@ public class DocumentServiceImpl implements DocumentService {
                         new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
 
                 Optional<DocumentVersion> latestVersion = documentVersionRepository.findLastVersionByDocumentId(doc.getId());
-                String labelVersion = getNextVersionLabel(versionType, latestVersion.get().getVersionLabel());
+                String labelVersion = getNextVersionLabel(docView.get().getRef(), versionType, latestVersion.get().getVersionLabel());
                 Optional<DocumentVersion> latestMajorVersion = Optional.empty();
                 if (isMajor) {
                     latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
@@ -377,6 +378,28 @@ public class DocumentServiceImpl implements DocumentService {
                 docViews.get(0).getPackageId()), documentContentRepository, docViews, false);
     }
 
+    public List<LeosDocument> findVersionsBetween(String docRef, String fromVersion) {
+        List<LeosDocument> allVersions = findAllVersionsByRef(docRef);
+        return allVersions.stream()
+            .filter(doc -> compareVersions(doc.getVersionLabel(), fromVersion) > 0)
+            .collect(Collectors.toList());
+    }
+
+    private int compareVersions(String version1, String version2) {
+        String[] v1Parts = version1.split("\\.");
+        String[] v2Parts = version2.split("\\.");
+        int maxLength = Math.max(v1Parts.length, v2Parts.length);
+        
+        for (int i = 0; i < maxLength; i++) {
+            int v1Part = i < v1Parts.length ? Integer.parseInt(v1Parts[i]) : 0;
+            int v2Part = i < v2Parts.length ? Integer.parseInt(v2Parts[i]) : 0;
+            if (v1Part != v2Part) {
+                return Integer.compare(v1Part, v2Part);
+            }
+        }
+        return 0;
+    }
+
     public List<LeosDocument> searchVersionsByRef(final String ref, final List<String> logins, final String versionType) {
         StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d");
         queryBuild.append(" WHERE 1 = 1");
@@ -438,6 +461,12 @@ public class DocumentServiceImpl implements DocumentService {
                 docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
     }
 
+    public LeosDocument findLatestMajorMilestoneVersionByRef(final String docRef) {
+        Optional<DocumentV> docView = documentVRepository.findLatestMajorMilestoneVersionByRef(docRef);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docView.isPresent() ? ConversionUtils.fetchCollaborators(collaboratorsService,
+                docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
+    }
+
     public LeosDocument findFirstVersion(final String docRef) {
         LOG.info("Find first version: docRef={}", docRef);
         Optional<DocumentV> docView = documentVRepository.findFirstVersion(docRef);
@@ -450,6 +479,11 @@ public class DocumentServiceImpl implements DocumentService {
         Optional<DocumentV> docView = documentVRepository.findDocumentByVersion(docRef, versionLabel);
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docView.isPresent() ? ConversionUtils.fetchCollaborators(collaboratorsService,
                 docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
+    }
+
+    @Override
+    public String getNextVersionLabel(VersionType versionType, String oldVersion) {
+        return this.getNextVersionLabel(null, versionType, oldVersion);
     }
 
     public DocumentV findDocumentVByVersion(final String docRef, final String versionLabel) {
@@ -489,7 +523,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    public String getNextVersionLabel(VersionType versionType, String oldVersion) {
+    public String getNextVersionLabel(String docRef, VersionType versionType, String oldVersion) {
         if (StringUtils.isEmpty(oldVersion)) {
             if (versionType.equals(VersionType.MAJOR)) {
                 return "1.0.0.0";
@@ -516,7 +550,21 @@ public class DocumentServiceImpl implements DocumentService {
             newVersion[0] = Integer.parseInt(newVersion[0]) + 1 + "";
             newVersion[1] = "0";
             newVersion[2] = "0";
-            newVersion[3] = "0";
+
+            if (docRef != null && !newVersion[0].equals("1")){
+                LeosDocument doc = findLatestMajorMilestoneVersionByRef(docRef);
+                List<LeosDocument> versions = findVersionsBetween(docRef, doc.getVersionLabel());
+                if (versions != null && !versions.isEmpty()) {
+                    boolean allTechnical = versions.stream()
+                        .allMatch(v -> v.getVersionType().equals(VersionType.TECHNICAL));
+                    newVersion[3] = allTechnical ? "1" : "0";
+                } else {
+                    newVersion[3] = "0";
+                }
+            }
+            else{
+                newVersion[3] = "0";
+            }
         } else if (versionType.equals(VersionType.INTERMEDIATE)) {
             newVersion[1] = Integer.parseInt(newVersion[1]) + 1 + "";
             newVersion[2] = "0";
@@ -627,15 +675,18 @@ public class DocumentServiceImpl implements DocumentService {
             throw new IllegalArgumentException("CMIS Version number should be in the format x...0");
         } else if (!str.stream().allMatch(StringUtils::isNumeric)) {
             throw new IllegalArgumentException("CMIS Version number should be in the format x...0");
-        } else if (!"0".equals(str.remove(str.size() - 1))) {
-            throw new IllegalArgumentException("CMIS Version number should be in the format of a major version x...0");
         } else {
-            if (str.size() > 2){
+            String lastElement = str.remove(str.size() - 1);
+            if (!"0".equals(lastElement) && !"1".equals(lastElement)) {
+                throw new IllegalArgumentException("CMIS Version number should be in the format of a major version x...0");
+            }
+            if (str.size() > 2) {
                 str.remove(str.size() - 1);
             }
             return str;
         }
     }
+
 
     private String buildSearchVersionRegularExp(List<String> str, boolean allIntermediateVersions) {
         StringBuilder versionRegularExp = new StringBuilder();
