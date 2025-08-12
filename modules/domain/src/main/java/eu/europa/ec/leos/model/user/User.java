@@ -34,6 +34,8 @@ public class User implements Serializable {
 
     private Entity connectedEntity;
 
+    private boolean isGreffeUser;
+
     public User(Long id, String login, String name, List<Entity> entities, String email, List<String> roles) {
         this.id = id;
         this.login = login;
@@ -100,6 +102,14 @@ public class User implements Serializable {
 
     public void setConnectedEntity(Entity connectedEntity) {
         this.connectedEntity = connectedEntity;
+    }
+
+    public boolean isGreffeUser() {
+        return this.isGreffeUser;
+    }
+
+    public void setGreffeUser(boolean isGreffeUser) {
+        this.isGreffeUser = isGreffeUser;
     }
 
     public String toString2() {
