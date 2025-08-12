@@ -217,26 +217,33 @@
                 </mat-form-field>
               </div>
             </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-flag">
+                <span (click)="$event.stopPropagation()">
+                  <input
+                    name="checkbox-institutional-ref"
+                    euiInputCheckBox
+                    (change)="handleChange()"
+                    [(ngModel)]="institutionalRef"
+                  />
+                </span><strong>{{'page.collection.details.institutional.reference' | translate}}</strong>
+            </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference">
-              <label
-                euiLabel
-                translate="page.collection.details.institutional.reference"
-              ></label>
               <div class="adoption-info-institutional-reference">
                 <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="institutionalRefActingEntity" name="institutionalRefActingEntity"
-                        id="institutionalRefActingEntity"  class="details-tab-first-select">
+                        id="institutionalRefActingEntity"  class="details-tab-first-select" [disabled]="!institutionalRef">
                   <option *ngFor="let institutionalRefActingEntity of institutionalRefActingEntities">{{ institutionalRefActingEntity }}</option>
                 </select>
                 (<select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="institutionalRefYear" name="institutionalRefYear" id="institutionalRefYear"
-                         class="details-tab-select">
+                         class="details-tab-select" [disabled]="!institutionalRef">
                   <option *ngFor="let institutionalRefYear of years">{{ institutionalRefYear }}</option>
                 </select>)
-                <input type="text"
+                <input type="number"
                        [(ngModel)]="institutionalRefNumber"
                        (ngModelChange)="handleChange()"
+                       [disabled]="!institutionalRef"
                        class="details-tab-text"/>
-                <div *ngIf="invalidInstitutionalNumberInput" class="tooltip">
-                  {{ 'page.collection.details.invalid.number.label' | translate}}
+                <div *ngIf="!isInstitutionalRefValid()" class="tooltip">
+                  {{ this.getInstitutionalRefNonValidMsg() }}
                 </div>
 
                 <input
@@ -245,12 +252,13 @@
                   label="Final"
                   [(ngModel)]="institutionalReferenceFinalVersion"
                   (ngModelChange)="handleChange()"
+                  [disabled]="!institutionalRef"
                 />
                 <label
                   class="details-tab-inline">{{'page.collection.details.institutional.reference.final' | translate}}</label>
               </div>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-version">
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-version" *ngIf="false">
               <label
                 euiLabel
                 translate="page.collection.details.institutional.reference.version"
@@ -281,7 +289,7 @@
                         [disabled]="!interInstitutionalRef">
                   <option *ngFor="let interInstitutionalRefYear of years">{{ interInstitutionalRefYear }}</option>
                 </select>/
-                <input type="text"
+                <input type="number"
                        [(ngModel)]="interInstitutionalRefNumber"
                        (ngModelChange)="handleChange()"
                        [disabled]="!interInstitutionalRef"
@@ -292,7 +300,7 @@
                   <option *ngFor="let interInstitutionalRefType of interInstitutionalRefTypes">{{ interInstitutionalRefType }}</option>
                 </select>)
                 <div *ngIf="invalidInterInstitutionalNumberInput" class="tooltip">
-                  {{ 'page.collection.details.invalid.inter.institional.ref' | translate}}
+                  {{ this.getInterInstitutionalRefNonValidMsg() }}
                 </div>
               </div>
             </div>
@@ -512,7 +520,7 @@
                   <input class="proposal-corrigendum-addendum-option"
                          type="radio" name="proposalType"
                          [(ngModel)]="proposalType"
-                         (change)="onAnyInputChange()"
+                         (change)="handleChange()"
                          [value]="'corrigendum'"
                          [disabled]="!showCorrigendumAddendum"/>
                   {{'page.collection.details.proposal.corrigendum' | translate}}
@@ -522,7 +530,7 @@
                          type="radio"
                          name="proposalType"
                          [(ngModel)]="proposalType"
-                         (change)="onAnyInputChange()"
+                         (change)="handleChange()"
                          [value]="'addendum'"
                          [disabled]="!showCorrigendumAddendum"/>
                   {{'page.collection.details.proposal.addendum' | translate}}
@@ -558,14 +566,14 @@
                     <option *ngFor="let targetProposalReferenceYear of years">{{ targetProposalReferenceYear }}</option>
                   </select>
                   <label style="font-size: x-large; margin-top: 5px;">)</label>
-                  <input type="text"
+                  <input type="number"
                          [(ngModel)]="targetProposalReferenceNumber"
                          (ngModelChange)="handleChange()"
                          [required]="showCorrigendumAddendum"
                          class="details-tab-text"
                          #targetProposalReferenceNumberElt/>
                   <div *ngIf="invalidTargetProposalReferenceInput" class="tooltip">
-                    {{ 'page.collection.details.invalid.number.label' | translate}}
+                    {{ this.getTargetProposalRefNonValidMsg() }}
                   </div>
                 </div>
                 <div class="details-tab-block">
@@ -574,7 +582,7 @@
                       matInput
                       [matDatepicker]="picker"
                       [(ngModel)]="targetProposalDate"
-                      (ngModelChange)="onAnyInputChange()"
+                      (ngModelChange)="handleChange()"
                       [disabled]="!showCorrigendumAddendum"
                       [required]="showCorrigendumAddendum"
                       #targetProposalDateElt
@@ -583,6 +591,9 @@
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                   </mat-form-field>
+                </div>
+                <div *ngIf="invalidTargetProposalDateInput" class="tooltip">
+                  {{ this.getTargetProposalDateNonValidMsg() }}
                 </div>
               </div>
             </div>
@@ -644,12 +655,15 @@
                   id="correction-information"
                   #correctionInformationElt
                   [(ngModel)]="correctionInformation"
-                  (ngModelChange)="onAnyInputChange()"
+                  (ngModelChange)="handleChange()"
                   type="textarea"
                   [required]="showCorrigendumAddendum"
                   euiInputText
                   class="eui-input-text--clearable eui-input-text target-proposal-ref-input"
                 />
+              </div>
+              <div *ngIf="invalidCorrectionInfoInput" class="tooltip">
+                {{ this.getCorrectionInfoNonValidMsg() }}
               </div>
             </div>
           </div>
