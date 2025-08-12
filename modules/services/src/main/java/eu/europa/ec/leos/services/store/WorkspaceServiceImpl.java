@@ -16,16 +16,14 @@ package eu.europa.ec.leos.services.store;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
-import eu.europa.ec.leos.model.user.User;
-import eu.europa.ec.leos.security.TokenService;
-import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.repository.store.WorkspaceRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
+import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
-import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,14 +47,12 @@ class WorkspaceServiceImpl implements WorkspaceService {
 
     private final TemplateService templateService;
     private final UserHelper userHelper;
-    private final TokenService tokenService;
 
     @Autowired
-    WorkspaceServiceImpl(WorkspaceRepository workspaceRepository, TemplateService templateService, UserHelper userHelper, TokenService tokenService) {
+    WorkspaceServiceImpl(WorkspaceRepository workspaceRepository, TemplateService templateService, UserHelper userHelper) {
         this.workspaceRepository = workspaceRepository;
         this.templateService = templateService;
         this.userHelper = userHelper;
-        this.tokenService = tokenService;
     }
 
     @Override
