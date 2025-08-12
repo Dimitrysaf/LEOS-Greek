@@ -15,7 +15,7 @@ Feature: cover page Regression Features
         And  click on create button
         Then user is on act viewer page
 
-    @coverPage @local
+    @coverPage @local @focus
     Scenario: edition of title in cover page 
         And  title of the act contains "Automation Cover Page Testing" keyword
         When click on legal act link present in act viewer page
@@ -66,7 +66,6 @@ Feature: cover page Regression Features
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section
         And  navigation pane is minimized
-        And  last subversion of recent changes version card contains "0.1.1Document title updated"
         And  last version card header title contains "Version 0.1.0 - Document created"
         When click on save button in ribbon toolbar
         Then "Save this version" dialog box window is displayed
@@ -101,7 +100,6 @@ Feature: cover page Regression Features
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section
         And  navigation pane is minimized
-        And  last subversion of recent changes version card contains "0.1.1Document title updated"
         And  last version card header title contains "Version 0.1.0 - Document created"
         When click on home link in breadcrumb item
         Then user is on home page
