@@ -151,7 +151,7 @@
   </div>
 </div>
 
-<div class="row eui-u-mt-l d-flex align-items-start" *ngIf="!greffeUser">
+<div class="row eui-u-mt-l d-flex align-items-start">
   <div class="col-md-11">
     <eui-card
       class="eui-u-mt-s eui-u-mb-l"
@@ -258,7 +258,7 @@
                   class="details-tab-inline">{{'page.collection.details.institutional.reference.final' | translate}}</label>
               </div>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-version" *ngIf="false">
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-version" *ngIf="false && !greffeUser">
               <label
                 euiLabel
                 translate="page.collection.details.institutional.reference.version"
