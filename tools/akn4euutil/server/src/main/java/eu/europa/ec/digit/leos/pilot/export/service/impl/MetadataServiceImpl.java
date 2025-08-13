@@ -45,6 +45,7 @@ import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.insertEleme
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isMainDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.deleteElementsByXPath;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getChildNodeWithName;
+import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getXmlChildNodeWithAttributeValue;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getXmlChildNodeWithNameAttributeValue;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.newXmlFile;
 
@@ -780,24 +781,30 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public void processStamp(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        if (!MetadataUtil.VALUE_ONE.equals(fieldInfo.getDisplayValue())) return;
         if (MetadataUtil.isMainDocumentFile(xmlFile)) return;
 
         final Node conclusions = xmlFile.getElementByName(MetadataUtil.ELEMENT_CONCLUSIONS);
         if (conclusions == null) return;
 
-        final Node blockNode = xmlFile.newElement("block");
-        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
-        XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.ATTRIBUTE_NAME, "stamp");
+        if (MetadataUtil.VALUE_ONE.equals(fieldInfo.getDisplayValue())) {
+            final Node blockNode = xmlFile.newElement("block");
+            XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(blockNode, MetadataUtil.ATTRIBUTE_NAME, "stamp");
 
-        final String language = readLanguageValue(xmlFile);
-        final String b64Stamp = getLanguageStampAsBase64(language);
+            final String language = readLanguageValue(xmlFile);
+            final String b64Stamp = getLanguageStampAsBase64(language);
 
-        final Node imgNode = xmlFile.newElement("img");
-        XmlUtil.setNodeAttributeValue(imgNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
-        XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
-        blockNode.appendChild(imgNode);
-        conclusions.appendChild(blockNode);
+            final Node imgNode = xmlFile.newElement("img");
+            XmlUtil.setNodeAttributeValue(imgNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(imgNode, "src", "data:image/gif;base64," + b64Stamp);
+            blockNode.appendChild(imgNode);
+            conclusions.appendChild(blockNode);
+        } else if (MetadataUtil.VALUE_ZERO.equals(fieldInfo.getDisplayValue())) {
+            final Node blockNode = getXmlChildNodeWithAttributeValue(conclusions, MetadataUtil.ATTRIBUTE_NAME, "stamp");
+            if (blockNode != null) {
+                conclusions.removeChild(blockNode);
+            }
+        }
     }
 
     private String readLanguageValue(XmlUtil.XmlFile xmlFile) {

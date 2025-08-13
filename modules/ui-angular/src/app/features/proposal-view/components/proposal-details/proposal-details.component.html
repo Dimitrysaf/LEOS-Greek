@@ -204,17 +204,9 @@
                 translate="page.collection.details.adoption.date"
               ></label>
               <div class="row" class="details-tab-adoption-date">
-                <mat-form-field appearance="fill" class="date-picker">
-                  <input
-                    matInput
-                    [matDatepicker]="myDatepicker"
-                    [(ngModel)]="adoptionDate"
-                    (ngModelChange)="handleChange()"
-                    readonly
-                  />
-                  <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
-                  <mat-datepicker #myDatepicker></mat-datepicker>
-                </mat-form-field>
+                <eui-datepicker togglerIconSvg="eui-calendar"
+                                [(ngModel)]="adoptionDate"
+                                (ngModelChange)="handleChange()"></eui-datepicker>
               </div>
             </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-flag">
@@ -346,7 +338,6 @@
                 euiInputCheckBox
                 label="Insert Stamp"
                 (ngModelChange)="handleChange()"
-                [disabled]="true"
                 [(ngModel)]="stamp"
               />
               <label
@@ -468,7 +459,7 @@
   </div>
 </div>
 
-<div class="row eui-u-mt-l d-flex align-items-start" *ngIf="greffeUser">
+<div class="row eui-u-mt-l d-flex align-items-start"  *ngIf="greffeUser">
   <div class="col-md-11">
     <eui-card
       class="eui-u-mt-s eui-u-mb-l"
@@ -577,20 +568,9 @@
                   </div>
                 </div>
                 <div class="details-tab-block">
-                  <mat-form-field appearance="fill" class="date-picker">
-                    <input
-                      matInput
-                      [matDatepicker]="picker"
-                      [(ngModel)]="targetProposalDate"
-                      (ngModelChange)="handleChange()"
-                      [disabled]="!showCorrigendumAddendum"
-                      [required]="showCorrigendumAddendum"
-                      #targetProposalDateElt
-                      readonly
-                    />
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                  </mat-form-field>
+                  <eui-datepicker togglerIconSvg="eui-calendar"
+                                  [(ngModel)]="targetProposalDate"
+                                  (ngModelChange)="handleChange()"></eui-datepicker>
                 </div>
                 <div *ngIf="invalidTargetProposalDateInput" class="tooltip">
                   {{ this.getTargetProposalDateNonValidMsg() }}

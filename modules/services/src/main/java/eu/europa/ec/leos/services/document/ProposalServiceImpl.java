@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -85,6 +86,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_PROPOSAL_REF;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_STATUS;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_TARGET_USER;
 import static eu.europa.ec.leos.services.support.XmlHelper.COVERPAGE;
+import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
+import static eu.europa.ec.leos.services.support.XmlHelper.REG_FILE_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
@@ -273,14 +276,18 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, MetadataVO metadataVO) {
+    public MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, byte[] billContent, MetadataVO metadataVO) {
         Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(xmlContent,
                 new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE,
                         XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT, XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION,
                         XmlNodeConfigProcessor.ADOPTION_PLACE, XmlNodeConfigProcessor.ADOPTION_DATE, XmlNodeConfigProcessor.COTE,
-                        XmlNodeConfigProcessor.FINAL_COTE, XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE,
-                        XmlNodeConfigProcessor.STAMP},
+                        XmlNodeConfigProcessor.FINAL_COTE, XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE},
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
+        Map<String, String> billMetadata = new HashMap<>();
+        if (billContent != null) {
+            billMetadata = xmlNodeProcessor.getValuesFromXml(billContent, new String[]{XmlNodeConfigProcessor.STAMP},
+                    xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
+        }
         metadataVO.setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
         metadataVO.setInternalRef(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE));
         Map<String, List<String>> authenticLanguages = xmlNodeProcessor.getMultipleValuesFromXml(xmlContent,
@@ -305,6 +312,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         metadataVO.setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
                 detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
         metadataVO.setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
+        metadataVO.setStamp(billMetadata.get(XmlNodeConfigProcessor.STAMP) != null);
         return metadataVO;
     }
 
@@ -693,16 +701,19 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public byte[] applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception {
+    public Map<String, byte[]> applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception {
+        Map<String, byte[]> updatedDocuments = new HashMap<>();
         MetadataOptions metadataOptions = convertUpdateProposalRequestToMetadataOptions(legPackage.getExportResource().getName() + ".leg", proposal, request);
-
         Map<String, Object> zipContent = metadataService.applyMetadata(legPackage, proposal, metadataOptions);
         for (String fileName : zipContent.keySet()) {
-            if (fileName.startsWith(PROPOSAL_NAME_PREFIX)) {
-                return (byte[]) zipContent.get(fileName);
+            if (fileName.startsWith(PROPOSAL_FILE)) {
+                updatedDocuments.put(LeosCategory.PROPOSAL.name(), (byte[]) zipContent.get(fileName));
+            }
+            if (fileName.startsWith(REG_FILE_PREFIX)) {
+                updatedDocuments.put(LeosCategory.BILL.name(), (byte[]) zipContent.get(fileName));
             }
         }
-        return proposal.getContent().get().getSource().getBytes();
+        return updatedDocuments;
     }
 
     @Override
@@ -728,6 +739,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
         if (request.getAdoptionDate() != null) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             fields.add(new MetadataOptions.FieldNode("adoptionDate", dateFormat.format(request.getAdoptionDate())));
+        }
+        if (request.getStamp() != null) {
+            fields.add(new MetadataOptions.FieldNode("stamp", request.getStamp().equals(Boolean.TRUE) ? "1" : "0"));
         }
         if (request.getAdoptionPlace() != null) {
             fields.add(new MetadataOptions.FieldNode("adoptionLocation", request.getAdoptionPlace()));

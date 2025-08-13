@@ -103,6 +103,7 @@ public abstract class CollectionContextService {
     protected final Map<ContextActionService, String> actionMsgMap;
     protected Proposal proposal = null;
     protected byte[] proposalContent = null;
+    protected byte[] billContent = null;
     protected String purpose;
     protected String procedureType;
     protected String actType;
@@ -193,6 +194,11 @@ public abstract class CollectionContextService {
     public void useProposalContent(byte[] proposalContent) {
         Validate.notNull(proposalContent, "Proposal Content is required!");
         this.proposalContent = proposalContent;
+    }
+
+    public void useBillContent(byte[] billContent) {
+        Validate.notNull(billContent, "Bill Content is required!");
+        this.billContent = billContent;
     }
 
     public void useProposalId(String id) {
@@ -692,9 +698,42 @@ public abstract class CollectionContextService {
             useActionComment(proposalComment);
             useVersionType(VersionType.INTERMEDIATE);
             executeUpdateDocumentsAssociatedToProposal();
+        } else if (billContent != null) {
+            useProposal(proposal);
+            usePurpose(purpose);
+            useEeaRelevance(eeaRelevance != null ? eeaRelevance : proposal.getMetadata().get().getEeaRelevance());
+            useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
+            useActionComment(proposalComment);
+            useVersionType(VersionType.INTERMEDIATE);
+            executeUpdateBillAssociatedToProposal();
         }
 
         return proposal;
+    }
+
+    public void executeUpdateBillAssociatedToProposal() {
+        LOG.trace("Executing 'Update Bill Associated to Proposal' use case...");
+
+        Validate.notNull(proposal, "Proposal is required!");
+        Validate.notNull(proposalComment, "Proposal comment is required!");
+        Validate.notNull(versionType, "Version Type is required!");
+        Validate.notNull(billContent, "Bill Content is required!");
+
+        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
+        Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+
+        Validate.notNull(purpose, "Proposal purpose is required!");
+
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+
+        BillContextService billContext = billContextProvider.get();
+        billContext.usePackage(leosPackage);
+        billContext.usePurpose(purpose);
+        billContext.useEeaRelevance(eeaRelevance);
+        billContext.useActionMessageMap(actionMsgMap);
+        billContext.useBillContent(this.billContent);
+        billContext.useVersionType(this.versionType);
+        billContext.executeUpdateBillContent();
     }
 
     public void executeUpdateDocumentsAssociatedToProposal() {
