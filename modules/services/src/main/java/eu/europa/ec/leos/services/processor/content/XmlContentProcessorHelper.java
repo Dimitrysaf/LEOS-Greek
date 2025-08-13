@@ -361,19 +361,14 @@ public class XmlContentProcessorHelper {
         Node headingNode = getFirstChild(node, HEADING);
         if (headingNode != null) {
             Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
-            Node insNode = getFirstChild(headingNode, LEOS_TC_INSERT_ELEMENT_NAME);
-            if(delNode != null) {
+            if (delNode != null) {
                 originalHeading = StringEscapeUtils.escapeXml10(trimmedXml(delNode.getTextContent()));
                 String tocItemType = getAttributeValue(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE);
                 if(StringUtils.isNotBlank(tocItemType)) {
                     originalTocItemType = TocItemTypeName.valueOf(tocItemType);
                 }
             }
-            if(insNode != null) {
-                heading = StringEscapeUtils.escapeXml10(trimmedXml(insNode.getTextContent()));
-            } else {
-                heading = StringEscapeUtils.escapeXml10(trimmedXml(headingNode.getTextContent())); //
-            }
+            heading = getHeadingTextContentWithoutDel(headingNode);
             originHeadingAttr = getAttributeValue(headingNode, LEOS_ORIGIN_ATTR);
             headingSoftActionAttribute = getAttributeForSoftAction(headingNode, LEOS_SOFT_ACTION_ATTR);
         }
@@ -417,6 +412,15 @@ public class XmlContentProcessorHelper {
         item.setNode(withNode ? node : null);
         setItemSoleNumber(numberingConfigs, tocItems, item, messageHelper, numNodeText);
         return item;
+    }
+
+    private static String getHeadingTextContentWithoutDel(Node headingNode) {
+        String heading;
+        Node clonedNode = headingNode.cloneNode(true);
+        List<Node> delNodes = getChildren(clonedNode, LEOS_TC_DELETE_ELEMENT_NAME);
+        delNodes.forEach(clonedNode::removeChild);
+        heading = StringEscapeUtils.escapeXml10(trimmedXml(clonedNode.getTextContent()));
+        return heading;
     }
 
     private static void setItemSoleNumber(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, TableOfContentItemVO item,
@@ -627,12 +631,11 @@ public class XmlContentProcessorHelper {
         Node headingNode = XercesUtils.getFirstChild(node, HEADING);
         if (headingNode == null) {
             headingNode = createElement(node.getOwnerDocument(), HEADING, newHeading);
-        } else {
+        } else if (!StringUtils.equals(newHeading, StringEscapeUtils.unescapeXml(getHeadingTextContentWithoutDel(headingNode)))) {
             if(isTrackChangesEnabled) {
                 TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems,  headingNode.getNodeName(), XercesUtils.getAttributes(headingNode));
 
                 Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
-                Node insNode = getFirstChild(headingNode, LEOS_TC_INSERT_ELEMENT_NAME);
                 if(delNode != null) {
                     if(delNode.getTextContent().equals(newHeading)) {
                         // Switched back original type
