@@ -305,6 +305,10 @@ Then(`p tag {int} of li {int} with data-akn-element {string} of article contains
     ckEditorWindow.getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement).invoke('text').should('contain', content);
 });
 
+Then('li {int} with data-akn-element {string} of article contains {string} in edition mode', function (li, dataAknElement, content) {
+    ckEditorWindow.getParagraphElementOfArticle(li, dataAknElement).invoke('text').should('contain', content);
+});
+
 Then(`p tag {int} of li {int} with data-akn-element {string} of article contains html {string} in edition mode`, (pTag, paragraphLi, paragraphDataAknElement, content) => {
     ckEditorWindow.getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement).should('include.html', content);
 });
