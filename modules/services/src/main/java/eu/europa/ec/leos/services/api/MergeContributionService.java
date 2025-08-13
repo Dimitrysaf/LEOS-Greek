@@ -1581,15 +1581,18 @@ public class MergeContributionService {
                             Node child = children.item(i);
                             String childContent = getContent(child);
                             if (childContent.contains(prevContent.trim()) && prevContent.length() > 1 && !StringUtils.isBlank(prevContent)) {
-                                String toBeReplacedBy = withTrackChanges ? prevContent + nodeToString(nodeToBeAddedOrRemoved) : prevContent + getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved);
+                                String toReplace = withTrackChanges ? prevContent + nodeToString(nodeToBeAddedOrRemoved) : prevContent + getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved);
                                 if (nextContent != null && nextContent.startsWith(" ")) {
-                                    toBeReplacedBy += " ";
+                                    toReplace += " ";
                                 }
-                                XercesUtils.replaceElement(child,
-                                        nodeToString(child).replaceFirst(!nodeToString(child).contains(prevContent) ?
-                                                        Pattern.quote(prevContent.trim()) :
-                                                        Pattern.quote(prevContent),
-                                                toBeReplacedBy.replaceAll("\\\\", "\\\\\\\\")));
+                                String toBeReplacedBy = !nodeToString(child).contains(prevContent) ? prevContent.trim() : prevContent;
+                                int positionOfToBeReplacedBy = nodeToString(child).lastIndexOf(toBeReplacedBy);
+                                int sizeOfToBeReplacedBy = toBeReplacedBy.length();
+                                String endOfString = "";
+                                if (positionOfToBeReplacedBy + sizeOfToBeReplacedBy + 1 < nodeToString(child).length()) {
+                                    endOfString = nodeToString(child).substring(positionOfToBeReplacedBy + toBeReplacedBy.length());
+                                }
+                                XercesUtils.replaceElement(child, nodeToString(child).substring(0, positionOfToBeReplacedBy) + toReplace + endOfString);
                                 found = true;
                                 break;
                             }
