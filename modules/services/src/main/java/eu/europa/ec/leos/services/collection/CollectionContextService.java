@@ -577,7 +577,7 @@ public abstract class CollectionContextService {
                 .withEeaRelevance(eeaRelevance)
                 .build();
 
-        proposal = proposalService.updateProposal(proposal, metadata, VersionType.TECHNICAL, proposalComment);
+        proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);
 
         useProposal(proposal);
         usePurpose(proposal.getMetadata().get().getPurpose());
