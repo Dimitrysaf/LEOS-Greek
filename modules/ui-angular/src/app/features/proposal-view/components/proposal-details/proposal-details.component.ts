@@ -615,7 +615,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.isAdoptionDateChanged() ? this.adoptionDate.toDate() : null,
       this.isInstitutionalReferenceChanged() ? this.getInstitutionalReference() : null,
       this.isInstitutionalReferenceChanged() ? this.institutionalReferenceFinalVersion : null,
-      this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null
+      this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null,
+      this.isStampChanged() ? this.stamp : null
     ).subscribe({
       next: () => {
         this.detailsService.setProposalRef(this.proposal.ref);

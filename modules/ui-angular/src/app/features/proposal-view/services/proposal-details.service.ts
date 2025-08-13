@@ -198,7 +198,7 @@ export class ProposalDetailsService implements OnDestroy {
                          proposalType?: string, targetProposalReference?: string, targetProposalDate?: Date, proposalTargetLang?: string[],
                          correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
-                         institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string) {
+                         institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean) {
     const internalRef = null;
     return this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
@@ -222,7 +222,8 @@ export class ProposalDetailsService implements OnDestroy {
         adoptionDate,
         institutionalReference,
         institutionalReferenceFinalVersion,
-        interInstitutionalReference
+        interInstitutionalReference,
+        stamp
       });
   }
 
