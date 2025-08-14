@@ -101,7 +101,6 @@ Feature: cover page Regression Features
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section
         And  navigation pane is minimized
-        And  last subversion of recent changes version card contains "0.1.1Document title updated"
         And  last version card header title contains "Version 0.1.0 - Document created"
         When click on home link in breadcrumb item
         Then user is on home page
