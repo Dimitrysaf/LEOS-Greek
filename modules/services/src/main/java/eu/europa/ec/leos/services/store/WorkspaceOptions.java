@@ -61,18 +61,8 @@ public class WorkspaceOptions {
         } else {
             initRoleFilter();
         }
-        initDefaultFilters(filters);
         initSortOrder();
 
-    }
-
-    private void initDefaultFilters(FilterProposalsRequest.Filter[] filters){
-        if ((filters == null || filters.length == 0) || !Arrays.stream(filters)
-                .anyMatch(filter -> "customTemplates".equals(filter.getType()))){
-            workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
-                    "=", false, true,
-                    "false"));
-        }
     }
 
     private void initFilter(FilterProposalsRequest.Filter[] filters) {
