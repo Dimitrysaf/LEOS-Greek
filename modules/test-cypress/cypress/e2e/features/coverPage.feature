@@ -15,7 +15,7 @@ Feature: cover page Regression Features
         And  click on create button
         Then user is on act viewer page
 
-    @coverPage @local @focus
+    @coverPage @local
     Scenario: edition of title in cover page 
         And  title of the act contains "Automation Cover Page Testing" keyword
         When click on legal act link present in act viewer page
