@@ -1081,6 +1081,17 @@ public class XercesUtils {
         return null;
     }
 
+    public static boolean hasAscendantOfType(Node node, String type) {
+        Node parent = node;
+        while (parent != null) {
+            if (parent.getNodeType() == Node.ELEMENT_NODE && parent.getNodeName().equalsIgnoreCase(type)) {
+                return true;
+            }
+            parent = parent.getParentNode();
+        }
+        return false;
+    }
+
     public static int getPointDepth(Node node) {
         int pointDepth = 0;
         if (node != null && Arrays.asList(POINT, INDENT).contains(node.getNodeName())) {

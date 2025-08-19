@@ -70,6 +70,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.getStartTagNodeAsXmlFragment;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasAscendantOfType;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAscendantWithId;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
@@ -1892,6 +1893,9 @@ public class MergeContributionService {
             if (realDelElt.getNodeName().equals(LEOS_TC_DELETE_ELEMENT_NAME)) {
                 xmlContent = undoDelInContent(xmlContent, delElt);
                 impactedElements.add(getId(delElt));
+                if (delElt.getNodeName().equalsIgnoreCase(LEOS_TC_DELETE_ELEMENT_NAME) && hasAscendantOfType(delElt, LEOS_TC_INSERT_ELEMENT_NAME)) {
+                    realDelElt.getParentNode().removeChild(realDelElt);
+                }
             } else {
                 xmlContent = handleIntroAndConclusionForList(xmlContent, realDelElt, delElt);
                 Node sibling = getSiblingForRenumbering(realDelElt);
@@ -1907,6 +1911,9 @@ public class MergeContributionService {
                         tocItemsList, mergingCompletelySuccessfull);
                 xmlContent = renumberFragment(xmlContent, getId(realDelElt), tocItemsList);
                 impactedElements.add(getId(realDelElt));
+                if (delElt.getNodeName().equalsIgnoreCase(LEOS_TC_DELETE_ELEMENT_NAME) && hasAscendantOfType(delElt, LEOS_TC_INSERT_ELEMENT_NAME)) {
+                    realDelElt.getParentNode().removeChild(realDelElt);
+                }
             }
         }
         return xmlContent;

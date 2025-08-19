@@ -48,6 +48,7 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import io.atlassian.fugue.Option;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -1811,6 +1812,56 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
+        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        this.contribution3.setXmlContent(contributionContent3);
+    }
+
+    @Test
+    public void testUndoUpdatingChapterHeadingWith2UsersWithoutTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateChapterHeadingWith2UsersWithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest3.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecMx441KrjVTv0g4c");
+        mergeActionVO.setElementTagName("heading");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithUpdateChapterHeadingWith2Users.xml");
+        this.contribution3.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution3);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3With2Users.xml"));
+        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        this.contribution3.setXmlContent(contributionContent3);
+    }
+
+    @Test
+    public void testUndoUpdatingChapterHeadingWith2UsersWithTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateChapterHeadingWith2UsersWithTC.xml");
+        Content content = new ContentImpl("billMergeTest3.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecMx441KrjVTv0g4c");
+        mergeActionVO.setElementTagName("heading");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithUpdateChapterHeadingWith2Users.xml");
+        this.contribution3.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution3);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3With2Users.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
         this.contribution3.setXmlContent(contributionContent3);
     }
