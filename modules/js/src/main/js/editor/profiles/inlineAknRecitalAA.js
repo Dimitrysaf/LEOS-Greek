@@ -62,6 +62,7 @@ define(function aknRecitalAAProfileModule(require) {
     plugins.push(require("plugins/aknUnorderedList/aknUnorderedListPlugin"));
     plugins.push(require("plugins/leosArticleList/leosArticleListPlugin"));
     plugins.push(require("plugins/leosRecitalIndentlist/leosRecitalIndentlistPlugin"));
+    plugins.push(require("plugins/leosInsertAfter/leosInsertAfterPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
