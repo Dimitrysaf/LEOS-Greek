@@ -47,6 +47,7 @@ import java.util.Map;
 import static eu.europa.ec.digit.leos.pilot.export.model.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.ANNEX_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.DEC_FILE_PREFIX;
+import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.DIR_DEL_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.DIR_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.MEMORANDUM_FILE_PREFIX;
 import static eu.europa.ec.digit.leos.pilot.export.service.impl.XmlDocumentServiceImpl.PROP_ACT_PREFIX;
@@ -80,6 +81,7 @@ public class XmlContentProcessorImpl implements XmlContentProcessor {
                 case REG_DEL_FILE_PREFIX:
                 case DIR_FILE_PREFIX:
                 case DEC_FILE_PREFIX:
+                case DIR_DEL_FILE_PREFIX:
                     category = LeosCategory.BILL;
                     break;
                 case MEMORANDUM_FILE_PREFIX:
