@@ -609,7 +609,7 @@ public abstract class CollectionContextService {
         billContext.useEeaRelevance(eeaRelevance);
         billContext.useActionMessageMap(actionMsgMap);
         billContext.setAnnexToBeUpdated(false);
-        billContext.executeUpdateBill();
+        billContext.executeUpdateMetadataBill();
     }
 
     public void executeDeleteProposal() {

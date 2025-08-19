@@ -451,6 +451,36 @@ public class BillContextService {
         }
     }
 
+    public void executeUpdateMetadataBill() {
+        LOG.trace("Executing 'Update Bill' use case...");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
+        if(billByPackagePath != null) {
+            Option<BillMetadata> metadataOption = billByPackagePath.getMetadata();
+            Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
+            Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
+            BillMetadata metadata = metadataOption.get()
+                    .builder()
+                    .withPurpose(purpose)
+                    .withEeaRelevance(eeaRelevance)
+                    .build();
+            billService.updateBill(billByPackagePath, metadata, VersionType.TECHNICAL, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            if(isAnnexToBeUpdated) {
+                // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
+                List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+                annexes.forEach(annex -> {
+                    AnnexContextService annexContext = annexContextProvider.get();
+                    annexContext.usePurpose(purpose);
+                    annexContext.useAnnexId(annex.getId());
+                    annexContext.useActionMessageMap(actionMsgMap);
+                    annexContext.useEeaRelevance(eeaRelevance);
+                    annexContext.executeUpdateAnnexMetadata();
+                });
+            }
+        }
+    }
+
     public void executeRemoveBillAnnex() {
         LOG.trace("Executing 'Remove Bill Annex' use case...");
 
