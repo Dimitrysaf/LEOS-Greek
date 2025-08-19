@@ -34,6 +34,8 @@ public class UpdateProposalRequest {
     private Boolean showCorrigendumAddendum;
     private Boolean finalVersion;
 
+    private Boolean stamp;
+
     private String adoptionPlace;
     private Date adoptionDate;
     private String institutionalReference;

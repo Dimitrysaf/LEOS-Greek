@@ -425,12 +425,23 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
             }
-            byte[] proposalContent = proposalService.applyMetadata(legPackage, proposal, request);
-            context.useProposal(proposal);
-            context.useProposalContent(proposalContent);
-            proposal = context.executeUpdateMetadataProposal();
-            proposal = proposalService.populateProposalMetadataFromXml(proposal);
-            return new DocumentVO(proposal);
+            Map<String, byte[]> updatedDocuments = proposalService.applyMetadata(legPackage, proposal, request);
+            if (!updatedDocuments.containsKey(LeosCategory.PROPOSAL.name())) {
+                throw new Exception("Unexpected error occurred while updating proposal metadata");
+            } else {
+                context.useProposal(proposal);
+                context.useProposalContent(updatedDocuments.get(LeosCategory.PROPOSAL.name()));
+                if (updatedDocuments.containsKey(LeosCategory.BILL.name())) {
+                    LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+                    Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+                    if (!new String(bill.getContent().get().getSource().getBytes(), StandardCharsets.UTF_8).equals(new String(updatedDocuments.get(LeosCategory.BILL.name()), StandardCharsets.UTF_8))) {
+                        context.useBillContent(updatedDocuments.get(LeosCategory.BILL.name()));
+                    }
+                }
+                proposal = context.executeUpdateMetadataProposal();
+                proposal = proposalService.populateProposalMetadataFromXml(proposal);
+                return new DocumentVO(proposal);
+            }
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;
@@ -774,7 +785,9 @@ public abstract class ApiServiceImpl implements ApiService {
                                 : new byte[0];
                     }
                     MetadataVO metadataVO = createMetadataVO(proposal);
-                    proposalVO.setMetaData(proposalService.populateProposalMetadataFromXml(proposalXmlContent, metadataVO));
+                    Optional<XmlDocument> bill = documents.stream().filter((d) -> d.getCategory().equals(LeosCategory.BILL)).findAny();
+                    proposalVO.setMetaData(proposalService.populateProposalMetadataFromXml(proposalXmlContent,
+                            bill.map(xmlDocument -> billService.findBillByRef(xmlDocument.getMetadata().get().getRef()).getContent().get().getSource().getBytes()).orElse(null), metadataVO));
                     proposalVO.addCollaborators(proposal.getCollaborators());
                     proposalVO.setUpdatedBy(userHelper.convertToPresentation(proposal.getLastModifiedBy()));
                     proposalVO.setCreatedBy(userHelper.convertToPresentation(proposal.getCreatedBy()));

@@ -94,6 +94,7 @@ public class BillContextService {
 
     private LeosPackage leosPackage = null;
     private Bill bill = null;
+    private byte[] billContent = null;
     private String versionComment;
     private VersionType versionType;
     private String milestoneComment;
@@ -304,6 +305,11 @@ public class BillContextService {
         this.customTemplateAct = customTemplateAct;
     }
 
+    public void useBillContent(byte[] content) {
+        LOG.trace("Using Bill content... [billContent={}]", content);
+        this.billContent = content;
+    }
+
     public void usePackageRef(String packageRef) {
         this.packageRef = packageRef;
     }
@@ -484,6 +490,27 @@ public class BillContextService {
                 useAnnexDocument(docChild);
                 createRefForAnnex(metadata);
             }
+        }
+    }
+
+    public void executeUpdateBillContent() {
+        LOG.trace("Executing 'Update Bill' use case...");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+        Validate.notNull(versionType, "Version Type is required!");
+        Validate.notNull(billContent, "Bill Content is required!");
+
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
+        if(billByPackagePath != null) {
+            Option<BillMetadata> metadataOption = billByPackagePath.getMetadata();
+            Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
+            Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
+            BillMetadata metadata = metadataOption.get()
+                    .builder()
+                    .withPurpose(purpose)
+                    .withEeaRelevance(eeaRelevance)
+                    .build();
+            billByPackagePath = billService.updateBill(billByPackagePath.getId(), billContent, false);
+            billService.updateBill(billByPackagePath, metadata, this.versionType, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
         }
     }
 

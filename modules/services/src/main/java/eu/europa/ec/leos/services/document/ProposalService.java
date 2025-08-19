@@ -121,11 +121,11 @@ public interface ProposalService {
 
     LeosDocument findConfigByName(String name);
 
-    byte[] applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception;
+    Map<String, byte[]> applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception;
 
     MetadataOptions convertUpdateProposalRequestToMetadataOptions(String legFileName, Proposal proposal, UpdateProposalRequest request);
 
     Proposal populateProposalMetadataFromXml(Proposal proposal);
 
-    MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, MetadataVO metadataVO);
+    MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, byte[] billContent, MetadataVO metadataVO);
 }
