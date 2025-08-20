@@ -156,7 +156,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   isCoverPageTypeChanged() {
     return this.coverPageType !== this.proposalMetadata.coverPageType
-      || this.verticalShift.toString() !== this.proposalMetadata.verticalShift;
+      || (this.isVerticalShift && this.verticalShift.toString() !== this.proposalMetadata.verticalShift);
   }
 
   isAuthenticLangChanged() : boolean {
@@ -181,7 +181,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     }
 
     return (this.proposalMetadata.isAuthenticLang !== isMetadataAuthenticLang
-      || JSON.stringify(this.proposalMetadata.authenticLang) !== JSON.stringify(this.authenticLang));
+      || JSON.stringify(this.proposalMetadata.authenticLang.sort()) !== JSON.stringify(this.authenticLang.sort()));
   }
 
   isCrossReferencesChanged(): boolean {
@@ -193,7 +193,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isAdoptionDateChanged(): boolean {
-    return this.adoptionDate.toDate() !== this.proposalMetadata.adoptionDate;
+    return (new Date(this.proposalMetadata.adoptionDate).getTime()/1000) !== this.adoptionDate.unix();
   }
 
   isInstitutionalReferenceChanged(): boolean {

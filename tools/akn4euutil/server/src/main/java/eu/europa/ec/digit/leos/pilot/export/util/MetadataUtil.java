@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -109,7 +110,7 @@ public class MetadataUtil {
     public static final String TLCREFERENCE = "TLCReference";
     public static final String ELEMENT_DISCLAIMER ="disclaimer";
     public static final String ELEMENT_LOGO ="logo";
-   public static final String ELEMENT_P ="p";
+    public static final String ELEMENT_P ="p";
     public static final String ELEMENT_IMG ="img";
     public static final String ELEMENT_ORGANIZATION ="organization";
     public static final String ATTRIBUTE_PACKAGE_TITLE="packageTitle";
@@ -131,136 +132,13 @@ public class MetadataUtil {
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
             "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
 
-    /**
-     * List providing spellings of role "president" in different languages.
-     *
-     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
-     */
-    public static final Set<String> ROLE_PRESIDENT = new LinkedHashSet<>(Arrays.asList("The President",
-                    "Председател", "předseda", "Formand", "Der Präsident",
-                    "Die Präsidentin", "Ο Πρόεδρος", "El Presidente", "eesistuja",
-                    "Puheenjohtaja", "Le président", "An tUachtarán", "Predsjednik",
-                    "Predsjednica", "az elnök", "Il presidente", "Pirmininkas",
-                    "priekšsēdētājs", "Il-President", "De voorzitter", "Przewodniczący",
-                    "O Presidente", "Preşedintele", "predseda", "Predsednik",
-                    "Ordförande")
-            .stream()
-            .map(String::toLowerCase)
-            .collect(Collectors.toList()));
-
-    /**
-     * List providing spellings of role "vice president" in different languages.
-     *
-     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
-     */
-    public static final Set<String> ROLE_VICE_PRESIDENT = new LinkedHashSet<>(Arrays.asList("Vice-President",
-                    "Заместник-председател", "místopředseda", "místopředsedkyně",  "Næstformand",
-                    "Vizepräsident", "Vizepräsidentin", "Αντιπρόεδρος", "Vicepresidente",
-                    "asepresident", "Varapuheenjohtaja", "Vice-président", "An Leas-Uachtarán",
-                    "Potpredsjednik", "Potpredsjednica", "alelnök", "Vicepresidente",
-                    "Pirmininko pavaduotojas", "priekšsēdētāja vietnieks", "Viċi President", "Vicevoorzitter",
-                    "Wiceprzewodniczący", "Vice-Presidente", "Vicepreşedinte", "podpredseda",
-                    "Podpredsednik", "Vice ordförande")
-            .stream()
-            .map(String::toLowerCase)
-            .collect(Collectors.toList()));
-
-    /**
-     * List providing spellings of role "Member of the Commission" in different languages.
-     *
-     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
-     */
-    public static final Set<String> ROLE_MEMBER_OF_THE_COMMISSION = new LinkedHashSet<>(Arrays.asList("Member of the Commission",
-                    "Член на Комисията", "člen Komise", "členka Komise", "Medlem af Kommissionen",
-                    "Μέλος της Επιτροπής", "Miembro de la Comisión", "komisjoni liige", "Komission jäsen",
-                    "Membre de la Commission", "Comhalta den Choimisiún", "Član Komisije", "Članica Komisije",
-                    "a Bizottság tagja", "Membro della Commissione", "Komisijos narys", "Komisijas loceklis",
-                    "Membru tal-Kummissjoni", "Lid van de Commissie", "Członek Komisji", "Membro da Comissão",
-                    "Membru al Comisiei", "člen Komisie", "Član Komisije", "Ledamot av kommissionen")
-            .stream()
-            .map(String::toLowerCase)
-            .collect(Collectors.toList()));
-
-    /**
-     * List providing spellings of role "Director General" in different languages.
-     *
-     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
-     */
-    public static final Set<String> ROLE_DIRECTOR_GENERAL = new LinkedHashSet<>(Arrays.asList("Director General",
-                    "Генерален директор", "generální ředitel", "generální ředitelka", "Generaldirektør",
-                    "Generaldirektor", "Generaldirektorin", "Γενικός διευθυντής", "Director General",
-                    "peadirektor", "Pääjohtaja", "Directeur général", "An tArd-Stiúrthóir",
-                    "Glavni direktor", "Glavna direktorica", "főigazgató", "Direttore generale",
-                    "Generalinis direktorius", "ģenerāldirektors", "Direttur Ġenerali", "Directeur-generaal",
-                    "Dyrektor Generalny", "Diretor-Geral", "Director general", "generálny riaditeľ",
-                    "Generalni direktor", "Generaldirektör")
-            .stream()
-            .map(String::toLowerCase)
-            .collect(Collectors.toList()));
-
-    /**
-     * List providing spellings of role "Head of Service" in different languages.
-     *
-     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
-     */
-    public static final Set<String> ROLE_HEAD_OF_SERVICE = new LinkedHashSet<>(Arrays.asList("Head of Service",
-                    "Ръководител на служба","vedoucí útvaru","Tjenestechef","Leiter der",
-                    "Leiterin der","Leiter des","Leiterin des","προϊστάμενος υπηρεσίας",
-                    "Jefe de Servicio","talituse juhataja","Toimialajohtaja", "Chef de service",
-                    "Ceann na Seirbhíse","Voditelj službe","Voditeljica službe","szolgálatvezető",
-                    "Caposervizio","Tarnybos vadovas","dienesta vadītājs","Kap tas-Servizz",
-                    "Diensthoofd","Szef Służby","Chefe de Serviço", "Şef de serviciu",
-                    "vedúci útvaru","Vodja službe","Avdelningschef")
-            .stream()
-            .map(String::toLowerCase)
-            .collect(Collectors.toList()));
-
-    /**
-     * List providing spellings of role "Director" in different languages.
-     *
-     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
-     */
-    public static final Set<String> ROLE_DIRECTOR = new LinkedHashSet<>(Arrays.asList("Director",
-                    "Директор", "ředitel", "ředitelka", "Direktør",
-                    "Direktor","Direktorin","Διευθυντής","Director",
-                    "direktor","Johtaja","Directeur","An Stiúrthóir",
-                    "Direktor","igazgató", "Direktorica","Direttore",
-                    "Direktorius","direktors","Direttur","Directeur",
-                    "Dyrektor","Diretor","Director","riaditeľ",
-                    "Direktor","Direktör")
-            .stream()
-            .map(String::toLowerCase)
-            .collect(Collectors.toList()));
-
-    /**
-     * List providing spellings of role "Head of Unit" in different languages.
-     *
-     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
-     */
-    public static final Set<String> ROLE_HEAD_OF_UNIT = new LinkedHashSet<>(Arrays.asList("Head of Unit",
-                    "Началник на отдел","vedoucí oddělení","Kontorchef","Referatsleiter",
-                    "Referatsleiterin","Προϊστάμενος Μονάδας","Jefe de Unidad","üksuse juhataja",
-                    "Yksikönpäällikkö","Chef d'unité", "An Ceann Aonaid","Načelnik odjela",
-                    "Načelnica odjela", "egységvezető","Capo unità","Skyriaus vadovas",
-                    "nodaļas vadītājs","Kap tal-Unità","Eenheidshoofd","Kierownik Działu",
-                    "Chefe de Unidade","Şef de unitate","vedúci oddelenia","Vodja enote",
-                    "Enhetschef")
-            .stream()
-            .map(String::toLowerCase)
-            .collect(Collectors.toList()));
-
-    /**
-     * List providing spellings of role "The secretaries" in different languages.
-     *
-     * Spellings are sorted by languages: EN,BG,CS,DA,DE,EL,ES,ET,FI,FR,GA,HR,HU,IT,LT,LV,MT,NL,PL,PT,RO,SK,SL,SV
-     */
-    public static final Set<String> ROLE_SECRETARIES = new LinkedHashSet<>(Arrays.asList("The Secretaries",
-                    "Секретари","tajemníci","Sekretærer","Οι Γραμματείς",
-                    "Die Sekretäre","Die Sekretärinnen","της Μεικτής","Los Secretarios",
-                    "del Comité","sekretärid","sekakomitean", "Les secrétaires",
-                    "titkárai","I segretari","sekretoriai","sekretāri",
-                    "Is-Segretarji","De secretarissen","Sekretarze","Os Secretários",
-                    "Secretarii","tajomníci","Sekretarja","sekreterare")
+    public static final Set<String> LIST_LANGUAGES = new LinkedHashSet<>(Arrays.asList("BG",
+                    "CS", "DA", "DE", "EL", "EN", "ES", "ET", "FI",
+                    "FR", "GA", "HR", "HU",
+                    "IT", "LT", "LV", "MT",
+                    "NL", "PL", "PT", "RO",
+                    "SK", "SL",
+                    "SV")
             .stream()
             .map(String::toLowerCase)
             .collect(Collectors.toList()));
@@ -292,31 +170,31 @@ public class MetadataUtil {
                 "", MetadataFieldType.ADOPTION_LOCATION);
     }
 
-    public static ReferenceFieldInfo getRolePresidentFieldInfo() {
+    public static ReferenceFieldInfo getRolePresidentFieldInfo(final String lang) {
         return new ReferenceFieldInfo("PRESID",
                 "http://publications.europa.eu/resource/authority/role/PRESID",
-                "President",
+                ResourcesUtil.getMessage(lang, "role.president"),
                 "", MetadataFieldType.COMMISSIONER);
     }
 
-    public static ReferenceFieldInfo getRoleVicePresidentFieldInfo() {
+    public static ReferenceFieldInfo getRoleVicePresidentFieldInfo(final String lang) {
         return new ReferenceFieldInfo("PRESID_VICE",
                 "http://publications.europa.eu/resource/authority/role/PRESID_VICE",
-                "Vice-President",
+                ResourcesUtil.getMessage(lang, "role.vice.president"),
                 "", MetadataFieldType.COMMISSIONER);
     }
 
-    public static ReferenceFieldInfo getRoleMemberOfTheCommissionFieldInfo() {
+    public static ReferenceFieldInfo getRoleMemberOfTheCommissionFieldInfo(final String lang) {
         return new ReferenceFieldInfo("MEMBER_COM",
                 "http://publications.europa.eu/resource/authority/role/MEMBER_COM",
-                "Member of the Commission",
+                ResourcesUtil.getMessage(lang, "role.member.commission"),
                 "", MetadataFieldType.COMMISSIONER);
     }
 
-    public static ReferenceFieldInfo getRoleDirectorGeneralFieldInfo() {
+    public static ReferenceFieldInfo getRoleDirectorGeneralFieldInfo(final String lang) {
         return new ReferenceFieldInfo("DIR_GEN",
                 "http://publications.europa.eu/resource/authority/role/DIR_GEN",
-                "Director General",
+                ResourcesUtil.getMessage(lang, "role.director.general"),
                 "", MetadataFieldType.COMMISSIONER);
     }
 
@@ -781,35 +659,67 @@ public class MetadataUtil {
     }
 
     public static boolean isRolePresident(final String value) {
-        return valueContainsSpelling(value, ROLE_PRESIDENT);
+        final Set<String> rolesPresident = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            rolesPresident.add(ResourcesUtil.getMessage(lang, "role.president").toLowerCase());
+        }
+        return valueContainsSpelling(value, rolesPresident);
     }
 
     public static boolean isRoleVicePresident(final String value) {
-        return valueContainsSpelling(value, ROLE_VICE_PRESIDENT);
+        final Set<String> rolesVicePresident = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            rolesVicePresident.add(ResourcesUtil.getMessage(lang, "role.vice.president").toLowerCase());
+        }
+        return valueContainsSpelling(value, rolesVicePresident);
     }
 
     public static boolean isRoleMemberOfTheCommission(final String value) {
-        return valueContainsSpelling(value, ROLE_MEMBER_OF_THE_COMMISSION);
+        final Set<String> rolesMemberOfTheCommission = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            rolesMemberOfTheCommission.add(ResourcesUtil.getMessage(lang, "role.member.commission").toLowerCase());
+        }
+        return valueContainsSpelling(value, rolesMemberOfTheCommission);
     }
 
     public static boolean isRoleDirectorGeneral(final String value) {
-        return valueContainsSpelling(value, ROLE_DIRECTOR_GENERAL);
+        final Set<String> rolesDirectorGeneral = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            rolesDirectorGeneral.add(ResourcesUtil.getMessage(lang, "role.director.general").toLowerCase());
+        }
+        return valueContainsSpelling(value, rolesDirectorGeneral);
     }
 
     public static boolean isRoleDirector(final String value) {
-        return valueContainsSpelling(value, ROLE_DIRECTOR);
+        final Set<String> rolesDirector = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            rolesDirector.add(ResourcesUtil.getMessage(lang, "role.director").toLowerCase());
+        }
+        return valueContainsSpelling(value, rolesDirector);
     }
 
     public static boolean isRoleHeadOfService(final String value) {
-        return valueContainsSpelling(value, ROLE_HEAD_OF_SERVICE);
+        final Set<String> rolesHeadOfService = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            rolesHeadOfService.add(ResourcesUtil.getMessage(lang, "role.head.service").toLowerCase());
+        }
+        return valueContainsSpelling(value, rolesHeadOfService);
     }
 
     public static boolean isRoleHeadOfUnit(final String value) {
-        return valueContainsSpelling(value, ROLE_HEAD_OF_UNIT);
+        final Set<String> rolesHeadOfUnit = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            rolesHeadOfUnit.add(ResourcesUtil.getMessage(lang, "role.head.unit").toLowerCase());
+        }
+        return valueContainsSpelling(value, rolesHeadOfUnit);
     }
 
     public static boolean isRoleSecretaries(final String value) {
-        return valueContainsSpelling(value, ROLE_SECRETARIES);
+        final Set<String> rolesSecretaries = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            rolesSecretaries.add(ResourcesUtil.getMessage(lang, "role.secretaries").toLowerCase());
+        }
+        return valueContainsSpelling(value, rolesSecretaries);
     }
 
     public static boolean valueContainsSpelling(final String value, final Collection<String> spellings) {
