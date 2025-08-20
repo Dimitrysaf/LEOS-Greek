@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.Node;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * tests on parsing the linked documents
@@ -281,56 +283,88 @@ public class MetadataUtilsTests {
 
     @Test
     public void testIsPresidentRole() {
-        for (String spelling : MetadataUtil.ROLE_PRESIDENT){
+        final Set<String> rolesPresident = new HashSet<>();
+        for (final String lang : MetadataUtil.LIST_LANGUAGES) {
+            rolesPresident.add(ResourcesUtil.getMessage(lang, "role.president").toLowerCase());
+        }
+        for (String spelling : rolesPresident){
             Assertions.assertTrue(MetadataUtil.isRolePresident(spelling));
         }
     }
 
     @Test
     public void testIsVicePresidentRole() {
-        for (String spelling : MetadataUtil.ROLE_VICE_PRESIDENT){
+        final Set<String> rolesVicePresident = new HashSet<>();
+        for (final String lang : MetadataUtil.LIST_LANGUAGES) {
+            rolesVicePresident.add(ResourcesUtil.getMessage(lang, "role.vice.president").toLowerCase());
+        }
+        for (String spelling : rolesVicePresident){
             Assertions.assertTrue(MetadataUtil.isRoleVicePresident(spelling));
         }
     }
 
     @Test
     public void testIsDirectorRole() {
-        for (String spelling : MetadataUtil.ROLE_DIRECTOR){
+        final Set<String> rolesDirector = new HashSet<>();
+        for (final String lang : MetadataUtil.LIST_LANGUAGES) {
+            rolesDirector.add(ResourcesUtil.getMessage(lang, "role.director").toLowerCase());
+        }
+        for (String spelling : rolesDirector){
             Assertions.assertTrue(MetadataUtil.isRoleDirector(spelling));
         }
     }
 
     @Test
     public void testIsDirectorGeneralRole() {
-        for (String spelling : MetadataUtil.ROLE_DIRECTOR_GENERAL){
+        final Set<String> rolesDirectorGeneral = new HashSet<>();
+        for (final String lang : MetadataUtil.LIST_LANGUAGES) {
+            rolesDirectorGeneral.add(ResourcesUtil.getMessage(lang, "role.director.general").toLowerCase());
+        }
+        for (String spelling : rolesDirectorGeneral){
             Assertions.assertTrue(MetadataUtil.isRoleDirectorGeneral(spelling));
         }
     }
 
     @Test
     public void testIsHeadOfServiceRole() {
-        for (String spelling : MetadataUtil.ROLE_HEAD_OF_SERVICE){
+        final Set<String> rolesHeadOfService = new HashSet<>();
+        for (final String lang : MetadataUtil.LIST_LANGUAGES) {
+            rolesHeadOfService.add(ResourcesUtil.getMessage(lang, "role.head.service").toLowerCase());
+        }
+        for (String spelling : rolesHeadOfService){
             Assertions.assertTrue(MetadataUtil.isRoleHeadOfService(spelling));
         }
     }
 
     @Test
     public void testIsHeadOfUnitRole() {
-        for (String spelling : MetadataUtil.ROLE_HEAD_OF_UNIT){
+        final Set<String> rolesHeadOfUnit = new HashSet<>();
+        for (final String lang : MetadataUtil.LIST_LANGUAGES) {
+            rolesHeadOfUnit.add(ResourcesUtil.getMessage(lang, "role.head.unit").toLowerCase());
+        }
+        for (String spelling : rolesHeadOfUnit){
             Assertions.assertTrue(MetadataUtil.isRoleHeadOfUnit(spelling));
         }
     }
 
     @Test
     public void testIsMemberOfCommissionRole() {
-        for (String spelling : MetadataUtil.ROLE_MEMBER_OF_THE_COMMISSION){
+        final Set<String> rolesMemberOfCommission = new HashSet<>();
+        for (final String lang : MetadataUtil.LIST_LANGUAGES) {
+            rolesMemberOfCommission.add(ResourcesUtil.getMessage(lang, "role.member.commission").toLowerCase());
+        }
+        for (String spelling : rolesMemberOfCommission){
             Assertions.assertTrue(MetadataUtil.isRoleMemberOfTheCommission(spelling));
         }
     }
 
     @Test
     public void testIsSecretariesRole() {
-        for (String spelling : MetadataUtil.ROLE_SECRETARIES){
+        final Set<String> rolesSecretaries = new HashSet<>();
+        for (final String lang : MetadataUtil.LIST_LANGUAGES) {
+            rolesSecretaries.add(ResourcesUtil.getMessage(lang, "role.secretaries").toLowerCase());
+        }
+        for (String spelling : rolesSecretaries){
             Assertions.assertTrue(MetadataUtil.isRoleSecretaries(spelling));
         }
     }

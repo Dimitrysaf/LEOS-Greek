@@ -73,6 +73,9 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         proposalConfigMap.put(ADOPTION_DATE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='placeAndDate']/akn:date/@date",
                 false,
                 Collections.emptyList()));
+        proposalConfigMap.put(ADOPTION_DATE_VALUE, new XmlNodeConfig("//akn:coverPage/akn:longTitle/akn:p/akn:date",
+                false,
+                Collections.emptyList()));
         proposalConfigMap.put(COTE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='reference']/akn:docNumber",
                 false,
                 Collections.emptyList()));

@@ -81,6 +81,7 @@ public interface XmlNodeConfigProcessor {
 
     String ADOPTION_PLACE = "adoptionLocation";
     String ADOPTION_DATE = "adoptionDate";
+    String ADOPTION_DATE_VALUE = "adoptionDateValue";
     String COTE = "cote";
     String FINAL_COTE = "finalCote";
     String INTERINSTITUTIONAL_COTE = "interinstitutionalCote";
