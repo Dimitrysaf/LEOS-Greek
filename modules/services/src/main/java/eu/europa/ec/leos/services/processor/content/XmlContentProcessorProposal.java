@@ -659,44 +659,49 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             attributesOfRejectedNode.removeNamedItem(LEOS_ID_TO_BE_RESTORED);
             Document document = createXercesDocument(xmlContent);
             Node nodeToRestore = XercesUtils.getElementById(document, idToRestore);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_USER_ATTR);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_DATE_ATTR);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_ACTION_ATTR);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_ACTION_ROOT_ATTR);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_MOVED_LABEL_ATTR);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_MOVE_TO);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_ACTION_ATTR);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_TITLE);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_UID);
-            XercesUtils.removeAttribute(nodeToRestore, LEOS_EDITABLE_ATTR);
-            XercesUtils.addAttribute(nodeToRestore, XMLID, XercesUtils.getAttributeValue(nodeToRestore, XMLID).replace(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, ""));
-            Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
-            XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
-            XercesUtils.removeAttribute(numNode, LEOS_TITLE);
-            XercesUtils.removeAttribute(numNode, LEOS_UID);
+            if(nodeToRestore != null) {
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_USER_ATTR);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_DATE_ATTR);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_ACTION_ATTR);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_ACTION_ROOT_ATTR);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_MOVED_LABEL_ATTR);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_MOVE_TO);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_ACTION_ATTR);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_TITLE);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_UID);
+                XercesUtils.removeAttribute(nodeToRestore, LEOS_EDITABLE_ATTR);
+                String attributeValue = XercesUtils.getAttributeValue(nodeToRestore, XMLID);
+                if(attributeValue != null) {
+                    XercesUtils.addAttribute(nodeToRestore, XMLID, attributeValue.replace(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, ""));
+                }
+                Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
+                XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
+                XercesUtils.removeAttribute(numNode, LEOS_TITLE);
+                XercesUtils.removeAttribute(numNode, LEOS_UID);
 
-            if (nodeToRestore.getParentNode() != null) {
-                List<Node> children = XercesUtils.getChildren(nodeToRestore.getParentNode(), Arrays.asList(INDENT, POINT));
-                if (!CollectionUtils.isEmpty(children)) {
-                    Node firstElement = children.get(0);
-                    int elementDepth = XercesUtils.getPointDepth(firstElement);
-                    String elementName = firstElement.getNodeName();
-                    NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
-                    boolean changeOffset = false;
-                    for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
-                        Node node = children.get(nodeListCount);
-                        if (changeOffset) {
-                            numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-                            if (numNode != null) {
-                                Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
-                                if (insNode != null) {
-                                    int index = numberConfig.getNumberIndex(insNode.getTextContent()) + 1;
-                                    insNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                if (nodeToRestore.getParentNode() != null) {
+                    List<Node> children = XercesUtils.getChildren(nodeToRestore.getParentNode(), Arrays.asList(INDENT, POINT));
+                    if (!CollectionUtils.isEmpty(children)) {
+                        Node firstElement = children.get(0);
+                        int elementDepth = XercesUtils.getPointDepth(firstElement);
+                        String elementName = firstElement.getNodeName();
+                        NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
+                        boolean changeOffset = false;
+                        for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
+                            Node node = children.get(nodeListCount);
+                            if (changeOffset) {
+                                numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+                                if (numNode != null) {
+                                    Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
+                                    if (insNode != null) {
+                                        int index = numberConfig.getNumberIndex(insNode.getTextContent()) + 1;
+                                        insNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                                    }
                                 }
                             }
-                        }
-                        if (nodeToRestore == node) {
-                            changeOffset = true;
+                            if (nodeToRestore == node) {
+                                changeOffset = true;
+                            }
                         }
                     }
                 }

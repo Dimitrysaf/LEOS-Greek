@@ -180,7 +180,7 @@ define(function leosPluginUtilsModule(require) {
         var level = 0;
         var actualEL = selected;
         while (_isListElement(actualEL)) {
-            if (!_isListIntro(actualEL)) {
+            if (!_isListIntro(actualEL) && !_isListWrapper(actualEL)) {
                 level++;
             }
             actualEL = actualEL.getAscendant({ ol:1, ul:1 });
@@ -277,13 +277,30 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isSubParaButNotListIntroOrFirstSubparaOfPointOrPara(element) {
-        return _isSubparagraph(element) && (!_isListIntroAndFirstSubparaOfPointOrPara(element) || !(element.getPrevious()));
+        return _isSubparagraph(element) && (!_isListIntro(element) || !(element.getPrevious()));
+    }
+
+    function _isSubParaAndFirst(element) {
+        return _isSubparagraph(element) && !element.getPrevious();
+    }
+
+    function _isSubParaAndNextIsPorINP(element) {
+        return _isSubparagraph(element) && (element.getNext().$.nodeName === 'P' ||
+            (element.getNext().$.nodeName === 'OL' && element.getNext().getFirst() && element.getNext().getFirst().getAttribute('refersto') === '~INP'));
     }
 
     function _isListIntro(element) {
         if (!!element && element instanceof CKEDITOR.dom.element
             && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()) || _isUnorderedList(element.getParent()))
             && element.getParent().getFirst(liOrp).equals(element)) {
+            return _isSubparagraph(element);
+        }
+    }
+
+    function _isListWrapper(element) {
+        if (!!element && element instanceof CKEDITOR.dom.element
+            && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
+            && element.getParent().getLast(liOrp).equals(element)) {
             return _isSubparagraph(element);
         }
     }
@@ -1036,6 +1053,19 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
+    function _isNumberedHtmlParagraph(element) {
+        var paragraphElement = element.getAscendant(function(el) {
+            return el.is(LIST_ELEMENT) && el.hasAttribute(DATA_AKN_ELEMENT) && el.getAttribute(DATA_AKN_ELEMENT) === PARAGRAPH
+        }, true);
+        if (paragraphElement) {
+            var elementToCheck = paragraphElement.getParent().getFirst();
+            if (elementToCheck && elementToCheck.getAttribute(DATA_AKN_NUM) && !elementToCheck.getAttribute('data-akn-action-number') !== 'delete') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function _isUnumberedparagraph(paragraph) {
         return (paragraph && paragraph.prop("tagName").toLocaleLowerCase() == PARAGRAPH && !_hasNum(paragraph));
     }
@@ -1482,12 +1512,6 @@ define(function leosPluginUtilsModule(require) {
         if (!liOrp(element)) {
              newElement = element.getAscendant(liOrp);
         }
-        if (_isSubparagraph(newElement) && !indent) {
-            var parentElement = !_isInsideList(newElement) ? newElement.getParent() : newElement.getParent().getParent();
-            if (_isPointOrIndent(parentElement) || _isParagraph(parentElement)) {
-                return parentElement.getFirst();
-            }
-        }
         return !!newElement ? newElement : element;
     }
 
@@ -1792,6 +1816,13 @@ define(function leosPluginUtilsModule(require) {
         return result;
     }
 
+    function _isLeaf(element) {
+        return element.$.nodeName === 'LI'
+            && element.find('ol').count() === 0
+            && element.find('p').count() === 0
+            && (element.getAttribute('data-akn-element') === 'point' || element.getAttribute('data-akn-element') === 'indent' || element.getAttribute('data-akn-element') === 'paragraph');
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1878,6 +1909,11 @@ define(function leosPluginUtilsModule(require) {
         isEmpty: _isEmpty,
         isInsideTable: _isInsideTable,
         findLastEditable: _findLastEditable,
+        isParagraph: _isParagraph,
+        isSubParaAndFirst: _isSubParaAndFirst,
+        isSubParaAndNextIsPorINP: _isSubParaAndNextIsPorINP,
+        isLeaf: _isLeaf,
+        isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
@@ -1929,6 +1965,7 @@ define(function leosPluginUtilsModule(require) {
         DELETED: DELETED,
         MOVED: MOVED,
         REFERS_TO: REFERS_TO,
+        INP: INP,
         DATA_AKN_CONTENT_ID: DATA_AKN_CONTENT_ID,
         CROSSHEADING_LIST_ATTR: CROSSHEADING_LIST_ATTR,
         DATA_INDENT_LEVEL_ATTR: DATA_INDENT_LEVEL_ATTR,
@@ -1946,6 +1983,7 @@ define(function leosPluginUtilsModule(require) {
         HCONTAINER_TABLE: HCONTAINER_TABLE,
         SUB_HCONTAINER_TABLE: SUB_HCONTAINER_TABLE,
         HCONTAINER_IMAGE: HCONTAINER_IMAGE,
-        SUB_HCONTAINER_IMAGE: SUB_HCONTAINER_IMAGE
+        SUB_HCONTAINER_IMAGE: SUB_HCONTAINER_IMAGE,
+        AKN_ORDERED_LIST: AKN_ORDERED_LIST
     };
 });

@@ -769,34 +769,42 @@ Feature: CK Editor Regression Features
         When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point a sub point a" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point b sub point b" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point i sub point i" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point ii sub point ii" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point 1 sub point 1" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point 2 sub point 2" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point - sub point -" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point -- sub point --" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on decrease indent icon present in ck editor panel
+        And  click on decrease indent icon present in ck editor panel
         And  add "point 3 sub point 3" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
         And  click on decrease indent icon present in ck editor panel
         And  add "point iii sub point iii" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on decrease indent icon present in ck editor panel
+        And  click on decrease indent icon present in ck editor panel
         And  add "point c sub point c" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
         And  click on decrease indent icon present in ck editor panel
         And  add "second paragraph" at current cursor position in edition mode
         And  append "First Paragraph" at offset 7 in numbered paragraph 1 of article in edition mode
@@ -908,20 +916,24 @@ Feature: CK Editor Regression Features
         And  add "new paragraph" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point a sub point a" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point b sub point b" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point i sub point i" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point ii sub point ii" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point 1 sub point 1" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point 2 sub point 2" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point - sub point -" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
@@ -946,20 +958,24 @@ Feature: CK Editor Regression Features
         And  add "new paragraph" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point a sub point a" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point b sub point b" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point i sub point i" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point ii sub point ii" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point 1 sub point 1" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point 2 sub point 2" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point - sub point -" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
@@ -1044,20 +1060,24 @@ Feature: CK Editor Regression Features
 #        When click at offset 7 of paragraph in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point a sub point a" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point b sub point b" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point i sub point i" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point ii sub point ii" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point 1 sub point 1" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point 2 sub point 2" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point - sub point -" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
@@ -1088,20 +1108,24 @@ Feature: CK Editor Regression Features
         And  add "intro subparagraph" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point a sub point a" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point b sub point b" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point i sub point i" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point ii sub point ii" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
         And  add "point 1 sub point 1" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point 2 sub point 2" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
         And  add "point - sub point -" at current cursor position in edition mode
         And  click enter from keyboard in edition mode

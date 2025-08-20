@@ -54,6 +54,7 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     public static final String REG_FILE_PREFIX = "REG";
     public static final String REG_DEL_FILE_PREFIX = "REG_DEL";
     public static final String DIR_FILE_PREFIX = "DIR";
+    public static final String DIR_DEL_FILE_PREFIX = "DIR_DEL";
     public static final String DEC_FILE_PREFIX = "DEC";
     public static final String MEMORANDUM_FILE_PREFIX = "EXPL_MEMORANDUM";
     public static final String PROP_ACT_PREFIX = "PROP_ACT";

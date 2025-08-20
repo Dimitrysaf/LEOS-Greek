@@ -114,23 +114,23 @@ class QueryUtil {
     }
 
     private static List<String> parseMajorVersion(String majorVersionLabel) {
-        // Split
-        List<String> str = new LinkedList<>(Arrays.asList(majorVersionLabel.split("[.]")));
-
-        // Check versionLabel format
+        List<String> str = new LinkedList(Arrays.asList(majorVersionLabel.split("[.]")));
         if (str.size() < 2) {
             throw new IllegalArgumentException("CMIS Version number should be in the format x...0");
-        }
-        if (!str.stream().allMatch(StringUtils::isNumeric)) {
+        } else if (!str.stream().allMatch(StringUtils::isNumeric)) {
             throw new IllegalArgumentException("CMIS Version number should be in the format x...0");
+        } else {
+            String lastElement = str.remove(str.size() - 1);
+            if (!"0".equals(lastElement) && !"1".equals(lastElement)) {
+                throw new IllegalArgumentException("CMIS Version number should be in the format of a major version x...0");
+            }
+            if (str.size() > 2) {
+                str.remove(str.size() - 1);
+            }
+            return str;
         }
-
-        // Check if it is a major version (Should finish with ".0")
-        if (!("0".equals(str.remove(str.size()-1)))) {
-            throw new IllegalArgumentException("CMIS Version number should be in the format of a major version x...0");
-        }
-        return str;
     }
+
 
     private static String buildSearchVersionRegularExp(List<String> str, boolean allIntermediateVersions) {
         StringBuilder versionRegularExp = new StringBuilder();
