@@ -28,3 +28,23 @@ Then(`milestone explorer window contains below tabs`, (datatable) => {
 When(/^export button is displayed in milestone explorer window$/, function () {
     milestoneExplorer.elements.exportBtn().should('be.visible');
 });
+
+Then(/^"([^"]*)" tab is showing in red color in milestone explorer window$/, function (tabName) {
+    milestoneExplorer.getTabItemDanger(tabName).should('be.visible');
+});
+
+Then(/^"([^"]*)" tab is showing in green color in milestone explorer window$/, function (tabName) {
+    milestoneExplorer.getTabItemSuccess(tabName).should('be.visible');
+});
+
+When(/^click on tab "([^"]*)" showing in red color$/, function (tabName) {
+    milestoneExplorer.clickTabItemDanger(tabName);
+});
+
+When(/^click on tab "([^"]*)" showing in green color$/, function (tabName) {
+    milestoneExplorer.clickTabItemSuccess(tabName)
+});
+
+Then(/^"([^"]*)" button is enabled in milestone explorer window$/, function (action) {
+    milestoneExplorer.getActionBtn(action).should('not.have.attr', 'disabled');
+});

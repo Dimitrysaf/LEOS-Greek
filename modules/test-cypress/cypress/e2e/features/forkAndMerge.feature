@@ -215,6 +215,10 @@ Feature: fork and merge features
     And  document title input field is displayed
     When click on create button in upload document page
     Then user is on act viewer page
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 1
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 2
     When click on milestones tab in act view page
     When click on add button in milestones tab
     And  click on create milestone button
@@ -233,10 +237,20 @@ Feature: fork and merge features
     Then user is on act viewer page
     And  chip content container 1 of act header contains "Contribution"
     And  chip content container 2 of act header contains "LEOS"
+    When click on cover page link present in act viewer page
+    Then user is on cover page
+    When click on edit icon of docPurpose
+    Then ck editor window is displayed
+    When add " new title from the contribution" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    When click on close button present in cover page
+    Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  enable track changes toggle bar is on in ribbon toolbar
+    When refresh the browser
     When click on toc edit button
     And  click on "Article 1 - Scope 1. Text..." link in navigation pane
     And  drag node label "Article 1 - Scope 1. Text..." and drop to node label "Article 3 - Entry into force This Regulation" in navigation pane
@@ -273,6 +287,13 @@ Feature: fork and merge features
     And "MOVED from Chapter 1" is showing as soft move label in num of chapter 3 of bill
     When click on close button present in legal act page
     Then user is on act viewer page
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 3
+    When click on action icon of annex 2
+    And  click on delete button in action menu
+    Then "Annex deletion confirm" dialog confirm box window is displayed
+    When click on danger button in dialog box window
+    Then total number of annexes present in act viewer page is 2
     When click on milestones tab in act view page
     When click on add button in milestones tab
     And  click on create milestone button
@@ -288,7 +309,32 @@ Feature: fork and merge features
     Then user is on act viewer page
     When click on milestones tab in act view page
     Then "Ready to merge" is showing under status column of row 2 of milestones table
+    When click on three dots under actions column of row 2 of milestones table
+    And  click on option "View Contribution" under milestone actions
+    Then user is on milestone explorer window
+    And  "Annex 2" tab is showing in red color in milestone explorer window
+    And  "Annex 2" tab is showing in green color in milestone explorer window
+    When click on tab "Annex 2" showing in red color
+    Then "Accept" button is enabled in milestone explorer window
+    And  "Reject" button is enabled in milestone explorer window
+    When click on tab "Annex 2" showing in green color
+    Then "Accept" button is enabled in milestone explorer window
+    And  "Reject" button is enabled in milestone explorer window
+    When click on close button in milestone explorer view
+    Then user is on act viewer page
     When click on drafts tab in act view page
+    When click on cover page link present in act viewer page
+    Then user is on cover page
+    When click on contributions pane accordion
+    And  click on first contribution
+    Then contribution view container is displayed
+    When click on merge actions menu of "docpurpose" 1
+    And  click on merge action "Accept Change"
+    And  click on apply changes
+    And  click close button of merge section in ribbon toolbar
+    Then long title docPurpose of cover page is "fork&merge new title from the contribution"
+    When click on close button present in cover page
+    Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present

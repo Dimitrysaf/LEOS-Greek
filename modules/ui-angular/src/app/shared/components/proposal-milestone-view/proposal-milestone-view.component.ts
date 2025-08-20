@@ -457,4 +457,9 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+  getDisplayVersion(version: string): string {
+    const parts = version.split('.');
+    return parts.slice(0, 3).join('.');
+  }
 }

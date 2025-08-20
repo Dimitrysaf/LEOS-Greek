@@ -69,6 +69,8 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.MergeUtils;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
@@ -86,6 +88,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 import javax.inject.Provider;
 import java.io.File;
@@ -107,6 +112,9 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
+import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
+
 
 @Service
 public class ContributionApiServiceImpl implements ContributionApiService {
@@ -624,6 +632,43 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         milestoneService.updateMilestone(legDocument.getMilestoneRef(), legDocument.getId(), updatedDocuments);
     }
 
+    private void removeTrackChangesFromDoc(DocumentVO annexVO) {
+        Node xmlDocNode = XercesUtils.createXercesDocument(annexVO.getSource());
+        NodeList bodyNodes = XercesUtils.getElementsByXPath(xmlDocNode, XPathCatalog.getXPathElement(MAIN_BODY));
+        if (bodyNodes != null && bodyNodes.getLength() > 0) {
+            Node mainBody = bodyNodes.item(0);
+            removeTrackChanges(mainBody);
+            annexVO.setSource(XercesUtils.nodeToByteArray(xmlDocNode));
+        }
+    }
+    private void removeTrackChanges(Node node) {
+        MergeUtils.removeTrackChangesAttributes(node, false);
+        List<Node> children = XercesUtils.getChildren(node);
+
+        // This loop now includes the logic to handle <ins> elements.
+        for (Node child : children) {
+            // --- START: New logic to flatten <ins> nodes
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                // Check if the element is an <ins> tag.
+                if (LEOS_TC_INSERT_ELEMENT_NAME.equals(child.getNodeName())) {
+                    Node parent = child.getParentNode();
+                    String textContent = child.getTextContent();
+                    if (textContent != null && !textContent.trim().isEmpty()) {
+                        // Create a new text node with the content.
+                        Text newTextNode = parent.getOwnerDocument().createTextNode(textContent);
+                        // Insert the new text node before the <ins> element.
+                        parent.insertBefore(newTextNode, child);
+                    }
+                    // Remove the original <ins> element.
+                    parent.removeChild(child);
+                } else {
+                    // The original recursive call, which now only happens for children that are not <ins> elements.
+                    removeTrackChanges(child);
+                }
+            }
+       }
+    }
+
     @Override
     public void handleMilestoneAccept(String proposalRef, String legFileName, Boolean isAdded, String docRef, LeosCategory category) throws IOException {
         LeosPackage leosClonedPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
@@ -650,6 +695,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
             if (isAdded) {
                 DocumentVO annexVO = proposalConverterService.createDocument(docName, docFile, true);
+                removeTrackChangesFromDoc(annexVO);
                 annexVO.getMetadata().setIndex(null);
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
                 BillContextService billContext = billContextProvider.get();

@@ -6,6 +6,7 @@ class ribbonToolBar {
         saveBtn: () => this.elements.ribbonToolBarContainer().contains('Save'),
         exportsBtn: () => this.elements.ribbonToolBarContainer().contains('Exports'),
         displaySection: () => cy.get('#DISPLAY_SECTION_ID'),
+        mergeSection: () => cy.get('#MERGE_SECTION_ID'),
         seeUserGuidanceInput: () => this.elements.displaySection().find('app-ribbon-toolbar-checkbox').find('input'),
         showCleanVersionBtn: () => this.elements.displaySection().find('button#DISPLAY_SHOW_CLEAN_VERSION'),
         seeTrackChangesSection: () => cy.get('#SEE-TRACK_CHANGES-ID'),
@@ -26,7 +27,7 @@ class ribbonToolBar {
         compareContainer: ()=> this.elements.appRibbonToolbarSection().find('div#COMPARE_SECTION_ID'),
         comparisonEUILabel: ()=> this.elements.compareContainer().next('div.eui-label'),
         cancelVersionCompareContainer:()=>this.elements.compareContainer().find('button.section-close-icon'),
-
+        closeBtnInMergeSection:()=>this.elements.mergeSection().find('button.section-close-icon')
     }
 
     clickCancelVersionCompareContainer(){
@@ -76,6 +77,10 @@ class ribbonToolBar {
 
     clickSearchBtn() {
         this.elements.searchBtn().click();
+    }
+
+    clickCloseBtnMergeSection() {
+        this.elements.closeBtnInMergeSection().click();
     }
 }
 export default new ribbonToolBar();

@@ -308,6 +308,7 @@ define(function leosUtilsModule(require) {
                     "content: '↰'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt;" +
                     "}\n";
+                tcShowStyle += "ins img { display:inline-block !important; border:" + (isTrackChangesShowed ? "2px solid rgba(0, 255, 0, 0.5)" :"none") + " !important;}";
             } else {
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +

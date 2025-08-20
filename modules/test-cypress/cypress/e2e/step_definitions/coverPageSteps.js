@@ -23,3 +23,7 @@ Then(`long title docPurpose of cover page is {string}`, (title) => {
 When(`click on long title of doc purpose`, () => {
     coverPage.clickDocPurpose();
 });
+
+When(/^click on edit icon of docPurpose$/, function () {
+    coverPage.clickEditIconOfDocPurpose();
+});
