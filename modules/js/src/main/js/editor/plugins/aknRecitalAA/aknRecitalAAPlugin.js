@@ -27,6 +27,7 @@ define(function aknRecitalAAPluginModule(require) {
 
     var pluginName = "aknRecitalAA";
     var ENTER_KEY = 13;
+    var CTRL_ENTER = CKEDITOR.CTRL + ENTER_KEY;
     var BACKSPACE =  8;
     var DELETE = 46;
     var ARROW_KEYS = [37, 38, 39, 40];
@@ -251,7 +252,7 @@ define(function aknRecitalAAPluginModule(require) {
         }
         if (startElement?.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME &&
             startElement?.getAttribute(leosPluginUtils.DATA_AKN_HCONTAINER) &&
-            !ARROW_KEYS.includes(e.keyCode) && e.keyCode !== BACKSPACE && e.keyCode !== DELETE) {
+            !ARROW_KEYS.includes(e.keyCode) && e.keyCode !== BACKSPACE && e.keyCode !== DELETE && e.keyCode !== CTRL_ENTER) {
             //Cancel the event
             e.stopImmediatePropagation();
             return false;
