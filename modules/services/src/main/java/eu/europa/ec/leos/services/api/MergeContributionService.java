@@ -1243,6 +1243,10 @@ public class MergeContributionService {
         } else if (xmlNum != null && !withTrackChanges && !getId(firstChild).equals(getId(xmlNode))) {
             xmlNum.setTextContent("#");
             xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNum), getId(xmlNum));
+        } else if (xmlNum != null && !withTrackChanges && getId(firstChild).equals(getId(xmlNode))) {
+            Node refInsNode = getFirstChild(contributionNum, "ins");
+            xmlNum.setTextContent(refInsNode.getTextContent());
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNum), getId(xmlNum));
         }
         return xmlContent;
     }
