@@ -84,6 +84,8 @@ public interface DocumentService {
 
     List<LeosDocument> findAllVersionsByRef(final String ref);
 
+    List<LeosDocument> findVersionsBetween(String docRef, String fromVersion);
+
     List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults, final boolean fetchContent);
 
     long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);

@@ -244,7 +244,13 @@ define(function leosTrackChangesPluginModule(require) {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
-                        } else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
+                        } else if (editor.getSelection().isCollapsed() && (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)
+                            && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_TO)) {
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
+                        }else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
                             tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                             if (tcElement) {
                                 editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
@@ -841,6 +847,7 @@ define(function leosTrackChangesPluginModule(require) {
                             break;
                         case "authorialNoteDialog":
                         case "leosCrossReferenceDialog":
+                        case "leosBase64ImageDialog":
                         case "mathjax":
                             var dialog = event.data.definition.dialog;
                             dialog.on("ok", function(event) {
@@ -914,6 +921,32 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                     return diffPos;
                 }
+                function hasOnlyImage(nodeList) {
+                    for (let node of nodeList) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            if (node.tagName === 'BR' || node.tagName === 'IMG') {
+                                continue;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        // Check for TEXT_NODE
+                        else if (node.nodeType === Node.TEXT_NODE) {
+                            const cleanedText = node.nodeValue.replace(/[\u200B\u200C\u200D\s]/g, '');
+                            if (cleanedText.length === 0) {
+                                continue;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    return true;
+                }
                 function processMutations(mutations) {
                     if (handleMutations) {
                         handleMutations = false;
@@ -928,7 +961,20 @@ define(function leosTrackChangesPluginModule(require) {
                                             node.remove();
                                         }
                                         break;
-                                    } else if ((node.tagName === "TABLE") && !node.id) { // It is a new table
+                                    } else if (node.tagName === "IMG") {
+                                        core.setToEditablePosition(editor, new CKEDITOR.dom.element(node), core.CARET_END);
+                                        const value = hasOnlyImage(node.parentNode.childNodes);
+                                        if (actions.insertNewData(editor, node.outerHTML)) {
+                                            if (value) {
+                                                //Images inside the <ins> tag are ignored by CKEditor and disappear if the tag has no text.
+                                                // The <ins> tag is still required to wrap track changes and handle merge contributions.
+                                                const parent = new CKEDITOR.dom.element(node).getParent();
+                                                parent.appendText('\u200B'); // zero-width space
+                                            }
+                                            node.remove();
+                                        }
+                                    }
+                                    else if ((node.tagName === "TABLE") && !node.id) { // It is a new table
                                         var rows = node.querySelectorAll("tr");
                                         rows.forEach(function (row) {
                                             if (!row.getAttribute(core.UID_ATTR)) {

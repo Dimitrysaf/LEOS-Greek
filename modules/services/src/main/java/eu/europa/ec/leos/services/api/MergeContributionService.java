@@ -70,6 +70,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.getStartTagNodeAsXmlFragment;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasAscendantOfType;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAscendantWithId;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
@@ -1581,15 +1582,18 @@ public class MergeContributionService {
                             Node child = children.item(i);
                             String childContent = getContent(child);
                             if (childContent.contains(prevContent.trim()) && prevContent.length() > 1 && !StringUtils.isBlank(prevContent)) {
-                                String toBeReplacedBy = withTrackChanges ? prevContent + nodeToString(nodeToBeAddedOrRemoved) : prevContent + getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved);
+                                String toReplace = withTrackChanges ? prevContent + nodeToString(nodeToBeAddedOrRemoved) : prevContent + getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved);
                                 if (nextContent != null && nextContent.startsWith(" ")) {
-                                    toBeReplacedBy += " ";
+                                    toReplace += " ";
                                 }
-                                XercesUtils.replaceElement(child,
-                                        nodeToString(child).replaceFirst(!nodeToString(child).contains(prevContent) ?
-                                                        Pattern.quote(prevContent.trim()) :
-                                                        Pattern.quote(prevContent),
-                                                toBeReplacedBy.replaceAll("\\\\", "\\\\\\\\")));
+                                String toBeReplacedBy = !nodeToString(child).contains(prevContent) ? prevContent.trim() : prevContent;
+                                int positionOfToBeReplacedBy = nodeToString(child).lastIndexOf(toBeReplacedBy);
+                                int sizeOfToBeReplacedBy = toBeReplacedBy.length();
+                                String endOfString = "";
+                                if (positionOfToBeReplacedBy + sizeOfToBeReplacedBy + 1 < nodeToString(child).length()) {
+                                    endOfString = nodeToString(child).substring(positionOfToBeReplacedBy + toBeReplacedBy.length());
+                                }
+                                XercesUtils.replaceElement(child, nodeToString(child).substring(0, positionOfToBeReplacedBy) + toReplace + endOfString);
                                 found = true;
                                 break;
                             }
@@ -1889,6 +1893,9 @@ public class MergeContributionService {
             if (realDelElt.getNodeName().equals(LEOS_TC_DELETE_ELEMENT_NAME)) {
                 xmlContent = undoDelInContent(xmlContent, delElt);
                 impactedElements.add(getId(delElt));
+                if (delElt.getNodeName().equalsIgnoreCase(LEOS_TC_DELETE_ELEMENT_NAME) && hasAscendantOfType(delElt, LEOS_TC_INSERT_ELEMENT_NAME)) {
+                    realDelElt.getParentNode().removeChild(realDelElt);
+                }
             } else {
                 xmlContent = handleIntroAndConclusionForList(xmlContent, realDelElt, delElt);
                 Node sibling = getSiblingForRenumbering(realDelElt);
@@ -1904,6 +1911,9 @@ public class MergeContributionService {
                         tocItemsList, mergingCompletelySuccessfull);
                 xmlContent = renumberFragment(xmlContent, getId(realDelElt), tocItemsList);
                 impactedElements.add(getId(realDelElt));
+                if (delElt.getNodeName().equalsIgnoreCase(LEOS_TC_DELETE_ELEMENT_NAME) && hasAscendantOfType(delElt, LEOS_TC_INSERT_ELEMENT_NAME)) {
+                    realDelElt.getParentNode().removeChild(realDelElt);
+                }
             }
         }
         return xmlContent;
