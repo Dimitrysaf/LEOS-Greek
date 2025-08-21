@@ -27,14 +27,24 @@ class ckEditorWindow {
         boldIcon: () => cy.get('.cke_button__bold'),
         italicIcon: () => cy.get('.cke_button__italic'),
         changeTextCaseIcon: () => cy.get('.cke_button__transformtextswitcher'),
-        //backgroundColorBtn: () => cy.get('.cke_button__bgcolor'),
+        numberedListIcon: () => cy.get('.cke_button__numberedlist'),
+        bulletedListIcon: () => cy.get('.cke_button__bulletedlist'),
         ckEditorBtn: () => cy.get('a.cke_button'),
         docPurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
         pTag: () => this.elements.ckEditableInline().find('p'),
+        level: () => this.elements.ckEditableInline().find("ol li[data-akn-element='level']"),
+        paragraph: () => this.elements.ckEditableInline().find("ol li[data-akn-element='paragraph']"),
+        article: () => this.elements.ckEditableInline().find('article ol'),
         refTag: () => this.elements.ckEditableInline().find('ref'),
+        blockContainer: () => this.elements.ckEditableInline().find("div[data-akn-name='blockContainer']"),
+        pTagFromBlockContainer: () => this.elements.blockContainer().find('p'),
+        olTagFromBlockContainer: () => this.elements.blockContainer().find('ol'),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
         ckEditorLeosAlternative1Btn: () => cy.get('.cke_button__leosalternatives1'),
-        ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2')
+        ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2'),
+        clauseContent: () => this.elements.ckEditableInline().find("#clause1 p[data-akn-mp-id='clause1ContentP']"),
+        tcActionIcon: () => cy.get('.cke_combo__trackchangeactions'),
+        tcActionDropdown: () => cy.get('ul.cke_panel_list > li.cke_panel_listItem > a')
     }
 
     uploadImageFile(location, iframeClass) {
@@ -49,6 +59,10 @@ class ckEditorWindow {
 
     getCkEditorDialogHtml() {
         return this.elements.ckEditorDialogHtml();
+    }
+
+    clickCkEditorLeosAlternative1Btn() {
+        this.elements.ckEditorLeosAlternative1Btn().click();
     }
 
     clickCkEditorLeosAlternative2Btn() {
@@ -193,6 +207,14 @@ class ckEditorWindow {
         this.elements.cutBtn().click();
     }
 
+    clickNumberedListIcon() {
+        this.elements.numberedListIcon().click();
+    }
+
+    clickBulletedListIcon() {
+        this.elements.bulletedListIcon().click();
+    }
+
     /*    clickBackgroundColorIcon() {
             this.elements.backgroundColorBtn().click();
         }*/
@@ -229,6 +251,14 @@ class ckEditorWindow {
         return this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1);
     }
 
+    getLiTagFromOlOfBlockContainer(attributeName, attributeValue){
+        return this.elements.olTagFromBlockContainer().find("li["+attributeName+"='"+attributeValue+"']");
+    }
+
+    getPTagFromBlockContainer(attributeName, attributeValue){
+        return this.elements.ckEditableInline().find("p["+attributeName+"='"+attributeValue+"']");
+    }
+
     moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
     }
@@ -251,6 +281,15 @@ class ckEditorWindow {
 
     clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("p[data-akn-element='" + pTagDataAknElement + "'").eq(pTagNumber - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
+    }
+
+    clickAtSpecificOffsetOfLiTagOfOlOfBlockContainer(offSet, attributeName, attributeValue) {
+        this.getLiTagFromOlOfBlockContainer(attributeName, attributeValue).invoke('attr', 'id').then(id => this.moveCursor(offSet, "#" + id));
+    }
+
+
+    clickAtSpecificOffsetOfPTagOfBlockContainer(offSet, attributeName, attributeValue) {
+        this.getPTagFromBlockContainer(attributeName, attributeValue).invoke('attr', 'id').then(id => this.moveCursor(offSet, "#" + id));
     }
 
     moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
@@ -337,8 +376,16 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.selectContent(offsetStart, offsetEnd, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
     }
 
+    selectContentInLiOfOlOfBlockContainer(offSetStart, offSetEnd, attributeName, attributeValue){
+        this.getLiTagFromOlOfBlockContainer(attributeName, attributeValue).invoke('attr', 'id').then(id => this.selectContent(offSetStart, offSetEnd, "#" + id));
+    }
+
     moveCursorToSpecificOffsetInLevel(offset, pTagNumber) {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offset, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
+    }
+
+    moveCursorToSpecificOffsetInParagraph(offSet) {
+        this.elements.paragraph().invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
     }
 
     moveCursorToSpecificOffsetInFSLevel(offset, pTagNumber) {
@@ -346,10 +393,14 @@ class ckEditorWindow {
     }
 
     getElementPTagOfLevel(pTagNumber) {
-        return this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1);
+        return this.elements.level().find('p').eq(pTagNumber - 1);
     }
 
-    getElementLiTagOfLevel(){
+    getParagraph() {
+        return this.elements.paragraph();
+    }
+
+    getElementLiTagOfLevel() {
         return this.elements.ckEditableInline().find("ol[data-akn-element='level']").find("li[data-akn-element='level']");
     }
 
@@ -361,16 +412,36 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find("ol[data-akn-element=" + dataAknElement3 + "]").find("li[data-akn-element='" + dataAknElement2 + "']").find("p[data-akn-element='" + dataAknElement1 + "']").eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offSet, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
     }
 
+    clickAtSpecificOffsetInPTagOfLevel(offSet, pTagNumber) {
+        this.elements.level().children('p').eq(pTagNumber-1).invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+    }
+
     clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement) {
         this.elements.ckEditableInline().find("ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offSet, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
     }
 
+    clickAtSpecificOffsetInSpanOfFirstLayerPointInLevel(offSet, spanAttributeName, spanAttributeValue, LiTag1Number, LiTag1AttributeName, LiTag1AttributeValue) {
+        this.elements.level().children("ol li["+LiTag1AttributeName+"='"+LiTag1AttributeValue+"']").eq(LiTag1Number-1).children("span["+spanAttributeName+"='"+spanAttributeValue+"']").invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+    }
+
+    clickAtSpecificOffsetInSpanOfSecondLayerPointInLevel(offSet, spanAttributeName, spanAttributeValue, LiTag2Number, LiTag2AttributeName, LiTag2AttributeValue, LiTag1Number) {
+        this.elements.level().children('ol').children('li').eq(LiTag1Number-1).children('ol').children("li["+LiTag2AttributeName+"='"+LiTag2AttributeValue+"']").eq(LiTag2Number-1).children("span["+spanAttributeName+"='"+spanAttributeValue+"']").invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+    }
+
+    clickAtSpecificOffsetInSpanOfThirdLayerPointInLevel(offSet, spanAttributeName, spanAttributeValue, LiTag3Number, LiTag3AttributeName, LiTag3AttributeValue, LiTag2Number, LiTag1Number) {
+        this.elements.level().children('ol').children('li').eq(LiTag1Number-1).children('ol').children('li').eq(LiTag2Number-1).children('ol').children("li["+LiTag3AttributeName+"='"+LiTag3AttributeValue+"']").eq(LiTag3Number-1).children("span["+spanAttributeName+"='"+spanAttributeValue+"']").invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+    }
+
+    clickAtSpecificOffsetInSpanOfFourthLayerPointInLevel(offSet, spanAttributeName, spanAttributeValue, LiTag4Number, LiTag4AttributeName, LiTag4AttributeValue, LiTag3Number, LiTag2Number, LiTag1Number) {
+        this.elements.level().children('ol').children('li').eq(LiTag1Number-1).children('ol').children('li').eq(LiTag2Number-1).children('ol').children('li').eq(LiTag3Number-1).children('ol').children("li["+LiTag4AttributeName+"='"+LiTag4AttributeValue+"']").eq(LiTag4Number-1).children("span["+spanAttributeName+"='"+spanAttributeValue+"']").invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+    }
+
     getRefTag(count) {
-        return this.elements.refTag().eq(count-1);
+        return this.elements.refTag().eq(count - 1);
     }
 
     clickInterReferenceLink(count) {
-        this.elements.refTag().eq(count-1).dblclick();
+        this.elements.refTag().eq(count - 1).dblclick();
     }
 
     clickAtCellInRowInTableOfParagraph(cell, row, table, paragraphLi, dataAknElement) {
@@ -391,6 +462,26 @@ class ckEditorWindow {
 
     getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, markerNumber) {
         return this.getParagraphElementOfArticle(paragraphNumber, 'paragraph').find("span.authorialnote[marker='" + markerNumber + "']");
+    }
+
+    clickTrackChangesActionPlugin() {
+        this.elements.tcActionIcon().click()
+    }
+
+    getIframeBodyTcPlugin() {
+        return cy.get('iframe.cke_panel_frame').its('0.contentDocument.body').should('not.be.empty').then(cy.wrap);
+    }
+
+    getCkePanelListItem(){
+        return this.getIframeBodyTcPlugin().find('ul.cke_panel_list > li.cke_panel_listItem');
+    }
+
+    clickAcceptAll() {
+        this.elements.tcActionDropdown().contains('Accept All').click();
+    }
+
+    clickRejectAll() {
+        this.elements.tcActionDropdown().contains('Reject All').click();
     }
 
     selectContent(offsetStart, offsetEnd, element) {
@@ -477,5 +568,4 @@ class ckEditorWindow {
         });
     }
 }
-
 export default new ckEditorWindow();

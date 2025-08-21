@@ -247,6 +247,7 @@ Feature: Legal Act Page Regression Features
     And  click enter from keyboard in edition mode
     And  add content "Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text" to li 2 with data-akn-element "paragraph" of article in edition mode
     And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add content "It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click at offset 162 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
@@ -256,7 +257,7 @@ Feature: Legal Act Page Regression Features
     And  click at offset 0 of p tag 1 of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click on decrease indent icon present in ck editor panel
     Then p tag 1 of li 2 with data-akn-element "paragraph" of article contains "It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated " in edition mode
-    And  p tag 1 of li 3 with data-akn-element "paragraph" of article contains "Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc" in edition mode
+    And  li 3 with data-akn-element "paragraph" of article contains "Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc" in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
     And  content of paragraph 2 of article 1 contains "It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated"
@@ -270,6 +271,7 @@ Feature: Legal Act Page Regression Features
     When move the cursor position to offset 7 in paragraph 1 of article in edition mode
     And  click enter from keyboard in edition mode
     And  add content "Point a" to li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click on increase indent icon present in ck editor panel
     And  click on increase indent icon present in ck editor panel
     And  click on add subparagraph icon present in ck editor panel
     And  add "wrapper subparagraph" at current cursor position in edition mode
@@ -308,20 +310,24 @@ Feature: Legal Act Page Regression Features
     And  click enter from keyboard in edition mode
     And  add content "point a" to li 3 with data-akn-element "paragraph" of article in edition mode
     And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add content "point b" to li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click enter from keyboard in edition mode
     And  add content "point i" to li 3 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click on increase indent icon present in ck editor panel
     And  click on increase indent icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click enter from keyboard in edition mode
     And  add content "point 1" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click enter from keyboard in edition mode
     And  add content "point -" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click on increase indent icon present in ck editor panel
     And  click on increase indent icon present in ck editor panel
     Then increase indent icon is disabled in ck editor
     When click enter from keyboard in edition mode
@@ -423,10 +429,12 @@ Feature: Legal Act Page Regression Features
     And  click enter from keyboard in edition mode
     And  add content "point i" to li 3 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click enter from keyboard in edition mode
     And  add content "point 1" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click on increase indent icon present in ck editor panel
     And  click on increase indent icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
@@ -481,12 +489,14 @@ Feature: Legal Act Page Regression Features
     When click enter from keyboard in edition mode
     And  add content "point a" to li 3 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
     Then li 1 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(a)" in edition mode
     When click enter from keyboard in edition mode
     And  add content "point b" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
     Then li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(b)" in edition mode
     When click enter from keyboard in edition mode
     And  add content "point i" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click on increase indent icon present in ck editor panel
     And  click on increase indent icon present in ck editor panel
     Then increase indent icon is disabled in ck editor
     And  li 1 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(i)" in edition mode
@@ -758,6 +768,7 @@ Feature: Legal Act Page Regression Features
     When click enter from keyboard in edition mode
     And  add content "line 1" to li 2 with data-akn-element "paragraph" of article in edition mode
     And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add content "line 2" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     When click save and close button of ck editor
@@ -768,6 +779,7 @@ Feature: Legal Act Page Regression Features
     When mouseover and click on article 1
     Then ck editor window is displayed
     When click at offset 0 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click on decrease indent icon present in ck editor panel
     And  click on decrease indent icon present in ck editor panel
     Then decrease indent icon is disabled in ck editor panel
     When click save and close button of ck editor
@@ -806,7 +818,7 @@ Feature: Legal Act Page Regression Features
     Then user is on legal act page
     When mouseover and click on article 3
     Then ck editor window is displayed
-    When click on alternative 2 icon present in ck editor panel
+    When click on alternative2 icon present in ck editor panel
     And  click dialog ok button
     Then check content inside ckeditor is of size 3202
     When click source button
@@ -821,7 +833,7 @@ Feature: Legal Act Page Regression Features
     Then enable track changes
     When mouseover and click on article 5
     Then ck editor window is displayed
-    When click on alternative 2 icon present in ck editor panel
+    When click on alternative2 icon present in ck editor panel
     And click dialog ok button
     Then check content inside ckeditor is greater than 100
     When click save and close button of ck editor
@@ -1050,6 +1062,15 @@ Feature: Legal Act Page Regression Features
       | A higher division must contain at least one sub-element                                                |
       | A lower division cannot exist outside a higher division element                                        |
       | Only elements of the same type can be selected together.                                               |
+    When click on cancel button in navigation pane
+    Then toc editing button is displayed and enabled
+    And  wait for 5000 milliseconds
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
+      | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
+    When click on toc edit button
     When click on ngContent "Article 1 - Definitions Text..." from navigation pane
     And  click on ngContent "Article 2 - Article heading... 1.Text..." from navigation pane along with control button from keyboard
     And  drag node label "Article 1 - Definitions Text..." and drop to node label "Section 1 Section heading..." in navigation pane
@@ -1058,6 +1079,7 @@ Feature: Legal Act Page Regression Features
       | warning                                                                                                |
       | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
       | A higher division must contain at least one sub-element                                                |
+    And  node label "Section 1 Section heading..." contains node label "Article 1 -"
     And  node label "Section 1 Section heading..." contains node label "Article 2 -"
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled
@@ -1068,3 +1090,44 @@ Feature: Legal Act Page Regression Features
       | A lower division cannot exist outside a higher division element                                        |
     And  node label "Section 1 - Section heading..." contains node label "Article 1 -"
     And  node label "Section 1 - Section heading..." contains node label "Article 2 -"
+
+  @switchingAlternativeArticle @local
+  Scenario: user is able to switch alternative article
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing Alternative Article" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in all Member States."
+    When mouseover and click on clause 1
+    Then ck editor window is displayed
+    When alternative1 is selected in ck editor panel
+    And  click on alternative2 icon present in ck editor panel
+    Then cke dialog window is displayed with title "Confirm alternative change"
+    And  cke dialog window is displayed with body "If any changes were made to the default content, selecting an alternative will discard them. Are you sure to continue?"
+    When click on ok button in cke dialog window
+    Then content of clause is "This Regulation shall be binding in its entirety and directly applicable in the Member States in accordance with the Treaties." in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in the Member States in accordance with the Treaties."
+    When mouseover and click on clause 1
+    Then ck editor window is displayed
+    When alternative2 is selected in ck editor panel
+    And  click on alternative1 icon present in ck editor panel
+    Then cke dialog window is displayed with title "Confirm alternative change"
+    And  cke dialog window is displayed with body "If any changes were made to the default content, selecting an alternative will discard them. Are you sure to continue?"
+    When click on ok button in cke dialog window
+    Then content of clause is "This Regulation shall be binding in its entirety and directly applicable in all Member States." in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in all Member States."
+    When click on close button present in legal act page
+    Then user is on act viewer page

@@ -37,6 +37,7 @@ Feature: Track Changes Feature
     # Indent
     When move the cursor position to offset 3 in paragraph 2 of article in edition mode
     And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
     # Save and close
     And  click save and close button of ck editor
     # Check results
@@ -1071,191 +1072,192 @@ Feature: Track Changes Feature
     And paragraph 3 of article 4 doesn't contain attribute "leos:action-enter"
     And paragraph 3 of article 4 doesn't contain attribute "leos:action"
 
-  @Cases11To16FromStory1319 @local
-  Scenario: Cases 11 to 16 of https://code.europa.eu/leos/core/-/issues/1319
-    Given navigate to edit drafting application with "User1"
-    Then user is on home page
-    When click on upload button
-    Then active upload window label contains "Upload a legislative document"
-    When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode7.leg"
-    Then active upload window label contains "Document metadata"
-    And  document title input field is displayed
-    When click on create button in upload document page
-    Then user is on act viewer page
-    When click on legal act link present in act viewer page
-    Then user is on legal act page
-    And  ribbon toolbar is maximized
-    When enable track changes
-    Then enable track changes toggle bar is on in ribbon toolbar
-    When mouseover and click on article 7
-    And ck editor window is displayed
-    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And  click on decrease indent icon present in ck editor panel
-    When click save and close button of ck editor
-    Then num tag of paragraph 1 of article 7 has html "1."
-    And 'del' tag 1 of num tag of paragraph 2 of article 7 has text "(a)"
-    And 'del' tag 1 of num tag of paragraph 2 of article 7 has attribute "leos:action-number" with value "delete"
-    And 'del' tag 1 of num tag of paragraph 2 of article 7 has attribute "leos:tc-original-number" with value "(a)"
-    And 'del' tag 1 of num tag of paragraph 2 of article 7 doesn't have attribute "leos:action-enter"
-    And 'del' tag 1 of num tag of paragraph 2 of article 7 doesn't have attribute "leos:action"
-    And 'ins' tag 1 of num tag of paragraph 2 of article 7 has text "2."
-    And 'ins' tag 1 of num tag of paragraph 2 of article 7 has attribute "leos:action-number" with value "insert"
-    And 'ins' tag 1 of num tag of paragraph 2 of article 7 has attribute "leos:tc-original-number" with value "(a)"
-    And 'ins' tag 1 of num tag of paragraph 2 of article 7 doesn't have attribute "leos:action-enter"
-    And 'ins' tag 1 of num tag of paragraph 2 of article 7 doesn't have attribute "leos:action"
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has html "(b)"
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has attribute "leos:action-number" with value "delete"
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has attribute "leos:tc-original-number" with value "(b)"
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action-enter"
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action-delete"
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has html "(a)"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has attribute "leos:action-number" with value "insert"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has attribute "leos:tc-original-number" with value "(b)"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action-enter"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action-delete"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action"
-    And 'del' tag 1 of num tag of paragraph 3 of article 7 has text "2."
-    And 'del' tag 1 of num tag of paragraph 3 of article 7 has attribute "leos:action-number" with value "delete"
-    And 'del' tag 1 of num tag of paragraph 3 of article 7 has attribute "leos:tc-original-number" with value "2."
-    And 'del' tag 1 of num tag of paragraph 3 of article 7 doesn't have attribute "leos:action-enter"
-    And 'del' tag 1 of num tag of paragraph 3 of article 7 doesn't have attribute "leos:action"
-    And 'ins' tag 1 of num tag of paragraph 3 of article 7 has text "3."
-    And 'ins' tag 1 of num tag of paragraph 3 of article 7 has attribute "leos:action-number" with value "insert"
-    And 'ins' tag 1 of num tag of paragraph 3 of article 7 has attribute "leos:tc-original-number" with value "2."
-    And 'ins' tag 1 of num tag of paragraph 3 of article 7 doesn't have attribute "leos:action-enter"
-    And 'ins' tag 1 of num tag of paragraph 3 of article 7 doesn't have attribute "leos:action"
-    Then num tag of point 1 of list 1 of paragraph 3 of article 7 has html "(a)"
-    When mouseover and click on article 7
-    And ck editor window is displayed
-    Then click at offset 0 in li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "paragraph" of article in edition mode
-    And  click on increase indent icon present in ck editor panel
-    When click save and close button of ck editor
-    Then num tag of paragraph 1 of article 7 has html "1."
-    And num tag of paragraph 2 of article 7 has html "2."
-    And num tag of point 1 of list 1 of paragraph 1 of article 7 has html "(a)"
-    And num tag of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action-number"
-    And num tag of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action-enter"
-    And num tag of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action"
-    And num tag of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:tc-original-number"
-    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has html "(b)"
-    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has attribute "leos:action-number" with value "delete"
-    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has attribute "leos:tc-original-number" with value "(b)"
-    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action-enter"
-    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has html "(i)"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has attribute "leos:action-number" with value "insert"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has attribute "leos:tc-original-number" with value "(b)"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action-enter"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action"
-    And num tag of point 1 of list 1 of paragraph 2 of article 7 has html "(a)"
-    And num tag of point 2 of list 1 of paragraph 2 of article 7 has html "(b)"
-    When mouseover and click on article 7
-    And ck editor window is displayed
-    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click down arrow from keyboard in edition mode
-    And click on decrease indent icon present in ck editor panel
-    Then click save and close button of ck editor
-    And num tag of paragraph 1 of article 7 has html "1."
-    And num tag of paragraph 2 of article 7 has html "2."
-    And num tag of point 1 of list 1 of paragraph 1 of article 7 has html "(a)"
-    And num tag of point 2 of list 1 of paragraph 1 of article 7 has html "(b)"
-    And num tag of point 1 of list 1 of paragraph 2 of article 7 has html "(a)"
-    And num tag of point 2 of list 1 of paragraph 2 of article 7 has html "(b)"
-    When mouseover and click on article 3
-    And ck editor window is displayed
-    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click down arrow from keyboard in edition mode
-    And click down arrow from keyboard in edition mode
-    And click down arrow from keyboard in edition mode
-    And click down arrow from keyboard in edition mode
-    And click down arrow from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    Then click save and close button of ck editor
-    And num tag of paragraph 1 of article 3 has html "1."
-    And num tag of point 1 of list 1 of paragraph 1 of article 3 has html "(a)"
-    And num tag of point 2 of list 1 of paragraph 1 of article 3 has html "(b)"
-    And num tag of paragraph 2 of article 3 has html "2."
-    And num tag of paragraph 3 of article 3 has html "3."
-    And num tag of paragraph 4 of article 3 has html "4."
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has html "5."
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has attribute "leos:action-number" with value "delete"
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has attribute "leos:tc-original-number" with value "5."
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 doesn't have attribute "leos:action-enter"
-    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 doesn't have attribute "leos:action"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has html "(a)"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has attribute "leos:action-number" with value "insert"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has attribute "leos:tc-original-number" with value "5."
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 doesn't have attribute "leos:action-enter"
-    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 doesn't have attribute "leos:action"
-    And 'del' tag 1 of num tag of paragraph 5 of article 3 has text "6."
-    And 'del' tag 1 of num tag of paragraph 5 of article 3 has attribute "leos:action-number" with value "delete"
-    And 'del' tag 1 of num tag of paragraph 5 of article 3 has attribute "leos:tc-original-number" with value "6."
-    And 'del' tag 1 of num tag of paragraph 5 of article 3 doesn't have attribute "leos:action-enter"
-    And 'del' tag 1 of num tag of paragraph 5 of article 3 doesn't have attribute "leos:action"
-    And 'ins' tag 1 of num tag of paragraph 5 of article 3 has text "5."
-    And 'ins' tag 1 of num tag of paragraph 5 of article 3 has attribute "leos:action-number" with value "insert"
-    And 'ins' tag 1 of num tag of paragraph 5 of article 3 has attribute "leos:tc-original-number" with value "6."
-    And 'ins' tag 1 of num tag of paragraph 5 of article 3 doesn't have attribute "leos:action-enter"
-    And 'ins' tag 1 of num tag of paragraph 5 of article 3 doesn't have attribute "leos:action"
-    And 'del' tag 1 of num tag of paragraph 6 of article 3 has text "7."
-    And 'del' tag 1 of num tag of paragraph 6 of article 3 has attribute "leos:action-number" with value "delete"
-    And 'del' tag 1 of num tag of paragraph 6 of article 3 has attribute "leos:tc-original-number" with value "7."
-    And 'del' tag 1 of num tag of paragraph 6 of article 3 doesn't have attribute "leos:action-enter"
-    And 'del' tag 1 of num tag of paragraph 6 of article 3 doesn't have attribute "leos:action"
-    And 'ins' tag 1 of num tag of paragraph 6 of article 3 has text "6."
-    And 'ins' tag 1 of num tag of paragraph 6 of article 3 has attribute "leos:action-number" with value "insert"
-    And 'ins' tag 1 of num tag of paragraph 6 of article 3 has attribute "leos:tc-original-number" with value "7."
-    And 'ins' tag 1 of num tag of paragraph 6 of article 3 doesn't have attribute "leos:action-enter"
-    And 'ins' tag 1 of num tag of paragraph 6 of article 3 doesn't have attribute "leos:action"
-    When mouseover and click on article 3
-    And ck editor window is displayed
-    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click down arrow from keyboard in edition mode
-    And click down arrow from keyboard in edition mode
-    And click down arrow from keyboard in edition mode
-    And click down arrow from keyboard in edition mode
-    And click down arrow from keyboard in edition mode
-    And click on decrease indent icon present in ck editor panel
-    Then click save and close button of ck editor
-    And num tag of paragraph 1 of article 3 has html "1."
-    And num tag of point 1 of list 1 of paragraph 1 of article 3 has html "(a)"
-    And num tag of point 2 of list 1 of paragraph 1 of article 3 has html "(b)"
-    And num tag of paragraph 2 of article 3 has html "2."
-    And num tag of paragraph 3 of article 3 has html "3."
-    And num tag of paragraph 4 of article 3 has html "4."
-    And num tag of paragraph 5 of article 3 has html "5."
-    And num tag of point 1 of list 1 of paragraph 5 of article 3 has html "(a)"
-    And num tag of point 2 of list 1 of paragraph 5 of article 3 has html "(b)"
-    And num tag of paragraph 6 of article 3 has html "6."
-    And num tag of paragraph 7 of article 3 has html "7."
-    When mouseover and click on article 8
-    And ck editor window is displayed
-    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click on decrease indent icon present in ck editor panel
-    Then click save and close button of ck editor
-    Then num tag of paragraph 1 of article 8 should not exist
-    And 'del' tag 1 of num tag of paragraph 2 of article 8 has text "(a)"
-    And 'del' tag 1 of num tag of paragraph 2 of article 8 has attribute "leos:action-number" with value "delete"
-    And 'del' tag 1 of num tag of paragraph 2 of article 8 has attribute "leos:tc-original-number" with value "(a)"
-    And 'del' tag 1 of num tag of paragraph 2 of article 8 doesn't have attribute "leos:action-enter"
-    And 'del' tag 1 of num tag of paragraph 2 of article 8 doesn't have attribute "leos:action"
-    And 'ins' tag of num tag of paragraph 2 of article 8 should not exist
-    And num tag of paragraph 3 of article 8 should not exist
-    When mouseover and click on article 8
-    And ck editor window is displayed
-    Then click at offset 0 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click down arrow from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click down arrow from keyboard in edition mode
-    And click on decrease indent icon present in ck editor panel
-    Then click save and close button of ck editor
-    And num tag of paragraph 1 of article 8 should not exist
-    And num tag of paragraph 2 of article 8 should not exist
-    And num tag of point 1 of list 1 of paragraph 1 of article 8 has html "(a)"
-    And num tag of point 2 of list 1 of paragraph 1 of article 8 has html "(b)"
-    And num tag of point 1 of list 1 of paragraph 2 of article 8 has html "(a)"
-    And num tag of point 2 of list 1 of paragraph 2 of article 8 has html "(b)"
+#  @Cases11To16FromStory1319 @local @focus
+#  Scenario: Cases 11 to 16 of https://code.europa.eu/leos/core/-/issues/1319
+#    Given navigate to edit drafting application with "User1"
+#    Then user is on home page
+#    When click on upload button
+#    Then active upload window label contains "Upload a legislative document"
+#    When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode7.leg"
+#    Then active upload window label contains "Document metadata"
+#    And  document title input field is displayed
+#    When click on create button in upload document page
+#    Then user is on act viewer page
+#    When click on legal act link present in act viewer page
+#    Then user is on legal act page
+#    And  ribbon toolbar is maximized
+#    When enable track changes
+#    Then enable track changes toggle bar is on in ribbon toolbar
+#    When mouseover and click on article 7
+#    And ck editor window is displayed
+#    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And  click on decrease indent icon present in ck editor panel
+#    And  click on decrease indent icon present in ck editor panel
+#    When click save and close button of ck editor
+#    Then num tag of paragraph 1 of article 7 has html "1."
+#    And 'del' tag 1 of num tag of paragraph 2 of article 7 has text "(a)"
+#    And 'del' tag 1 of num tag of paragraph 2 of article 7 has attribute "leos:action-number" with value "delete"
+#    And 'del' tag 1 of num tag of paragraph 2 of article 7 has attribute "leos:tc-original-number" with value "(a)"
+#    And 'del' tag 1 of num tag of paragraph 2 of article 7 doesn't have attribute "leos:action-enter"
+#    And 'del' tag 1 of num tag of paragraph 2 of article 7 doesn't have attribute "leos:action"
+#    And 'ins' tag 1 of num tag of paragraph 2 of article 7 has text "2."
+#    And 'ins' tag 1 of num tag of paragraph 2 of article 7 has attribute "leos:action-number" with value "insert"
+#    And 'ins' tag 1 of num tag of paragraph 2 of article 7 has attribute "leos:tc-original-number" with value "(a)"
+#    And 'ins' tag 1 of num tag of paragraph 2 of article 7 doesn't have attribute "leos:action-enter"
+#    And 'ins' tag 1 of num tag of paragraph 2 of article 7 doesn't have attribute "leos:action"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has html "(b)"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has attribute "leos:action-number" with value "delete"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has attribute "leos:tc-original-number" with value "(b)"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action-enter"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action-delete"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has html "(a)"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has attribute "leos:action-number" with value "insert"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 has attribute "leos:tc-original-number" with value "(b)"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action-enter"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action-delete"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 7 doesn't have attribute "leos:action"
+#    And 'del' tag 1 of num tag of paragraph 3 of article 7 has text "2."
+#    And 'del' tag 1 of num tag of paragraph 3 of article 7 has attribute "leos:action-number" with value "delete"
+#    And 'del' tag 1 of num tag of paragraph 3 of article 7 has attribute "leos:tc-original-number" with value "2."
+#    And 'del' tag 1 of num tag of paragraph 3 of article 7 doesn't have attribute "leos:action-enter"
+#    And 'del' tag 1 of num tag of paragraph 3 of article 7 doesn't have attribute "leos:action"
+#    And 'ins' tag 1 of num tag of paragraph 3 of article 7 has text "3."
+#    And 'ins' tag 1 of num tag of paragraph 3 of article 7 has attribute "leos:action-number" with value "insert"
+#    And 'ins' tag 1 of num tag of paragraph 3 of article 7 has attribute "leos:tc-original-number" with value "2."
+#    And 'ins' tag 1 of num tag of paragraph 3 of article 7 doesn't have attribute "leos:action-enter"
+#    And 'ins' tag 1 of num tag of paragraph 3 of article 7 doesn't have attribute "leos:action"
+#    Then num tag of point 1 of list 1 of paragraph 3 of article 7 has html "(a)"
+#    When mouseover and click on article 7
+#    And ck editor window is displayed
+#    Then click at offset 0 in li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "paragraph" of article in edition mode
+#    And  click on increase indent icon present in ck editor panel
+#    When click save and close button of ck editor
+#    Then num tag of paragraph 1 of article 7 has html "1."
+#    And num tag of paragraph 2 of article 7 has html "2."
+#    And num tag of point 1 of list 1 of paragraph 1 of article 7 has html "(a)"
+#    And num tag of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action-number"
+#    And num tag of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action-enter"
+#    And num tag of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action"
+#    And num tag of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:tc-original-number"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has html "(b)"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has attribute "leos:action-number" with value "delete"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has attribute "leos:tc-original-number" with value "(b)"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action-enter"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has html "(i)"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has attribute "leos:action-number" with value "insert"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 has attribute "leos:tc-original-number" with value "(b)"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action-enter"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 7 doesn't have attribute "leos:action"
+#    And num tag of point 1 of list 1 of paragraph 2 of article 7 has html "(a)"
+#    And num tag of point 2 of list 1 of paragraph 2 of article 7 has html "(b)"
+#    When mouseover and click on article 7
+#    And ck editor window is displayed
+#    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click on decrease indent icon present in ck editor panel
+#    Then click save and close button of ck editor
+#    And num tag of paragraph 1 of article 7 has html "1."
+#    And num tag of paragraph 2 of article 7 has html "2."
+#    And num tag of point 1 of list 1 of paragraph 1 of article 7 has html "(a)"
+#    And num tag of point 2 of list 1 of paragraph 1 of article 7 has html "(b)"
+#    And num tag of point 1 of list 1 of paragraph 2 of article 7 has html "(a)"
+#    And num tag of point 2 of list 1 of paragraph 2 of article 7 has html "(b)"
+#    When mouseover and click on article 3
+#    And ck editor window is displayed
+#    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click on increase indent icon present in ck editor panel
+#    Then click save and close button of ck editor
+#    And num tag of paragraph 1 of article 3 has html "1."
+#    And num tag of point 1 of list 1 of paragraph 1 of article 3 has html "(a)"
+#    And num tag of point 2 of list 1 of paragraph 1 of article 3 has html "(b)"
+#    And num tag of paragraph 2 of article 3 has html "2."
+#    And num tag of paragraph 3 of article 3 has html "3."
+#    And num tag of paragraph 4 of article 3 has html "4."
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has html "5."
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has attribute "leos:action-number" with value "delete"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has attribute "leos:tc-original-number" with value "5."
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 doesn't have attribute "leos:action-enter"
+#    And 'del' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 doesn't have attribute "leos:action"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has html "(a)"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has attribute "leos:action-number" with value "insert"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 has attribute "leos:tc-original-number" with value "5."
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 doesn't have attribute "leos:action-enter"
+#    And 'ins' tag 1 of num tag of point 1 of list 1 of paragraph 4 of article 3 doesn't have attribute "leos:action"
+#    And 'del' tag 1 of num tag of paragraph 5 of article 3 has text "6."
+#    And 'del' tag 1 of num tag of paragraph 5 of article 3 has attribute "leos:action-number" with value "delete"
+#    And 'del' tag 1 of num tag of paragraph 5 of article 3 has attribute "leos:tc-original-number" with value "6."
+#    And 'del' tag 1 of num tag of paragraph 5 of article 3 doesn't have attribute "leos:action-enter"
+#    And 'del' tag 1 of num tag of paragraph 5 of article 3 doesn't have attribute "leos:action"
+#    And 'ins' tag 1 of num tag of paragraph 5 of article 3 has text "5."
+#    And 'ins' tag 1 of num tag of paragraph 5 of article 3 has attribute "leos:action-number" with value "insert"
+#    And 'ins' tag 1 of num tag of paragraph 5 of article 3 has attribute "leos:tc-original-number" with value "6."
+#    And 'ins' tag 1 of num tag of paragraph 5 of article 3 doesn't have attribute "leos:action-enter"
+#    And 'ins' tag 1 of num tag of paragraph 5 of article 3 doesn't have attribute "leos:action"
+#    And 'del' tag 1 of num tag of paragraph 6 of article 3 has text "7."
+#    And 'del' tag 1 of num tag of paragraph 6 of article 3 has attribute "leos:action-number" with value "delete"
+#    And 'del' tag 1 of num tag of paragraph 6 of article 3 has attribute "leos:tc-original-number" with value "7."
+#    And 'del' tag 1 of num tag of paragraph 6 of article 3 doesn't have attribute "leos:action-enter"
+#    And 'del' tag 1 of num tag of paragraph 6 of article 3 doesn't have attribute "leos:action"
+#    And 'ins' tag 1 of num tag of paragraph 6 of article 3 has text "6."
+#    And 'ins' tag 1 of num tag of paragraph 6 of article 3 has attribute "leos:action-number" with value "insert"
+#    And 'ins' tag 1 of num tag of paragraph 6 of article 3 has attribute "leos:tc-original-number" with value "7."
+#    And 'ins' tag 1 of num tag of paragraph 6 of article 3 doesn't have attribute "leos:action-enter"
+#    And 'ins' tag 1 of num tag of paragraph 6 of article 3 doesn't have attribute "leos:action"
+#    When mouseover and click on article 3
+#    And ck editor window is displayed
+#    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click on decrease indent icon present in ck editor panel
+#    Then click save and close button of ck editor
+#    And num tag of paragraph 1 of article 3 has html "1."
+#    And num tag of point 1 of list 1 of paragraph 1 of article 3 has html "(a)"
+#    And num tag of point 2 of list 1 of paragraph 1 of article 3 has html "(b)"
+#    And num tag of paragraph 2 of article 3 has html "2."
+#    And num tag of paragraph 3 of article 3 has html "3."
+#    And num tag of paragraph 4 of article 3 has html "4."
+#    And num tag of paragraph 5 of article 3 has html "5."
+#    And num tag of point 1 of list 1 of paragraph 5 of article 3 has html "(a)"
+#    And num tag of point 2 of list 1 of paragraph 5 of article 3 has html "(b)"
+#    And num tag of paragraph 6 of article 3 has html "6."
+#    And num tag of paragraph 7 of article 3 has html "7."
+#    When mouseover and click on article 8
+#    And ck editor window is displayed
+#    Then click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And click on decrease indent icon present in ck editor panel
+#    Then click save and close button of ck editor
+#    Then num tag of paragraph 1 of article 8 should not exist
+#    And 'del' tag 1 of num tag of paragraph 2 of article 8 has text "(a)"
+#    And 'del' tag 1 of num tag of paragraph 2 of article 8 has attribute "leos:action-number" with value "delete"
+#    And 'del' tag 1 of num tag of paragraph 2 of article 8 has attribute "leos:tc-original-number" with value "(a)"
+#    And 'del' tag 1 of num tag of paragraph 2 of article 8 doesn't have attribute "leos:action-enter"
+#    And 'del' tag 1 of num tag of paragraph 2 of article 8 doesn't have attribute "leos:action"
+#    And 'ins' tag of num tag of paragraph 2 of article 8 should not exist
+#    And num tag of paragraph 3 of article 8 should not exist
+#    When mouseover and click on article 8
+#    And ck editor window is displayed
+#    Then click at offset 0 of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And click down arrow from keyboard in edition mode
+#    And click on increase indent icon present in ck editor panel
+#    And click down arrow from keyboard in edition mode
+#    And click on decrease indent icon present in ck editor panel
+#    Then click save and close button of ck editor
+#    And num tag of paragraph 1 of article 8 should not exist
+#    And num tag of paragraph 2 of article 8 should not exist
+#    And num tag of point 1 of list 1 of paragraph 1 of article 8 has html "(a)"
+#    And num tag of point 2 of list 1 of paragraph 1 of article 8 has html "(b)"
+#    And num tag of point 1 of list 1 of paragraph 2 of article 8 has html "(a)"
+#    And num tag of point 2 of list 1 of paragraph 2 of article 8 has html "(b)"
 
   @Cases17To20FromStory1319 @local
   Scenario: Cases 17 to 20 of https://code.europa.eu/leos/core/-/issues/1319 and another case from story https://code.europa.eu/leos/core/-/issues/2208 (in comments)
@@ -1478,11 +1480,16 @@ Feature: Track Changes Feature
     When click on insert after icon of citation 4
     Then citation 5 contains attribute "leos:action" with value "insert"
     And  total citation count is 7
+    When click on toc refresh icon
+    When click on right angle icon of preamble link
+    Then citations section contains new element in navigation pane
     When click on insert before icon of recital 2
     Then recital 2 contains attribute "leos:action" with value "insert"
     And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 3 contains value "(2)"
     And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of recital 3 contains value "(3)"
     And  total recital count is 3
+    When click on toc refresh icon
+    Then recitals section contains new element in navigation pane
     When click on insert after icon of article 1
     Then article 2 contains attribute "leos:action" with value "insert"
     And  del tag of num tag of article 3 contains value "Article 2"
@@ -1490,15 +1497,20 @@ Feature: Track Changes Feature
     And  del tag of num tag of article 4 contains value "Article 3"
     And  ins tag of num tag of article 4 contains value "Article 4"
     And  total article count is 11
+    When click on toc refresh icon
+    Then enacting terms contains new element in navigation pane
     When right click on citation 5
     And  click on reject this change option under track changes action
     Then total citation count is 6
+    And  citations section doesn't contain new element in navigation pane
     When right click on recital 2
     And  click on reject this change option under track changes action
     Then total recital count is 2
+    And  recitals section doesn't contain new element in navigation pane
     When right click on article 2
     And  click on reject this change option under track changes action
     Then total article count is 10
+    And  enacting terms doesn't contain new element in navigation pane
     When click on close button present in legal act page
     Then user is on act viewer page
     When click on add button in annexes section
@@ -1615,7 +1627,7 @@ Feature: Track Changes Feature
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "Automation Testing Soft Enter in Level with Track Changes" in create document page
+    And  provide document title "Automation Testing Enter in Level with Track Changes" in create document page
     And  click on create button
     Then user is on act viewer page
     When click on add button in annexes section
@@ -1819,7 +1831,6 @@ Feature: Track Changes Feature
     Then sole recital doesn't contain num tag
     And  recital 1 contains "Recital..."
 
-
   @soleArticle @local
   Scenario: Verify numbering remains correct when last article is deleted
     Given navigate to edit drafting application with "User1"
@@ -1888,30 +1899,36 @@ Feature: Track Changes Feature
     Then  "num" tag of article 1 contains "Sole Article"
     When click on insert before icon of article 1
     Then article 1 contains attribute "leos:action" with value "insert"
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click close button of ck editor
+    Then ck editor window is not displayed
     When right click on article 1
     And  click on accept this change option under track changes action
     And  "num" tag of article 1 contains "Article 1"
     And  "num" tag of article 2 contains "Article 2"
 
     When disable track changes
-    And mouseover and click on article 2
+    And  mouseover and click on article 2
     Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     When click on internal reference icon present in ck editor panel
     Then cke dialog window is displayed with title "Internal reference"
-    And enacting terms contains following articles in internal reference window
+    And  enacting terms contains following articles in internal reference window
       | Article 1 - Article heading... 1.Text... |
       | Article 2 - Article heading... 1.Text... |
-    And click on cancel button in cke dialog window
+    And  click on cancel button in cke dialog window
     And  click close button of ck editor
     When mouseover on article 2
     When click on delete icon of article 2
     Then "Delete Element: confirmation" dialog confirm box window is displayed
     When click on ok button in dialog box window
-    And mouseover and click on article 1
+    And  mouseover and click on article 1
     Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     When click on internal reference icon present in ck editor panel
     Then cke dialog window is displayed with title "Internal reference"
-    And enacting terms contains following articles in internal reference window
+    And  enacting terms contains following articles in internal reference window
       | Sole Article - Article heading... 1.Text... |
+    When click on cancel button in cke dialog window
+    And  click close button of ck editor

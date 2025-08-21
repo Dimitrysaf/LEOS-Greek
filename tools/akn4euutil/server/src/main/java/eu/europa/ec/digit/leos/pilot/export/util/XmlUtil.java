@@ -66,6 +66,7 @@ public class XmlUtil {
     public static final String NAMESPACE_AKN4EU_NAME = "akn4eu";
     public static final String NAMESPACE_AKN4EU_URI = "http://imfc.europa.eu/akn4eu";
     public static final String TAG_AKN4EU_NAME = "akn4eu:akn4euVersion";
+    private static final int NO_MATCH_INDEX_VALUE = -1;
 
     public static class XmlFile {
         private Document xmlDocument;
@@ -375,6 +376,17 @@ public class XmlUtil {
         }
 
         return result;
+    }
+
+    public static int indexOfChildNode(Node node, String childName) {
+        if (node == null) return NO_MATCH_INDEX_VALUE;
+        final NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++){
+            if (nodeNameEquals(childNodes.item(i), childName)){
+                return i;
+            }
+        }
+        return NO_MATCH_INDEX_VALUE;
     }
 
     public static boolean parentNodeNameEquals(Node node, String name){

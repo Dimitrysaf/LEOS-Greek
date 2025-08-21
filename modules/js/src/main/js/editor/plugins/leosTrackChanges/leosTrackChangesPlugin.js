@@ -24,6 +24,7 @@ define(function leosTrackChangesPluginModule(require) {
     var UTILS = require("core/leosUtils");
     var numberModule = require("plugins/leosNumber/listItemNumberModule");
     var unumberModule = require("plugins/leosUnumber/listUnumberModule");
+    var dialogDefinition = require("./leosTrackChangesWarningDialog");
     var pluginName = "leosTrackChanges";
 
     var pluginDefinition = {
@@ -40,6 +41,11 @@ define(function leosTrackChangesPluginModule(require) {
             var deleteTcStyle = new CKEDITOR.style({ element: core.TRACKCHANGES_ELEMENT, attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION) });
             var originalSelectedElement, selectedElement, handleMutations = false;
             var handleMutationsDoneBySpellChecker = false, spellCheckerOriginalText, spellCheckerReplacementText;
+
+            // adds dialog
+            pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
+            //creates dialog command
+            var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -238,7 +244,13 @@ define(function leosTrackChangesPluginModule(require) {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
-                        } else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
+                        } else if (editor.getSelection().isCollapsed() && (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)
+                            && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_TO)) {
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
+                        }else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
                             tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                             if (tcElement) {
                                 editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
@@ -467,6 +479,11 @@ define(function leosTrackChangesPluginModule(require) {
                     core.setOriginalNumber(element, previousNumber);
                 }
             });
+            editor.on("handleTcComplexStructure", function (event) {
+                if (isTrackChangesEnabled) {
+                    dialogCommand.exec();
+                }
+            }, null, null, 100);
 
             // Update toggle display state when editor has focus
             editor.on("focus", function () {
@@ -498,8 +515,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Used for CTRL-X, to get the content BEFORE been deleted
                 editable.attachListener(editor.document, "keydown", function(e) {
-                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && !core.isInsideTrackedHigherElement(editor, core.getUserId(editor)) &&
-                        (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
                         if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_X) {
                             editor.execCommand("copy");
@@ -527,9 +543,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
-                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && !core.isInsideTrackedHigherElement(editor, core.getUserId(editor)) &&
-                        (editor.getSelection().getRanges().length > 0)) {
-
+                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
 
                         // On delete functionality(prevents/backup of text)
@@ -744,6 +758,7 @@ define(function leosTrackChangesPluginModule(require) {
 
             editor.on("afterCommandExec", function(event) {
                 if (event.data.name === "enter") {
+                    addSplitAttrLiIfTextBeforeAnyTag(event);
                     var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
                     var newParagraph = null;
                     if (!elementToRemoveAttribute) {
@@ -823,6 +838,7 @@ define(function leosTrackChangesPluginModule(require) {
                             break;
                         case "authorialNoteDialog":
                         case "leosCrossReferenceDialog":
+                        case "leosBase64ImageDialog":
                         case "mathjax":
                             var dialog = event.data.definition.dialog;
                             dialog.on("ok", function(event) {
@@ -896,6 +912,32 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                     return diffPos;
                 }
+                function hasOnlyImage(nodeList) {
+                    for (let node of nodeList) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            if (node.tagName === 'BR' || node.tagName === 'IMG') {
+                                continue;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        // Check for TEXT_NODE
+                        else if (node.nodeType === Node.TEXT_NODE) {
+                            const cleanedText = node.nodeValue.replace(/[\u200B\u200C\u200D\s]/g, '');
+                            if (cleanedText.length === 0) {
+                                continue;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    return true;
+                }
                 function processMutations(mutations) {
                     if (handleMutations) {
                         handleMutations = false;
@@ -910,7 +952,20 @@ define(function leosTrackChangesPluginModule(require) {
                                             node.remove();
                                         }
                                         break;
-                                    } else if ((node.tagName === "TABLE") && !node.id) { // It is a new table
+                                    } else if (node.tagName === "IMG") {
+                                        core.setToEditablePosition(editor, new CKEDITOR.dom.element(node), core.CARET_END);
+                                        const value = hasOnlyImage(node.parentNode.childNodes);
+                                        if (actions.insertNewData(editor, node.outerHTML)) {
+                                            if (value) {
+                                                //Images inside the <ins> tag are ignored by CKEditor and disappear if the tag has no text.
+                                                // The <ins> tag is still required to wrap track changes and handle merge contributions.
+                                                const parent = new CKEDITOR.dom.element(node).getParent();
+                                                parent.appendText('\u200B'); // zero-width space
+                                            }
+                                            node.remove();
+                                        }
+                                    }
+                                    else if ((node.tagName === "TABLE") && !node.id) { // It is a new table
                                         var rows = node.querySelectorAll("tr");
                                         rows.forEach(function (row) {
                                             if (!row.getAttribute(core.UID_ATTR)) {
@@ -1166,6 +1221,71 @@ define(function leosTrackChangesPluginModule(require) {
             return charCode;
         }
     };
+
+    function addSplitAttrLiIfTextBeforeAnyTag(event) {
+
+        var selection = event.editor.getSelection();
+        if (!selection) return;
+
+        var range = selection.getRanges()[0];
+        var currentLi = range.startContainer.getAscendant('li', true);
+        if (!currentLi || currentLi.getName() !== 'li') return;
+        currentLi.removeAttribute('data-akn-split-content');
+        var children = currentLi.getChildren();
+        if (children.count() === 0) return;
+
+        var firstTextIndex = -1;
+        var firstElementIndex = -1;
+
+        for (var i = 0; i < children.count(); i++) {
+            var child = children.getItem(i);
+
+            if (child.type === CKEDITOR.NODE_TEXT) {
+                if (child.getText().length > 0 && firstTextIndex === -1) {
+                    firstTextIndex = i;
+                }
+            } else if (child.type === CKEDITOR.NODE_ELEMENT) {
+                if (child.getName() !== 'br' && child.getName() !== 'em' && firstElementIndex === -1) {
+                    firstElementIndex = i;
+                }
+            }
+        }
+
+        if (firstTextIndex !== -1 && (firstElementIndex === -1 || firstTextIndex < firstElementIndex)) {
+            var prevLi = currentLi.getPrevious();
+            var currentText = currentLi.getText() ? currentLi.getText().trim() : '';
+            if (prevLi) {
+                var prevText =  prevLi.getText() ? prevLi.getText().trim() : '';
+                if (prevText.length > 0 && currentText.length > 0) {
+                    if(event.editor.LEOS.isTrackChangesEnabled){
+                        console.log(" Split detected  part of the content stayed above, part moved down.", currentLi.getId());
+                        currentLi.setAttribute('data-akn-split-content', 'child');
+                        prevLi.setAttribute('data-akn-split-content', 'parent');
+                        var parentOl = prevLi.getParent();
+                        if (parentOl && parentOl.getName() === 'ol') {
+                            var outerLi = parentOl.getParent();
+                            if (outerLi && outerLi.getName() === 'li') {
+                               outerLi.setAttribute('data-akn-split-content', 'parent');
+                            }
+                        }
+                    }
+                } else if (prevText.length > 0 && currentText.length === 0) {
+                     console.log("Just a blank new line after Enter.");
+                } else if (prevText.length === 0 && currentText.length > 0) {
+                    console.log(" Content was fully moved to new line.");
+                } else {
+                    console.log(" Both lines are empty unclear action.");
+                }
+            } else {
+                console.log(" This is the first <li>, no previous sibling to compare.");
+            }
+
+
+        } else {
+            currentLi.removeAttribute('data-akn-split-content');
+            console.log(" Skipped <li>: first text does not come before any valid element (excluding <br>)");
+        }
+    }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 

@@ -60,6 +60,9 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.IS_LATEST_MAJOR_VERSION = 1 and d.REF = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
     Optional<DocumentV> findLatestMajorVersionByRef(String ref);
 
+    @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.VERSION_TYPE = '1' and d.REF = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
+    Optional<DocumentV> findLatestMajorMilestoneVersionByRef(String ref);
+
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.VERSION_ID IN (SELECT MIN(VERSION_ID) FROM DOCUMENT_V WHERE REF = ?1)",
             nativeQuery = true)
     Optional<DocumentV> findFirstVersion(String docRef);
@@ -77,11 +80,11 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = true AND d.ref = ?1")
     Page<DocumentV> findAllMajors(String docRef, Pageable pageable);
 
-    @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel LIKE ?2 AND d.isVersionArchived = false")
+    @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel LIKE ?2 AND d.isVersionArchived = false AND d.versionType != '4'")
     Page<DocumentV> findRecentMinorVersions(String docRef, String lastMajorId, Pageable pageable);
 
     @Query(value = "SELECT * FROM (SELECT COUNT(DISTINCT VERSION_ID) mvc FROM DOCUMENT_V d WHERE d.is_major_version = 0 and d.ref = ?1 and version_label LIKE" +
-            " ?2 and d.is_version_archived = 0) ", nativeQuery = true)
+            " ?2 and d.is_version_archived = 0 and d.version_type != '4') ", nativeQuery = true)
     long getRecentMinorVersionsCount(String docRef, String versionLabel);
 
     @Query(value = "SELECT COUNT(*) FROM DOCUMENT_V d WHERE (d.IS_ARCHIVED IS NULL OR d.IS_ARCHIVED = 0) AND d.PACKAGE_ID in (SELECT p.ID from PACKAGE p " +

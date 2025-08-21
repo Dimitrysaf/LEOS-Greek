@@ -226,7 +226,7 @@ public class MilestoneHelper {
                 if (!found) {
                     //Populate list of deleted annexes from contribution which are already accepted in original proposal
                     Optional<Annex> acceptedAnnex = annexList.stream().filter(annex ->
-                            originalEntryKey.equalsIgnoreCase(annex.getMetadata().get().getRef())).findFirst();
+                            originalEntryKey.equalsIgnoreCase(annex.getMetadata().get().getClonedRef())).findFirst();
                     //Populate list of deleted annexes from contribution which are rejected
                     Optional<String> rejectedAnnex = originalLegDocument.getContainedDocuments().stream().filter(
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(originalEntryKey)).findFirst();

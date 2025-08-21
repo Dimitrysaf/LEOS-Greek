@@ -44,3 +44,7 @@ Then(`check that there is no merge action on {string} {int}`, (eltName, eltNumbe
 Then('check that {string} {int} contains attribute {string} with value {string}', function (eltName, eltNumber, attributeName, attributeValue) {
     contributionPage.getElementInDocument(eltName, eltNumber).should('have.attr', attributeName).and('equal', attributeValue);
 });
+
+Then(/^contribution view container is displayed$/, function () {
+    contributionPage.elements.contributionViewContainer().should('be.visible');
+});

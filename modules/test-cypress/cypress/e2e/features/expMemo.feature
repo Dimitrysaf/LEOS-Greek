@@ -53,5 +53,53 @@ Feature: explanatory memorandum page regression features
       | [Explain if the proposal requires Explanatory Documents on the transposition and why.]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
     When click on see drafting guidance toggle bar
     Then user guidance is not present in the explanatory document container
+
+    When mouseover and click on block container 1 in explanatory memorandum page
+    Then ck editor window is displayed
+    And  p tag is present inside blockContainer in edition mode
+    When click on numberedList icon present in ck editor panel
+    Then ol tag of blockContainer contains attribute "data-akn-name" with value "NumberedBlockList" in edition mode
+    And  content of li with attribute "data-akn-num" with value "1." of ol tag of blockContainer contains "Not Applicable" in edition mode
+    When click enter from keyboard in edition mode
+    And  add "test2" at current cursor position in edition mode
+    Then content of li with attribute "data-akn-num" with value "2." of ol tag of blockContainer contains "test2" in edition mode
+    When click enter from keyboard in edition mode
+    And  add "test3" at current cursor position in edition mode
+    Then content of li with attribute "data-akn-num" with value "3." of ol tag of blockContainer contains "test3" in edition mode
+    When click enter from keyboard in edition mode
+    And  add "test4" at current cursor position in edition mode
+    Then content of li with attribute "data-akn-num" with value "4." of ol tag of blockContainer contains "test4" in edition mode
+    When select content from offset 0 till offset 5 in li with attribute "data-akn-num" with value "2." of ol tag of blockContainer in edition mode
+    And  click backspace from keyboard in edition mode
+    And  click backspace from keyboard in edition mode
+    Then content of li with attribute "data-akn-num" with value "2." of ol tag of blockContainer contains "test3" in edition mode
+    And  content of li with attribute "data-akn-num" with value "3." of ol tag of blockContainer contains "test4" in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  num of item 1 of blockList 1 of blockContainer 1 contains value "1."
+    And  content of item 1 of blockList 1 of blockContainer 1 contains value "Not Applicable"
+    And  num of item 2 of blockList 1 of blockContainer 1 contains value "2."
+    And  content of item 2 of blockList 1 of blockContainer 1 contains value "test3"
+    And  num of item 3 of blockList 1 of blockContainer 1 contains value "3."
+    And  content of item 3 of blockList 1 of blockContainer 1 contains value "test4"
+    When mouseover and click on block container 1 in explanatory memorandum page
+    Then ck editor window is displayed
+    When click at offset 14 in li with attribute "data-akn-num" with value "1." of ol tag of blockContainer in edition mode
+    And  click enter from keyboard in edition mode
+    And  add "test2" at current cursor position in edition mode
+    Then content of li with attribute "data-akn-num" with value "2." of ol tag of blockContainer contains "test2" in edition mode
+    And  content of li with attribute "data-akn-num" with value "3." of ol tag of blockContainer contains "test3" in edition mode
+    And  content of li with attribute "data-akn-num" with value "4." of ol tag of blockContainer contains "test4" in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  num of item 1 of blockList 1 of blockContainer 1 contains value "1."
+    And  content of item 1 of blockList 1 of blockContainer 1 contains value "Not Applicable"
+    And  num of item 2 of blockList 1 of blockContainer 1 contains value "2."
+    And  content of item 2 of blockList 1 of blockContainer 1 contains value "test2"
+    And  num of item 3 of blockList 1 of blockContainer 1 contains value "3."
+    And  content of item 3 of blockList 1 of blockContainer 1 contains value "test3"
+    And  num of item 4 of blockList 1 of blockContainer 1 contains value "4."
+    And  content of item 4 of blockList 1 of blockContainer 1 contains value "test4"
+
     When click on close button on explanatory memorandum page
     Then user is on act viewer page

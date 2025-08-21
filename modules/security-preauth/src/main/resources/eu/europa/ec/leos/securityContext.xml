@@ -20,7 +20,8 @@
             <sec:content-security-policy policy-directives="default-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy};
                 script-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} 'unsafe-inline' 'unsafe-eval' blob:;
                 style-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} 'unsafe-inline';
-                img-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} data:;"/>
+                img-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} data:;
+                frame-ancestors ${leos.content.script.security.policy};"/>
         </sec:headers>
     </sec:http>
 

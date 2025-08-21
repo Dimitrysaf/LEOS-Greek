@@ -41,6 +41,7 @@ define(function leosUtilsModule(require) {
     var HEADING = "heading";
     var NUM = "num";
     var PARAGRAPH = "paragraph";
+    var BLOCKCONTAINER = "blockcontainer";
     var LEVEL = "level";
     var DOCPURPOSE = "docPurpose";
     var ID = "id";
@@ -145,28 +146,11 @@ define(function leosUtilsModule(require) {
             if (_containsOnlyDeletedElts(el)) {
                 return true;
             }
-            if (isFirstNodeEmptyTextOrBr(el)) {
+            if (el.childNodes[0].nodeName === LINE_BREAK_TAG) {
                 return true;
             }
         }
         return false;
-    }
-    function isFirstNodeEmptyTextOrBr(el) {
-        const node = el.childNodes[0];
-        if (node && node.nodeType === Node.TEXT_NODE) {
-            if (node.textContent === '' || /^\s*$/.test(node.textContent)) {
-                const secondNode = el.childNodes[1];
-                if (secondNode && secondNode.nodeType === Node.ELEMENT_NODE && secondNode.nodeName !== 'UL' && secondNode.nodeName !== 'OL') {
-                    return secondNode.nodeName === LINE_BREAK_TAG; // true if <br>, false otherwise
-                }
-                return true; // text node is empty or whitespace only
-            }
-            return false; // text node with real content
-        }
-        if (node && node.nodeType === Node.ELEMENT_NODE) {
-            return node.nodeName ===  LINE_BREAK_TAG; // true if <br>, false otherwise
-        }
-        return false; // no child nodes found
     }
 
     function _setItemInStorage(key, value) {
@@ -314,6 +298,7 @@ define(function leosUtilsModule(require) {
                     "content: '↰'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt;" +
                     "}\n";
+                tcShowStyle += "ins img { display:inline-block !important; border:" + (isTrackChangesShowed ? "2px solid rgba(0, 255, 0, 0.5)" :"none") + " !important;}";
             } else {
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
@@ -443,6 +428,7 @@ define(function leosUtilsModule(require) {
         ID: ID,
         HEADING: HEADING,
         SPELLCHECKER: SPELLCHECKER,
+        BLOCKCONTAINER: BLOCKCONTAINER,
         LEVEL: LEVEL,
         DOCPURPOSE: DOCPURPOSE
     };

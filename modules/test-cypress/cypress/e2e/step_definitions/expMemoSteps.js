@@ -37,3 +37,19 @@ When('click on close button on explanatory memorandum page', function () {
 When('mouseover and click on block container {int} in explanatory memorandum page', (blockContainerNumber) => {
     expMemoPage.mouseHoverAndClickOnBlockContainer(blockContainerNumber);
 });
+
+Then(/^num of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount, blockListCount, blockContainerCount, text) {
+    expMemoPage.getItemFirstLayer(itemCount, blockListCount, blockContainerCount).children('num').should('have.text', text);
+});
+
+Then(/^content of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount, blockListCount, blockContainerCount, content) {
+    expMemoPage.getItemFirstLayer(itemCount, blockListCount, blockContainerCount).children('aknp').should('have.text', content);
+});
+
+Then(/^num of item (\d+) of blockList (\d+) of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount2, blockListCount2, itemCount, blockListCount, blockContainerCount, text) {
+    expMemoPage.getItemSecondLayer(itemCount2, blockListCount2, itemCount, blockListCount, blockContainerCount).children('num').should('have.text', text);
+});
+
+Then(/^content of item (\d+) of blockList (\d+) of item (\d+) of blockList (\d+) of blockContainer (\d+) contains value "([^"]*)"$/, function (itemCount2, blockListCount2, itemCount, blockListCount, blockContainerCount, content) {
+    expMemoPage.getItemSecondLayer(itemCount2, blockListCount2, itemCount, blockListCount, blockContainerCount).children('aknp').should('have.text', content);
+});

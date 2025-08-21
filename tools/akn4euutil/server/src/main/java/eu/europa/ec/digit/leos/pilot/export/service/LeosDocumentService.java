@@ -17,6 +17,8 @@ import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 public interface LeosDocumentService {
 
     LeosConvertDocumentInput createDocumentInput(MultipartFile inputFile, MultipartFile main, boolean isWithAnnotations);
@@ -27,7 +29,7 @@ public interface LeosDocumentService {
 
     LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput);
 
-    byte[] applyMetadata(MultipartFile inputFile);
+    byte[] applyMetadata(MultipartFile inputFile) throws IOException;
 
-    String applyMetadataAsync(MultipartFile inputFile, String callbackUrl);
+    String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) throws IOException;
 }
