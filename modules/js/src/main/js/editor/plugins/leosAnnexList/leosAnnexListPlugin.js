@@ -18,7 +18,7 @@ define(function leosAnnexListPluginModule(require) {
 
     // load module dependencies
     var CKEDITOR = require("promise!ckEditor");
-    var LOG = require("logger");
+    var UTILS = require("core/leosUtils");
     var pluginTools = require("plugins/pluginTools");
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
@@ -766,6 +766,7 @@ define(function leosAnnexListPluginModule(require) {
             nextPath = new CKEDITOR.dom.elementPath( nextCursor.startContainer ),
             nextLi = nextPath.contains( CKEDITOR.dtd.$listItem ),
             nextList = nextPath.contains( CKEDITOR.dtd.$list ),
+            listElemP = cursor.startContainer.find('> p'),
             last;
 
         // Remove bogus node the current block/pseudo block.
@@ -782,11 +783,16 @@ define(function leosAnnexListPluginModule(require) {
         // Kill the tail br in extracted.
         last = frag.getLast();
         // LEOS-6702 add condition !frag.getFirst().equals(last) to avoid removing all fragment
-        if ( last && last.type == CKEDITOR.NODE_ELEMENT && last.is( 'br' ) && !frag.getFirst().equals(last) )
+        if ( last && last.type == CKEDITOR.NODE_ELEMENT && last.is( 'br' ) && (!frag.getFirst().equals(last) || !isEmptyElementToAppendFragment()))
             last.remove();
 
+        function isEmptyElementToAppendFragment() {
+            var elemToAppendFragment = (listElemP && listElemP.$.length > 0) ? listElemP.getItem(listElemP.$.length - 1) :
+                isINP ? nextCursor.startContainer : cursor.startContainer;
+            return UTILS.isEmptyElement(elemToAppendFragment.$);
+        }
+
         // Insert fragment at the range position.
-        var listElemP = cursor.startContainer.find('> p');
         if (listElemP && listElemP.$.length > 0) {
             var elemP = listElemP.getItem(listElemP.$.length-1);
             elemP.appendText(" ");
