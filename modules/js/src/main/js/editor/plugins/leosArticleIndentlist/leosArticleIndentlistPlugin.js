@@ -437,6 +437,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     // To outdent INTRO subparagraph to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.DATA_AKN_TC_ORIGINAL_NUMBER);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
@@ -451,11 +452,15 @@ define(function leosArticleIndentListPluginModule(require) {
                         nextElement = nextOfNextElement;
                     }
                     newLi.insertAfter(range.startContainer.getParent());
+                    if (originalNumber) {
+                        newLi.setAttribute(leosTrackChanges.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'LI' && !range.startContainer.getNext()) {
                     // To outdent WRAP subparagraph to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
                     var parentOl = range.startContainer.getParent();
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.DATA_AKN_TC_ORIGINAL_NUMBER);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
@@ -472,6 +477,9 @@ define(function leosArticleIndentListPluginModule(require) {
                         nextElement = nextOfNextElement;
                     }
                     newLi.insertAfter(range.startContainer.getParent());
+                    if (originalNumber) {
+                        newLi.setAttribute(leosTrackChanges.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && !(range.startContainer.$.nodeName === 'P' && !range.startContainer.getPrevious())) {
                     // To indent subparagraph to point, as the normal indent of paragraph would expand and indent ALL point, not only the paragraph
                     var originalNumber = range.startContainer.getAttribute(leosTrackChanges.DATA_AKN_TC_ORIGINAL_NUMBER);
