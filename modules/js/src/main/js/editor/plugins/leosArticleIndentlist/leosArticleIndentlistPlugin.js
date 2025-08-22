@@ -494,7 +494,7 @@ define(function leosArticleIndentListPluginModule(require) {
                         newOl.append(range.startContainer);
                     }
                     if (originalNumber) {
-                        newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
                     }
                 } else if (!this.isIndent && isLeaf) {
                     var parentLi = range.startContainer.getParent().getParent();
