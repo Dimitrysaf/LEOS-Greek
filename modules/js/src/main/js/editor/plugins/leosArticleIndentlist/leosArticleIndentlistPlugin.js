@@ -412,6 +412,7 @@ define(function leosArticleIndentListPluginModule(require) {
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'P') {
                     // To outdent subparagraph (which is not INTRO or WRAPPER) to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     var newLi = doc.createElement('li');
                     var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
                     range.startContainer.getParent().$.insertBefore(newLi.$, range.startContainer.$);
@@ -429,6 +430,9 @@ define(function leosArticleIndentListPluginModule(require) {
                         var html = newLi.getFirst().getHtml();
                         newLi.getFirst().remove();
                         newLi.setHtml(html);
+                    }
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
                     }
                     if (originalNumber) {
                         newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
