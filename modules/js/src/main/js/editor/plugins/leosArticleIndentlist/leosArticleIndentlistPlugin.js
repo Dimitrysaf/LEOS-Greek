@@ -35,6 +35,7 @@ define(function leosArticleIndentListPluginModule(require) {
 
     var pluginName = "leosArticleIndentlist";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var isNotWhitespaces = CKEDITOR.dom.walker.whitespaces( true ),
         isNotBookmark = CKEDITOR.dom.walker.bookmark( false, true ),
@@ -412,6 +413,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     // To outdent subparagraph (which is not INTRO or WRAPPER) to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
+                    var originalNumber = range.startContainer.getAttribute('data-akn-tc-original-number');
                     range.startContainer.getParent().$.insertBefore(newLi.$, range.startContainer.$);
                     newLi.append(range.startContainer);
                     range.startContainer = newLi;
@@ -428,6 +430,7 @@ define(function leosArticleIndentListPluginModule(require) {
                         newLi.getFirst().remove();
                         newLi.setHtml(html);
                     }
+                    newLi.setAttribute(leosTrackChanges.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'LI' && !range.startContainer.getPrevious()) {
                     // To outdent INTRO subparagraph to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
@@ -469,6 +472,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     newLi.insertAfter(range.startContainer.getParent());
                 } else if (this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && !(range.startContainer.$.nodeName === 'P' && !range.startContainer.getPrevious())) {
                     // To indent subparagraph to point, as the normal indent of paragraph would expand and indent ALL point, not only the paragraph
+                    var originalNumber = range.startContainer.getAttribute('data-akn-tc-original-number');
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.POINT);
                     range.startContainer.renameNode('li');
@@ -479,14 +483,19 @@ define(function leosArticleIndentListPluginModule(require) {
                         range.startContainer.getParent().$.insertBefore(newOl.$, range.startContainer.$);
                         newOl.append(range.startContainer);
                     }
+                    newLi.setAttribute(leosTrackChanges.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
                 } else if (!this.isIndent && isLeaf) {
                     var parentLi = range.startContainer.getParent().getParent();
                     var parentOl = range.startContainer.getParent();
                     var nextLi = range.startContainer.getNext();
+                    var parentLiNum = parentLi.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    var previousNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    var newNum = 'SUB_OF_' + parentLiNum;
+                    range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NUM, newNum);
+                    editor.fire("handleTcIndent", {data: range.startContainer, previousNumber: previousNum});
                     range.startContainer.insertAfter(parentOl);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
-                    range.startContainer.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
                     range.startContainer.renameNode('p');
                     var newOl = new CKEDITOR.dom.element('ol');
                     parentLi.append(newOl);
@@ -515,9 +524,12 @@ define(function leosArticleIndentListPluginModule(require) {
                     }
                 } else if (this.isIndent && isLeaf) {
                     var previous = range.startContainer.getPrevious();
+                    var previousNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    var newNum = 'SUB_OF_' + previousNum;
+                    range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NUM, newNum);
+                    editor.fire("handleTcIndent", {data: range.startContainer, previousNumber: previousNum});
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
-                    range.startContainer.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
                     if (previous.getLast().$.nodeName === 'OL' && previous.getLast().getLast().getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) !== leosPluginUtils.SUBPARAGRAPH) {
                         range.startContainer.setAttribute(leosPluginUtils.REFERS_TO, leosPluginUtils.WRP);
                         previous.getLast().append(range.startContainer);
