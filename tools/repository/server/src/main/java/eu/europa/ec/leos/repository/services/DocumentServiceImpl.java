@@ -17,25 +17,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
+import eu.europa.ec.leos.repository.entities.*;
 import eu.europa.ec.leos.repository.entities.Document;
-import eu.europa.ec.leos.repository.entities.DocumentCategories;
-import eu.europa.ec.leos.repository.entities.DocumentContent;
-import eu.europa.ec.leos.repository.entities.DocumentProperties;
-import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
-import eu.europa.ec.leos.repository.entities.DocumentV;
-import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
-import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentPropertiesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentVersionRepository;
-import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import eu.europa.ec.leos.repository.repositories.*;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import org.apache.commons.lang3.StringUtils;
@@ -50,9 +38,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -68,6 +59,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -88,19 +89,24 @@ public class DocumentServiceImpl implements DocumentService {
     private final MilestoneDocumentService milestoneDocumentService;
     private final ConfigService configService;
     private final EntityManager entityManager;
+    private final DocumentMilestoneRepository documentMilestoneRepository;
 
     private static final ObjectMapper mapper = new ObjectMapper();
+    private final ConfigContentRepository configContentRepository;
+    private final ConfigVersionRepository configVersionRepository;
+    private final ConfigurationVRepository configurationVRepository;
 
     @Autowired
     public DocumentServiceImpl(DocumentRepository documentRepository, DocumentVRepository documentVRepository,
-            DocumentVersionRepository documentVersionRepository, DocumentContentRepository documentContentRepository,
-            DocumentCategoriesRepository documentCategoriesRepository,
-            DocumentPropertiesRepository documentPropertiesRepository,
-            DocumentPropertyValuesRepository documentPropertyValuesRepository,
-            PackageRepository packageRepository, PackageService packageService,
-            CollaboratorsService collaboratorsService,
-            MilestoneDocumentService milestoneDocumentService,
-            ConfigService configService, EntityManager entityManager) {
+                               DocumentVersionRepository documentVersionRepository, DocumentContentRepository documentContentRepository,
+                               DocumentCategoriesRepository documentCategoriesRepository,
+                               DocumentPropertiesRepository documentPropertiesRepository,
+                               DocumentPropertyValuesRepository documentPropertyValuesRepository,
+                               PackageRepository packageRepository, PackageService packageService,
+                               CollaboratorsService collaboratorsService,
+                               MilestoneDocumentService milestoneDocumentService,
+                               ConfigService configService, EntityManager entityManager,
+                               DocumentMilestoneRepository documentMilestoneRepository, ConfigContentRepository configContentRepository, ConfigVersionRepository configVersionRepository, ConfigurationVRepository configurationVRepository) {
         this.documentRepository = documentRepository;
         this.documentVRepository = documentVRepository;
         this.documentVersionRepository = documentVersionRepository;
@@ -114,6 +120,10 @@ public class DocumentServiceImpl implements DocumentService {
         this.milestoneDocumentService = milestoneDocumentService;
         this.configService = configService;
         this.entityManager = entityManager;
+        this.documentMilestoneRepository = documentMilestoneRepository;
+        this.configContentRepository = configContentRepository;
+        this.configVersionRepository = configVersionRepository;
+        this.configurationVRepository = configurationVRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -1203,4 +1213,328 @@ public class DocumentServiceImpl implements DocumentService {
             }
         }
     }
+
+    @Override
+    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs) throws RepositoryException {
+        LOG.info("Publishing custom template: name={}, description={}, categories={}", templateName, legDocumentName, dgs);
+
+        Optional<Document> legFile = documentRepository.findDocumentByName(legDocumentName);
+
+        if (!legFile.isPresent()){
+            return;
+        }
+
+        //UPDATE MILESTONE
+        DocumentMilestone milestone = documentMilestoneRepository.findByDocumentId(legFile.get().getId());
+        milestone.setStatus("PUBLISHED");
+        milestone.setAuditLastMBy("jane"); // Get username
+        milestone.setAuditLastMDate(LocalDateTime.now());
+        documentMilestoneRepository.save(milestone);
+
+
+        //CREATE CONFIG
+
+        String catalog = createCatalogWithCategoriesOnly();
+
+        String updatedCatalog = insertTemplateIntoCatalog(catalog, "SJ-004");
+
+        System.out.println(updatedCatalog);
+
+    }
+
+
+    // PRIVATE THINGS TO BE MOVED TO A DIFF FILE
+    public String createCatalogWithCategoriesOnly() throws RepositoryException {
+        try {
+            byte[] catalogContent = getCatalogFromDatabase();
+
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            org.w3c.dom.Document sourceDoc = builder.parse(new ByteArrayInputStream(catalogContent));
+
+            org.w3c.dom.Document targetDoc = builder.newDocument();
+
+            // Copy the root element with its attributes
+            Element sourceRoot = sourceDoc.getDocumentElement();
+            Element targetRoot = targetDoc.createElement(sourceRoot.getTagName());
+
+            // Copy root attributes
+            NamedNodeMap rootAttributes = sourceRoot.getAttributes();
+            for (int i = 0; i < rootAttributes.getLength(); i++) {
+                Node attr = rootAttributes.item(i);
+                targetRoot.setAttribute(attr.getNodeName(), attr.getNodeValue());
+            }
+
+            targetDoc.appendChild(targetRoot);
+
+            copyCategoriesOnly(sourceRoot, targetRoot, targetDoc);
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(targetDoc), new StreamResult(writer));
+            return writer.toString();
+
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
+    private byte[] getCatalogFromDatabase() throws RepositoryException {
+        configService.findConfigByName("catalog");
+        Optional<ConfigurationV> configurationV = configurationVRepository.findConfigurationByName("catalog");
+        return configurationV.get().getContent();
+    }
+
+    private void copyCategoriesOnly(Element source, Element target, org.w3c.dom.Document targetDoc) {
+        NodeList children = source.getChildNodes();
+
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) child;
+
+                if ("item".equals(childElement.getTagName())) {
+                    String type = childElement.getAttribute("type");
+
+                    // Only process CATEGORY items, skip TEMPLATE and DOCUMENT items
+                    if ("CATEGORY".equals(type)) {
+                        // Create the category item element
+                        Element categoryItem = targetDoc.createElement("item");
+
+                        // Copy all attributes
+                        NamedNodeMap attributes = childElement.getAttributes();
+                        for (int k = 0; k < attributes.getLength(); k++) {
+                            Node attr = attributes.item(k);
+                            categoryItem.setAttribute(attr.getNodeName(), attr.getNodeValue());
+                        }
+
+                        // Add to target
+                        target.appendChild(categoryItem);
+
+                        // Copy child elements that are not items (names, descriptions, languages, etc.)
+                        NodeList categoryChildren = childElement.getChildNodes();
+                        for (int j = 0; j < categoryChildren.getLength(); j++) {
+                            Node categoryChild = categoryChildren.item(j);
+
+                            if (categoryChild.getNodeType() == Node.ELEMENT_NODE) {
+                                Element categoryChildElement = (Element) categoryChild;
+                                if (!"item".equals(categoryChildElement.getTagName())) {
+                                    // Import the entire subtree for non-item elements
+                                    Node importedChild = targetDoc.importNode(categoryChild, true);
+                                    categoryItem.appendChild(importedChild);
+                                }
+                            } else if (categoryChild.getNodeType() == Node.TEXT_NODE) {
+                                // Copy text nodes (whitespace for formatting)
+                                Node importedText = targetDoc.importNode(categoryChild, false);
+                                categoryItem.appendChild(importedText);
+                            }
+                        }
+
+                        // Recursively process nested categories
+                        copyCategoriesOnly(childElement, categoryItem, targetDoc);
+                    }
+                    // Skip TEMPLATE and DOCUMENT items completely
+                }
+                // Removed the else block that was copying all non-item elements
+            } else if (child.getNodeType() == Node.TEXT_NODE) {
+                // Copy text nodes (whitespace for formatting)
+                Node importedText = targetDoc.importNode(child, false);
+                target.appendChild(importedText);
+            }
+        }
+    }
+
+
+    //INSERT TEMPLATE INTO CATALOG
+    public String insertTemplateIntoCatalog(String existingCatalogXml, String templateKey) throws RepositoryException {
+        try {
+            // Get the full catalog from DB to find the template
+            byte[] fullCatalogContent = getCatalogFromDatabase();
+
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            // Parse both documents
+            org.w3c.dom.Document existingCatalogDoc = builder.parse(new ByteArrayInputStream(existingCatalogXml.getBytes("UTF-8")));
+            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent));
+
+            // Find the template in the full catalog
+            Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
+            if (templateElement == null) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
+                        "Template with key " + templateKey + " not found");
+            }
+
+            // Find the parent category path for this template in the full catalog
+            String categoryPath = findTemplateCategoryPath(fullCatalogDoc, templateKey);
+            if (categoryPath == null) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
+                        "Parent category for template " + templateKey + " not found");
+            }
+
+            // Find the corresponding category in the existing catalog
+            Element targetCategory = findCategoryByPath(existingCatalogDoc, categoryPath);
+            if (targetCategory == null) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
+                        "Target category not found in existing catalog: " + categoryPath);
+            }
+
+            // Import and insert the template
+            Node importedTemplate = existingCatalogDoc.importNode(templateElement, true);
+            targetCategory.appendChild(importedTemplate);
+
+            // Convert back to string
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(existingCatalogDoc), new StreamResult(writer));
+            return writer.toString();
+
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
+    // Simpler version if you know the target category key
+    public String insertTemplateIntoCatalogByCategory(String existingCatalogXml, String templateKey, String targetCategoryKey) throws RepositoryException {
+        try {
+            // Get the full catalog from DB to find the template
+            byte[] fullCatalogContent = getCatalogFromDatabase();
+
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            // Parse both documents
+            org.w3c.dom.Document existingCatalogDoc = builder.parse(new ByteArrayInputStream(existingCatalogXml.getBytes("UTF-8")));
+            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent));
+
+            // Find the template in the full catalog
+            Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
+            if (templateElement == null) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
+                        "Template with key " + templateKey + " not found");
+            }
+
+            // Find the target category in the existing catalog
+            Element targetCategory = findCategoryByKey(existingCatalogDoc, targetCategoryKey);
+            if (targetCategory == null) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
+                        "Target category with key " + targetCategoryKey + " not found in existing catalog");
+            }
+
+            // Import and insert the template
+            Node importedTemplate = existingCatalogDoc.importNode(templateElement, true);
+            targetCategory.appendChild(importedTemplate);
+
+            // Convert back to string
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(existingCatalogDoc), new StreamResult(writer));
+            return writer.toString();
+
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
+    private Element findTemplateByKey(org.w3c.dom.Document doc, String templateKey) {
+        NodeList items = doc.getElementsByTagName("item");
+        for (int i = 0; i < items.getLength(); i++) {
+            Element item = (Element) items.item(i);
+            if ("TEMPLATE".equals(item.getAttribute("type")) &&
+                    templateKey.equals(item.getAttribute("key"))) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private String findTemplateCategoryPath(org.w3c.dom.Document doc, String templateKey) {
+        Element templateElement = findTemplateByKey(doc, templateKey);
+        if (templateElement == null) {
+            return null;
+        }
+
+        // Build the path from root to the parent category
+        List<String> pathSegments = new ArrayList<>();
+        Element current = (Element) templateElement.getParentNode();
+
+        // Traverse up to build the path
+        while (current != null && "item".equals(current.getTagName()) && "CATEGORY".equals(current.getAttribute("type"))) {
+            String key = current.getAttribute("key");
+            if (key != null && !key.isEmpty()) {
+                pathSegments.add(key);
+            }
+            Node parent = current.getParentNode();
+            if (parent instanceof Element && "item".equals(((Element) parent).getTagName())) {
+                current = (Element) parent;
+            } else {
+                break;
+            }
+        }
+
+        // Reverse the path (we built it from bottom up)
+        Collections.reverse(pathSegments);
+
+        return String.join("/", pathSegments);
+    }
+
+    private Element findCategoryByPath(org.w3c.dom.Document doc, String categoryPath) {
+        String[] pathSegments = categoryPath.split("/");
+        Element current = doc.getDocumentElement();
+
+        for (String segment : pathSegments) {
+            if (segment.isEmpty()) continue;
+
+            Element found = null;
+            NodeList children = current.getChildNodes();
+
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                if (child.getNodeType() == Node.ELEMENT_NODE) {
+                    Element childElement = (Element) child;
+                    if ("item".equals(childElement.getTagName()) &&
+                            "CATEGORY".equals(childElement.getAttribute("type")) &&
+                            segment.equals(childElement.getAttribute("key"))) {
+                        found = childElement;
+                        break;
+                    }
+                }
+            }
+
+            if (found == null) {
+                return null; // Path not found
+            }
+
+            current = found;
+        }
+
+        return current;
+    }
+
+    private Element findCategoryByKey(org.w3c.dom.Document doc, String categoryKey) {
+        NodeList items = doc.getElementsByTagName("item");
+        for (int i = 0; i < items.getLength(); i++) {
+            Element item = (Element) items.item(i);
+            if ("CATEGORY".equals(item.getAttribute("type")) &&
+                    categoryKey.equals(item.getAttribute("key"))) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+
 }

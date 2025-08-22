@@ -728,7 +728,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 proposalDetails.setDocument(proposalVO);
                 return Optional.of(proposalDetails);
             } catch (Exception e) {
-                LOG.error("Package not found for proposal {}", proposalRef);
+                LOG.error("Package not found for proposal {}, Error {}", proposalRef, e);
                 return Optional.empty();
             }
         }

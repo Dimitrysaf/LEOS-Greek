@@ -732,6 +732,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs) {
+
+    }
+
+    @Override
     public Map<String, Object> findDocumentMetadataByRef(String ref, Class type) {
         return null;
     }

@@ -486,6 +486,56 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
+  /**
+   * Publish a custom template to the DG Template Catalog.
+   * @param milestone The milestone to publish from.
+   * @param templateName The display name of the template in the catalog.
+   * @param dgCodes Array of DG codes (e.g. ['CLIMA','RTD']).
+   */
+  publishTemplateToDgCatalog(
+    milestone: MilestoneDescriptor,
+    templateName: string,
+    dgCodes: string[],
+  ) {
+    this.loadingService.setLoading(true);
+
+    const url = `${apiBaseUrl}/secured/proposals/publish-custom-template/${milestone.proposalRef}`;
+    const body = {
+      legDocumentName: milestone.legDocumentName,
+      templateName,
+      dgCodes,
+    };
+
+    return this.http
+      .post(url, body)
+      .pipe(finalize(() => this.loadingService.setLoading(false)))
+      .subscribe({
+        next: () => {
+          this.growlService.growl({
+            severity: 'success',
+            summary: this.translateService.instant('global.notifications.title.success'),
+            detail: this.translateService.instant('page.collection.milestones.publish-to-catalog.success'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.loadProposalMilestones();
+        },
+        error: (err) => {
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant('global.notifications.title.error'),
+            detail:
+              err?.error?.message ??
+              this.translateService.instant('page.collection.milestones.publish-to-catalog.error'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
   sendRevisionForMerge(milestone: MilestoneDescriptor) {
     this.loadingService.setLoading(true);
 

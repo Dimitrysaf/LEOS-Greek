@@ -20,6 +20,7 @@ import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromContent;
 import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromSource;
 import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithContent;
 import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithoutContent;
+import eu.europa.ec.leos.repository.controllers.requests.PublishCustomTemplateRequest;
 import eu.europa.ec.leos.repository.controllers.requests.UpdateDocumentRequest;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
@@ -428,4 +429,19 @@ public class DocumentController {
         return ResponseEntity.ok(RestPreconditions.checkFound(count, HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting"));
     }
 
+
+    @PostMapping(path = "/document/custom-template/publish",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Publish a custom template")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Template published successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity<Object> publishCustomTemplate(
+            @RequestParam String proposalRef,
+            @RequestParam String legDocumentName,
+            @RequestParam String templateName,
+            @RequestParam List<String> dgs) throws RepositoryException {
+        documentService.publishCustomTemplate(proposalRef, legDocumentName, templateName, dgs);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -35,6 +35,7 @@ const OTHER_VALUE = 'other';
 })
 export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   @Input() isCloneProposal: boolean;
+  @Input() isCustomTemplate: boolean;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
   form: FormGroup;
@@ -54,7 +55,7 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.types = this.isCloneProposal
       ? this.getTypeOptionsClonedProposal()
-      : this.getTypeOptions();
+      : this.isCustomTemplate ? this.getCustomTemplateOption() : this.getTypeOptions();
     this.defaultType = this.types[0];
     this.buildForm();
     this.form.patchValue({
@@ -163,6 +164,19 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
         option('page.collection.milestones.type.other', OTHER_VALUE),
       ];
     }
+  }
+
+  private getCustomTemplateOption() {
+    const option = (key: string, value: string): TypeOption => ({
+      label: this.translateService.instant(key),
+      value,
+    });
+      return [
+        option(
+          'page.collection.milestones.type.custom-template',
+          'Custom Template',
+        )
+      ];
   }
 
   private handleChanges() {

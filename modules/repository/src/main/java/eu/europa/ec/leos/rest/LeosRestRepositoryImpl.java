@@ -1153,6 +1153,13 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs) {
+        logger.trace("publishing custom template {}", proposalRef);
+        repository.publishCustomTemplate(proposalRef, legDocumentName, templateName, dgs);
+    }
+
+    @Override
+    @PerformanceLogger
     public FavouritePackageResponse getFavouritePackage(String ref, String userId) {
         logger.trace("Finding package for document... [ref=" + ref + ']');
         return repository.getFavouritePackage(ref, userId);

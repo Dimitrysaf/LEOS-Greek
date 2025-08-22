@@ -37,6 +37,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
@@ -50,6 +51,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
@@ -124,6 +126,7 @@ public class LeosApiController {
     private final ApiService apiService;
     private final UserService userService;
     private final CoEditionInfoHandler coEditionInfoHandler;
+    private final CustomTemplateService customTemplateService;
 
     private final ConfigService configService;
     private final SecurityContext securityContext;
@@ -145,7 +148,8 @@ public class LeosApiController {
                              EventBus leosApplicationEventBus, ExportService exportService,
                              CreateCollectionService createCollectionService, Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
-                             SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler) {
+                             SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
+                             CustomTemplateService customTemplateService) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -161,6 +165,7 @@ public class LeosApiController {
         this.securityContext = securityContext;
         this.userService = userService;
         this.coEditionInfoHandler = coEditionInfoHandler;
+        this.customTemplateService = customTemplateService;
     }
 
     @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -561,6 +566,28 @@ public class LeosApiController {
             return new ResponseEntity<>("Unexpected error occured while downloading proposal", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/secured/proposals/publish-custom-template/{proposalRef}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> publishTemplateToCatalog(@PathVariable("proposalRef") String proposalRef, @RequestBody PublishTemplateRequest request) {
+        try {
+            proposalRef = encodeParam(proposalRef);
+            customTemplateService.publishTemplate(
+                    proposalRef,
+                    request.getLegDocumentName(),
+                    request.getTemplateName(),
+                    request.getDgCodes()
+            );
+            return new ResponseEntity<>("Template published successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while publishing template - " + e.getMessage(), e);
+            return new ResponseEntity<>(
+                    "Unexpected error occurred while publishing template",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
 
     @RequestMapping(value = "/secured/proposals/{proposalRef}/createAnnex", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)

@@ -98,8 +98,18 @@
             <ng-container *appShowOnInstance="['ec', 'os']">
               <button
                 euiDropdownItem
+                (click)="openMilestonePublishToDgTemplateCatalog(row)"
+                *ngIf="proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_CREATE_TEMPLATE')"
+              >
+                {{
+                  'page.collection.milestones.actions.publish-to-dg-template-catalog'
+                    | translate
+                }}
+              </button>
+              <button
+                euiDropdownItem
                 (click)="openMilestoneSendCopyForContributionDialog(row)"
-                *ngIf="!proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
+                *ngIf="!proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
               >
                 {{
                   'page.collection.milestones.actions.send-copy-for-contribution'
@@ -201,6 +211,7 @@
   (closed)="onAddMilestoneDialogClosed()"
   *ngIf="addMilestoneDialogVisible"
   [isCloneProposal]="proposal.cloneProposalMetadataVO?.clonedProposal"
+  [isCustomTemplate]="proposal.metadata?.customTemplateAct"
 ></app-add-milestone-dialog>
 
 <app-proposal-milestone-view
@@ -218,6 +229,13 @@
   (closed)="onMilestoneSendCopyForContributionDialogClosed()"
   *ngIf="sendCopyDialogVisible && milestoneViewData"
 ></app-proposal-milestone-send-copy-dialog>
+
+<app-proposal-milestone-publish-to-catalog-dialog
+  #sendMilestonePublishToDgTemplateCatalog
+  [milestone]="milestoneViewData"
+  (closed)="onMilestoneSendCopyForContributionDialogClosed()"
+  *ngIf="sendCopyDialogVisible && milestoneViewData"
+></app-proposal-milestone-publish-to-catalog-dialog>
 
 <app-milestone-annotation-warning-modal
   #milestoneAnnotationWarningModal

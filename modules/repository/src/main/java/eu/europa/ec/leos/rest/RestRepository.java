@@ -43,6 +43,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
@@ -137,6 +139,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestArchiveDocumentURI;
     @Value("${leos.rest.repository.archive.document.version}")
     private String leosRestArchiveDocumentVersionURI;
+    @Value("${leos.rest.repository.publish.custom.template}")
+    private String leosRestPublishCustomTemplateURI;
     @Value("${leos.rest.repository.find.document.search.versions}")
     private String leosRestSearchVersionsURI;
     @Value("${leos.rest.repository.find.recent.packages.uri}")
@@ -661,5 +665,18 @@ public class RestRepository extends AbstractRestClient {
         String url = getUrl(leosRestArchiveDocumentVersionURI);
         LeosDocument resp = putEntity(url, null, LeosDocument.class, docRef, version);
         return resp;
+    }
+
+    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs) {
+        LOGGER.trace("Publish Custom Template [{}]", proposalRef);
+        String url = getUrl(leosRestPublishCustomTemplateURI);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("proposalRef", proposalRef);
+        params.add("legDocumentName", legDocumentName);
+        params.add("templateName", templateName);
+        dgs.forEach(dg -> params.add("dgs", dg));
+
+        postEntity(url, params, Object.class);
     }
 }

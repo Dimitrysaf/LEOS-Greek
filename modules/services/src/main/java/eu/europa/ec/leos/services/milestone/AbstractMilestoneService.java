@@ -38,6 +38,8 @@ public abstract class AbstractMilestoneService implements MilestoneService{
 
     private final StampedLock updateMilestoneLock = new StampedLock();
 
+    private static final String CUSTOM_TEMPLATE = "Custom Template";
+
     public AbstractMilestoneService(LegService legService, CloneContext cloneContext) {
         this.legService = legService;
         this.cloneContext = cloneContext;
@@ -48,12 +50,22 @@ public abstract class AbstractMilestoneService implements MilestoneService{
 
     protected abstract LegPackage createLegPackage(String proposalId) throws IOException;
 
+    protected abstract LegPackage createLegPackage(String proposalId, boolean withAnnotations) throws IOException;
+
     @Override
     public LegDocument createMilestone(String proposalId, String milestoneComment) throws Exception {
         LOG.trace("Creating Milestone for Proposal... [proposalId={}]", proposalId);
         File legFileAsZip = null;
         try{
-            LegPackage legPackage = createLegPackage(proposalId);
+            LegPackage legPackage;
+
+            if (milestoneComment.equals(CUSTOM_TEMPLATE)){
+                legPackage = createLegPackage(proposalId, false);
+            }
+            else{
+                legPackage = createLegPackage(proposalId);
+            }
+
             legPackage.addMilestoneComment(milestoneComment);
             legFileAsZip = legPackage.getFile();
             LegDocument legDocument = createLegDocument(proposalId, legPackage);
