@@ -54,11 +54,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.ANNEX;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
@@ -560,7 +556,14 @@ public class BillContextService {
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
-            billService.updateBill(billByPackagePath, metadata, VersionType.TECHNICAL, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+
+            if (billByPackagePath.getMetadata().get().getEeaRelevance() != eeaRelevance){
+                billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            }
+            else{
+                billService.updateBill(billByPackagePath, metadata, VersionType.TECHNICAL, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            }
+
             if(isAnnexToBeUpdated) {
                 // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
                 List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
