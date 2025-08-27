@@ -16,6 +16,10 @@ define(function leosIdentityHandler(require) {
     "use strict";
     var leosPluginUtils = require("plugins/leosPluginUtils");
 
+    var pElement = "p";
+    var liElement = "li";
+    var level = "level";
+
     // load module dependencies
     const CKEDITOR = require("promise!ckEditor");
     const REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX = /\u200B/g;
@@ -316,6 +320,18 @@ define(function leosIdentityHandler(require) {
         }
     }
 
+    function isPElementInLevel(el) {
+        if (
+            el.getName() === pElement &&
+            el.getParent() &&
+            el.getParent().getName() === liElement &&
+            el.getParent().getAttribute("data-akn-name") === level
+        ) {
+           return true;
+        }
+        return false;
+    }
+
     function _injectTagIdsInNode(element) {
         if (!element){
             return;
@@ -328,7 +344,7 @@ define(function leosIdentityHandler(require) {
 
         if (!["akomaNtoso", "bill", "documentCollection", "div", "doc", "attachments", "br", "span"].includes(tagName)) {
             let idAttrValue = element.getAttribute("id");
-            if ((idAttrValue == undefined) || (idAttrValue.trim().length == 0)) {
+            if ((idAttrValue == undefined || idAttrValue.trim().length == 0) && !isPElementInLevel(element)) {
                 idAttrValue = _generateId();
                 element.setAttribute("id", idAttrValue);
                 element.setAttribute("NEW", '');
