@@ -85,14 +85,14 @@ $LIST_SPACING: 40px;
         & > li[data-akn-num] {
             position: relative;
 
-            &:not([data-akn-action-enter='delete']):before {
+            &:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before {
                 color: $GREY_COLOR;
                 content: attr(data-akn-num);
                 min-width: $LIST_SPACING;
                 float: left;
             }
 
-            &[data-akn-attr-softmove_label]:not([data-akn-action-enter='delete']):before {
+            &[data-akn-attr-softmove_label]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before {
                 content: attr(data-akn-num) ' ' attr(data-akn-attr-softmove_label);
                 margin-right: 10px;
                 background-color: #808080 !important;
@@ -134,7 +134,7 @@ $LIST_SPACING: 40px;
     li[data-akn-name=aknNumberedParagraph] > ol[data-akn-name=aknOrderedList],
     ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknPointMandateOrderedList] > li,
-    li > ol > li[data-akn-num] {
+    li > ol > li[data-akn-num]:not([data-akn-element='subparagraph']) {
         padding-left: $LIST_SPACING;
     }
 
