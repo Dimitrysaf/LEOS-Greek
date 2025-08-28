@@ -800,10 +800,7 @@ public class MetadataServiceImpl implements MetadataService {
             blockNode.appendChild(imgNode);
             conclusions.appendChild(blockNode);
         } else if (MetadataUtil.VALUE_ZERO.equals(fieldInfo.getDisplayValue())) {
-            final Node blockNode = getXmlChildNodeWithAttributeValue(conclusions, MetadataUtil.ATTRIBUTE_NAME, "stamp");
-            if (blockNode != null) {
-                conclusions.removeChild(blockNode);
-            }
+            deleteElementsByXPath(conclusions, "//*[@name='stamp']", true);
         }
     }
 
