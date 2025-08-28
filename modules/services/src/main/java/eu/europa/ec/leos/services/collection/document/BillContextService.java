@@ -50,11 +50,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.ANNEX;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
@@ -436,6 +432,43 @@ public class BillContextService {
                     .withEeaRelevance(eeaRelevance)
                     .build();
             billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            if(isAnnexToBeUpdated) {
+                // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
+                List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+                annexes.forEach(annex -> {
+                    AnnexContextService annexContext = annexContextProvider.get();
+                    annexContext.usePurpose(purpose);
+                    annexContext.useAnnexId(annex.getId());
+                    annexContext.useActionMessageMap(actionMsgMap);
+                    annexContext.useEeaRelevance(eeaRelevance);
+                    annexContext.executeUpdateAnnexMetadata();
+                });
+            }
+        }
+    }
+
+    public void executeUpdateMetadataBill() {
+        LOG.trace("Executing 'Update Bill' use case...");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
+        if(billByPackagePath != null) {
+            Option<BillMetadata> metadataOption = billByPackagePath.getMetadata();
+            Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
+            Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
+            BillMetadata metadata = metadataOption.get()
+                    .builder()
+                    .withPurpose(purpose)
+                    .withEeaRelevance(eeaRelevance)
+                    .build();
+
+            if (billByPackagePath.getMetadata().get().getEeaRelevance() != eeaRelevance){
+                billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            }
+            else{
+                billService.updateBill(billByPackagePath, metadata, VersionType.TECHNICAL, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            }
+
             if(isAnnexToBeUpdated) {
                 // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
                 List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);

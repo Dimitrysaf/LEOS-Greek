@@ -130,5 +130,6 @@ Then('eui-label {string} is displayed in compared section of ribbon toolbar', fu
     ribbonToolbar.elements.comparisonEUILabel().should('have.text', euiLabel);
 });
 
-
-
+When(/^click close button of merge section in ribbon toolbar$/, function () {
+    ribbonToolbar.clickCloseBtnMergeSection();
+});

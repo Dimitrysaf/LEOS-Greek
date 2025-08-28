@@ -855,7 +855,7 @@ define(function leosArticleListPluginModule(require) {
                     sublist.remove();
                 }
                 // Migrate the sub list to current list item.
-                else {
+                else if(!sublist.contains(currentBlock)){
                     currentBlock.append( sublist );
                 }
             }
@@ -897,11 +897,23 @@ define(function leosArticleListPluginModule(require) {
         if ( next && next.type == CKEDITOR.NODE_ELEMENT && next.getName() in CKEDITOR.dtd.$list )
             mergeListSiblings( next );
 
+        bm.normalized = ( !!bm.normalized ? bm.normalized : true);
         cursor.moveToBookmark( bm );
 
         // Make fresh selection.
         cursor.select();
-
+        var selection = editor.getSelection();
+        if (selection) {
+            var range = selection.getRanges()[0];
+            if(range) {
+                var currentLi = range.startContainer.getAscendant('li', true);
+                if(currentLi && currentLi.getName() === 'li'){
+                    if (currentLi.getAttribute('data-akn-split-content') === 'parent') {
+                        currentLi.removeAttribute('data-akn-split-content');
+                    }
+                }
+            }
+        }
         editor.fire( 'saveSnapshot' );
     }
 
@@ -926,6 +938,31 @@ define(function leosArticleListPluginModule(require) {
             numberModule.updateNumbers(orderedLists);
         }
         event.editor.fire('unlockSnapshot');
+    }
+    function removeSplitContentAttr(sel) {
+        var range = sel.getRanges()[ 0 ];
+        if (range && range.collapsed && range.startOffset === 0 && range.endOffset === 0) {
+            var currentP = range.startContainer.getAscendant('p', true);
+            if (!currentP || currentP.getName() !== 'p') return;
+            var li = currentP.getAscendant('li', true);
+            if (!li || li.getName() !== 'li') return;
+
+            // Get all direct children of <li> that are <p>
+            var pChildren = [];
+            for (var i = 0; i < li.getChildCount(); i++) {
+                var child = li.getChild(i);
+                if (child.getName && child.getName() === 'p') {
+                    pChildren.push(child);
+                }
+            }
+            if (pChildren.length === 2 && li.hasAttribute('data-akn-split-content')) {
+                li.removeAttribute('data-akn-split-content');
+            }
+
+        }
+
+            //.removeAttribute('data-akn-split-content');
+
     }
 
     var pluginDefinition = {
@@ -985,6 +1022,9 @@ define(function leosArticleListPluginModule(require) {
 
                     if ( isBackspace ) {
                         var previous, joinWith;
+                        if (editor.LEOS.isTrackChangesEnabled) {
+                            removeSplitContentAttr(sel);
+                        }
 
                         // Join a sub list's first line, with the previous visual line in parent.
                         if (

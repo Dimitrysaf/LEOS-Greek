@@ -33,7 +33,7 @@
 
     <properties>
         <sonar.sources>src/app</sonar.sources>
-        <nodejs.version>v18.18.2</nodejs.version>
+        <nodejs.version>v20.19.1</nodejs.version>
         <mvn.frontend.plugin.version>1.11.2</mvn.frontend.plugin.version>
         <mvn.frontend.plugin.execution.phase>generate-resources</mvn.frontend.plugin.execution.phase>
         <npm.build.command>run build-prod-skip-test</npm.build.command>

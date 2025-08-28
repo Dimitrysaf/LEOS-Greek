@@ -186,6 +186,13 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     function _executeShiftEnter(editor) {
         var selection = editor.getSelection();
         var startElement = leosKeyHandler.getSelectedElement(selection);
+        if (startElement.$.nodeType === CKEDITOR.NODE_ELEMENT) {
+            var newRange = new CKEDITOR.dom.range(editor.document);
+            newRange.moveToPosition(selection.getRanges()[0].getPreviousEditableNode(), CKEDITOR.POSITION_BEFORE_END);
+            newRange.select();
+            selection = editor.getSelection();
+            startElement = leosKeyHandler.getSelectedElement(selection);
+        }
         if (leosPluginUtils.isListIntro(startElement)) {
             startElement.insertBefore(startElement.getParent());
             _renameIntroToP(editor, startElement);
@@ -208,6 +215,25 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         // if the current inline content is not wrap in p, wrap it if it is not heading
         var wrappingP = startElementName === 'h2' ? startElement : wrapCurrentInlineContent(startElement, editor);
 
+        if (editor.LEOS.isTrackChangesEnabled) {
+            var range = selection.getRanges()[0];
+            var currentLi = range.startContainer.getAscendant('li', true);
+            if (!currentLi || currentLi.getName() !== 'li') return;
+            if (!currentLi.hasAttribute('data-akn-split-content')) {
+                currentLi.setAttribute('data-akn-split-content', 'parent');
+                // Get the first *element* child
+                var firstElement = currentLi.getFirst(function (node) {
+                    return node.type === CKEDITOR.NODE_ELEMENT && node.getName() === 'p';
+                });
+
+                if (firstElement) {
+                    firstElement.setAttribute('data-akn-split-content', 'parent');
+                     if (contentAfterShiftEnter && contentAfterShiftEnter.getName() === 'p') {
+                        contentAfterShiftEnter.setAttribute('data-akn-split-content', 'child');
+                    }
+                }
+            }
+        }
         // insert new subparagraph with extracted content in the next line
         contentAfterShiftEnter.insertAfter(wrappingP);
         // make selection at the beginning of the new subparagraph

@@ -298,6 +298,7 @@ define(function leosUtilsModule(require) {
                     "content: '↰'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt;" +
                     "}\n";
+                tcShowStyle += "ins img { display:inline-block !important; border:" + (isTrackChangesShowed ? "2px solid rgba(0, 255, 0, 0.5)" :"none") + " !important;}";
             } else {
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
@@ -321,8 +322,8 @@ define(function leosUtilsModule(require) {
                     "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                     "float: left !important; text-decoration: none !important;" +
                     "}\n";
-                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):before, " +
-                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):before {" +
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before {" +
                     "content: attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt" +
                     "}\n";

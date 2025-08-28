@@ -94,7 +94,7 @@ Feature: collaborator section regression features
     And  "Reviewer" is displayed in row 2 of column role of collaborators tab
     And  total number of row is 2 in collaborators tab
 
-  @deletetRole @local 
+  @deleteRole @local
   Scenario: author can delete the role in collaborator section
     Given navigate to edit drafting application with "User1"
     Then user is on home page

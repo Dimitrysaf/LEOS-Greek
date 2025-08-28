@@ -89,6 +89,10 @@ define(function aknParagraphPluginModule(require) {
             }, {
                 akn: "leos:title-enter",
                 html: "title-enter"
+            },
+            {
+                akn: "leos:split-content",
+                html: "data-akn-split-content"
             }],
             sub: {
                 akn: "text",

@@ -467,7 +467,7 @@ define(function aknUnNumberedBlockListPluginModule(require) {
         var next = walker.next();
         if ( next && next.type == CKEDITOR.NODE_ELEMENT && next.getName() in CKEDITOR.dtd.$list )
             mergeListSiblings( next );
-
+        bm.normalized = ( !!bm.normalized ? bm.normalized : true);
         cursor.moveToBookmark( bm );
 
         // Make fresh selection.

@@ -89,6 +89,7 @@ define(function hierarchicalElementTransformer(require) {
     var LEOS_INDENT_ORIGIN_NUMBER_ORIGIN = "leos:indent-origin-num-origin";
     var LEOS_INDENT_ORIGIN_TYPE = "leos:indent-origin-type";
     var LEOS_INDENT_UNUMBERED_PARAGRAPH = "leos:indent-unumbered-paragraph";
+    var LEOS_TC_ORIGINAL_NUMBER = "leos:tc-original-number";
     var DATA_REFERS_TO = "refersto";
     var LEOS_REFERS_TO = "refersTo";
     var STYLE = "style";
@@ -149,6 +150,10 @@ define(function hierarchicalElementTransformer(require) {
                         to: "leos:softdate",
                         action: "passAttributeTransformer"
                     }, {
+                        from: "data-akn-split-content",
+                        to:"leos:split-content",
+                        action: "passAttributeTransformer"
+                    },{
                         from: DATA_AKN_SOFTMOVE_TO,
                         to: "leos:softmove_to",
                         action: "passAttributeTransformer"
@@ -198,7 +203,7 @@ define(function hierarchicalElementTransformer(require) {
                         action: "passAttributeTransformer"
                     }, {
                         from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                        to: "leos:tc-original-number",
+                        to: LEOS_TC_ORIGINAL_NUMBER,
                         action: "passAttributeTransformer"
                     }, {
                         from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -688,6 +693,10 @@ define(function hierarchicalElementTransformer(require) {
                                             from: "leos:softdate",
                                             to: DATA_AKN_SOFTDATE,
                                             action: "passAttributeTransformer"
+                                        },{
+                                            from: "leos:split-content",
+                                            to: "data-akn-split-content",
+                                            action: "passAttributeTransformer"
                                         }, {
                                             from: "leos:softmove_to",
                                             to: DATA_AKN_SOFTMOVE_TO,
@@ -729,7 +738,7 @@ define(function hierarchicalElementTransformer(require) {
                                             to: DATA_AKN_TITLE_NUMBER,
                                             action: "passAttributeTransformer"
                                         }, {
-                                            from: "leos:tc-original-number",
+                                            from: LEOS_TC_ORIGINAL_NUMBER,
                                             to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                             action: "passAttributeTransformer"
                                         }, {
@@ -796,7 +805,7 @@ define(function hierarchicalElementTransformer(require) {
                                         to: DATA_AKN_TITLE_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
-                                        from: "leos:tc-original-number",
+                                        from: LEOS_TC_ORIGINAL_NUMBER,
                                         to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
@@ -843,13 +852,13 @@ define(function hierarchicalElementTransformer(require) {
                                     });
                                 }
                             } else if (rootElementsWithNumWithDelTextForFromRegExp.test(path)) {
-                                if (element.parent.attributes["leos:action-number"] === DELETE && !element.parent.attributes["leos:tc-original-number"]) {
+                                if (element.parent.attributes["leos:action-number"] === DELETE && !element.parent.attributes[LEOS_TC_ORIGINAL_NUMBER]) {
                                     this.mapToProducts(element, {
                                         toPath: rootsElementsPathForTo,
                                         toAttribute: DATA_AKN_NUM
                                     });
                                 }
-                                if (element.parent.attributes["leos:action-number"] === DELETE && element.parent.attributes["leos:tc-original-number"]) {
+                                if (element.parent.attributes["leos:action-number"] === DELETE && element.parent.attributes[LEOS_TC_ORIGINAL_NUMBER]) {
                                     this.mapToProducts(element, {
                                         toPath: rootsElementsPathForTo,
                                         toAttribute: DATA_AKN_TC_ORIGINAL_NUMBER
@@ -871,7 +880,7 @@ define(function hierarchicalElementTransformer(require) {
                                         to: DATA_AKN_TITLE_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
-                                        from: "leos:tc-original-number",
+                                        from: LEOS_TC_ORIGINAL_NUMBER,
                                         to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
@@ -1020,6 +1029,11 @@ define(function hierarchicalElementTransformer(require) {
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:softdate", element),
                                         action: "passAttributeTransformer"
                                     }, {
+                                        to: "data-akn-split-content",
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:split-content", element),
+                                        action: "passAttributeTransformer"
+                                    },
+                                        {
                                         to: DATA_AKN_SOFTMOVE_TO,
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:softmove_to", element),
                                         action: "passAttributeTransformer"
@@ -1078,6 +1092,10 @@ define(function hierarchicalElementTransformer(require) {
                                     }, {
                                         to: "data-akn-element",
                                         toValue: contentWrapperForFrom,
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, LEOS_TC_ORIGINAL_NUMBER, element),
                                         action: "passAttributeTransformer"
                                     }]
                                 });
@@ -1255,6 +1273,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_SOFTDATE,
                                                 to: "leos:softdate",
                                                 action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-split-content",
+                                                to: "leos:split-content",
+                                                action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_SOFTMOVE_TO,
                                                 to: "leos:softmove_to",
@@ -1410,6 +1432,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_SOFTDATE,
                                                 to: "leos:softdate",
                                                 action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-split-content",
+                                                to: "leos:split-content",
+                                                action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_SOFTMOVE_TO,
                                                 to: "leos:softmove_to",
@@ -1521,7 +1547,7 @@ define(function hierarchicalElementTransformer(require) {
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                    to: "leos:tc-original-number",
+                                                    to: LEOS_TC_ORIGINAL_NUMBER,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -1559,7 +1585,7 @@ define(function hierarchicalElementTransformer(require) {
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                    to: "leos:tc-original-number",
+                                                    to: LEOS_TC_ORIGINAL_NUMBER,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -1676,6 +1702,10 @@ define(function hierarchicalElementTransformer(require) {
                                         }, {
                                             from: DATA_AKN_SOFTDATE,
                                             to: "leos:softdate",
+                                            action: "passAttributeTransformer"
+                                        },{
+                                            from: "data-akn-split-content",
+                                            to: "leos:split-content",
                                             action: "passAttributeTransformer"
                                         }, {
                                             from: DATA_AKN_SOFTMOVE_TO,
@@ -1821,6 +1851,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_SOFTDATE,
                                                 to: "leos:softdate",
                                                 action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-split-content",
+                                                to: "leos:split-content",
+                                                action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_SOFTMOVE_TO,
                                                 to: "leos:softmove_to",
@@ -1843,7 +1877,7 @@ define(function hierarchicalElementTransformer(require) {
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                to: "leos:tc-original-number",
+                                                to: LEOS_TC_ORIGINAL_NUMBER,
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -1928,7 +1962,7 @@ define(function hierarchicalElementTransformer(require) {
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                    to: "leos:tc-original-number",
+                                                    to: LEOS_TC_ORIGINAL_NUMBER,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -1966,7 +2000,7 @@ define(function hierarchicalElementTransformer(require) {
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                    to: "leos:tc-original-number",
+                                                    to: LEOS_TC_ORIGINAL_NUMBER,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -2076,10 +2110,14 @@ define(function hierarchicalElementTransformer(require) {
                                                 to: "leos:softdate",
                                                 action: "passAttributeTransformer"
                                             }, {
+                                                from: "data-akn-split-content",
+                                                to: "leos:split-content",
+                                                action: "passAttributeTransformer"
+                                            }, {
                                                 from: DATA_AKN_SOFTMOVE_TO,
                                                 to: "leos:softmove_to",
                                                 action: "passAttributeTransformer"
-                                            }, {
+                                            },{
                                                 from: DATA_AKN_SOFTMOVE_FROM,
                                                 to: "leos:softmove_from",
                                                 action: "passAttributeTransformer"
@@ -2109,7 +2147,7 @@ define(function hierarchicalElementTransformer(require) {
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                to: "leos:tc-original-number",
+                                                to: LEOS_TC_ORIGINAL_NUMBER,
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,

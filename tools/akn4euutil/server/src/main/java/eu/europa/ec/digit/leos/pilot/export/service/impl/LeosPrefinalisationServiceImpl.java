@@ -132,6 +132,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
         try {
             Map<String, Object> documentZipContent = ZipUtil.unzipByteArray(documentZipData);
+            documentZipContent.entrySet().removeIf(entry -> entry.getKey().startsWith("renditions")); // Remove all files inside renditions folder
             return documentZipContent;
         } catch (IOException e) {
             throw new LeosPrefinalisationException("Error unzip document", e);
@@ -223,13 +224,17 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     }
 
     private ApplyMetadataResponse.ActionNode processApplyMetadataRequestAction(ApplyMetadataRequest.ActionNode action, List<XmlFile> documentXmlFiles){
+        int commissionerPos = 0;
         List<ApplyMetadataResponse.FieldNode> fieldResponses = new ArrayList<>();
         for (ApplyMetadataRequest.FieldNode field : action.getFields()){
-            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles));
+            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos));
+            if (MetadataFieldType.isCommissioner(field.getKey())) {
+                commissionerPos += 1;
+            }
         }
         if (!hasLinkedDocumentsField(action)) {
             // Remove associatedReferences container if no linkedDocuments are set
-            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles);
+            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles, commissionerPos);
         }
         return new ApplyMetadataResponse.ActionNode(action.getName(), fieldResponses);
     }
@@ -238,9 +243,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
     }
 
-    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles) {
+    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles, int commissionerPos) {
         try {
-            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles);
+            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles, commissionerPos);
             return metadataService.getFieldSuccessResult(field.getKey());
         } catch(MetadataFieldNotAvailableException ex) {
             LOG.debug("Lookup field info failed: {}", ex);
@@ -254,7 +259,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles){
+    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles, int commissionerPos){
         LOG.debug("Process field info  '{}'", fieldInfo);
 
         final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
@@ -285,6 +290,11 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                 case STAMP:
                     if(isAutonomousAct) {
                         metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    }
+                    break;
+                case COMMISSIONER:
+                    if(isAutonomousAct) {
+                        metadataService.processCommissioner((ReferenceFieldInfo) fieldInfo, xmlFile, commissionerPos);
                     }
                     break;
             }

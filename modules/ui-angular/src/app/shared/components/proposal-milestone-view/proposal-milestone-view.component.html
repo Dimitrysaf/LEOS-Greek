@@ -63,7 +63,7 @@
         <eui-tab-label>
           <div [title]="getIconTabHelp(doc.state)">
             {{ doc.label }}
-            <small class="eui-u-font-regular"> [{{ doc.version }}] </small>
+            <small class="eui-u-font-regular"> [{{ getDisplayVersion(doc.version) }}] </small>
             <eui-icon-svg
               class="tab-icon"
               *ngIf="(doc.state === 'Rejected_Deleted' || doc.state === 'Rejected_Added') && !this.parentClonedProposal"

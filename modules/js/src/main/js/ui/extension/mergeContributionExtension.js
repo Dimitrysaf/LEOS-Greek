@@ -25,6 +25,8 @@ define(function mergeContributionExtensionModule(require) {
     var MOVED_PREFIX = "movedX";
     var DELETED_PREFIX = "deletedX";
     var MERGE_ACTION_ATTR = "leos:mergeAction";
+    var SPLIT_ATTR = "leos:split-content";
+    var CHILD = "child";
     var SELECTED_ACTION_ATTR = "leos:selectedAction";
     var TRACK_ACTION_ATTR = "leos:action";
     var SOFT_ACTION_ATTR = "leos:softaction";
@@ -33,6 +35,7 @@ define(function mergeContributionExtensionModule(require) {
     var ACTION_DONE_CLASS = "contribution-wrapper-after-merge";
     var MOVE_FROM = "move_from", INSERT = "insert", DELETE = "delete", PARENT_AFFECTED = "parent_affected", UNDO = "UNDO"
         , PROCESSED = "PROCESSED", ACCEPT = "ACCEPT", ACCEPT_TC = "ACCEPT_TC";
+    var SUBPARAGRAPH = "subparagraph", PARAGRAPGH = "paragraph", LIST = "list";
     var HIGHER_ELTS = ['chapter' , 'akntitle', 'section', 'part'];
 
     var callback = (mutationList, observer) => {
@@ -63,8 +66,47 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _registerActionTriggers(connector) {
+        //const $levels = $('level')
         let changed_element = $.makeArray($("[leos\\:indent-origin-type], [leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins," +
             " [leos\\:softaction='" + MOVE_FROM + "']"));
+        const $annexes = $('mainbody > level, mainbody > paragraph, body > level, body > paragraph');
+        for (let i = 0; i < $annexes.length; i++) {
+            const $element = $annexes.eq(i);
+            if ($element.attr(UTILS.ID).includes(REVISION_PREFIX)) {
+                var hasSplitAttr =
+                    $element.is('[leos\\:split-content="parent"], [leos\\:split-content="child"]') ||
+                    $element.find('[leos\\:split-content="parent"], [leos\\:split-content="child"]').length > 0;
+                if (hasSplitAttr) {
+                    $element.attr(PARENT_AFFECTED, "true");
+                    if (
+                        $element.is(PARAGRAPGH) &&
+                        $element.children(LIST).first().is(LIST) &&
+                        $element.children(LIST).first().children(SUBPARAGRAPH).first().attr(SPLIT_ATTR)
+                    ) {
+                        $element.attr(TRACK_ACTION_ATTR, INSERT);
+                        //_attachWrapperActionEvents(connector, $element);
+                        $element.attr(SPLIT_ATTR, 'child');
+                        const $list = $element.children(LIST).first();
+                        $list.children().each(function () {
+                            const $child = $(this);
+                            if ($child.is('div')) {
+                                return;
+                            }
+                            changed_element = changed_element.filter(function(item) {
+                                const currentElement = $(item);
+                               // const currentElement = $(this);
+                                return !currentElement.is($child) && !currentElement.closest($child).length;
+                            });
+                        });
+                    }
+                    _attachWrapperActionEvents(connector, $element);
+
+
+                }
+            }
+        }
+
+
         let impactedArticles = [];
         const $articles = $('article')
         for (let i = 0; i < $articles.length; i++) {
@@ -73,7 +115,12 @@ define(function mergeContributionExtensionModule(require) {
                 var nbParagraphs = $element.find('paragraph');
                 var nbParagraphsNbToUnb = $element.find('paragraph[leos\\:action-number="delete"]');
                 var nbParagraphsUnbToNb = $element.find('paragraph[leos\\:action-number="insert"]');
+                var hasSplitContentAttr = $element.find('[leos\\:split-content="parent"],[leos\\:split-content="child"]');
                 if (nbParagraphsUnbToNb.length === nbParagraphs.length || nbParagraphsNbToUnb.length === nbParagraphs.length) {
+                    changed_element.push($articles[i]);
+                    impactedArticles.push($element.attr(UTILS.ID));
+                    $articles[i].setAttribute(PARENT_AFFECTED, "true");
+                } if (hasSplitContentAttr && hasSplitContentAttr.length > 0 && !changed_element.includes($articles[i])) {
                     changed_element.push($articles[i]);
                     impactedArticles.push($element.attr(UTILS.ID));
                     $articles[i].setAttribute(PARENT_AFFECTED, "true");
