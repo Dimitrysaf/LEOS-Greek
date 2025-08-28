@@ -39,6 +39,7 @@ import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
@@ -391,7 +392,12 @@ public abstract class ApiServiceImpl implements ApiService {
         LegPackage legPackage = null;
         try {
             CollectionContextService context = collectionContextProvider.get();
-            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+            if (leosPackage.getTranslated() != null && leosPackage.getTranslated()) {
+                LinkedPackage linkedPackage = packageService.findLinkedPackageByLinkedPkgId(leosPackage.getId());
+                leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
+            }
+            Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
             String proposalComment = generateProposalComment(request);
             if (request.getDocPurpose() != null) {
@@ -408,11 +414,6 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.usePackageTitle(proposal.getMetadata().get().getPackageTitle());
             }
-            if (request.getIsAuthenticLang() != null) {
-                context.useIsAuthenticLang(request.getIsAuthenticLang());
-            } else {
-                context.useIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
-            }
             if (request.getCoverPageType() != null) {
                 context.useCoverPageType(request.getCoverPageType());
             } else {
@@ -420,28 +421,50 @@ public abstract class ApiServiceImpl implements ApiService {
             }
             context.useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
             context.useActionComment(proposalComment);
-            if (proposal.isClonedProposal()) {
-                legPackage = legService.createLegPackageForClone(proposal.getId(), new ExportLeos());
-            } else {
-                legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
+            List<LinkedPackage> linkedPackages =  packageService.findLinkedPackagesByPackageId(leosPackage.getId());
+            List<Proposal> proposalsToUpdate = new ArrayList<>();
+            proposalsToUpdate.add(proposal);
+            for (LinkedPackage linkedPackage : linkedPackages) {
+                leosPackage = packageService.findPackageByPackageId(linkedPackage.getLinkedPackageId());
+                proposalsToUpdate.add(proposalService.findProposalByPackagePath(leosPackage.getPath()));
             }
-            Map<String, byte[]> updatedDocuments = proposalService.applyMetadata(legPackage, proposal, request);
-            if (!updatedDocuments.containsKey(LeosCategory.PROPOSAL.name())) {
-                throw new Exception("Unexpected error occurred while updating proposal metadata");
-            } else {
-                context.useProposal(proposal);
-                context.useProposalContent(updatedDocuments.get(LeosCategory.PROPOSAL.name()));
-                if (updatedDocuments.containsKey(LeosCategory.BILL.name())) {
-                    LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-                    Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
-                    if (!new String(bill.getContent().get().getSource().getBytes(), StandardCharsets.UTF_8).equals(new String(updatedDocuments.get(LeosCategory.BILL.name()), StandardCharsets.UTF_8))) {
-                        context.useBillContent(updatedDocuments.get(LeosCategory.BILL.name()));
+            for (int i = 0; i < proposalsToUpdate.size(); i++) {
+                Proposal proposalToUpdate = proposalsToUpdate.get(i);
+                if (request.getIsAuthenticLang() != null) {
+                    if (request.getIsAuthenticLang().equals(LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE) || request.getIsAuthenticLang().equals(LeosAuthenticLanguage.PROPOSAL_LANGUAGE)) {
+                        String currentLang = proposalToUpdate.getMetadata().get().getLanguage();
+                        boolean isContainingLang = request.getAuthenticLang() != null && request.getAuthenticLang().contains(currentLang.toLowerCase());
+                        context.useIsAuthenticLang(isContainingLang ? LeosAuthenticLanguage.PROPOSAL_LANGUAGE : LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE);
+                    } else {
+                        context.useIsAuthenticLang(request.getIsAuthenticLang());
                     }
+                } else {
+                    context.useIsAuthenticLang(proposalToUpdate.getMetadata().get().getIsAuthenticLang());
                 }
-                proposal = context.executeUpdateMetadataProposal();
-                proposal = proposalService.populateProposalMetadataFromXml(proposal);
-                return new DocumentVO(proposal);
+                if (proposal.isClonedProposal()) {
+                    legPackage = legService.createLegPackageForClone(proposalToUpdate.getId(), new ExportLeos());
+                } else {
+                    legPackage = legService.createLegPackage(proposalToUpdate.getId(), new ExportLeos());
+                }
+
+                Map<String, byte[]> updatedDocuments = proposalService.applyMetadata(legPackage, proposalToUpdate, request);
+                if (!updatedDocuments.containsKey(LeosCategory.PROPOSAL.name())) {
+                    throw new Exception("Unexpected error occurred while updating proposal metadata");
+                } else {
+                    context.useProposal(proposalToUpdate);
+                    context.useProposalContent(updatedDocuments.get(LeosCategory.PROPOSAL.name()));
+                    if (updatedDocuments.containsKey(LeosCategory.BILL.name())) {
+                        leosPackage = packageService.findPackageByDocumentRef(proposalToUpdate.getMetadata().get().getRef(), Proposal.class);
+                        Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+                        if (!new String(bill.getContent().get().getSource().getBytes(), StandardCharsets.UTF_8).equals(new String(updatedDocuments.get(LeosCategory.BILL.name()), StandardCharsets.UTF_8))) {
+                            context.useBillContent(updatedDocuments.get(LeosCategory.BILL.name()));
+                        }
+                    }
+                    proposalToUpdate = context.executeUpdateMetadataProposal();
+                    proposalsToUpdate.set(i, proposalService.populateProposalMetadataFromXml(proposalToUpdate));
+                }
             }
+            return new DocumentVO(proposalsToUpdate.get(0));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;

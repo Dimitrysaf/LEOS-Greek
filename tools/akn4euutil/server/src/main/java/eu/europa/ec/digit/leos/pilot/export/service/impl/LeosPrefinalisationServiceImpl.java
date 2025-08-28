@@ -292,9 +292,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                     metadataService.processFinalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
                 case STAMP:
-                    if(isAutonomousAct) {
-                        metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    }
+                    metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
                 case COMMISSIONER:
                     if(isAutonomousAct) {
