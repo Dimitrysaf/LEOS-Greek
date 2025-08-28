@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import {EuiTabComponent, EuiTabsComponent} from '@eui/components/eui-tabs';
 import { EuiBreadcrumbService } from '@eui/components/layout';
-import {Document, ProposalDetailsLists} from '@leos/shared';
+import {DetailsTabExclusions, Document, ProposalDetailsLists} from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -28,6 +28,8 @@ export class ProposalViewComponent
 {
   proposal: Document | null = null;
   proposalDetails: ProposalDetailsLists | null = null;
+  detailsTabExclusions: DetailsTabExclusions | null;
+
   proposalState: 'loading' | 'done' | 'error' | 'active' = 'loading';
   proposalError: unknown = null;
   proposalErrorCode: number | null = null;
@@ -76,6 +78,7 @@ export class ProposalViewComponent
       .subscribe({
         next: (proposalDetails) => {
           const proposal = proposalDetails.document;
+          this.proposal =  proposal;
           this.proposalDetails = proposalDetails.proposalDetailsLists;
           this.proposalTitleNonEditablePart = `${proposal.metadata.docStage} ${proposal.metadata.docType}`;
           this.proposalTitleEditablePart = `${proposal.metadata.docPurpose}`;
@@ -96,6 +99,8 @@ export class ProposalViewComponent
             proposalRef: this.proposalRef,
             legFileName: this.legFileName
           };
+          this.detailsTabExclusions = proposalDetails.document.detailsTabExclusions;
+          this.proposalDetailsService.proposalDetailsRefreshedBS.next(proposal);
           // Manually trigger change detection
           this.cdr.detectChanges();
         },

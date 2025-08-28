@@ -142,7 +142,7 @@
   "page.collection.details.switch.coverpage.label": "Switch cover page",
   "page.collection.details.switch.coverpage.option1": "Standard cover page (logo, no disclaimer, no watermark)",
   "page.collection.details.switch.coverpage.option2": "Europa/Eur-lex (logo, disclaimer, watermark)",
-  "page.collection.details.switch.coverpage.option3": "Committee/Experts group (no logo, disclaimer, benchmark)",
+  "page.collection.details.switch.coverpage.option3": "Committee/Experts group (no logo, disclaimer, watermark)",
   "page.collection.details.switch.coverpage.shift": "Vertical shift of disclaimer: ",
   "page.collection.details.card.corrigendum.addendum.header.label": "Corrigendum & addendum",
   "page.collection.details.proposal.corrigendum":  "Corrigendum",

@@ -670,21 +670,16 @@ public abstract class CollectionContextService {
         proposal = proposalService.updateProposal(proposal.getId(), proposalContent);
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.INTERMEDIATE, proposalComment);
 
-        if (eeaRelevance != null) {
-            useProposal(proposal);
-            usePurpose(purpose);
+        useProposal(proposal);
+        usePurpose(purpose);
+        useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
+        useActionComment(proposalComment);
+        useVersionType(VersionType.INTERMEDIATE);
+        if (eeaRelevance != null && billContent == null) {
             useEeaRelevance(eeaRelevance);
-            useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
-            useActionComment(proposalComment);
-            useVersionType(VersionType.INTERMEDIATE);
             executeUpdateDocumentsAssociatedToProposal();
         } else if (billContent != null) {
-            useProposal(proposal);
-            usePurpose(purpose);
-            useEeaRelevance(eeaRelevance != null ? eeaRelevance : proposal.getMetadata().get().getEeaRelevance());
-            useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
-            useActionComment(proposalComment);
-            useVersionType(VersionType.INTERMEDIATE);
+            useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
             executeUpdateBillAssociatedToProposal();
         }
 
