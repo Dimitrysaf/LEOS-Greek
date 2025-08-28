@@ -32,6 +32,9 @@ define(function aknHtmlParagraphPluginModule(require) {
         }, {
             akn : "leos:origin",
             html : "data-origin"
+        }, {
+            akn : "leos:tc-original-number",
+            html : "data-akn-tc-original-number"
         }],
         sub: {
             akn: "text",
