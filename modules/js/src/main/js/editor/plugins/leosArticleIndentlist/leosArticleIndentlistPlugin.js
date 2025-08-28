@@ -442,6 +442,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
                     var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
@@ -456,6 +457,9 @@ define(function leosArticleIndentListPluginModule(require) {
                         nextElement = nextOfNextElement;
                     }
                     newLi.insertAfter(range.startContainer.getParent());
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
+                    }
                     if (originalNumber) {
                         newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
                     }
@@ -465,6 +469,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     var newLi = doc.createElement('li');
                     var parentOl = range.startContainer.getParent();
                     var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
@@ -481,6 +486,9 @@ define(function leosArticleIndentListPluginModule(require) {
                         nextElement = nextOfNextElement;
                     }
                     newLi.insertAfter(range.startContainer.getParent());
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
+                    }
                     if (originalNumber) {
                         newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
                     }
@@ -504,11 +512,10 @@ define(function leosArticleIndentListPluginModule(require) {
                     var parentLi = range.startContainer.getParent().getParent();
                     var parentOl = range.startContainer.getParent();
                     var nextLi = range.startContainer.getNext();
-                    var parentLiNum = parentLi.getAttribute(leosPluginUtils.DATA_AKN_NUM);
-                    var previousNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
-                    var newNum = 'SUB_OF_' + parentLiNum;
-                    range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NUM, newNum);
-                    editor.fire("handleTcIndent", {data: range.startContainer, previousNumber: previousNum});
+                    var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
+                    }
                     range.startContainer.insertAfter(parentOl);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
@@ -540,10 +547,10 @@ define(function leosArticleIndentListPluginModule(require) {
                     }
                 } else if (this.isIndent && isLeaf) {
                     var previous = range.startContainer.getPrevious();
-                    var previousNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
-                    var newNum = 'SUB_OF_' + previousNum;
-                    range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NUM, newNum);
-                    editor.fire("handleTcIndent", {data: range.startContainer, previousNumber: previousNum});
+                    var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
+                    }
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
                     if (previous.getLast().$.nodeName === 'OL' && previous.getLast().getLast().getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) !== leosPluginUtils.SUBPARAGRAPH) {
