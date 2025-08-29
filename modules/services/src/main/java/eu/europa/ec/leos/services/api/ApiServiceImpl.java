@@ -400,11 +400,6 @@ public abstract class ApiServiceImpl implements ApiService {
             Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
             String proposalComment = generateProposalComment(request);
-            if (request.getDocPurpose() != null) {
-                context.usePurpose(request.getDocPurpose());
-            } else {
-                context.usePurpose(proposal.getMetadata().get().getPurpose());
-            }
             if (request.getCrossReferences() == null) {
                 request.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
             }
@@ -430,6 +425,11 @@ public abstract class ApiServiceImpl implements ApiService {
             }
             for (int i = 0; i < proposalsToUpdate.size(); i++) {
                 Proposal proposalToUpdate = proposalsToUpdate.get(i);
+                if (request.getDocPurpose() != null) {
+                    context.usePurpose(request.getDocPurpose());
+                } else {
+                    context.usePurpose(proposalToUpdate.getMetadata().get().getPurpose());
+                }
                 if (request.getIsAuthenticLang() != null) {
                     if (request.getIsAuthenticLang().equals(LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE) || request.getIsAuthenticLang().equals(LeosAuthenticLanguage.PROPOSAL_LANGUAGE)) {
                         String currentLang = proposalToUpdate.getMetadata().get().getLanguage();
