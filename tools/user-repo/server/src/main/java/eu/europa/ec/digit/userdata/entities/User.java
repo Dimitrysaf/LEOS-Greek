@@ -17,21 +17,29 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@javax.persistence.Entity
+@jakarta.persistence.Entity
 @Table(name = "LEOS_USER")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements Serializable {
 
     private static final long serialVersionUID = -242509624358432413L;
@@ -64,40 +72,6 @@ public class User implements Serializable {
     @OrderBy("ENTITY_ORG_NAME, ENTITY_NAME")
     private List<Entity> entities;
 
-    public User() {
-    }
-
-    public User(String login, Long perId, String lastName, String firstName,
-            String email, List<Role> roleEntities, List<Entity> entities) {
-        this.login = login;
-        this.perId = perId;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.roleEntities = roleEntities;
-        this.entities = entities;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public Long getPerId() {
-        return perId;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     public List<Role> getRoleEntities() {
         roleEntities.add(new Role("USER","Default USER role"));
         return roleEntities;
@@ -107,9 +81,5 @@ public class User implements Serializable {
         roleEntities.add(new Role("USER","Default USER role"));
         return roleEntities.stream().map(r -> r.getRole())
                 .collect(Collectors.toList());
-    }
-
-    public List<Entity> getEntities() {
-        return entities;
     }
 }

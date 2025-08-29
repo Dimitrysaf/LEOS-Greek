@@ -82,7 +82,7 @@ public class ApplicationTests {
     @Transactional(readOnly = true)
     public void test_findAllFullPathEntities() {
         Stream<Entity> entities = entityRepository
-                .findAllFullPathEntities(Arrays.asList("4", "8"));
+                .findAllFullPathEntitiesH2(Arrays.asList("4", "8"));
         List<Entity> test = entities.collect(Collectors.toList());
         assertEquals(test.size(), 8);
     }
