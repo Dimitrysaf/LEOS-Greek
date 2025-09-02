@@ -52,6 +52,9 @@ public class User implements Serializable {
     @Column(name = "USER_EMAIL", nullable = false, insertable = false, updatable = false)
     private String email;
 
+    @Column(name = "JOB_TITLE", nullable = false, insertable = false, updatable = false)
+    private String jobTitle;
+
     @JsonIgnore
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -68,12 +71,13 @@ public class User implements Serializable {
     }
 
     public User(String login, Long perId, String lastName, String firstName,
-            String email, List<Role> roleEntities, List<Entity> entities) {
+            String email, String jobTitle, List<Role> roleEntities, List<Entity> entities) {
         this.login = login;
         this.perId = perId;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
+        this.jobTitle = jobTitle;
         this.roleEntities = roleEntities;
         this.entities = entities;
     }
@@ -97,6 +101,8 @@ public class User implements Serializable {
     public String getEmail() {
         return email;
     }
+
+    public String getJobTitle() { return jobTitle; }
 
     public List<Role> getRoleEntities() {
         roleEntities.add(new Role("USER","Default USER role"));

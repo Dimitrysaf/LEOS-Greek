@@ -48,6 +48,9 @@ class UsersClientImpl implements UsersProvider {
     @Value("#{integrationProperties['leos.user.repository.searchbyentitykey.uri']}")
     private String findByEntityKeyUri;
 
+    @Value("#{integrationProperties['leos.user.repository.searchbyJobTitle.uri']}")
+    private String findByJobTitleUri;
+
     @Autowired
     private RestOperations restTemplate;
     
@@ -128,5 +131,26 @@ class UsersClientImpl implements UsersProvider {
         }
 
         return results;
+    }
+
+    @Override
+    public List<UserJSON> searchUsersByJobTitle(String jobTitle) {
+        Validate.notNull(jobTitle, "Job title must not be null");
+        final String uri = repositoryUrl + findByJobTitleUri;
+        Map<String, String> params = new HashMap<>();
+        params.put("jobTitle", jobTitle);
+
+        try {
+            ResponseEntity<List<UserJSON>> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<UserJSON>>() {},
+                    params
+            );
+            return response.getBody();
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to search for user. Failed calling: " + uri, e);
+        }
     }
 }

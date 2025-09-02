@@ -130,6 +130,19 @@ public class ProposalApiController {
         }
     }
 
+    @RequestMapping(value = "/searchUsersByJobTitle", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Object> searchUsersByJobTitle(@RequestParam("jobTitle") String jobTitle) {
+        try {
+            List<String> users = apiService.searchUserByJobTitle(jobTitle);
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while searching for users in repository for job title: "+ e.getMessage());
+            return new ResponseEntity<>("Error occurred while searching for users in repository for job title " + jobTitle,
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = "/createExplanatory", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> createExplanatory(@RequestBody ExplanatoryRequest request) {

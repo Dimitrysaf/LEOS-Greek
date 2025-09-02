@@ -86,6 +86,9 @@ public interface XmlNodeConfigProcessor {
     String FINAL_COTE = "finalCote";
     String INTERINSTITUTIONAL_COTE = "interinstitutionalCote";
     String STAMP = "stamp";
+    String SIGNATURE_ORG = "organisation";
+    String SIGNATURE_ROLE = "role";
+    String SIGNATURE_PERSON = "person";
 
     List<String> docEEATagList = Arrays.asList(DOC_EEA_RELEVANCE_COVER, DOC_EEA_RELEVANCE_PREFACE, DOC_EEA_RELEVANCE_META);
 

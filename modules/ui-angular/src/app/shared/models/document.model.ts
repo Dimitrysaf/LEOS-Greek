@@ -47,6 +47,7 @@ export interface ProposalDetailsLists {
   adoptionPlaces: string[] | null;
   specialMentions: string[] | null;
   languages: string[] | null;
+  commissionerTitles: string[] | null;
 }
 
 export interface ProposalDetails {

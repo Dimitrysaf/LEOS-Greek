@@ -1,5 +1,15 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Document, Permission, AuthenticLanguage, CoverPageType, ProposalDetailsLists, Metadata, DetailsTabExclusions, LeosConfig} from '@leos/shared';
+import {
+  Document,
+  Permission,
+  AuthenticLanguage,
+  CoverPageType,
+  ProposalDetailsLists,
+  Metadata,
+  DetailsTabExclusions,
+  LeosConfig,
+  User
+} from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
 import {cloneDeep, toNumber} from "lodash-es";
@@ -49,7 +59,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   specialMention: string | null;
   specialMentions = [];
   signingCommissioner: string | null;
-  signingCommissioners: [];
+  signingCommissioners: string[];
+  commissionerTitles = [];
   commissionerTitle: string | null;
   stamp: boolean = false;
   institutionalRefRegEx = /([A-Za-z0-9]+)\(([0-9]{4})\)\s{0,1}([0-9]+)\s{0,1}/;
@@ -220,6 +231,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.institutionalRefActingEntities = this.proposalDetails.institionalRefsTypes;
     this.interInstitutionalRefTypes = this.proposalDetails.interInstitionalRefsTypes;
     this.specialMentions = this.proposalDetails.specialMentions;
+    this.commissionerTitles = this.proposalDetails.commissionerTitles;
+    this.commissionerTitle = this.proposal.metadata.commissionerTitle;
+    this.signingCommissioners = [this.proposal.metadata.signingCommissioner];
+    this.signingCommissioner = this.proposal.metadata.signingCommissioner;
     this.proposalMetadata = cloneDeep(this.proposal.metadata);
   }
 
@@ -452,7 +467,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.interInstitutionalRefType = myArray[3];
     }
     this.specialMention = this.proposal.metadata.specialMention;
-    this.signingCommissioner = this.proposal.metadata.signingCommissioner;
     this.commissionerTitle = this.proposal.metadata.commissionerTitle;
     this.stamp = this.proposal.metadata.stamp;
   }
@@ -489,6 +503,20 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       { length: currentYear - firstYear + 1 },
       (_, i) => currentYear - i,
     );
+  }
+
+  onCommissionerTitleSelection(event: Event) {
+    const selectedTitle = event.toString();
+    this.commissionerTitle = selectedTitle;
+    this.detailsService.searchUsersByJobTitle(selectedTitle)
+        .subscribe({
+          next: (users: []) => {
+            this.signingCommissioners = [...users];
+          },
+          error: (err) => {
+            console.error('Error fetching commissioners by job title', err);
+          }
+        });
   }
 
   handleChange() {
@@ -638,7 +666,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.isInstitutionalReferenceChanged() ? this.getInstitutionalReference() : null,
       this.isInstitutionalReferenceChanged() ? this.institutionalReferenceFinalVersion : null,
       this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null,
-      this.isStampChanged() ? this.stamp : null
+      this.isStampChanged() ? this.stamp : null,
+        this.specialMention,
+        this.commissionerTitle,
+        this.signingCommissioner
     ).subscribe({
       next: () => {
         if (!this.showCorrigendumAddendum) {
