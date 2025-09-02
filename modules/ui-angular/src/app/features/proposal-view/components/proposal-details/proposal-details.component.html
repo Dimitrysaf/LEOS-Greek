@@ -303,10 +303,25 @@
                 translate="page.collection.details.adoption.special.mention"
               ></label>
               <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="specialMention" name="specialMention" id="specialMention"
-                      class="details-tab-first-select" [disabled]="true">
+                      class="details-tab-first-select" [disabled]="false">
                 <option *ngFor="let specialMention of specialMentions">{{ specialMention }}</option>
               </select>
             </div>
+
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-commissioner-title">
+              <label
+                euiLabel
+                euiRequired
+                for="signingCommissioner"
+                translate="page.collection.details.adoption.commissioner.title"
+              ></label>
+              <select euiSelect (ngModelChange)="onCommissionerTitleSelection($event)" [(ngModel)]="commissionerTitle" name="commissionerTitle" id="commissionerTitle"
+                      class="details-tab-first-select"
+                      required [disabled]="false">
+              <option *ngFor="let commissionerTitle of commissionerTitles">{{ commissionerTitle }}</option>
+              </select>
+            </div>
+
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-signing-commissioner">
               <label
                 euiLabel
@@ -316,22 +331,11 @@
               ></label>
               <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="signingCommissioner" name="signingCommissioner" id="signingCommissioner"
                       class="details-tab-first-select"
-                      required [disabled]="true">
+                      required [disabled]="false">
                 <option *ngFor="let signingCommissioner of signingCommissioners">{{ signingCommissioner }}</option>
               </select>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-commissioner-title">
-              <label
-                euiLabel
-                euiRequired
-                for="signingCommissioner"
-                translate="page.collection.details.adoption.commissioner.title"
-              ></label>
-              <input type="text"
-                     [(ngModel)]="commissionerTitle"
-                     (ngModelChange)="handleChange()"
-                     class="details-tab-first-text" [disabled]="true"/>
-            </div>
+
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-stamp">
               <input
                 name="checkbox-stamp"

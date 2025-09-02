@@ -23,6 +23,10 @@ public interface UserRepository extends Repository<User, Long> {
 
     User findByLogin(String login);
 
+    User findByEmail(String email);
+
+    Stream<User> findByJobTitle(String jobTitle);
+
     // FIXME: shift functions to DB later
     @Query(value = "SELECT * FROM LEOS_USER " + " WHERE "
             + " deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(?1) "

@@ -128,6 +128,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -519,6 +520,14 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public List<UserJSON> searchUser(String searchKey) {
         return userService.searchUsersByKey(searchKey);
+    }
+
+    @Override
+    public List<String> searchUserByJobTitle(String jobTitle) {
+        List<UserJSON> results = userService.searchUsersByJobTitle(jobTitle);
+        return results.stream()
+                .map(user -> user.getFirstName() + " " + user.getLastName())
+                .collect(Collectors.toList());
     }
 
     @Override

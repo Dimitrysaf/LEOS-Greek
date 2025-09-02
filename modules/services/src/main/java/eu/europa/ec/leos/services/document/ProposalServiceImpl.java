@@ -21,7 +21,6 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -286,7 +285,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         Map<String, String> billMetadata = new HashMap<>();
         if (billContent != null) {
-            billMetadata = xmlNodeProcessor.getValuesFromXml(billContent, new String[]{XmlNodeConfigProcessor.STAMP},
+            billMetadata = xmlNodeProcessor.getValuesFromXml(billContent, new String[]{XmlNodeConfigProcessor.STAMP, XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_PERSON},
                     xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
         }
         metadataVO.setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
@@ -317,6 +316,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
         metadataVO.setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         metadataVO.setStamp(billMetadata.get(XmlNodeConfigProcessor.STAMP) != null);
+        metadataVO.setSpecialMention(billMetadata.get(XmlNodeConfigProcessor.SIGNATURE_ORG));
+        metadataVO.setCommissionerTitle(billMetadata.get(XmlNodeConfigProcessor.SIGNATURE_ROLE));
+        metadataVO.setSigningCommissioner(billMetadata.get(XmlNodeConfigProcessor.SIGNATURE_PERSON));
         return metadataVO;
     }
 
@@ -731,11 +733,11 @@ public abstract class ProposalServiceImpl implements ProposalService {
             fields.add(new MetadataOptions.FieldNode("internalRef", StringUtils.normalizeSpace(request.getInternalRef())));
         }
         if (request.getAuthenticLang() != null) {
-            fields.add(new MetadataOptions.FieldNode("authenticLang", listToJson(request.getAuthenticLang())));
+            fields.add(new MetadataOptions.FieldNode("authenticLang", collectionToJson(request.getAuthenticLang())));
         }
         if (request.getCoverPageType() != null) {
             fields.add(new MetadataOptions.FieldNode("coverPageType",
-                    listToJson(new CoverPageTypeMetadata(request.getCoverPageType(), request.getVerticalShift()))));
+                    collectionToJson(new CoverPageTypeMetadata(request.getCoverPageType(), request.getVerticalShift()))));
         }
         if (request.getCrossReferences() != null) {
             fields.add(new MetadataOptions.FieldNode("linkedDocuments", String.join(" - ", request.getCrossReferences())));
@@ -746,6 +748,23 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
         if (request.getStamp() != null) {
             fields.add(new MetadataOptions.FieldNode("stamp", request.getStamp().equals(Boolean.TRUE) ? "1" : "0"));
+        }
+        if (request.getCommissionerTitle() != null || request.getSigningCommissioner() != null || request.getSpecialMention() != null) {
+            Map<String, String> commissionerMap = new LinkedHashMap<>();
+
+            if (request.getSpecialMention() != null) {
+                commissionerMap.put("specialMention", request.getSpecialMention());
+            }
+            if (request.getCommissionerTitle() != null) {
+                commissionerMap.put("commissionerTitle", request.getCommissionerTitle());
+            }
+            if (request.getSigningCommissioner() != null) {
+                commissionerMap.put("signingCommissioner", request.getSigningCommissioner());
+            }
+
+            if (!commissionerMap.isEmpty()) {
+                fields.add(new MetadataOptions.FieldNode("commissioner", collectionToJson(commissionerMap)));
+            }
         }
         if (request.getAdoptionPlace() != null) {
             fields.add(new MetadataOptions.FieldNode("adoptionLocation", request.getAdoptionPlace()));
@@ -775,13 +794,13 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 corrigendumAddendumMetadata.setProposalTargetLang(request.getProposalTargetLang());
                 corrigendumAddendumMetadata.setFinalVersion(request.getFinalVersion());
             }
-            fields.add(new MetadataOptions.FieldNode("corrigendumAddendum", listToJson(corrigendumAddendumMetadata)));
+            fields.add(new MetadataOptions.FieldNode("corrigendumAddendum", collectionToJson(corrigendumAddendumMetadata)));
         }
         metadataOptions.addTask(legFileName, proposal, fields);
         return metadataOptions;
     }
 
-    private String listToJson(Object values) {
+    private String collectionToJson(Object values) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.writeValueAsString(values);

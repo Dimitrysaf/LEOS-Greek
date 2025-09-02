@@ -207,7 +207,8 @@ export class ProposalDetailsService implements OnDestroy {
                          proposalType?: string, targetProposalReference?: string, targetProposalDate?: Date, proposalTargetLang?: string[],
                          correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
-                         institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean) {
+                         institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean,
+                         specialMention?: string, commissionerTitle?: string, signingCommissioner?: string) {
     const internalRef = null;
     return this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
@@ -232,7 +233,10 @@ export class ProposalDetailsService implements OnDestroy {
         institutionalReference,
         institutionalReferenceFinalVersion,
         interInstitutionalReference,
-        stamp
+        stamp,
+        specialMention,
+        commissionerTitle,
+        signingCommissioner
       });
   }
 
@@ -717,6 +721,12 @@ export class ProposalDetailsService implements OnDestroy {
   searchUsers(name: string): Observable<User[]> {
     return this.http.get<User[]>(`${apiBaseUrl}/secured/proposal/searchUser`, {
       params: { searchKey: name },
+    });
+  }
+
+  searchUsersByJobTitle(jobTitle: string): Observable<User[]> {
+    return this.http.get<User[]>(`${apiBaseUrl}/secured/proposal/searchUsersByJobTitle`, {
+      params: { jobTitle: jobTitle },
     });
   }
 
