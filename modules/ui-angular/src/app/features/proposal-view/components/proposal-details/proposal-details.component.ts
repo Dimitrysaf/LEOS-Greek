@@ -9,6 +9,7 @@ import moment from 'moment';
 import { AppConfigService } from '@/core/services/app-config.service';
 import {EuiSelectComponent} from "@eui/components/eui-select";
 import {EuiInputTextComponent} from "@eui/components/eui-input-text";
+import {LoadingService} from "@/shared/services/loading.service";
 
 @Component({
   selector: 'app-proposal-details',
@@ -18,6 +19,7 @@ import {EuiInputTextComponent} from "@eui/components/eui-input-text";
 export class ProposalDetailsComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
   @Input() proposalDetails: ProposalDetailsLists;
+  @Input() detailsTabExclusions: DetailsTabExclusions
   leosConfig: LeosConfig;
   permissions: Permission[];
   eeaRelevance: boolean;
@@ -73,7 +75,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   targetProposalDate: any;
   correctionInformation: string;
   finalVersion: boolean;
-  detailsTabExclusions: DetailsTabExclusions;
+
 
   //TODO To be moved to the backend configuration
   languages = [];
@@ -104,6 +106,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     protected detailsService: ProposalDetailsService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
+    private loadingService: LoadingService,
     ) {
     this.years = this.getYearsSince(1980);
     this.detailsService.permissions$
@@ -137,26 +140,26 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isEeaRelevanceChanged() {
-    return this.proposalMetadata.eeaRelevance !== this.eeaRelevance;
+    return this.proposalMetadata.eeaRelevance != this.eeaRelevance;
   }
 
   isPackageTitleChanged() {
-    return this.packageTitle !== this.proposalMetadata.packageTitle;
+    return this.packageTitle != this.proposalMetadata.packageTitle;
   }
 
   isStampChanged() {
-    return this.proposalMetadata.stamp !== this.stamp;
+    return this.proposalMetadata.stamp != this.stamp;
   }
 
   isCommissionerChanged() {
-    return this.specialMention !== this.proposalMetadata.specialMention
-      || this.signingCommissioner !== this.proposalMetadata.signingCommissioner
-      || this.commissionerTitle !== this.proposalMetadata.commissionerTitle;
+    return this.specialMention != this.proposalMetadata.specialMention
+      || this.signingCommissioner != this.proposalMetadata.signingCommissioner
+      || this.commissionerTitle != this.proposalMetadata.commissionerTitle;
   }
 
   isCoverPageTypeChanged() {
-    return this.coverPageType !== this.proposalMetadata.coverPageType
-      || this.verticalShift.toString() !== this.proposalMetadata.verticalShift;
+    return this.coverPageType != this.proposalMetadata.coverPageType
+      || (this.isVerticalShift && this.verticalShift.toString() != this.proposalMetadata.verticalShift);
   }
 
   isAuthenticLangChanged() : boolean {
@@ -171,7 +174,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         isMetadataAuthenticLang = 'NON_PROPOSAL_LANGUAGE';
       }
 
-      if (this.authenticLang.length == this.languages.length) {
+      if (this.authenticLang.length == this.languages.length || this.allSelected) {
         this.authenticLang = [];
         isMetadataAuthenticLang = 'ALL';
       }
@@ -180,34 +183,36 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.authenticLang = [];
     }
 
-    return (this.proposalMetadata.isAuthenticLang !== isMetadataAuthenticLang
-      || JSON.stringify(this.proposalMetadata.authenticLang) !== JSON.stringify(this.authenticLang));
+    return (this.proposalMetadata.isAuthenticLang != isMetadataAuthenticLang
+      || JSON.stringify(this.proposalMetadata.authenticLang.sort()) != JSON.stringify(this.authenticLang.sort()));
   }
 
   isCrossReferencesChanged(): boolean {
-    return (JSON.stringify(this.crossReferenceProposalListing) !== JSON.stringify(this.proposalMetadata.crossReferences));
+    return (JSON.stringify(this.crossReferenceProposalListing) != JSON.stringify(this.proposalMetadata.crossReferences));
   }
 
   isAdoptionPlaceChanged(): boolean {
-    return this.adoptionPlace !== this.proposalMetadata.adoptionPlace;
+    return this.adoptionPlace != this.proposalMetadata.adoptionPlace;
   }
 
   isAdoptionDateChanged(): boolean {
-    return this.adoptionDate.toDate() !== this.proposalMetadata.adoptionDate;
+    return !(this.adoptionDate == null && this.proposalMetadata.adoptionDate == null)
+      && (this.adoptionDate !== null && this.proposalMetadata.adoptionDate !== null && new Date(this.proposalMetadata.adoptionDate).getTime()/1000) != this.adoptionDate.unix();
   }
 
   isInstitutionalReferenceChanged(): boolean {
-    return this.getInstitutionalReference() !== this.proposalMetadata.institutionalReference
-      || this.institutionalReferenceFinalVersion !== this.proposalMetadata.institutionalReferenceFinalVersion;
+    return this.getInstitutionalReference() != this.proposalMetadata.institutionalReference
+      || this.institutionalReferenceFinalVersion != this.proposalMetadata.institutionalReferenceFinalVersion;
   }
 
   isInterInstitutionalReferenceChanged(): boolean {
-    return this.getInterInstitutionalReference() !== this.proposalMetadata.interInstitutionalReference;
+    return this.getInterInstitutionalReference() != this.proposalMetadata.interInstitutionalReference;
   }
 
   initializeLists(): void {
     this.proposalRefTypeList = this.proposalDetails.proposalRefTypes;
     this.adoptionPlaces = this.proposalDetails.adoptionPlaces;
+    this.proposalLanguage = this.proposal.metadata.language;
     this.languages = [];
     for (const lang of this.proposalDetails.languages) {
       this.languages.push(lang.toUpperCase());
@@ -226,18 +231,30 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.eeaRelevance = this.proposal.metadata.eeaRelevance;
     this.packageTitle = this.proposal.metadata.packageTitle;
     this.authenticLang = cloneDeep(this.proposal.metadata.authenticLang);
+    this.allSelected = false;
 
-    this.proposalLanguage = this.proposal.metadata.language;
     if (this.proposal.metadata.isAuthenticLang != null) {
       if (this.proposal.metadata.isAuthenticLang.includes("PROPOSAL_LANGUAGE")) {
         this.isAuthenticLang = true;
+        if (this.proposal.metadata.isAuthenticLang == "NON_PROPOSAL_LANGUAGE") {
+          this.authenticLang = this.authenticLang.filter((lang => lang.toLowerCase() != this.proposalLanguage.toLowerCase()));
+          this.proposalMetadata.authenticLang = this.proposalMetadata.authenticLang.filter((lang => lang.toLowerCase() != this.proposalLanguage.toLowerCase()));
+        }
       } else if (this.proposal.metadata.isAuthenticLang == 'ALL') {
         this.isAuthenticLang = true;
         this.allSelected = true;
+        this.proposalMetadata.authenticLang = [];
         this.languages.forEach(lang => {
           this.selectedLanguages[lang] = true;
         });
+      } else if (this.proposal.metadata.isAuthenticLang == 'FALSE') {
+        this.isAuthenticLang = false;
+        this.proposalMetadata.authenticLang = [];
       }
+    } else {
+      this.proposalMetadata.isAuthenticLang = 'FALSE';
+      this.proposalMetadata.authenticLang = [];
+      this.isAuthenticLang = false;
     }
 
     if (this.isAuthenticLang) {
@@ -254,8 +271,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.coverPageType = this.proposal.metadata.coverPageType;
     if (this.coverPageType == null) {
       this.coverPageType = 'STANDARD';
+      this.proposalMetadata.coverPageType = 'STANDARD';
     }
-    this.isVerticalShift = this.coverPageType !== 'STANDARD';
+    this.isVerticalShift = this.coverPageType != 'STANDARD';
     this.verticalShift = this.proposal.metadata.verticalShift != null ? toNumber(this.proposal.metadata.verticalShift) : 6.0;
   }
 
@@ -440,27 +458,29 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.detailsService.proposalDetails$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (proposalDetails) => {
-          this.detailsTabExclusions = proposalDetails.document.detailsTabExclusions;
-        },
-        error: (error) => console.log('error'),
-      });
     this.appConfigService.config
       .pipe(takeUntil(this.destroy$))
       .subscribe((config) => {
         this.leosConfig = config;
       });
     this.greffeUser = this.leosConfig.user.greffeUser;
-    this.initializeLists();
     this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
-    this.initializeGeneral();
-    this.initializeCoverPageType();
-    this.initializeAdoptionInfo();
-    this.initializeCorrigendumAddendumFields();
-    this.initializeCrossReferences();
+    this.detailsService.proposalDetailsRefreshedBS.subscribe((proposal) => {
+      if (proposal) {
+        if (this.detailsService.getTranslated() && proposal.translatedProposals
+          && proposal.translatedProposals.length > 0 && this.proposal.ref != proposal.ref) {
+          this.proposal = proposal.translatedProposals.find((p) => p.ref == this.proposal.ref);
+        } else {
+          this.proposal = proposal;
+        }
+        this.initializeLists();
+        this.initializeGeneral();
+        this.initializeCoverPageType();
+        this.initializeAdoptionInfo();
+        this.initializeCorrigendumAddendumFields();
+        this.initializeCrossReferences();
+      }
+    });
   }
 
   private getYearsSince(firstYear: number): number[] {
@@ -508,6 +528,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   handleAuthLangChange(e: boolean) {
     this.handleChange();
     if (!e) {
+      this.allSelected = false;
       this.languages.forEach(lang => {
         this.selectedLanguages[lang] = false;
       });
@@ -533,9 +554,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   handleCoverPageTypeChange(covertype: string) {
-    this.handleChange();
     this.isVerticalShift = covertype != 'STANDARD';
     if (!this.isVerticalShift) this.verticalShift = 6.0;
+    this.handleChange();
   }
 
   ngOnDestroy(): void {
@@ -595,6 +616,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       }
     }
 
+    this.enableSave = false;
     this.detailsService.updateProposalMetadata(
       null,
       this.isEeaRelevanceChanged() ? this.eeaRelevance : null,
@@ -619,7 +641,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.isStampChanged() ? this.stamp : null
     ).subscribe({
       next: () => {
-        this.detailsService.setProposalRef(this.proposal.ref);
         if (!this.showCorrigendumAddendum) {
           this.resetCorrigendumAddendumFields();
         }
@@ -633,8 +654,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
           isGrowlSticky: false,
           position: 'bottom-right',
         });
+        this.detailsService.setProposalRef(this.proposal.ref);
       },
       error: (err) => {
+        this.enableSave = true;
         this.growlService.growlError(this.translateService.instant(
           'page.collection.default-error',
         ),);

@@ -280,7 +280,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(xmlContent,
                 new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE,
                         XmlNodeConfigProcessor.PROPOSAL_VERTICAL_SHIFT, XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION,
-                        XmlNodeConfigProcessor.ADOPTION_PLACE, XmlNodeConfigProcessor.ADOPTION_DATE, XmlNodeConfigProcessor.COTE,
+                        XmlNodeConfigProcessor.ADOPTION_PLACE, XmlNodeConfigProcessor.ADOPTION_DATE, XmlNodeConfigProcessor.ADOPTION_DATE_VALUE,
+                        XmlNodeConfigProcessor.COTE,
                         XmlNodeConfigProcessor.FINAL_COTE, XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE},
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         Map<String, String> billMetadata = new HashMap<>();
@@ -305,8 +306,11 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
         List<String> crossReferences = crossRefs.get(XmlNodeConfigProcessor.PROPOSAL_CROSS_REFERENCES);
         metadataVO.setCrossReferences(crossReferences);
-        String adoptionDateStr = detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_DATE);
-        metadataVO.setAdoptionDate(convertToDate(adoptionDateStr));
+        String adoptionDateValue = detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_DATE_VALUE);
+        if (StringUtils.isNotBlank(adoptionDateValue) && adoptionDateValue.length() > 3) {
+            String adoptionDateStr = detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_DATE);
+            metadataVO.setAdoptionDate(convertToDate(adoptionDateStr));
+        }
         metadataVO.setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
         metadataVO.setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
         metadataVO.setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :

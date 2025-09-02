@@ -7,12 +7,11 @@ import {
   CollaboratorRequest,
   CreateDraftBody,
   CreateDraftResponse,
-  Document,
   ExceptionResponseVO,
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage, CoverPageType, ProposalDetails
+  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -24,7 +23,7 @@ import {
   map,
   Observable,
   Subject,
-  switchMap,
+  switchMap, take,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -48,6 +47,7 @@ export class ProposalDetailsService implements OnDestroy {
   collaborators$: Observable<Collaborator[]>;
   userAutocompleteData$: Observable<User[]>;
   proposalDetails$: Observable<ProposalDetails>;
+  proposalDetailsRefreshedBS = new BehaviorSubject<Document>(null);
   userInputFieldChange$: Observable<string>;
   milestones$: Observable<Milestone[]>;
   exportedDocuments$: Observable<ExportPackageVO[]>;
@@ -63,6 +63,7 @@ export class ProposalDetailsService implements OnDestroy {
   private proposalDetailsResponse$ = this.proposalRefBS.pipe(
     switchMap(([_proposalRef, loading]) => this.getProposalDetails(loading, this.proposalRef)),
   );
+
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
 
   private userAutocompleteDataResponse$ = this.userInputFieldChangeBS.pipe(
@@ -208,6 +209,7 @@ export class ProposalDetailsService implements OnDestroy {
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
                          institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean) {
     const internalRef = null;
+    this.loadingService.setLoading(true);
     return this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
         docPurpose,

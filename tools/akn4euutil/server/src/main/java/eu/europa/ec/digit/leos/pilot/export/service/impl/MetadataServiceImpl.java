@@ -800,10 +800,7 @@ public class MetadataServiceImpl implements MetadataService {
             blockNode.appendChild(imgNode);
             conclusions.appendChild(blockNode);
         } else if (MetadataUtil.VALUE_ZERO.equals(fieldInfo.getDisplayValue())) {
-            final Node blockNode = getXmlChildNodeWithAttributeValue(conclusions, MetadataUtil.ATTRIBUTE_NAME, "stamp");
-            if (blockNode != null) {
-                conclusions.removeChild(blockNode);
-            }
+            deleteElementsByXPath(conclusions, "//*[@name='stamp']", true);
         }
     }
 
@@ -879,8 +876,9 @@ public class MetadataServiceImpl implements MetadataService {
         if (roleNode == null) return;
 
         roleNode.setTextContent(fieldInfo.getDisplayValue());
+        final String language = readLanguageValue(xmlFile);
 
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue(), language);
         XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
     }
 
@@ -889,7 +887,8 @@ public class MetadataServiceImpl implements MetadataService {
         boolean appendNode = false;
         if (referencesNode == null) return;
 
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
+        final String language = readLanguageValue(xmlFile);
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue(), language);
         if (roleFieldInfo == null) return;
 
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
@@ -906,18 +905,18 @@ public class MetadataServiceImpl implements MetadataService {
         }
     }
 
-    private ReferenceFieldInfo getRoleFieldInfo(String commissionerValue) {
+    private ReferenceFieldInfo getRoleFieldInfo(String commissionerValue, String lang) {
         if (MetadataUtil.isRolePresident(commissionerValue)) {
-            return MetadataUtil.getRolePresidentFieldInfo();
+            return MetadataUtil.getRolePresidentFieldInfo(lang);
         }
         if (MetadataUtil.isRoleVicePresident(commissionerValue)) {
-            return MetadataUtil.getRoleVicePresidentFieldInfo();
+            return MetadataUtil.getRoleVicePresidentFieldInfo(lang);
         }
         if (MetadataUtil.isRoleMemberOfTheCommission(commissionerValue)) {
-            return MetadataUtil.getRoleMemberOfTheCommissionFieldInfo();
+            return MetadataUtil.getRoleMemberOfTheCommissionFieldInfo(lang);
         }
         if (MetadataUtil.isRoleDirectorGeneral(commissionerValue)) {
-            return MetadataUtil.getRoleDirectorGeneralFieldInfo();
+            return MetadataUtil.getRoleDirectorGeneralFieldInfo(lang);
         }
         return null;
     }
@@ -1086,7 +1085,8 @@ public class MetadataServiceImpl implements MetadataService {
                 langArray.add(ResourcesUtil.getMessage(language, "authentic.language." + lang.toUpperCase()));
             }
             langArray = langArray.stream().sorted().collect(Collectors.toList());
-            final String langStr = String.join(", ", langArray);
+            final String langStr = String.join(", ", langArray.subList(0, langArray.size() - 1)) + " " + ResourcesUtil.getMessage(language, "coverpage" +
+                    ".separator") + " " + langArray.get(langArray.size() - 1);
             XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
             authPElement.setTextContent(String.format(ResourcesUtil.getMessage(language, "authentic.languages.text.template"), langStr));
             authContainerElement.appendChild(authPElement);

@@ -174,7 +174,7 @@ public class MetadataServiceImplTest {
         Node tlcRole = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
         Assertions.assertNotNull(tlcRole);
 
-        ReferenceFieldInfo presidentFieldInfo = MetadataUtil.getRolePresidentFieldInfo();
+        ReferenceFieldInfo presidentFieldInfo = MetadataUtil.getRolePresidentFieldInfo("EN");
         Assertions.assertEquals(presidentFieldInfo.getId(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_XMLID));
         Assertions.assertEquals(presidentFieldInfo.getHref(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_HREF));
         Assertions.assertEquals(presidentFieldInfo.getDisplayValue(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_SHOWAS));

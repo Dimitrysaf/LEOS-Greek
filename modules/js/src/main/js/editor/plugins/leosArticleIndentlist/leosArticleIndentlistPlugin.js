@@ -35,6 +35,7 @@ define(function leosArticleIndentListPluginModule(require) {
 
     var pluginName = "leosArticleIndentlist";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var isNotWhitespaces = CKEDITOR.dom.walker.whitespaces( true ),
         isNotBookmark = CKEDITOR.dom.walker.bookmark( false, true ),
@@ -411,7 +412,9 @@ define(function leosArticleIndentListPluginModule(require) {
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'P') {
                     // To outdent subparagraph (which is not INTRO or WRAPPER) to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     var newLi = doc.createElement('li');
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
                     range.startContainer.getParent().$.insertBefore(newLi.$, range.startContainer.$);
                     newLi.append(range.startContainer);
                     range.startContainer = newLi;
@@ -428,10 +431,18 @@ define(function leosArticleIndentListPluginModule(require) {
                         newLi.getFirst().remove();
                         newLi.setHtml(html);
                     }
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
+                    }
+                    if (originalNumber) {
+                        newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'LI' && !range.startContainer.getPrevious()) {
                     // To outdent INTRO subparagraph to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
@@ -446,11 +457,19 @@ define(function leosArticleIndentListPluginModule(require) {
                         nextElement = nextOfNextElement;
                     }
                     newLi.insertAfter(range.startContainer.getParent());
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
+                    }
+                    if (originalNumber) {
+                        newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'LI' && !range.startContainer.getNext()) {
                     // To outdent WRAP subparagraph to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
                     var parentOl = range.startContainer.getParent();
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
@@ -467,8 +486,15 @@ define(function leosArticleIndentListPluginModule(require) {
                         nextElement = nextOfNextElement;
                     }
                     newLi.insertAfter(range.startContainer.getParent());
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
+                    }
+                    if (originalNumber) {
+                        newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && !(range.startContainer.$.nodeName === 'P' && !range.startContainer.getPrevious())) {
                     // To indent subparagraph to point, as the normal indent of paragraph would expand and indent ALL point, not only the paragraph
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.POINT);
                     range.startContainer.renameNode('li');
@@ -479,14 +505,20 @@ define(function leosArticleIndentListPluginModule(require) {
                         range.startContainer.getParent().$.insertBefore(newOl.$, range.startContainer.$);
                         newOl.append(range.startContainer);
                     }
+                    if (originalNumber) {
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (!this.isIndent && isLeaf) {
                     var parentLi = range.startContainer.getParent().getParent();
                     var parentOl = range.startContainer.getParent();
                     var nextLi = range.startContainer.getNext();
+                    var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
+                    }
                     range.startContainer.insertAfter(parentOl);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
-                    range.startContainer.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
                     range.startContainer.renameNode('p');
                     var newOl = new CKEDITOR.dom.element('ol');
                     parentLi.append(newOl);
@@ -515,9 +547,12 @@ define(function leosArticleIndentListPluginModule(require) {
                     }
                 } else if (this.isIndent && isLeaf) {
                     var previous = range.startContainer.getPrevious();
+                    var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
+                    }
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
-                    range.startContainer.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
                     if (previous.getLast().$.nodeName === 'OL' && previous.getLast().getLast().getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) !== leosPluginUtils.SUBPARAGRAPH) {
                         range.startContainer.setAttribute(leosPluginUtils.REFERS_TO, leosPluginUtils.WRP);
                         previous.getLast().append(range.startContainer);

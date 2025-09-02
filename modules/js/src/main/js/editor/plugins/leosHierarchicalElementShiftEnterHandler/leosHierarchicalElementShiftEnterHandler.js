@@ -186,6 +186,13 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     function _executeShiftEnter(editor) {
         var selection = editor.getSelection();
         var startElement = leosKeyHandler.getSelectedElement(selection);
+        if (startElement.$.nodeType === CKEDITOR.NODE_ELEMENT) {
+            var newRange = new CKEDITOR.dom.range(editor.document);
+            newRange.moveToPosition(selection.getRanges()[0].getPreviousEditableNode(), CKEDITOR.POSITION_BEFORE_END);
+            newRange.select();
+            selection = editor.getSelection();
+            startElement = leosKeyHandler.getSelectedElement(selection);
+        }
         if (leosPluginUtils.isListIntro(startElement)) {
             startElement.insertBefore(startElement.getParent());
             _renameIntroToP(editor, startElement);
