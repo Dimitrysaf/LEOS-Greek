@@ -14,14 +14,7 @@
 package eu.europa.ec.leos.repository.controllers;
 
 import eu.europa.ec.leos.repository.common.VersionType;
-import eu.europa.ec.leos.repository.controllers.requests.CreateDocumentRequest;
-import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
-import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromContent;
-import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromSource;
-import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithContent;
-import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithoutContent;
-import eu.europa.ec.leos.repository.controllers.requests.PublishCustomTemplateRequest;
-import eu.europa.ec.leos.repository.controllers.requests.UpdateDocumentRequest;
+import eu.europa.ec.leos.repository.controllers.requests.*;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.LeosDocumentList;

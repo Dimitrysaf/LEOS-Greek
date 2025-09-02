@@ -1,0 +1,43 @@
+# Build and dependency directories - universal patterns
+
+# Node modules - works for all developers
+**/node_modules/
+
+# Generic patterns for any missed ones
+**/target/
+**/node_modules/
+**/dist/
+**/build/
+
+# IDE files
+**/.idea/
+**/.vscode/
+**/*.iml
+
+# Log files
+**/*.log
+**/logs/
+
+# Temporary files
+**/*.tmp
+**/*.temp
+**/.DS_Store
+
+# Large data files
+**/*.sql
+**/*.dump
+
+# Generated files
+**/generated/
+**/auto-generated/
+**/generated-sources/
+**/generated-test-sources/
+**/generated-config/
+
+# Test coverage reports
+**/coverage/
+**/test-results/
+
+# Documentation that shouldn't be in context
+**/javadoc/
+**/apidoc/
