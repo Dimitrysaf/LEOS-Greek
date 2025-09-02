@@ -9,6 +9,7 @@ import moment from 'moment';
 import { AppConfigService } from '@/core/services/app-config.service';
 import {EuiSelectComponent} from "@eui/components/eui-select";
 import {EuiInputTextComponent} from "@eui/components/eui-input-text";
+import {LoadingService} from "@/shared/services/loading.service";
 
 @Component({
   selector: 'app-proposal-details',
@@ -105,6 +106,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     protected detailsService: ProposalDetailsService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
+    private loadingService: LoadingService,
     ) {
     this.years = this.getYearsSince(1980);
     this.detailsService.permissions$
@@ -614,6 +616,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       }
     }
 
+    this.enableSave = false;
     this.detailsService.updateProposalMetadata(
       null,
       this.isEeaRelevanceChanged() ? this.eeaRelevance : null,
@@ -654,6 +657,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         this.detailsService.setProposalRef(this.proposal.ref);
       },
       error: (err) => {
+        this.enableSave = true;
         this.growlService.growlError(this.translateService.instant(
           'page.collection.default-error',
         ),);

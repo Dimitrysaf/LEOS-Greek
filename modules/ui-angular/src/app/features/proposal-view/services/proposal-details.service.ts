@@ -209,6 +209,7 @@ export class ProposalDetailsService implements OnDestroy {
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
                          institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean) {
     const internalRef = null;
+    this.loadingService.setLoading(true);
     return this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
         docPurpose,
