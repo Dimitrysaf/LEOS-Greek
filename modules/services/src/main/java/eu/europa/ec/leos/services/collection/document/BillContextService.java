@@ -505,8 +505,7 @@ public class BillContextService {
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
-            billByPackagePath = billService.updateBill(billByPackagePath.getId(), billContent, false);
-            billService.updateBill(billByPackagePath, metadata, this.versionType, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            billService.updateBill(billByPackagePath, metadata, billContent, this.versionType, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
         }
     }
 
