@@ -717,8 +717,8 @@ export class ProposalDetailsService implements OnDestroy {
     });
   }
 
-  searchUsersByJobTitle(jobTitle: string): Observable<User[]> {
-    return this.http.get<User[]>(`${apiBaseUrl}/secured/proposal/searchUsersByJobTitle`, {
+  searchUsersByJobTitle(jobTitle: string): Observable<string[]> {
+    return this.http.get<string[]>(`${apiBaseUrl}/secured/proposal/searchUsersByJobTitle`, {
       params: { jobTitle: jobTitle },
     });
   }
