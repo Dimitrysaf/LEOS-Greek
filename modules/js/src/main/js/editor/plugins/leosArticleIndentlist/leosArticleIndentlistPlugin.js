@@ -79,7 +79,7 @@ define(function leosArticleIndentListPluginModule(require) {
                             // Don't indent if in first list item of the parent.
                             // Outdent, however, can always be done to collapse
                             // the list into a paragraph (div).
-                            if (this.isIndent && firstItemInPath(this.context, path, list))
+                            if (this.isIndent && firstItemInPath(this.context, path, list) && path.elements[0].getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) !== leosPluginUtils.SUBPARAGRAPH)
                                 return;
 
                             // Exec related global indentation command. Global
