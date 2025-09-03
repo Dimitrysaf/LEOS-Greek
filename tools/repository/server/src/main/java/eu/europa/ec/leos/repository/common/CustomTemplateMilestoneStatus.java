@@ -11,16 +11,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository.repositories;
+package eu.europa.ec.leos.repository.common;
 
-import eu.europa.ec.leos.repository.entities.ConfigCategory;
-import org.springframework.data.jpa.repository.JpaRepository;
+public enum CustomTemplateMilestoneStatus {
+    PUBLISHED("PUBLISHED"),
+    UNPUBLISHED("UNPUBLISHED");
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+    private final String value;
 
-public interface ConfigCategoryRepository extends JpaRepository<ConfigCategory, BigDecimal> {
-    Optional<ConfigCategory> findConfigCategoriesByCategoryCode(String categoryCode);
-    List<ConfigCategory> findConfigCategoriesByCategoryCodeIn(List<String> categoryCodes);
+    CustomTemplateMilestoneStatus(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

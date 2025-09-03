@@ -13,12 +13,8 @@
  */
 package eu.europa.ec.leos.repository.entities;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,57 +23,56 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "CUSTOM_TEMPLATE_CONFIG")
+@Table(name = "CUSTOM_TEMPLATE_ENTITIES")
 @NamedQueries({
-        @NamedQuery(name = "CustomTemplateConfig.findAll", query = "SELECT c FROM Config c"),
-        @NamedQuery(name = "CustomTemplateConfig.findById", query = "SELECT c FROM Config c WHERE c.id = :id"),
-        @NamedQuery(name = "CustomTemplateConfig.findByName", query = "SELECT c FROM Config c WHERE c.name = :name"),
-        @NamedQuery(name = "CustomTemplateConfig.findByObjectId", query = "SELECT c FROM Config c WHERE c.objectId = :objectId"),
-        @NamedQuery(name = "CustomTemplateConfig.findByAuditCBy", query = "SELECT c FROM Config c WHERE c.auditCBy = :auditCBy"),
-        @NamedQuery(name = "CustomTemplateConfig.findByAuditCDate", query = "SELECT c FROM Config c WHERE c.auditCDate = :auditCDate"),
-        @NamedQuery(name = "CustomTemplateConfig.findByAuditLastMBy", query = "SELECT c FROM Config c WHERE c.auditLastMBy = :auditLastMBy"),
-        @NamedQuery(name = "CustomTemplateConfig.findByAuditLastMDate", query = "SELECT c FROM Config c WHERE c.auditLastMDate = :auditLastMDate"),
-        @NamedQuery(name = "CustomTemplateConfig.findByLanguage", query = "SELECT c FROM Config c WHERE c.language = :language")})
-public class CustomTemplateConfig implements Serializable {
+    @NamedQuery(name = "CustomTemplateEntities.findAll", query = "SELECT c FROM CustomTemplateEntities c"),
+    @NamedQuery(name = "CustomTemplateEntities.findById", query = "SELECT c FROM CustomTemplateEntities c WHERE c.id = :id"),
+    @NamedQuery(name = "CustomTemplateEntities.findByPackageId", query = "SELECT c FROM CustomTemplateEntities c WHERE c.packageId = :packageId"),
+    @NamedQuery(name = "CustomTemplateEntities.findByEntities", query = "SELECT c FROM CustomTemplateEntities c WHERE c.entities = :entities")
+})
+public class CustomTemplateEntities implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "ID", nullable = false, updatable = false, precision = 22, scale = 0)
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigDecimal id;
-    @Column(name = "NAME", nullable = false, length = 100)
-    private String name;
-    @Column(name = "OBJECT_ID", nullable = false, precision = 22, scale = 0)
-    private BigDecimal objectId;
+
+    @ManyToOne
+    @JoinColumn(name = "PACKAGE_ID", nullable = false)
+    private Package packageId;
+
+    @Column(name = "ENTITIES", length = 4000)
+    private String entities;
+
     @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
     private String auditCBy;
+
     @Column(name = "AUDIT_C_DATE", nullable = false)
     private LocalDateTime auditCDate;
-    @Column(name = "AUDIT_LAST_M_DATE")
-    private LocalDateTime auditLastMDate;
+
     @Column(name = "AUDIT_LAST_M_BY", length = 30)
     private String auditLastMBy;
-    @Column(name = "LANGUAGE")
-    private String language;
-    @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private CustomTemplateConfigCategory configCategory;
 
-    public CustomTemplateConfig() {
+    @Column(name = "AUDIT_LAST_M_DATE")
+    private LocalDateTime auditLastMDate;
+
+    public CustomTemplateEntities() {
     }
 
-    public CustomTemplateConfig(BigDecimal id) {
+    public CustomTemplateEntities(BigDecimal id) {
         this.id = id;
     }
 
-    public CustomTemplateConfig(BigDecimal id, String name, BigDecimal objectId, String auditCBy, LocalDateTime auditCDate) {
+    public CustomTemplateEntities(BigDecimal id, Package packageId, String auditCBy, LocalDateTime auditCDate) {
         this.id = id;
-        this.name = name;
-        this.objectId = objectId;
+        this.packageId = packageId;
         this.auditCBy = auditCBy;
         this.auditCDate = auditCDate;
     }
@@ -90,12 +85,20 @@ public class CustomTemplateConfig implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Package getPackageId() {
+        return packageId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPackageId(Package packageId) {
+        this.packageId = packageId;
+    }
+
+    public String getEntities() {
+        return entities;
+    }
+
+    public void setEntities(String entities) {
+        this.entities = entities;
     }
 
     public String getAuditCBy() {
@@ -130,22 +133,6 @@ public class CustomTemplateConfig implements Serializable {
         this.auditLastMDate = auditLastMDate;
     }
 
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public CustomTemplateConfigCategory getConfigCategory() {
-        return configCategory;
-    }
-
-    public void setConfigCategory(CustomTemplateConfigCategory category) {
-        this.configCategory = category;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -155,11 +142,10 @@ public class CustomTemplateConfig implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CustomTemplateConfig)) {
+        if (!(object instanceof CustomTemplateEntities)) {
             return false;
         }
-        CustomTemplateConfig other = (CustomTemplateConfig) object;
+        CustomTemplateEntities other = (CustomTemplateEntities) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -168,7 +154,6 @@ public class CustomTemplateConfig implements Serializable {
 
     @Override
     public String toString() {
-        return "eu.europa.ec.leos.repository.entities.Config[ id=" + id + " ]";
+        return "eu.europa.ec.leos.repository.entities.CustomTemplateEntities[ id=" + id + " ]";
     }
-
 }

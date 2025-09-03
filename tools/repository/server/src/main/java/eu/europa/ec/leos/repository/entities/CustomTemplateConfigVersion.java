@@ -207,6 +207,14 @@ public class CustomTemplateConfigVersion implements Serializable {
         this.auditLastMDate = auditLastMDate;
     }
 
+    public Boolean getImmutable() {
+        return isImmutable;
+    }
+
+    public void setImmutable(Boolean immutable) {
+        isImmutable = immutable;
+    }
+
     @XmlTransient
     public Collection<ConfigContent> getConfigContentCollection() {
         return configContentCollection;

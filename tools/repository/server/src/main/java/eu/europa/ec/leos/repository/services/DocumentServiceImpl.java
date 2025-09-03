@@ -99,6 +99,11 @@ public class DocumentServiceImpl implements DocumentService {
     private final ConfigVersionRepository configVersionRepository;
     private final ConfigurationVRepository configurationVRepository;
     private final CustomTemplateEntitiesRepository customTemplateEntitiesRepository;
+    private final CustomTemplateConfigRepository customTemplateConfigRepository;
+    private final CustomTemplateConfigVersionRepository customTemplateConfigVersionRepository;
+    private final CustomTemplateConfigContentRepository customTemplateConfigContentRepository;
+    private final CustomTemplateConfigCategoryRepository customTemplateConfigCategoryRepository;
+    private final ConfigCategoryRepository configCategoryRepository;
 
     @Autowired
     public DocumentServiceImpl(DocumentRepository documentRepository, DocumentVRepository documentVRepository,
@@ -110,7 +115,7 @@ public class DocumentServiceImpl implements DocumentService {
                                CollaboratorsService collaboratorsService,
                                MilestoneDocumentService milestoneDocumentService,
                                ConfigService configService, EntityManager entityManager,
-                               DocumentMilestoneRepository documentMilestoneRepository, ConfigContentRepository configContentRepository, ConfigVersionRepository configVersionRepository, ConfigurationVRepository configurationVRepository, CustomTemplateEntitiesRepository customTemplateEntitiesRepository) {
+                               DocumentMilestoneRepository documentMilestoneRepository, ConfigContentRepository configContentRepository, ConfigVersionRepository configVersionRepository, ConfigurationVRepository configurationVRepository, CustomTemplateEntitiesRepository customTemplateEntitiesRepository, CustomTemplateConfigRepository customTemplateConfigRepository, CustomTemplateConfigVersionRepository customTemplateConfigVersionRepository, CustomTemplateConfigContentRepository customTemplateConfigContentRepository, CustomTemplateConfigCategoryRepository customTemplateConfigCategoryRepository, ConfigCategoryRepository configCategoryRepository) {
         this.documentRepository = documentRepository;
         this.documentVRepository = documentVRepository;
         this.documentVersionRepository = documentVersionRepository;
@@ -129,6 +134,11 @@ public class DocumentServiceImpl implements DocumentService {
         this.configVersionRepository = configVersionRepository;
         this.configurationVRepository = configurationVRepository;
         this.customTemplateEntitiesRepository = customTemplateEntitiesRepository;
+        this.customTemplateConfigRepository = customTemplateConfigRepository;
+        this.customTemplateConfigVersionRepository = customTemplateConfigVersionRepository;
+        this.customTemplateConfigContentRepository = customTemplateConfigContentRepository;
+        this.customTemplateConfigCategoryRepository = customTemplateConfigCategoryRepository;
+        this.configCategoryRepository = configCategoryRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -1220,6 +1230,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @Transactional
     public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs, String userId) throws RepositoryException {
         LOG.info("Publishing custom template: name={}, description={}, categories={}", templateName, legDocumentName, dgs);
 
@@ -1246,11 +1257,11 @@ public class DocumentServiceImpl implements DocumentService {
 
         //CREATE CONFIG
 
-        String catalog = createCatalogWithCategoriesOnly();
-
-        String updatedCatalog = insertTemplateIntoCatalog(catalog, "SJ-004");
-
-        System.out.println(updatedCatalog);
+//        String catalog = createCatalogWithCategoriesOnly();
+//
+//        String updatedCatalog = insertTemplateIntoCatalog(catalog, "SJ-004", templateName, pkg.getId().toString());
+//
+//        System.out.println(updatedCatalog);
 
     }
 
@@ -1283,6 +1294,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 
     // PRIVATE THINGS TO BE MOVED TO A DIFF FILE
+    @Transactional(readOnly = true)
     public String createCatalogWithCategoriesOnly() throws RepositoryException {
         try {
             byte[] catalogContent = getCatalogFromDatabase();
@@ -1322,7 +1334,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    private byte[] getCatalogFromDatabase() throws RepositoryException {
+    protected byte[] getCatalogFromDatabase() throws RepositoryException {
         configService.findConfigByName("catalog");
         Optional<ConfigurationV> configurationV = configurationVRepository.findConfigurationByName("catalog");
         return configurationV.get().getContent();
@@ -1368,29 +1380,37 @@ public class DocumentServiceImpl implements DocumentService {
                                     categoryItem.appendChild(importedChild);
                                 }
                             } else if (categoryChild.getNodeType() == Node.TEXT_NODE) {
-                                // Copy text nodes (whitespace for formatting)
-                                Node importedText = targetDoc.importNode(categoryChild, false);
-                                categoryItem.appendChild(importedText);
+                                // Only copy non-empty text nodes
+                                String textContent = categoryChild.getNodeValue();
+                                if (textContent != null && !textContent.trim().isEmpty()) {
+                                    Node importedText = targetDoc.importNode(categoryChild, false);
+                                    categoryItem.appendChild(importedText);
+                                }
                             }
                         }
 
-                        // Recursively process nested categories
+                        // Recursively process nested categories within this category
                         copyCategoriesOnly(childElement, categoryItem, targetDoc);
                     }
                     // Skip TEMPLATE and DOCUMENT items completely
                 }
-                // Removed the else block that was copying all non-item elements
             } else if (child.getNodeType() == Node.TEXT_NODE) {
-                // Copy text nodes (whitespace for formatting)
-                Node importedText = targetDoc.importNode(child, false);
-                target.appendChild(importedText);
+                // Only copy non-empty text nodes
+                String textContent = child.getNodeValue();
+                if (textContent != null && !textContent.trim().isEmpty()) {
+                    Node importedText = targetDoc.importNode(child, false);
+                    target.appendChild(importedText);
+                }
             }
         }
     }
 
 
+
+
     //INSERT TEMPLATE INTO CATALOG
-    public String insertTemplateIntoCatalog(String existingCatalogXml, String templateKey) throws RepositoryException {
+    @Transactional(readOnly = true)
+    public String insertTemplateIntoCatalog(String existingCatalogXml, String templateKey, String templateName, String packageId) throws RepositoryException {
         try {
             // Get the full catalog from DB to find the template
             byte[] fullCatalogContent = getCatalogFromDatabase();
@@ -1416,15 +1436,29 @@ public class DocumentServiceImpl implements DocumentService {
                         "Parent category for template " + templateKey + " not found");
             }
 
-            // Find the corresponding category in the existing catalog
-            Element targetCategory = findCategoryByPath(existingCatalogDoc, categoryPath);
-            if (targetCategory == null) {
-                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
-                        "Target category not found in existing catalog: " + categoryPath);
-            }
+            // Find or create the corresponding category in the existing catalog
+            Element targetCategory = ensureCategoryPath(existingCatalogDoc, fullCatalogDoc, categoryPath);
 
             // Import and insert the template
             Node importedTemplate = existingCatalogDoc.importNode(templateElement, true);
+            
+            // Add custom attributes to the imported template and its children
+            if (importedTemplate instanceof Element) {
+                Element templateEl = (Element) importedTemplate;
+                templateEl.setAttribute("custom-name", templateName);
+                templateEl.setAttribute("custom-key", templateEl.getAttribute("key") + "/" + packageId);
+                
+                // Add custom-id to all child items
+                NodeList childItems = templateEl.getElementsByTagName("item");
+                for (int i = 0; i < childItems.getLength(); i++) {
+                    Element childItem = (Element) childItems.item(i);
+                    String id = childItem.getAttribute("id");
+                    if (StringUtils.isNotBlank(id)) {
+                        childItem.setAttribute("custom-id", id + "/" + packageId);
+                    }
+                }
+            }
+            
             targetCategory.appendChild(importedTemplate);
 
             // Convert back to string
@@ -1443,7 +1477,8 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     // Simpler version if you know the target category key
-    public String insertTemplateIntoCatalogByCategory(String existingCatalogXml, String templateKey, String targetCategoryKey) throws RepositoryException {
+    @Transactional(readOnly = true)
+    public String insertTemplateIntoCatalogByCategory(String existingCatalogXml, String templateKey, String targetCategoryKey, String templateName, String packageId) throws RepositoryException {
         try {
             // Get the full catalog from DB to find the template
             byte[] fullCatalogContent = getCatalogFromDatabase();
@@ -1471,6 +1506,14 @@ public class DocumentServiceImpl implements DocumentService {
 
             // Import and insert the template
             Node importedTemplate = existingCatalogDoc.importNode(templateElement, true);
+            
+            // Add custom attributes to the imported template
+            if (importedTemplate instanceof Element) {
+                Element templateEl = (Element) importedTemplate;
+                templateEl.setAttribute("custom-name", templateName);
+                templateEl.setAttribute("custom-key", templateEl.getAttribute("key") + "/" + packageId);
+            }
+            
             targetCategory.appendChild(importedTemplate);
 
             // Convert back to string
@@ -1564,12 +1607,85 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private Element findCategoryByKey(org.w3c.dom.Document doc, String categoryKey) {
-        NodeList items = doc.getElementsByTagName("item");
+        return findCategoryByKey(doc.getDocumentElement(), categoryKey);
+    }
+
+    private Element findCategoryByKey(Element root, String categoryKey) {
+        NodeList items = root.getElementsByTagName("item");
         for (int i = 0; i < items.getLength(); i++) {
             Element item = (Element) items.item(i);
             if ("CATEGORY".equals(item.getAttribute("type")) &&
                     categoryKey.equals(item.getAttribute("key"))) {
                 return item;
+            }
+        }
+        return null;
+    }
+
+    private Element ensureCategoryPath(org.w3c.dom.Document targetDoc, org.w3c.dom.Document sourceDoc, String categoryPath) throws RepositoryException {
+        String[] pathSegments = categoryPath.split("/");
+        Element current = targetDoc.getDocumentElement();
+
+        for (String segment : pathSegments) {
+            if (segment.isEmpty()) continue;
+
+            Element found = findChildCategoryByKey(current, segment);
+            if (found == null) {
+                // Category doesn't exist, copy it from source
+                Element sourceCategory = findCategoryByKey(sourceDoc, segment);
+                if (sourceCategory == null) {
+                    throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
+                            "Category with key " + segment + " not found in source catalog");
+                }
+                
+                // Create the category without its children (templates/subcategories)
+                Element categoryItem = targetDoc.createElement("item");
+                
+                // Copy all attributes
+                NamedNodeMap attributes = sourceCategory.getAttributes();
+                for (int k = 0; k < attributes.getLength(); k++) {
+                    Node attr = attributes.item(k);
+                    categoryItem.setAttribute(attr.getNodeName(), attr.getNodeValue());
+                }
+                
+                // Copy non-item child elements (names, descriptions, etc.)
+                NodeList categoryChildren = sourceCategory.getChildNodes();
+                for (int j = 0; j < categoryChildren.getLength(); j++) {
+                    Node categoryChild = categoryChildren.item(j);
+                    
+                    if (categoryChild.getNodeType() == Node.ELEMENT_NODE) {
+                        Element categoryChildElement = (Element) categoryChild;
+                        if (!"item".equals(categoryChildElement.getTagName())) {
+                            Node importedChild = targetDoc.importNode(categoryChild, true);
+                            categoryItem.appendChild(importedChild);
+                        }
+                    } else if (categoryChild.getNodeType() == Node.TEXT_NODE) {
+                        Node importedText = targetDoc.importNode(categoryChild, false);
+                        categoryItem.appendChild(importedText);
+                    }
+                }
+                
+                current.appendChild(categoryItem);
+                found = categoryItem;
+            }
+            
+            current = found;
+        }
+
+        return current;
+    }
+
+    private Element findChildCategoryByKey(Element parent, String categoryKey) {
+        NodeList children = parent.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) child;
+                if ("item".equals(childElement.getTagName()) &&
+                        "CATEGORY".equals(childElement.getAttribute("type")) &&
+                        categoryKey.equals(childElement.getAttribute("key"))) {
+                    return childElement;
+                }
             }
         }
         return null;
@@ -1605,31 +1721,65 @@ public class DocumentServiceImpl implements DocumentService {
     private void ensureEntityCatalogExists(String entityName, String userId, Package pkg) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
         
-        // Use EAFP pattern: try to find catalog first, create only if not found
-        // This avoids race conditions and is more efficient for the common case
-        try {
-            configService.findConfigByName(catalogName);
-        } catch (RepositoryException e) {
-            if (e.getCode() == RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND) {
-                createEntityCatalog(catalogName, userId, pkg);
-            } else {
-                throw e;
-            }
+        if (!customTemplateConfigRepository.findConfigByName(catalogName).isPresent()) {
+            createEntityCatalog(catalogName, userId, pkg);
         }
     }
 
     private void createEntityCatalog(String catalogName, String userId, Package pkg) throws RepositoryException {
-        String baseCatalog = createCatalogWithCategoriesOnly();
-        
-        // Get template name from PROPOSAL document in this package
-        String templateName = getTemplateNameFromProposal(pkg);
-        if (templateName != null) {
-            baseCatalog = insertTemplateIntoCatalog(baseCatalog, templateName);
+        try {
+            String baseCatalog = createCatalogWithCategoriesOnly();
+            
+            // Find the TEMPLATE_CATALOG category
+            CustomTemplateConfigCategory templateCatalogCategory = customTemplateConfigCategoryRepository
+                .findConfigCategoriesByCategoryCode("CONFIG")
+                .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, 
+                    "TEMPLATE_CATALOG category not found"));
+            
+            // Step 1: Create config entry
+            CustomTemplateConfig config = new CustomTemplateConfig();
+            config.setName(catalogName);
+            config.setAuditCBy(userId);
+            config.setAuditCDate(LocalDateTime.now());
+            config.setAuditLastMBy(userId);
+            config.setAuditLastMDate(LocalDateTime.now());
+            config.setLanguage("en");
+            config.setConfigCategory(templateCatalogCategory);
+            config = customTemplateConfigRepository.save(config);
+            
+            // Step 2: Create version entry
+            CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
+            version.setConfigId(config.getId());
+            version.setVersionLabel("1.0.0");
+            version.setVersionSeriesId(config.getId().toString());
+            version.setVersionType("MAJOR");
+            version.setIsLatestMajorVersion(true);
+            version.setIsLatestVersion(true);
+            version.setIsMajorVersion(true);
+            version.setIsVersionSeriesCheckedOut(false);
+            version.setAuditCBy(userId);
+            version.setAuditCDate(LocalDateTime.now());
+            version.setImmutable(false);
+            version = customTemplateConfigVersionRepository.save(version);
+            
+            // Step 3: Create content entry
+            CustomTemplateConfigContent content = new CustomTemplateConfigContent();
+            content.setContentString(baseCatalog);
+            content.setContentStreamMimeType("application/xml");
+            content.setContentStreamFilename(catalogName + ".xml");
+            content.setContentStreamId(config.getId().toString());
+            content.setContentStreamLength(String.valueOf(baseCatalog.length()));
+            content.setAuditCBy(userId);
+            content.setAuditCDate(LocalDateTime.now());
+            content.setVersionId(version);
+            customTemplateConfigContentRepository.save(content);
+            
+            LOG.info("Successfully created entity catalog: {}", catalogName);
+            
+        } catch (Exception e) {
+            LOG.error("Error creating entity catalog: {}", catalogName, e);
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
         }
-        
-        // Create the custom template config with the entity-specific catalog
-        // This would use the configService to create a new config entry
-        // Implementation depends on the configService.createConfig method
     }
 
     private String getTemplateNameFromProposal(Package pkg) {
@@ -1640,9 +1790,309 @@ public class DocumentServiceImpl implements DocumentService {
         return null;
     }
 
+    @Transactional
+    public String removeTemplateFromCatalog(String catalogXml, String customKey) throws RepositoryException {
+        if (StringUtils.isBlank(catalogXml)) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.PARA_NOT_FOUND, "catalogXml cannot be null or empty");
+        }
+        if (StringUtils.isBlank(customKey)) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.PARA_NOT_FOUND, "customKey cannot be null or empty");
+        }
+        
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            org.w3c.dom.Document catalogDoc = builder.parse(new ByteArrayInputStream(catalogXml.getBytes(StandardCharsets.UTF_8)));
+
+            Element templateToRemove = findTemplateByCustomKey(catalogDoc.getDocumentElement(), customKey);
+            if (templateToRemove != null) {
+                templateToRemove.getParentNode().removeChild(templateToRemove);
+            }
+
+            return documentToString(catalogDoc);
+        } catch (Exception e) {
+            LOG.error("Error removing template from catalog", e);
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
+    private Element findTemplateByCustomKey(Element root, String customKey) {
+        NodeList items = root.getElementsByTagName("item");
+        for (int i = 0; i < items.getLength(); i++) {
+            Element item = (Element) items.item(i);
+            if ("TEMPLATE".equals(item.getAttribute("type")) &&
+                    customKey.equals(item.getAttribute("custom-key"))) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private String documentToString(org.w3c.dom.Document doc) throws Exception {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        return writer.toString();
+    }
+
+    private List<DocumentV> getLatestDocumentsByPackageId(BigDecimal packageId) {
+        return documentVRepository.findDocumentsByPackageId(packageId);
+    }
+
+    
+    private void saveCustomTemplateFileWithContent(String templateKey, byte[] content, String userId) throws RepositoryException {
+        try {
+            CustomTemplateConfigCategory templateCategory = customTemplateConfigCategoryRepository
+                .findConfigCategoriesByCategoryCode("TEMPLATE")
+                .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "TEMPLATE category not found"));
+            
+            CustomTemplateConfig config = new CustomTemplateConfig();
+            config.setName(templateKey);
+            config.setAuditCBy(userId);
+            config.setAuditCDate(LocalDateTime.now());
+            config.setAuditLastMBy(userId);
+            config.setAuditLastMDate(LocalDateTime.now());
+            config.setLanguage("en");
+            config.setConfigCategory(templateCategory);
+            config = customTemplateConfigRepository.save(config);
+            
+            CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
+            version.setConfigId(config.getId());
+            version.setVersionLabel("1.0.0");
+            version.setVersionSeriesId(config.getId().toString());
+            version.setVersionType("MAJOR");
+            version.setIsLatestMajorVersion(true);
+            version.setIsLatestVersion(true);
+            version.setIsMajorVersion(true);
+            version.setIsVersionSeriesCheckedOut(false);
+            version.setAuditCBy(userId);
+            version.setAuditCDate(LocalDateTime.now());
+            version.setImmutable(false);
+            version = customTemplateConfigVersionRepository.save(version);
+            
+            CustomTemplateConfigContent configContent = new CustomTemplateConfigContent();
+            configContent.setContent(content);
+            configContent.setContentStreamMimeType("application/xml");
+            configContent.setContentStreamFilename(templateKey + ".xml");
+            configContent.setContentStreamId(config.getId().toString());
+            configContent.setContentStreamLength(String.valueOf(content.length));
+            configContent.setAuditCBy(userId);
+            configContent.setAuditCDate(LocalDateTime.now());
+            configContent.setVersionId(version);
+            customTemplateConfigContentRepository.save(configContent);
+            
+        } catch (Exception e) {
+            LOG.error("Error saving custom template file: {}", templateKey, e);
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
+    private String insertTemplateIntoCatalogAndExtractKeys(String existingCatalogXml, String templateKey, String templateName, String packageId, Set<String> extractedKeys) throws RepositoryException {
+        try {
+            byte[] fullCatalogContent = getCatalogFromDatabase();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent));
+            
+            Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
+            if (templateElement != null) {
+                // Add direct child items
+                NodeList childItems = templateElement.getElementsByTagName("item");
+                for (int i = 0; i < childItems.getLength(); i++) {
+                    Node node = childItems.item(i);
+                    if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+                        Element item = (Element) node;
+                        String type = item.getAttribute("type");
+                        String id = item.getAttribute("id");
+                        if (("TEMPLATE".equals(type) || "DOCUMENT".equals(type)) && StringUtils.isNotBlank(id)) {
+                            extractedKeys.add(id);
+                        }
+                    }
+                }
+            }
+            
+            return insertTemplateIntoCatalog(existingCatalogXml, templateKey, templateName, packageId);
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+    
+    private List<ConfigurationV> getCategoryCodesFromTemplateKeys(Set<String> templateKeys) {
+        List<ConfigurationV> configs = new ArrayList<>();
+        for (String key : templateKeys) {
+            Optional<ConfigurationV> config = configurationVRepository.findConfigurationByName(key);
+            if (config.isPresent()) {
+                configs.add(config.get());
+            }
+        }
+        return configs;
+    }
+    
+    private List<ConfigCategory> getConfigCategoriesByCodes(List<ConfigurationV> configV) {
+        List<String> categoryCodes = configV.stream()
+                .map(ConfigurationV::getCategoryCode)
+                .collect(Collectors.toList());
+
+        return configCategoryRepository.findConfigCategoriesByCategoryCodeIn(categoryCodes);
+    }
+    
+    private void updateCustomTemplateConfigWithNewVersion(CustomTemplateConfig config, String newContent, String userId) throws RepositoryException {
+        try {
+            // Get current version
+            CustomTemplateConfigVersion currentVersion = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+            
+            // Mark current version as not latest
+            currentVersion.setIsLatestVersion(false);
+            customTemplateConfigVersionRepository.save(currentVersion);
+            
+            // Create new version
+            CustomTemplateConfigVersion newVersion = new CustomTemplateConfigVersion();
+            newVersion.setConfigId(config.getId());
+            newVersion.setVersionLabel(getNextVersionLabel(VersionType.MINOR, currentVersion.getVersionLabel()));
+            newVersion.setVersionSeriesId(config.getId().toString());
+            newVersion.setVersionType("MINOR");
+            newVersion.setIsLatestMajorVersion(false);
+            newVersion.setIsLatestVersion(true);
+            newVersion.setIsMajorVersion(false);
+            newVersion.setIsVersionSeriesCheckedOut(false);
+            newVersion.setAuditCBy(userId);
+            newVersion.setAuditCDate(LocalDateTime.now());
+            newVersion.setImmutable(false);
+            newVersion = customTemplateConfigVersionRepository.save(newVersion);
+            
+            // Create new content
+            CustomTemplateConfigContent newContentEntity = new CustomTemplateConfigContent();
+            newContentEntity.setContentString(newContent);
+            newContentEntity.setContentStreamMimeType("application/xml");
+            newContentEntity.setContentStreamFilename(config.getName() + ".xml");
+            newContentEntity.setContentStreamId(config.getId().toString());
+            newContentEntity.setContentStreamLength(String.valueOf(newContent.length()));
+            newContentEntity.setAuditCBy(userId);
+            newContentEntity.setAuditCDate(LocalDateTime.now());
+            newContentEntity.setVersionId(newVersion);
+            customTemplateConfigContentRepository.save(newContentEntity);
+            
+        } catch (Exception e) {
+            LOG.error("Error updating custom template config with new version", e);
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+    
+    private void saveDocumentsAsCustomTemplates(List<DocumentV> documents, List<ConfigurationV> configVList, List<ConfigCategory> configCategories, String packageId, String userId) throws RepositoryException {
+        for (ConfigurationV configV : configVList) {
+            Optional<ConfigCategory> matchingCategory = findMatchingConfigCategory(configV, configCategories);
+            if (matchingCategory.isPresent()) {
+                Optional<DocumentV> matchingDoc = documents.stream()
+                    .filter(doc -> doc.getConfigCategoryId() != null && doc.getConfigCategoryId().equals(matchingCategory.get().getId()))
+                    .findFirst();
+                
+                if (matchingDoc.isPresent()) {
+                    String customKey = configV.getName() + "/" + packageId;
+                    saveDocumentAsCustomTemplate(matchingDoc.get(), customKey, matchingCategory.get(), userId);
+                }
+            }
+        }
+    }
+    
+    private Optional<ConfigCategory> findMatchingConfigCategory(ConfigurationV configV, List<ConfigCategory> configCategories) {
+        return configCategories.stream()
+            .filter(category -> configV.getCategoryCode().equals(category.getCategoryCode()))
+            .findFirst();
+    }
+    
+    private void saveDocumentAsCustomTemplate(DocumentV document, String customKey, ConfigCategory configCategory, String userId) throws RepositoryException {
+        try {
+            Optional<DocumentContent> docContent = documentContentRepository.findDocumentContentByVersionId(document.getVersionId());
+            if (!docContent.isPresent()) {
+                return;
+            }
+            
+            CustomTemplateConfigCategory templateCategory = customTemplateConfigCategoryRepository
+                .findConfigCategoriesByCategoryCode(configCategory.getCategoryCode())
+                .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Config category not found: " + configCategory.getCategoryCode()));
+            
+            CustomTemplateConfig config = new CustomTemplateConfig();
+            config.setName(customKey);
+            config.setAuditCBy(userId);
+            config.setAuditCDate(LocalDateTime.now());
+            config.setAuditLastMBy(userId);
+            config.setAuditLastMDate(LocalDateTime.now());
+            config.setLanguage("en");
+            config.setConfigCategory(templateCategory);
+            config = customTemplateConfigRepository.save(config);
+            
+            CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
+            version.setConfigId(config.getId());
+            version.setVersionLabel("1.0.0");
+            version.setVersionSeriesId(config.getId().toString());
+            version.setVersionType("MAJOR");
+            version.setIsLatestMajorVersion(true);
+            version.setIsLatestVersion(true);
+            version.setIsMajorVersion(true);
+            version.setIsVersionSeriesCheckedOut(false);
+            version.setAuditCBy(userId);
+            version.setAuditCDate(LocalDateTime.now());
+            version.setImmutable(false);
+            version = customTemplateConfigVersionRepository.save(version);
+
+            String cleanedContent = clearXmlIdAttributes(docContent.get().getContent());
+            
+            CustomTemplateConfigContent content = new CustomTemplateConfigContent();
+            content.setContentString(cleanedContent);
+            content.setContentStreamMimeType("application/xml");
+            content.setContentStreamFilename(customKey + ".xml");
+            content.setContentStreamId(config.getId().toString());
+            content.setContentStreamLength(String.valueOf(cleanedContent.length()));
+            content.setAuditCBy(userId);
+            content.setAuditCDate(LocalDateTime.now());
+            content.setVersionId(version);
+            customTemplateConfigContentRepository.save(content);
+            
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
+    private String clearXmlIdAttributes(String xmlString) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        org.w3c.dom.Document doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
+
+        clearXmlIdAttributes(doc.getDocumentElement());
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+
+        return writer.toString();
+    }
+
+    private void clearXmlIdAttributes(Node node) {
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Element element = (Element) node;
+            element.removeAttribute("xml:id");
+        }
+
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            clearXmlIdAttributes(children.item(i));
+        }
+    }
+
+
+
     private void handleCatalog(List<String> existingEntities, List<String> newEntities, String userId, Package pkg) throws RepositoryException {
+        List<DocumentV> latestDocuments = getLatestDocumentsByPackageId(pkg.getId());
+        
         if (existingEntities.isEmpty()) {
-            // No existing entities - create catalogs for each new entity
+            // No existing entities - create catalogs for each new entity if needed
             for (String entity : newEntities) {
                 ensureEntityCatalogExists(entity, userId, pkg);
             }
@@ -1650,11 +2100,25 @@ public class DocumentServiceImpl implements DocumentService {
             // Get template name from PROPOSAL document and add to each catalog
             String templateName = getTemplateNameFromProposal(pkg);
             if (templateName != null) {
+                Set<String> insertedTemplateKeys = new HashSet<>();
+
                 for (String entity : newEntities) {
                     String catalogName = "catalog-" + entity;
-                    // Add template to the entity catalog
-                    // This would require updating the existing catalog with the template
+                    Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+                    if (config.isPresent()) {
+                        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+                        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+                        String updatedCatalog = insertTemplateIntoCatalogAndExtractKeys(content.getContentString(), templateName, templateName, pkg.getId().toString(), insertedTemplateKeys);
+                        updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
+                    }
                 }
+
+                // Get category codes for the inserted template keys
+                List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(insertedTemplateKeys);
+                // Get config categories by their codes
+                List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
+                // Save document files matching the extracted template keys
+                saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
             }
         } else {
             // Existing entities - follow different process

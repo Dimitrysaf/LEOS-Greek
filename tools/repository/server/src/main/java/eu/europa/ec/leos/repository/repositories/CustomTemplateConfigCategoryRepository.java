@@ -13,14 +13,12 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
-import eu.europa.ec.leos.repository.entities.ConfigCategory;
+import eu.europa.ec.leos.repository.entities.CustomTemplateConfigCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
-public interface ConfigCategoryRepository extends JpaRepository<ConfigCategory, BigDecimal> {
-    Optional<ConfigCategory> findConfigCategoriesByCategoryCode(String categoryCode);
-    List<ConfigCategory> findConfigCategoriesByCategoryCodeIn(List<String> categoryCodes);
+public interface CustomTemplateConfigCategoryRepository extends JpaRepository<CustomTemplateConfigCategory, BigDecimal> {
+    Optional<CustomTemplateConfigCategory> findConfigCategoriesByCategoryCode(String categoryCode);
 }

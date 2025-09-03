@@ -73,7 +73,7 @@ public class CustomTemplateConfigContent implements Serializable {
     private LocalDateTime auditLastMDate;
     @JoinColumn(name = "VERSION_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private ConfigVersion versionId;
+    private CustomTemplateConfigVersion versionId;
 
     public CustomTemplateConfigContent() {
     }
@@ -168,11 +168,11 @@ public class CustomTemplateConfigContent implements Serializable {
         this.id = id;
     }
 
-    public ConfigVersion getVersionId() {
+    public CustomTemplateConfigVersion getVersionId() {
         return versionId;
     }
 
-    public void setVersionId(ConfigVersion versionId) {
+    public void setVersionId(CustomTemplateConfigVersion versionId) {
         this.versionId = versionId;
     }
 
