@@ -198,6 +198,27 @@ public class MetadataUtil {
                 "", MetadataFieldType.COMMISSIONER);
     }
 
+    public static ReferenceFieldInfo getMentionCommissionFieldInfo(final String lang) {
+        return new ReferenceFieldInfo("COM",
+                "",
+                ResourcesUtil.getMessage(lang, "mention.com"),
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
+    public static ReferenceFieldInfo getMentionCouncilFieldInfo(final String lang) {
+        return new ReferenceFieldInfo("CONSIL",
+                "",
+                ResourcesUtil.getMessage(lang, "mention.consil"),
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
+    public static ReferenceFieldInfo getMentionEPFieldInfo(final String lang) {
+        return new ReferenceFieldInfo("EP",
+                "",
+                ResourcesUtil.getMessage(lang, "mention.ep"),
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
     public static boolean isDocumentXmlFile(final XmlFile xmlFile) {
         Node rootNode = MetadataUtil.getAkomaNtosoNode(xmlFile);
         if (rootNode == null) {
@@ -659,6 +680,7 @@ public class MetadataUtil {
     }
 
     public static boolean isRolePresident(final String value) {
+        if (value.equalsIgnoreCase("PRESID")) return true;
         final Set<String> rolesPresident = new HashSet<>();
         for (final String lang : LIST_LANGUAGES) {
             rolesPresident.add(ResourcesUtil.getMessage(lang, "role.president").toLowerCase());
@@ -667,6 +689,7 @@ public class MetadataUtil {
     }
 
     public static boolean isRoleVicePresident(final String value) {
+        if (value.equalsIgnoreCase("PRESID_VICE")) return true;
         final Set<String> rolesVicePresident = new HashSet<>();
         for (final String lang : LIST_LANGUAGES) {
             rolesVicePresident.add(ResourcesUtil.getMessage(lang, "role.vice.president").toLowerCase());
@@ -675,6 +698,7 @@ public class MetadataUtil {
     }
 
     public static boolean isRoleMemberOfTheCommission(final String value) {
+        if (value.equalsIgnoreCase("MEMBER_COM")) return true;
         final Set<String> rolesMemberOfTheCommission = new HashSet<>();
         for (final String lang : LIST_LANGUAGES) {
             rolesMemberOfTheCommission.add(ResourcesUtil.getMessage(lang, "role.member.commission").toLowerCase());
@@ -683,6 +707,7 @@ public class MetadataUtil {
     }
 
     public static boolean isRoleDirectorGeneral(final String value) {
+        if (value.equalsIgnoreCase("DIR_GEN")) return true;
         final Set<String> rolesDirectorGeneral = new HashSet<>();
         for (final String lang : LIST_LANGUAGES) {
             rolesDirectorGeneral.add(ResourcesUtil.getMessage(lang, "role.director.general").toLowerCase());
@@ -720,6 +745,33 @@ public class MetadataUtil {
             rolesSecretaries.add(ResourcesUtil.getMessage(lang, "role.secretaries").toLowerCase());
         }
         return valueContainsSpelling(value, rolesSecretaries);
+    }
+
+    public static boolean isMentionCommission(final String value) {
+        if (value.equalsIgnoreCase("COM")) return true;
+        final Set<String> mentionsCom = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            mentionsCom.add(ResourcesUtil.getMessage(lang, "mention.com").toLowerCase());
+        }
+        return valueContainsSpelling(value, mentionsCom);
+    }
+
+    public static boolean isMentionCouncil(final String value) {
+        if (value.equalsIgnoreCase("CONSIL")) return true;
+        final Set<String> mentions = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            mentions.add(ResourcesUtil.getMessage(lang, "mention.consil").toLowerCase());
+        }
+        return valueContainsSpelling(value, mentions);
+    }
+
+    public static boolean isMentionEuropeanParliament(final String value) {
+        if (value.equalsIgnoreCase("EP")) return true;
+        final Set<String> mentions = new HashSet<>();
+        for (final String lang : LIST_LANGUAGES) {
+            mentions.add(ResourcesUtil.getMessage(lang, "mention.ep").toLowerCase());
+        }
+        return valueContainsSpelling(value, mentions);
     }
 
     public static boolean valueContainsSpelling(final String value, final Collection<String> spellings) {
