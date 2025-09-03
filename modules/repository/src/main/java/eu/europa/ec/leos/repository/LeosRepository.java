@@ -441,7 +441,7 @@ public interface LeosRepository {
 
     void archiveDocumentVersion(String documentRef, String version);
 
-    void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs);
+    void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs, String userId);
 
 
 }

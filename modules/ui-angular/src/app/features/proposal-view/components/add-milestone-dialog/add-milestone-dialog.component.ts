@@ -173,9 +173,19 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
     });
       return [
         option(
+          'page.collection.milestones.type.proposal1',
+          'For Interservice Consultation',
+        ),
+        option('page.collection.milestones.type.proposal2', 'For Decision'),
+        option(
+          'page.collection.milestones.type.proposal3',
+          'Revision after Interservice Consultation',
+        ),
+        option(
           'page.collection.milestones.type.custom-template',
           'Custom Template',
-        )
+        ),
+        option('page.collection.milestones.type.other', OTHER_VALUE)
       ];
   }
 

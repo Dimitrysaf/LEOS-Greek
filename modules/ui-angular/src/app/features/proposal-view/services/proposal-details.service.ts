@@ -771,6 +771,10 @@ export class ProposalDetailsService implements OnDestroy {
     });
   }
 
+  getAllOrganizations(): Observable<string[]> {
+    return this.http.get<string[]>(`${apiBaseUrl}/secured/organizations`);
+  }
+
   private retrieveAuthority(collaborators: Collaborator[], config: LeosAppConfig) {
     /** Normal user collaborator - has preference over entity collaborators **/
     const userCollaborators = collaborators

@@ -28,21 +28,14 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   targetUserForm: FormGroup;
   submitted = false;
 
-  /** Five sample DGs (local) */
-  private ALL_DGS: DGOption[] = [
-    { code: 'CLIMA', label: 'CLIMA — Climate Action' },
-    { code: 'COMP',  label: 'COMP — Competition' },
-    { code: 'MOVE',  label: 'MOVE — Mobility & Transport' },
-    { code: 'RTD',   label: 'RTD — Research & Innovation' },
-    { code: 'TRADE', label: 'TRADE — Trade' },
-  ];
+  /** Organizations loaded from API */
+  private ALL_DGS: DGOption[] = [];
 
   /** Map label -> option for quick resolution */
-  private dgByLabel = new Map<string, DGOption>(this.ALL_DGS.map(o => [o.label, o]));
+  private dgByLabel = new Map<string, DGOption>();
 
   /** EUI items for the autocomplete (display only) */
-  allDgItems: EuiAutoCompleteItem[] =
-    this.ALL_DGS.map(o => new EuiAutoCompleteItem({ label: o.label, tooltip: { tooltipMessage: o.label } }));
+  allDgItems: EuiAutoCompleteItem[] = [];
 
   filteredDgItems: EuiAutoCompleteItem[] = [...this.allDgItems];
 
@@ -60,10 +53,20 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
 
   ngOnInit(): void {
     this.targetUserForm = this.fb.group({
-      templateName: this.fb.control('', Validators.required),   // <-- new field
+      templateName: this.fb.control('', Validators.required),
       dgSearch: [''],
       dgCodes: this.fb.control<string[]>([], Validators.required)
     });
+
+    // Load organizations from API
+    this.detailsService.getAllOrganizations()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(organizations => {
+        this.ALL_DGS = organizations.map(org => ({ code: org, label: org }));
+        this.dgByLabel = new Map<string, DGOption>(this.ALL_DGS.map(o => [o.label, o]));
+        this.allDgItems = this.ALL_DGS.map(o => new EuiAutoCompleteItem({ label: o.label, tooltip: { tooltipMessage: o.label } }));
+        this.filteredDgItems = [...this.allDgItems];
+      });
 
     // React to autocomplete value changes (label or item), unify as label string
     this.targetUserForm.controls['dgSearch'].valueChanges
@@ -85,8 +88,6 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
           this.onDgSearch(typeof val === 'string' ? val : '');
         }
       });
-
-    this.filteredDgItems = [...this.allDgItems];
   }
 
   ngOnDestroy(): void {
@@ -190,14 +191,11 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
       return;
     }
 
-    console.log(this.milestone);
     const templateName = this.templateNameCtrl.value as string;
     const dgCodes = this.dgCtrl.value as string[];
 
     this.detailsService.publishTemplateToDgCatalog(this.milestone, templateName, dgCodes);
 
-    console.log(templateName);
-    console.log(dgCodes);
     this.close();
   }
 }

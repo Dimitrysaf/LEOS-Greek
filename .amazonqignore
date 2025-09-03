@@ -9,6 +9,9 @@
 **/dist/
 **/build/
 
+# Specific Angular dist folder
+modules/ui-angular/dist/
+
 # IDE files
 **/.idea/
 **/.vscode/

@@ -862,4 +862,16 @@ public class LeosApiController {
             return new ResponseEntity<>("Unexpected error occurred while getting Html renditions", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/secured/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getOrganizations() {
+        try {
+            List<String> organizations = userService.getAllOrganizations();
+            return new ResponseEntity<>(organizations, HttpStatus.OK);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while retrieving organizations: " + ex.getMessage());
+            return new ResponseEntity<>("Error occurred while retrieving organizations", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -433,8 +433,9 @@ public class DocumentController {
             @RequestParam String proposalRef,
             @RequestParam String legDocumentName,
             @RequestParam String templateName,
-            @RequestParam List<String> dgs) throws RepositoryException {
-        documentService.publishCustomTemplate(proposalRef, legDocumentName, templateName, dgs);
+            @RequestParam List<String> dgs,
+            @RequestParam String userId) throws RepositoryException {
+        documentService.publishCustomTemplate(proposalRef, legDocumentName, templateName, dgs, userId);
         return ResponseEntity.ok().build();
     }
 }

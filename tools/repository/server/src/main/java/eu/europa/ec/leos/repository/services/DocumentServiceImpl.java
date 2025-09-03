@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
+import eu.europa.ec.leos.repository.common.CustomTemplateMilestoneStatus;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.entities.*;
 import eu.europa.ec.leos.repository.entities.Document;
@@ -24,6 +25,7 @@ import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.*;
+import eu.europa.ec.leos.repository.entities.CustomTemplateEntities;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import org.apache.commons.lang3.StringUtils;
@@ -75,6 +77,7 @@ public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceImpl.class);
     private static final int MAX_RESULT_DEFAULT = 100;
     private static final String XML_DOC_EXT = ".xml";
+    private static final String CUSTOM_TEMPLATE_COMMENT = "Custom Template";
 
     private final DocumentRepository documentRepository;
     private final DocumentVRepository documentVRepository;
@@ -95,6 +98,7 @@ public class DocumentServiceImpl implements DocumentService {
     private final ConfigContentRepository configContentRepository;
     private final ConfigVersionRepository configVersionRepository;
     private final ConfigurationVRepository configurationVRepository;
+    private final CustomTemplateEntitiesRepository customTemplateEntitiesRepository;
 
     @Autowired
     public DocumentServiceImpl(DocumentRepository documentRepository, DocumentVRepository documentVRepository,
@@ -106,7 +110,7 @@ public class DocumentServiceImpl implements DocumentService {
                                CollaboratorsService collaboratorsService,
                                MilestoneDocumentService milestoneDocumentService,
                                ConfigService configService, EntityManager entityManager,
-                               DocumentMilestoneRepository documentMilestoneRepository, ConfigContentRepository configContentRepository, ConfigVersionRepository configVersionRepository, ConfigurationVRepository configurationVRepository) {
+                               DocumentMilestoneRepository documentMilestoneRepository, ConfigContentRepository configContentRepository, ConfigVersionRepository configVersionRepository, ConfigurationVRepository configurationVRepository, CustomTemplateEntitiesRepository customTemplateEntitiesRepository) {
         this.documentRepository = documentRepository;
         this.documentVRepository = documentVRepository;
         this.documentVersionRepository = documentVersionRepository;
@@ -124,6 +128,7 @@ public class DocumentServiceImpl implements DocumentService {
         this.configContentRepository = configContentRepository;
         this.configVersionRepository = configVersionRepository;
         this.configurationVRepository = configurationVRepository;
+        this.customTemplateEntitiesRepository = customTemplateEntitiesRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -1215,7 +1220,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs) throws RepositoryException {
+    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs, String userId) throws RepositoryException {
         LOG.info("Publishing custom template: name={}, description={}, categories={}", templateName, legDocumentName, dgs);
 
         Optional<Document> legFile = documentRepository.findDocumentByName(legDocumentName);
@@ -1224,13 +1229,20 @@ public class DocumentServiceImpl implements DocumentService {
             return;
         }
 
-        //UPDATE MILESTONE
-        DocumentMilestone milestone = documentMilestoneRepository.findByDocumentId(legFile.get().getId());
-        milestone.setStatus("PUBLISHED");
-        milestone.setAuditLastMBy("jane"); // Get username
-        milestone.setAuditLastMDate(LocalDateTime.now());
-        documentMilestoneRepository.save(milestone);
+        // Get the package from the document
+        Package pkg = legFile.get().getPackageId();
+        
+        // 1. Get custom template entities for this package
+        List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
+        
+        // 2. Update custom template entities with new ones from dgs parameter
+        updateCustomTemplateEntities(pkg, dgs, userId);
 
+        // 3. Update milestone status for custom template
+        updateCustomTemplateMilestones(pkg, legFile.get().getId(), userId);
+
+        // 4. Handle catalog creation based on existing entities
+        handleCatalog(existingEntities, dgs, userId, pkg);
 
         //CREATE CONFIG
 
@@ -1240,6 +1252,33 @@ public class DocumentServiceImpl implements DocumentService {
 
         System.out.println(updatedCatalog);
 
+    }
+
+    private void updateCustomTemplateMilestones(Package pkg, BigDecimal currentDocumentId, String userId) {
+        // Get all documents in the package
+        List<Document> allDocuments = documentRepository.findAllDocumentsByPackageId(pkg);
+        
+        // Find all milestones for documents in the package
+        List<DocumentMilestone> allMilestones = documentMilestoneRepository.findDocumentMilestonesByDocumentIn(allDocuments);
+        
+        // Unpublish previous custom template milestones
+        for (DocumentMilestone milestone : allMilestones) {
+            if (CustomTemplateMilestoneStatus.PUBLISHED.getValue().equals(milestone.getStatus()) && 
+                CUSTOM_TEMPLATE_COMMENT.equals(milestone.getMilestoneComments())) {
+                milestone.setStatus(CustomTemplateMilestoneStatus.UNPUBLISHED.getValue());
+                milestone.setAuditLastMBy(userId);
+                milestone.setAuditLastMDate(LocalDateTime.now());
+                documentMilestoneRepository.save(milestone);
+            }
+        }
+
+        // Update current milestone
+        DocumentMilestone currentMilestone = documentMilestoneRepository.findByDocumentId(currentDocumentId);
+        currentMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
+        currentMilestone.setMilestoneComments(CUSTOM_TEMPLATE_COMMENT);
+        currentMilestone.setAuditLastMBy(userId);
+        currentMilestone.setAuditLastMDate(LocalDateTime.now());
+        documentMilestoneRepository.save(currentMilestone);
     }
 
 
@@ -1536,5 +1575,91 @@ public class DocumentServiceImpl implements DocumentService {
         return null;
     }
 
+    public List<String> getCustomTemplateEntitiesByPackage(Package pkg) {
+        Optional<CustomTemplateEntities> entities = customTemplateEntitiesRepository.findByPackageId(pkg);
+        if (entities.isPresent() && entities.get().getEntities() != null) {
+            return Arrays.asList(entities.get().getEntities().split(","));
+        }
+        return Collections.emptyList();
+    }
+
+    public void updateCustomTemplateEntities(Package pkg, List<String> newEntities, String userId) {
+        Optional<CustomTemplateEntities> existing = customTemplateEntitiesRepository.findByPackageId(pkg);
+        CustomTemplateEntities entities;
+        
+        if (existing.isPresent()) {
+            entities = existing.get();
+            entities.setAuditLastMBy(userId);
+            entities.setAuditLastMDate(LocalDateTime.now());
+        } else {
+            entities = new CustomTemplateEntities();
+            entities.setPackageId(pkg);
+            entities.setAuditCBy(userId);
+            entities.setAuditCDate(LocalDateTime.now());
+        }
+        
+        entities.setEntities(String.join(",", newEntities));
+        customTemplateEntitiesRepository.save(entities);
+    }
+
+    private void ensureEntityCatalogExists(String entityName, String userId, Package pkg) throws RepositoryException {
+        String catalogName = "catalog-" + entityName;
+        
+        // Use EAFP pattern: try to find catalog first, create only if not found
+        // This avoids race conditions and is more efficient for the common case
+        try {
+            configService.findConfigByName(catalogName);
+        } catch (RepositoryException e) {
+            if (e.getCode() == RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND) {
+                createEntityCatalog(catalogName, userId, pkg);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    private void createEntityCatalog(String catalogName, String userId, Package pkg) throws RepositoryException {
+        String baseCatalog = createCatalogWithCategoriesOnly();
+        
+        // Get template name from PROPOSAL document in this package
+        String templateName = getTemplateNameFromProposal(pkg);
+        if (templateName != null) {
+            baseCatalog = insertTemplateIntoCatalog(baseCatalog, templateName);
+        }
+        
+        // Create the custom template config with the entity-specific catalog
+        // This would use the configService to create a new config entry
+        // Implementation depends on the configService.createConfig method
+    }
+
+    private String getTemplateNameFromProposal(Package pkg) {
+        List<DocumentV> proposalDocs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(pkg.getId(), "PROPOSAL");
+        if (!proposalDocs.isEmpty()) {
+            return proposalDocs.get(0).getTemplate();
+        }
+        return null;
+    }
+
+    private void handleCatalog(List<String> existingEntities, List<String> newEntities, String userId, Package pkg) throws RepositoryException {
+        if (existingEntities.isEmpty()) {
+            // No existing entities - create catalogs for each new entity
+            for (String entity : newEntities) {
+                ensureEntityCatalogExists(entity, userId, pkg);
+            }
+            
+            // Get template name from PROPOSAL document and add to each catalog
+            String templateName = getTemplateNameFromProposal(pkg);
+            if (templateName != null) {
+                for (String entity : newEntities) {
+                    String catalogName = "catalog-" + entity;
+                    // Add template to the entity catalog
+                    // This would require updating the existing catalog with the template
+                }
+            }
+        } else {
+            // Existing entities - follow different process
+            // TODO: Handle existing entities case
+        }
+    }
 
 }

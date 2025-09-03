@@ -68,5 +68,12 @@ public interface UserService {
      */
     public Authentication createUserWithAuthorities(String login);
 
+    /**
+     * Get all organizations from the user repository.
+     *
+     * @return a list of organization names
+     */
+    public List<String> getAllOrganizations();
+
 }
 

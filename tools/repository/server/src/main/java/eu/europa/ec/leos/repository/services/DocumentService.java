@@ -92,5 +92,5 @@ public interface DocumentService {
 
     LeosDocument findTemplateByName(String ref) throws RepositoryException;
 
-    void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs) throws RepositoryException;
+    void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs, String userId) throws RepositoryException;
 }

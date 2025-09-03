@@ -129,4 +129,18 @@ class UsersClientImpl implements UsersProvider {
 
         return results;
     }
+
+    @Override
+    public List<String> getAllOrganizations() {
+        final String uri = repositoryUrl + "/entities";
+        
+        List<String> results;
+        try {
+            results = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {}).getBody();
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to get organizations. Failed calling: " + uri, e);
+        }
+        
+        return results;
+    }
 }

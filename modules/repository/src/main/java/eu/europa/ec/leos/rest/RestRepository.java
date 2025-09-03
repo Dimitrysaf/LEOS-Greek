@@ -667,7 +667,7 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs) {
+    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs, String userId) {
         LOGGER.trace("Publish Custom Template [{}]", proposalRef);
         String url = getUrl(leosRestPublishCustomTemplateURI);
 
@@ -675,6 +675,7 @@ public class RestRepository extends AbstractRestClient {
         params.add("proposalRef", proposalRef);
         params.add("legDocumentName", legDocumentName);
         params.add("templateName", templateName);
+        params.add("userId", userId);
         dgs.forEach(dg -> params.add("dgs", dg));
 
         postEntity(url, params, Object.class);
