@@ -140,6 +140,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             billContext.usePackage(leosPackage);
             billContext.useTemplate(bill);
             billContext.usePurpose(purpose);
+            billContext.useEeaRelevance(eeaRelevance);
             billContext.useActionMessageMap(actionMsgMap);
             billContext.usePackageRef(proposal.getMetadata().get().getRef());
             Bill billCreated = billContext.executeCreateBill();

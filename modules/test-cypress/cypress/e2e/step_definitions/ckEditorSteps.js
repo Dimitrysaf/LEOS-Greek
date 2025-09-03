@@ -739,3 +739,75 @@ Then(/^citation contains span tag with attribute name "([^"]*)" with value "([^"
 Then(/^recital contains span tag with attribute name "([^"]*)" with value "([^"]*)" in edition mode$/, function (attributeName, attributeValue) {
     ckEditorWindow.elements.pTag().find('span').should('have.attr', attributeName).and('equal', attributeValue);
 });
+
+When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liTag, attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnSubparagraphOfParagraph(liTag, attributeName, attributeValue);
+});
+
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickOnSubparagraphOfParagraph(liTag, attributeName, attributeValue);
+});
+
+When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnFirstLayerElementOfParagraph(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickOnFirstLayerElementOfParagraph(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnSecondLayerElementOfParagraph(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickOnSecondLayerElementOfParagraph(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnThirdLayerElementOfParagraph(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickOnThirdLayerElementOfParagraph(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^right click on p tag with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnPTagSubparagraphOfLevel(attributeName, attributeValue);
+});
+
+When(/^click on p tag with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (attributeName, attributeValue) {
+    ckEditorWindow.clickOnPTagSubparagraphOfLevel(attributeName, attributeValue);
+});
+
+When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liTag, attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnSubparagraphOfLevel(liTag, attributeName, attributeValue);
+});
+
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickOnSubparagraphOfLevel(liTag, attributeName, attributeValue);
+});
+
+When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnFirstLayerElementOfLevel(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickOnFirstLayerElementOfLevel(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnSecondLayerElementOfLevel(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickOnSecondLayerElementOfLevel(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.rightClickOnThirdLayerElementOfLevel(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickOnThirdLayerElementOfLevel(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
