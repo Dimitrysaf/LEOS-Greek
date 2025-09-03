@@ -1229,19 +1229,23 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
+    // ========================================
+    // PUBLISH CATALOG METHODS
+    // ========================================
+
     @Override
     @Transactional
     public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs, String userId) throws RepositoryException {
         LOG.info("Publishing custom template: name={}, description={}, categories={}", templateName, legDocumentName, dgs);
 
-        Optional<Document> legFile = documentRepository.findDocumentByName(legDocumentName);
+        List<Document> legFile = documentRepository.findDocumentsByName(legDocumentName);
 
-        if (!legFile.isPresent()){
+        if (legFile.isEmpty()){
             return;
         }
 
         // Get the package from the document
-        Package pkg = legFile.get().getPackageId();
+        Package pkg = legFile.get(0).getPackageId();
         
         // 1. Get custom template entities for this package
         List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
@@ -1250,19 +1254,10 @@ public class DocumentServiceImpl implements DocumentService {
         updateCustomTemplateEntities(pkg, dgs, userId);
 
         // 3. Update milestone status for custom template
-        updateCustomTemplateMilestones(pkg, legFile.get().getId(), userId);
+        updateCustomTemplateMilestones(pkg, legFile.get(0).getId(), userId);
 
         // 4. Handle catalog creation based on existing entities
         handleCatalog(existingEntities, dgs, userId, pkg);
-
-        //CREATE CONFIG
-
-//        String catalog = createCatalogWithCategoriesOnly();
-//
-//        String updatedCatalog = insertTemplateIntoCatalog(catalog, "SJ-004", templateName, pkg.getId().toString());
-//
-//        System.out.println(updatedCatalog);
-
     }
 
     private void updateCustomTemplateMilestones(Package pkg, BigDecimal currentDocumentId, String userId) {
@@ -1408,7 +1403,10 @@ public class DocumentServiceImpl implements DocumentService {
 
 
 
-    //INSERT TEMPLATE INTO CATALOG
+    // ========================================
+    // CATALOG CREATION AND MANIPULATION METHODS
+    // ========================================
+
     @Transactional(readOnly = true)
     public String insertTemplateIntoCatalog(String existingCatalogXml, String templateKey, String templateName, String packageId) throws RepositoryException {
         try {
@@ -1804,9 +1802,16 @@ public class DocumentServiceImpl implements DocumentService {
             DocumentBuilder builder = factory.newDocumentBuilder();
             org.w3c.dom.Document catalogDoc = builder.parse(new ByteArrayInputStream(catalogXml.getBytes(StandardCharsets.UTF_8)));
 
-            Element templateToRemove = findTemplateByCustomKey(catalogDoc.getDocumentElement(), customKey);
-            if (templateToRemove != null) {
-                templateToRemove.getParentNode().removeChild(templateToRemove);
+            if (customKey.startsWith("*/")) {
+                // Remove all templates with matching packageId
+                String packageId = customKey.substring(2);
+                removeTemplatesByPackageId(catalogDoc.getDocumentElement(), packageId);
+            } else {
+                // Remove specific template by custom-key
+                Element templateToRemove = findTemplateByCustomKey(catalogDoc.getDocumentElement(), customKey);
+                if (templateToRemove != null) {
+                    templateToRemove.getParentNode().removeChild(templateToRemove);
+                }
             }
 
             return documentToString(catalogDoc);
@@ -1826,6 +1831,25 @@ public class DocumentServiceImpl implements DocumentService {
             }
         }
         return null;
+    }
+
+    private void removeTemplatesByPackageId(Element root, String packageId) {
+        NodeList items = root.getElementsByTagName("item");
+        List<Element> toRemove = new ArrayList<>();
+        
+        for (int i = 0; i < items.getLength(); i++) {
+            Element item = (Element) items.item(i);
+            if ("TEMPLATE".equals(item.getAttribute("type"))) {
+                String customKey = item.getAttribute("custom-key");
+                if (customKey != null && customKey.endsWith("/" + packageId)) {
+                    toRemove.add(item);
+                }
+            }
+        }
+        
+        for (Element item : toRemove) {
+            item.getParentNode().removeChild(item);
+        }
     }
 
     private String documentToString(org.w3c.dom.Document doc) throws Exception {
@@ -2015,24 +2039,38 @@ public class DocumentServiceImpl implements DocumentService {
                 .findConfigCategoriesByCategoryCode(configCategory.getCategoryCode())
                 .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Config category not found: " + configCategory.getCategoryCode()));
             
-            CustomTemplateConfig config = new CustomTemplateConfig();
-            config.setName(customKey);
-            config.setAuditCBy(userId);
-            config.setAuditCDate(LocalDateTime.now());
-            config.setAuditLastMBy(userId);
-            config.setAuditLastMDate(LocalDateTime.now());
-            config.setLanguage("en");
-            config.setConfigCategory(templateCategory);
-            config = customTemplateConfigRepository.save(config);
+            // Check if config already exists
+            Optional<CustomTemplateConfig> existingConfig = customTemplateConfigRepository.findConfigByName(customKey);
+            CustomTemplateConfig config;
+            
+            if (existingConfig.isPresent()) {
+                config = existingConfig.get();
+                // Mark previous version as not latest
+                CustomTemplateConfigVersion currentVersion = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+                if (currentVersion != null) {
+                    currentVersion.setIsLatestVersion(false);
+                    customTemplateConfigVersionRepository.save(currentVersion);
+                }
+            } else {
+                config = new CustomTemplateConfig();
+                config.setName(customKey);
+                config.setAuditCBy(userId);
+                config.setAuditCDate(LocalDateTime.now());
+                config.setAuditLastMBy(userId);
+                config.setAuditLastMDate(LocalDateTime.now());
+                config.setLanguage("en");
+                config.setConfigCategory(templateCategory);
+                config = customTemplateConfigRepository.save(config);
+            }
             
             CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
             version.setConfigId(config.getId());
-            version.setVersionLabel("1.0.0");
+            version.setVersionLabel(existingConfig.isPresent() ? getNextVersionLabel(VersionType.MINOR, "1.0.0") : "1.0.0");
             version.setVersionSeriesId(config.getId().toString());
-            version.setVersionType("MAJOR");
-            version.setIsLatestMajorVersion(true);
+            version.setVersionType(existingConfig.isPresent() ? "MINOR" : "MAJOR");
+            version.setIsLatestMajorVersion(!existingConfig.isPresent());
             version.setIsLatestVersion(true);
-            version.setIsMajorVersion(true);
+            version.setIsMajorVersion(!existingConfig.isPresent());
             version.setIsVersionSeriesCheckedOut(false);
             version.setAuditCBy(userId);
             version.setAuditCDate(LocalDateTime.now());
@@ -2086,6 +2124,94 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
+    private void extractTemplateKeysFromCatalog(String catalogXml, String packageId, Set<String> templateKeys) throws RepositoryException {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            org.w3c.dom.Document catalogDoc = builder.parse(new ByteArrayInputStream(catalogXml.getBytes(StandardCharsets.UTF_8)));
+            
+            NodeList items = catalogDoc.getElementsByTagName("item");
+            for (int i = 0; i < items.getLength(); i++) {
+                Element item = (Element) items.item(i);
+                if ("TEMPLATE".equals(item.getAttribute("type"))) {
+                    String customKey = item.getAttribute("custom-key");
+                    if (customKey != null && customKey.endsWith("/" + packageId)) {
+                        NodeList childItems = item.getElementsByTagName("item");
+                        for (int j = 0; j < childItems.getLength(); j++) {
+                            Element childItem = (Element) childItems.item(j);
+                            String id = childItem.getAttribute("id");
+                            if (StringUtils.isNotBlank(id)) {
+                                templateKeys.add(id);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
+    private void markPreviousCustomTemplateVersionsAsNotLatest(String packageId) {
+        // Find all custom template configs with names ending with packageId
+        List<CustomTemplateConfig> configs = customTemplateConfigRepository.findAll().stream()
+            .filter(config -> config.getName().endsWith("/" + packageId))
+            .collect(Collectors.toList());
+        
+        for (CustomTemplateConfig config : configs) {
+            CustomTemplateConfigVersion currentVersion = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+            if (currentVersion != null && currentVersion.getIsLatestVersion()) {
+                currentVersion.setIsLatestVersion(false);
+                customTemplateConfigVersionRepository.save(currentVersion);
+            }
+        }
+    }
+
+    private void removeTemplateFromEntityCatalog(String entityName, String packageId, String userId) throws RepositoryException {
+        String catalogName = "catalog-" + entityName;
+        Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+        
+        if (config.isPresent()) {
+            CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+            CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+            
+            String customKey = "*/" + packageId; // Match any template with this packageId
+            String updatedCatalog = removeTemplateFromCatalog(content.getContentString(), customKey);
+            updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
+        }
+    }
+
+    private void addTemplateToEntityCatalog(String entityName, String templateName, String packageId, String userId) throws RepositoryException {
+        String catalogName = "catalog-" + entityName;
+        Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+        
+        if (config.isPresent()) {
+            CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+            CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+            
+            String updatedCatalog = insertTemplateIntoCatalog(content.getContentString(), templateName, templateName, packageId);
+            updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
+        }
+    }
+
+    private void replaceTemplateInEntityCatalog(String entityName, String templateName, String packageId, String userId) throws RepositoryException {
+        String catalogName = "catalog-" + entityName;
+        Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+        
+        if (config.isPresent()) {
+            CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+            CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+            
+            // Remove existing templates for this package
+            String customKey = "*/" + packageId;
+            String catalogWithoutOldTemplate = removeTemplateFromCatalog(content.getContentString(), customKey);
+            
+            // Add the new template
+            String updatedCatalog = insertTemplateIntoCatalog(catalogWithoutOldTemplate, templateName, templateName, packageId);
+            updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
+        }
+    }
+
 
 
     private void handleCatalog(List<String> existingEntities, List<String> newEntities, String userId, Package pkg) throws RepositoryException {
@@ -2121,8 +2247,66 @@ public class DocumentServiceImpl implements DocumentService {
                 saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
             }
         } else {
-            // Existing entities - follow different process
-            // TODO: Handle existing entities case
+            // Existing entities - handle scenarios
+            
+            // Scenario 1: Identify removed entities and delete templates from their catalogs
+            List<String> removedEntities = existingEntities.stream()
+                .filter(entity -> !newEntities.contains(entity))
+                .collect(Collectors.toList());
+            
+            for (String removedEntity : removedEntities) {
+                removeTemplateFromEntityCatalog(removedEntity, pkg.getId().toString(), userId);
+            }
+            
+            // Scenario 2: Identify new entities and add templates to their catalogs
+            List<String> newlyAddedEntities = newEntities.stream()
+                .filter(entity -> !existingEntities.contains(entity))
+                .collect(Collectors.toList());
+            
+            String templateName = getTemplateNameFromProposal(pkg);
+            if (templateName != null) {
+                for (String newEntity : newlyAddedEntities) {
+                    ensureEntityCatalogExists(newEntity, userId, pkg);
+                    addTemplateToEntityCatalog(newEntity, templateName, pkg.getId().toString(), userId);
+                }
+            }
+            
+            // Scenario 3: Identify common entities and replace templates in their catalogs
+            List<String> commonEntities = existingEntities.stream()
+                .filter(newEntities::contains)
+                .collect(Collectors.toList());
+            
+            if (templateName != null) {
+                for (String commonEntity : commonEntities) {
+                    replaceTemplateInEntityCatalog(commonEntity, templateName, pkg.getId().toString(), userId);
+                }
+            }
+            
+            // Final step: Save documents as custom templates after all catalog operations
+            if (templateName != null) {
+                Set<String> allTemplateKeys = new HashSet<>();
+                
+                // Extract template keys from all updated catalogs
+                for (String entity : newEntities) {
+                    String catalogName = "catalog-" + entity;
+                    Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+                    if (config.isPresent()) {
+                        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+                        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+                        extractTemplateKeysFromCatalog(content.getContentString(), pkg.getId().toString(), allTemplateKeys);
+                    }
+                }
+                
+                if (!allTemplateKeys.isEmpty()) {
+                    // Mark previous custom template versions as not latest
+                    markPreviousCustomTemplateVersionsAsNotLatest(pkg.getId().toString());
+                    
+                    // Save new custom templates
+                    List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(allTemplateKeys);
+                    List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
+                    saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
+                }
+            }
         }
     }
 

@@ -28,7 +28,7 @@ public interface DocumentRepository extends JpaRepository<Document, BigDecimal> 
 
     Optional<Document> findDocumentByRef(String ref);
 
-    Optional<Document> findDocumentByName(String name);
+    List<Document> findDocumentsByName(String name);
 
     @Query(value = "SELECT * FROM DOCUMENT d WHERE d.ID IN (SELECT v.DOCUMENT_ID FROM DOCUMENT_VERSION v WHERE v.ID= ?1 AND v.IS_LATEST_VERSION = 1);", nativeQuery = true)
     Optional<Document> findDocumentByDocumentId(BigDecimal documentId);
