@@ -509,14 +509,19 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   populateSigningCommissioner(selectedTitle) {
     this.detailsService.searchUsersByJobTitle(selectedTitle)
       .subscribe({
-        next: (users: []) => {
-          this.signingCommissioners = [...users];
-          if (!this.signingCommissioners.includes(this.signingCommissioner)) {
-            this.signingCommissioners.push(this.signingCommissioner);
+        next: (users: string[]) => {
+          this.signingCommissioners = [];
+          this.signingCommissioners.push(this.signingCommissioner);
+          for (let user of users) {
+            if (user != this.signingCommissioner) {
+              this.signingCommissioners.push(user);
+            }
           }
         },
         error: (err) => {
           console.error('Error fetching commissioners by job title', err);
+          this.signingCommissioners = [];
+          this.signingCommissioners.push(this.signingCommissioner);
         }
       });
   }
