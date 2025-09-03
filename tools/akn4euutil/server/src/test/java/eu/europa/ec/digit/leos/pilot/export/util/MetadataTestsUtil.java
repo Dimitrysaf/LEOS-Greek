@@ -200,7 +200,7 @@ public final class MetadataTestsUtil {
     private static void checkInsertCote(XmlFile xmlFile) throws Exception {
         Node xmlNodeMeta = MetadataUtil.getXmlNodeMetaReferenceWithNameAttributeValue(xmlFile, "TLCReference", "identifier");
         if (xmlNodeMeta != null) {
-            Assert.notNull(XmlUtil.getNodeAttributeValue(xmlNodeMeta, "xml:id"));
+            Assert.notNull(XmlUtil.getNodeAttributeValue(xmlNodeMeta, "xml:id"), "Attribute 'xml:id' must not be null");
             checkNodeAttributeValue(xmlNodeMeta, "href",
                     "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER");
             checkNodeAttributeValue(xmlNodeMeta, "showAs", "COM(2012) 466");
@@ -212,7 +212,7 @@ public final class MetadataTestsUtil {
         Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "reference");
         Node xmlNodeDocNumber = XmlUtil.getChildNodeWithName(xmlNodeBlock, "docNumber");
         if (xmlNodeDocNumber != null) {
-            Assert.notNull(XmlUtil.getNodeAttributeValue(xmlNodeDocNumber, "refersTo"));
+            Assert.notNull(XmlUtil.getNodeAttributeValue(xmlNodeDocNumber, "refersTo"), "Attribute 'refersTo' must not be null");
             checkNodeTextContent(xmlNodeDocNumber, "COM(2012) 466");
         }
     }
