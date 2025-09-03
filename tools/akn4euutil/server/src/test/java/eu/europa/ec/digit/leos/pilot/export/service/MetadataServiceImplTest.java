@@ -167,7 +167,7 @@ public class MetadataServiceImplTest {
 
     @Test
     public void testAddCommissionerRole() throws Exception {
-        String roleValue = "the President";
+        String roleValue = "The President";
         XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
         ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", "the President", "", MetadataFieldType.COMMISSIONER);
         metadataService.processCommissioner(fieldInfo, xmlFile, 0);
