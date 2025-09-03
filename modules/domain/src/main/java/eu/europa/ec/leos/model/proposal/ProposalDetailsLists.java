@@ -14,4 +14,6 @@ public class ProposalDetailsLists {
     List<String> adoptionPlaces;
     List<String> languages;
     List<String> specialMentions;
+    List<String> commissionerTitles;
+    List<String> signingCommissioner;
 }

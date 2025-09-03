@@ -1,6 +1,7 @@
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
@@ -847,10 +848,12 @@ public class MetadataServiceImpl implements MetadataService {
         if (roleIndex < 0 || personIndex < 0) {
             return;
         }
+        processCommissionerRole(fieldInfo, signatureNode, xmlFile);
+        processCommissionerPerson(fieldInfo, signatureNode);
 
         // Check wether role or person is first set in xml
         // Depending on the index, the commission values are set accordingly
-        switch(pos) {
+        /*switch(pos) {
             case 0:
                 if (roleIndex < personIndex) {
                     processCommissionerRole(fieldInfo, signatureNode, xmlFile);
@@ -867,28 +870,41 @@ public class MetadataServiceImpl implements MetadataService {
                 break;
             default:
                 break;
+        }*/
+    }
+
+    public String getFieldValue(String jsonString, String field) {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = null;
+        try {
+            root = mapper.readTree(jsonString);
+        } catch (JsonProcessingException e) {
+            return jsonString;
         }
+        String fieldValue = root.get(field).asText();
+        return fieldValue;
     }
 
     private void processCommissionerRole(ReferenceFieldInfo fieldInfo, Node signatureNode, XmlUtil.XmlFile xmlFile) {
-        this.addRoleToReferences(fieldInfo, xmlFile);
+        String fieldValue = getFieldValue(fieldInfo.getDisplayValue(), "commissionerTitle");
+        this.addRoleToReferences(fieldValue, xmlFile);
         final Node roleNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_ROLE);
         if (roleNode == null) return;
 
-        roleNode.setTextContent(fieldInfo.getDisplayValue());
+        roleNode.setTextContent(fieldValue);
         final String language = readLanguageValue(xmlFile);
 
         final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue(), language);
         XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
     }
 
-    private void addRoleToReferences(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    private void addRoleToReferences(String fieldValue, XmlUtil.XmlFile xmlFile) {
         final Node referencesNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_REFERENCES);
         boolean appendNode = false;
         if (referencesNode == null) return;
 
         final String language = readLanguageValue(xmlFile);
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue(), language);
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldValue, language);
         if (roleFieldInfo == null) return;
 
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
@@ -922,9 +938,11 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void processCommissionerPerson(ReferenceFieldInfo fieldInfo, Node signatureNode) {
+        String signingCommissioner = getFieldValue(fieldInfo.getDisplayValue(), "signingCommissioner");
         final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
         if (personNode == null) return;
-        personNode.setTextContent(fieldInfo.getDisplayValue());
+        personNode.setTextContent(signingCommissioner);
+        XmlUtil.setNodeAttributeValue(personNode, MetadataUtil.ATTRIBUTE_REFERSTO, (fieldInfo == null) ? "" : "~" + fieldInfo.getId());
     }
 
     @Override

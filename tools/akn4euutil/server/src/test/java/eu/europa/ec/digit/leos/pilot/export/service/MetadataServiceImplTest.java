@@ -23,6 +23,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFi
 import eu.europa.ec.digit.leos.pilot.export.service.impl.MetadataServiceImpl;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
