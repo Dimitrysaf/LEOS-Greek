@@ -2167,6 +2167,83 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
+    private void saveConfigFilesAsCustomTemplates(Set<String> templateKeys, String packageId, String userId) throws RepositoryException {
+        try {
+            CustomTemplateConfigCategory configCategory = customTemplateConfigCategoryRepository
+                .findConfigCategoriesByCategoryCode("CONFIG")
+                .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "CONFIG category not found"));
+            
+            for (String templateKey : templateKeys) {
+                String configName = templateKey + "-CONF";
+                Optional<ConfigurationV> configFile = configurationVRepository.findConfigurationByName(configName);
+                
+                if (configFile.isPresent()) {
+                    String customKey = configName + "/" + packageId;
+                    saveConfigAsCustomTemplate(configFile.get(), customKey, configCategory, userId);
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Error saving config files as custom templates", e);
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
+    private void saveConfigAsCustomTemplate(ConfigurationV configFile, String customKey, CustomTemplateConfigCategory templateCategory, String userId) throws RepositoryException {
+        try {
+            // Check if config already exists
+            Optional<CustomTemplateConfig> existingConfig = customTemplateConfigRepository.findConfigByName(customKey);
+            CustomTemplateConfig config;
+            
+            if (existingConfig.isPresent()) {
+                config = existingConfig.get();
+                // Mark previous version as not latest
+                CustomTemplateConfigVersion currentVersion = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+                if (currentVersion != null) {
+                    currentVersion.setIsLatestVersion(false);
+                    customTemplateConfigVersionRepository.save(currentVersion);
+                }
+            } else {
+                config = new CustomTemplateConfig();
+                config.setName(customKey);
+                config.setAuditCBy(userId);
+                config.setAuditCDate(LocalDateTime.now());
+                config.setAuditLastMBy(userId);
+                config.setAuditLastMDate(LocalDateTime.now());
+                config.setLanguage("en");
+                config.setConfigCategory(templateCategory);
+                config = customTemplateConfigRepository.save(config);
+            }
+            
+            CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
+            version.setConfigId(config.getId());
+            version.setVersionLabel(existingConfig.isPresent() ? getNextVersionLabel(VersionType.MINOR, "1.0.0") : "1.0.0");
+            version.setVersionSeriesId(config.getId().toString());
+            version.setVersionType(existingConfig.isPresent() ? "MINOR" : "MAJOR");
+            version.setIsLatestMajorVersion(!existingConfig.isPresent());
+            version.setIsLatestVersion(true);
+            version.setIsMajorVersion(!existingConfig.isPresent());
+            version.setIsVersionSeriesCheckedOut(false);
+            version.setAuditCBy(userId);
+            version.setAuditCDate(LocalDateTime.now());
+            version.setImmutable(false);
+            version = customTemplateConfigVersionRepository.save(version);
+            
+            CustomTemplateConfigContent content = new CustomTemplateConfigContent();
+            content.setContent(configFile.getContent());
+            content.setContentStreamMimeType("application/json");
+            content.setContentStreamFilename(customKey + ".json");
+            content.setContentStreamId(config.getId().toString());
+            content.setContentStreamLength(String.valueOf(configFile.getContent().length));
+            content.setAuditCBy(userId);
+            content.setAuditCDate(LocalDateTime.now());
+            content.setVersionId(version);
+            customTemplateConfigContentRepository.save(content);
+            
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+        }
+    }
+
     private void removeTemplateFromEntityCatalog(String entityName, String packageId, String userId) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
         Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
@@ -2245,6 +2322,8 @@ public class DocumentServiceImpl implements DocumentService {
                 List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
                 // Save document files matching the extracted template keys
                 saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
+                // Save config files for each template
+                saveConfigFilesAsCustomTemplates(insertedTemplateKeys, pkg.getId().toString(), userId);
             }
         } else {
             // Existing entities - handle scenarios
@@ -2305,6 +2384,9 @@ public class DocumentServiceImpl implements DocumentService {
                     List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(allTemplateKeys);
                     List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
                     saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
+                    
+                    // Save config files for each template key
+                    saveConfigFilesAsCustomTemplates(allTemplateKeys, pkg.getId().toString(), userId);
                 }
             }
         }
