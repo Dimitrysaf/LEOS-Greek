@@ -989,10 +989,11 @@ define(function leosTrackChangesModule(require) {
 
                     if (pParentElement && !pParentElement.getText().trim()) {
                         let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
-                        if(!!lastEditable && lastEditable.getId() == pParentElement.getId()){
+                        let isSignatureElement = leosPluginUtils.isSignatureElement(pParentElement);
+                        if (!!lastEditable && lastEditable.getId() == pParentElement.getId() || isSignatureElement) {
                             pParentElement.appendBogus();
                             var range = editor.createRange();
-                            range.selectNodeContents(lastEditable);
+                            range.selectNodeContents(pParentElement);
                             range.collapse(true);
                             editor.getSelection().selectRanges([range]);
                             editor.focus();
@@ -1289,12 +1290,13 @@ define(function leosTrackChangesModule(require) {
                     element.remove();
                     if (pParentElement && !pParentElement.getText().trim()) {
                         let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
-                        if(!lastEditable || lastEditable.getId() !== pParentElement.getId()){
+                        let isSignatureElement = leosPluginUtils.isSignatureElement(pParentElement);
+                        if ((!lastEditable || lastEditable.getId() !== pParentElement.getId()) && !isSignatureElement) {
                             pParentElement.remove();
-                        }else if(!!lastEditable){
-                            lastEditable.appendBogus();
+                        } else {
+                            pParentElement.appendBogus();
                             var range = editor.createRange();
-                            range.selectNodeContents(lastEditable);
+                            range.selectNodeContents(pParentElement);
                             range.collapse(true);
                             editor.getSelection().selectRanges([range]);
                             editor.focus();
