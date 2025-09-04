@@ -438,7 +438,7 @@ export abstract class DocumentActionsService {
           euiStyle: 'secondary',
           euiSize: 's',
           icon: 'search',
-          disabled: this.isEditorOpen,
+          disabled: this.documentService.isEditorOpen$,
           // todo move search on it's own service ... requirs refactoring fro @kostas_kontos
           actionFn: () => this.documentService.toggleSearchPane(),
         },
@@ -518,10 +518,13 @@ export abstract class DocumentActionsService {
             'page.editor.actions-dropdown.enable-track-changes',
           ),
           isSlider: true,
-          disabled:
-            !this.permissions.includes('CAN_ACTIVATE_TRACK_CHANGES') ||
-            this.isEditorOpen ||
-            this.isClonedProposal(),
+          disabled: combineLatest([
+            of(!this.permissions.includes('CAN_ACTIVATE_TRACK_CHANGES')),
+            this.documentService.isEditorOpen$,
+            of(this.isClonedProposal())
+          ]).pipe(
+            map(([noPermission, isEditorOpen, isClonedProposal]) => noPermission || isEditorOpen || isClonedProposal)
+          ),
           value: this.isTrackChangesEnabled,
           actionFn: () => this.toggleTrackChangesEnabled(),
         },
