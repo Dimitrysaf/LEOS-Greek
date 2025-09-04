@@ -342,6 +342,7 @@ public class BillContextService {
                 .withPurpose(purpose)
                 .withPackageRef(packageRef)
                 .withCustomTemplateAct(customTemplateAct)
+                .withEeaRelevance(eeaRelevance)
                 .build();
 
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
