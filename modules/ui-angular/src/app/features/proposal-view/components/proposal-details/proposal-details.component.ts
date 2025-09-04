@@ -468,6 +468,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     }
     this.specialMention = this.proposal.metadata.specialMention;
     this.commissionerTitle = this.proposal.metadata.commissionerTitle;
+    this.populateSigningCommissioner(this.commissionerTitle);
     this.stamp = this.proposal.metadata.stamp;
   }
 
@@ -505,18 +506,31 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
+  populateSigningCommissioner(selectedTitle) {
+    this.detailsService.searchUsersByJobTitle(selectedTitle)
+      .subscribe({
+        next: (users: string[]) => {
+          this.signingCommissioners = [];
+          this.signingCommissioners.push(this.signingCommissioner);
+          for (let user of users) {
+            if (user != this.signingCommissioner) {
+              this.signingCommissioners.push(user);
+            }
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching commissioners by job title', err);
+          this.signingCommissioners = [];
+          this.signingCommissioners.push(this.signingCommissioner);
+        }
+      });
+  }
+
   onCommissionerTitleSelection(event: Event) {
     const selectedTitle = event.toString();
     this.commissionerTitle = selectedTitle;
-    this.detailsService.searchUsersByJobTitle(selectedTitle)
-        .subscribe({
-          next: (users: []) => {
-            this.signingCommissioners = [...users];
-          },
-          error: (err) => {
-            console.error('Error fetching commissioners by job title', err);
-          }
-        });
+    this.populateSigningCommissioner(selectedTitle);
+    this.handleChange();
   }
 
   handleChange() {

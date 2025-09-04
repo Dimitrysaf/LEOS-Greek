@@ -193,7 +193,7 @@
                 for="adoptionPlace"
                 translate="page.collection.details.adoption.place"
               ></label>
-              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="adoptionPlace" name="adoptionPlace" id="adoptionPlace" required>
+              <select euiSelect [(ngModel)]="adoptionPlace" (ngModelChange)="handleChange()" name="adoptionPlace" id="adoptionPlace" required>
                 <option *ngFor="let adoptionPlace of adoptionPlaces">{{ adoptionPlace }}</option>
               </select>
             </div>
@@ -221,11 +221,11 @@
             </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference">
               <div class="adoption-info-institutional-reference">
-                <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="institutionalRefActingEntity" name="institutionalRefActingEntity"
+                <select euiSelect [(ngModel)]="institutionalRefActingEntity" (ngModelChange)="handleChange()" name="institutionalRefActingEntity"
                         id="institutionalRefActingEntity"  class="details-tab-first-select" [disabled]="!institutionalRef">
                   <option *ngFor="let institutionalRefActingEntity of institutionalRefActingEntities">{{ institutionalRefActingEntity }}</option>
                 </select>
-                (<select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="institutionalRefYear" name="institutionalRefYear" id="institutionalRefYear"
+                (<select euiSelect [(ngModel)]="institutionalRefYear" (ngModelChange)="handleChange()" name="institutionalRefYear" id="institutionalRefYear"
                          class="details-tab-select" [disabled]="!institutionalRef">
                   <option *ngFor="let institutionalRefYear of years">{{ institutionalRefYear }}</option>
                 </select>)
@@ -275,7 +275,7 @@
             </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference2">
               <div class="adoption-info-institutional-reference">
-                <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="interInstitutionalRefYear" name="interInstitutionalRefYear"
+                <select euiSelect [(ngModel)]="interInstitutionalRefYear" (ngModelChange)="handleChange()" name="interInstitutionalRefYear"
                         id="interInstitutionalRefYear"
                         class="details-tab-first-select"
                         [disabled]="!interInstitutionalRef">
@@ -286,7 +286,7 @@
                        (ngModelChange)="handleChange()"
                        [disabled]="!interInstitutionalRef"
                        class="details-tab-text"/>
-                (<select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="interInstitutionalRefType" name="interInstitutionalRefType"
+                (<select euiSelect [(ngModel)]="interInstitutionalRefType" (ngModelChange)="handleChange()" name="interInstitutionalRefType"
                          id="interInstitutionalRefType"
                          class="details-tab-select" [disabled]="!interInstitutionalRef">
                   <option *ngFor="let interInstitutionalRefType of interInstitutionalRefTypes">{{ interInstitutionalRefType }}</option>
@@ -302,9 +302,10 @@
                 for="specialMention"
                 translate="page.collection.details.adoption.special.mention"
               ></label>
-              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="specialMention" name="specialMention" id="specialMention"
+              <select euiSelect [(ngModel)]="specialMention" (ngModelChange)="handleChange()" name="specialMention" id="specialMention"
                       class="details-tab-first-select" [disabled]="false">
-                <option *ngFor="let specialMention of specialMentions">{{ specialMention }}</option>
+                <option *ngFor="let specialMention of specialMentions" [value]="specialMention">{{ 'page.collection.details.adoption.special.mention.' +
+                specialMention.toLowerCase() | translate }}</option>
               </select>
             </div>
 
@@ -315,10 +316,10 @@
                 for="signingCommissioner"
                 translate="page.collection.details.adoption.commissioner.title"
               ></label>
-              <select euiSelect (ngModelChange)="onCommissionerTitleSelection($event)" [(ngModel)]="commissionerTitle" name="commissionerTitle" id="commissionerTitle"
+              <select euiSelect [(ngModel)]="commissionerTitle" (ngModelChange)="onCommissionerTitleSelection($event)" name="commissionerTitle" id="commissionerTitle"
                       class="details-tab-first-select"
                       required [disabled]="false">
-              <option *ngFor="let commissionerTitle of commissionerTitles">{{ commissionerTitle }}</option>
+              <option *ngFor="let commissionerTitle of commissionerTitles" [value]="commissionerTitle">{{ 'page.collection.details.adoption.commissioner.title.' + commissionerTitle.toLowerCase() | translate }}</option>
               </select>
             </div>
 
@@ -329,7 +330,7 @@
                 for="signingCommissioner"
                 translate="page.collection.details.adoption.signing.commissioner"
               ></label>
-              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="signingCommissioner" name="signingCommissioner" id="signingCommissioner"
+              <select euiSelect [(ngModel)]="signingCommissioner" (ngModelChange)="handleChange()" name="signingCommissioner" id="signingCommissioner"
                       class="details-tab-first-select"
                       required [disabled]="false">
                 <option *ngFor="let signingCommissioner of signingCommissioners">{{ signingCommissioner }}</option>

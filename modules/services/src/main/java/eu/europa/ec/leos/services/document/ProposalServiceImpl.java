@@ -316,8 +316,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
         metadataVO.setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         metadataVO.setStamp(billMetadata.get(XmlNodeConfigProcessor.STAMP) != null);
-        metadataVO.setSpecialMention(billMetadata.get(XmlNodeConfigProcessor.SIGNATURE_ORG));
-        metadataVO.setCommissionerTitle(billMetadata.get(XmlNodeConfigProcessor.SIGNATURE_ROLE));
+        metadataVO.setSpecialMention(billMetadata.get(XmlNodeConfigProcessor.SIGNATURE_ORG).replaceAll("~",""));
+        metadataVO.setCommissionerTitle(billMetadata.get(XmlNodeConfigProcessor.SIGNATURE_ROLE).replaceAll("~",""));
         metadataVO.setSigningCommissioner(billMetadata.get(XmlNodeConfigProcessor.SIGNATURE_PERSON));
         return metadataVO;
     }

@@ -109,10 +109,10 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         billConfigMap.put(STAMP, new XmlNodeConfig("//akn:conclusions/akn:block[@name='stamp']/akn:img/@src",
                 false,
                 Collections.emptyList()));
-        billConfigMap.put(SIGNATURE_ORG, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:organization",
+        billConfigMap.put(SIGNATURE_ORG, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:organization/@refersTo",
                 false,
                 Collections.emptyList()));
-        billConfigMap.put(SIGNATURE_ROLE, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:role",
+        billConfigMap.put(SIGNATURE_ROLE, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:role/@refersTo",
                 false,
                 Collections.emptyList()));
         billConfigMap.put(SIGNATURE_PERSON, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:person",

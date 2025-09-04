@@ -850,27 +850,7 @@ public class MetadataServiceImpl implements MetadataService {
         }
         processCommissionerRole(fieldInfo, signatureNode, xmlFile);
         processCommissionerPerson(fieldInfo, signatureNode);
-
-        // Check wether role or person is first set in xml
-        // Depending on the index, the commission values are set accordingly
-        /*switch(pos) {
-            case 0:
-                if (roleIndex < personIndex) {
-                    processCommissionerRole(fieldInfo, signatureNode, xmlFile);
-                } else {
-                    processCommissionerPerson(fieldInfo, signatureNode);
-                }
-                break;
-            case 1:
-                if (roleIndex < personIndex) {
-                    processCommissionerPerson(fieldInfo, signatureNode);
-                } else {
-                    processCommissionerRole(fieldInfo, signatureNode, xmlFile);
-                }
-                break;
-            default:
-                break;
-        }*/
+        processCommissionerMention(fieldInfo, signatureNode, xmlFile);
     }
 
     public String getFieldValue(String jsonString, String field) {
@@ -887,24 +867,35 @@ public class MetadataServiceImpl implements MetadataService {
 
     private void processCommissionerRole(ReferenceFieldInfo fieldInfo, Node signatureNode, XmlUtil.XmlFile xmlFile) {
         String fieldValue = getFieldValue(fieldInfo.getDisplayValue(), "commissionerTitle");
-        this.addRoleToReferences(fieldValue, xmlFile);
+        final String language = readLanguageValue(xmlFile);
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldValue, language);
+        fieldValue = roleFieldInfo != null ? roleFieldInfo.getDisplayValue() : fieldValue;
+        this.addRoleToReferences(roleFieldInfo, xmlFile);
         final Node roleNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_ROLE);
         if (roleNode == null) return;
 
         roleNode.setTextContent(fieldValue);
-        final String language = readLanguageValue(xmlFile);
 
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue(), language);
         XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
     }
 
-    private void addRoleToReferences(String fieldValue, XmlUtil.XmlFile xmlFile) {
+    private void processCommissionerMention(ReferenceFieldInfo fieldInfo, Node signatureNode, XmlUtil.XmlFile xmlFile) {
+        String fieldValue = getFieldValue(fieldInfo.getDisplayValue(), "specialMention");
+        final String language = readLanguageValue(xmlFile);
+        final ReferenceFieldInfo mentionFieldInfo = getMentionFieldInfo(fieldValue, language);
+        fieldValue = mentionFieldInfo != null ? mentionFieldInfo.getDisplayValue() : fieldValue;
+        final Node organizationNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_ORGANIZATION);
+        if (organizationNode == null) return;
+
+        organizationNode.setTextContent(fieldValue);
+
+        XmlUtil.setNodeAttributeValue(organizationNode, MetadataUtil.ATTRIBUTE_REFERSTO, (mentionFieldInfo == null) ? "" : "~" + mentionFieldInfo.getId());
+    }
+
+    private void addRoleToReferences(ReferenceFieldInfo roleFieldInfo, XmlUtil.XmlFile xmlFile) {
         final Node referencesNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_REFERENCES);
         boolean appendNode = false;
         if (referencesNode == null) return;
-
-        final String language = readLanguageValue(xmlFile);
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldValue, language);
         if (roleFieldInfo == null) return;
 
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
@@ -933,6 +924,19 @@ public class MetadataServiceImpl implements MetadataService {
         }
         if (MetadataUtil.isRoleDirectorGeneral(commissionerValue)) {
             return MetadataUtil.getRoleDirectorGeneralFieldInfo(lang);
+        }
+        return null;
+    }
+
+    private ReferenceFieldInfo getMentionFieldInfo(String mentionValue, String lang) {
+        if (MetadataUtil.isMentionCommission(mentionValue)) {
+            return MetadataUtil.getMentionCommissionFieldInfo(lang);
+        }
+        if (MetadataUtil.isMentionCouncil(mentionValue)) {
+            return MetadataUtil.getMentionCouncilFieldInfo(lang);
+        }
+        if (MetadataUtil.isMentionEuropeanParliament(mentionValue)) {
+            return MetadataUtil.getMentionEPFieldInfo(lang);
         }
         return null;
     }

@@ -13,10 +13,12 @@
  */
 package eu.europa.ec.leos.integration.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.europa.ec.leos.domain.repository.metadata.LeosJobTitle;
 import eu.europa.ec.leos.integration.UsersProvider;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -138,7 +140,9 @@ class UsersClientImpl implements UsersProvider {
         Validate.notNull(jobTitle, "Job title must not be null");
         final String uri = repositoryUrl + findByJobTitleUri;
         Map<String, String> params = new HashMap<>();
-        params.put("jobTitle", jobTitle);
+        LeosJobTitle leosJobTitle = LeosJobTitle.caseInsensitiveValueOf(jobTitle);
+        if (leosJobTitle == null) { return new ArrayList<UserJSON>(); }
+        params.put("jobTitle", leosJobTitle.getTitle());
 
         try {
             ResponseEntity<List<UserJSON>> response = restTemplate.exchange(
