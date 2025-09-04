@@ -11,7 +11,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document
+  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -208,7 +208,7 @@ export class ProposalDetailsService implements OnDestroy {
                          correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
                          institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean,
-                         specialMention?: string, commissionerTitle?: string, signingCommissioner?: string) {
+                         signatures?: SignatureMetadata[]) {
     const internalRef = null;
     this.loadingService.setLoading(true);
     return this.http
@@ -235,9 +235,7 @@ export class ProposalDetailsService implements OnDestroy {
         institutionalReferenceFinalVersion,
         interInstitutionalReference,
         stamp,
-        specialMention,
-        commissionerTitle,
-        signingCommissioner
+        signatures
       });
   }
 

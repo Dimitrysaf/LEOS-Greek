@@ -8,7 +8,7 @@ import {
   Metadata,
   DetailsTabExclusions,
   LeosConfig,
-  User
+  User, SignatureMetadata
 } from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
@@ -56,12 +56,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   interInstitutionalRefNumber: number | null;
   interInstitutionalRefType: string | null;
   interInstitutionalRefTypes = [];
-  specialMention: string | null;
+  signatures: SignatureMetadata[] | null;
   specialMentions = [];
-  signingCommissioner: string | null;
-  signingCommissioners: string[];
   commissionerTitles = [];
-  commissionerTitle: string | null;
   stamp: boolean = false;
   institutionalRefRegEx = /([A-Za-z0-9]+)\(([0-9]{4})\)\s{0,1}([0-9]+)\s{0,1}/;
   interInstitutionalRefRegEx = /([0-9]{4})\/([0-9]+) \(([A-Za-z0-9]+)\)/;
@@ -87,7 +84,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   correctionInformation: string;
   finalVersion: boolean;
 
-
   //TODO To be moved to the backend configuration
   languages = [];
 
@@ -111,13 +107,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   invalidCorrectionInfoInput: boolean;
   greffeUser: boolean;
 
-
   constructor(
     private appConfigService: AppConfigService,
     protected detailsService: ProposalDetailsService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
-    private loadingService: LoadingService,
     ) {
     this.years = this.getYearsSince(1980);
     this.detailsService.permissions$
@@ -163,9 +157,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isCommissionerChanged() {
-    return this.specialMention != this.proposalMetadata.specialMention
-      || this.signingCommissioner != this.proposalMetadata.signingCommissioner
-      || this.commissionerTitle != this.proposalMetadata.commissionerTitle;
+    for (let i = 0; i < this.signatures.length; i++) {
+      let signature = this.signatures[i];
+      if (signature.specialMention != this.proposalMetadata.signatures[i].specialMention
+        || signature.signingCommissioner != this.proposalMetadata.signatures[i].signingCommissioner
+        || signature.commissionerTitle != this.proposalMetadata.signatures[i].commissionerTitle) {
+        return true;
+      }
+    }
+    return false;
   }
 
   isCoverPageTypeChanged() {
@@ -232,9 +232,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.interInstitutionalRefTypes = this.proposalDetails.interInstitionalRefsTypes;
     this.specialMentions = this.proposalDetails.specialMentions;
     this.commissionerTitles = this.proposalDetails.commissionerTitles;
-    this.commissionerTitle = this.proposal.metadata.commissionerTitle;
-    this.signingCommissioners = [this.proposal.metadata.signingCommissioner];
-    this.signingCommissioner = this.proposal.metadata.signingCommissioner;
     this.proposalMetadata = cloneDeep(this.proposal.metadata);
   }
 
@@ -438,7 +435,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isAuthenticLangValid(): boolean {
-    return !this.isAuthenticLang || this.isThereSelectedLanguage();
+    return (this.isAuthenticLang && this.isThereSelectedLanguage()) || !this.isAuthenticLang;
   }
 
   isTargetLangValid(): boolean {
@@ -466,9 +463,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.interInstitutionalRefNumber = parseInt(myArray[2]);
       this.interInstitutionalRefType = myArray[3];
     }
-    this.specialMention = this.proposal.metadata.specialMention;
-    this.commissionerTitle = this.proposal.metadata.commissionerTitle;
-    this.populateSigningCommissioner(this.commissionerTitle);
+    this.signatures = cloneDeep(this.proposal.metadata.signatures);
+    for (let signature of this.signatures) {
+      this.populateSigningCommissioner(signature);
+    }
     this.stamp = this.proposal.metadata.stamp;
   }
 
@@ -506,30 +504,31 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
-  populateSigningCommissioner(selectedTitle) {
-    this.detailsService.searchUsersByJobTitle(selectedTitle)
+  populateSigningCommissioner(signature : SignatureMetadata) {
+    if (!signature.commissionerTitle) return;
+    signature.signingCommissioners = [];
+    this.detailsService.searchUsersByJobTitle(signature.commissionerTitle)
       .subscribe({
         next: (users: string[]) => {
-          this.signingCommissioners = [];
-          this.signingCommissioners.push(this.signingCommissioner);
+          signature.signingCommissioners.push(signature.signingCommissioner);
           for (let user of users) {
-            if (user != this.signingCommissioner) {
-              this.signingCommissioners.push(user);
+            if (user != signature.signingCommissioner) {
+              signature.signingCommissioners.push(user);
             }
           }
         },
         error: (err) => {
           console.error('Error fetching commissioners by job title', err);
-          this.signingCommissioners = [];
-          this.signingCommissioners.push(this.signingCommissioner);
+          signature.signingCommissioners = [];
+          signature.signingCommissioners.push(signature.signingCommissioner);
         }
       });
   }
 
-  onCommissionerTitleSelection(event: Event) {
+  onCommissionerTitleSelection(signature: SignatureMetadata, event: Event) {
     const selectedTitle = event.toString();
-    this.commissionerTitle = selectedTitle;
-    this.populateSigningCommissioner(selectedTitle);
+    signature.commissionerTitle = selectedTitle;
+    this.populateSigningCommissioner(signature);
     this.handleChange();
   }
 
@@ -681,9 +680,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.isInstitutionalReferenceChanged() ? this.institutionalReferenceFinalVersion : null,
       this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null,
       this.isStampChanged() ? this.stamp : null,
-        this.specialMention,
-        this.commissionerTitle,
-        this.signingCommissioner
+      this.isCommissionerChanged() ? this.signatures : null,
     ).subscribe({
       next: () => {
         if (!this.showCorrigendumAddendum) {
@@ -716,6 +713,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.languages.forEach(lang => {
       this.selectedLanguages[lang] = this.allSelected;
     });
+    this.handleChange();
   }
 
   onLanguageChange() {
