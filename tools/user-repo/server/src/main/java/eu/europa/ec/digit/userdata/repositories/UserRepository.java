@@ -25,6 +25,9 @@ public interface UserRepository extends Repository<User, Long> {
 
     User findByEmail(String email);
 
+    @Query(value = "SELECT * FROM LEOS_USER " + " WHERE "
+            + " JOB_TITLE LIKE ?1% "
+            + " ORDER BY USER_LASTNAME, USER_FIRSTNAME ", nativeQuery = true)
     Stream<User> findByJobTitle(String jobTitle);
 
     // FIXME: shift functions to DB later

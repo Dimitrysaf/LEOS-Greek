@@ -15,6 +15,7 @@ package eu.europa.ec.leos.domain.vo;
 
 import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.LeosCoverPageType;
+import eu.europa.ec.leos.domain.repository.metadata.SignatureMetadata;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -57,9 +58,7 @@ public class MetadataVO {
     private String institutionalReference;
     private Boolean institutionalReferenceFinalVersion;
     private String interInstitutionalReference;
-    private String specialMention;
-    private String signingCommissioner;
-    private String commissionerTitle;
+    private List<SignatureMetadata> signatures;
     private Boolean stamp;
 
     public MetadataVO() {
@@ -108,9 +107,7 @@ public class MetadataVO {
         this.setInstitutionalReference(null);
         this.setInstitutionalReferenceFinalVersion(null);
         this.setInterInstitutionalReference(null);
-        this.setSpecialMention(null);
-        this.setSigningCommissioner(null);
-        this.setCommissionerTitle(null);
+        this.setSignatures(null);
         this.setStamp(null);
     }
 }

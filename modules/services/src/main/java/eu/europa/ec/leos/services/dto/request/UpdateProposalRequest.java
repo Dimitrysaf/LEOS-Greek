@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.dto.request;
 
 import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.LeosCoverPageType;
+import eu.europa.ec.leos.domain.repository.metadata.SignatureMetadata;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +10,6 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 @Getter
@@ -41,9 +41,7 @@ public class UpdateProposalRequest {
     private String institutionalReference;
     private Boolean institutionalReferenceFinalVersion;
     private String interInstitutionalReference;
-    private String specialMention;
-    private String signingCommissioner;
-    private String commissionerTitle;
+    private List<SignatureMetadata> signatures;
 
     public void setCrossReferences(List<String> crossReferences) {
         if (crossReferences == null) {
