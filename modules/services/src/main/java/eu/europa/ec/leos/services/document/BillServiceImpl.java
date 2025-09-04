@@ -173,6 +173,23 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     @Override
+    public Bill updateBill(Bill bill, BillMetadata updatedMetadata, byte[] updatedContent, VersionType versionType, String comment, boolean updateInternalRefs) {
+        LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        byte[] updatedBytes = updateDataInXml(updatedContent, updatedMetadata);
+
+        bill = billRepository.updateBill(bill.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(bill);
+        }
+        //call validation on document with updated content
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
+
+        LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        return bill;
+    }
+
+    @Override
     public Bill updateBill(Bill bill, BillMetadata updatedMetadata, VersionType versionType, String comment, boolean updateInternalRefs) {
         LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
         Stopwatch stopwatch = Stopwatch.createStarted();
