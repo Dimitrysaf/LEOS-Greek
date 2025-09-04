@@ -73,7 +73,6 @@
                     type="checkbox"
                     id="all_lang"
                     [(ngModel)]="allSelected"
-                    (ngModelChange)="handleChange()"
                     (change)="toggleAllLanguages()"
                     [disabled]="!isAuthenticLang"/>
                   <label>{{ 'page.collection.details.all'
@@ -296,45 +295,50 @@
                 </div>
               </div>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-special-mention">
-              <label
-                euiLabel
-                for="specialMention"
-                translate="page.collection.details.adoption.special.mention"
-              ></label>
-              <select euiSelect [(ngModel)]="specialMention" (ngModelChange)="handleChange()" name="specialMention" id="specialMention"
-                      class="details-tab-first-select" [disabled]="false">
-                <option *ngFor="let specialMention of specialMentions" [value]="specialMention">{{ 'page.collection.details.adoption.special.mention.' +
-                specialMention.toLowerCase() | translate }}</option>
-              </select>
-            </div>
-
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-commissioner-title">
-              <label
-                euiLabel
-                euiRequired
-                for="signingCommissioner"
-                translate="page.collection.details.adoption.commissioner.title"
-              ></label>
-              <select euiSelect [(ngModel)]="commissionerTitle" (ngModelChange)="onCommissionerTitleSelection($event)" name="commissionerTitle" id="commissionerTitle"
-                      class="details-tab-first-select"
-                      required [disabled]="false">
-              <option *ngFor="let commissionerTitle of commissionerTitles" [value]="commissionerTitle">{{ 'page.collection.details.adoption.commissioner.title.' + commissionerTitle.toLowerCase() | translate }}</option>
-              </select>
-            </div>
-
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-signing-commissioner">
-              <label
-                euiLabel
-                euiRequired
-                for="signingCommissioner"
-                translate="page.collection.details.adoption.signing.commissioner"
-              ></label>
-              <select euiSelect [(ngModel)]="signingCommissioner" (ngModelChange)="handleChange()" name="signingCommissioner" id="signingCommissioner"
-                      class="details-tab-first-select"
-                      required [disabled]="false">
-                <option *ngFor="let signingCommissioner of signingCommissioners">{{ signingCommissioner }}</option>
-              </select>
+            <div *ngFor="let signature of signatures" class="eui-u-width-auto grid-adoption-info-signature">
+              <div euiInputGroup class="eui-u-width-auto grid-adoption-info-special-mention">
+                <label
+                  euiLabel
+                  for="specialMention"
+                  translate="page.collection.details.adoption.special.mention"
+                ></label>
+                <select euiSelect [(ngModel)]="signature.specialMention" (ngModelChange)="handleChange()" name="specialMention" id="specialMention"
+                        class="details-tab-first-select-250" [disabled]="false">
+                  <option *ngFor="let specialMention of specialMentions" [value]="specialMention">{{
+                      'page.collection.details.adoption.special.mention.' +
+                  specialMention.toLowerCase() | translate }}</option>
+                </select>
+              </div>
+              <div euiInputGroup class="eui-u-width-auto grid-adoption-info-commissioner-title">
+                <label
+                  euiLabel
+                  euiRequired
+                  for="signingCommissioner"
+                  translate="page.collection.details.adoption.commissioner.title"
+                ></label>
+                <select euiSelect [(ngModel)]="signature.commissionerTitle" (ngModelChange)="onCommissionerTitleSelection(signature, $event)"
+                        name="commissionerTitle"
+                        id="commissionerTitle"
+                        class="details-tab-first-select-250"
+                        required [disabled]="false">
+                <option *ngFor="let commissionerTitle of commissionerTitles" [value]="commissionerTitle">{{
+                    'page.collection.details.adoption.commissioner.title.' + commissionerTitle.toLowerCase() | translate }}</option>
+                </select>
+              </div>
+              <div euiInputGroup class="eui-u-width-auto grid-adoption-info-signing-commissioner">
+                <label
+                  euiLabel
+                  euiRequired
+                  for="signingCommissioner"
+                  translate="page.collection.details.adoption.signing.commissioner"
+                ></label>
+                <select euiSelect [(ngModel)]="signature.signingCommissioner" (ngModelChange)="handleChange()" name="signingCommissioner"
+                        id="signingCommissioner"
+                        class="details-tab-first-select-250"
+                        required [disabled]="false">
+                  <option *ngFor="let signingCommissioner of signature.signingCommissioners">{{ signingCommissioner }}</option>
+                </select>
+              </div>
             </div>
 
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-stamp">

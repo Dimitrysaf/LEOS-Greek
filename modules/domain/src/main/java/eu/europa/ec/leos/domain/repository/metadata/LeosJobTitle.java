@@ -1,10 +1,10 @@
 package eu.europa.ec.leos.domain.repository.metadata;
 
 public enum LeosJobTitle {
-    PRESID("The President"),
+    PRESID("President"),
     PRESID_VICE("Vice-President"),
     MEMBER_COM("Member of the Commission"),
-    DIR_GEN("Director General");
+    DIR_GEN("Director-General");
 
     private String title;
 

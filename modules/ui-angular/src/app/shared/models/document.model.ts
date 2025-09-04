@@ -55,6 +55,13 @@ export interface ProposalDetails {
   proposalDetailsLists: ProposalDetailsLists;
 }
 
+export interface SignatureMetadata {
+  specialMention: string | null;
+  signingCommissioner: string | null;
+  commissionerTitle: string | null;
+  signingCommissioners: string[];
+}
+
 /** AKA `MetadataVO` in Java code */
 //used in proposal.metadata
 export interface Metadata {
@@ -83,9 +90,7 @@ export interface Metadata {
   institutionalReference: string | null;
   institutionalReferenceFinalVersion: Boolean | null;
   interInstitutionalReference: string | null;
-  specialMention: string | null;
-  signingCommissioner: string | null;
-  commissionerTitle: string | null;
+  signatures: SignatureMetadata[] | null;
   stamp: boolean | null;
 }
 //used in document-config.documentsmetadata
