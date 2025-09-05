@@ -80,7 +80,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="true">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -144,7 +144,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="true">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -212,7 +212,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="false">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -266,7 +266,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="false">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -320,7 +320,7 @@
                                     </descriptions>
                                 </item>
                             </item>
-                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="false" default="false">
                                 <names>
                                     <name lang="EN">FS-001 - ....</name>
                                 </names>
@@ -456,7 +456,7 @@
                 <name lang="EN">Delegated Acts (article 290 TFEU)</name>
                 <name lang="FR">Actes délégués (article 290 TFUE)</name>
             </names>
-            <item type="TEMPLATE" enabled="true" key="SJ-003">
+            <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-003">
                 <names>
                     <name lang="EN">SJ-003 - Commission Delegated Regulation (EU) .../...</name>
                     <name lang="FR">SJ-003 - Règlement délégué  (UE) .../... de la Commission</name>
@@ -469,7 +469,7 @@
                     <language lang="EN">English</language>
                     <!--<language lang="FR">Français</language>-->
                 </languages>
-                <item type="TEMPLATE" id="PR-003" enabled="true" mandatory="true">
+                <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-003" enabled="true" mandatory="true">
                     <names>
                         <name lang="EN">PR-003 - ....</name>
                     </names>
@@ -502,7 +502,7 @@
                     </item>
                 </item>
             </item>
-            <item type="TEMPLATE" enabled="true" key="SJ-007">
+            <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-007">
                 <names>
                     <name lang="EN">SJ-007 - Commission Delegated Directive (EU) .../...</name>
                     <name lang="FR">SJ-007 - Directive déléguée (UE) .../... de la Commission</name>
@@ -515,7 +515,7 @@
                     <language lang="EN">English</language>
                     <!--<language lang="FR">Français</language>-->
                 </languages>
-                <item type="TEMPLATE" id="PR-007" enabled="true" mandatory="true">
+                <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-007" enabled="true" mandatory="true">
                     <names>
                         <name lang="EN">PR-007 - ....</name>
                     </names>
@@ -557,7 +557,7 @@
                     <description lang="EN">Delegated Commission decisions are adopted following a delegation given by the legislator in the basic act (art. 290 TFUE). They take effect upon their publication in the Official Journal of the European Union or upon notification to their destinataries. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
                     <description lang="FR">Les décisions déléguées de la Commission sont adoptées suite à une délégation donnée par le législateur dans l'acte de base (art. 290 TFUE). Elles entrent en vigueur soit par leur publication au Journal officiel de l'Union européenne soit par leur notification aux destinataires. N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
                 </descriptions>
-                <item type="TEMPLATE" enabled="true" key="SJ-033">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-033">
                     <names>
                         <name lang="EN">SJ-033 - Commission Delegated Decision (EU) .../... (entry into force by its publication)</name>
                         <name lang="FR">SJ-033 - Décision déléguée de la Commission (UE) .../... (entre en vigueur par sa publication)</name>
@@ -570,7 +570,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-033" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-033" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-033 - ....</name>
                         </names>
@@ -603,7 +603,7 @@
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" enabled="true" key="SJ-012">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-012">
                     <names>
                         <name lang="EN">SJ-012 - Commission Delegated Decision (entry into force by its notification)</name>
                         <name lang="FR">SJ-012 - Décision déléguée de la Commission (entre en vigueur par sa notification)</name>
@@ -616,7 +616,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-012" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-012" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-012 - ....</name>
                         </names>
@@ -665,7 +665,7 @@
                     <description lang="EN">Regulation</description>
                     <description lang="FR">Règlement</description>
                 </descriptions>
-                <item type="TEMPLATE" enabled="true" key="SJ-004">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-004">
                     <names>
                         <name lang="EN">SJ-004 - Commission Implementing Regulation (EU)  .../...</name>
                         <name lang="FR">SJ-004 - Règlement d'exécution (UE)  .../... de la Commission</name>
@@ -674,7 +674,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-004" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-004" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-004 - ....</name>
                         </names>
@@ -699,7 +699,7 @@
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" enabled="true" key="SJ-001">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-001">
                     <names>
                         <name lang="EN">SJ-001 - Commission Regulation (EU) .../... (former PRAC)</name>
                         <name lang="FR">SJ-001 - Règlement (UE) .../... de la Commission (ancienne PRAC)</name>
@@ -712,7 +712,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-001" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-001" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-001 - ....</name>
                         </names>
@@ -747,7 +747,7 @@
                     <description lang="EN">Directive</description>
                     <description lang="FR">Directive</description>
                 </descriptions>
-                <item type="TEMPLATE" enabled="true" key="SJ-008">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-008">
                     <names>
                         <name lang="EN">SJ-008 - Commission Implementing Directive (EU)  .../...</name>
                         <name lang="FR">SJ-008 - Directive d'exécution (UE)  .../... de la Commission</name>
@@ -756,7 +756,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-008" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-008" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-008 - ....</name>
                         </names>
@@ -781,7 +781,7 @@
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" enabled="true" key="SJ-005">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-005">
                     <names>
                         <name lang="EN">SJ-005 - Commission Directive (EU) .../... (former PRAC)</name>
                         <name lang="FR">SJ-005 - Directive (UE) .../... de la Commission (ancienne PRAC)</name>
@@ -794,7 +794,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-005" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-005" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-005 - ....</name>
                         </names>
@@ -834,7 +834,7 @@
                         <name lang="EN">Commission implementing Decision</name>
                         <name lang="FR">Décision d'exécution de la Commission</name>
                     </names>
-                    <item type="TEMPLATE" enabled="true" key="SJ-032">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-032">
                         <names>
                             <name lang="EN">SJ-032 - Commission Implementing Decision (EU) .../... (entry into force by its publication)</name>
                             <name lang="FR">SJ-032 - Décision d'exécution de la Commission (UE) .../... (entre en vigueur par sa publication)</name>
@@ -847,7 +847,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="PR-032" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-032" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-032 - ....</name>
                             </names>
@@ -872,7 +872,7 @@
                             </item>
                         </item>
                     </item>
-                    <item type="TEMPLATE" enabled="true" key="SJ-009">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-009">
                         <names>
                             <name lang="EN">SJ-009 - Commission Implementing Decision (entry into force by its notification)</name>
                             <name lang="FR">SJ-009 - Décision d'exécution de la Commission (entre en vigueur par sa notification)</name>
@@ -885,7 +885,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="PR-009" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-009" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-009 - ....</name>
                             </names>
@@ -910,7 +910,7 @@
                             </item>
                         </item>
                     </item>
-                    <item type="TEMPLATE" enabled="true" key="SJ-031">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-031">
                         <names>
                             <name lang="EN">SJ-031 - Commission Implementing Decision (internal)</name>
                             <name lang="FR">SJ-031 - Décision d'exécution de la Commission (interne)</name>
@@ -923,7 +923,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="PR-031" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-031" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-031 - ....</name>
                             </names>
@@ -962,7 +962,7 @@
                 <name lang="EN">Other Autonomous Acts</name>
                 <name lang="FR">Autres Actes Autonomes</name>
             </names>
-            <item type="TEMPLATE" enabled="true" key="SJ-002">
+            <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-002">
                 <names>
                     <name lang="EN">SJ-002 - Commission Regulation (EU)  .../...</name>
                     <name lang="FR">SJ-002 - Règlement (UE)  .../... de la Commission</name>
@@ -975,7 +975,7 @@
                     <language lang="EN">English</language>
                     <!--<language lang="FR">Français</language>-->
                 </languages>
-                <item type="TEMPLATE" id="PR-002" enabled="true" mandatory="true">
+                <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-002" enabled="true" mandatory="true">
                     <names>
                         <name lang="EN">PR-002 - ....</name>
                     </names>
@@ -1000,7 +1000,7 @@
                     </item>
                 </item>
             </item>
-            <item type="TEMPLATE" enabled="true" key="SJ-006">
+            <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-006">
                 <names>
                     <name lang="EN">SJ-006 - Commission Directive (EU) .../...</name>
                     <name lang="FR">SJ-006 - Directive (UE) .../... de la Commission</name>
@@ -1013,7 +1013,7 @@
                     <language lang="EN">English</language>
                     <!--<language lang="FR">Français</language>-->
                 </languages>
-                <item type="TEMPLATE" id="PR-006" enabled="true" mandatory="true">
+                <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-006" enabled="true" mandatory="true">
                     <names>
                         <name lang="EN">PR-006 - ....</name>
                     </names>
@@ -1047,7 +1047,7 @@
                     <description lang="EN">Decisions take effect either upon their publication in the Official Journal of the European Union or upon notification to their destinataries (the last article in the text of the decision clearly specifies which of the two applies). Internal decisions are neither to be notified nor to be published (except for information purposes in some cases), they take effect upon their adoption. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
                     <description lang="FR">Les décisions entrent en vigueur soit par leur publication au Journal officiel de l'Union européenne  soit par leur notification aux destinataires (Le dernier article du texte de la décision vous indique clairement le choix à prendre).  Les décisions internes ne sont ni à notifier ni à publier (sauf pour information en certains cas), et entrent en vigueur par leur adoption  N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
                 </descriptions>
-                <item type="TEMPLATE" enabled="true" key="SJ-011">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-011">
                     <names>
                         <name lang="EN">SJ-011 - Commission Decision (entry into force by its notification)</name>
                         <name lang="FR">SJ-011 - Décision de la Commission (entre en vigueur par sa notification)</name>
@@ -1060,7 +1060,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-011" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-011" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-011 - ....</name>
                         </names>
@@ -1085,7 +1085,7 @@
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" enabled="true" key="SJ-013">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-013">
                     <names>
                         <name lang="EN">SJ-013 - Commission Decision (EU) .../... (entry into force by its publication)</name>
                         <name lang="FR">SJ-013 - Décision de la Commission (UE) .../... (entre en vigueur par sa publication)</name>
@@ -1098,7 +1098,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-013" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-013" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-013 - ....</name>
                         </names>
@@ -1123,7 +1123,7 @@
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" enabled="true" key="SJ-030">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-030">
                     <names>
                         <name lang="EN">SJ-030 - Commission Decision (internal)</name>
                         <name lang="FR">SJ-030 - Décision de la Commission (interne)</name>
@@ -1136,7 +1136,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-030" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-030" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-030 - ....</name>
                         </names>
@@ -1161,7 +1161,7 @@
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" enabled="true" key="SJ-037">
+                <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-037">
                     <names>
                         <name lang="EN">SJ-037 - Commission decision  (State aid - entry force by its notification)</name>
                         <name lang="FR">SJ-037 - Décision de la Commission (Aide d'état - entrée en vigueur par sa notification)</name>
@@ -1170,7 +1170,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" id="PR-037" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-037" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-037 - ....</name>
                         </names>
