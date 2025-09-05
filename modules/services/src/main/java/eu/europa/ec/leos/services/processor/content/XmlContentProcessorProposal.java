@@ -620,6 +620,10 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         xmlContent = resultFromRemoveSoftElement.left();
         elementContent = resultFromRemoveSoftElement.right();
 
+        Pair<byte[], String> resultFromRemoveSoftElementRejected = removeSoftMovedElementMarkedWithAttributeRejected(xmlContent, elementContent);
+        xmlContent = resultFromRemoveSoftElementRejected.left();
+        elementContent = resultFromRemoveSoftElementRejected.right();
+
         Pair<byte[], String> resultFromRestoreSoftElement = restoreSoftMovedElementMarkedWithAttribute(xmlContent, elementContent);
         xmlContent = resultFromRestoreSoftElement.left();
         elementContent = resultFromRestoreSoftElement.right();
@@ -725,6 +729,53 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             attributesOfAcceptedNode.removeNamedItem(LEOS_ID_TO_BE_REMOVED);
             attributesOfAcceptedNode.removeNamedItem(LEOS_RENUMBER_ORIGIN);
             String idToDelete = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + attributesOfAcceptedNode.getNamedItem(XMLID).getNodeValue();
+            Document document = createXercesDocument(xmlContent);
+            Node nodeToDelete = XercesUtils.getElementById(document, idToDelete);
+            if (nodeToDelete != null && nodeToDelete.getParentNode() != null) {
+                List<Node> children = XercesUtils.getChildren(nodeToDelete.getParentNode(), Arrays.asList(INDENT, POINT));
+                if (!CollectionUtils.isEmpty(children)) {
+                    Node firstElement = children.get(0);
+                    int elementDepth = XercesUtils.getPointDepth(firstElement);
+                    String elementName = firstElement.getNodeName();
+                    NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
+                    boolean changeOffset = false;
+                    for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
+                        Node node = children.get(nodeListCount);
+                        if (changeOffset) {
+                            Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+                            if (numNode != null) {
+                                Node delNode = getFirstChild(numNode, LEOS_SOFT_ACTION_DELETE);
+                                if (delNode != null) {
+                                    int index = numberConfig.getNumberIndex(delNode.getTextContent()) - 1;
+                                    delNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                                }
+                            }
+                        }
+                        if (nodeToDelete == node) {
+                            changeOffset = true;
+                        }
+                    }
+                }
+            }
+            xmlContent = nodeToByteArray(document);
+            xmlContent = this.deleteElementById(xmlContent, idToDelete);
+            document = createXercesDocument(xmlContent);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, "EN", true);
+            xmlContent = nodeToByteArray(document);
+        }
+        return new Pair<>(xmlContent, unWrapXmlFragment(nodeToString(fragmentToCheckDeleted.getFirstChild())));
+    }
+
+    private Pair<byte[], String> removeSoftMovedElementMarkedWithAttributeRejected(byte[] xmlContent, String elementContent) {
+        Document fragmentToCheckDeleted = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
+        NodeList softMovedNodesToCheckDeleted = XercesUtils.getElementsByXPath(fragmentToCheckDeleted, String.format("//*[@%s][@%s='reject']", LEOS_ID_TO_BE_REMOVED,
+                LEOS_RENUMBER_ORIGIN));
+        for (int nodeIdx = 0; nodeIdx < softMovedNodesToCheckDeleted.getLength(); nodeIdx++) {
+            NamedNodeMap attributesOfAcceptedNode = softMovedNodesToCheckDeleted.item(nodeIdx).getAttributes();
+            String idToDelete = attributesOfAcceptedNode.getNamedItem(LEOS_ID_TO_BE_REMOVED).getNodeValue();
+            attributesOfAcceptedNode.removeNamedItem(LEOS_ID_TO_BE_REMOVED);
+            attributesOfAcceptedNode.removeNamedItem(LEOS_RENUMBER_ORIGIN);
+
             Document document = createXercesDocument(xmlContent);
             Node nodeToDelete = XercesUtils.getElementById(document, idToDelete);
             if (nodeToDelete != null && nodeToDelete.getParentNode() != null) {
