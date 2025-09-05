@@ -1720,11 +1720,11 @@ public class DocumentServiceImpl implements DocumentService {
         String catalogName = "catalog-" + entityName;
         
         if (!customTemplateConfigRepository.findConfigByName(catalogName).isPresent()) {
-            createEntityCatalog(catalogName, userId, pkg);
+            createEntityCatalog(catalogName, entityName, userId, pkg);
         }
     }
 
-    private void createEntityCatalog(String catalogName, String userId, Package pkg) throws RepositoryException {
+    private void createEntityCatalog(String catalogName, String entityName, String userId, Package pkg) throws RepositoryException {
         try {
             String baseCatalog = createCatalogWithCategoriesOnly();
             
@@ -1771,6 +1771,17 @@ public class DocumentServiceImpl implements DocumentService {
             content.setAuditCDate(LocalDateTime.now());
             content.setVersionId(version);
             customTemplateConfigContentRepository.save(content);
+            
+            // Save catalog config file for this entity
+            Optional<ConfigurationV> catalogConfigFile = configurationVRepository.findConfigurationByName("catalog-CONF");
+            if (catalogConfigFile.isPresent()) {
+                CustomTemplateConfigCategory configCategory = customTemplateConfigCategoryRepository
+                    .findConfigCategoriesByCategoryCode("CONFIG")
+                    .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "CONFIG category not found"));
+                
+                String customKey = "catalog-" + entityName + "-CONF/" + pkg.getId().toString();
+                saveConfigAsCustomTemplate(catalogConfigFile.get(), customKey, configCategory, userId);
+            }
             
             LOG.info("Successfully created entity catalog: {}", catalogName);
             
@@ -2387,6 +2398,8 @@ public class DocumentServiceImpl implements DocumentService {
                     
                     // Save config files for each template key
                     saveConfigFilesAsCustomTemplates(allTemplateKeys, pkg.getId().toString(), userId);
+                    
+
                 }
             }
         }
