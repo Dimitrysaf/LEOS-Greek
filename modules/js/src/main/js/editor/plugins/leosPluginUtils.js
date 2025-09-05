@@ -47,7 +47,6 @@ define(function leosPluginUtilsModule(require) {
     var UNORDERED_LIST_ELEMENT = "ul";
     var LIST_ELEMENTS = "ol, ul";
     var LIST_ITEM= "li";
-    var LIST_ELEMENT= "li";
     var HTML_POINT = "li";
     var HTML_SUB_POINT = "p";
     var SPAN = "span";
@@ -1056,7 +1055,7 @@ define(function leosPluginUtilsModule(require) {
 
     function _isNumberedHtmlParagraph(element) {
         var paragraphElement = element.getAscendant(function(el) {
-            return el.is(LIST_ELEMENT) && el.hasAttribute(DATA_AKN_ELEMENT) && el.getAttribute(DATA_AKN_ELEMENT) === PARAGRAPH
+            return el.is(LIST_ITEM) && el.hasAttribute(DATA_AKN_ELEMENT) && el.getAttribute(DATA_AKN_ELEMENT) === PARAGRAPH
         }, true);
         if (paragraphElement) {
             var elementToCheck = paragraphElement.getParent().getFirst();
