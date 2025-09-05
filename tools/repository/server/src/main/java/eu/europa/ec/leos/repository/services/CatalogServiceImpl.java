@@ -161,7 +161,13 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     //MILESTONES
-    private void updateCustomTemplateMilestones(Package pkg, BigDecimal currentDocumentId, String userId) {
+    private void updateCustomTemplateMilestones(Package pkg, BigDecimal currentDocumentId, String userId) throws RepositoryException {
+        DocumentMilestone currentMilestone = documentMilestoneRepository.findByDocumentId(currentDocumentId);
+
+        if (currentMilestone == null || currentMilestone.getStatus().equals(CustomTemplateMilestoneStatus.PUBLISHED.getValue())) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Milestone already published!");
+        }
+
         // Get all documents in the package
         List<Document> allDocuments = documentRepository.findAllDocumentsByPackageId(pkg);
 
@@ -180,7 +186,6 @@ public class CatalogServiceImpl implements CatalogService {
         }
 
         // Update current milestone
-        DocumentMilestone currentMilestone = documentMilestoneRepository.findByDocumentId(currentDocumentId);
         currentMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
         currentMilestone.setMilestoneComments(CUSTOM_TEMPLATE_COMMENT);
         currentMilestone.setAuditLastMBy(userId);
