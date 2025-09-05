@@ -119,7 +119,10 @@ define(function leosPluginUtilsModule(require) {
         { akn: "leos:softactionroot", html: "data-akn-attr-softactionroot" },
         { akn: "leos:action", html: "data-akn-action" },
         { akn: "leos:uid", html: "data-akn-uid" },
-        { akn: "leos:title", html: "title" }
+        { akn: "leos:title", html: "title" },
+        { akn: "leos:id-to-be-restored", html: "data-akn-id-to-be-restored" },
+        { akn: "leos:renumber-origin", html: "data-akn-renumber-origin" },
+        { akn: "leos:id-to-be-removed", html: "data-akn-id-to-be-removed" }
     ];
 
     function _hasTextOrBogusAsNextSibling(element){
