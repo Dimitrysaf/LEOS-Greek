@@ -91,7 +91,7 @@ $LIST_SPACING: 40px;
         & > li[data-akn-num] {
             position: relative;
 
-            &:not([data-akn-action-enter='delete']){
+            &:not([data-akn-action-enter='delete']) {
                 &:not([data-akn-element='subparagraph']):before {
                     color: $GREY_COLOR;
                     content: attr(data-akn-num);
