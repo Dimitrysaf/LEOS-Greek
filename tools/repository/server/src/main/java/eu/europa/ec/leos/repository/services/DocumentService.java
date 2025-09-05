@@ -91,6 +91,4 @@ public interface DocumentService {
     long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 
     LeosDocument findTemplateByName(String ref) throws RepositoryException;
-
-    void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs, String userId) throws RepositoryException;
 }

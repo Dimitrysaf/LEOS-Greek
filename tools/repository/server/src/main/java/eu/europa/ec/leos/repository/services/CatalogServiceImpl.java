@@ -105,12 +105,14 @@ public class CatalogServiceImpl implements CatalogService {
         Optional<LeosDocument> legFile = milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId));
 
         if (!legFile.isPresent()){
+            //TODO add error
             return;
         }
 
         Optional<Document> leosDocument = documentRepository.findById(legFile.get().getDocumentId());
 
         if (!leosDocument.isPresent()){
+            //TODO add error
             return;
         }
 
@@ -130,6 +132,35 @@ public class CatalogServiceImpl implements CatalogService {
         handleCatalog(existingEntities, dgs, userId, pkg);
     }
 
+    //CUSTOM ENTITIES
+    private List<String> getCustomTemplateEntitiesByPackage(Package pkg) {
+        Optional<CustomTemplateEntities> entities = customTemplateEntitiesRepository.findByPackageId(pkg);
+        if (entities.isPresent() && entities.get().getEntities() != null) {
+            return Arrays.asList(entities.get().getEntities().split(","));
+        }
+        return Collections.emptyList();
+    }
+
+    private void updateCustomTemplateEntities(Package pkg, List<String> newEntities, String userId) {
+        Optional<CustomTemplateEntities> existing = customTemplateEntitiesRepository.findByPackageId(pkg);
+        CustomTemplateEntities entities;
+
+        if (existing.isPresent()) {
+            entities = existing.get();
+            entities.setAuditLastMBy(userId);
+            entities.setAuditLastMDate(LocalDateTime.now());
+        } else {
+            entities = new CustomTemplateEntities();
+            entities.setPackageId(pkg);
+            entities.setAuditCBy(userId);
+            entities.setAuditCDate(LocalDateTime.now());
+        }
+
+        entities.setEntities(String.join(",", newEntities));
+        customTemplateEntitiesRepository.save(entities);
+    }
+
+    //MILESTONES
     private void updateCustomTemplateMilestones(Package pkg, BigDecimal currentDocumentId, String userId) {
         // Get all documents in the package
         List<Document> allDocuments = documentRepository.findAllDocumentsByPackageId(pkg);
@@ -157,10 +188,119 @@ public class CatalogServiceImpl implements CatalogService {
         documentMilestoneRepository.save(currentMilestone);
     }
 
+    //CATALOG MANIPULATION
 
-    // PRIVATE THINGS TO BE MOVED TO A DIFF FILE
-    @Transactional(readOnly = true)
-    public String createCatalogWithCategoriesOnly() throws RepositoryException {
+    private void handleCatalog(List<String> existingEntities, List<String> newEntities, String userId, Package pkg) throws RepositoryException {
+        List<DocumentV> latestDocuments = getLatestDocumentsByPackageId(pkg.getId());
+
+        // 1. If this is the first time any Template in this Package will be Published
+        if (existingEntities.isEmpty()) {
+            // Create catalogs for each new entity if needed
+            for (String entity : newEntities) {
+                ensureCatalogExists(entity, userId, pkg);
+            }
+
+            // Get template name from PROPOSAL document and add to each catalog
+            String baseTemplateName = getBaseTemplateNameFromProposal(pkg);
+            if (baseTemplateName != null) {
+                Set<String> insertedTemplateKeys = new HashSet<>();
+
+                // Insert xml into Catalogs
+                for (String entity : newEntities) {
+                    String catalogName = "catalog-" + entity;
+                    Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+                    if (config.isPresent()) {
+                        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+                        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+                        String updatedCatalog = insertTemplateIntoCatalogAndExtractKeys(content.getContentString(), baseTemplateName, baseTemplateName, pkg.getId().toString(), insertedTemplateKeys);
+                        updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
+                    }
+                    else{
+                        throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Cannot find Catalog");
+                    }
+                }
+
+                // Save all documents related with Templates previously inserted
+                // Get category codes for the inserted template keys
+                List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(insertedTemplateKeys);
+                // Get config categories by their codes
+                List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
+                // Save document files matching the extracted template keys
+                saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
+                // Save config files for each template
+                saveConfigFiles(insertedTemplateKeys, pkg.getId().toString(), userId);
+            }
+        } else {
+            // Existing entities - handle scenarios
+
+            // Scenario 1: Identify removed entities and delete templates from their catalogs
+            List<String> removedEntities = existingEntities.stream()
+                    .filter(entity -> !newEntities.contains(entity))
+                    .collect(Collectors.toList());
+
+            for (String removedEntity : removedEntities) {
+                removeTemplateFromEntityCatalog(removedEntity, pkg.getId().toString(), userId);
+            }
+
+            // Scenario 2: Identify new entities and add templates to their catalogs
+            List<String> newlyAddedEntities = newEntities.stream()
+                    .filter(entity -> !existingEntities.contains(entity))
+                    .collect(Collectors.toList());
+
+            String templateName = getBaseTemplateNameFromProposal(pkg);
+            if (templateName != null) {
+                for (String newEntity : newlyAddedEntities) {
+                    ensureCatalogExists(newEntity, userId, pkg);
+                    addTemplateToEntityCatalog(newEntity, templateName, pkg.getId().toString(), userId);
+                }
+            }
+
+            // Scenario 3: Identify common entities and replace templates in their catalogs
+            List<String> commonEntities = existingEntities.stream()
+                    .filter(newEntities::contains)
+                    .collect(Collectors.toList());
+
+            if (templateName != null) {
+                for (String commonEntity : commonEntities) {
+                    replaceTemplateInEntityCatalog(commonEntity, templateName, pkg.getId().toString(), userId);
+                }
+            }
+
+            // Final step: Save documents as custom templates after all catalog operations
+            if (templateName != null) {
+                Set<String> allTemplateKeys = new HashSet<>();
+
+                // Extract template keys from all updated catalogs
+                for (String entity : newEntities) {
+                    String catalogName = "catalog-" + entity;
+                    Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+                    if (config.isPresent()) {
+                        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+                        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+                        extractTemplateKeysFromCatalog(content.getContentString(), pkg.getId().toString(), allTemplateKeys);
+                    }
+                }
+
+                if (!allTemplateKeys.isEmpty()) {
+                    // Mark previous custom template versions as not latest
+                    markPreviousCustomTemplateVersionsAsNotLatest(pkg.getId().toString());
+
+                    // Save new custom templates
+                    List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(allTemplateKeys);
+                    List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
+                    saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
+
+                    // Save config files for each template key
+                    saveConfigFiles(allTemplateKeys, pkg.getId().toString(), userId);
+
+
+                }
+            }
+        }
+    }
+
+
+    private String createCatalogWithCategoriesOnly() throws RepositoryException {
         try {
             byte[] catalogContent = getCatalogFromDatabase();
 
@@ -271,14 +411,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
 
-
-
-    // ========================================
-    // CATALOG CREATION AND MANIPULATION METHODS
-    // ========================================
-
-    @Transactional(readOnly = true)
-    public String insertTemplateIntoCatalog(String existingCatalogXml, String templateKey, String templateName, String packageId) throws RepositoryException {
+    private String insertTemplateIntoCatalog(String existingCatalogXml, String templateKey, String templateName, String packageId) throws RepositoryException {
         try {
             // Get the full catalog from DB to find the template
             byte[] fullCatalogContent = getCatalogFromDatabase();
@@ -325,61 +458,6 @@ public class CatalogServiceImpl implements CatalogService {
                         childItem.setAttribute("custom-id", id + "/" + packageId);
                     }
                 }
-            }
-
-            targetCategory.appendChild(importedTemplate);
-
-            // Convert back to string
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(existingCatalogDoc), new StreamResult(writer));
-            return writer.toString();
-
-        } catch (Exception e) {
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
-        }
-    }
-
-    // Simpler version if you know the target category key
-    @Transactional(readOnly = true)
-    public String insertTemplateIntoCatalogByCategory(String existingCatalogXml, String templateKey, String targetCategoryKey, String templateName, String packageId) throws RepositoryException {
-        try {
-            // Get the full catalog from DB to find the template
-            byte[] fullCatalogContent = getCatalogFromDatabase();
-
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
-            // Parse both documents
-            org.w3c.dom.Document existingCatalogDoc = builder.parse(new ByteArrayInputStream(existingCatalogXml.getBytes("UTF-8")));
-            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent));
-
-            // Find the template in the full catalog
-            Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
-            if (templateElement == null) {
-                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
-                        "Template with key " + templateKey + " not found");
-            }
-
-            // Find the target category in the existing catalog
-            Element targetCategory = findCategoryByKey(existingCatalogDoc, targetCategoryKey);
-            if (targetCategory == null) {
-                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING,
-                        "Target category with key " + targetCategoryKey + " not found in existing catalog");
-            }
-
-            // Import and insert the template
-            Node importedTemplate = existingCatalogDoc.importNode(templateElement, true);
-
-            // Add custom attributes to the imported template
-            if (importedTemplate instanceof Element) {
-                Element templateEl = (Element) importedTemplate;
-                templateEl.setAttribute("custom-name", templateName);
-                templateEl.setAttribute("custom-key", templateEl.getAttribute("key") + "/" + packageId);
             }
 
             targetCategory.appendChild(importedTemplate);
@@ -559,50 +637,23 @@ public class CatalogServiceImpl implements CatalogService {
         return null;
     }
 
-    public List<String> getCustomTemplateEntitiesByPackage(Package pkg) {
-        Optional<CustomTemplateEntities> entities = customTemplateEntitiesRepository.findByPackageId(pkg);
-        if (entities.isPresent() && entities.get().getEntities() != null) {
-            return Arrays.asList(entities.get().getEntities().split(","));
-        }
-        return Collections.emptyList();
-    }
-
-    public void updateCustomTemplateEntities(Package pkg, List<String> newEntities, String userId) {
-        Optional<CustomTemplateEntities> existing = customTemplateEntitiesRepository.findByPackageId(pkg);
-        CustomTemplateEntities entities;
-
-        if (existing.isPresent()) {
-            entities = existing.get();
-            entities.setAuditLastMBy(userId);
-            entities.setAuditLastMDate(LocalDateTime.now());
-        } else {
-            entities = new CustomTemplateEntities();
-            entities.setPackageId(pkg);
-            entities.setAuditCBy(userId);
-            entities.setAuditCDate(LocalDateTime.now());
-        }
-
-        entities.setEntities(String.join(",", newEntities));
-        customTemplateEntitiesRepository.save(entities);
-    }
-
-    private void ensureEntityCatalogExists(String entityName, String userId, Package pkg) throws RepositoryException {
+    private void ensureCatalogExists(String entityName, String userId, Package pkg) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
 
         if (!customTemplateConfigRepository.findConfigByName(catalogName).isPresent()) {
-            createEntityCatalog(catalogName, entityName, userId, pkg);
+            createCatalog(catalogName, entityName, userId);
         }
     }
 
-    private void createEntityCatalog(String catalogName, String entityName, String userId, Package pkg) throws RepositoryException {
+    private void createCatalog(String catalogName, String entityName, String userId) throws RepositoryException {
         try {
             String baseCatalog = createCatalogWithCategoriesOnly();
 
-            // Find the TEMPLATE_CATALOG category
+            // Find the Config Category category
             CustomTemplateConfigCategory templateCatalogCategory = customTemplateConfigCategoryRepository
                     .findConfigCategoriesByCategoryCode("CONFIG")
                     .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
-                            "TEMPLATE_CATALOG category not found"));
+                            "Config Category category not found"));
 
             // Step 1: Create config entry
             CustomTemplateConfig config = new CustomTemplateConfig();
@@ -611,7 +662,7 @@ public class CatalogServiceImpl implements CatalogService {
             config.setAuditCDate(LocalDateTime.now());
             config.setAuditLastMBy(userId);
             config.setAuditLastMDate(LocalDateTime.now());
-            config.setLanguage("en");
+            config.setLanguage("EN");
             config.setConfigCategory(templateCatalogCategory);
             config = customTemplateConfigRepository.save(config);
 
@@ -649,8 +700,8 @@ public class CatalogServiceImpl implements CatalogService {
                         .findConfigCategoriesByCategoryCode("CONFIG")
                         .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "CONFIG category not found"));
 
-                String customKey = "catalog-" + entityName + "-CONF/" + pkg.getId().toString();
-                saveConfigAsCustomTemplate(catalogConfigFile.get(), customKey, configCategory, userId);
+                String customKey = "catalog-" + entityName + "-CONF";
+                saveConfigFile(catalogConfigFile.get(), customKey, configCategory, userId);
             }
 
             LOG.info("Successfully created entity catalog: {}", catalogName);
@@ -661,7 +712,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private String getTemplateNameFromProposal(Package pkg) {
+    private String getBaseTemplateNameFromProposal(Package pkg) {
         List<DocumentV> proposalDocs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(pkg.getId(), "PROPOSAL");
         if (!proposalDocs.isEmpty()) {
             return proposalDocs.get(0).getTemplate();
@@ -669,8 +720,7 @@ public class CatalogServiceImpl implements CatalogService {
         return null;
     }
 
-    @Transactional
-    public String removeTemplateFromCatalog(String catalogXml, String customKey) throws RepositoryException {
+    private String removeTemplateFromCatalog(String catalogXml, String customKey) throws RepositoryException {
         if (StringUtils.isBlank(catalogXml)) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.PARA_NOT_FOUND, "catalogXml cannot be null or empty");
         }
@@ -1048,7 +1098,8 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private void saveConfigFilesAsCustomTemplates(Set<String> templateKeys, String packageId, String userId) throws RepositoryException {
+    // *-CONF.json files
+    private void saveConfigFiles(Set<String> templateKeys, String packageId, String userId) throws RepositoryException {
         try {
             CustomTemplateConfigCategory configCategory = customTemplateConfigCategoryRepository
                     .findConfigCategoriesByCategoryCode("CONFIG")
@@ -1060,7 +1111,7 @@ public class CatalogServiceImpl implements CatalogService {
 
                 if (configFile.isPresent()) {
                     String customKey = configName + "/" + packageId;
-                    saveConfigAsCustomTemplate(configFile.get(), customKey, configCategory, userId);
+                    saveConfigFile(configFile.get(), customKey, configCategory, userId);
                 }
             }
         } catch (Exception e) {
@@ -1069,7 +1120,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private void saveConfigAsCustomTemplate(ConfigurationV configFile, String customKey, CustomTemplateConfigCategory templateCategory, String userId) throws RepositoryException {
+    private void saveConfigFile(ConfigurationV configFile, String customKey, CustomTemplateConfigCategory templateCategory, String userId) throws RepositoryException {
         try {
             // Check if config already exists
             Optional<CustomTemplateConfig> existingConfig = customTemplateConfigRepository.findConfigByName(customKey);
@@ -1172,106 +1223,5 @@ public class CatalogServiceImpl implements CatalogService {
 
 
 
-    private void handleCatalog(List<String> existingEntities, List<String> newEntities, String userId, Package pkg) throws RepositoryException {
-        List<DocumentV> latestDocuments = getLatestDocumentsByPackageId(pkg.getId());
 
-        if (existingEntities.isEmpty()) {
-            // No existing entities - create catalogs for each new entity if needed
-            for (String entity : newEntities) {
-                ensureEntityCatalogExists(entity, userId, pkg);
-            }
-
-            // Get template name from PROPOSAL document and add to each catalog
-            String templateName = getTemplateNameFromProposal(pkg);
-            if (templateName != null) {
-                Set<String> insertedTemplateKeys = new HashSet<>();
-
-                for (String entity : newEntities) {
-                    String catalogName = "catalog-" + entity;
-                    Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
-                    if (config.isPresent()) {
-                        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
-                        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
-                        String updatedCatalog = insertTemplateIntoCatalogAndExtractKeys(content.getContentString(), templateName, templateName, pkg.getId().toString(), insertedTemplateKeys);
-                        updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
-                    }
-                }
-
-                // Get category codes for the inserted template keys
-                List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(insertedTemplateKeys);
-                // Get config categories by their codes
-                List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
-                // Save document files matching the extracted template keys
-                saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
-                // Save config files for each template
-                saveConfigFilesAsCustomTemplates(insertedTemplateKeys, pkg.getId().toString(), userId);
-            }
-        } else {
-            // Existing entities - handle scenarios
-
-            // Scenario 1: Identify removed entities and delete templates from their catalogs
-            List<String> removedEntities = existingEntities.stream()
-                    .filter(entity -> !newEntities.contains(entity))
-                    .collect(Collectors.toList());
-
-            for (String removedEntity : removedEntities) {
-                removeTemplateFromEntityCatalog(removedEntity, pkg.getId().toString(), userId);
-            }
-
-            // Scenario 2: Identify new entities and add templates to their catalogs
-            List<String> newlyAddedEntities = newEntities.stream()
-                    .filter(entity -> !existingEntities.contains(entity))
-                    .collect(Collectors.toList());
-
-            String templateName = getTemplateNameFromProposal(pkg);
-            if (templateName != null) {
-                for (String newEntity : newlyAddedEntities) {
-                    ensureEntityCatalogExists(newEntity, userId, pkg);
-                    addTemplateToEntityCatalog(newEntity, templateName, pkg.getId().toString(), userId);
-                }
-            }
-
-            // Scenario 3: Identify common entities and replace templates in their catalogs
-            List<String> commonEntities = existingEntities.stream()
-                    .filter(newEntities::contains)
-                    .collect(Collectors.toList());
-
-            if (templateName != null) {
-                for (String commonEntity : commonEntities) {
-                    replaceTemplateInEntityCatalog(commonEntity, templateName, pkg.getId().toString(), userId);
-                }
-            }
-
-            // Final step: Save documents as custom templates after all catalog operations
-            if (templateName != null) {
-                Set<String> allTemplateKeys = new HashSet<>();
-
-                // Extract template keys from all updated catalogs
-                for (String entity : newEntities) {
-                    String catalogName = "catalog-" + entity;
-                    Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
-                    if (config.isPresent()) {
-                        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
-                        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
-                        extractTemplateKeysFromCatalog(content.getContentString(), pkg.getId().toString(), allTemplateKeys);
-                    }
-                }
-
-                if (!allTemplateKeys.isEmpty()) {
-                    // Mark previous custom template versions as not latest
-                    markPreviousCustomTemplateVersionsAsNotLatest(pkg.getId().toString());
-
-                    // Save new custom templates
-                    List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(allTemplateKeys);
-                    List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
-                    saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
-
-                    // Save config files for each template key
-                    saveConfigFilesAsCustomTemplates(allTemplateKeys, pkg.getId().toString(), userId);
-
-
-                }
-            }
-        }
-    }
 }
