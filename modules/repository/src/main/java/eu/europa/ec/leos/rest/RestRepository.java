@@ -667,13 +667,12 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    public void publishCustomTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgs, String userId) {
-        LOGGER.trace("Publish Custom Template [{}]", proposalRef);
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) {
+        LOGGER.trace("Publish Custom Template [{}]", legFileId);
         String url = getUrl(leosRestPublishCustomTemplateURI);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("proposalRef", proposalRef);
-        params.add("legDocumentName", legDocumentName);
+        params.add("legFileId", legFileId);
         params.add("templateName", templateName);
         params.add("userId", userId);
         dgs.forEach(dg -> params.add("dgs", dg));

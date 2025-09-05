@@ -423,19 +423,5 @@ public class DocumentController {
     }
 
 
-    @PostMapping(path = "/document/custom-template/publish",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Publish a custom template")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Template published successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> publishCustomTemplate(
-            @RequestParam String proposalRef,
-            @RequestParam String legDocumentName,
-            @RequestParam String templateName,
-            @RequestParam List<String> dgs,
-            @RequestParam String userId) throws RepositoryException {
-        documentService.publishCustomTemplate(proposalRef, legDocumentName, templateName, dgs, userId);
-        return ResponseEntity.ok().build();
-    }
+
 }

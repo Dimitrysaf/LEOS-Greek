@@ -89,12 +89,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
@@ -567,26 +562,7 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/publish-custom-template/{proposalRef}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> publishTemplateToCatalog(@PathVariable("proposalRef") String proposalRef, @RequestBody PublishTemplateRequest request) {
-        try {
-            proposalRef = encodeParam(proposalRef);
-            customTemplateService.publishTemplate(
-                    proposalRef,
-                    request.getLegDocumentName(),
-                    request.getTemplateName(),
-                    request.getDgCodes()
-            );
-            return new ResponseEntity<>("Template published successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while publishing template - " + e.getMessage(), e);
-            return new ResponseEntity<>(
-                    "Unexpected error occurred while publishing template",
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
-    }
+
 
 
     @RequestMapping(value = "/secured/proposals/{proposalRef}/createAnnex", method = RequestMethod.POST,

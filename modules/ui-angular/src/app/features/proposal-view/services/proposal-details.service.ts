@@ -501,7 +501,7 @@ export class ProposalDetailsService implements OnDestroy {
   ) {
     this.loadingService.setLoading(true);
 
-    const url = `${apiBaseUrl}/secured/proposals/publish-custom-template/${milestone.proposalRef}`;
+    const url = `${apiBaseUrl}/secured/catalog/publish-template/${milestone.legFileId}`;
     const body = {
       legDocumentName: milestone.legDocumentName,
       templateName,
@@ -513,6 +513,7 @@ export class ProposalDetailsService implements OnDestroy {
       .pipe(finalize(() => this.loadingService.setLoading(false)))
       .subscribe({
         next: () => {
+          console.log('PUBLISH SUCCESS')
           this.growlService.growl({
             severity: 'success',
             summary: this.translateService.instant('global.notifications.title.success'),
@@ -524,6 +525,7 @@ export class ProposalDetailsService implements OnDestroy {
           this.loadProposalMilestones();
         },
         error: (err) => {
+          console.log('PUBLISH ERROR')
           this.growlService.growl({
             severity: 'danger',
             summary: this.translateService.instant('global.notifications.title.error'),

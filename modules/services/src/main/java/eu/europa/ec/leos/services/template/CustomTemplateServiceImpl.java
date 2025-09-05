@@ -44,7 +44,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
 
 
     @Override
-    public void publishTemplate(String proposalRef, String legDocumentName, String templateName, List<String> dgCodes) {
+    public void publishTemplate(String legFileId,String templateName, List<String> dgCodes) {
         // Get all valid organizations from user repository for validation
         List<String> validOrganizations = userService.getAllOrganizations();
         Set<String> validOrgSet = new HashSet<>(validOrganizations);
@@ -74,6 +74,6 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         }
         
         // Publish template with validated DG codes
-        leosRepository.publishCustomTemplate(proposalRef, legDocumentName, templateName, finalDgCodes, user.getLogin());
+        leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin());
     }
 }

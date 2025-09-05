@@ -55,7 +55,7 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
     this.targetUserForm = this.fb.group({
       templateName: this.fb.control('', Validators.required),
       dgSearch: [''],
-      dgCodes: this.fb.control<string[]>([], Validators.required)
+      dgCodes: this.fb.control<string[]>([])
     });
 
     // Load organizations from API
@@ -162,9 +162,9 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
     this.onDgSearch('');
   }
 
-  /** Valid when at least one DG is selected */
+  /** Valid when template name is provided */
   get isFormValid(): boolean {
-    return (this.dgCtrl.value ?? []).length > 0;
+    return this.templateNameCtrl.valid;
   }
 
   /** Helper accessors */
@@ -185,9 +185,8 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
 
   publishTemplate(): void {
     this.submitted = true;
-    if (this.targetUserForm.invalid) {
+    if (this.templateNameCtrl.invalid) {
       this.templateNameCtrl.markAsTouched();
-      this.dgCtrl.markAsTouched();
       return;
     }
 
