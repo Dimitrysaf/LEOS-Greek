@@ -1,20 +1,85 @@
-.selected-chips {
+.dg-select-container {
+  position: relative;
+  border: 1px solid var(--euiColorLightShade, #dcdfe3);
+  border-radius: 4px;
+  min-height: 32px;
+  background: white;
+  display: flex;
+  align-items: center;
+}
+
+.dg-selection-list {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 4px;
+  padding: 6px 8px;
+  margin: 0;
+  list-style: none;
+  width: 100%;
 }
+
+.dg-selection-item {
+  display: flex;
+  align-items: center;
+}
+
+.dg-filter-input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.dg-filter-input input {
+  border: none;
+  outline: none;
+  padding: 4px;
+  font-size: 14px;
+  width: 100%;
+  background: transparent;
+}
+
+.dg-suggestion-container {
+  position: fixed;
+  z-index: 99999;
+  background: white;
+  border: 1px solid #23a9e1;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dg-suggestion-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dg-suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--euiColorLightestShade, #eef1f3);
+}
+
+.dg-suggestion-item:hover {
+  background: var(--euiColorLightestShade, #eef1f3);
+}
+
 .chip {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--euiColorLightestShade, #eef1f3);
-  border: 1px solid var(--euiColorLightShade, #dcdfe3);
-  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: white;
+  border: 1px solid black;
   user-select: none;
   font-size: 12px;
+  color: black;
+  height: 28px;
+  box-sizing: border-box;
 }
 .chip-x {
   margin-left: 6px;
-  font-weight: 600;
+  font-weight: 900;
+  cursor: pointer;
 }

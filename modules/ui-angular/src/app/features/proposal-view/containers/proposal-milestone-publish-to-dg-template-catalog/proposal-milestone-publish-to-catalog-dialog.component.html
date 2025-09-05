@@ -44,20 +44,26 @@
           <!-- Or hardcode: My DG and DG(s) -->
         </small>
 
-        <eui-autocomplete
-          #dgAuto
-          id="dgSearch"
-          [autocompleteData]="filteredDgItems"
-          [placeholder]="'Search DGs…'"
-          formControlName="dgSearch"
-          (inputChange)="onDgSearch($event)"
-          (clear)="onDgSearch('')">
-        </eui-autocomplete>
-
-        <div class="eui-u-mt-2xs selected-chips">
-      <span class="chip" *ngFor="let dg of selectedDgs; let i = index" (click)="removeDg(i)" title="Remove">
-        {{ dg.label }} <span class="chip-x" aria-hidden="true">×</span>
-      </span>
+        <div class="dg-select-container" #dgContainer>
+          <ul class="dg-selection-list">
+            <li class="dg-selection-item" *ngFor="let dg of selectedDgs; let i = index">
+              <span class="chip">
+                {{ dg.label }}
+                <span class="chip-x" (click)="removeDg(i)" title="Remove">✖</span>
+              </span>
+            </li>
+            <li class="dg-filter-input">
+              <input
+                #dgInput
+                type="text"
+                placeholder="Search DGs…"
+                formControlName="dgSearch"
+                (input)="onDgSearch(dgInput.value)"
+                (focus)="onInputFocus()"
+                (blur)="onInputBlur()"
+              />
+            </li>
+          </ul>
         </div>
 
         <input type="hidden" formControlName="dgCodes" />
@@ -77,3 +83,14 @@
     </div>
   </eui-dialog-footer>
 </eui-dialog>
+
+<!-- Dropdown positioned outside dialog -->
+<div class="dg-suggestion-container" *ngIf="showSuggestions" [style.top.px]="dropdownTop" [style.left.px]="dropdownLeft" [style.width.px]="dropdownWidth">
+  <ul class="dg-suggestion-list">
+    <li *ngFor="let item of filteredDgItems; let i = index"
+        class="dg-suggestion-item"
+        (click)="selectDg(item.label)">
+      {{ item.label }}
+    </li>
+  </ul>
+</div>

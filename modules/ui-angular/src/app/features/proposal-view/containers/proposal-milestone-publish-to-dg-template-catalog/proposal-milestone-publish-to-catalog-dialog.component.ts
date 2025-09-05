@@ -42,6 +42,14 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   /** Current selections used for chips */
   selectedDgs: DGOption[] = [];
 
+  /** Show/hide suggestions dropdown */
+  showSuggestions = false;
+
+  /** Dropdown positioning */
+  dropdownTop = 0;
+  dropdownLeft = 0;
+  dropdownWidth = 0;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -131,6 +139,43 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
       if (selectedCodes.has(opt.code)) return false;
       return !q || item.label.toLowerCase().includes(q);
     });
+  }
+
+  /** Select DG from suggestions */
+  selectDg(label: string): void {
+    const opt = this.dgByLabel.get(label);
+    if (opt) {
+      this.addDg(opt);
+      this.targetUserForm.controls['dgSearch'].setValue('', { emitEvent: false });
+      this.onDgSearch('');
+      this.showSuggestions = false;
+    }
+  }
+
+  /** Input focus handler */
+  onInputFocus(): void {
+    this.showSuggestions = true;
+    this.updateDropdownPosition();
+  }
+
+  /** Input blur handler */
+  onInputBlur(): void {
+    setTimeout(() => {
+      this.showSuggestions = false;
+    }, 200); // Delay to allow click on suggestions
+  }
+
+  /** Update dropdown position */
+  private updateDropdownPosition(): void {
+    setTimeout(() => {
+      const container = document.querySelector('.dg-select-container') as HTMLElement;
+      if (container) {
+        const rect = container.getBoundingClientRect();
+        this.dropdownTop = rect.bottom;
+        this.dropdownLeft = rect.left;
+        this.dropdownWidth = rect.width;
+      }
+    }, 0);
   }
 
   /** Add DG to chips + form array */
