@@ -47,6 +47,7 @@ define(function leosPluginUtilsModule(require) {
     var UNORDERED_LIST_ELEMENT = "ul";
     var LIST_ELEMENTS = "ol, ul";
     var LIST_ITEM= "li";
+    var LIST_ELEMENT= "li";
     var HTML_POINT = "li";
     var HTML_SUB_POINT = "p";
     var SPAN = "span";
