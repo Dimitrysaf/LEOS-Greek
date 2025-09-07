@@ -119,6 +119,7 @@ define(function leosPluginUtilsModule(require) {
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~ART_DEF";
     var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-number'];
+    var SIGNATURE_ELEMENTS = ['organization', 'role', 'person'];
 
     var commonAttributes = [
         { akn: "xml:id", html: "id" },
@@ -1823,6 +1824,10 @@ define(function leosPluginUtilsModule(require) {
             && (element.getAttribute('data-akn-element') === 'point' || element.getAttribute('data-akn-element') === 'indent' || element.getAttribute('data-akn-element') === 'paragraph');
     }
 
+    function _isSignatureElement(element) {
+        var elementName = element.getAttribute(DATA_AKN_NAME);
+        return SIGNATURE_ELEMENTS.some(e => e === elementName);
+    }
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1914,6 +1919,7 @@ define(function leosPluginUtilsModule(require) {
         isSubParaAndNextIsPorINP: _isSubParaAndNextIsPorINP,
         isLeaf: _isLeaf,
         isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
+        isSignatureElement: _isSignatureElement,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
