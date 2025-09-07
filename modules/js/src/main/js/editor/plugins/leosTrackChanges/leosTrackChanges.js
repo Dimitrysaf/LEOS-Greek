@@ -543,12 +543,6 @@ define(function leosTrackChangesModule(require) {
 
         getLastTCElement: function(elementId, editor, processedElements) {
             var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
-            if (!element) { //LFDS case
-                element = editor.document.find('.leos-placeholder').getItem(0).find(`[${leosPluginUtils.DATA_AKN_MP_ID}='${elementId}']`).getItem(0);
-            }
-            if (!element && elementId) { //selector case where elementId contains the selector
-                element = editor.document.find('.leos-placeholder').getItem(0).find(elementId).getItem(0);
-            }
             if(element) {
                 for (var i = element.getChildCount()-1; i >= 0; i--) {
                     var childElement = element.getChild(i);
