@@ -762,8 +762,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
             fields.add(new MetadataOptions.FieldNode("linkedDocuments", String.join(" - ", request.getCrossReferences())));
         }
         if (request.getAdoptionDate() != null) {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            fields.add(new MetadataOptions.FieldNode("adoptionDate", dateFormat.format(request.getAdoptionDate())));
+            if (request.getAdoptionDate().getTime() == 0) {
+                fields.add(new MetadataOptions.FieldNode("adoptionDate", ""));
+            } else {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                fields.add(new MetadataOptions.FieldNode("adoptionDate", dateFormat.format(request.getAdoptionDate())));
+            }
         }
         if (request.getStamp() != null) {
             fields.add(new MetadataOptions.FieldNode("stamp", request.getStamp().equals(Boolean.TRUE) ? "1" : "0"));

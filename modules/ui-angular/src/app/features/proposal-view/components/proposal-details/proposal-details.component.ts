@@ -208,7 +208,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   isAdoptionDateChanged(): boolean {
     return !(this.adoptionDate == null && this.proposalMetadata.adoptionDate == null)
-      && (this.adoptionDate !== null && this.proposalMetadata.adoptionDate !== null && new Date(this.proposalMetadata.adoptionDate).getTime()/1000) != this.adoptionDate.unix();
+      || (this.adoptionDate !== null && this.proposalMetadata.adoptionDate !== null && new Date(this.proposalMetadata.adoptionDate).getTime()/1000 != this.adoptionDate.unix());
   }
 
   isInstitutionalReferenceChanged(): boolean {
@@ -675,7 +675,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.finalVersion,
       this.isCrossReferencesChanged() ? this.crossReferenceProposalListing : null,
       this.isAdoptionPlaceChanged() ? this.adoptionPlace : null,
-      this.isAdoptionDateChanged() ? this.adoptionDate.toDate() : null,
+      this.isAdoptionDateChanged() ? this.adoptionDate == null ? new Date(0) : this.adoptionDate.toDate() : null,
       this.isInstitutionalReferenceChanged() ? this.getInstitutionalReference() : null,
       this.isInstitutionalReferenceChanged() ? this.institutionalReferenceFinalVersion : null,
       this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null,
