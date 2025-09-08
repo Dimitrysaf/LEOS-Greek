@@ -336,6 +336,9 @@ public class MetadataUtil {
     }
 
     public static MetadataFieldInfo parseEmissionDate(String fieldName, String fieldValue) throws MetadataFieldInvalidValueException {
+        if (fieldValue.isEmpty()) {
+            return new ReferenceFieldInfo("", "", "", "", MetadataFieldType.EMISSION_DATE);
+        }
         Date parsedDate = stringToDate(fieldValue, EMISSION_DATE_PARSE_PATTERN);
         if (parsedDate == null) {
             throw MetadataFieldInvalidValueException.newException(fieldName, MESSAGE_INVALID_ISO_DATE);
