@@ -966,7 +966,7 @@ define(function leosTrackChangesModule(require) {
                 if (!element.getAttribute(leosPluginUtils.ID)) {
                     element.setAttribute(leosPluginUtils.ID, "XtempXtcX" + Date.now().toString(36) + Math.random().toString(36).substring(2));
                 }
-            } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.hasAttribute(core.DATA_AKN_SOFTACTION)) {
                 for (var elementSibling of element.getParent().$.children) {
                     if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM) && !elementSibling.getAttribute(core.ACTION_ATTR)) {
                         core.removeTrackChangesAttributes(elementSibling);
@@ -1183,7 +1183,6 @@ define(function leosTrackChangesModule(require) {
             }
             editor.fire('key', {keyCode: keyCodeToUse, domEvent: ckEditorEvent});
         },
-
         rejectChange: function(editor, element, numberModule) {
             editor.getSelection().fake(element.getParent());
             var parentElem = element.getAscendant(el => {
@@ -1317,7 +1316,9 @@ define(function leosTrackChangesModule(require) {
                 }else{
                     element.remove();
                 }
-            } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.DELETE_ACTION && element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.DELETE_ACTION
+                        && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)
+                        && !element.hasAttribute(core.DATA_AKN_SOFTACTION)) {
                 core.removeTrackChangesAttributesForNumbering(element);
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 if(parentElem && parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE && element.getAscendant("li")) {
@@ -1361,9 +1362,9 @@ define(function leosTrackChangesModule(require) {
                 }
                 if(element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_TO) {
                     if (this.checkIfRejectIsProcessedInBackendMovedTo(editor, element, numberModule)) {
-                        element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_TO));
-                        element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.ID));
-                        element.getParent().getParent().setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.REJECT);
+                        element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_TO));
+                        element.setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.ID));
+                        element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.REJECT);
                     }
 
                     element.removeAttribute('contenteditable');
