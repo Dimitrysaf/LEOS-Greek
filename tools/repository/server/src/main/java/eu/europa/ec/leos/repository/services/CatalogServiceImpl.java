@@ -129,7 +129,7 @@ public class CatalogServiceImpl implements CatalogService {
         updateCustomTemplateMilestones(pkg, leosDocument.get().getId(), userId);
 
         // 4. Handle catalog creation based on existing entities
-        handleCatalog(existingEntities, dgs, userId, pkg);
+        handleCatalog(existingEntities, dgs, templateName, userId, pkg);
     }
 
     //CUSTOM ENTITIES
@@ -195,7 +195,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     //CATALOG MANIPULATION
 
-    private void handleCatalog(List<String> existingEntities, List<String> newEntities, String userId, Package pkg) throws RepositoryException {
+    private void handleCatalog(List<String> existingEntities, List<String> newEntities, String customTemplateName, String userId, Package pkg) throws RepositoryException {
         List<DocumentV> latestDocuments = getLatestDocumentsByPackageId(pkg.getId());
 
         // 1. If this is the first time any Template in this Package will be Published
@@ -217,7 +217,7 @@ public class CatalogServiceImpl implements CatalogService {
                     if (config.isPresent()) {
                         CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
                         CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
-                        String updatedCatalog = insertTemplateIntoCatalogAndExtractKeys(content.getContentString(), baseTemplateName, baseTemplateName, pkg.getId().toString(), insertedTemplateKeys);
+                        String updatedCatalog = insertTemplateIntoCatalogAndExtractKeys(content.getContentString(), baseTemplateName, customTemplateName, pkg.getId().toString(), insertedTemplateKeys);
                         updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
                     }
                     else{
@@ -256,7 +256,7 @@ public class CatalogServiceImpl implements CatalogService {
             if (templateName != null) {
                 for (String newEntity : newlyAddedEntities) {
                     ensureCatalogExists(newEntity, userId, pkg);
-                    addTemplateToEntityCatalog(newEntity, templateName, pkg.getId().toString(), userId);
+                    addTemplateToEntityCatalog(newEntity, templateName, customTemplateName, pkg.getId().toString(), userId);
                 }
             }
 
@@ -267,7 +267,7 @@ public class CatalogServiceImpl implements CatalogService {
 
             if (templateName != null) {
                 for (String commonEntity : commonEntities) {
-                    replaceTemplateInEntityCatalog(commonEntity, templateName, pkg.getId().toString(), userId);
+                    replaceTemplateInEntityCatalog(commonEntity, templateName, customTemplateName, pkg.getId().toString(), userId);
                 }
             }
 
@@ -1195,7 +1195,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private void addTemplateToEntityCatalog(String entityName, String templateName, String packageId, String userId) throws RepositoryException {
+    private void addTemplateToEntityCatalog(String entityName, String templateName, String customTemplateName, String packageId, String userId) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
         Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
 
@@ -1203,12 +1203,12 @@ public class CatalogServiceImpl implements CatalogService {
             CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
             CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
 
-            String updatedCatalog = insertTemplateIntoCatalog(content.getContentString(), templateName, templateName, packageId);
+            String updatedCatalog = insertTemplateIntoCatalog(content.getContentString(), templateName, customTemplateName, packageId);
             updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
         }
     }
 
-    private void replaceTemplateInEntityCatalog(String entityName, String templateName, String packageId, String userId) throws RepositoryException {
+    private void replaceTemplateInEntityCatalog(String entityName, String templateName, String customTemplateName, String packageId, String userId) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
         Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
 
@@ -1221,7 +1221,7 @@ public class CatalogServiceImpl implements CatalogService {
             String catalogWithoutOldTemplate = removeTemplateFromCatalog(content.getContentString(), customKey);
 
             // Add the new template
-            String updatedCatalog = insertTemplateIntoCatalog(catalogWithoutOldTemplate, templateName, templateName, packageId);
+            String updatedCatalog = insertTemplateIntoCatalog(catalogWithoutOldTemplate, templateName, customTemplateName, packageId);
             updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
         }
     }
