@@ -34,6 +34,7 @@ define(function aknOrderedListPluginModule(require) {
         lang: 'en',
         init: function init(editor) {
             numberModule.init(editor);
+            editor.on("beforeAknIndentList", _resetDataNumOnIndent);
             editor.on("toDataFormat", _checkLists, null, null, 0);
             editor.on("change", resetDataAknNameForOrderedList, null, null, 0);
             editor.on("change", resetNumbering, null, null, 1);
@@ -254,6 +255,41 @@ define(function aknOrderedListPluginModule(require) {
 
     function _getAscendantPoint(element) {
         return element.getAscendant(leosPluginUtils.HTML_POINT);
+    }
+
+    //This is removing num and origin() on indent and outdent also
+    function _resetDataNumOnIndent(event) {
+        var editor = event.editor, isIndent = event.data.isIndent, range, node;
+        var selection = editor.getSelection();
+        selection = leosPluginUtils.selectCorrectElementForList(selection, isIndent);
+        var ranges = selection && selection.getRanges(),
+            iterator = ranges.createIterator();
+
+        while ((range = iterator.getNextRange())) {
+            var currentStartNode = range.startContainer.type !== CKEDITOR.NODE_TEXT && range.startContainer.getName() === "li"
+                ? range.startContainer
+                : range.startContainer.getAscendant('li');
+            var currentEndNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === "li"
+                ? range.endContainer
+                : range.endContainer.getAscendant('li');
+            if (currentStartNode) {
+                _handleNode(currentStartNode, editor, isIndent);
+                currentStartNode = range.startContainer.type !== CKEDITOR.NODE_TEXT && range.startContainer.getName() === "li"
+                    ? range.startContainer
+                    : range.startContainer.getAscendant('li');
+            }
+            if (currentEndNode) {
+                _handleNode(currentEndNode, editor, isIndent);
+                currentEndNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === "li"
+                    ? range.endContainer
+                    : range.endContainer.getAscendant('li');
+            }
+
+            var rangeWalker = new CKEDITOR.dom.walker(range);
+            while (node = rangeWalker.next()) {
+                _handleNode(node, editor, isIndent);
+            }
+        }
     }
 
     function _handleNode(node, editor, isIndent) {
