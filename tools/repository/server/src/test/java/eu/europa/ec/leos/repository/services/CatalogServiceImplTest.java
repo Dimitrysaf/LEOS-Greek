@@ -218,7 +218,7 @@ public class CatalogServiceImplTest {
         catalogService.publishCustomTemplate("invalid", "Template", Arrays.asList("DG1"), "user");
     }
 
-    @Test
+    @Test(expected = RepositoryException.class)
     public void testPublishCustomTemplate_LegFileNotFound() throws RepositoryException {
         // Arrange - Test early return when milestone not found
         String legFileId = "999";
@@ -227,15 +227,9 @@ public class CatalogServiceImplTest {
 
         // Act
         catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user");
-
-        // Assert - Verify early return, no further processing
-        verify(milestoneDocumentService).findMilestoneById(new BigDecimal(legFileId));
-        verifyNoInteractions(documentRepository);
-        verifyNoInteractions(customTemplateEntitiesRepository);
-        verifyNoInteractions(documentMilestoneRepository);
     }
 
-    @Test
+    @Test(expected = RepositoryException.class)
     public void testPublishCustomTemplate_DocumentNotFound() throws RepositoryException {
         // Arrange - Test early return when document not found
         String legFileId = "123";
@@ -246,12 +240,6 @@ public class CatalogServiceImplTest {
 
         // Act
         catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user");
-
-        // Assert - Verify early return, no further processing
-        verify(milestoneDocumentService).findMilestoneById(new BigDecimal(legFileId));
-        verify(documentRepository).findById(mockLeosDocument.getDocumentId());
-        verifyNoInteractions(customTemplateEntitiesRepository);
-        verifyNoInteractions(documentMilestoneRepository);
     }
 
     @Test
@@ -260,6 +248,8 @@ public class CatalogServiceImplTest {
         DocumentMilestone previousMilestone = new DocumentMilestone();
         previousMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
         previousMilestone.setMilestoneComments("Custom Template");
+        previousMilestone.setAuditLastMBy("PreviousUser");
+        previousMilestone.setAuditLastMDate(LocalDateTime.now());
         
         DocumentMilestone currentMilestone = new DocumentMilestone();
         currentMilestone.setStatus(CustomTemplateMilestoneStatus.UNPUBLISHED.getValue());
