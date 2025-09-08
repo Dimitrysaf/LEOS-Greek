@@ -46,6 +46,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing custom template catalogs.
+ * Handles publishing, versioning, and catalog operations for custom templates.
+ * 
+ * <p>This service is thread-safe and uses synchronized methods to prevent
+ * concurrent catalog modifications that could lead to data inconsistency.</p>
+ */
 @Service
 public class CatalogServiceImpl implements CatalogService {
     private static final Logger LOG = LoggerFactory.getLogger(CatalogServiceImpl.class);
@@ -97,23 +104,40 @@ public class CatalogServiceImpl implements CatalogService {
         this.milestoneDocumentService = milestoneDocumentService;
     }
 
+    /**
+     * Publishes a custom template to specified entity catalogs.
+     * 
+     * <p>This method is synchronized to prevent concurrent modifications that could
+     * override catalog information. It performs the following operations:</p>
+     * <ul>
+     *   <li>Validates the leg file and document existence</li>
+     *   <li>Updates custom template entities</li>
+     *   <li>Updates milestone status</li>
+     *   <li>Handles catalog creation and updates</li>
+     * </ul>
+     * 
+     * @param legFileId the ID of the leg file milestone
+     * @param templateName the name of the custom template
+     * @param dgs list of entity names (DGs) to publish the template to
+     * @param userId the ID of the user performing the operation
+     * @throws RepositoryException if validation fails or database operations fail
+     */
     @Override
     @Transactional
-    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws RepositoryException {
+    public synchronized void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws RepositoryException {
         LOG.info("Publishing custom template: name={}, description={}, categories={}", templateName, legFileId, dgs);
 
         Optional<LeosDocument> legFile = milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId));
 
         if (!legFile.isPresent()){
-            //TODO add error
-            return;
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "LegFile not found");
         }
+
 
         Optional<Document> leosDocument = documentRepository.findById(legFile.get().getDocumentId());
 
         if (!leosDocument.isPresent()){
-            //TODO add error
-            return;
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Document not found");
         }
 
         // Get the package from the document
@@ -132,7 +156,12 @@ public class CatalogServiceImpl implements CatalogService {
         handleCatalog(existingEntities, dgs, templateName, userId, pkg);
     }
 
-    //CUSTOM ENTITIES
+    /**
+     * Retrieves existing custom template entities for a package.
+     * 
+     * @param pkg the package to query
+     * @return list of entity names, empty if none exist
+     */
     private List<String> getCustomTemplateEntitiesByPackage(Package pkg) {
         Optional<CustomTemplateEntities> entities = customTemplateEntitiesRepository.findByPackageId(pkg);
         if (entities.isPresent() && entities.get().getEntities() != null) {
@@ -141,6 +170,13 @@ public class CatalogServiceImpl implements CatalogService {
         return Collections.emptyList();
     }
 
+    /**
+     * Updates or creates custom template entities for a package.
+     * 
+     * @param pkg the package to update
+     * @param newEntities list of new entity names
+     * @param userId the user performing the update
+     */
     private void updateCustomTemplateEntities(Package pkg, List<String> newEntities, String userId) {
         Optional<CustomTemplateEntities> existing = customTemplateEntitiesRepository.findByPackageId(pkg);
         CustomTemplateEntities entities;
@@ -160,7 +196,15 @@ public class CatalogServiceImpl implements CatalogService {
         customTemplateEntitiesRepository.save(entities);
     }
 
-    //MILESTONES
+    /**
+     * Updates milestone status for custom template publication.
+     * Unpublishes previous custom template milestones and publishes the current one.
+     * 
+     * @param pkg the package containing the documents
+     * @param currentDocumentId the ID of the current document
+     * @param userId the user performing the update
+     * @throws RepositoryException if milestone is already published or update fails
+     */
     private void updateCustomTemplateMilestones(Package pkg, BigDecimal currentDocumentId, String userId) throws RepositoryException {
         DocumentMilestone currentMilestone = documentMilestoneRepository.findByDocumentId(currentDocumentId);
 
