@@ -1,4 +1,4 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import financialStatementPage from "../pages/financialStatementPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
@@ -103,7 +103,7 @@ Then(/^checkbox (\d+) of level "([^"]*)" is deselected$/, function (checkboxInde
     financialStatementPage.getCheckBoxInLevel(checkboxIndex, levelName).should('have.attr', 'name', 'unchecked');
 });
 
-And('total number of selected checkbox inside level {string} is {int}', (levelName, totalNumberOfChkBoxes) => {
+When('total number of selected checkbox inside level {string} is {int}', (levelName, totalNumberOfChkBoxes) => {
     financialStatementPage.getSelectedCheckBoxInLevel(levelName).should('have.length', totalNumberOfChkBoxes);
 });
 
@@ -111,7 +111,7 @@ When('user selects all the checkboxes of level {string}',(levelName) => {
     financialStatementPage.selectAllCheckboxesInLevel(levelName)
 });
 
-And(/^click on delete icon of repeatable subparagraph (\d+) of level "([^"]*)"$/, function (repeatableSubparagraphNumber, levelName) {
+When(/^click on delete icon of repeatable subparagraph (\d+) of level "([^"]*)"$/, function (repeatableSubparagraphNumber, levelName) {
     financialStatementPage.deleteRepeatableSubparagraph(repeatableSubparagraphNumber,levelName);
 });
 

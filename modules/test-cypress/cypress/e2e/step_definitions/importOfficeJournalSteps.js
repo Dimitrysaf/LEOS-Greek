@@ -1,4 +1,4 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import importOfficeJournalWindow from "../pages/importOfficeJournalWindow";
 
 Then(`close button in import office journal window is displayed and enabled`, () => {

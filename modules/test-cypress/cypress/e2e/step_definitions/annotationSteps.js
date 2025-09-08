@@ -1,4 +1,4 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 require('@cypress/xpath');
 import annotationBar from "../pages/annotationBar";
 
