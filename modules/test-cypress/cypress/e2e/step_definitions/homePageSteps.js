@@ -1,6 +1,5 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import homePage from "../pages/homePage";
-import tableOfContent from "../pages/tableOfContent";
 
 Then('user is on home page', () => {
     homePage.elements.euiLabel().should('have.text', 'The online collaboration tool for drafting legislation');

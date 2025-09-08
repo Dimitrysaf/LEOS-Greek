@@ -1,7 +1,7 @@
-import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import tableOfContent from "../pages/tableOfContent";
 
-And('toc editing button is displayed and enabled', () => {
+Then('toc editing button is displayed and enabled', () => {
     tableOfContent.elements.editBtn().should('be.visible');
     tableOfContent.elements.editBtn().should('not.be.disabled');
 })
@@ -62,7 +62,7 @@ When(`click on title link in navigation pane`, () => {
     tableOfContent.clickFirstNestedTreeNode();
 });
 
-And(`last subversion of recent changes version card contains {string}`, (subversion) => {
+Then(`last subversion of recent changes version card contains {string}`, (subversion) => {
     tableOfContent.getLatestRecentVersionCardContent().should('have.text', subversion);
 });
 
@@ -265,10 +265,6 @@ Then('error message disappears from table of content', function () {
     tableOfContent.elements.euiLabelDanger().should('not.be.visible');
 });
 
-When(`click on contributions pane accordion`, () => {
-    tableOfContent.clickContributionsPaneButton();
-});
-
 When(`click on first contribution`, () => {
     tableOfContent.clickFirstContribution();
 });
@@ -320,7 +316,7 @@ Then("subversion of recent changes version card doesn't contain {string}",functi
         .should('not.have.text', label.trim());
 });
 
-And("minimize {string} link in navigation pane", function (nodeLabel) {
+When("minimize {string} link in navigation pane", function (nodeLabel) {
     tableOfContent.minimizeNodeLabel(nodeLabel);
 });
 

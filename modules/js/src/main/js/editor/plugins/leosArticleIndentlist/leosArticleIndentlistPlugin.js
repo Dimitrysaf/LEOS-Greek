@@ -513,6 +513,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     var parentOl = range.startContainer.getParent();
                     var nextLi = range.startContainer.getNext();
                     var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    leosPluginUtils.handleIndentAttributes(range.startContainer, editor, !this.isIndent);
                     if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
                         range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
                     }
@@ -548,6 +549,7 @@ define(function leosArticleIndentListPluginModule(require) {
                 } else if (this.isIndent && isLeaf) {
                     var previous = range.startContainer.getPrevious();
                     var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    leosPluginUtils.handleIndentAttributes(range.startContainer, editor, this.isIndent);
                     if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
                         range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
                     }

@@ -1,7 +1,7 @@
-import {Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import {Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import loginPage from "../pages/loginPage";
 
-Given('navigate to edit drafting application with {string}', (user) => {
+Given("navigate to edit drafting application with {string}", (user) => {
     if(Cypress.env('CE_ENV').includes('@local')) {
         loginPage.visitUrl('localDraftingUrl', 'http' + '://' + Cypress.env('local' + user) + ':' + Cypress.env('localPassword') + '@');
     }
@@ -16,7 +16,7 @@ Given('navigate to edit drafting application with {string}', (user) => {
         loginPage.selectPasswordVerificationMethod();
         loginPage.clickSignInBtn();
     }
-})
+});
 
 Then('user is on EU login page', () => {
     loginPage.elements.username().should('be.visible');
@@ -26,7 +26,7 @@ When("user enters username {string}", (userName) =>{
     loginPage.enterUserName(userName);
 })
 
-And('user clicks next button', () => {
+When('user clicks next button', () => {
     loginPage.clickNextBtn()
 })
 
@@ -38,6 +38,6 @@ When("user enters password {string}", (password) =>{
     loginPage.enterPassword(password);
 })
 
-And('user clicks on sign in button', () => {
+When('user clicks on sign in button', () => {
     loginPage.clickSignInBtn();
 })
