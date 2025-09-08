@@ -573,11 +573,11 @@ class ckEditorWindow {
     }
 
     clickAcceptAll() {
-        this.elements.tcActionDropdown().contains('Accept All').click();
+        this.elements.tcActionDropdown().contains('Accept All').click({ force: true });
     }
 
     clickRejectAll() {
-        this.elements.tcActionDropdown().contains('Reject All').click();
+        this.elements.tcActionDropdown().contains('Reject All').click({ force: true });
     }
 
     selectContent(offsetStart, offsetEnd, element) {
