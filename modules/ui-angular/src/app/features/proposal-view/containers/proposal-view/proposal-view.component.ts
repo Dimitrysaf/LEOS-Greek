@@ -1,22 +1,17 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import {
-  AfterViewChecked, ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {HttpErrorResponse} from '@angular/common/http';
+import {AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild,} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import {EuiTabComponent, EuiTabsComponent} from '@eui/components/eui-tabs';
-import { EuiBreadcrumbService } from '@eui/components/layout';
+import {EuiBreadcrumbService} from '@eui/components/layout';
 import {DetailsTabExclusions, Document, ProposalDetailsLists} from '@leos/shared';
-import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
+import {Subject, takeUntil} from 'rxjs';
 
-import { DocumentService } from '@/shared/services/document.service';
+import {DocumentService} from '@/shared/services/document.service';
 
-import { ProposalDetailsService } from '../../services/proposal-details.service';
-import { EuiAppShellService } from '@eui/core';
+import {ProposalDetailsService} from '../../services/proposal-details.service';
+import {EuiAppShellService} from '@eui/core';
+import {MilestoneStatus} from "@/features/proposal-view/models/milestone.model";
 
 @Component({
   selector: 'app-proposal-view',
@@ -39,6 +34,7 @@ export class ProposalViewComponent
   proposalLanguage: string;
   isClonedProposal = false;
   customTemplateAct = false;
+  isPublished = false;
   originRef: string | null = null;
   proposalRef: string;
   documentCollectionName:string;
@@ -90,6 +86,23 @@ export class ProposalViewComponent
             proposal.cloneProposalMetadataVO?.clonedProposal,
           );
           this.customTemplateAct = proposal.metadata.customTemplateAct;
+
+          if (this.customTemplateAct) {
+            this.proposalDetailsService.milestones$
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (milestones) => {
+                  milestones.forEach((milestone) => {
+                    if (milestone.legFileStatus == MilestoneStatus.CustomTemplatePublished) {
+                      this.isPublished = true;
+                    }
+                  });
+                },
+                error: (error) => {
+                },
+              });
+          }
+
           this.documentService.setIsClonedProposal(this.isClonedProposal);
           this.documentService.setDocumentCollectionName(proposal.metadata?.documentCollectionName);
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;

@@ -224,7 +224,8 @@ public class CatalogServiceImpl implements CatalogService {
                     CUSTOM_TEMPLATE_COMMENT.equals(milestone.getMilestoneComments())) {
                 milestone.setStatus(CustomTemplateMilestoneStatus.UNPUBLISHED.getValue());
                 milestone.setAuditLastMBy(userId);
-                milestone.setAuditLastMDate(LocalDateTime.now());
+                // Comment to prevent all the Milestones to have the same modified date.
+                // milestone.setAuditLastMDate(LocalDateTime.now());
                 documentMilestoneRepository.save(milestone);
             }
         }
@@ -994,9 +995,18 @@ public class CatalogServiceImpl implements CatalogService {
                         .filter(doc -> doc.getConfigCategoryId() != null && doc.getConfigCategoryId().equals(matchingCategory.get().getId()))
                         .findFirst();
 
+                String customKey = configV.getName() + "/" + packageId;
                 if (matchingDoc.isPresent()) {
-                    String customKey = configV.getName() + "/" + packageId;
-                    saveDocumentAsCustomTemplate(matchingDoc.get(), customKey, matchingCategory.get(), userId);
+                    Optional<DocumentContent> docContent = documentContentRepository.findDocumentContentByVersionId(matchingDoc.get().getVersionId());
+
+                    if (!docContent.isPresent()) {
+                        throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Document content not found for document: " + customKey);
+                    }
+
+                    saveDocumentAsCustomTemplate(docContent.get().getContent(), customKey, matchingCategory.get(), userId);
+                }
+                else{
+                    saveDocumentAsCustomTemplate(new String(configV.getContent()), customKey, matchingCategory.get(), userId);
                 }
             }
         }
@@ -1008,13 +1018,8 @@ public class CatalogServiceImpl implements CatalogService {
                 .findFirst();
     }
 
-    private void saveDocumentAsCustomTemplate(DocumentV document, String customKey, ConfigCategory configCategory, String userId) throws RepositoryException {
+    private void saveDocumentAsCustomTemplate(String docContent, String customKey, ConfigCategory configCategory, String userId) throws RepositoryException {
         try {
-            Optional<DocumentContent> docContent = documentContentRepository.findDocumentContentByVersionId(document.getVersionId());
-            if (!docContent.isPresent()) {
-                return;
-            }
-
             CustomTemplateConfigCategory templateCategory = customTemplateConfigCategoryRepository
                     .findConfigCategoriesByCategoryCode(configCategory.getCategoryCode())
                     .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Config category not found: " + configCategory.getCategoryCode()));
@@ -1057,7 +1062,7 @@ public class CatalogServiceImpl implements CatalogService {
             version.setImmutable(false);
             version = customTemplateConfigVersionRepository.save(version);
 
-            String cleanedContent = clearXmlIdAttributes(docContent.get().getContent());
+            String cleanedContent = clearXmlIdAttributes(docContent);
 
             CustomTemplateConfigContent content = new CustomTemplateConfigContent();
             content.setContentString(cleanedContent);

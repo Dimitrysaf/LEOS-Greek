@@ -235,6 +235,14 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         return this.translateService.instant(
           'page.workspace.milestones.status.revision-sent',
         );
+      case MilestoneStatus.CustomTemplatePublished:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.ct-published',
+        );
+      case MilestoneStatus.CustomTemplateUnPublished:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.ct-unpublished',
+        );
       default:
         return status;
     }
@@ -312,4 +320,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     return clonedMilestone;
   }
+
+  protected readonly MilestoneStatus = MilestoneStatus;
 }

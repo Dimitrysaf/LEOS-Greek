@@ -40,4 +40,6 @@ export enum MilestoneStatus {
   Error = 'FILE_ERROR',
   ReadyToMerge = 'Ready to merge',
   RevisionSent = 'Sent for contribution',
+  CustomTemplatePublished = 'PUBLISHED',
+  CustomTemplateUnPublished = 'UNPUBLISHED'
 }
