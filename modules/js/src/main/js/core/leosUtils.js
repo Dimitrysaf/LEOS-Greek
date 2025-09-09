@@ -156,6 +156,9 @@ define(function leosUtilsModule(require) {
             if (_containsOnlyEmptyElts(el)) {
                 return true;
             }
+            if (el.childNodes[0].nodeName === LINE_BREAK_TAG) {
+                return true;
+            }
         }
         return false;
     }

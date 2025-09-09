@@ -169,7 +169,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 (t.getAknTag().value().equalsIgnoreCase(PERSON)
                 || t.getAknTag().value().equalsIgnoreCase(ROLE)))) {
             signatureLocationNode = getFirstChild(node, P);  //Conclusions location paragraph
-        } else if (getChildren(node).size() > 0) {
+        } else {
             childrenNode = ELEMENTS_WITH_ONLY_TEXT.contains(tocVo.getTagName().value().toLowerCase()) ?
                     XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node) :
                     XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node);
