@@ -15,12 +15,12 @@ ARG CHROME_VERSION='140.0.7339.80-1'
 
 FROM cypress/factory:latest
 ENV JAVA_HOME=/opt/openlogic-openjdk-8u402-b06-linux-x64
-ENV M2_HOME=/opt/apache-maven-3.9.6
-ENV PATH=${PATH}:/opt/openlogic-openjdk-8u402-b06-linux-x64/bin:/opt/apache-maven-3.9.6/bin
+ENV M2_HOME=/opt/apache-maven-3.9.11
+ENV PATH=${PATH}:/opt/openlogic-openjdk-8u402-b06-linux-x64/bin:/opt/apache-maven-3.9.11/bin
 
 RUN wget https://builds.openlogic.com/downloadJDK/openlogic-openjdk/8u402-b06/openlogic-openjdk-8u402-b06-linux-x64.tar.gz \
     && tar -xvf openlogic-openjdk-8u402-b06-linux-x64.tar.gz \
     && mv openlogic-openjdk-8u402-b06-linux-x64 /opt/
 RUN wget https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz \
     && tar -xvf apache-maven-3.9.11-bin.tar.gz \
-    && mv apache-maven-3.9.11-bin.tar.gz /opt/
+    && mv apache-maven-3.9.11 /opt/
