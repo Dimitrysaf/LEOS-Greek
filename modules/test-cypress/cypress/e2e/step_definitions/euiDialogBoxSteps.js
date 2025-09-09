@@ -1,4 +1,4 @@
-import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import euiDialogBoxPage from "../pages/euiDialogBoxPage";
 
 Then(`{string} dialog confirm box window is displayed`, (headerValue) => {
@@ -38,11 +38,11 @@ Then(`{string} dialog box window is displayed`, (name) => {
     euiDialogBoxPage.elements.headerTitle().should('have.text', name);
 });
 
-And(`provide input {string} dialog box window`, (input) => {
+When(`provide input {string} dialog box window`, (input) => {
     euiDialogBoxPage.elements.input().clear().type(input);
 });
 
-And(`input value of dialog box window is {string}`, (input) => {
+Then(`input value of dialog box window is {string}`, (input) => {
     euiDialogBoxPage.elements.input().should('have.value', input);
 });
 
@@ -54,7 +54,7 @@ When('click on revert button in dialog box', function () {
     euiDialogBoxPage.clickAcceptBtn();
 });
 
-And(`click on confirm button in dialog confirm box window`, function () {
+When(`click on confirm button in dialog confirm box window`, function () {
     euiDialogBoxPage.clickConfirmBtn();
 });
 
@@ -82,6 +82,6 @@ When(/^drag row (\d+) and drop on row (\d+) in dialog box window$/, function (dr
     euiDialogBoxPage.elements.exampleBoxNgContent().eq(dropRow-1).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
 });
 
-And(/^click on archive button$/, function () {
+When(/^click on archive button$/, function () {
     euiDialogBoxPage.clickArchiveBtn();
 });

@@ -668,7 +668,7 @@ export class DocumentService {
   }
 
   setBlockReloadOfToc() {
-    this.tocService.setBlockReloadOfToc();
+    this.tocService.setBlockReloadOfToc(true);
   }
 
   showRefreshWarning() {

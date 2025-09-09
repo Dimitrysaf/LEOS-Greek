@@ -121,7 +121,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                             // Don't indent if in first list item of the parent.
                             // Outdent, however, can always be done to collapse
                             // the list into a paragraph (div).
-                            if (this.isIndent && firstItemInPath(this.context, path, list))
+                            if (this.isIndent && editor.getCommand('indent').state !== CKEDITOR.TRISTATE_OFF)
                                 return;
 
                             // Exec related global indentation command. Global

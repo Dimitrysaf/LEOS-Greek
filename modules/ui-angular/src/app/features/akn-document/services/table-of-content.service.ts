@@ -220,8 +220,8 @@ export class TableOfContentService {
       );
   }
 
-  setBlockReloadOfToc() {
-    this.blockReloadOfToc = true;
+  setBlockReloadOfToc(reloadTOC: boolean) {
+    this.blockReloadOfToc = reloadTOC;
   }
 
   showRefreshWarning() {

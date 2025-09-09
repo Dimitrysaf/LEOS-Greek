@@ -1,4 +1,4 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import dialogBoxPage from "../pages/euiDialogBoxPage";
 import milestoneExplorer from "../pages/milestoneExplorer";
 

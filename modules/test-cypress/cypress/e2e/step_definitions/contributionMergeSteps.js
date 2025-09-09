@@ -1,4 +1,4 @@
-import {When, Then} from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import contributionPage from "../pages/contributionPage";
 
 When(`click on merge actions menu of {string} {int}`, (eltName, eltNumber) => {
