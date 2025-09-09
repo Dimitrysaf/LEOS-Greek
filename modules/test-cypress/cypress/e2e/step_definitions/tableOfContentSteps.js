@@ -153,12 +153,18 @@ When('drag node label {string} and drop to node label {string} in navigation pan
 });
 
 When('drag node label {string} and drop after node label {string} in navigation pane', function (dragLabel, dropLabel) {
-    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;');
+    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;').wait(500);
     tableOfContent.getNodeLabelText(dragLabel)
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
         .wait(1000);
-    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).trigger("mousemove", "top", {force: true}).trigger("mouseup", "top", {force: true}).wait(1000);
+    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel)
+        .then($el => {
+            return cy.wrap($el)
+                .trigger('mousemove', "top", { force: true })
+                .trigger('mouseup', "top", { force: true });
+        })
+        .wait(1000);
 });
 
 When('drag node label {string} and drop before node label {string} in navigation pane', function (dragLabel, dropLabel) {

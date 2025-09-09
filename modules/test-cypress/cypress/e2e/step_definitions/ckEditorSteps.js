@@ -744,6 +744,10 @@ When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)
     ckEditorWindow.rightClickOnSubparagraphOfParagraph(liTag, attributeName, attributeValue);
 });
 
+When(/^click at offset (\d+) of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (offSet, liTag, attributeName, attributeValue) {
+    ckEditorWindow.clickAtSpecificOffsetInSubparagraphOfParagraph(offSet, liTag, attributeName, attributeValue);
+});
+
 When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/, function (liTag, attributeName, attributeValue) {
     ckEditorWindow.clickOnSubparagraphOfParagraph(liTag, attributeName, attributeValue);
 });
