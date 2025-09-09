@@ -388,8 +388,16 @@ class ckEditorWindow {
         this.elements.paragraph().invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
     }
 
+    getSubparagraphOfParagraph(liTag, attributeName, attributeValue) {
+        return this.elements.paragraph().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1);
+    }
+
     rightClickOnSubparagraphOfParagraph(liTag, attributeName, attributeValue) {
-        this.elements.paragraph().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).rightclick({ force: true });
+        this.getSubparagraphOfParagraph(liTag, attributeName, attributeValue).scrollIntoView().rightclick({ force: true });
+    }
+
+    clickAtSpecificOffsetInSubparagraphOfParagraph(offSet, liTag, attributeName, attributeValue) {
+        this.getSubparagraphOfParagraph(liTag, attributeName, attributeValue).invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
     }
 
     clickOnSubparagraphOfParagraph(liTag, attributeName, attributeValue) {
