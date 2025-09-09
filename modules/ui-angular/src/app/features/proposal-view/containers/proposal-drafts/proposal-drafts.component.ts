@@ -269,6 +269,8 @@ export class ProposalDraftsComponent
     this.coverpage = getChildDocument('COVERPAGE');
     this.memorandum = getChildDocument('MEMORANDUM');
     this.document = getChildDocument('BILL');
+    console.log(this.document);
+    console.log(this.proposal.metadata);
     this.explanatories = this.proposal.childDocuments.filter(
       (d) => d.category === 'COUNCIL_EXPLANATORY',
     );

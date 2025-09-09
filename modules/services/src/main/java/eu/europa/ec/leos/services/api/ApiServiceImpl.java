@@ -1020,6 +1020,16 @@ public abstract class ApiServiceImpl implements ApiService {
             try {
                 populateTrackChangesContext(proposal);
                 LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+
+                if (proposal.getMetadata() != null && proposal.getMetadata().get().isCustomTemplateAct()){
+                    List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                    documents.forEach(document -> {
+                        if (document.getCategory().equals(LeosCategory.ANNEX)){
+                            throw new RuntimeException("You cannot add more than one Annex to a Custom Template.");
+                        }
+                    });
+                }
+
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
                 BillContextService billContext = billContextProvider.get();
