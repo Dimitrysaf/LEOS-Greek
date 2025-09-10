@@ -728,6 +728,8 @@ public class CatalogServiceImpl implements CatalogService {
             version.setIsVersionSeriesCheckedOut(false);
             version.setAuditCBy(userId);
             version.setAuditCDate(LocalDateTime.now());
+            version.setAuditLastMBy(userId);
+            version.setAuditLastMDate(LocalDateTime.now());
             version.setImmutable(false);
             version = customTemplateConfigVersionRepository.save(version);
 
@@ -848,54 +850,6 @@ public class CatalogServiceImpl implements CatalogService {
         return documentVRepository.findDocumentsByPackageId(packageId);
     }
 
-
-    private void saveCustomTemplateFileWithContent(String templateKey, byte[] content, String userId) throws RepositoryException {
-        try {
-            CustomTemplateConfigCategory templateCategory = customTemplateConfigCategoryRepository
-                    .findConfigCategoriesByCategoryCode("TEMPLATE")
-                    .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "TEMPLATE category not found"));
-
-            CustomTemplateConfig config = new CustomTemplateConfig();
-            config.setName(templateKey);
-            config.setAuditCBy(userId);
-            config.setAuditCDate(LocalDateTime.now());
-            config.setAuditLastMBy(userId);
-            config.setAuditLastMDate(LocalDateTime.now());
-            config.setLanguage("en");
-            config.setConfigCategory(templateCategory);
-            config = customTemplateConfigRepository.save(config);
-
-            CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
-            version.setConfigId(config.getId());
-            version.setVersionLabel("1.0.0.0");
-            version.setVersionSeriesId(config.getId().toString());
-            version.setVersionType(String.valueOf(VersionType.MAJOR.value()));
-            version.setIsLatestMajorVersion(true);
-            version.setIsLatestVersion(true);
-            version.setIsMajorVersion(true);
-            version.setIsVersionSeriesCheckedOut(false);
-            version.setAuditCBy(userId);
-            version.setAuditCDate(LocalDateTime.now());
-            version.setImmutable(false);
-            version = customTemplateConfigVersionRepository.save(version);
-
-            CustomTemplateConfigContent configContent = new CustomTemplateConfigContent();
-            configContent.setContent(content);
-            configContent.setContentStreamMimeType("application/xml");
-            configContent.setContentStreamFilename(templateKey + ".xml");
-            configContent.setContentStreamId(config.getId().toString());
-            configContent.setContentStreamLength(String.valueOf(content.length));
-            configContent.setAuditCBy(userId);
-            configContent.setAuditCDate(LocalDateTime.now());
-            configContent.setVersionId(version);
-            customTemplateConfigContentRepository.save(configContent);
-
-        } catch (Exception e) {
-            LOG.error("Error saving custom template file: {}", templateKey, e);
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
-        }
-    }
-
     private String insertTemplateIntoCatalogAndExtractKeys(String existingCatalogXml, String templateKey, String templateName, String packageId, Set<String> extractedKeys) throws RepositoryException {
         try {
             byte[] fullCatalogContent = getCatalogFromDatabase();
@@ -966,6 +920,8 @@ public class CatalogServiceImpl implements CatalogService {
             newVersion.setIsVersionSeriesCheckedOut(false);
             newVersion.setAuditCBy(userId);
             newVersion.setAuditCDate(LocalDateTime.now());
+            newVersion.setAuditLastMBy(userId);
+            newVersion.setAuditLastMDate(LocalDateTime.now());
             newVersion.setImmutable(false);
             newVersion = customTemplateConfigVersionRepository.save(newVersion);
 
@@ -1059,6 +1015,8 @@ public class CatalogServiceImpl implements CatalogService {
             version.setIsVersionSeriesCheckedOut(false);
             version.setAuditCBy(userId);
             version.setAuditCDate(LocalDateTime.now());
+            version.setAuditLastMBy(userId);
+            version.setAuditLastMDate(LocalDateTime.now());
             version.setImmutable(false);
             version = customTemplateConfigVersionRepository.save(version);
 
@@ -1211,6 +1169,8 @@ public class CatalogServiceImpl implements CatalogService {
             version.setIsVersionSeriesCheckedOut(false);
             version.setAuditCBy(userId);
             version.setAuditCDate(LocalDateTime.now());
+            version.setAuditLastMBy(userId);
+            version.setAuditLastMDate(LocalDateTime.now());
             version.setImmutable(false);
             version = customTemplateConfigVersionRepository.save(version);
 
