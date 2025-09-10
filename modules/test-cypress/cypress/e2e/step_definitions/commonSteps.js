@@ -1,8 +1,8 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import messageGrowl from "../pages/messageGrowl";
 import headerPage from "../pages/headerPage";
 
-And(`extract recent {string} file present in download folder`, (extension) => {
+When(`extract recent {string} file present in download folder`, (extension) => {
     let path = Cypress.config('downloadsFolder');
     // TODO: After implementation in the code, check for successful download message before proceeding further.
     /* if(extension === "zip"){
@@ -73,7 +73,7 @@ When(/^wait for (\d+) milliseconds$/, function (milliseconds) {
     cy.wait(milliseconds);
 });
 
-Given(/^refresh the browser$/, function () {
+When(/^refresh the browser$/, function () {
     cy.reload();
 });
 

@@ -1,6 +1,5 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import ckeDialogWindow from "../pages/ckeDialogWindow";
-import internalReferenceWindow from "../pages/internalReferenceWindow";
 
 Then(`cke dialog window is displayed with title {string}`, (title) => {
     ckeDialogWindow.elements.dialogTitle().should('have.text', title);
@@ -30,6 +29,6 @@ Then('click on dialog cancel button', () => {
     ckeDialogWindow.clickDialogCancelBtn();
 });
 
-And('click on cancel button in cke dialog window', () => {
+When('click on cancel button in cke dialog window', () => {
    ckeDialogWindow.clickCancelButton()
 })

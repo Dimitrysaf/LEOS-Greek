@@ -1,4 +1,4 @@
-import {When, Then, And} from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import ribbonToolbar from "../pages/ribbonToolBar";
 
 When(`click on finalise button in ribbon toolbar`, () => {
@@ -53,7 +53,7 @@ When('enable track changes', () => {
     ribbonToolbar.clickEnableTrackChangesToggleBtn();
 })
 
-And(/^enable track changes toggle bar is on in ribbon toolbar$/, function () {
+Then(/^enable track changes toggle bar is on in ribbon toolbar$/, function () {
     ribbonToolbar.elements.enableTrackChangesInput().should('have.attr', 'checked', 'checked');
 });
 
@@ -81,7 +81,7 @@ When(/^click on save button in ribbon toolbar$/, function () {
     ribbonToolbar.clickSaveBtn();
 });
 
-And('ribbon toolbar is maximized', () => {
+Then('ribbon toolbar is maximized', () => {
     ribbonToolbar.elements.ribbonToolBarArrowUpBtn().should('be.visible');
 })
 
@@ -114,7 +114,7 @@ Then(/^mark as done button is displayed in the ribbon toolbar$/, function () {
     ribbonToolbar.elements.markAsDoneBtn().should('be.visible');
 });
 
-And ('close the comparison section from the ribbon bar',function (){
+When('close the comparison section from the ribbon bar',function (){
     ribbonToolbar.clickCancelVersionCompareContainer();
 });
 

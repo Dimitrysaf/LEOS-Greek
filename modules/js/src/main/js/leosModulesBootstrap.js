@@ -77,7 +77,7 @@
             range: "js/lib/anchoring/range",
             rangeutil: "js/lib/anchoring/util",
             xpath: "js/lib/anchoring/xpath",
-            refToLink:"lib/ref2Link_1.3.29/assets/ref2link.bundle",
+            refToLink:"lib/ref2Link_1.3.30/assets/ref2link.bundle",
             // LEOS Core, Editor, Views, Components & Extensions
             core: "js/core",
             editor: "js/editor",

@@ -1,4 +1,4 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import collaboratorsTab from "../pages/collaboratorsTab";
 
 When(/^click on add button in collaborators tab$/, function () {
@@ -49,12 +49,12 @@ When(/^select role with value "([^"]*)" in column action of row (\d+) of collabo
     collaboratorsTab.selectRoleFromRow(role, row);
 });
 
-And  ('click on delete role button',()=>{
+When('click on delete role button',()=>{
     collaboratorsTab.clickDeleteRole();
 });
 
 Then('{string} is not displayed in collaborators tab', function (name) {
-    collaboratorsTab.getRowByName('name').should('not.exist');
+    collaboratorsTab.getRowByName(name).should('not.exist');
 });
 
 Then ('delete option is not be visible for the collaborator',()=>{
