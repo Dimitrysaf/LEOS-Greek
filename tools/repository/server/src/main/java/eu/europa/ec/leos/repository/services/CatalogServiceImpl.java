@@ -721,7 +721,7 @@ public class CatalogServiceImpl implements CatalogService {
             version.setConfigId(config.getId());
             version.setVersionLabel("1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
-            version.setVersionType("MAJOR");
+            version.setVersionType(String.valueOf(VersionType.MAJOR.value()));
             version.setIsLatestMajorVersion(true);
             version.setIsLatestVersion(true);
             version.setIsMajorVersion(true);
@@ -869,7 +869,7 @@ public class CatalogServiceImpl implements CatalogService {
             version.setConfigId(config.getId());
             version.setVersionLabel("1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
-            version.setVersionType("MAJOR");
+            version.setVersionType(String.valueOf(VersionType.MAJOR.value()));
             version.setIsLatestMajorVersion(true);
             version.setIsLatestVersion(true);
             version.setIsMajorVersion(true);
@@ -959,7 +959,7 @@ public class CatalogServiceImpl implements CatalogService {
             newVersion.setConfigId(config.getId());
             newVersion.setVersionLabel(documentService.getNextVersionLabel(VersionType.MINOR, currentVersion.getVersionLabel()));
             newVersion.setVersionSeriesId(config.getId().toString());
-            newVersion.setVersionType("MINOR");
+            newVersion.setVersionType(String.valueOf(VersionType.MINOR.value()));
             newVersion.setIsLatestMajorVersion(false);
             newVersion.setIsLatestVersion(true);
             newVersion.setIsMajorVersion(false);
@@ -1052,7 +1052,7 @@ public class CatalogServiceImpl implements CatalogService {
             version.setConfigId(config.getId());
             version.setVersionLabel(existingConfig.isPresent() ? documentService.getNextVersionLabel(VersionType.MINOR, "1.0.0.0") : "1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
-            version.setVersionType(existingConfig.isPresent() ? "MINOR" : "MAJOR");
+            version.setVersionType(existingConfig.isPresent() ? String.valueOf(VersionType.MINOR.value()) : String.valueOf(VersionType.MAJOR.value()));
             version.setIsLatestMajorVersion(!existingConfig.isPresent());
             version.setIsLatestVersion(true);
             version.setIsMajorVersion(!existingConfig.isPresent());
@@ -1204,7 +1204,7 @@ public class CatalogServiceImpl implements CatalogService {
             version.setConfigId(config.getId());
             version.setVersionLabel(existingConfig.isPresent() ? documentService.getNextVersionLabel(VersionType.MINOR, "1.0.0.0") : "1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
-            version.setVersionType(existingConfig.isPresent() ? "MINOR" : "MAJOR");
+            version.setVersionType(existingConfig.isPresent() ? String.valueOf(VersionType.MINOR.value()) : String.valueOf(VersionType.MAJOR.value()));
             version.setIsLatestMajorVersion(!existingConfig.isPresent());
             version.setIsLatestVersion(true);
             version.setIsMajorVersion(!existingConfig.isPresent());
