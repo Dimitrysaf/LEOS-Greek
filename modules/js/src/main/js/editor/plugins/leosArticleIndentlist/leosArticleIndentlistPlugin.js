@@ -79,7 +79,7 @@ define(function leosArticleIndentListPluginModule(require) {
                             // Don't indent if in first list item of the parent.
                             // Outdent, however, can always be done to collapse
                             // the list into a paragraph (div).
-                            if (this.isIndent && firstItemInPath(this.context, path, list) && path.elements[0].getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) !== leosPluginUtils.SUBPARAGRAPH)
+                            if (this.isIndent && editor.getCommand('indent').state !== CKEDITOR.TRISTATE_OFF)
                                 return;
 
                             // Exec related global indentation command. Global
@@ -513,6 +513,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     var parentOl = range.startContainer.getParent();
                     var nextLi = range.startContainer.getNext();
                     var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    leosPluginUtils.handleIndentAttributes(range.startContainer, editor, !this.isIndent);
                     if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
                         range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
                     }
@@ -548,6 +549,7 @@ define(function leosArticleIndentListPluginModule(require) {
                 } else if (this.isIndent && isLeaf) {
                     var previous = range.startContainer.getPrevious();
                     var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    leosPluginUtils.handleIndentAttributes(range.startContainer, editor, this.isIndent);
                     if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
                         range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
                     }

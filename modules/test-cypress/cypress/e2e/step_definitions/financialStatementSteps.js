@@ -1,4 +1,4 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import financialStatementPage from "../pages/financialStatementPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
@@ -86,3 +86,47 @@ Then('content of subparagraph {int} of level {int} contains a table with {int} r
     financialStatementPage.getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', rowNumber);
     financialStatementPage.getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', columnNumber);
 });
+
+When(/^user selects checkbox (\d+) of level "([^"]*)"$/, function (checkboxIndex, levelName) {
+    financialStatementPage.selectCheckboxInLevel(checkboxIndex, levelName);
+});
+
+Then(/^checkbox (\d+) of level "([^"]*)" is selected$/, function (checkboxIndex, levelName) {
+    financialStatementPage.getCheckBoxInLevel(checkboxIndex, levelName).should('have.attr', 'name', 'checked');
+});
+
+When('user deselects checkbox {int} of level {string}', (checkboxIndex, levelNum) => {
+    financialStatementPage.unSelectCheckboxInLevel(checkboxIndex, levelNum);
+});
+
+Then(/^checkbox (\d+) of level "([^"]*)" is deselected$/, function (checkboxIndex, levelName) {
+    financialStatementPage.getCheckBoxInLevel(checkboxIndex, levelName).should('have.attr', 'name', 'unchecked');
+});
+
+When('total number of selected checkbox inside level {string} is {int}', (levelName, totalNumberOfChkBoxes) => {
+    financialStatementPage.getSelectedCheckBoxInLevel(levelName).should('have.length', totalNumberOfChkBoxes);
+});
+
+When('user selects all the checkboxes of level {string}',(levelName) => {
+    financialStatementPage.selectAllCheckboxesInLevel(levelName)
+});
+
+When(/^click on delete icon of repeatable subparagraph (\d+) of level "([^"]*)"$/, function (repeatableSubparagraphNumber, levelName) {
+    financialStatementPage.deleteRepeatableSubparagraph(repeatableSubparagraphNumber,levelName);
+});
+
+Then ('repeatable subparagraph {int} of level {string} contains attribute name {string} with value {string}',(repeatableSubparagraphNumber, levelName, attributeName, attributeValue)=>{
+    financialStatementPage.getRepeatedSubparagraphOfLevel(repeatableSubparagraphNumber, levelName).should('have.attr', attributeName, attributeValue);
+})
+
+When(/^right click on repeatable subparagraph (\d+) of level "([^"]*)"$/, function (repeatableSubparagraphNumber, levelName) {
+    financialStatementPage.getRepeatedSubparagraphOfLevel(repeatableSubparagraphNumber, levelName).rightclick();
+});
+
+Then ('repeatable subparagraph {int} of level {string} does not contain attribute name {string} with value {string}',(repeatableSubparagraphNumber, levelName, attributeName, attributeValue)=>{
+    financialStatementPage.getRepeatedSubparagraphOfLevel(repeatableSubparagraphNumber, levelName).should('not.have.attr', attributeName, attributeValue);
+})
+
+/*When(/^scroll the view into level "([^"]*)"$/, function (levelName) {
+    financialStatementPage.getLevelByNum(levelName).scrollIntoView();
+});*/

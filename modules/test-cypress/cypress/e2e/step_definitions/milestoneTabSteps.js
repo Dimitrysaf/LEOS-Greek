@@ -1,4 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import milestoneTab from "../pages/milestoneTab";
 import dialogBoxPage from "../pages/euiDialogBoxPage";
 
@@ -14,11 +14,11 @@ When(`click on milestone type dropdown`, () => {
     milestoneTab.elements.milestoneTypeDropDown();
 });
 
-And(`{string} option is selected by default`, (option) => {
+Then(`{string} option is selected by default`, (option) => {
     milestoneTab.elements.milestoneTypeDropDown().should('have.value', option);
 });
 
-And(`milestone title textBox is disabled`, () => {
+Then(`milestone title textBox is disabled`, () => {
     milestoneTab.elements.milestoneTitleTextBox().should('be.disabled');
 });
 
