@@ -1923,6 +1923,7 @@ define(function leosPluginUtilsModule(require) {
         isLeaf: _isLeaf,
         isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
         isSignatureElement: _isSignatureElement,
+        handleIndentAttributes: _handleIndentAttributes,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
