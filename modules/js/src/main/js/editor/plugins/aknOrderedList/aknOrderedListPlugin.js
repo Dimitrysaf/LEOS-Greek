@@ -355,6 +355,15 @@ define(function aknOrderedListPluginModule(require) {
                 akn : "leos:softdate",
                 html : "data-akn-attr-softdate"
             }, {
+                akn: "leos:id-to-be-restored",
+                html: "data-akn-id-to-be-restored"
+            }, {
+                akn: "leos:renumber-origin",
+                html: "data-akn-renumber-origin"
+            }, {
+                akn: "leos:id-to-be-removed",
+                html: "data-akn-id-to-be-removed"
+            }, {
                 html : "data-akn-name=aknOrderedList"
             },{
                 akn : "leos:action",
