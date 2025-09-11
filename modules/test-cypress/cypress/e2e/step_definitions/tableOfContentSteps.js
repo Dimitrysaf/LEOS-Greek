@@ -161,8 +161,8 @@ When('drag node label {string} and drop after node label {string} in navigation 
     tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel)
         .then($el => {
             return cy.wrap($el)
-                .trigger('mousemove', "top", { force: true })
-                .trigger('mouseup', "top", { force: true });
+                .trigger('mousemove', "center", { force: true })
+                .trigger('mouseup', "center", { force: true });
         })
         .wait(1000);
 });
