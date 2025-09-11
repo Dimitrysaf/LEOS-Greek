@@ -43,6 +43,14 @@
               <div class="col-sm-6 label-column"></div>
             </div>
 
+            <div class="row details-gen-rows">
+              <div class="col-sm-2 label-column">
+                <label>{{ 'page.collection.details.language' | translate }}</label>
+              </div>
+              <div class="col-sm-4">{{ proposal.metadata.language }}</div>
+              <div class="col-sm-6 label-column"></div>
+            </div>
+
             <div class="row details-gen-rows" *ngIf="!detailsTabExclusions?.eea">
               <div class="col-sm-12 label-column"><input
                 name="checkbox-eea-rel"
