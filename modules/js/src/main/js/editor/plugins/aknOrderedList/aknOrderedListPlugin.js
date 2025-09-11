@@ -257,32 +257,29 @@ define(function aknOrderedListPluginModule(require) {
         return element.getAscendant(leosPluginUtils.HTML_POINT);
     }
 
-    //This is removing num and origin() on indent and outdent also
     function _resetDataNumOnIndent(event) {
         var editor = event.editor, isIndent = event.data.isIndent, range, node;
         var selection = editor.getSelection();
+
+        var originalRanges = selection.getRanges();
+        var savedRanges = [].concat(originalRanges);
+
         selection = leosPluginUtils.selectCorrectElementForList(selection, isIndent);
         var ranges = selection && selection.getRanges(),
             iterator = ranges.createIterator();
 
         while ((range = iterator.getNextRange())) {
-            var currentStartNode = range.startContainer.type !== CKEDITOR.NODE_TEXT && range.startContainer.getName() === "li"
-                ? range.startContainer
-                : range.startContainer.getAscendant('li');
-            var currentEndNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === "li"
-                ? range.endContainer
-                : range.endContainer.getAscendant('li');
-            if (currentStartNode) {
-                _handleNode(currentStartNode, editor, isIndent);
-                currentStartNode = range.startContainer.type !== CKEDITOR.NODE_TEXT && range.startContainer.getName() === "li"
+            if (range.startContainer) {
+                var startNode = range.startContainer.type !== CKEDITOR.NODE_TEXT && range.startContainer.getName() === "li"
                     ? range.startContainer
                     : range.startContainer.getAscendant('li');
+                _handleNode(startNode, editor, isIndent);
             }
-            if (currentEndNode) {
-                _handleNode(currentEndNode, editor, isIndent);
-                currentEndNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === "li"
+            if (range.endContainer) {
+                var endNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === "li"
                     ? range.endContainer
                     : range.endContainer.getAscendant('li');
+                _handleNode(endNode, editor, isIndent);
             }
 
             var rangeWalker = new CKEDITOR.dom.walker(range);
@@ -290,6 +287,7 @@ define(function aknOrderedListPluginModule(require) {
                 _handleNode(node, editor, isIndent);
             }
         }
+        selection.selectRanges(savedRanges);
     }
 
     function _handleNode(node, editor, isIndent) {
@@ -297,7 +295,6 @@ define(function aknOrderedListPluginModule(require) {
             return;
         }
         leosPluginUtils.handleIndentAttributes(node, editor, isIndent);
-        node.removeAttribute('data-akn-num');
         node.getChildren().toArray().forEach(_handleNode.bind(this, editor, isIndent));
     }
 
