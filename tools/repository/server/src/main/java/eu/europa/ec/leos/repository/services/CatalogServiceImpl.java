@@ -65,13 +65,12 @@ public class CatalogServiceImpl implements CatalogService {
     private final DocumentContentRepository documentContentRepository;
     private final ConfigService configService;
     private final ConfigurationVRepository configurationVRepository;
-    private final CustomTemplateConfigRepository customTemplateConfigRepository;
-    private final CustomTemplateConfigVersionRepository customTemplateConfigVersionRepository;
-    private final CustomTemplateConfigContentRepository customTemplateConfigContentRepository;
-    private final CustomTemplateConfigCategoryRepository customTemplateConfigCategoryRepository;
     private final ConfigCategoryRepository configCategoryRepository;
     private final DocumentService documentService;
     private final MilestoneDocumentService milestoneDocumentService;
+    private final ConfigRepository configRepository;
+    private final ConfigVersionRepository configVersionRepository;
+    private final ConfigContentRepository configContentRepository;
 
     @Autowired
     public CatalogServiceImpl(DocumentRepository documentRepository,
@@ -81,13 +80,12 @@ public class CatalogServiceImpl implements CatalogService {
                               DocumentContentRepository documentContentRepository,
                               ConfigService configService,
                               ConfigurationVRepository configurationVRepository,
-                              CustomTemplateConfigRepository customTemplateConfigRepository,
-                              CustomTemplateConfigVersionRepository customTemplateConfigVersionRepository,
-                              CustomTemplateConfigContentRepository customTemplateConfigContentRepository,
-                              CustomTemplateConfigCategoryRepository customTemplateConfigCategoryRepository,
                               ConfigCategoryRepository configCategoryRepository,
                               DocumentService documentService,
-                              MilestoneDocumentService milestoneDocumentService) {
+                              MilestoneDocumentService milestoneDocumentService,
+                              ConfigRepository configRepository,
+                              ConfigVersionRepository configVersionRepository,
+                              ConfigContentRepository configContentRepository) {
         this.documentRepository = documentRepository;
         this.documentMilestoneRepository = documentMilestoneRepository;
         this.customTemplateEntitiesRepository = customTemplateEntitiesRepository;
@@ -95,13 +93,12 @@ public class CatalogServiceImpl implements CatalogService {
         this.documentContentRepository = documentContentRepository;
         this.configService = configService;
         this.configurationVRepository = configurationVRepository;
-        this.customTemplateConfigRepository = customTemplateConfigRepository;
-        this.customTemplateConfigVersionRepository = customTemplateConfigVersionRepository;
-        this.customTemplateConfigContentRepository = customTemplateConfigContentRepository;
-        this.customTemplateConfigCategoryRepository = customTemplateConfigCategoryRepository;
         this.configCategoryRepository = configCategoryRepository;
         this.documentService = documentService;
         this.milestoneDocumentService = milestoneDocumentService;
+        this.configRepository = configRepository;
+        this.configVersionRepository = configVersionRepository;
+        this.configContentRepository = configContentRepository;
     }
 
     /**
@@ -258,10 +255,10 @@ public class CatalogServiceImpl implements CatalogService {
                 // Insert xml into Catalogs
                 for (String entity : newEntities) {
                     String catalogName = "catalog-" + entity;
-                    Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+                    Optional<Config> config = configRepository.findConfigByName(catalogName);
                     if (config.isPresent()) {
-                        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
-                        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+                        ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+                        ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
                         String updatedCatalog = insertTemplateIntoCatalogAndExtractKeys(content.getContentString(), baseTemplateName, customTemplateName, pkg.getId().toString(), insertedTemplateKeys);
                         updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
                     }
@@ -323,10 +320,10 @@ public class CatalogServiceImpl implements CatalogService {
                 // Extract template keys from all updated catalogs
                 for (String entity : newEntities) {
                     String catalogName = "catalog-" + entity;
-                    Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+                    Optional<Config> config = configRepository.findConfigByName(catalogName);
                     if (config.isPresent()) {
-                        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
-                        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+                        ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+                        ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
                         extractTemplateKeysFromCatalog(content.getContentString(), pkg.getId().toString(), allTemplateKeys);
                     }
                 }
@@ -497,7 +494,7 @@ public class CatalogServiceImpl implements CatalogService {
             if (importedTemplate instanceof Element) {
                 Element templateEl = (Element) importedTemplate;
                 templateEl.setAttribute("custom-name", templateName);
-                templateEl.setAttribute("custom-key", templateEl.getAttribute("key") + "/" + packageId);
+                templateEl.setAttribute("key", templateEl.getAttribute("key") + "/" + packageId);
 
                 // Add custom-id to all child items
                 NodeList childItems = templateEl.getElementsByTagName("item");
@@ -505,7 +502,7 @@ public class CatalogServiceImpl implements CatalogService {
                     Element childItem = (Element) childItems.item(i);
                     String id = childItem.getAttribute("id");
                     if (StringUtils.isNotBlank(id)) {
-                        childItem.setAttribute("custom-id", id + "/" + packageId);
+                        childItem.setAttribute("id", id + "/" + packageId);
                     }
                 }
             }
@@ -690,7 +687,7 @@ public class CatalogServiceImpl implements CatalogService {
     private void ensureCatalogExists(String entityName, String userId, Package pkg) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
 
-        if (!customTemplateConfigRepository.findConfigByName(catalogName).isPresent()) {
+        if (!configRepository.findConfigByName(catalogName).isPresent()) {
             createCatalog(catalogName, entityName, userId);
         }
     }
@@ -700,13 +697,13 @@ public class CatalogServiceImpl implements CatalogService {
             String baseCatalog = createCatalogWithCategoriesOnly();
 
             // Find the Config Category category
-            CustomTemplateConfigCategory templateCatalogCategory = customTemplateConfigCategoryRepository
+            ConfigCategory templateCatalogCategory = configCategoryRepository
                     .findConfigCategoriesByCategoryCode("CONFIG")
                     .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                             "Config Category category not found"));
 
             // Step 1: Create config entry
-            CustomTemplateConfig config = new CustomTemplateConfig();
+            Config config = new Config();
             config.setName(catalogName);
             config.setAuditCBy(userId);
             config.setAuditCDate(LocalDateTime.now());
@@ -714,10 +711,10 @@ public class CatalogServiceImpl implements CatalogService {
             config.setAuditLastMDate(LocalDateTime.now());
             config.setLanguage("EN");
             config.setConfigCategory(templateCatalogCategory);
-            config = customTemplateConfigRepository.save(config);
+            config = configRepository.save(config);
 
             // Step 2: Create version entry
-            CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
+            ConfigVersion version = new ConfigVersion();
             version.setConfigId(config.getId());
             version.setVersionLabel("1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
@@ -730,11 +727,10 @@ public class CatalogServiceImpl implements CatalogService {
             version.setAuditCDate(LocalDateTime.now());
             version.setAuditLastMBy(userId);
             version.setAuditLastMDate(LocalDateTime.now());
-            version.setImmutable(false);
-            version = customTemplateConfigVersionRepository.save(version);
+            version = configVersionRepository.save(version);
 
             // Step 3: Create content entry
-            CustomTemplateConfigContent content = new CustomTemplateConfigContent();
+            ConfigContent content = new ConfigContent();
             content.setContentString(baseCatalog);
             content.setContentStreamMimeType("application/xml");
             content.setContentStreamFilename(catalogName + ".xml");
@@ -743,12 +739,12 @@ public class CatalogServiceImpl implements CatalogService {
             content.setAuditCBy(userId);
             content.setAuditCDate(LocalDateTime.now());
             content.setVersionId(version);
-            customTemplateConfigContentRepository.save(content);
+            configContentRepository.save(content);
 
             // Save catalog config file for this entity
             Optional<ConfigurationV> catalogConfigFile = configurationVRepository.findConfigurationByName("catalog-CONF");
             if (catalogConfigFile.isPresent()) {
-                CustomTemplateConfigCategory configCategory = customTemplateConfigCategoryRepository
+                ConfigCategory configCategory = configCategoryRepository
                         .findConfigCategoriesByCategoryCode("CONFIG")
                         .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "CONFIG category not found"));
 
@@ -790,7 +786,7 @@ public class CatalogServiceImpl implements CatalogService {
                 String packageId = customKey.substring(2);
                 removeTemplatesByPackageId(catalogDoc.getDocumentElement(), packageId);
             } else {
-                // Remove specific template by custom-key
+                // Remove specific template by key
                 Element templateToRemove = findTemplateByCustomKey(catalogDoc.getDocumentElement(), customKey);
                 if (templateToRemove != null) {
                     templateToRemove.getParentNode().removeChild(templateToRemove);
@@ -809,7 +805,7 @@ public class CatalogServiceImpl implements CatalogService {
         for (int i = 0; i < items.getLength(); i++) {
             Element item = (Element) items.item(i);
             if ("TEMPLATE".equals(item.getAttribute("type")) &&
-                    customKey.equals(item.getAttribute("custom-key"))) {
+                    customKey.equals(item.getAttribute("key"))) {
                 return item;
             }
         }
@@ -823,7 +819,7 @@ public class CatalogServiceImpl implements CatalogService {
         for (int i = 0; i < items.getLength(); i++) {
             Element item = (Element) items.item(i);
             if ("TEMPLATE".equals(item.getAttribute("type"))) {
-                String customKey = item.getAttribute("custom-key");
+                String customKey = item.getAttribute("key");
                 if (customKey != null && customKey.endsWith("/" + packageId)) {
                     toRemove.add(item);
                 }
@@ -899,17 +895,17 @@ public class CatalogServiceImpl implements CatalogService {
         return configCategoryRepository.findConfigCategoriesByCategoryCodeIn(categoryCodes);
     }
 
-    private void updateCustomTemplateConfigWithNewVersion(CustomTemplateConfig config, String newContent, String userId) throws RepositoryException {
+    private void updateCustomTemplateConfigWithNewVersion(Config config, String newContent, String userId) throws RepositoryException {
         try {
             // Get current version
-            CustomTemplateConfigVersion currentVersion = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+            ConfigVersion currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
 
             // Mark current version as not latest
             currentVersion.setIsLatestVersion(false);
-            customTemplateConfigVersionRepository.save(currentVersion);
+            configVersionRepository.save(currentVersion);
 
             // Create new version
-            CustomTemplateConfigVersion newVersion = new CustomTemplateConfigVersion();
+            ConfigVersion newVersion = new ConfigVersion();
             newVersion.setConfigId(config.getId());
             newVersion.setVersionLabel(documentService.getNextVersionLabel(VersionType.MINOR, currentVersion.getVersionLabel()));
             newVersion.setVersionSeriesId(config.getId().toString());
@@ -922,11 +918,10 @@ public class CatalogServiceImpl implements CatalogService {
             newVersion.setAuditCDate(LocalDateTime.now());
             newVersion.setAuditLastMBy(userId);
             newVersion.setAuditLastMDate(LocalDateTime.now());
-            newVersion.setImmutable(false);
-            newVersion = customTemplateConfigVersionRepository.save(newVersion);
+            newVersion = configVersionRepository.save(newVersion);
 
             // Create new content
-            CustomTemplateConfigContent newContentEntity = new CustomTemplateConfigContent();
+            ConfigContent newContentEntity = new ConfigContent();
             newContentEntity.setContentString(newContent);
             newContentEntity.setContentStreamMimeType("application/xml");
             newContentEntity.setContentStreamFilename(config.getName() + ".xml");
@@ -935,7 +930,7 @@ public class CatalogServiceImpl implements CatalogService {
             newContentEntity.setAuditCBy(userId);
             newContentEntity.setAuditCDate(LocalDateTime.now());
             newContentEntity.setVersionId(newVersion);
-            customTemplateConfigContentRepository.save(newContentEntity);
+            configContentRepository.save(newContentEntity);
 
         } catch (Exception e) {
             LOG.error("Error updating custom template config with new version", e);
@@ -976,24 +971,24 @@ public class CatalogServiceImpl implements CatalogService {
 
     private void saveDocumentAsCustomTemplate(String docContent, String customKey, ConfigCategory configCategory, String userId) throws RepositoryException {
         try {
-            CustomTemplateConfigCategory templateCategory = customTemplateConfigCategoryRepository
+            ConfigCategory templateCategory = configCategoryRepository
                     .findConfigCategoriesByCategoryCode(configCategory.getCategoryCode())
                     .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Config category not found: " + configCategory.getCategoryCode()));
 
             // Check if config already exists
-            Optional<CustomTemplateConfig> existingConfig = customTemplateConfigRepository.findConfigByName(customKey);
-            CustomTemplateConfig config;
+            Optional<Config> existingConfig = configRepository.findConfigByName(customKey);
+            Config config;
 
             if (existingConfig.isPresent()) {
                 config = existingConfig.get();
                 // Mark previous version as not latest
-                CustomTemplateConfigVersion currentVersion = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+                ConfigVersion currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
                 if (currentVersion != null) {
                     currentVersion.setIsLatestVersion(false);
-                    customTemplateConfigVersionRepository.save(currentVersion);
+                    configVersionRepository.save(currentVersion);
                 }
             } else {
-                config = new CustomTemplateConfig();
+                config = new Config();
                 config.setName(customKey);
                 config.setAuditCBy(userId);
                 config.setAuditCDate(LocalDateTime.now());
@@ -1001,10 +996,10 @@ public class CatalogServiceImpl implements CatalogService {
                 config.setAuditLastMDate(LocalDateTime.now());
                 config.setLanguage("en");
                 config.setConfigCategory(templateCategory);
-                config = customTemplateConfigRepository.save(config);
+                config = configRepository.save(config);
             }
 
-            CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
+            ConfigVersion version = new ConfigVersion();
             version.setConfigId(config.getId());
             version.setVersionLabel(existingConfig.isPresent() ? documentService.getNextVersionLabel(VersionType.MINOR, "1.0.0.0") : "1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
@@ -1017,12 +1012,11 @@ public class CatalogServiceImpl implements CatalogService {
             version.setAuditCDate(LocalDateTime.now());
             version.setAuditLastMBy(userId);
             version.setAuditLastMDate(LocalDateTime.now());
-            version.setImmutable(false);
-            version = customTemplateConfigVersionRepository.save(version);
+            version = configVersionRepository.save(version);
 
             String cleanedContent = clearXmlIdAttributes(docContent);
 
-            CustomTemplateConfigContent content = new CustomTemplateConfigContent();
+            ConfigContent content = new ConfigContent();
             content.setContentString(cleanedContent);
             content.setContentStreamMimeType("application/xml");
             content.setContentStreamFilename(customKey + ".xml");
@@ -1031,7 +1025,7 @@ public class CatalogServiceImpl implements CatalogService {
             content.setAuditCBy(userId);
             content.setAuditCDate(LocalDateTime.now());
             content.setVersionId(version);
-            customTemplateConfigContentRepository.save(content);
+            configContentRepository.save(content);
 
         } catch (Exception e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
@@ -1077,7 +1071,7 @@ public class CatalogServiceImpl implements CatalogService {
             for (int i = 0; i < items.getLength(); i++) {
                 Element item = (Element) items.item(i);
                 if ("TEMPLATE".equals(item.getAttribute("type"))) {
-                    String customKey = item.getAttribute("custom-key");
+                    String customKey = item.getAttribute("key");
                     if (customKey != null && customKey.endsWith("/" + packageId)) {
                         NodeList childItems = item.getElementsByTagName("item");
                         for (int j = 0; j < childItems.getLength(); j++) {
@@ -1097,15 +1091,15 @@ public class CatalogServiceImpl implements CatalogService {
 
     private void markPreviousCustomTemplateVersionsAsNotLatest(String packageId) {
         // Find all custom template configs with names ending with packageId
-        List<CustomTemplateConfig> configs = customTemplateConfigRepository.findAll().stream()
+        List<Config> configs = configRepository.findAll().stream()
                 .filter(config -> config.getName().endsWith("/" + packageId))
                 .collect(Collectors.toList());
 
-        for (CustomTemplateConfig config : configs) {
-            CustomTemplateConfigVersion currentVersion = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+        for (Config config : configs) {
+            ConfigVersion currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
             if (currentVersion != null && currentVersion.getIsLatestVersion()) {
                 currentVersion.setIsLatestVersion(false);
-                customTemplateConfigVersionRepository.save(currentVersion);
+                configVersionRepository.save(currentVersion);
             }
         }
     }
@@ -1113,7 +1107,7 @@ public class CatalogServiceImpl implements CatalogService {
     // *-CONF.json files
     private void saveConfigFiles(Set<String> templateKeys, String packageId, String userId) throws RepositoryException {
         try {
-            CustomTemplateConfigCategory configCategory = customTemplateConfigCategoryRepository
+            ConfigCategory configCategory = configCategoryRepository
                     .findConfigCategoriesByCategoryCode("CONFIG")
                     .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "CONFIG category not found"));
 
@@ -1132,22 +1126,22 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private void saveConfigFile(ConfigurationV configFile, String customKey, CustomTemplateConfigCategory templateCategory, String userId) throws RepositoryException {
+    private void saveConfigFile(ConfigurationV configFile, String customKey, ConfigCategory templateCategory, String userId) throws RepositoryException {
         try {
             // Check if config already exists
-            Optional<CustomTemplateConfig> existingConfig = customTemplateConfigRepository.findConfigByName(customKey);
-            CustomTemplateConfig config;
+            Optional<Config> existingConfig = configRepository.findConfigByName(customKey);
+            Config config;
 
             if (existingConfig.isPresent()) {
                 config = existingConfig.get();
                 // Mark previous version as not latest
-                CustomTemplateConfigVersion currentVersion = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+                ConfigVersion currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
                 if (currentVersion != null) {
                     currentVersion.setIsLatestVersion(false);
-                    customTemplateConfigVersionRepository.save(currentVersion);
+                    configVersionRepository.save(currentVersion);
                 }
             } else {
-                config = new CustomTemplateConfig();
+                config = new Config();
                 config.setName(customKey);
                 config.setAuditCBy(userId);
                 config.setAuditCDate(LocalDateTime.now());
@@ -1155,10 +1149,10 @@ public class CatalogServiceImpl implements CatalogService {
                 config.setAuditLastMDate(LocalDateTime.now());
                 config.setLanguage("en");
                 config.setConfigCategory(templateCategory);
-                config = customTemplateConfigRepository.save(config);
+                config = configRepository.save(config);
             }
 
-            CustomTemplateConfigVersion version = new CustomTemplateConfigVersion();
+            ConfigVersion version = new ConfigVersion();
             version.setConfigId(config.getId());
             version.setVersionLabel(existingConfig.isPresent() ? documentService.getNextVersionLabel(VersionType.MINOR, "1.0.0.0") : "1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
@@ -1171,10 +1165,9 @@ public class CatalogServiceImpl implements CatalogService {
             version.setAuditCDate(LocalDateTime.now());
             version.setAuditLastMBy(userId);
             version.setAuditLastMDate(LocalDateTime.now());
-            version.setImmutable(false);
-            version = customTemplateConfigVersionRepository.save(version);
+            version = configVersionRepository.save(version);
 
-            CustomTemplateConfigContent content = new CustomTemplateConfigContent();
+            ConfigContent content = new ConfigContent();
             content.setContent(configFile.getContent());
             content.setContentStreamMimeType("application/json");
             content.setContentStreamFilename(customKey + ".json");
@@ -1183,7 +1176,7 @@ public class CatalogServiceImpl implements CatalogService {
             content.setAuditCBy(userId);
             content.setAuditCDate(LocalDateTime.now());
             content.setVersionId(version);
-            customTemplateConfigContentRepository.save(content);
+            configContentRepository.save(content);
 
         } catch (Exception e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
@@ -1192,11 +1185,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     private void removeTemplateFromEntityCatalog(String entityName, String packageId, String userId) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
-        Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+        Optional<Config> config = configRepository.findConfigByName(catalogName);
 
         if (config.isPresent()) {
-            CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
-            CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+            ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+            ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
 
             String customKey = "*/" + packageId; // Match any template with this packageId
             String updatedCatalog = removeTemplateFromCatalog(content.getContentString(), customKey);
@@ -1206,11 +1199,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     private void addTemplateToEntityCatalog(String entityName, String templateName, String customTemplateName, String packageId, String userId) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
-        Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+        Optional<Config> config = configRepository.findConfigByName(catalogName);
 
         if (config.isPresent()) {
-            CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
-            CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+            ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+            ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
 
             String updatedCatalog = insertTemplateIntoCatalog(content.getContentString(), templateName, customTemplateName, packageId);
             updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
@@ -1219,11 +1212,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     private void replaceTemplateInEntityCatalog(String entityName, String templateName, String customTemplateName, String packageId, String userId) throws RepositoryException {
         String catalogName = "catalog-" + entityName;
-        Optional<CustomTemplateConfig> config = customTemplateConfigRepository.findConfigByName(catalogName);
+        Optional<Config> config = configRepository.findConfigByName(catalogName);
 
         if (config.isPresent()) {
-            CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
-            CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+            ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+            ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
 
             // Remove existing templates for this package
             String customKey = "*/" + packageId;

@@ -92,19 +92,8 @@ public class DocumentServiceImpl implements DocumentService {
     private final MilestoneDocumentService milestoneDocumentService;
     private final ConfigService configService;
     private final EntityManager entityManager;
-    private final DocumentMilestoneRepository documentMilestoneRepository;
 
     private static final ObjectMapper mapper = new ObjectMapper();
-    private final ConfigContentRepository configContentRepository;
-    private final ConfigVersionRepository configVersionRepository;
-    private final ConfigurationVRepository configurationVRepository;
-    private final CustomTemplateEntitiesRepository customTemplateEntitiesRepository;
-    private final CustomTemplateConfigRepository customTemplateConfigRepository;
-    private final CustomTemplateConfigVersionRepository customTemplateConfigVersionRepository;
-    private final CustomTemplateConfigContentRepository customTemplateConfigContentRepository;
-    private final CustomTemplateConfigCategoryRepository customTemplateConfigCategoryRepository;
-    private final ConfigCategoryRepository configCategoryRepository;
-
     @Autowired
     public DocumentServiceImpl(DocumentRepository documentRepository, DocumentVRepository documentVRepository,
                                DocumentVersionRepository documentVersionRepository, DocumentContentRepository documentContentRepository,
@@ -114,8 +103,7 @@ public class DocumentServiceImpl implements DocumentService {
                                PackageRepository packageRepository, PackageService packageService,
                                CollaboratorsService collaboratorsService,
                                MilestoneDocumentService milestoneDocumentService,
-                               ConfigService configService, EntityManager entityManager,
-                               DocumentMilestoneRepository documentMilestoneRepository, ConfigContentRepository configContentRepository, ConfigVersionRepository configVersionRepository, ConfigurationVRepository configurationVRepository, CustomTemplateEntitiesRepository customTemplateEntitiesRepository, CustomTemplateConfigRepository customTemplateConfigRepository, CustomTemplateConfigVersionRepository customTemplateConfigVersionRepository, CustomTemplateConfigContentRepository customTemplateConfigContentRepository, CustomTemplateConfigCategoryRepository customTemplateConfigCategoryRepository, ConfigCategoryRepository configCategoryRepository) {
+                               ConfigService configService, EntityManager entityManager) {
         this.documentRepository = documentRepository;
         this.documentVRepository = documentVRepository;
         this.documentVersionRepository = documentVersionRepository;
@@ -129,16 +117,6 @@ public class DocumentServiceImpl implements DocumentService {
         this.milestoneDocumentService = milestoneDocumentService;
         this.configService = configService;
         this.entityManager = entityManager;
-        this.documentMilestoneRepository = documentMilestoneRepository;
-        this.configContentRepository = configContentRepository;
-        this.configVersionRepository = configVersionRepository;
-        this.configurationVRepository = configurationVRepository;
-        this.customTemplateEntitiesRepository = customTemplateEntitiesRepository;
-        this.customTemplateConfigRepository = customTemplateConfigRepository;
-        this.customTemplateConfigVersionRepository = customTemplateConfigVersionRepository;
-        this.customTemplateConfigContentRepository = customTemplateConfigContentRepository;
-        this.customTemplateConfigCategoryRepository = customTemplateConfigCategoryRepository;
-        this.configCategoryRepository = configCategoryRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
