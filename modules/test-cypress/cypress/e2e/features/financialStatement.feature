@@ -90,7 +90,7 @@ Feature: financial statement page regression features
       | TabName                              |
       | Explanatory Memorandum  [1.0.0]      |
       | Legal Act  [1.0.0]                   |
-      | Digital Financial Statement  [1.0.0] |
+      | Legislative Financial and Digital Statement  [1.0.0] |
       | Annex 1  [1.0.0]                     |
     When click on close button in milestone explorer view
     Then user is on act viewer page
@@ -199,11 +199,11 @@ Feature: financial statement page regression features
     Then user is on act viewer page
     And  delete button of financial statement is displayed
     When click on delete button of financial statement
-    Then "Digital financial statement deletion: confirmation" dialog box window is displayed
-    And  dialog box body contains "Are you sure you want to delete the digital financial statement?"
-    And  dialog box body contains "A justification of this removal should be provided in the Explanatory Memorandum"
+    Then "Legislative Financial and Digital Statement deletion: confirmation" dialog box window is displayed
+    And  dialog box body contains "Are you sure you want to delete the Legislative Financial and Digital Statement?"
+    And  dialog box body contains "The absence of digital dimensions should be explained in the Explanatory Memorandum"
     When click on delete button in dialog box window
-    Then " There is no digital financial statement in this document " is displayed
+    Then " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
     When click on add button in financial statement section
     Then delete button of financial statement is displayed
@@ -216,14 +216,14 @@ Feature: financial statement page regression features
     And  provide document title "Automation Testing LFDS configuration SJ-025" in create document page
     And  click on create button
     Then user is on act viewer page
-    And  " There is no digital financial statement in this document " is displayed
+    And  " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
     When click on add button in financial statement section
     Then delete button of financial statement is displayed
     When click on delete button of financial statement
-    Then "Digital financial statement deletion: confirmation" dialog box window is displayed
-    And  dialog box body contains "Are you sure you want to delete the digital financial statement?"
-    And  dialog box body doesn't contain "A justification of this removal should be provided in the Explanatory Memorandum"
+    Then "Legislative Financial and Digital Statement deletion: confirmation" dialog box window is displayed
+    And  dialog box body contains "Are you sure you want to delete the Legislative Financial and Digital Statement?"
+    And  dialog box body doesn't contain "The absence of digital dimensions should be explained in the Explanatory Memorandum"
     When click on delete button in dialog box window
-    Then " There is no digital financial statement in this document " is displayed
+    Then " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
