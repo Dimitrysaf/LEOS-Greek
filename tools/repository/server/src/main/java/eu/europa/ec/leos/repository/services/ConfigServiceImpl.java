@@ -6,12 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.entities.Config;
 import eu.europa.ec.leos.repository.entities.ConfigContent;
 import eu.europa.ec.leos.repository.entities.ConfigVersion;
+import eu.europa.ec.leos.repository.entities.CustomTemplateConfig;
+import eu.europa.ec.leos.repository.entities.CustomTemplateConfigContent;
+import eu.europa.ec.leos.repository.entities.CustomTemplateConfigVersion;
 import eu.europa.ec.leos.repository.entities.Notification;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.ConfigContentRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigVersionRepository;
+import eu.europa.ec.leos.repository.repositories.CustomTemplateConfigContentRepository;
+import eu.europa.ec.leos.repository.repositories.CustomTemplateConfigRepository;
+import eu.europa.ec.leos.repository.repositories.CustomTemplateConfigVersionRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import eu.europa.ec.leos.repository.utils.DateUtils;
 import org.slf4j.Logger;
@@ -39,6 +45,12 @@ public class ConfigServiceImpl implements ConfigService {
     private ConfigVersionRepository configVersionRepository;
     @Autowired
     private ConfigContentRepository configContentRepository;
+    @Autowired
+    private CustomTemplateConfigRepository customTemplateConfigRepository;
+    @Autowired
+    private CustomTemplateConfigVersionRepository customTemplateConfigVersionRepository;
+    @Autowired
+    private CustomTemplateConfigContentRepository customTemplateConfigContentRepository;
     private Notification notification;
     @Autowired
     private ObjectMapper objectMapper;
@@ -69,6 +81,28 @@ public class ConfigServiceImpl implements ConfigService {
 
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
         return this.findConfigByName(name, true);
+    }
+
+    public List<LeosDocument> findCustomTemplateConfigByName(final String name) throws RepositoryException {
+        Optional<CustomTemplateConfig> hasDoc = customTemplateConfigRepository.findConfigByName(name);
+        if (hasDoc.isPresent()) {
+            CustomTemplateConfigContent content = getCustomTemplateConfigContent(hasDoc.get());
+            return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get(), content));
+        } else {
+            return Arrays.asList();
+        }
+    }
+
+    private CustomTemplateConfigContent getCustomTemplateConfigContent(CustomTemplateConfig config) throws RepositoryException {
+        CustomTemplateConfigVersion version = customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(config.getId());
+        if (version == null) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, CustomTemplateConfigVersion.class.getName());
+        }
+        CustomTemplateConfigContent content = customTemplateConfigContentRepository.findConfigContentByVersionId(version);
+        if (content == null) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, CustomTemplateConfigContent.class.getName());
+        }
+        return content;
     }
 
     public LeosDocument findConfigById(final String id) throws RepositoryException {

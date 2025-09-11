@@ -117,6 +117,7 @@ export class ProposalService {
   proposals$: Observable<Document[]>;
   totalResults$: Observable<number>;
   templateCatalog$: Observable<CatalogItem[]>;
+  customTemplateCatalog$: Observable<CatalogItem[]>;
 
   private defaultLanguage: string;
   private userLang: string;
@@ -140,6 +141,9 @@ export class ProposalService {
     });
     this.templateCatalog$ = this.http
       .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getTemplates`)
+      .pipe(shareReplay(1));
+    this.customTemplateCatalog$ = this.http
+      .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getCustomTemplates`)
       .pipe(shareReplay(1));
 
     this.filters$ = this.filtersBS.pipe(

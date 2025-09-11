@@ -1,4 +1,4 @@
-<div class="eui-u-flex-column">
+<div class="eui-u-flex-column" *ngIf="treeNodes.length > 0">
     <p>
         {{
         'page.workspace.create-selector.' + translationKey + '.title' | translate
@@ -60,6 +60,14 @@
             #treeComponent
     >
     </eui-tree>
+</div>
+
+<div *ngIf="treeNodes.length === 0">
+  <p>
+    {{
+      'page.workspace.create-selector.no-template' | translate
+    }}
+  </p>
 </div>
 
 

@@ -20,6 +20,8 @@ import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.entities.Config;
 import eu.europa.ec.leos.repository.entities.ConfigContent;
+import eu.europa.ec.leos.repository.entities.CustomTemplateConfig;
+import eu.europa.ec.leos.repository.entities.CustomTemplateConfigContent;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
@@ -185,6 +187,26 @@ public class LeosDocument {
             this.ref = doc.getName();
             this.category = doc.getConfigCategory().getCategoryCode();
             this.metadata.put("language", doc.getLanguage());
+        }
+    }
+
+    public LeosDocument(CustomTemplateConfig doc, CustomTemplateConfigContent configContent) {
+        if (doc != null) {
+            this.setVersionId(configContent.getVersionId().getId());
+            this.setCreatedBy(doc.getAuditCBy());
+            this.setCreatedOn(Date.from(doc.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
+            this.setUpdatedBy(configContent.getVersionId().getAuditLastMBy());
+            this.setUpdatedOn(configContent.getVersionId().getAuditLastMDate() != null ? Date.from(configContent.getVersionId().getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.setSource(configContent.getContent());
+            this.isLatestVersion = configContent.getVersionId().getIsLatestVersion();
+            this.versionType = configContent.getVersionId().getVersionType() != null ? VersionType.fromValue(Integer.parseInt(configContent.getVersionId().getVersionType())) : null;
+            this.name = doc.getName();
+            this.ref = doc.getName();
+            this.category = doc.getConfigCategory().getCategoryCode();
+
+            this.metadata.put("language", doc.getLanguage());
+
+            this.setVersionLabel(configContent.getVersionId().getVersionLabel());
         }
     }
 

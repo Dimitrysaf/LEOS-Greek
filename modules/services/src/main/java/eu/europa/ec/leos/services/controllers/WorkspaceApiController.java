@@ -21,6 +21,8 @@ import eu.europa.ec.leos.services.dto.request.CreateProposalRequest;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -93,6 +96,25 @@ public class WorkspaceApiController {
             LOG.error("Error occurred while retrieving list of proposals " + ex.getMessage());
             return new ResponseEntity<>("Error occurred while retrieving list of proposals " + ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/getCustomTemplates", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Object> getCustomTemplates() {
+        try {
+            List<CatalogItem> catalogItems = apiService.getCustomTemplates();
+            if (CollectionUtils.isNotEmpty(catalogItems)) {
+                return new ResponseEntity<>(catalogItems, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("No result found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            LOG.error("Error occurred while retrieving custom templates catalog: {}", ex.getMessage());
+            if (StringUtils.startsWith(ex.getMessage(), "404 NOT_FOUND")) {
+                return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Error occurred while retrieving custom templates catalog: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

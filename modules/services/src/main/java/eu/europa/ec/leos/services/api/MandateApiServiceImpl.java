@@ -47,6 +47,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
@@ -67,7 +68,8 @@ import java.util.Properties;
 public class MandateApiServiceImpl extends ApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(MandateApiServiceImpl.class);
 
-    public MandateApiServiceImpl(TemplateService templateService,
+    public MandateApiServiceImpl(CustomTemplateService customTemplateService,
+                                 TemplateService templateService,
                                  WorkspaceService workspaceService,
                                  UserService userService, CreateCollectionService createCollectionService,
                                  ProposalService proposalService, SecurityContext securityContext,
@@ -89,10 +91,10 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
                                  CoverPageApiService coverPageApiService,
                                  ProposalDetailsService proposalDetailsService,
                                  TemplateConfigurationService templateConfigurationService) {
-        super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
-                collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
-                archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
-                applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
+        super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap,
+                exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
+                xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
+                validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
                 trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
                 templateConfigurationService);
     }

@@ -17,6 +17,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.entities.Config;
 import eu.europa.ec.leos.repository.entities.ConfigContent;
+import eu.europa.ec.leos.repository.entities.CustomTemplateConfig;
+import eu.europa.ec.leos.repository.entities.CustomTemplateConfigContent;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
@@ -237,6 +239,10 @@ public class ConversionUtils {
 
     public static LeosDocument buildConfigDocument(Config config) {
         return new LeosDocument(config);
+    }
+
+    public static LeosDocument buildConfigDocument(CustomTemplateConfig config, CustomTemplateConfigContent configContent) {
+        return new LeosDocument(config, configContent);
     }
 
     public static Package buildPackage(eu.europa.ec.leos.repository.entities.Package pkg,

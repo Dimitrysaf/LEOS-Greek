@@ -353,9 +353,12 @@ public class LeosDocumentExtensions {
     }
 
     static Instant getLastModificationInstant(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        GregorianCalendar lastModificationDate = new GregorianCalendar();
-        lastModificationDate.setTime(document.getUpdatedOn());
-        return lastModificationDate != null ? lastModificationDate.toInstant() : Instant.MIN;
+        if (document.getUpdatedOn() != null) {
+            GregorianCalendar lastModificationDate = new GregorianCalendar();
+            lastModificationDate.setTime(document.getUpdatedOn());
+            return lastModificationDate.toInstant();
+        }
+        return Instant.MIN;
     }
 
     private static Option<Content> contentOption(eu.europa.ec.leos.rest.support.model.LeosDocument document, boolean fetchContent) {

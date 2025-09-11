@@ -13,6 +13,9 @@
  */
 package eu.europa.ec.leos.vo.catalog;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +35,10 @@ public class CatalogItem {
     private Boolean enabled;
     private Boolean hidden;
     private String key;
+    @Getter @Setter
+    private String customKey;
+    @Getter @Setter
+    private String customName;
     private String visibleTo;
     private String category;
     private Boolean mandatory;
