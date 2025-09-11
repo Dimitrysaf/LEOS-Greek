@@ -92,7 +92,8 @@ public class LeosXercesUtils {
                     insNode.setTextContent(numLabel);
                     addAttribute(insNode, LEOS_UID, securityContext.getUser().getLogin());
                     addAttribute(insNode, LEOS_TITLE, getTitleValue(securityContext));
-                } else {
+                } else if (!hasAttribute(node, LEOS_INDENT_ORIGIN_INDENT_LEVEL_ATTR)
+                        || getAttributeValueAsIntegerOrZero(node, LEOS_INDENT_ORIGIN_INDENT_LEVEL_ATTR).equals(getPointDepth(node))) {
                     numNode.removeChild(delNode);
                     numNode.removeChild(insNode);
                     numNode.setTextContent(numLabel);
@@ -100,6 +101,7 @@ public class LeosXercesUtils {
                     removeAttribute(node, LEOS_TITLE_NUMBER);
                     removeAttribute(node, LEOS_ACTION_NUMBER);
                     removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
+                    removeAttribute(node, LEOS_INDENT_ORIGIN_INDENT_LEVEL_ATTR);
                 }
             } else if ((insNode != null) && node.getNodeName().equalsIgnoreCase(POINT) && !insNode.getTextContent().equals(numLabel)) {
                 insNode.setTextContent(numLabel);

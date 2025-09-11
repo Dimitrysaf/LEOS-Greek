@@ -13,6 +13,7 @@ import java.util.Arrays;
 import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 
@@ -30,7 +31,7 @@ public class NumberProcessorDefault extends NumberProcessorAbstract implements N
      */
     @Override
     public boolean canRenumber(Node node) {
-        return Arrays.asList(RECITAL, PART, TITLE, CHAPTER, SECTION).contains(node.getNodeName());
+        return Arrays.asList(RECITAL, RECITALS, PART, TITLE, CHAPTER, SECTION).contains(node.getNodeName());
     }
 
     @Override

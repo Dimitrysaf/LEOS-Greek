@@ -44,6 +44,11 @@
 
 @import 'shared/trackChanges';
 
+@import 'shared/aknbody';
+@import 'bill/modules/preamble';
+@import 'bill/modules/recital';
+@import 'bill/modules/recitals';
+
 @import 'bill/modules/clause';
 @import 'bill/modules/citation';
 @import 'bill/modules/citations';
@@ -51,11 +56,6 @@
 @import 'bill/modules/highlight';
 @import 'bill/modules/list';
 @import 'bill/modules/signature';
-
-@import 'shared/aknbody';
-@import 'bill/modules/preamble';
-@import 'bill/modules/recital';
-@import 'bill/modules/recitals';
 
 @import 'bill/editor';
 @import 'bill/xml';

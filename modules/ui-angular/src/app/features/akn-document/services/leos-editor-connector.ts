@@ -24,6 +24,7 @@ import { getInstanceType, isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
+import {AUTONOMOUS_ACT_DOC_COLLECTION} from "@/shared/constants";
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
@@ -471,6 +472,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       this.tableOfContentService.getCurrentToc(),
       elementId,
     );
+    const documentCollectionName = this.documentService.getDocumentCollectionName();
 
     const confirmDeletion = () => {
       const documentRef = this.documentService.documentRef;
@@ -521,8 +523,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           },
         });
       }
-    } else if (differentMessageForLast && ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType)) ||
-      (!this.isCNInstance && isLastElement))) {
+    } else if (differentMessageForLast && !(documentCollectionName === AUTONOMOUS_ACT_DOC_COLLECTION && elementType === 'recital')
+      && ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType))
+        || (!this.isCNInstance && isLastElement))) {
       this.dialogService.openDialog({
         title: this.translateService.instant(
           'page.editor.last-element-delete-confirmation.title',

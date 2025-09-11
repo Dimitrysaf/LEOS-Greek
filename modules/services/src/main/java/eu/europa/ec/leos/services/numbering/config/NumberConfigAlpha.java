@@ -2,14 +2,15 @@ package eu.europa.ec.leos.services.numbering.config;
 
 public class NumberConfigAlpha extends NumberConfigAbstract implements NumberConfig {
 
-    public NumberConfigAlpha(boolean isUpperCase, String prefix, String suffix) {
+    public NumberConfigAlpha(boolean isUpperCase, String prefix, String suffix, boolean suffixInEnd) {
         this.prefix = prefix;
         this.suffix = suffix;
         this.isUpperCase = isUpperCase;
+        this.suffixInEnd = suffixInEnd;
     }
 
     public NumberConfigAlpha() {
-        this(false, "", "");
+        this(false, "", "", true);
     }
 
     @Override
@@ -56,6 +57,10 @@ public class NumberConfigAlpha extends NumberConfigAbstract implements NumberCon
     @Override
     protected String getImplName() {
         return this.getClass().getSimpleName();
+    }
+
+    public boolean isSuffixInEnd() {
+        return this.suffixInEnd;
     }
 
 }

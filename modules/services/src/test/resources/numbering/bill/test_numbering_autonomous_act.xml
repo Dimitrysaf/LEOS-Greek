@@ -1,0 +1,44 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <recitals leos:editable="false" xml:id="recs">
+        <recital leos:editable="true" xml:id="rec_1">
+            <num xml:id="rec_1__num">(23)</num>
+            <p xml:id="rec_1__p">Recital...</p>
+        </recital>
+        <recitals leos:editable="false" xml:id="ecBtIZ0ScOrGeBgBs">
+            <num xml:id="ecJ9W262n7hk89U9Z">2.</num>
+            <heading leos:editable="true" xml:id="ecgfIA36DLJNNP8S1">REQUESTS FOR EXEMPTION 2</heading>
+            <recital leos:editable="true" xml:id="ecD6jvVF0QBgyBC4x">
+                <num xml:id="ecJ9W262m7hl89T9Z">(5)</num>
+                <p xml:id="ec8eOg7CQa5Yo4eYd">Recital 5. to test</p>
+            </recital>
+            <recital leos:editable="true" xml:id="ecD6jvVFMQBgyBC4x">
+                <num xml:id="eDJ9W262m7hl89T9Z">(6)</num>
+                <p xml:id="ec8eOh7CQa5Yo4eYd">Recital 6. to test</p>
+            </recital>
+            <recitals leos:editable="false" xml:id="ecBtIZ0ScOSGeBgBs">
+                <num xml:id="ecJ9W262m7hk89U9Z">2.1.</num>
+                <heading leos:editable="true" xml:id="edgfIA36DLJNNP8S1">REQUESTS FOR EXEMPTION 2.1</heading>
+                <recital leos:editable="true" xml:id="ecD6jxVF0QBgyBC4x">
+                    <num xml:id="ecJ9W262n7hl89T9Z">(7)</num>
+                    <p xml:id="ec8eOg7CQa5Yp4eYd">Recital 7. to test</p>
+                </recital>
+                <recital leos:editable="true" xml:id="ecD6jvVFMQBgyBC4k">
+                    <num xml:id="eDK9W262m7hl89T9Z">(8)</num>
+                    <p xml:id="ec8eOH7CQa5Yo4eYd">Recital 8. to test</p>
+                </recital>
+            </recitals>
+        </recitals>
+        <recital leos:editable="true" xml:id="rec_2">
+            <num xml:id="rec_2__num">(24)</num>
+            <p xml:id="rec_2__p">Recital...</p>
+        </recital>
+        <recitals leos:editable="false" xml:id="ecBtIZ0ScOrGeBgBr">
+            <num xml:id="ecJ9W262m7hk89U9Z">1.</num>
+            <heading leos:editable="true" xml:id="ecgfIA36DLJNNP8S1">REQUESTS FOR EXEMPTION</heading>
+            <recital leos:editable="true" xml:id="ecD6jvVF0QBgxBC4x">
+                <num xml:id="ecJ9W262m7hk89T9Z">(2)</num>
+                <p xml:id="ec8eOg7CQa5Yo4dYd">Recital 1. to test</p>
+            </recital>
+        </recitals>
+    </recitals>
+</akomaNtoso>

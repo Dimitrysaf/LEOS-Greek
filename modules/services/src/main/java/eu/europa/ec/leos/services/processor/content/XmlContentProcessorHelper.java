@@ -191,10 +191,17 @@ public class XmlContentProcessorHelper {
                                            List<TableOfContentItemVO> itemVOList, TocMode mode, String language, MessageHelper messageHelper, boolean withNode) {
         TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, messageHelper, withNode);
         if (tableOfContentItemVO != null) {
+            TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, tableOfContentItemVO.getTagName());
+            if (tocItem != null
+                    && tocItem.isRootItemDeletable() != null
+                    && !tocItem.isRootItemDeletable()
+                    && node != null && node.getParentNode() != null
+                    && !node.getParentNode().getNodeName().equals(node.getNodeName())) {
+                tableOfContentItemVO.setDeletable(false);
+            }
             boolean isList = getTagValueFromTocItemVo(tableOfContentItemVO).equals(LIST);
             List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language,
                     messageHelper, withNode);
-            TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, tableOfContentItemVO.getTagName());
             if ((!TocMode.SIMPLIFIED_CLEAN.equals(mode) || (TocMode.SIMPLIFIED_CLEAN.equals(mode) && tocItem.isDisplay()))
                     && shouldItemBeAddedToToc(tocItems, tocRules, node, StructureConfigUtils.getTocItemByName(tocItems,
                     tableOfContentItemVO.getTagName()))) {
@@ -354,19 +361,14 @@ public class XmlContentProcessorHelper {
         Node headingNode = getFirstChild(node, HEADING);
         if (headingNode != null) {
             Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
-            Node insNode = getFirstChild(headingNode, LEOS_TC_INSERT_ELEMENT_NAME);
-            if(delNode != null) {
+            if (delNode != null) {
                 originalHeading = StringEscapeUtils.escapeXml10(trimmedXml(delNode.getTextContent()));
                 String tocItemType = getAttributeValue(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE);
                 if(StringUtils.isNotBlank(tocItemType)) {
                     originalTocItemType = TocItemTypeName.valueOf(tocItemType);
                 }
             }
-            if(insNode != null) {
-                heading = StringEscapeUtils.escapeXml10(trimmedXml(insNode.getTextContent()));
-            } else {
-                heading = StringEscapeUtils.escapeXml10(trimmedXml(headingNode.getTextContent())); //
-            }
+            heading = getHeadingTextContentWithoutDel(headingNode);
             originHeadingAttr = getAttributeValue(headingNode, LEOS_ORIGIN_ATTR);
             headingSoftActionAttribute = getAttributeForSoftAction(headingNode, LEOS_SOFT_ACTION_ATTR);
         }
@@ -410,6 +412,15 @@ public class XmlContentProcessorHelper {
         item.setNode(withNode ? node : null);
         setItemSoleNumber(numberingConfigs, tocItems, item, messageHelper, numNodeText);
         return item;
+    }
+
+    private static String getHeadingTextContentWithoutDel(Node headingNode) {
+        String heading;
+        Node clonedNode = headingNode.cloneNode(true);
+        List<Node> delNodes = getChildren(clonedNode, LEOS_TC_DELETE_ELEMENT_NAME);
+        delNodes.forEach(clonedNode::removeChild);
+        heading = StringEscapeUtils.escapeXml10(trimmedXml(clonedNode.getTextContent()));
+        return heading;
     }
 
     private static void setItemSoleNumber(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, TableOfContentItemVO item,
@@ -620,12 +631,11 @@ public class XmlContentProcessorHelper {
         Node headingNode = XercesUtils.getFirstChild(node, HEADING);
         if (headingNode == null) {
             headingNode = createElement(node.getOwnerDocument(), HEADING, newHeading);
-        } else {
+        } else if (!StringUtils.equals(newHeading, StringEscapeUtils.unescapeXml(getHeadingTextContentWithoutDel(headingNode)))) {
             if(isTrackChangesEnabled) {
                 TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems,  headingNode.getNodeName(), XercesUtils.getAttributes(headingNode));
 
                 Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
-                Node insNode = getFirstChild(headingNode, LEOS_TC_INSERT_ELEMENT_NAME);
                 if(delNode != null) {
                     if(delNode.getTextContent().equals(newHeading)) {
                         // Switched back original type
@@ -667,7 +677,7 @@ public class XmlContentProcessorHelper {
         return node;
     }
     
-    public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
+    public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
         List<Node> childrenToAppend = new ArrayList<>();
         List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
@@ -679,7 +689,7 @@ public class XmlContentProcessorHelper {
         return childrenToAppend;
     }
 
-    public static List<Node> extractLevelNonTocItemsKeepingTextNodes(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
+    public static List<Node> extractLevelNonTocItemsKeepingTextNodes(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
         List<Node> childrenToAppend = new ArrayList<>();
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -699,6 +709,19 @@ public class XmlContentProcessorHelper {
             return node;
         }
         return null;
+    }
+
+    public static List<Node> extractChildrenNotNumHeadingIntro(Node node) {
+        List<Node> childrenToAppend = new ArrayList<>();
+        List<Node> children = getChildren(node);
+        for (int i = 0; i < children.size(); i++) {
+            Node childNode = children.get(i);
+            String tagName = childNode.getNodeName();
+            if (!tagName.equals(NUM) && !isCrossheadingNum(node) && !tagName.equals(HEADING) && !tagName.equals(INTRO)) {
+                childrenToAppend.add(childNode);
+            }
+        }
+        return childrenToAppend;
     }
 
     private static boolean isCrossheadingNum(Node node) {

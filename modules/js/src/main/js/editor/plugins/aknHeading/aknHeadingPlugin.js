@@ -108,6 +108,9 @@ define(function aknChapterPluginModule(require) {
             }, {
                 akn : "xml:id",
                 html : "data-akn-heading-id"
+            }, {
+                akn : "leos:editable",
+                html : "data-akn-attr-editable"
             },{
                 akn : "class",
                 html : "data-akn-class"

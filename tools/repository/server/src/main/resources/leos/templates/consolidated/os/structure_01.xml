@@ -1374,7 +1374,7 @@
         </rule>
         <rule>
             <description>No empty higher division rule</description>
-            <type>notEmpty</type>
+            <type>notEmptyHigherDivision</type>
             <tocItem>body</tocItem>
             <higherDivisions>
                 <type>part</type>

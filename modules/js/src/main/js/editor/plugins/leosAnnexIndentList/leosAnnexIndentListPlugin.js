@@ -1528,7 +1528,7 @@ define(function leosAnnexIndentListPluginModule(require) {
     function _onSelectionChange(event) {
         var selection = event.data.selection;
         if (selection.getStartElement().getName() === 'ol') {
-            event.data.selection = leosPluginUtils.selectLastEditableElement(selection);
+            event.data.selection = leosPluginUtils.selectLastEditableElement(selection, 'p, li');
         }
         leosCommandStateHandler.changeCommandState(event.editor, "indent");
         leosCommandStateHandler.changeCommandState(event.editor, "outdent");

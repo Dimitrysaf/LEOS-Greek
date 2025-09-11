@@ -1,0 +1,55 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//conclusions[1]/aknp[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose the right option, depending on Procedure and the person who signs]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "title": "The President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "2",
+          "title": "On behalf of the President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">On behalf of the President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "3",
+          "title": "Director-General",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"3\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director-General</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "4",
+          "title": "Director",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"4\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Director</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "5",
+          "title": "Head of unit",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"5\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of unit</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "6",
+          "title": "Head of service",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"6\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Head of service</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "name": "structure_08"
+    }
+  ]
+}

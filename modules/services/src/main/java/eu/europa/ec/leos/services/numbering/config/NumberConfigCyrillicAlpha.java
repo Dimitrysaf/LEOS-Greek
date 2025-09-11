@@ -9,14 +9,15 @@ public class NumberConfigCyrillicAlpha extends NumberConfigAbstract implements N
     private static final int CYRILLIC_LOWERCASE_START = 1072;
     private static final int ALPHABET_LENGTH = 32;
 
-    public NumberConfigCyrillicAlpha(boolean isUpperCase, String prefix, String suffix) {
+    public NumberConfigCyrillicAlpha(boolean isUpperCase, String prefix, String suffix, boolean suffixInEnd) {
         this.prefix = prefix;
         this.suffix = suffix;
         this.isUpperCase = isUpperCase;
+        this.suffixInEnd = suffixInEnd;
     }
 
     public NumberConfigCyrillicAlpha() {
-        this(false, "", "");
+        this(false, "", "", true);
     }
 
     @Override
@@ -63,6 +64,10 @@ public class NumberConfigCyrillicAlpha extends NumberConfigAbstract implements N
     @Override
     protected String getImplName() {
         return this.getClass().getSimpleName();
+    }
+
+    public boolean isSuffixInEnd() {
+        return suffixInEnd;
     }
 
 }

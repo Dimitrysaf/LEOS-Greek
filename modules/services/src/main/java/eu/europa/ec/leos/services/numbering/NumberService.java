@@ -43,4 +43,7 @@ public interface NumberService {
     byte[] renumberHigherSubDivisions(byte[] xmlContent, List<TableOfContentItemVO> tocList);
 
     byte[] renumberHigherSubDivisions(byte[] xmlContent, String language, String elementName, List<TocItem> tocItems);
+
+    byte[] renumberRecitalSections(byte[] xmlContent);
+
 }

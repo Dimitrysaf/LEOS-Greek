@@ -5,9 +5,10 @@ public class SoleNumberConfig extends NumberConfigAbstract implements NumberConf
     String soleNumberingLabel;
     boolean isSoleNumbering;
 
-    SoleNumberConfig(String soleNumberingLabel, boolean isSoleNumbering) {
+    SoleNumberConfig(String soleNumberingLabel, boolean isSoleNumbering, boolean suffixInEnd) {
         this.soleNumberingLabel = soleNumberingLabel;
         this.isSoleNumbering = isSoleNumbering;
+        this.suffixInEnd = suffixInEnd;
     }
 
     @Override
@@ -37,4 +38,9 @@ public class SoleNumberConfig extends NumberConfigAbstract implements NumberConf
     public String getSoleNumberLabel() {
         return this.soleNumberingLabel;
     }
+
+    public boolean isSuffixInEnd() {
+        return suffixInEnd;
+    }
+
 }

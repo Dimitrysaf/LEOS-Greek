@@ -19,6 +19,7 @@ import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
@@ -379,11 +380,13 @@ public interface XmlContentProcessor {
 
     void updateSoftMoveLabelAttribute(Node documentNode, String attr);
 
+    Node getElementByXpath(byte[] xmlContent, String xPath);
+
     String getAttributeValueByXpath(byte[] xmlContent, String xPath, String attrName);
 
     String getDocReference(byte[] xmlContent);
 
-    LeosCategory identifyCategory(String docName, byte[] xmlContent);
+    LeosCategory identifyCategory(byte[] xmlContent);
 
     void updateIfEmptyOrigin(Node node, boolean isEmptyOrigin);
 
@@ -411,4 +414,7 @@ public interface XmlContentProcessor {
 
     byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
                                                     String title);
+
+    public SpecificDocumentInformationDTO getSpecificDocumentInformation(byte xmlContent[]);
+
 }

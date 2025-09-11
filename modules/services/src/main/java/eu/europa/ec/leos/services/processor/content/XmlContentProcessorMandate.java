@@ -667,7 +667,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             if ((tocVo.getNode() == null) && tocVo.getChildItemsView().isEmpty()) {
                 appendChildrenIfNotNull(node.getChildNodes(), existingNode);
             } else {
-                appendChildrenIfNotNull(XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node, tocVo), existingNode);
+                appendChildrenIfNotNull(XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node), existingNode);
             }
         } else {
             if ((tocVo.getNode() == null) && tocVo.getChildItemsView().isEmpty()) {
@@ -675,7 +675,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                 appendChildrenIfNotNull(XercesUtils.getChildren(node), existingNode);
             } else {
                 if (tagName.equals(POINT) && tocVo.getChildItemsView().size() > 0) {
-                    List<Node> listOfNodes = XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
+                    List<Node> listOfNodes = XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node);
                     if (listOfNodes.size() > 0) {
                         Node contentNode = listOfNodes.get(0);
                         contentNode = wrapWithSubparagraph(contentNode, tocVo, user);
@@ -683,7 +683,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                     }
                     appendChildrenIfNotNull(listOfNodes, existingNode);
                 } else {
-                    appendChildrenIfNotNull(XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo), existingNode);
+                    appendChildrenIfNotNull(XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node), existingNode);
                 }
             }
         }

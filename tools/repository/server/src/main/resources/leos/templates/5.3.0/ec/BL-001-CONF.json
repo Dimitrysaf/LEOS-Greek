@@ -1,0 +1,57 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//clause[1]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-article-2\" class=\"guidance-green-block\"><span id=\"clause-article-2\">[Choose between the two options below. The second option must be used where the Regulation is binding and directly applicable <b>only in certain</b> Member States in accordance with the Treaties.]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//conclusions[1]/aknp[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-conclusions-1\" class=\"guidance-green-block\"><span id=\"clause-conclusions-1\">[Choose between the two options, depending on the person who signs.]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">This Regulation shall be binding in its entirety and directly applicable in all Member States.</p></content></clause>"
+        },
+        {
+          "index": "2",
+          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">This Regulation shall be binding in its entirety and directly applicable in the Member States in accordance with the Treaties.</p></content></clause>"
+        }
+      ]
+    },
+    {
+      "name": "listOption2",
+      "list": [
+        {
+          "index": "1",
+          "title": "The President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "2",
+          "title": "On behalf of the President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\">On behalf of the President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "name": "structure_08"
+    }
+  ]
+}

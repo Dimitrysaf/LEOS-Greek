@@ -4,7 +4,8 @@ public enum DocumentRuleType {
 
     STRUCTURE_VALIDATION("structureValidation"),
     ONLY_ONE_OCCURENCE_ELEMENT("onlyOneOccurenceElement"),
-    NOT_EMPTY("notEmpty"),
+    NOT_EMPTY_HIGHER_DIVISION("notEmptyHigherDivision"),
+    NOT_EMPTY_ELEMENT("notEmptyElement"),
     HIERARCHY("hierarchy");
 
     private String ruleType;

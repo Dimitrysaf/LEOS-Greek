@@ -99,6 +99,21 @@ define(function aknBlockSignatoryPluginModule(require) {
         }, {
             akn: ["name", SIGNATORY_NAME].join("="),
             html: ["data-akn-name", SIGNATORY_NAME].join("=")
+        }, {
+            akn : "leos:editable",
+            html : "leos:editable"
+        }, {
+            akn : "leos:deletable",
+            html : "leos:deletable"
+        }, {
+            akn : "leos:alternative",
+            html : "leos:alternative"
+        }, {
+            akn : "leos:optionlist",
+            html : "leos:optionlist"
+        }, {
+            akn : "leos:selectedoption",
+            html : "leos:selectedoption"
         }],
         sub: [{
             akn: "block",

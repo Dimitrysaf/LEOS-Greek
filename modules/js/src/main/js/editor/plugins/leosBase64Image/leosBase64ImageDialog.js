@@ -16,7 +16,9 @@ define(function leosBase64ImageDialog(require) {
     "use strict";
     
     var CKEDITOR = require("promise!ckEditor");
-    
+    var leosPluginUtils = require("plugins/leosPluginUtils");
+    var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
+
     var dialogDefinition = {
         dialogName: "leosBase64ImageDialog"
     };
@@ -171,7 +173,22 @@ define(function leosBase64ImageDialog(require) {
             if (isNaN(v)) v = 0;
             elem.setValue(v + u);
         }
-        
+
+        function insertImgInSubflow(selection, selectedElement, img) {
+            let range = selection.getRanges()[0];
+            if (leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                selectedElement = selectedElement.getLast().getLast();
+            }
+            selectedElement = selectedElement.getAscendant(leosPluginUtils.DIV, true);
+            img.insertAfter(selectedElement);
+            range.setStartAfter(selectedElement);
+            range.fixBlock(true, leosPluginUtils.DIV);
+            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
+            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_HCONTAINER, leosPluginUtils.HCONTAINER_IMAGE);
+            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_SUB_HCONTAINER, leosPluginUtils.SUB_HCONTAINER_IMAGE);
+            leosPluginUtils.setFocus(img, editor);
+        }
+
         /* Dialog */
         return {
             title: editor.lang.common.image,
@@ -295,10 +312,18 @@ define(function leosBase64ImageDialog(require) {
                     
                 }
                 if (css.length > 0) newImg.setAttribute("style", css.join(""));
-                
+
                 /* Insert new image */
-                if (!selectedImg) editor.insertElement(newImg);
-                
+                if (!selectedImg) {
+                    var selection = editor.getSelection();
+                    var selectedElement = leosKeyHandler.getSelectedElement(selection);
+                    if (leosPluginUtils.isRecitalAA(selectedElement)) {
+                        insertImgInSubflow(selection, selectedElement, newImg);
+                    } else {
+                        editor.insertElement(newImg);
+                    }
+                }
+
                 /* Resize image */
                 if (editor.plugins.imageresize) editor.plugins.imageresize.resize(editor, newImg, 800, 800);
                 

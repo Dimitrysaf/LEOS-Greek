@@ -11,6 +11,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -61,7 +62,13 @@ public class NumberProcessorAbstract {
 
     // Numbers like: 1, 2, 3, etc
     private void simpleNumbering(Node node, NumberConfig numberConfig, String elementName, String elementId, String parentPrefix, int depth) {
+        if (!StringUtils.isEmpty(parentPrefix) && !parentPrefix.endsWith(".")) {
+            parentPrefix += ".";
+        }
         String elementNum = numberConfig.getPrefix() + parentPrefix + numberConfig.getNextNumberToShow() + numberConfig.getSuffix();
+        if (!numberConfig.isSuffixInEnd() && elementNum.indexOf(".") != elementNum.lastIndexOf(".")) {
+            elementNum = elementNum.substring(0, elementNum.length()-1);
+        }
         if (skipAutoRenumbering(node)) {
             String insertedNum = XercesUtils.getContentByTagName(node, NUM);
             LOG.trace("{} (depth {}) '{}', skipping calculated number '{}', keeping manual insertion '{}'", node.getNodeName(), depth, getId(node), elementNum, insertedNum);
