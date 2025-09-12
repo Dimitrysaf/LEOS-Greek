@@ -161,6 +161,8 @@
         <junit-jupiter.version>5.0.2</junit-jupiter.version>
         <junit-platform.version>1.0.2</junit-platform.version>
         <junit-vintage.version>4.12.2</junit-vintage.version>
+        <assertj.version>3.24.2</assertj.version>
+        <byte-buddy.version>1.12.21</byte-buddy.version>
         <!-- httpclient -->
        <httpclient.version>4.5.13</httpclient.version> <!--  5.4-alpha1 4.5.3-->
         <!-- Sonar -->
@@ -481,6 +483,46 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-library</artifactId>
                 <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-surefire-provider</artifactId>
+                <version>${junit-platform.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!--
+                bytebuddy is a transitive dep of both assertj and mockito
+                Set to the higher (assertj dep) version
+            -->
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${byte-buddy.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit-vintage.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
