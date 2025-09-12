@@ -494,7 +494,7 @@ public class CatalogServiceImpl implements CatalogService {
             if (importedTemplate instanceof Element) {
                 Element templateEl = (Element) importedTemplate;
                 templateEl.setAttribute("custom-name", templateName);
-                templateEl.setAttribute("key", templateEl.getAttribute("key") + "/" + packageId);
+                templateEl.setAttribute("key", templateEl.getAttribute("key") + "-" + packageId);
 
                 // Add custom-id to all child items
                 NodeList childItems = templateEl.getElementsByTagName("item");
@@ -502,7 +502,7 @@ public class CatalogServiceImpl implements CatalogService {
                     Element childItem = (Element) childItems.item(i);
                     String id = childItem.getAttribute("id");
                     if (StringUtils.isNotBlank(id)) {
-                        childItem.setAttribute("id", id + "/" + packageId);
+                        childItem.setAttribute("id", id + "-" + packageId);
                     }
                 }
             }
@@ -563,40 +563,7 @@ public class CatalogServiceImpl implements CatalogService {
         // Reverse the path (we built it from bottom up)
         Collections.reverse(pathSegments);
 
-        return String.join("/", pathSegments);
-    }
-
-    private Element findCategoryByPath(org.w3c.dom.Document doc, String categoryPath) {
-        String[] pathSegments = categoryPath.split("/");
-        Element current = doc.getDocumentElement();
-
-        for (String segment : pathSegments) {
-            if (segment.isEmpty()) continue;
-
-            Element found = null;
-            NodeList children = current.getChildNodes();
-
-            for (int i = 0; i < children.getLength(); i++) {
-                Node child = children.item(i);
-                if (child.getNodeType() == Node.ELEMENT_NODE) {
-                    Element childElement = (Element) child;
-                    if ("item".equals(childElement.getTagName()) &&
-                            "CATEGORY".equals(childElement.getAttribute("type")) &&
-                            segment.equals(childElement.getAttribute("key"))) {
-                        found = childElement;
-                        break;
-                    }
-                }
-            }
-
-            if (found == null) {
-                return null; // Path not found
-            }
-
-            current = found;
-        }
-
-        return current;
+        return String.join("-", pathSegments);
     }
 
     private Element findCategoryByKey(org.w3c.dom.Document doc, String categoryKey) {
@@ -616,7 +583,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private Element ensureCategoryPath(org.w3c.dom.Document targetDoc, org.w3c.dom.Document sourceDoc, String categoryPath) throws RepositoryException {
-        String[] pathSegments = categoryPath.split("/");
+        String[] pathSegments = categoryPath.split("-");
         Element current = targetDoc.getDocumentElement();
 
         for (String segment : pathSegments) {
@@ -820,7 +787,7 @@ public class CatalogServiceImpl implements CatalogService {
             Element item = (Element) items.item(i);
             if ("TEMPLATE".equals(item.getAttribute("type"))) {
                 String customKey = item.getAttribute("key");
-                if (customKey != null && customKey.endsWith("/" + packageId)) {
+                if (customKey != null && customKey.endsWith("-" + packageId)) {
                     toRemove.add(item);
                 }
             }
@@ -946,7 +913,7 @@ public class CatalogServiceImpl implements CatalogService {
                         .filter(doc -> doc.getConfigCategoryId() != null && doc.getConfigCategoryId().equals(matchingCategory.get().getId()))
                         .findFirst();
 
-                String customKey = configV.getName() + "/" + packageId;
+                String customKey = configV.getName() + "-" + packageId;
                 if (matchingDoc.isPresent()) {
                     Optional<DocumentContent> docContent = documentContentRepository.findDocumentContentByVersionId(matchingDoc.get().getVersionId());
 
@@ -1072,7 +1039,7 @@ public class CatalogServiceImpl implements CatalogService {
                 Element item = (Element) items.item(i);
                 if ("TEMPLATE".equals(item.getAttribute("type"))) {
                     String customKey = item.getAttribute("key");
-                    if (customKey != null && customKey.endsWith("/" + packageId)) {
+                    if (customKey != null && customKey.endsWith("-" + packageId)) {
                         NodeList childItems = item.getElementsByTagName("item");
                         for (int j = 0; j < childItems.getLength(); j++) {
                             Element childItem = (Element) childItems.item(j);
@@ -1092,7 +1059,7 @@ public class CatalogServiceImpl implements CatalogService {
     private void markPreviousCustomTemplateVersionsAsNotLatest(String packageId) {
         // Find all custom template configs with names ending with packageId
         List<Config> configs = configRepository.findAll().stream()
-                .filter(config -> config.getName().endsWith("/" + packageId))
+                .filter(config -> config.getName().endsWith("-" + packageId))
                 .collect(Collectors.toList());
 
         for (Config config : configs) {
@@ -1116,7 +1083,7 @@ public class CatalogServiceImpl implements CatalogService {
                 Optional<ConfigurationV> configFile = configurationVRepository.findConfigurationByName(configName);
 
                 if (configFile.isPresent()) {
-                    String customKey = configName + "/" + packageId;
+                    String customKey = configName + "-" + packageId;
                     saveConfigFile(configFile.get(), customKey, configCategory, userId);
                 }
             }
