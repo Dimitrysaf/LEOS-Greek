@@ -33,11 +33,10 @@ public class CatalogServiceImplTest {
     @Mock private DocumentContentRepository documentContentRepository;
     @Mock private ConfigService configService;
     @Mock private ConfigurationVRepository configurationVRepository;
-    @Mock private CustomTemplateConfigRepository customTemplateConfigRepository;
-    @Mock private CustomTemplateConfigVersionRepository customTemplateConfigVersionRepository;
-    @Mock private CustomTemplateConfigContentRepository customTemplateConfigContentRepository;
-    @Mock private CustomTemplateConfigCategoryRepository customTemplateConfigCategoryRepository;
-    @Mock private ConfigCategoryRepository configCategoryRepository;
+    @Mock private ConfigRepository customTemplateConfigRepository;
+    @Mock private ConfigVersionRepository customTemplateConfigVersionRepository;
+    @Mock private ConfigContentRepository customTemplateConfigContentRepository;
+    @Mock private ConfigCategoryRepository customTemplateConfigCategoryRepository;
     @Mock private DocumentService documentService;
     @Mock private MilestoneDocumentService milestoneDocumentService;
 
@@ -49,9 +48,9 @@ public class CatalogServiceImplTest {
     private Package mockPackage;
     private CustomTemplateEntities mockCustomTemplateEntities;
     private DocumentMilestone mockDocumentMilestone;
-    private CustomTemplateConfig mockCustomTemplateConfig;
-    private CustomTemplateConfigVersion mockCustomTemplateConfigVersion;
-    private CustomTemplateConfigCategory mockCustomTemplateConfigCategory;
+    private Config mockCustomTemplateConfig;
+    private ConfigVersion mockCustomTemplateConfigVersion;
+    private ConfigCategory mockCustomTemplateConfigCategory;
 
     @Before
     public void setUp() {
@@ -73,15 +72,15 @@ public class CatalogServiceImplTest {
         mockDocumentMilestone.setStatus(CustomTemplateMilestoneStatus.UNPUBLISHED.getValue());
         mockDocumentMilestone.setMilestoneComments("Custom Template");
 
-        mockCustomTemplateConfig = new CustomTemplateConfig();
+        mockCustomTemplateConfig = new Config();
         mockCustomTemplateConfig.setId(BigDecimal.valueOf(200));
         mockCustomTemplateConfig.setName("catalog-DG1");
 
-        mockCustomTemplateConfigVersion = new CustomTemplateConfigVersion();
+        mockCustomTemplateConfigVersion = new ConfigVersion();
         mockCustomTemplateConfigVersion.setConfigId(BigDecimal.valueOf(200));
         mockCustomTemplateConfigVersion.setVersionLabel("1.0.0.0");
 
-        mockCustomTemplateConfigCategory = new CustomTemplateConfigCategory();
+        mockCustomTemplateConfigCategory = new ConfigCategory();
         mockCustomTemplateConfigCategory.setId(BigDecimal.valueOf(300));
         mockCustomTemplateConfigCategory.setCategoryCode("CONFIG");
     }
@@ -137,14 +136,16 @@ public class CatalogServiceImplTest {
             .thenReturn(Optional.empty()); // No existing entities - triggers catalog creation
         setupCatalogCreationMocks();
 
+
+
         // Act
         catalogService.publishCustomTemplate(legFileId, "Template", dgs, userId);
 
         // Assert - Verify catalog creation
         verify(customTemplateConfigRepository).findConfigByName("catalog-DG1");
-        verify(customTemplateConfigRepository).save(any(CustomTemplateConfig.class));
-        verify(customTemplateConfigVersionRepository).save(any(CustomTemplateConfigVersion.class));
-        verify(customTemplateConfigContentRepository).save(any(CustomTemplateConfigContent.class));
+        verify(customTemplateConfigRepository).save(any(Config.class));
+        verify(customTemplateConfigVersionRepository).save(any(ConfigVersion.class));
+        verify(customTemplateConfigContentRepository).save(any(ConfigContent.class));
         
         // Verify entities creation
         ArgumentCaptor<CustomTemplateEntities> entitiesCaptor = ArgumentCaptor.forClass(CustomTemplateEntities.class);
@@ -312,15 +313,15 @@ public class CatalogServiceImplTest {
         // Mock config repository - return empty for findConfigByName, return saved entity for save
         when(customTemplateConfigRepository.findConfigByName(anyString()))
             .thenReturn(Optional.empty());
-        when(customTemplateConfigRepository.save(any(CustomTemplateConfig.class)))
+        when(customTemplateConfigRepository.save(any(Config.class)))
             .thenReturn(mockCustomTemplateConfig);
         
         // Mock version repository
-        when(customTemplateConfigVersionRepository.save(any(CustomTemplateConfigVersion.class)))
+        when(customTemplateConfigVersionRepository.save(any(ConfigVersion.class)))
             .thenReturn(mockCustomTemplateConfigVersion);
         
         // Mock content repository
-        when(customTemplateConfigContentRepository.save(any(CustomTemplateConfigContent.class)))
-            .thenReturn(new CustomTemplateConfigContent());
+        when(customTemplateConfigContentRepository.save(any(ConfigContent.class)))
+            .thenReturn(new ConfigContent());
     }
 }

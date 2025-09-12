@@ -17,25 +17,6 @@ INSERT INTO CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DA
                                                                                                                               'LEOS_REPOSITORY',current_timestamp,null,null);
 
 
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('CONFIG','Configuration','LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('STRUCTURE','Structure','LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('TEMPLATE_PROPOSAL','Template',
-                                                                                                                              'LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('TEMPLATE_BILL','Template',
-                                                                                                                              'LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('TEMPLATE_MEMORANDUM','Template',
-                                                                                                                              'LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('TEMPLATE_ANNEX','Template',
-                                                                                                                              'LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('TEMPLATE_COUNCIL_EXPLANATORY','Template',
-                                                                                                                              'LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('TEMPLATE_STAT_DIGIT_FINANC_LEGIS','Template',
-                                                                                                                              'LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
-INSERT INTO CUSTOM_TEMPLATE_CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('LIGHT_PROFILE','Profile',
-                                                                                                                              'LEOS_REPOSITORY',current_timestamp,null,null);
-
-
-
 
 INSERT INTO CONFIG (NAME,OBJECT_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE,LANGUAGE,CATEGORY_ID) VALUES ('structure_01',734758,'admin/admin',current_timestamp,'admin/admin',current_timestamp,null,(SELECT id from CONFIG_CATEGORIES WHERE CATEGORY_CODE='STRUCTURE'));
 INSERT INTO CONFIG (NAME,OBJECT_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE,LANGUAGE,CATEGORY_ID) VALUES ('structure_02',734753,'admin/admin',current_timestamp,'admin/admin',current_timestamp,null,(SELECT id from CONFIG_CATEGORIES WHERE CATEGORY_CODE='STRUCTURE'));
