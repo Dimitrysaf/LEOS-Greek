@@ -36,8 +36,6 @@ public class CatalogItem {
     private Boolean hidden;
     private String key;
     @Getter @Setter
-    private String customKey;
-    @Getter @Setter
     private String customName;
     private String visibleTo;
     private String category;

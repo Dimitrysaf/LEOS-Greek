@@ -503,9 +503,6 @@ public class DocumentServiceImpl implements DocumentService {
         List<DocumentV> docs = documentVRepository.findDocumentsByName(fileName);
         listDocs.addAll(configService.findConfigByName(fileName));
         if (listDocs.isEmpty()) {
-            listDocs.addAll(configService.findCustomTemplateConfigByName(fileName));
-        }
-        if (listDocs.isEmpty()) {
             listDocs.addAll(milestoneDocumentService.findMilestoneByName(fileName));
         }
         if (listDocs.isEmpty()) {
