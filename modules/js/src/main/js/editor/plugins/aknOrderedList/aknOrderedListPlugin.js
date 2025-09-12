@@ -34,7 +34,7 @@ define(function aknOrderedListPluginModule(require) {
         lang: 'en',
         init: function init(editor) {
             numberModule.init(editor);
-            editor.on("beforeAknIndentList", leosPluginUtils.resetDataNumOnIndent);
+            editor.on("beforeAknIndentList", _resetDataNumOnIndent);
             editor.on("toDataFormat", _checkLists, null, null, 0);
             editor.on("change", resetDataAknNameForOrderedList, null, null, 0);
             editor.on("change", resetNumbering, null, null, 1);
@@ -257,6 +257,47 @@ define(function aknOrderedListPluginModule(require) {
         return element.getAscendant(leosPluginUtils.HTML_POINT);
     }
 
+    function _resetDataNumOnIndent(event) {
+        var editor = event.editor, isIndent = event.data.isIndent, range, node;
+        var selection = editor.getSelection();
+
+        var originalRanges = selection.getRanges();
+        var savedRanges = [].concat(originalRanges);
+
+        selection = leosPluginUtils.selectCorrectElementForList(selection, isIndent);
+        var ranges = selection && selection.getRanges(),
+            iterator = ranges.createIterator();
+
+        while ((range = iterator.getNextRange())) {
+            if (range.startContainer) {
+                var startNode = range.startContainer.type !== CKEDITOR.NODE_TEXT && range.startContainer.getName() === "li"
+                    ? range.startContainer
+                    : range.startContainer.getAscendant('li');
+                _handleNode(startNode, editor, isIndent);
+            }
+            if (range.endContainer) {
+                var endNode = range.endContainer.type !== CKEDITOR.NODE_TEXT && range.endContainer.getName() === "li"
+                    ? range.endContainer
+                    : range.endContainer.getAscendant('li');
+                _handleNode(endNode, editor, isIndent);
+            }
+
+            var rangeWalker = new CKEDITOR.dom.walker(range);
+            while (node = rangeWalker.next()) {
+                _handleNode(node, editor, isIndent);
+            }
+        }
+        selection.selectRanges(savedRanges);
+    }
+
+    function _handleNode(node, editor, isIndent) {
+        if (!node || node.type !== CKEDITOR.NODE_ELEMENT){
+            return;
+        }
+        leosPluginUtils.handleIndentAttributes(node, editor, isIndent);
+        node.getChildren().toArray().forEach(_handleNode.bind(this, editor, isIndent));
+    }
+
     /*
      * Resets the numbering of the points depending on nesting level. LEOS-1487: Current implementation simply goes through whole document and renumbers all
      * ordered list items. For above reason this could cause some performance issues if so this implementation should be reconsidered.
@@ -346,6 +387,15 @@ define(function aknOrderedListPluginModule(require) {
             }, {
                 akn : "leos:softdate",
                 html : "data-akn-attr-softdate"
+            }, {
+                akn: "leos:id-to-be-restored",
+                html: "data-akn-id-to-be-restored"
+            }, {
+                akn: "leos:renumber-origin",
+                html: "data-akn-renumber-origin"
+            }, {
+                akn: "leos:id-to-be-removed",
+                html: "data-akn-id-to-be-removed"
             }, {
                 html : "data-akn-name=aknOrderedList"
             },{

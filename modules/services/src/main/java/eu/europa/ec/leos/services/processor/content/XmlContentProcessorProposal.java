@@ -171,8 +171,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             signatureLocationNode = getFirstChild(node, P);  //Conclusions location paragraph
         } else {
             childrenNode = ELEMENTS_WITH_ONLY_TEXT.contains(tocVo.getTagName().value().toLowerCase()) ?
-                    XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node, tocVo) :
-                    XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node, tocVo);
+                    XmlContentProcessorHelper.extractLevelNonTocItemsKeepingTextNodes(tocItems, tocRules, node) :
+                    XmlContentProcessorHelper.extractLevelNonTocItems(tocItems, tocRules, node);
         }
         // 3. clean the node and build it again.
         node.setTextContent(EMPTY_STRING);

@@ -53,6 +53,7 @@ import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 
 import javax.inject.Provider;
 import java.io.IOException;

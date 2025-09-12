@@ -871,7 +871,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
 
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,
-                                                             final TocItem parentTocItem, final List<TocItem> parentTocItems) {
+            final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
         TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
                 sourceItem.getTagName());

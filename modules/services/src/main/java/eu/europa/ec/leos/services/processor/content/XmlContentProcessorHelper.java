@@ -118,7 +118,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.SIGNATORY;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
@@ -677,7 +676,7 @@ public class XmlContentProcessorHelper {
         return node;
     }
 
-    public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
+    public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
         List<Node> childrenToAppend = new ArrayList<>();
         List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
@@ -689,7 +688,7 @@ public class XmlContentProcessorHelper {
         return childrenToAppend;
     }
 
-    public static List<Node> extractLevelNonTocItemsKeepingTextNodes(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
+    public static List<Node> extractLevelNonTocItemsKeepingTextNodes(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
         List<Node> childrenToAppend = new ArrayList<>();
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
