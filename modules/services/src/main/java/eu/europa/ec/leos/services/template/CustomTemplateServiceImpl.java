@@ -22,12 +22,12 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -46,14 +46,12 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
     private final UserService userService;
     private final TemplateService templateService;
     private final SecurityContext securityContext;
-
-    @Value("${leos.templates.catalog}")
-    private String templatesCatalog;
+    private final UserHelper userHelper;
 
 
     @Override
     public List<CatalogItem> getCustomTemplatesCatalog() throws IOException {
-        String customTemplatesCatalog = templatesCatalog + "-" + securityContext.getUser().getDefaultEntity().getOrganizationName();
+        String customTemplatesCatalog = userHelper.getUserDgCustomTemplatesCatalog();
         return templateService.getTemplatesCatalog(customTemplatesCatalog);
     }
 

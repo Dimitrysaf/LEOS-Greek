@@ -48,6 +48,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -74,6 +75,7 @@ public abstract class CollectionContextService {
     private static final String PROPOSAL_PROCEDURE_TYPE_IS_REQUIRED = "Proposal procedure type is required!";
     private static final String PROPOSAL_ACT_TYPE_IS_REQUIRED = "Proposal act type is required!";
     private static final String PROPOSAL_METADATA_IS_REQUIRED = "Proposal metadata is required!";
+    protected static final String CUSTOM_TEMPLATE_KEY_INDICATOR = "/";
     protected static final String TEMPLATE = "template";
     protected static final String ACT_TYPE = "actType";
     protected static final String PROCEDURE_TYPE = "procedureType";
@@ -88,6 +90,7 @@ public abstract class CollectionContextService {
     protected final MessageHelper messageHelper;
     protected final ExplanatoryService explanatoryService;
     protected final TemplateService templateService;
+    protected final CustomTemplateService customTemplateService;
     protected final PackageService packageService;
     protected final ProposalService proposalService;
     private final CollectionUrlBuilder urlBuilder;
@@ -130,13 +133,15 @@ public abstract class CollectionContextService {
     protected boolean translated = false;
     protected String templateKey;
 
-    CollectionContextService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
+    CollectionContextService(CustomTemplateService customTemplateService, TemplateService templateService,
+                             PackageService packageService, ProposalService proposalService,
                              CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
                              Provider<BillContextService> billContextProvider, SecurityContext securityContext,
                              Provider<ExplanatoryContextService> explanatoryContextProvider,
                              Provider<FinancialStatementContextService> financialStatementContextProvider,
                              Provider<AnnexContextService> annexContextProvider,
                              ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
+        this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.explanatoryService = explanatoryService;
         this.packageService = packageService;

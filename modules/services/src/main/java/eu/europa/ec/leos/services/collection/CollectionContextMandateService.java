@@ -35,6 +35,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -56,13 +57,14 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 public class CollectionContextMandateService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextMandateService.class);
 
-    CollectionContextMandateService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
+    CollectionContextMandateService(CustomTemplateService customTemplateService, TemplateService templateService,
+            PackageService packageService, ProposalService proposalService,
             CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
             Provider<BillContextService> billContextProvider, Provider<AnnexContextService> annexContextProvider,
             SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider,
             Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService,
             MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
-        super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider,
+        super(customTemplateService, templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider,
                 securityContext, explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper, xmlContentProcessor);
     }
 
