@@ -11,7 +11,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document
+  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -207,7 +207,8 @@ export class ProposalDetailsService implements OnDestroy {
                          proposalType?: string, targetProposalReference?: string, targetProposalDate?: Date, proposalTargetLang?: string[],
                          correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
-                         institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean) {
+                         institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean,
+                         signatures?: SignatureMetadata[]) {
     const internalRef = null;
     this.loadingService.setLoading(true);
     return this.http
@@ -233,7 +234,8 @@ export class ProposalDetailsService implements OnDestroy {
         institutionalReference,
         institutionalReferenceFinalVersion,
         interInstitutionalReference,
-        stamp
+        stamp,
+        signatures
       });
   }
 
@@ -775,6 +777,12 @@ export class ProposalDetailsService implements OnDestroy {
 
   getAllOrganizations(): Observable<string[]> {
     return this.http.get<string[]>(`${apiBaseUrl}/secured/organizations`);
+  }
+
+  searchUsersByJobTitle(jobTitle: string): Observable<string[]> {
+    return this.http.get<string[]>(`${apiBaseUrl}/secured/proposal/searchUsersByJobTitle`, {
+      params: { jobTitle: jobTitle },
+    });
   }
 
   private retrieveAuthority(collaborators: Collaborator[], config: LeosAppConfig) {

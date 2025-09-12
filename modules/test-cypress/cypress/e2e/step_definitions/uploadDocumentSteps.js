@@ -1,4 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import uploadDocumentPage from "../pages/uploadDocumentPage";
 
 Then(`active upload window label contains {string}`, (label) => {
@@ -35,7 +35,7 @@ Then(`document title input field is displayed`, () => {
 When(`click on create button in upload document page`, () => {
     uploadDocumentPage.clickCreateBtn();
 });
- 
-And('provide document title {string} in upload document page', (title) => {
+
+When('provide document title {string} in upload document page', (title) => {
     uploadDocumentPage.enterProposalTitle(title);
 })

@@ -40,7 +40,9 @@ public class NumberProcessorParagraphAndPoint extends NumberProcessorDefault {
         Node listNode = getFirstChild(node, LIST);
         if (listNode != null && listNode.getFirstChild() != null) {
             String elementType = XercesUtils.getFirstChildType(listNode, Arrays.asList(INDENT, POINT));
-            numberProcessorHandler.renumberElement(node, elementType, numberChildren, language);
+            if(elementType != null){
+                numberProcessorHandler.renumberElement(node, elementType, numberChildren, language);
+            }
         }
     }
 

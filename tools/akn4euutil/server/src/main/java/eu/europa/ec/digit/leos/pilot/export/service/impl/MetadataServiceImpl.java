@@ -1,6 +1,8 @@
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
 import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
@@ -22,6 +24,7 @@ import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.metadata.CorrigendumAddendumMetadata;
 import eu.europa.ec.digit.leos.pilot.export.util.metadata.CoverPageTypeMetadata;
+import eu.europa.ec.digit.leos.pilot.export.util.metadata.SignatureMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,12 +159,11 @@ public class MetadataServiceImpl implements MetadataService {
         final Node pNode = XmlUtil.getChildNodeWithName(longTitle, "p");
         if (pNode == null) return;
 
-        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
+        Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
         if (dateNode == null) return;
 
-
-        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
-        final String displayValue = this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
+        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId().isEmpty() ? "2999-01-01" : fieldInfo.getId());
+        final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
         dateNode.setTextContent(displayValue);
     }
 
@@ -184,7 +186,9 @@ public class MetadataServiceImpl implements MetadataService {
         final Node dateNode = XmlUtil.getChildNodeWithName(xmlPlaceAndDate, MetadataUtil.ELEMENT_DATE);
         if (dateNode == null) return;
 
-        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId().isEmpty() ? "2999-01-01" : fieldInfo.getId());
+        final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
+        dateNode.setTextContent(displayValue);
     }
 
     private String readAdoptionDateDisplayValue(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -839,56 +843,72 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, int pos) {
+    public void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if (!MetadataUtil.isBillXmlDocument(xmlFile)) return;
-        final Node signatureNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_SIGNATURE);
-        final int roleIndex = XmlUtil.indexOfChildNode(signatureNode, MetadataUtil.ELEMENT_ROLE);
-        final int personIndex = XmlUtil.indexOfChildNode(signatureNode, MetadataUtil.ELEMENT_PERSON);
-        if (roleIndex < 0 || personIndex < 0) {
-            return;
-        }
-
-        // Check wether role or person is first set in xml
-        // Depending on the index, the commission values are set accordingly
-        switch(pos) {
-            case 0:
-                if (roleIndex < personIndex) {
-                    processCommissionerRole(fieldInfo, signatureNode, xmlFile);
-                } else {
-                    processCommissionerPerson(fieldInfo, signatureNode);
-                }
-                break;
-            case 1:
-                if (roleIndex < personIndex) {
-                    processCommissionerPerson(fieldInfo, signatureNode);
-                } else {
-                    processCommissionerRole(fieldInfo, signatureNode, xmlFile);
-                }
-                break;
-            default:
-                break;
+        final NodeList signatureNodes = xmlFile.getElementsByName(MetadataUtil.ELEMENT_SIGNATURE);
+        final List<SignatureMetadata> signatures = fetchSignaturesValue(fieldInfo.getDisplayValue());
+        for (int i = 0; i < signatureNodes.getLength(); i++) {
+            Node signatureNode = signatureNodes.item(i);
+            if (i < signatures.size()) {
+                processCommissionerRole(signatures.get(i), signatureNode, xmlFile);
+                processCommissionerPerson(signatures.get(i), signatureNode);
+                processCommissionerMention(signatures.get(i), signatureNode, xmlFile);
+            }
         }
     }
 
-    private void processCommissionerRole(ReferenceFieldInfo fieldInfo, Node signatureNode, XmlUtil.XmlFile xmlFile) {
-        this.addRoleToReferences(fieldInfo, xmlFile);
+    public List<SignatureMetadata> fetchSignaturesValue(String value) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(value, new TypeReference<List<SignatureMetadata>>(){});
+        } catch (JsonProcessingException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public String getFieldValue(String jsonString, String field) {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = null;
+        try {
+            root = mapper.readTree(jsonString);
+        } catch (JsonProcessingException e) {
+            return jsonString;
+        }
+        String fieldValue = root.get(field).asText();
+        return fieldValue;
+    }
+
+    private void processCommissionerRole(SignatureMetadata signature, Node signatureNode, XmlUtil.XmlFile xmlFile) {
+        String fieldValue = signature.getCommissionerTitle();
+        final String language = readLanguageValue(xmlFile);
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldValue, language);
+        fieldValue = roleFieldInfo != null ? roleFieldInfo.getDisplayValue() : fieldValue;
+        this.addRoleToReferences(roleFieldInfo, xmlFile);
         final Node roleNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_ROLE);
         if (roleNode == null) return;
 
-        roleNode.setTextContent(fieldInfo.getDisplayValue());
-        final String language = readLanguageValue(xmlFile);
+        roleNode.setTextContent(fieldValue);
 
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue(), language);
         XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
     }
 
-    private void addRoleToReferences(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    private void processCommissionerMention(SignatureMetadata signature, Node signatureNode, XmlUtil.XmlFile xmlFile) {
+        String fieldValue = signature.getSpecialMention();
+        final String language = readLanguageValue(xmlFile);
+        final ReferenceFieldInfo mentionFieldInfo = getMentionFieldInfo(fieldValue, language);
+        fieldValue = mentionFieldInfo != null ? mentionFieldInfo.getDisplayValue() : fieldValue;
+        final Node organizationNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_ORGANIZATION);
+        if (organizationNode == null) return;
+
+        organizationNode.setTextContent(fieldValue);
+
+        XmlUtil.setNodeAttributeValue(organizationNode, MetadataUtil.ATTRIBUTE_REFERSTO, (mentionFieldInfo == null) ? "" : "~" + mentionFieldInfo.getId());
+    }
+
+    private void addRoleToReferences(ReferenceFieldInfo roleFieldInfo, XmlUtil.XmlFile xmlFile) {
         final Node referencesNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_REFERENCES);
         boolean appendNode = false;
         if (referencesNode == null) return;
-
-        final String language = readLanguageValue(xmlFile);
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue(), language);
         if (roleFieldInfo == null) return;
 
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
@@ -921,10 +941,25 @@ public class MetadataServiceImpl implements MetadataService {
         return null;
     }
 
-    private void processCommissionerPerson(ReferenceFieldInfo fieldInfo, Node signatureNode) {
+    private ReferenceFieldInfo getMentionFieldInfo(String mentionValue, String lang) {
+        if (MetadataUtil.isMentionCommission(mentionValue)) {
+            return MetadataUtil.getMentionCommissionFieldInfo(lang);
+        }
+        if (MetadataUtil.isMentionCouncil(mentionValue)) {
+            return MetadataUtil.getMentionCouncilFieldInfo(lang);
+        }
+        if (MetadataUtil.isMentionEuropeanParliament(mentionValue)) {
+            return MetadataUtil.getMentionEPFieldInfo(lang);
+        }
+        return null;
+    }
+
+    private void processCommissionerPerson(SignatureMetadata signature, Node signatureNode) {
+        String signingCommissioner = signature.getSigningCommissioner();
         final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
         if (personNode == null) return;
-        personNode.setTextContent(fieldInfo.getDisplayValue());
+        personNode.setTextContent(signingCommissioner);
+        XmlUtil.setNodeAttributeValue(personNode, MetadataUtil.ATTRIBUTE_REFERSTO, "");
     }
 
     @Override
@@ -1085,7 +1120,9 @@ public class MetadataServiceImpl implements MetadataService {
                 langArray.add(ResourcesUtil.getMessage(language, "authentic.language." + lang.toUpperCase()));
             }
             langArray = langArray.stream().sorted().collect(Collectors.toList());
-            final String langStr = String.join(", ", langArray.subList(0, langArray.size() - 1)) + " " + ResourcesUtil.getMessage(language, "coverpage" +
+            final String langStr = langArray.size() == 1 ? langArray.get(0) :
+                    String.join(", ", langArray.subList(0, langArray.size() - 1)) + " " + ResourcesUtil.getMessage(language,
+                    "coverpage" +
                     ".separator") + " " + langArray.get(langArray.size() - 1);
             XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
             authPElement.setTextContent(String.format(ResourcesUtil.getMessage(language, "authentic.languages.text.template"), langStr));

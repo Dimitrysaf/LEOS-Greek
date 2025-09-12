@@ -1,7 +1,6 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import actViewerPage from "../pages/actViewerPage";
 import headerPage from "../pages/headerPage";
-/// <reference types="cypress" />
 
 Then('user is on act viewer page', () => {
     headerPage.getCurrentPageName().should("have.text", "Act View");
@@ -23,7 +22,7 @@ When(`click on cover page link present in act viewer page`, () => {
     actViewerPage.clickCoverPageLink();
 });
 
-And(`cover page link is present`, () => {
+Then(`cover page link is present`, () => {
     actViewerPage.elements.coverPageLink().should('be.visible');
 });
 
@@ -75,7 +74,7 @@ When(`click on actions button`, () => {
     actViewerPage.clickOnActionButton();
 });
 
-And(`click on download button`, () => {
+When(`click on download button`, () => {
     actViewerPage.clickDownloadButton();
     headerPage.getLoadingIcon().should('not.exist');
 });

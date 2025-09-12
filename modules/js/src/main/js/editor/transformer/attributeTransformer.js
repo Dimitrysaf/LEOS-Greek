@@ -72,12 +72,12 @@ define(function attributeTransformerModule(require) {
                         && !attributeTransformers['addClassAttributeTransformer'].isSupported(normAttr));
             },
             perform: function() {
-                if (!!this.attrConfig.from && this.fromElement.attributes[this.attrConfig.from.toLowerCase()]) {
+                if (!!this.attrConfig.from
+                    && (this.fromElement.attributes[this.attrConfig.from.toLowerCase()]
+                        || (this.fromElement.attributes[this.attrConfig.from.toLowerCase()] == "" && !this.attrConfig.toValue))) {
                     this.toElement.attributes[this.attrConfig.to] = this.fromElement.attributes[this.attrConfig.from.toLowerCase()];
-                } else {
-                    if (this.attrConfig.toValue) {
-                        this.toElement.attributes[this.attrConfig.to] = this.attrConfig.toValue;
-                    }
+                } else if (this.attrConfig.toValue) {
+                    this.toElement.attributes[this.attrConfig.to] = this.attrConfig.toValue;
                 }
             }
         },

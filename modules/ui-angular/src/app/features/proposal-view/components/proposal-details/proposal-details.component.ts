@@ -1,5 +1,15 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Document, Permission, AuthenticLanguage, CoverPageType, ProposalDetailsLists, Metadata, DetailsTabExclusions, LeosConfig} from '@leos/shared';
+import {
+  Document,
+  Permission,
+  AuthenticLanguage,
+  CoverPageType,
+  ProposalDetailsLists,
+  Metadata,
+  DetailsTabExclusions,
+  LeosConfig,
+  User, SignatureMetadata
+} from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
 import {cloneDeep, toNumber} from "lodash-es";
@@ -46,11 +56,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   interInstitutionalRefNumber: number | null;
   interInstitutionalRefType: string | null;
   interInstitutionalRefTypes = [];
-  specialMention: string | null;
+  signatures: SignatureMetadata[] | null;
   specialMentions = [];
-  signingCommissioner: string | null;
-  signingCommissioners: [];
-  commissionerTitle: string | null;
+  commissionerTitles = [];
   stamp: boolean = false;
   institutionalRefRegEx = /([A-Za-z0-9]+)\(([0-9]{4})\)\s{0,1}([0-9]+)\s{0,1}/;
   interInstitutionalRefRegEx = /([0-9]{4})\/([0-9]+) \(([A-Za-z0-9]+)\)/;
@@ -76,7 +84,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   correctionInformation: string;
   finalVersion: boolean;
 
-
   //TODO To be moved to the backend configuration
   languages = [];
 
@@ -100,13 +107,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   invalidCorrectionInfoInput: boolean;
   greffeUser: boolean;
 
-
   constructor(
     private appConfigService: AppConfigService,
     protected detailsService: ProposalDetailsService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
-    private loadingService: LoadingService,
     ) {
     this.years = this.getYearsSince(1980);
     this.detailsService.permissions$
@@ -152,9 +157,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isCommissionerChanged() {
-    return this.specialMention != this.proposalMetadata.specialMention
-      || this.signingCommissioner != this.proposalMetadata.signingCommissioner
-      || this.commissionerTitle != this.proposalMetadata.commissionerTitle;
+    for (let i = 0; i < this.signatures.length; i++) {
+      let signature = this.signatures[i];
+      if (signature.specialMention != this.proposalMetadata.signatures[i].specialMention
+        || signature.signingCommissioner != this.proposalMetadata.signatures[i].signingCommissioner
+        || signature.commissionerTitle != this.proposalMetadata.signatures[i].commissionerTitle) {
+        return true;
+      }
+    }
+    return false;
   }
 
   isCoverPageTypeChanged() {
@@ -197,7 +208,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   isAdoptionDateChanged(): boolean {
     return !(this.adoptionDate == null && this.proposalMetadata.adoptionDate == null)
-      && (this.adoptionDate !== null && this.proposalMetadata.adoptionDate !== null && new Date(this.proposalMetadata.adoptionDate).getTime()/1000) != this.adoptionDate.unix();
+      || (this.adoptionDate !== null && this.proposalMetadata.adoptionDate !== null && new Date(this.proposalMetadata.adoptionDate).getTime()/1000 != this.adoptionDate.unix());
   }
 
   isInstitutionalReferenceChanged(): boolean {
@@ -220,6 +231,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.institutionalRefActingEntities = this.proposalDetails.institionalRefsTypes;
     this.interInstitutionalRefTypes = this.proposalDetails.interInstitionalRefsTypes;
     this.specialMentions = this.proposalDetails.specialMentions;
+    this.commissionerTitles = this.proposalDetails.commissionerTitles;
     this.proposalMetadata = cloneDeep(this.proposal.metadata);
   }
 
@@ -423,7 +435,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isAuthenticLangValid(): boolean {
-    return !this.isAuthenticLang || this.isThereSelectedLanguage();
+    return (this.isAuthenticLang && this.isThereSelectedLanguage()) || !this.isAuthenticLang;
   }
 
   isTargetLangValid(): boolean {
@@ -451,9 +463,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.interInstitutionalRefNumber = parseInt(myArray[2]);
       this.interInstitutionalRefType = myArray[3];
     }
-    this.specialMention = this.proposal.metadata.specialMention;
-    this.signingCommissioner = this.proposal.metadata.signingCommissioner;
-    this.commissionerTitle = this.proposal.metadata.commissionerTitle;
+    this.signatures = cloneDeep(this.proposal.metadata.signatures);
+    for (let signature of this.signatures) {
+      this.populateSigningCommissioner(signature);
+    }
     this.stamp = this.proposal.metadata.stamp;
   }
 
@@ -489,6 +502,34 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       { length: currentYear - firstYear + 1 },
       (_, i) => currentYear - i,
     );
+  }
+
+  populateSigningCommissioner(signature : SignatureMetadata) {
+    if (!signature.commissionerTitle) return;
+    signature.signingCommissioners = [];
+    this.detailsService.searchUsersByJobTitle(signature.commissionerTitle)
+      .subscribe({
+        next: (users: string[]) => {
+          signature.signingCommissioners.push(signature.signingCommissioner);
+          for (let user of users) {
+            if (user != signature.signingCommissioner) {
+              signature.signingCommissioners.push(user);
+            }
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching commissioners by job title', err);
+          signature.signingCommissioners = [];
+          signature.signingCommissioners.push(signature.signingCommissioner);
+        }
+      });
+  }
+
+  onCommissionerTitleSelection(signature: SignatureMetadata, event: Event) {
+    const selectedTitle = event.toString();
+    signature.commissionerTitle = selectedTitle;
+    this.populateSigningCommissioner(signature);
+    this.handleChange();
   }
 
   handleChange() {
@@ -634,11 +675,12 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.finalVersion,
       this.isCrossReferencesChanged() ? this.crossReferenceProposalListing : null,
       this.isAdoptionPlaceChanged() ? this.adoptionPlace : null,
-      this.isAdoptionDateChanged() ? this.adoptionDate.toDate() : null,
+      this.isAdoptionDateChanged() ? this.adoptionDate == null ? new Date(0) : this.adoptionDate.toDate() : null,
       this.isInstitutionalReferenceChanged() ? this.getInstitutionalReference() : null,
       this.isInstitutionalReferenceChanged() ? this.institutionalReferenceFinalVersion : null,
       this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null,
-      this.isStampChanged() ? this.stamp : null
+      this.isStampChanged() ? this.stamp : null,
+      this.isCommissionerChanged() ? this.signatures : null,
     ).subscribe({
       next: () => {
         if (!this.showCorrigendumAddendum) {
@@ -671,6 +713,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.languages.forEach(lang => {
       this.selectedLanguages[lang] = this.allSelected;
     });
+    this.handleChange();
   }
 
   onLanguageChange() {

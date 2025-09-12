@@ -65,6 +65,8 @@ public interface ApiService {
 
     List<UserJSON> searchUser(String searchKey);
 
+    List<String> searchUserByJobTitle(String jobTitle);
+
     void createExplanatoryDocument(String proposalRef, String template);
 
     ProposalMetadata createExplanatoryDocument(String templateId, String docPurpose, boolean eeaRelevance);

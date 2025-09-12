@@ -36,6 +36,13 @@ public interface UserService {
      * @return a list of users and an empty list if no user is found.
      */
     public List<UserJSON> searchUsersByKey(String key);
+    /**
+     * Get list of users with a given job title.
+     *
+     * @param key
+     * @return a list of users and an empty list if no user is found.
+     */
+    public List<UserJSON> searchUsersByJobTitle(String key);
 
     /**
      * Get list of users with a given key, context and reference.
