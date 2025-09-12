@@ -4,7 +4,7 @@ import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
 
 Then('user is on financial statement page', () => {
-    headerPage.getCurrentPageName().should("have.text", "Digital Financial Statement");
+    headerPage.getCurrentPageName().should("have.text", "Legislative Financial and Digital Statement");
     cy.wait(5000);
 });
 
