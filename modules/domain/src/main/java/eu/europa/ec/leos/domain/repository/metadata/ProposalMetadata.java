@@ -21,9 +21,7 @@ public final class ProposalMetadata extends LeosMetadata {
     private String institutionalReference;
     private Boolean institutionalReferenceFinalVersion;
     private String interInstitutionalReference;
-    private String specialMention;
-    private String signingCommissioner;
-    private String commissionerTitle;
+    private List<SignatureMetadata> signatures;
     private Boolean stamp;
 
     public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
@@ -61,9 +59,7 @@ public final class ProposalMetadata extends LeosMetadata {
         private String institutionalReference;
         private Boolean institutionalReferenceFinalVersion;
         private String interInstitutionalReference;
-        private String specialMention;
-        private String signingCommissioner;
-        private String commissionerTitle;
+        private List<SignatureMetadata> signatures;
         private Boolean stamp;
 
         private ProposalMetadataBuilder() {
@@ -91,9 +87,7 @@ public final class ProposalMetadata extends LeosMetadata {
             this.institutionalReference = metadata.getInstitutionalReference();
             this.institutionalReferenceFinalVersion = metadata.getInstitutionalReferenceFinalVersion();
             this.interInstitutionalReference = metadata.getInterInstitutionalReference();
-            this.commissionerTitle = metadata.getCommissionerTitle();
-            this.signingCommissioner = metadata.getSigningCommissioner();
-            this.specialMention = metadata.getSpecialMention();
+            this.signatures = metadata.getSignatures();
             this.adoptionPlace = metadata.getAdoptionPlace();
             this.adoptionDate = metadata.getAdoptionDate();
             this.stamp = metadata.getStamp();
@@ -193,9 +187,7 @@ public final class ProposalMetadata extends LeosMetadata {
             metadata.setInstitutionalReference(institutionalReference);
             metadata.setInstitutionalReferenceFinalVersion(institutionalReferenceFinalVersion);
             metadata.setInterInstitutionalReference(interInstitutionalReference);
-            metadata.setSpecialMention(specialMention);
-            metadata.setSigningCommissioner(signingCommissioner);
-            metadata.setCommissionerTitle(commissionerTitle);
+            metadata.setSignatures(signatures);
             metadata.setStamp(stamp);
             return metadata;
         }

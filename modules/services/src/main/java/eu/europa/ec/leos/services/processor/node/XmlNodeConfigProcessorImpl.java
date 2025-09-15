@@ -73,7 +73,7 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         proposalConfigMap.put(ADOPTION_DATE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='placeAndDate']/akn:date/@date",
                 false,
                 Collections.emptyList()));
-        proposalConfigMap.put(ADOPTION_DATE_VALUE, new XmlNodeConfig("//akn:coverPage/akn:longTitle/akn:p/akn:date",
+        proposalConfigMap.put(ADOPTION_DATE_VALUE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='placeAndDate']/akn:date",
                 false,
                 Collections.emptyList()));
         proposalConfigMap.put(COTE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='reference']/akn:docNumber",
@@ -107,6 +107,15 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();
         billConfigMap.putAll(otherConfig);
         billConfigMap.put(STAMP, new XmlNodeConfig("//akn:conclusions/akn:block[@name='stamp']/akn:img/@src",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_ORG, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:organization/@refersTo",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_ROLE, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:role/@refersTo",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_PERSON, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:person",
                 false,
                 Collections.emptyList()));
 

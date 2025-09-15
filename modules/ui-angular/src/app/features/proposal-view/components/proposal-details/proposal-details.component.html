@@ -43,6 +43,14 @@
               <div class="col-sm-6 label-column"></div>
             </div>
 
+            <div class="row details-gen-rows">
+              <div class="col-sm-2 label-column">
+                <label>{{ 'page.collection.details.language' | translate }}</label>
+              </div>
+              <div class="col-sm-4">{{ proposal.metadata.language }}</div>
+              <div class="col-sm-6 label-column"></div>
+            </div>
+
             <div class="row details-gen-rows" *ngIf="!detailsTabExclusions?.eea">
               <div class="col-sm-12 label-column"><input
                 name="checkbox-eea-rel"
@@ -73,7 +81,6 @@
                     type="checkbox"
                     id="all_lang"
                     [(ngModel)]="allSelected"
-                    (ngModelChange)="handleChange()"
                     (change)="toggleAllLanguages()"
                     [disabled]="!isAuthenticLang"/>
                   <label>{{ 'page.collection.details.all'
@@ -193,14 +200,13 @@
                 for="adoptionPlace"
                 translate="page.collection.details.adoption.place"
               ></label>
-              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="adoptionPlace" name="adoptionPlace" id="adoptionPlace" required>
+              <select euiSelect [(ngModel)]="adoptionPlace" (ngModelChange)="handleChange()" name="adoptionPlace" id="adoptionPlace" required>
                 <option *ngFor="let adoptionPlace of adoptionPlaces">{{ adoptionPlace }}</option>
               </select>
             </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-adoption-date">
               <label
                 euiLabel
-                euiRequired
                 translate="page.collection.details.adoption.date"
               ></label>
               <div class="row" class="details-tab-adoption-date">
@@ -221,11 +227,11 @@
             </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference">
               <div class="adoption-info-institutional-reference">
-                <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="institutionalRefActingEntity" name="institutionalRefActingEntity"
+                <select euiSelect [(ngModel)]="institutionalRefActingEntity" (ngModelChange)="handleChange()" name="institutionalRefActingEntity"
                         id="institutionalRefActingEntity"  class="details-tab-first-select" [disabled]="!institutionalRef">
                   <option *ngFor="let institutionalRefActingEntity of institutionalRefActingEntities">{{ institutionalRefActingEntity }}</option>
                 </select>
-                (<select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="institutionalRefYear" name="institutionalRefYear" id="institutionalRefYear"
+                (<select euiSelect [(ngModel)]="institutionalRefYear" (ngModelChange)="handleChange()" name="institutionalRefYear" id="institutionalRefYear"
                          class="details-tab-select" [disabled]="!institutionalRef">
                   <option *ngFor="let institutionalRefYear of years">{{ institutionalRefYear }}</option>
                 </select>)
@@ -275,7 +281,7 @@
             </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference2">
               <div class="adoption-info-institutional-reference">
-                <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="interInstitutionalRefYear" name="interInstitutionalRefYear"
+                <select euiSelect [(ngModel)]="interInstitutionalRefYear" (ngModelChange)="handleChange()" name="interInstitutionalRefYear"
                         id="interInstitutionalRefYear"
                         class="details-tab-first-select"
                         [disabled]="!interInstitutionalRef">
@@ -286,7 +292,7 @@
                        (ngModelChange)="handleChange()"
                        [disabled]="!interInstitutionalRef"
                        class="details-tab-text"/>
-                (<select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="interInstitutionalRefType" name="interInstitutionalRefType"
+                (<select euiSelect [(ngModel)]="interInstitutionalRefType" (ngModelChange)="handleChange()" name="interInstitutionalRefType"
                          id="interInstitutionalRefType"
                          class="details-tab-select" [disabled]="!interInstitutionalRef">
                   <option *ngFor="let interInstitutionalRefType of interInstitutionalRefTypes">{{ interInstitutionalRefType }}</option>
@@ -296,42 +302,52 @@
                 </div>
               </div>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-special-mention">
-              <label
-                euiLabel
-                for="specialMention"
-                translate="page.collection.details.adoption.special.mention"
-              ></label>
-              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="specialMention" name="specialMention" id="specialMention"
-                      class="details-tab-first-select" [disabled]="true">
-                <option *ngFor="let specialMention of specialMentions">{{ specialMention }}</option>
-              </select>
+            <div *ngFor="let signature of signatures" class="eui-u-width-auto grid-adoption-info-signature">
+              <div euiInputGroup class="eui-u-width-auto grid-adoption-info-special-mention">
+                <label
+                  euiLabel
+                  for="specialMention"
+                  translate="page.collection.details.adoption.special.mention"
+                ></label>
+                <select euiSelect [(ngModel)]="signature.specialMention" (ngModelChange)="handleChange()" name="specialMention" id="specialMention"
+                        class="details-tab-first-select-250" [disabled]="false">
+                  <option *ngFor="let specialMention of specialMentions" [value]="specialMention">{{
+                      'page.collection.details.adoption.special.mention.' +
+                  specialMention.toLowerCase() | translate }}</option>
+                </select>
+              </div>
+              <div euiInputGroup class="eui-u-width-auto grid-adoption-info-commissioner-title">
+                <label
+                  euiLabel
+                  euiRequired
+                  for="signingCommissioner"
+                  translate="page.collection.details.adoption.commissioner.title"
+                ></label>
+                <select euiSelect [(ngModel)]="signature.commissionerTitle" (ngModelChange)="onCommissionerTitleSelection(signature, $event)"
+                        name="commissionerTitle"
+                        id="commissionerTitle"
+                        class="details-tab-first-select-250"
+                        required [disabled]="false">
+                <option *ngFor="let commissionerTitle of commissionerTitles" [value]="commissionerTitle">{{
+                    'page.collection.details.adoption.commissioner.title.' + commissionerTitle.toLowerCase() | translate }}</option>
+                </select>
+              </div>
+              <div euiInputGroup class="eui-u-width-auto grid-adoption-info-signing-commissioner">
+                <label
+                  euiLabel
+                  euiRequired
+                  for="signingCommissioner"
+                  translate="page.collection.details.adoption.signing.commissioner"
+                ></label>
+                <select euiSelect [(ngModel)]="signature.signingCommissioner" (ngModelChange)="handleChange()" name="signingCommissioner"
+                        id="signingCommissioner"
+                        class="details-tab-first-select-250"
+                        required [disabled]="false">
+                  <option *ngFor="let signingCommissioner of signature.signingCommissioners">{{ signingCommissioner }}</option>
+                </select>
+              </div>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-signing-commissioner">
-              <label
-                euiLabel
-                euiRequired
-                for="signingCommissioner"
-                translate="page.collection.details.adoption.signing.commissioner"
-              ></label>
-              <select euiSelect (ngModelChange)="handleChange()" [(ngModel)]="signingCommissioner" name="signingCommissioner" id="signingCommissioner"
-                      class="details-tab-first-select"
-                      required [disabled]="true">
-                <option *ngFor="let signingCommissioner of signingCommissioners">{{ signingCommissioner }}</option>
-              </select>
-            </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-commissioner-title">
-              <label
-                euiLabel
-                euiRequired
-                for="signingCommissioner"
-                translate="page.collection.details.adoption.commissioner.title"
-              ></label>
-              <input type="text"
-                     [(ngModel)]="commissionerTitle"
-                     (ngModelChange)="handleChange()"
-                     class="details-tab-first-text" [disabled]="true"/>
-            </div>
+
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-stamp">
               <input
                 name="checkbox-stamp"
@@ -459,7 +475,7 @@
   </div>
 </div>
 
-<div class="row eui-u-mt-l d-flex align-items-start"  *ngIf="greffeUser">
+<div class="row eui-u-mt-l d-flex align-items-start"  *ngIf="greffeUser && !isAutonomousAct">
   <div class="col-md-11">
     <eui-card
       class="eui-u-mt-s eui-u-mb-l"

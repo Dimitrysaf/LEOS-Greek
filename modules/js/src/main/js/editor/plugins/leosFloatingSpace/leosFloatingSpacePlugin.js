@@ -65,10 +65,32 @@ define(function floatingSpacePluginModule(require) {
 
     function isMobileDevice() {
         return (
+            getMobileOS() === "iOS" &&
             typeof window.orientation !== "undefined" || // Classic iOS/Android
             navigator.userAgent.includes("Mobi") || // Most mobile browsers include "Mobi"
             (navigator.maxTouchPoints > 1 && /MacIntel/.test(navigator.platform)) // iPadOS in desktop mode
         );
+    }
+
+    function getMobileOS() {
+        // Prefer UA Client Hints (Chromium; requires HTTPS)
+        if (navigator.userAgentData?.platform) {
+            const p = navigator.userAgentData.platform; // "Android" | "iOS" | "Windows" | "macOS" | ...
+            if (p === 'Android') return 'Android';
+            if (p === 'iOS') return 'iOS';
+        }
+
+        // Fallback: classic UA parsing
+        const ua = navigator.userAgent;
+
+        // iOS (includes iPadOS desktop-like UA)
+        const isiOS =
+            /iPad|iPhone|iPod/.test(ua) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS 13+
+
+        if (isiOS) return 'iOS';
+        if (/Android/i.test(ua)) return 'Android';
+        return 'Other';
     }
 
     function monitorViewportHeight(onChange, threshold = 100) {

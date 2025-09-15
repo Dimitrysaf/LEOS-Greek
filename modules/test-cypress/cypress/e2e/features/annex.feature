@@ -14,66 +14,66 @@ Feature: Annex Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "Automation Annex Numbering Testing" in create document page
-    And  click on create button
+    When provide document title "Automation Annex Numbering Testing" in create document page
+    When click on create button
     Then user is on act viewer page
-    And  cover page link is present
-    And  explanatory memorandum link is present
-    And  legal act link is present
-    And  annexes section is present
-    And  there is no annex in annexes section
+    Then cover page link is present
+    Then explanatory memorandum link is present
+    Then legal act link is present
+    Then annexes section is present
+    Then there is no annex in annexes section
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 1
     When click on annex 1 link
     Then annotation side bar is present
-    And  user is on annex page
-    And  annex title is "Annex"
+    Then user is on annex page
+    Then annex title is "Annex"
     When click on close button present in annex page
     Then user is on act viewer page
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 2
     When click on annex 1 link
     Then annotation side bar is present
-    And  user is on annex page
-    And  annex title is "Annex I"
+    Then user is on annex page
+    Then annex title is "Annex I"
     When click on close button present in annex page
     Then user is on act viewer page
     When click on annex 2 link
     Then annotation side bar is present
-    And  user is on annex page
-    And  annex title is "Annex II"
+    Then user is on annex page
+    Then annex title is "Annex II"
     When click on close button present in annex page
     Then user is on act viewer page
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 3
     When click on action icon of annex 1
-    And  click on change title button
+    Then click on change title button
     Then "Edit title" dialog box window is displayed
-    And  input value of dialog box window is "Annex"
+    Then input value of dialog box window is "Annex"
     When provide input "Annex 1" dialog box window
     Then input value of dialog box window is "Annex 1"
     When click on save button in dialog input box window
     Then title of annex 1 contains "Annex 1"
     When click on action icon of annex 2
-    And  click on change title button
+    When click on change title button
     Then "Edit title" dialog box window is displayed
-    And  input value of dialog box window is "Annex"
+    Then input value of dialog box window is "Annex"
     When provide input "Annex 2" dialog box window
-    And  click on save button in dialog input box window
+    When click on save button in dialog input box window
     Then title of annex 2 contains "Annex 2"
     When click on action icon of annex 3
-    And  click on change title button
+    When click on change title button
     Then "Edit title" dialog box window is displayed
-    And  input value of dialog box window is "Annex"
+    Then input value of dialog box window is "Annex"
     When provide input "Annex 3" dialog box window
     When click on save button in dialog input box window
     Then title of annex 3 contains "Annex 3"
     When click on annex 1 link
     Then user is on annex page
-    And  annotation side bar is present
-    And  ribbon toolbar is maximized
-    And  toc editing button is displayed and enabled
-    And  annex title is "Annex I"
+    Then annotation side bar is present
+    Then ribbon toolbar is maximized
+    Then toc editing button is displayed and enabled
+    Then annex title is "Annex I"
 #        Then block heading of the annex container is "Annex 1"
     When click on toc edit button
     Then cancel button is displayed and enabled in navigation pane
@@ -91,25 +91,25 @@ Feature: Annex Page Regression Features
     Then total number of level is 4
     When click on insert before icon of level 2
     Then total number of level is 5
-    And  click on edit icon of level 1
+    When click on edit icon of level 1
     Then ck editor window is displayed
         ##########LEOS-6034 - START###################
     When append "New Addition" at p tag 1 of level in edition mode
         # And  click enter button from keyboard
         # And  click backspace button from keyboard
         ##########LEOS-6034 - END###################
-    And  click save and close button of ck editor
+    When click save and close button of ck editor
     Then ck editor window is not displayed
-    And  level 1 contains "New Addition"
+    Then level 1 contains "New Addition"
     When mouseover and click on level 1
     Then ck editor window is displayed
         ##########LEOS-6034 - START###################
     When select content from offset 7 to 19 of p tag 1 of level in edition mode
-    And  click delete button from keyboard in edition mode
+    When click delete button from keyboard in edition mode
         ##########LEOS-6034 - END###################
-    And  click save and close button of ck editor
+    When click save and close button of ck editor
     Then ck editor window is not displayed
-    And  level 1 doesn't contain "New Addition"
+    Then level 1 doesn't contain "New Addition"
     When click on delete icon of level 3
     Then "Delete Element: confirmation" dialog confirm box window is displayed
     When click on ok button in dialog box window
@@ -121,12 +121,12 @@ Feature: Annex Page Regression Features
     When mouseover and click on article 1
     Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And  click on paragraph mode icon two times present in ck editor panel
-    And  click enter from keyboard in edition mode
-    And  add content "Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text" to li 2 with data-akn-element "paragraph" of article in edition mode
-    And  click on increase indent icon present in ck editor panel
-    And  click enter from keyboard in edition mode
-    And  add content "It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on paragraph mode icon two times present in ck editor panel
+    When click enter from keyboard in edition mode
+    When add content "Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text" to li 2 with data-akn-element "paragraph" of article in edition mode
+    When click on increase indent icon present in ck editor panel
+    When click enter from keyboard in edition mode
+    When add content "It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click at offset 162 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click on soft enter icon present in ck editor panel
     And  p tag 1 of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article contains "It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated " in edition mode
@@ -585,9 +585,7 @@ Feature: Annex Page Regression Features
     When click on danger button in dialog box window
     Then total number of annexes present in act viewer page is 1
     When click on legal act link present in act viewer page
-    When mouseover and click on recital 1
     Then recital number 1 contains mref tag with attribute "leos:broken" and value "true"
-    When click close button of ck editor
     When mouseover and click on recital 2
     Then innerText of internal reference link 1 is "Annex" in edition mode
     And  double click on internal reference link 1 in edition mode

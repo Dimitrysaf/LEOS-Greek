@@ -29,4 +29,6 @@ public interface UsersProvider extends SecurityUserProvider {
     List<String> searchUsersByEntityIdAndKey(String entity, String searchKey);
 
     List<String> getAllOrganizations();
+
+    List<UserJSON> searchUsersByJobTitle(String jobTitle);
 }

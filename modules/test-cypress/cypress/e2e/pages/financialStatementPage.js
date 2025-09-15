@@ -1,3 +1,4 @@
+
 class financialStatementPage {
     elements = {
         closeBtn: () => cy.xpath("//button[text()='Close']"),
@@ -21,8 +22,12 @@ class financialStatementPage {
         return cy.xpath("(//mainbody//level)[" + levelNumber + "]");
     }
 
+    getLevelByNum(levelName){
+        return cy.xpath("//mainbody//level/num[text()='"+levelName+"']").parent();
+    }
+
     getLandscapeLevel(levelNumber){
-        return cy.get('mainbody div.landscape level');
+        return cy.get('mainbody div.landscape level').eq(levelNumber-1);
     }
 
     getContentOfLevel(levelNumber) {
@@ -79,6 +84,40 @@ class financialStatementPage {
 
     getSubparagraphFromLevel(subparagraphNumber, levelNumber) {
         return this.getLevel(levelNumber).children('subparagraph').eq(subparagraphNumber-1);
+    }
+
+    selectCheckboxInLevel(checkboxIndex, levelName) {
+        this.getLevelByNum(levelName).find('inline').eq(checkboxIndex-1).click({ force: true }).wait(200);
+    }
+
+    unSelectCheckboxInLevel(checkboxIndex, levelName) {
+        this.getLevelByNum(levelName).find('inline').eq(checkboxIndex-1).click({ force: true }).wait(200);
+    }
+
+    getCheckBoxInLevel(checkboxIndex, levelName) {
+        return this.getLevelByNum(levelName).find('inline').eq(checkboxIndex-1);
+    }
+
+    getSelectedCheckBoxInLevel(levelName) {
+        return this.getLevelByNum(levelName).find('inline[name="checked"]');
+    }
+
+    selectAllCheckboxesInLevel(levelName) {
+        this.getLevelByNum(levelName)
+            .find('[name="unchecked"]')
+            .each(() => {
+                cy.get('[name="unchecked"]')
+                    .first()
+                    .click({ force: true }).wait(200);
+            });
+    }
+
+    getRepeatedSubparagraphOfLevel(repeatableSubparagraphNumber, levelName) {
+        return this.getLevelByNum(levelName).find("subparagraph[leos\\:repeatable='true']").eq(repeatableSubparagraphNumber-1);
+    }
+
+    deleteRepeatableSubparagraph(repeatableSubparagraphNumber, levelName) {
+        this.getRepeatedSubparagraphOfLevel(repeatableSubparagraphNumber, levelName).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true}).parent().find("span[data-widget-type='delete']").click({ force: true }).wait(200));
     }
 }
 export default new financialStatementPage();

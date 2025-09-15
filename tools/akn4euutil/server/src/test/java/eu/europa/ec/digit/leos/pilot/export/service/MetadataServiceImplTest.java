@@ -23,6 +23,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFi
 import eu.europa.ec.digit.leos.pilot.export.service.impl.MetadataServiceImpl;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -166,10 +167,11 @@ public class MetadataServiceImplTest {
 
     @Test
     public void testAddCommissionerRole() throws Exception {
-        String roleValue = "the President";
+        String roleValue = "The President";
         XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
-        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", "the President", "", MetadataFieldType.COMMISSIONER);
-        metadataService.processCommissioner(fieldInfo, xmlFile, 0);
+        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", "[{\"specialMention\":\"For the Commission\", \"commissionerTitle\":\"the President\"}]",
+                "", MetadataFieldType.COMMISSIONER);
+        metadataService.processCommissioner(fieldInfo, xmlFile);
 
         Node tlcRole = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
         Assertions.assertNotNull(tlcRole);
@@ -188,9 +190,11 @@ public class MetadataServiceImplTest {
     @Test
     public void testAddCommissionerPerson() throws Exception {
         String personValue = "Ursula VON DER LEYEN";
+        String signatureValue = "[{\"specialMention\":\"For the Commission\", \"commissionerTitle\":\"the President\", \"signingCommissioner\":\"Ursula VON " +
+                "DER LEYEN\"}]";
         XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
-        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", personValue, "", MetadataFieldType.COMMISSIONER);
-        metadataService.processCommissioner(fieldInfo, xmlFile, 1);
+        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", signatureValue, "", MetadataFieldType.COMMISSIONER);
+        metadataService.processCommissioner(fieldInfo, xmlFile);
 
         Node personNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_PERSON);
         Assertions.assertNotNull(personNode);
@@ -200,8 +204,10 @@ public class MetadataServiceImplTest {
     @Test
     public void testAddCommissionerUnknownRole() throws Exception {
         XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
-        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", "unknown role", "", MetadataFieldType.COMMISSIONER);
-        metadataService.processCommissioner(fieldInfo, xmlFile, 0);
+        String signatureValue = "[{\"specialMention\":\"For the Commission\", \"commissionerTitle\":\"unknown role\", \"signingCommissioner\":\"Ursula VON " +
+                "DER LEYEN\"}]";
+        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", signatureValue, "", MetadataFieldType.COMMISSIONER);
+        metadataService.processCommissioner(fieldInfo, xmlFile);
 
         Node roleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_ROLE);
         Assertions.assertNotNull(roleNode);

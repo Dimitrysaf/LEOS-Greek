@@ -606,7 +606,7 @@ export class DocumentEditorComponent
   handleSave(isClosing: boolean) {
     this.loadingService.setLoading(true);
     this.tocService.resetOriginalToc();
-    this.tocService.setBlockReloadOfToc();
+    this.tocService.setBlockReloadOfToc(true);
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
     this.tocService
@@ -616,6 +616,7 @@ export class DocumentEditorComponent
         next: (res) => {
           this.tocService.refreshToc(res, this.documentRef, this.documentType);
           this.tocService.resetOriginalToc(res);
+          this.tocService.setBlockReloadOfToc(false);
         },
         error: (err) => {
           console.log("Error while saving toc: " + err);
