@@ -345,14 +345,15 @@ Feature: CK Editor Regression Features
         When click save and close button of ck editor
         Then content of paragraph 2 contains a table with 3 row and 2 column
         #### Workaround to get attr 'id' of new paragraph for table #####
-        When refresh the browser
-        Then user is on annex page
+        #When refresh the browser
+        #Then user is on annex page
         ####
         When click on edit icon of level 1
         When click on edit icon of paragraph 2
         Then ck editor window is displayed
         And  table icon is disabled in ck editor
-        When mouseover and click on paragraph 1
+        When click close button of ck editor
+        When  click on edit icon of paragraph 1
         Then ck editor window is displayed
         And table icon is enabled in ck editor
         When click close button of ck editor
