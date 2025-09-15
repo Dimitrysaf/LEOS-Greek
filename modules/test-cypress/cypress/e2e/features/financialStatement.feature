@@ -20,26 +20,6 @@ Feature: financial statement page regression features
     And  title of the act contains "Automation Testing FS" keyword
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 1
-    When click on milestones tab in act view page
-    And  click on add button in milestones tab
-    Then add milestone window is displayed
-    When click on create milestone button
-    Then successful message contains "Milestone created"
-    And  "For Interservice Consultation" is showing under title column of row 1 of milestones table
-    And  "File ready" is showing under status column of row 1 of milestones table
-    When click on three dots under actions column of row 1 of milestones table
-    When click on option "View" under milestone actions
-    Then user is on milestone explorer window
-    And  milestone explorer window contains below tabs
-      | TabName                              |
-      | Explanatory Memorandum  [1.0.0]      |
-      | Legal Act  [1.0.0]                   |
-      | Digital Financial Statement  [1.0.0] |
-      | Annex 1  [1.0.0]                     |
-    When click on close button in milestone explorer view
-    Then user is on act viewer page
-    When click on drafts tab in act view page
-    Then active tab name is "Drafts"
     When click on financial statement link present in act viewer page
     Then user is on financial statement page
     And  doctype is "LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT"
@@ -70,8 +50,52 @@ Feature: financial statement page regression features
     Then ck editor window is not displayed
     And  content of subparagraph 1 of level 2 contains "text" in financial statement page
     And  content of subparagraph 2 of level 2 contains "Text..." in financial statement page
+#    When scroll the view into level "1.4."
+    When user selects checkbox 1 of level "1.4."
+    Then checkbox 1 of level "1.4." is selected
+    When user selects checkbox 2 of level "1.4."
+    Then checkbox 2 of level "1.4." is selected
+    When user selects checkbox 3 of level "1.4."
+    Then checkbox 3 of level "1.4." is selected
+    When user selects checkbox 4 of level "1.4."
+    Then checkbox 4 of level "1.4." is selected
+    Then total number of selected checkbox inside level "1.4." is 4
+    When user deselects checkbox 1 of level "1.4."
+    Then checkbox 1 of level "1.4." is deselected
+    And  total number of selected checkbox inside level "1.4." is 3
+    When user deselects checkbox 2 of level "1.4."
+    Then checkbox 2 of level "1.4." is deselected
+    And  total number of selected checkbox inside level "1.4." is 2
+    When user deselects checkbox 3 of level "1.4."
+    Then checkbox 3 of level "1.4." is deselected
+    And  total number of selected checkbox inside level "1.4." is 1
+    When user deselects checkbox 4 of level "1.4."
+    Then checkbox 4 of level "1.4." is deselected
+    And  total number of selected checkbox inside level "1.4." is 0
+    When user selects all the checkboxes of level "1.4."
+    Then total number of selected checkbox inside level "1.4." is 4
     When click on close button on financial statement page
     Then user is on act viewer page
+    When click on milestones tab in act view page
+    And  click on add button in milestones tab
+    Then add milestone window is displayed
+    When click on create milestone button
+    Then successful message contains "Milestone created"
+    And  "For Interservice Consultation" is showing under title column of row 1 of milestones table
+    And  "File ready" is showing under status column of row 1 of milestones table
+    When click on three dots under actions column of row 1 of milestones table
+    When click on option "View" under milestone actions
+    Then user is on milestone explorer window
+    And  milestone explorer window contains below tabs
+      | TabName                              |
+      | Explanatory Memorandum  [1.0.0]      |
+      | Legal Act  [1.0.0]                   |
+      | Legislative Financial and Digital Statement  [1.0.0] |
+      | Annex 1  [1.0.0]                     |
+    When click on close button in milestone explorer view
+    Then user is on act viewer page
+    When click on drafts tab in act view page
+    Then active tab name is "Drafts"
 
   @finaliseFinancialStatement @local
   Scenario: finalise financial statement document
@@ -125,6 +149,18 @@ Feature: financial statement page regression features
     Then "Delete Repeated Element: confirmation" dialog confirm box window is displayed
     When click on ok button in dialog box window
     Then repeated subparagraph should not exist
+    And  click on delete icon of repeatable subparagraph 1 of level "3.2.1.1."
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then repeatable subparagraph 1 of level "3.2.1.1." contains attribute name "leos:softaction" with value "del"
+    When right click on repeatable subparagraph 1 of level "3.2.1.1."
+    And  click on accept this change option under track changes action
+    Then "Optional element: accept deletion not allowed" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then repeatable subparagraph 1 of level "3.2.1.1." contains attribute name "leos:softaction" with value "del"
+    When right click on repeatable subparagraph 1 of level "3.2.1.1."
+    And  click on reject this change option under track changes action
+    Then repeatable subparagraph 1 of level "3.2.1.1." does not contain attribute name "leos:softaction" with value "del"
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
     When click on insert after icon of repeatable subparagraph
@@ -163,11 +199,11 @@ Feature: financial statement page regression features
     Then user is on act viewer page
     And  delete button of financial statement is displayed
     When click on delete button of financial statement
-    Then "Digital financial statement deletion: confirmation" dialog box window is displayed
-    And  dialog box body contains "Are you sure you want to delete the digital financial statement?"
-    And  dialog box body contains "A justification of this removal should be provided in the Explanatory Memorandum"
+    Then "Legislative Financial and Digital Statement deletion: confirmation" dialog box window is displayed
+    And  dialog box body contains "Are you sure you want to delete the Legislative Financial and Digital Statement?"
+    And  dialog box body contains "The absence of digital dimensions should be explained in the Explanatory Memorandum"
     When click on delete button in dialog box window
-    Then " There is no digital financial statement in this document " is displayed
+    Then " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
     When click on add button in financial statement section
     Then delete button of financial statement is displayed
@@ -180,15 +216,14 @@ Feature: financial statement page regression features
     And  provide document title "Automation Testing LFDS configuration SJ-025" in create document page
     And  click on create button
     Then user is on act viewer page
-    And  " There is no digital financial statement in this document " is displayed
+    And  " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
     When click on add button in financial statement section
     Then delete button of financial statement is displayed
     When click on delete button of financial statement
-    Then "Digital financial statement deletion: confirmation" dialog box window is displayed
-    And  dialog box body contains "Are you sure you want to delete the digital financial statement?"
-    And  dialog box body doesn't contain "A justification of this removal should be provided in the Explanatory Memorandum"
+    Then "Legislative Financial and Digital Statement deletion: confirmation" dialog box window is displayed
+    And  dialog box body contains "Are you sure you want to delete the Legislative Financial and Digital Statement?"
+    And  dialog box body doesn't contain "The absence of digital dimensions should be explained in the Explanatory Memorandum"
     When click on delete button in dialog box window
-    Then " There is no digital financial statement in this document " is displayed
+    Then " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
-    

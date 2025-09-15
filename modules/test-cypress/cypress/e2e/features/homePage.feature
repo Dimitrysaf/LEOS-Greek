@@ -8,7 +8,7 @@ Feature: repository browser page Regression Features
     Scenario: upload button is not present for non support user
         Given navigate to edit drafting application with "User3"
         Then user is on home page
-        And  upload act button is not present
+        Then upload act button is not present
         When click on support button
         Then below options are displayed in support menu
             | optionList       |
@@ -18,12 +18,12 @@ Feature: repository browser page Regression Features
             | Go to Decide     |
         When click on notification icon
         Then notification container is displayed
-        And  upload notification button is not displayed
+        Then upload notification button is not displayed
         When click on hide button in notification container
         Then notification container is not displayed
         When click on view all acts button
         Then user is on repository browser page
-        And  upload act button is not present
+        Then upload act button is not present
         
     @uploadNotificationAndLanguageIconSupportUser @local
     Scenario: upload notification button is present for support user
@@ -31,15 +31,15 @@ Feature: repository browser page Regression Features
         Then user is on home page
         When click on notification icon
         Then notification container is displayed
-        And  notification card list is displayed
-        And  upload notification button is displayed
+        Then notification card list is displayed
+        Then upload notification button is displayed
         When click on upload notification button
         Then "Upload notifications" dialog box window is displayed
-        And  upload notification button is disabled in upload notifications window
+        Then upload notification button is disabled in upload notifications window
         When upload a notification json file from a relative location "notifications.json"
-        And  click on upload notification button in dialog box window
+        When click on upload notification button in dialog box window
         Then notification container is displayed
-        And  notification card body contains text "TODAY CURRENTNEW VALUE It's OK YESS.... Example"
+        Then notification card body contains text "TODAY CURRENTNEW VALUE It's OK YESS.... Example"
         When click on hide button in notification container
         Then notification container is not displayed
         When click on language icon
@@ -48,8 +48,8 @@ Feature: repository browser page Regression Features
             | English (en)  |
             | français (fr) |
         When provide "Automation" keyword in search for an act input box
-        And  click search button present beside of search for an act input box
+        When click search button present beside of search for an act input box
         Then search card container is displayed
-        And  total search results is displayed
+        Then total search results is displayed
         When click on proposal 1 in search card container
         Then user is on act viewer page

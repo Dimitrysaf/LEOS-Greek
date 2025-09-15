@@ -1,4 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 require('@cypress/xpath');
 import createActPage from "../pages/createActPage";
 
@@ -14,11 +14,11 @@ When('click on next button in create document page', () => {
     createActPage.clickNextBtn();
 })
 
-And('provide document title {string} in create document page', (title) => {
+When('provide document title {string} in create document page', (title) => {
     createActPage.enterProposalTitle(title);
 })
 
-And('click on create button', () => {
+When('click on create button', () => {
     createActPage.clickCreateBtn();
 })
 

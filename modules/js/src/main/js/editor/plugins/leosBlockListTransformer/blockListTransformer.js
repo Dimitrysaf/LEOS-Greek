@@ -212,6 +212,18 @@ define(function blockListTransformer(require) {
                                             to: "data-akn-attr-softdate",
                                             action: "passAttributeTransformer"
                                         }, {
+                                            from: "leos:id-to-be-restored",
+                                            to: "data-akn-id-to-be-restored",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:renumber-origin",
+                                            to: "data-akn-renumber-origin",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:id-to-be-removed",
+                                            to: "data-akn-id-to-be-removed",
+                                            action: "passAttributeTransformer"
+                                        }, {
                                              from: "leos:action",
                                              to: DATA_AKN_ACTION_NUMBER,
                                              action: "passAttributeTransformer"
@@ -363,6 +375,18 @@ define(function blockListTransformer(require) {
                                             action: "passAttributeTransformer"
 //---------------------
                                         }, {
+                                            from: "leos:id-to-be-restored",
+                                            to: "data-akn-id-to-be-restored",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:renumber-origin",
+                                            to: "data-akn-renumber-origin",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:id-to-be-removed",
+                                            to: "data-akn-id-to-be-removed",
+                                            action: "passAttributeTransformer"
+                                        }, {
                                              from: "leos:action-number",
                                              to: DATA_AKN_ACTION_NUMBER,
                                              action: "passAttributeTransformer"
@@ -497,6 +521,18 @@ define(function blockListTransformer(require) {
                                                 }, {
                                                     from: DATA_AKN_ACTION_ENTER,
                                                     to: "leos:action-enter",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: "data-akn-id-to-be-restored",
+                                                    to : "leos:id-to-be-restored",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: "data-akn-renumber-origin",
+                                                    to: "leos:renumber-origin",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: "data-akn-id-to-be-removed",
+                                                    to: "leos:id-to-be-removed",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             }, {
@@ -644,6 +680,18 @@ define(function blockListTransformer(require) {
                                                 }, {
                                                     from: DATA_AKN_ACTION_ENTER,
                                                     to: "leos:action-enter",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: "data-akn-id-to-be-restored",
+                                                    to : "leos:id-to-be-restored",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: "data-akn-renumber-origin",
+                                                    to: "leos:renumber-origin",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: "data-akn-id-to-be-removed",
+                                                    to: "leos:id-to-be-removed",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             }, {
@@ -900,6 +948,18 @@ define(function blockListTransformer(require) {
                                             }, {
                                                 from: DATA_AKN_ACTION_ENTER,
                                                 to: "leos:action-enter",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-id-to-be-restored",
+                                                to : "leos:id-to-be-restored",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-renumber-origin",
+                                                to: "leos:renumber-origin",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-id-to-be-removed",
+                                                to: "leos:id-to-be-removed",
                                                 action: "passAttributeTransformer"
                                             }]
                                         }]);

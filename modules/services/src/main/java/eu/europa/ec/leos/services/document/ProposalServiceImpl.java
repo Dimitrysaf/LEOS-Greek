@@ -69,6 +69,7 @@ import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;

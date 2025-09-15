@@ -20,6 +20,7 @@ import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.utils.LegUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -116,14 +117,7 @@ public class UserHelper {
 
 
     public String fetchMilestoneVersion(LegDocument legDocument) {
-        Optional<Integer> versionInt = legDocument.getContainedDocuments().stream().map((d) -> {
-            try {
-                return (d.lastIndexOf("_") != -1) ? Integer.parseInt(d.substring(d.lastIndexOf("_") + 1).replace(".", "")) : 0;
-            } catch (NumberFormatException e) {
-                return 0;
-            }
-        }).max(Integer::compare);
-        return StringUtils.join(String.valueOf(versionInt.orElse(0).intValue()).split(""), ".");
+        return LegUtils.fetchMilestoneVersion(legDocument);
     }
 
 }

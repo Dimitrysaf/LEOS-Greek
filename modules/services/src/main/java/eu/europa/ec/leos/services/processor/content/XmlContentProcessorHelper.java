@@ -677,7 +677,7 @@ public class XmlContentProcessorHelper {
         return node;
     }
 
-    public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
+    public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
         List<Node> childrenToAppend = new ArrayList<>();
         List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
@@ -689,7 +689,7 @@ public class XmlContentProcessorHelper {
         return childrenToAppend;
     }
 
-    public static List<Node> extractLevelNonTocItemsKeepingTextNodes(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TableOfContentItemVO tocVo) {
+    public static List<Node> extractLevelNonTocItemsKeepingTextNodes(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
         List<Node> childrenToAppend = new ArrayList<>();
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {

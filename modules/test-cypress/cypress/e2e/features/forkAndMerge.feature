@@ -516,7 +516,7 @@ Feature: fork and merge features
     And  minimize "Chapter 2 - Chapter heading..." link in navigation pane
     When click on toc edit button
     #And  click on "Chapter 1 - Chapter heading" link in navigation pane
-    And  drag node label "Chapter 1 - Chapter heading" and drop after node label "Chapter 2 - Chapter heading..." in navigation pane
+    And  drag node label "Chapter 1 - Chapter heading" and drop to node label "Chapter 2 - Chapter heading..." in navigation pane
     And  "Chapter  1" is showing as soft move title in navigation pane
     And  "MOVED" is showing as soft move label with soft move title " Chapter  1" in navigation pane
     And  "Chapter  #" is showing as soft move title in navigation pane

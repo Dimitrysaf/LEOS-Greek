@@ -1,4 +1,4 @@
-import {When, Then} from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import internalReferenceWindow from "../pages/internalReferenceWindow";
 
 When(`click on {string} link in enacting terms on the left side of internal reference window`, (link) => {
@@ -45,7 +45,7 @@ Then(/^reference text label is shown as "([^"]*)" in internal reference dialogue
     internalReferenceWindow.elements.referenceTextLabel().should('have.value', referenceText);
 });
 
-And(/^enacting terms contains following articles in internal reference window$/, function (dataTable) {
+Then(/^enacting terms contains following articles in internal reference window$/, function (dataTable) {
     const expectedTexts = dataTable.raw().flat();
     internalReferenceWindow.elements.articleList().find('a').each((element, index) => {
         cy.wrap(element).should('have.text', expectedTexts[index]);

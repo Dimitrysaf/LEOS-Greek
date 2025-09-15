@@ -63,7 +63,8 @@ public class CollectionContextMandateService extends CollectionContextService {
             Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService,
             MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
         super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider,
-                securityContext, explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper, xmlContentProcessor);
+                securityContext, explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService,
+                messageHelper, xmlContentProcessor);
     }
 
     @Override
