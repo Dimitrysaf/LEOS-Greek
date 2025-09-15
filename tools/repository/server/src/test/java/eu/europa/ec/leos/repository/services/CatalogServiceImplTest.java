@@ -3,6 +3,7 @@ package eu.europa.ec.leos.repository.services;
 import eu.europa.ec.leos.repository.common.CustomTemplateMilestoneStatus;
 import eu.europa.ec.leos.repository.entities.*;
 import eu.europa.ec.leos.repository.entities.Package;
+import eu.europa.ec.leos.repository.exceptions.CatalogException;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.*;
@@ -16,9 +17,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -86,7 +91,7 @@ public class CatalogServiceImplTest {
     }
 
     @Test
-    public void testPublishCustomTemplate_ExistingEntities_Success() throws RepositoryException {
+    public void testPublishCustomTemplate_ExistingEntities_Success() throws CatalogException {
         // Arrange - Test scenario where entities already exist (no catalog creation)
         String legFileId = "123";
         String templateName = "Test Template";
@@ -125,7 +130,7 @@ public class CatalogServiceImplTest {
     }
 
     @Test
-    public void testPublishCustomTemplate_NewEntities_CatalogCreation() throws RepositoryException {
+    public void testPublishCustomTemplate_NewEntities_CatalogCreation() throws CatalogException {
         // Arrange - Test first-time publishing (catalog creation scenario)
         String legFileId = "123";
         List<String> dgs = Arrays.asList("DG1");
@@ -155,7 +160,7 @@ public class CatalogServiceImplTest {
     }
 
     @Test
-    public void testPublishCustomTemplate_EmptyDgsList() throws RepositoryException {
+    public void testPublishCustomTemplate_EmptyDgsList() throws CatalogException {
         // Arrange - Test edge case with empty DGs list
         String legFileId = "123";
         List<String> emptyDgs = Collections.emptyList();
@@ -178,8 +183,8 @@ public class CatalogServiceImplTest {
         assertNotNull(entitiesCaptor.getValue().getAuditCDate());
     }
 
-    @Test(expected = RepositoryException.class)
-    public void testPublishCustomTemplate_MilestoneAlreadyPublished() throws RepositoryException {
+    @Test(expected = CatalogException.class)
+    public void testPublishCustomTemplate_MilestoneAlreadyPublished() throws CatalogException {
         // Arrange - Test milestone validation
         DocumentMilestone publishedMilestone = new DocumentMilestone();
         publishedMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
@@ -193,12 +198,12 @@ public class CatalogServiceImplTest {
         when(documentMilestoneRepository.findByDocumentId(mockDocument.getId()))
             .thenReturn(publishedMilestone);
 
-        // Act - Should throw RepositoryException
+        // Act - Should throw CatalogException
         catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "user");
     }
 
-    @Test(expected = RepositoryException.class)
-    public void testPublishCustomTemplate_MilestoneNotFound() throws RepositoryException {
+    @Test(expected = CatalogException.class)
+    public void testPublishCustomTemplate_MilestoneNotFound() throws CatalogException {
         // Arrange - Test null milestone validation
         when(milestoneDocumentService.findMilestoneById(new BigDecimal("123")))
             .thenReturn(Optional.of(mockLeosDocument));
@@ -209,18 +214,18 @@ public class CatalogServiceImplTest {
         when(documentMilestoneRepository.findByDocumentId(mockDocument.getId()))
             .thenReturn(null);
 
-        // Act - Should throw RepositoryException
+        // Act - Should throw CatalogException
         catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "user");
     }
 
     @Test(expected = NumberFormatException.class)
-    public void testPublishCustomTemplate_InvalidLegFileId() throws RepositoryException {
+    public void testPublishCustomTemplate_InvalidLegFileId() throws CatalogException {
         // Act - Should throw NumberFormatException for invalid BigDecimal
         catalogService.publishCustomTemplate("invalid", "Template", Arrays.asList("DG1"), "user");
     }
 
-    @Test(expected = RepositoryException.class)
-    public void testPublishCustomTemplate_LegFileNotFound() throws RepositoryException {
+    @Test(expected = CatalogException.class)
+    public void testPublishCustomTemplate_LegFileNotFound() throws CatalogException {
         // Arrange - Test early return when milestone not found
         String legFileId = "999";
         when(milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId)))
@@ -230,8 +235,8 @@ public class CatalogServiceImplTest {
         catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user");
     }
 
-    @Test(expected = RepositoryException.class)
-    public void testPublishCustomTemplate_DocumentNotFound() throws RepositoryException {
+    @Test(expected = CatalogException.class)
+    public void testPublishCustomTemplate_DocumentNotFound() throws CatalogException {
         // Arrange - Test early return when document not found
         String legFileId = "123";
         when(milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId)))
@@ -244,7 +249,7 @@ public class CatalogServiceImplTest {
     }
 
     @Test
-    public void testPublishCustomTemplate_MilestoneHandling() throws RepositoryException {
+    public void testPublishCustomTemplate_MilestoneHandling() throws CatalogException {
         // Arrange - Test milestone unpublishing and publishing logic
         DocumentMilestone previousMilestone = new DocumentMilestone();
         previousMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
@@ -298,9 +303,14 @@ public class CatalogServiceImplTest {
             .thenReturn(mockDocumentMilestone);
     }
 
-    private void setupCatalogCreationMocks() throws RepositoryException {
+    private void setupCatalogCreationMocks() throws CatalogException {
         // Mock catalog database retrieval
-        when(configService.findConfigByName("catalog")).thenReturn(null);
+        try {
+            when(configService.findConfigByName("catalog")).thenReturn(null);
+        } catch (RepositoryException e) {
+            throw new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, e.getMessage());
+        }
+
         ConfigurationV mockCatalogConfig = new ConfigurationV();
         mockCatalogConfig.setContent("<catalog><item type='CATEGORY' key='test'></item></catalog>".getBytes());
         when(configurationVRepository.findConfigurationByName("catalog"))
