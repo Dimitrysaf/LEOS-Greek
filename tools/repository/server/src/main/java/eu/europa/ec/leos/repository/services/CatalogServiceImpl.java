@@ -61,19 +61,22 @@ public class CatalogServiceImpl implements CatalogService {
     private static final String CUSTOM_TEMPLATE_SEPARATOR = "_";
     private static final String CUSTOM_TEMPLATE_CATEGORY_PATH_SEPARATOR = ";";
 
+    // Repository Dependencies
     private final DocumentRepository documentRepository;
     private final DocumentMilestoneRepository documentMilestoneRepository;
     private final CustomTemplateEntitiesRepository customTemplateEntitiesRepository;
     private final DocumentVRepository documentVRepository;
     private final DocumentContentRepository documentContentRepository;
-    private final ConfigService configService;
     private final ConfigurationVRepository configurationVRepository;
     private final ConfigCategoryRepository configCategoryRepository;
-    private final DocumentService documentService;
-    private final MilestoneDocumentService milestoneDocumentService;
     private final ConfigRepository configRepository;
     private final ConfigVersionRepository configVersionRepository;
     private final ConfigContentRepository configContentRepository;
+    
+    // Service Dependencies
+    private final ConfigService configService;
+    private final DocumentService documentService;
+    private final MilestoneDocumentService milestoneDocumentService;
 
     @Autowired
     public CatalogServiceImpl(DocumentRepository documentRepository,
@@ -104,6 +107,10 @@ public class CatalogServiceImpl implements CatalogService {
         this.configContentRepository = configContentRepository;
     }
 
+    // =============================================================================
+    // PUBLIC API METHODS
+    // =============================================================================
+    
     /**
      * Publishes a custom template to specified entity catalogs.
      * 
@@ -127,34 +134,40 @@ public class CatalogServiceImpl implements CatalogService {
     public synchronized void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws CatalogException {
         LOG.info("Publishing custom template: name={}, description={}, categories={}", templateName, legFileId, dgs);
 
-        Optional<LeosDocument> legFile = milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId));
-
-        if (!legFile.isPresent()){
-            throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, "LegFile not found");
-        }
-
-
-        Optional<Document> leosDocument = documentRepository.findById(legFile.get().getDocumentId());
-
-        if (!leosDocument.isPresent()){
-            throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, "Document not found");
-        }
-
-        // Get the package from the document
-        Package pkg = leosDocument.get().getPackageId();
-        
-        // 1. Get custom template entities for this package
+        Package pkg = validateAndExtractPackage(legFileId);
         List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
         
-        // 2. Update custom template entities with new ones from dgs parameter
         updateCustomTemplateEntities(pkg, dgs, userId);
-
-        // 3. Update milestone status for custom template
-        updateCustomTemplateMilestones(pkg, leosDocument.get().getId(), userId);
-
-        // 4. Handle catalog creation based on existing entities
+        updateCustomTemplateMilestones(pkg, getDocumentId(legFileId), userId);
         handleCatalog(existingEntities, dgs, templateName, userId, pkg);
     }
+    
+    // =============================================================================
+    // VALIDATION METHODS
+    // =============================================================================
+    
+    private Package validateAndExtractPackage(String legFileId) throws CatalogException {
+        Optional<LeosDocument> legFile = milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId));
+        if (!legFile.isPresent()) {
+            throw new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "LegFile not found");
+        }
+
+        Optional<Document> leosDocument = documentRepository.findById(legFile.get().getDocumentId());
+        if (!leosDocument.isPresent()) {
+            throw new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "Document not found");
+        }
+
+        return leosDocument.get().getPackageId();
+    }
+    
+    private BigDecimal getDocumentId(String legFileId) throws CatalogException {
+        Optional<LeosDocument> legFile = milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId));
+        return legFile.get().getDocumentId();
+    }
+    
+    // =============================================================================
+    // ENTITY MANAGEMENT METHODS
+    // =============================================================================
 
     /**
      * Retrieves existing custom template entities for a package.
@@ -238,7 +251,10 @@ public class CatalogServiceImpl implements CatalogService {
         documentMilestoneRepository.save(currentMilestone);
     }
 
-    //CATALOG MANIPULATION
+    // =============================================================================
+    // CATALOG ORCHESTRATION METHODS
+    // =============================================================================
+    
     private void handleCatalog(List<String> existingEntities, List<String> newEntities, String customTemplateName, String userId, Package pkg) throws CatalogException {
         List<DocumentV> latestDocuments = getLatestDocumentsByPackageId(pkg.getId());
 
@@ -269,14 +285,12 @@ public class CatalogServiceImpl implements CatalogService {
                     }
                 }
 
-                // Save all documents related with Templates previously inserted
-                // Get category codes for the inserted template keys
+                // Get config list
                 List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(insertedTemplateKeys);
-                // Get config categories by their codes
                 List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
-                // Save document files matching the extracted template keys
+
+                // Save documents
                 saveDocumentsOfPublishedTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
-                // Save config files for each template
                 saveConfigFiles(insertedTemplateKeys, pkg.getId().toString(), userId);
             }
         } else {
@@ -347,6 +361,10 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
 
+    // =============================================================================
+    // CATALOG CREATION METHODS
+    // =============================================================================
+    
     private String createCatalogWithCategoriesOnly() throws CatalogException {
         try {
             byte[] catalogContent = getCatalogFromDatabase();
@@ -464,6 +482,10 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
 
+    // =============================================================================
+    // TEMPLATE MANIPULATION METHODS
+    // =============================================================================
+    
     private String insertTemplateIntoCatalog(String existingCatalogXml, String templateKey, String templateName, String packageId) throws CatalogException {
         try {
             // Get the full catalog from DB to find the template
@@ -741,6 +763,10 @@ public class CatalogServiceImpl implements CatalogService {
         return null;
     }
 
+    // =============================================================================
+    // TEMPLATE REMOVAL METHODS
+    // =============================================================================
+    
     private String removeTemplateFromCatalog(String catalogXml, String customKey) throws CatalogException {
         if (StringUtils.isBlank(catalogXml)) {
             throw new CatalogException(CatalogException.CatalogExceptionCode.PARA_NOT_FOUND, "catalogXml cannot be null or empty");
@@ -815,6 +841,10 @@ public class CatalogServiceImpl implements CatalogService {
         return writer.toString();
     }
 
+    // =============================================================================
+    // DOCUMENT PROCESSING METHODS
+    // =============================================================================
+    
     private List<DocumentV> getLatestDocumentsByPackageId(BigDecimal packageId) {
         return documentVRepository.findDocumentsByPackageId(packageId);
     }
@@ -928,10 +958,10 @@ public class CatalogServiceImpl implements CatalogService {
                         throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, "Document content not found for document: " + customKey);
                     }
 
-                    saveDocumentAsCustomTemplate(docContent.get().getContent(), customKey, matchingCategory.get(), userId);
+                    saveDocumentOfPublishedTemplate(docContent.get().getContent(), customKey, matchingCategory.get(), userId);
                 }
                 else{
-                    saveDocumentAsCustomTemplate(new String(configV.getContent()), customKey, matchingCategory.get(), userId);
+                    saveDocumentOfPublishedTemplate(new String(configV.getContent()), customKey, matchingCategory.get(), userId);
                 }
             }
         }
@@ -943,7 +973,7 @@ public class CatalogServiceImpl implements CatalogService {
                 .findFirst();
     }
 
-    private void saveDocumentAsCustomTemplate(String docContent, String customKey, ConfigCategory configCategory, String userId) throws CatalogException {
+    private void saveDocumentOfPublishedTemplate(String docContent, String customKey, ConfigCategory configCategory, String userId) throws CatalogException {
         try {
             ConfigCategory templateCategory = configCategoryRepository
                     .findConfigCategoriesByCategoryCode(configCategory.getCategoryCode())
@@ -1024,6 +1054,10 @@ public class CatalogServiceImpl implements CatalogService {
         return writer.toString();
     }
 
+    // =============================================================================
+    // UTILITY METHODS
+    // =============================================================================
+    
     private String extractSuffix(String templateValue) {
         int lastUnderscore = templateValue.lastIndexOf(CUSTOM_TEMPLATE_SEPARATOR);
         return lastUnderscore != -1 ? templateValue.substring(lastUnderscore + 1) : "";
@@ -1118,7 +1152,10 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    // *-CONF.json files
+    // =============================================================================
+    // CONFIG FILE MANAGEMENT METHODS
+    // =============================================================================
+    
     private void saveConfigFiles(Set<String> templateKeys, String packageId, String userId) throws CatalogException {
         try {
             ConfigCategory configCategory = configCategoryRepository
@@ -1197,6 +1234,10 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
+    // =============================================================================
+    // ENTITY CATALOG OPERATIONS
+    // =============================================================================
+    
     private void removeTemplateFromEntityCatalog(String entityName, String packageId, String userId) throws CatalogException {
         String catalogName = "catalog-" + entityName;
         Optional<Config> config = configRepository.findConfigByName(catalogName);
