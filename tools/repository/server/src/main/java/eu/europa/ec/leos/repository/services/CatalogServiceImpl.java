@@ -332,12 +332,13 @@ public class CatalogServiceImpl implements CatalogService {
                 }
 
                 if (!allTemplateKeys.isEmpty()) {
-                    // Mark previous custom template versions as not latest
-                    markPreviousCustomTemplateVersionsAsNotLatest(pkg.getId().toString());
-
                     // Save new custom templates
                     List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(allTemplateKeys);
                     List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
+
+                    // Mark previous custom template versions as not latest
+                    markPreviousCustomTemplateVersionsAsNotLatest(pkg.getId().toString());
+
                     saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
 
                     // Save config files for each template key
@@ -922,7 +923,8 @@ public class CatalogServiceImpl implements CatalogService {
                         .filter(doc -> doc.getConfigCategoryId() != null && doc.getConfigCategoryId().equals(matchingCategory.get().getId()))
                         .findFirst();
 
-                String customKey = configV.getName() + CUSTOM_TEMPLATE_SEPARATOR + packageId;
+                String customKey = configV.getName().contains(CUSTOM_TEMPLATE_SEPARATOR) ? configV.getName() : configV.getName() + CUSTOM_TEMPLATE_SEPARATOR + packageId;
+
                 if (matchingDoc.isPresent()) {
                     Optional<DocumentContent> docContent = documentContentRepository.findDocumentContentByVersionId(matchingDoc.get().getVersionId());
 
@@ -1167,7 +1169,7 @@ public class CatalogServiceImpl implements CatalogService {
             ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
             ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
 
-            String customKey = "*#" + packageId; // Match any template with this packageId
+            String customKey = "*_" + packageId; // Match any template with this packageId
             String updatedCatalog = removeTemplateFromCatalog(content.getContentString(), customKey);
             updateCustomTemplateConfigWithNewVersion(config.get(), updatedCatalog, userId);
         }
@@ -1195,7 +1197,7 @@ public class CatalogServiceImpl implements CatalogService {
             ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
 
             // Remove existing templates for this package
-            String customKey = "*#" + packageId;
+            String customKey = "*_" + packageId;
             String catalogWithoutOldTemplate = removeTemplateFromCatalog(content.getContentString(), customKey);
 
             // Add the new template
