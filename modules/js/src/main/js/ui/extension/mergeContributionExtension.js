@@ -69,7 +69,7 @@ define(function mergeContributionExtensionModule(require) {
         //const $levels = $('level')
         let changed_element = $.makeArray($("[leos\\:indent-origin-type], [leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins," +
             " [leos\\:softaction='" + MOVE_FROM + "']"));
-        const $annexes = $('mainbody > level, mainbody > paragraph, body > level, body > paragraph');
+        const $annexes = $('preface > container > block[name="heading"], mainbody > level, mainbody > paragraph, body > level, body > paragraph');
         for (let i = 0; i < $annexes.length; i++) {
             const $element = $annexes.eq(i);
             if ($element.attr(UTILS.ID).includes(REVISION_PREFIX)) {
@@ -383,6 +383,7 @@ define(function mergeContributionExtensionModule(require) {
         wrappedEltsList.push(UTILS.BLOCKCONTAINER);
         wrappedEltsList.push(UTILS.LEVEL);
         wrappedEltsList.push(UTILS.DOCPURPOSE);
+        wrappedEltsList.push(UTILS.BLOCK);
         MAIN_ELEMENT_SELECTOR = wrappedEltsList.join(',');
         _registerActionTriggers(connector);
     }

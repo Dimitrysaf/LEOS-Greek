@@ -408,7 +408,7 @@
                                         (click)="$event.preventDefault()"
                                 ><strong>{{
                                     row.title
-                                        ? row.title
+                                        ? cleanDelInsert(row.title)
                                         : ('page.collection.drafts.annex.table.tr.no-title'
                                             | translate)
                                     }}</strong></a

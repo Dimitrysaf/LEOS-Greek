@@ -118,9 +118,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
                 XercesUtils.deleteElementsByXPath(parentNode, parentXPath);
             } else if (node != null) {
                 // Update existing node
-                if(node.getNodeName().toLowerCase().contains("docpurpose")
-                    && ((value.contains("<del ") && value.contains("</del>"))
-                        || (value.contains("<ins ") && value.contains("</ins>")))){
+                if(isGivenNodeContaningTrackChangeTags(node, value)){
                     String newValue = XercesUtils.generateNewIds(value);
                     XercesUtils.addContentToNode(node, newValue);
                 } else {
@@ -134,6 +132,33 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
         }
         LOG.trace("Values set in xml ({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return XercesUtils.nodeToByteArray(document, false);
+    }
+
+    private static boolean isGivenNodeContaningTrackChangeTags(Node node, String value) {
+        // --- Null-safe variable initialization ---
+        boolean isSpecificNode = false;
+        boolean isHeadingBlock = false;
+        boolean hasTags = false;
+
+        if (node != null) {
+            String nodeName = node.getNodeName();
+            if (nodeName != null) {
+                String lowerCaseName = nodeName.toLowerCase();
+                isSpecificNode = lowerCaseName.contains("docpurpose") || lowerCaseName.contains("annextitle");
+            }
+            if ("block".equalsIgnoreCase(nodeName)) {
+                if (node.getAttributes() != null) {
+                    Node nameAttribute = node.getAttributes().getNamedItem("name");
+                    if (nameAttribute != null) {
+                        isHeadingBlock = "heading".equals(nameAttribute.getNodeValue());
+                    }
+                }
+            }
+        }
+        if (value != null) {
+            hasTags = Pattern.compile("<(del|ins)\\b[^>]*>.*?</\\1>").matcher(value).find();
+        }
+        return (isSpecificNode || isHeadingBlock) && hasTags;
     }
 
     @Override
