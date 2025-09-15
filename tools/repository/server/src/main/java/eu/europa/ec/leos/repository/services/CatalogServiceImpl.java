@@ -923,7 +923,7 @@ public class CatalogServiceImpl implements CatalogService {
                         .filter(doc -> doc.getConfigCategoryId() != null && doc.getConfigCategoryId().equals(matchingCategory.get().getId()))
                         .findFirst();
 
-                String customKey = configV.getName().contains("_") ? configV.getName() : configV.getName() + "_" + packageId;
+                String customKey = configV.getName().contains(CUSTOM_TEMPLATE_SEPARATOR) ? configV.getName() : configV.getName() + CUSTOM_TEMPLATE_SEPARATOR + packageId;
 
                 if (matchingDoc.isPresent()) {
                     Optional<DocumentContent> docContent = documentContentRepository.findDocumentContentByVersionId(matchingDoc.get().getVersionId());
