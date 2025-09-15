@@ -205,7 +205,7 @@ export class ProposalCreateTemplateSelectorComponent
   private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
     const { id, documentCollection, key, names, customName, type, enabled, items, hidden, visibleTo } = item;
     let tooltipLabel = this.proposalService.getTranslation(names);
-    const label = customName ? (key.substring(0, key.indexOf('/')) + ' - ' + customName) : tooltipLabel;
+    const label = customName ? (key.substring(0, key.lastIndexOf('_')) + ' - ' + customName) : tooltipLabel;
     const iconClass =
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
     let disabled = !enabled;

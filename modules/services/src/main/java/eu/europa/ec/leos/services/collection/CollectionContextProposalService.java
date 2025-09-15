@@ -85,7 +85,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         templatePropertiesMap.put(DOCUMENT_DEFAULT_TRUE_TEMPLATES, "");
         templatePropertiesMap.put(DOCUMENT_DEFAULT_FALSE_TEMPLATES, "");
         try {
-            catalogItems = templateKey.contains(CUSTOM_TEMPLATE_KEY_INDICATOR) ?
+            catalogItems = templateKey.contains(CUSTOM_TEMPLATE_SEPARATOR) ?
                     customTemplateService.getCustomTemplatesCatalog() :
                     templateService.getTemplatesCatalog();
             getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
