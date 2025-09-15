@@ -25,7 +25,9 @@ import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.services.support.converter.DescriptionMapConverter;
 import eu.europa.ec.leos.services.support.converter.LanguageMapConverter;
 import eu.europa.ec.leos.services.support.converter.NameMapConverter;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.catalog.Catalog;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
@@ -60,6 +62,9 @@ class TemplateServiceImpl implements TemplateService {
 
     @Autowired
     TemplateConfigurationService templateConfigurationService;
+
+    @Autowired
+    CustomTemplateService customTemplateService;
 
     TemplateServiceImpl(ConfigurationRepository configRepository) {
         this.configRepository = configRepository;
@@ -231,7 +236,10 @@ class TemplateServiceImpl implements TemplateService {
 
     @Override
     public CatalogItem getTemplateItem(String name) throws IOException {
-        return getTemplateItem(getTemplatesCatalog(), name);
+        List<CatalogItem> templatesCatalog = name.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) ?
+                customTemplateService.getCustomTemplatesCatalog() :
+                getTemplatesCatalog();
+        return getTemplateItem(templatesCatalog, name);
     }
 
     private CatalogItem getTemplateItem(List<CatalogItem> catalogItems, String name) {

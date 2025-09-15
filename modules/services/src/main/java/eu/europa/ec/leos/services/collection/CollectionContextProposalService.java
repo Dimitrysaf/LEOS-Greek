@@ -38,6 +38,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -85,7 +86,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         templatePropertiesMap.put(DOCUMENT_DEFAULT_TRUE_TEMPLATES, "");
         templatePropertiesMap.put(DOCUMENT_DEFAULT_FALSE_TEMPLATES, "");
         try {
-            catalogItems = templateKey.contains(CUSTOM_TEMPLATE_SEPARATOR) ?
+            catalogItems = templateKey.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) ?
                     customTemplateService.getCustomTemplatesCatalog() :
                     templateService.getTemplatesCatalog();
             getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);

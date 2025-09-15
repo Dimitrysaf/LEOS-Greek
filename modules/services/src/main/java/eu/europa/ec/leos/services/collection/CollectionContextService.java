@@ -75,7 +75,6 @@ public abstract class CollectionContextService {
     private static final String PROPOSAL_PROCEDURE_TYPE_IS_REQUIRED = "Proposal procedure type is required!";
     private static final String PROPOSAL_ACT_TYPE_IS_REQUIRED = "Proposal act type is required!";
     private static final String PROPOSAL_METADATA_IS_REQUIRED = "Proposal metadata is required!";
-    protected static final String CUSTOM_TEMPLATE_SEPARATOR = "_";
     protected static final String TEMPLATE = "template";
     protected static final String ACT_TYPE = "actType";
     protected static final String PROCEDURE_TYPE = "procedureType";
