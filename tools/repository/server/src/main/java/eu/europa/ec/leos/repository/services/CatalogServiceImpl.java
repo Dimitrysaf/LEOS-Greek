@@ -239,7 +239,6 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     //CATALOG MANIPULATION
-
     private void handleCatalog(List<String> existingEntities, List<String> newEntities, String customTemplateName, String userId, Package pkg) throws CatalogException {
         List<DocumentV> latestDocuments = getLatestDocumentsByPackageId(pkg.getId());
 
@@ -276,7 +275,7 @@ public class CatalogServiceImpl implements CatalogService {
                 // Get config categories by their codes
                 List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
                 // Save document files matching the extracted template keys
-                saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
+                saveDocumentsOfPublishedTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
                 // Save config files for each template
                 saveConfigFiles(insertedTemplateKeys, pkg.getId().toString(), userId);
             }
@@ -332,19 +331,16 @@ public class CatalogServiceImpl implements CatalogService {
                 }
 
                 if (!allTemplateKeys.isEmpty()) {
-                    // Save new custom templates
+                    // Get config list
                     List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(allTemplateKeys);
                     List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
 
                     // Mark previous custom template versions as not latest
                     markPreviousCustomTemplateVersionsAsNotLatest(pkg.getId().toString());
 
-                    saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
-
-                    // Save config files for each template key
+                    //Save documents
+                    saveDocumentsOfPublishedTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
                     saveConfigFiles(allTemplateKeys, pkg.getId().toString(), userId);
-
-
                 }
             }
         }
@@ -915,7 +911,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private void saveDocumentsAsCustomTemplates(List<DocumentV> documents, List<ConfigurationV> configVList, List<ConfigCategory> configCategories, String packageId, String userId) throws CatalogException {
+    private void saveDocumentsOfPublishedTemplates(List<DocumentV> documents, List<ConfigurationV> configVList, List<ConfigCategory> configCategories, String packageId, String userId) throws CatalogException {
         for (ConfigurationV configV : configVList) {
             Optional<ConfigCategory> matchingCategory = findMatchingConfigCategory(configV, configCategories);
             if (matchingCategory.isPresent()) {
@@ -993,13 +989,14 @@ public class CatalogServiceImpl implements CatalogService {
             version = configVersionRepository.save(version);
 
             String cleanedContent = clearXmlIdAttributes(docContent);
+            String modifiedContent = modifyTemplateValues(cleanedContent, extractSuffix(customKey));
 
             ConfigContent content = new ConfigContent();
-            content.setContentString(cleanedContent);
+            content.setContentString(modifiedContent);
             content.setContentStreamMimeType("application/xml");
             content.setContentStreamFilename(customKey + ".xml");
             content.setContentStreamId(config.getId().toString());
-            content.setContentStreamLength(String.valueOf(cleanedContent.length()));
+            content.setContentStreamLength(String.valueOf(modifiedContent.length()));
             content.setAuditCBy(userId);
             content.setAuditCDate(LocalDateTime.now());
             content.setVersionId(version);
@@ -1021,6 +1018,45 @@ public class CatalogServiceImpl implements CatalogService {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+
+        return writer.toString();
+    }
+
+    private String extractSuffix(String templateValue) {
+        int lastUnderscore = templateValue.lastIndexOf(CUSTOM_TEMPLATE_SEPARATOR);
+        return lastUnderscore != -1 ? templateValue.substring(lastUnderscore + 1) : "";
+    }
+
+    private String modifyTemplateValues(String xmlContent, String suffix) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        org.w3c.dom.Document doc = builder.parse(new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8)));
+
+        // Modify leos:template
+        NodeList templateNodes = doc.getElementsByTagNameNS("urn:eu:europa:ec:leos", "template");
+        for (int i = 0; i < templateNodes.getLength(); i++) {
+            Element element = (Element) templateNodes.item(i);
+            String currentValue = element.getTextContent();
+            element.setTextContent(currentValue + CUSTOM_TEMPLATE_SEPARATOR + suffix);
+        }
+
+        // Modify leos:docTemplate
+        NodeList docTemplateNodes = doc.getElementsByTagNameNS("urn:eu:europa:ec:leos", "docTemplate");
+        for (int i = 0; i < docTemplateNodes.getLength(); i++) {
+            Element element = (Element) docTemplateNodes.item(i);
+            String currentValue = element.getTextContent();
+            element.setTextContent(currentValue + CUSTOM_TEMPLATE_SEPARATOR + suffix);
+        }
+
+        // Convert back to string
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
         StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
 
