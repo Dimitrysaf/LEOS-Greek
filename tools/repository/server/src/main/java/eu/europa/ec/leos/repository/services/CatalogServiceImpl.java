@@ -239,7 +239,6 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     //CATALOG MANIPULATION
-
     private void handleCatalog(List<String> existingEntities, List<String> newEntities, String customTemplateName, String userId, Package pkg) throws CatalogException {
         List<DocumentV> latestDocuments = getLatestDocumentsByPackageId(pkg.getId());
 
@@ -276,7 +275,7 @@ public class CatalogServiceImpl implements CatalogService {
                 // Get config categories by their codes
                 List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
                 // Save document files matching the extracted template keys
-                saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
+                saveDocumentsOfPublishedTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
                 // Save config files for each template
                 saveConfigFiles(insertedTemplateKeys, pkg.getId().toString(), userId);
             }
@@ -332,19 +331,16 @@ public class CatalogServiceImpl implements CatalogService {
                 }
 
                 if (!allTemplateKeys.isEmpty()) {
-                    // Save new custom templates
+                    // Get config list
                     List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(allTemplateKeys);
                     List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
 
                     // Mark previous custom template versions as not latest
                     markPreviousCustomTemplateVersionsAsNotLatest(pkg.getId().toString());
 
-                    saveDocumentsAsCustomTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
-
-                    // Save config files for each template key
+                    //Save documents
+                    saveDocumentsOfPublishedTemplates(latestDocuments, configurationVList, configCategories, pkg.getId().toString(), userId);
                     saveConfigFiles(allTemplateKeys, pkg.getId().toString(), userId);
-
-
                 }
             }
         }
@@ -915,7 +911,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private void saveDocumentsAsCustomTemplates(List<DocumentV> documents, List<ConfigurationV> configVList, List<ConfigCategory> configCategories, String packageId, String userId) throws CatalogException {
+    private void saveDocumentsOfPublishedTemplates(List<DocumentV> documents, List<ConfigurationV> configVList, List<ConfigCategory> configCategories, String packageId, String userId) throws CatalogException {
         for (ConfigurationV configV : configVList) {
             Optional<ConfigCategory> matchingCategory = findMatchingConfigCategory(configV, configCategories);
             if (matchingCategory.isPresent()) {
