@@ -989,13 +989,14 @@ public class CatalogServiceImpl implements CatalogService {
             version = configVersionRepository.save(version);
 
             String cleanedContent = clearXmlIdAttributes(docContent);
+            String modifiedContent = modifyTemplateValues(cleanedContent, extractSuffix(customKey));
 
             ConfigContent content = new ConfigContent();
-            content.setContentString(cleanedContent);
+            content.setContentString(modifiedContent);
             content.setContentStreamMimeType("application/xml");
             content.setContentStreamFilename(customKey + ".xml");
             content.setContentStreamId(config.getId().toString());
-            content.setContentStreamLength(String.valueOf(cleanedContent.length()));
+            content.setContentStreamLength(String.valueOf(modifiedContent.length()));
             content.setAuditCBy(userId);
             content.setAuditCDate(LocalDateTime.now());
             content.setVersionId(version);
@@ -1017,6 +1018,45 @@ public class CatalogServiceImpl implements CatalogService {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+
+        return writer.toString();
+    }
+
+    private String extractSuffix(String templateValue) {
+        int lastUnderscore = templateValue.lastIndexOf(CUSTOM_TEMPLATE_SEPARATOR);
+        return lastUnderscore != -1 ? templateValue.substring(lastUnderscore + 1) : "";
+    }
+
+    private String modifyTemplateValues(String xmlContent, String suffix) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        org.w3c.dom.Document doc = builder.parse(new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8)));
+
+        // Modify leos:template
+        NodeList templateNodes = doc.getElementsByTagNameNS("urn:eu:europa:ec:leos", "template");
+        for (int i = 0; i < templateNodes.getLength(); i++) {
+            Element element = (Element) templateNodes.item(i);
+            String currentValue = element.getTextContent();
+            element.setTextContent(currentValue + CUSTOM_TEMPLATE_SEPARATOR + suffix);
+        }
+
+        // Modify leos:docTemplate
+        NodeList docTemplateNodes = doc.getElementsByTagNameNS("urn:eu:europa:ec:leos", "docTemplate");
+        for (int i = 0; i < docTemplateNodes.getLength(); i++) {
+            Element element = (Element) docTemplateNodes.item(i);
+            String currentValue = element.getTextContent();
+            element.setTextContent(currentValue + CUSTOM_TEMPLATE_SEPARATOR + suffix);
+        }
+
+        // Convert back to string
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
         StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
 
