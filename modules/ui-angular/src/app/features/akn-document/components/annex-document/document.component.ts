@@ -451,9 +451,18 @@ export class DocumentComponent
     elementType: string;
     elementFragment: string;
     alternateElementId: string;
+    documentRef: string;
   }) {
     return this.isCNInstance || this.authorialNotesUpdated(data) || this.isElementDepthUpdated(data) ||
-      this.isSplitParagraphs(data) || this.isAlternateArticle(data) || this.isMovedElement(data);
+      this.isSplitParagraphs(data) || this.isAlternateArticle(data) || this.isMovedElement(data) || this.isAnnexParagraphUpdated(data);
+  }
+
+  private isAnnexParagraphUpdated(data: {
+    elementId: string;
+    elementType: string;
+    documentRef: string;
+  }) {
+    return this.docUpdating && data.elementType === 'paragraph' && data.documentRef.startsWith('ANNEX');
   }
 
   private isMovedElement(data: {
