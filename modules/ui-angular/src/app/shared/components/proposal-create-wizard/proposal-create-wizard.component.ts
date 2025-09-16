@@ -86,6 +86,9 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     if(this.isKeepAct){
       this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
     }
+    if (!this.isCopyChangeAct) {
+      this.proposalService.loadCustomTemplateCatalog();
+    }
   }
 
   ngAfterViewInit() {
