@@ -115,7 +115,7 @@ public class CatalogServiceImplTest {
         catalogService.publishCustomTemplate(legFileId, templateName, dgs, userId);
 
         // Assert - Verify core operations
-        verify(milestoneDocumentService).findMilestoneById(new BigDecimal(legFileId));
+        verify(milestoneDocumentService, times(2)).findMilestoneById(new BigDecimal(legFileId));
         verify(documentRepository).findById(mockLeosDocument.getDocumentId());
         verify(customTemplateEntitiesRepository, times(2)).findByPackageId(mockPackage);
         

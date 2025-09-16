@@ -86,12 +86,14 @@ export class ProposalViewComponent
             proposal.cloneProposalMetadataVO?.clonedProposal,
           );
           this.customTemplateAct = proposal.metadata.customTemplateAct;
+          this.isPublished = false;
 
           if (this.customTemplateAct) {
             this.proposalDetailsService.milestones$
               .pipe(takeUntil(this.destroy$))
               .subscribe({
                 next: (milestones) => {
+                  this.isPublished = false;
                   milestones.forEach((milestone) => {
                     if (milestone.legFileStatus == MilestoneStatus.CustomTemplatePublished) {
                       this.isPublished = true;
