@@ -25,6 +25,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   @Input() proposalTemplate!: string;
   @Input() proposalLanguage!: string;
   @Input() documentCollectionName!: string;
+  @Input() customTemplateAct: boolean;
 
   mailtoHeader = 'mailto:?';
   subjectProp = 'subject=';
