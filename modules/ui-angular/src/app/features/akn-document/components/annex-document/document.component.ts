@@ -424,17 +424,21 @@ export class DocumentComponent
       if (!elementInEditor) {
         this.reloadElements(data);
       } else if (data.isClosing && !data.isSaved) {
-        if (this.shouldReloadDocument(data)) {
+        if (this.shouldReloadDocument(data) || this.documentService.isToRestoreOrToRemoveData ) {
           this.documentService.reloadDocument();
+          this.documentService.isToRestoreOrToRemoveData = false;
         } else {
           this.reloadElements(data)
         }
       } else if (this.coEditionWSService.presenterId !== data.presenterId) {
         this.documentService.isReloadRequired = true;
+      } else if(this.isToRestoreOrToRemoveData(data)){
+        this.documentService.isToRestoreOrToRemoveData = true;
       }
     } else {
-      if (this.shouldReloadDocument(data)) {
+      if (this.shouldReloadDocument(data) || this.documentService.isToRestoreOrToRemoveData) {
         this.documentService.reloadDocument();
+        this.documentService.isToRestoreOrToRemoveData = false;
       } else {
         this.reloadElements(data);
       }
@@ -454,7 +458,16 @@ export class DocumentComponent
     documentRef: string;
   }) {
     return this.isCNInstance || this.authorialNotesUpdated(data) || this.isElementDepthUpdated(data) ||
-      this.isSplitParagraphs(data) || this.isAlternateArticle(data) || this.isMovedElement(data) || this.isAnnexParagraphUpdated(data);
+      this.isSplitParagraphs(data) || this.isAlternateArticle(data) || this.isMovedElement(data)
+      || this.isAnnexParagraphUpdated(data) || this.isToRestoreOrToRemoveData(data);
+  }
+
+  private isToRestoreOrToRemoveData(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    return ['leos:id-to-be-restored', 'leos:id-to-be-removed'].some(attr => data.elementFragment.includes(attr));
   }
 
   private isAnnexParagraphUpdated(data: {
