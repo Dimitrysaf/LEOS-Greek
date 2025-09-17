@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.repository.controllers;
 
+import eu.europa.ec.leos.repository.exceptions.CatalogException;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.services.CatalogService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,7 +48,7 @@ public class CatalogController {
             @RequestParam String legFileId,
             @RequestParam String templateName,
             @RequestParam List<String> dgs,
-            @RequestParam String userId) throws RepositoryException {
+            @RequestParam String userId) throws CatalogException {
         catalogService.publishCustomTemplate(legFileId, templateName, dgs, userId);
         return ResponseEntity.ok().build();
     }
