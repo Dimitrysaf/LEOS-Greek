@@ -13,10 +13,10 @@
  */
 package eu.europa.ec.leos.repository.services;
 
-import eu.europa.ec.leos.repository.exceptions.RepositoryException;
+import eu.europa.ec.leos.repository.exceptions.CatalogException;
 
 import java.util.List;
 
 public interface CatalogService {
-    void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws RepositoryException;
+    void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws CatalogException;
 }

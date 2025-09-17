@@ -42,8 +42,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -972,21 +970,10 @@ public class CatalogServiceImpl implements CatalogService {
 
 
             if (matchingCategory.isPresent()) {
-//                Optional<DocumentV> matchingDoc = documents.stream()
-//                        .filter(doc -> doc.getConfigCategoryId() != null && doc.getConfigCategoryId().equals(matchingCategory.get().getId()))
-//                        .findFirst();
                 String fileName = findFileByDocTemplate(legFiles, extractPrefix(configV.getName()));
-
                 String customKey = configV.getName().contains(CUSTOM_TEMPLATE_SEPARATOR) ? configV.getName() : configV.getName() + CUSTOM_TEMPLATE_SEPARATOR + packageId;
 
                 if (!StringUtils.isEmpty(fileName)) {
-//                    Optional<DocumentContent> docContent = documentContentRepository.findDocumentContentByVersionId(matchingDoc.get().getVersionId());
-//
-//                    if (!docContent.isPresent()) {
-//                        throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, "Document content not found for document: " + customKey);
-//                    }
-
-//                    saveDocumentOfPublishedTemplate(docContent.get().getContent(), customKey, matchingCategory.get(), userId);
                     saveDocumentOfPublishedTemplate(new String(legFiles.get(fileName)), customKey, matchingCategory.get(), userId);
                 }
                 else{

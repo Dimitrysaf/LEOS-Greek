@@ -236,6 +236,7 @@
   "page.collection.milestones.publish-to-catalog.template-visibility": "Visibilité du modèle",
   "page.collection.milestones.publish-to-catalog.visibility": "Ma DG et DG(s)",
   "page.collection.milestones.publish-to-catalog.publish": "Publier dans le catalogue",
+  "page.collection.milestones.publish-to-catalog.success": "Modèle publié",
   "page.collection.milestones.send-copy-for-contribution-dialog.title": "Envoyer une copie du milestone pour contribution",
   "page.collection.milestones.send-copy-for-contribution-dialog.target-user": "Utilisateur cible",
   "page.collection.milestones.send-copy-for-contribution-dialog.info-message": "<span>Cette action créera une copie du milestone; permettant au destinataire de proposer des modifications en éditant le texte de la copie.</span></br></br><span>Ensuite, vous pourrez fusionner les modifications proposées dans votre texte en direct.</span>",
