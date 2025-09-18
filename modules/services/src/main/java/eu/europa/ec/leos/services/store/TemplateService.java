@@ -24,6 +24,8 @@ public interface TemplateService {
 
     List<CatalogItem> getTemplatesCatalog() throws IOException;
 
+    List<CatalogItem> getTemplatesCatalog(String templatesCatalog) throws IOException;
+
     XmlDocument getTemplate(String name);
 
     String getTemplateName(List<CatalogItem> catalogItems, String name, String language);

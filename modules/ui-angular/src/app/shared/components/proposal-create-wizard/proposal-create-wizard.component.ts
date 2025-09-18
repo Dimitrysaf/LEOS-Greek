@@ -54,6 +54,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   documentCollectionName: string;
   private destroy$ = new Subject();
 
+  public activeTabIndex = 0;
 
   constructor(
     @Inject(DIALOG_COMPONENT_CONFIG) private config,
@@ -85,6 +86,9 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     if(this.isKeepAct){
       this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
     }
+    if (!this.isCopyChangeAct) {
+      this.proposalService.loadCustomTemplateCatalog();
+    }
   }
 
   ngAfterViewInit() {
@@ -101,6 +105,13 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       }
       this.cdr.detectChanges();
     }, 0);
+  }
+
+  onTabSelected({index}: { index: number }) {
+    this.activeTabIndex = index;
+    this.selectedTemplate = null;
+    this.selectedLanguage = null;
+    this.isNavigationAllowed = false;
   }
 
   handleSelectTemplate(template: CatalogItem | null) {

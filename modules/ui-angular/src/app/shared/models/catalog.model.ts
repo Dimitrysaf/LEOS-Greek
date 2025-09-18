@@ -5,6 +5,7 @@ export interface CatalogItem {
   enabled: boolean;
   hidden: true | null;
   key: string;
+  customName: string;
   visibleTo: string;
   /** langCode->name */
   names: Record<string, string>;

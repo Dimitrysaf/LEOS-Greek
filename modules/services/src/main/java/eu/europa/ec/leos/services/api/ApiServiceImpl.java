@@ -99,6 +99,7 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
 import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
@@ -168,6 +169,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private static final String MILESTONE = "milestone";
     protected final ProposalService proposalService;
     protected final ExportService exportService;
+    private final CustomTemplateService customTemplateService;
     private final TemplateService templateService;
     private final WorkspaceService workspaceService;
     private final UserService userService;
@@ -206,7 +208,8 @@ public abstract class ApiServiceImpl implements ApiService {
     private String cloneOriginRef;
 
     @Autowired
-    public ApiServiceImpl(TemplateService templateService,
+    public ApiServiceImpl(CustomTemplateService customTemplateService,
+                          TemplateService templateService,
                           WorkspaceService workspaceService,
                           UserService userService,
                           CreateCollectionService createCollectionService,
@@ -235,6 +238,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
                           TemplateConfigurationService templateConfigurationService) {
+        this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -283,6 +287,11 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public List<CatalogItem> getTemplates() throws IOException {
         return templateService.getTemplatesCatalog();
+    }
+
+    @Override
+    public List<CatalogItem> getCustomTemplates() throws IOException {
+        return customTemplateService.getCustomTemplatesCatalog();
     }
 
     @Override
