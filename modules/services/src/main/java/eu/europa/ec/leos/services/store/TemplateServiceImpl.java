@@ -25,8 +25,8 @@ import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.services.support.converter.DescriptionMapConverter;
 import eu.europa.ec.leos.services.support.converter.LanguageMapConverter;
 import eu.europa.ec.leos.services.support.converter.NameMapConverter;
-import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.catalog.Catalog;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
@@ -50,6 +50,7 @@ class TemplateServiceImpl implements TemplateService {
     private static final Logger LOG = LoggerFactory.getLogger(TemplateServiceImpl.class);
 
     private final ConfigurationRepository configRepository;
+    private final UserHelper userHelper;
 
     @Value("${leos.templates.path}")
     private String templatesPath;
@@ -63,11 +64,9 @@ class TemplateServiceImpl implements TemplateService {
     @Autowired
     TemplateConfigurationService templateConfigurationService;
 
-    @Autowired
-    CustomTemplateService customTemplateService;
-
-    TemplateServiceImpl(ConfigurationRepository configRepository) {
+    TemplateServiceImpl(ConfigurationRepository configRepository, UserHelper userHelper) {
         this.configRepository = configRepository;
+        this.userHelper = userHelper;
     }
 
     @Override
@@ -237,7 +236,7 @@ class TemplateServiceImpl implements TemplateService {
     @Override
     public CatalogItem getTemplateItem(String name) throws IOException {
         List<CatalogItem> templatesCatalog = name.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) ?
-                customTemplateService.getCustomTemplatesCatalog() :
+                getTemplatesCatalog(userHelper.getUserDgCustomTemplatesCatalog()) :
                 getTemplatesCatalog();
         return getTemplateItem(templatesCatalog, name);
     }
