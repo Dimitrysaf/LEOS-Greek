@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration debug="false" scan="true" scanPeriod="5 minutes">
 
-    <property resource="application.properties" />
+    <!--property resource="application.properties" /-->
+    <springProperty scope="context" name="leos.log.contextName" source="leos.log.contextName"/>
+    <springProperty scope="context" name="leos.log.path" source="leos.log.path"/>
+    <springProperty scope="context" name="leos.log.filePrefix" source="leos.log.filePrefix"/>
+    <springProperty scope="context" name="leos.log.level" source="leos.log.level"/>
+
     <!-- Ignore or print logback internal status messages on the console -->
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
     <!--<statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>-->
