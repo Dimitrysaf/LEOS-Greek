@@ -147,6 +147,7 @@ export class DocumentService {
   }>;
   pageSize = 10;
   isReloadRequired = false;
+  isToRestoreOrToRemoveData = false;
   public trackChangesStatus$: Observable<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;

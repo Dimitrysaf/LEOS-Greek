@@ -354,6 +354,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         localStorage.setItem(elemData.elementId, elemData.elementFragment);
       }
 
+      this.documentService.isToRestoreOrToRemoveData ||=
+        ['leos:id-to-be-restored', 'leos:id-to-be-removed'].some(attr => elemData.elementFragment.includes(attr));
+
       this.saveDocumentElement(
         this.documentService.documentRef,
         elemData.elementId,
@@ -452,8 +455,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       });
     } else if (this.documentService.isReloadRequired) {
       // When updates have been done on the same edited element by another user, if saved, other changes are screwed up.
-      if (!this.isSaveAndClose) {
+      if (!this.isSaveAndClose || this.documentService.isToRestoreOrToRemoveData) {
         this.documentService.reloadDocument();
+        this.documentService.isToRestoreOrToRemoveData = false;
       }
       this.documentService.isReloadRequired = false;
     }
