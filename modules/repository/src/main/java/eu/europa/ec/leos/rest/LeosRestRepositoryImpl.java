@@ -623,9 +623,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(name).orElseThrow(() -> new IllegalArgumentException("Document not found! [path=" + path +
-                    ", name=" + name + ']'));
-        if (doc.getCategory().contains("TEMPLATE")) {
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("404 NOT_FOUND Document not found! [path=" + path + ", name=" + name + ']'));
+        if (doc.getCategory() == null) {
+            throw new IllegalArgumentException("404 NOT_FOUND Document not found! [path=" + path + ", name=" + name + ']');
+        } else if (doc.getCategory().contains("TEMPLATE")) {
             try {
                 populateTemplateMetadataFromContent(doc);
             } catch (Exception e) {

@@ -104,16 +104,15 @@ public class WorkspaceApiController {
     public ResponseEntity<Object> getCustomTemplates() {
         try {
             List<CatalogItem> catalogItems = apiService.getCustomTemplates();
-            if (CollectionUtils.isNotEmpty(catalogItems)) {
-                return new ResponseEntity<>(catalogItems, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("No result found", HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception ex) {
-            LOG.error("Error occurred while retrieving custom templates catalog: {}", ex.getMessage());
+            return new ResponseEntity<>(catalogItems, HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
             if (StringUtils.startsWith(ex.getMessage(), "404 NOT_FOUND")) {
                 return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
             }
+            LOG.error("Error occurred while retrieving custom templates catalog: {}", ex.getMessage());
+            return new ResponseEntity<>("Error occurred while retrieving custom templates catalog: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while retrieving custom templates catalog: {}", ex.getMessage());
             return new ResponseEntity<>("Error occurred while retrieving custom templates catalog: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
