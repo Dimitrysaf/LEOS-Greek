@@ -48,3 +48,7 @@ Then('check that {string} {int} contains attribute {string} with value {string}'
 Then(/^contribution view container is displayed$/, function () {
     contributionPage.elements.contributionViewContainer().should('be.visible');
 });
+
+Then(/^contribution view container is not displayed$/, function () {
+    contributionPage.elements.contributionViewContainer().should('not.exist');
+});

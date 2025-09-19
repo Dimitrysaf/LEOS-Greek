@@ -27,3 +27,7 @@ When(`click on long title of doc purpose`, () => {
 When(/^click on edit icon of docPurpose$/, function () {
     coverPage.clickEditIconOfDocPurpose();
 });
+
+Then('text of eeaRelevance container of cover page is {string}', function (text) {
+    coverPage.elements.eeaRelevanceContainer().should("have.text", text);
+});

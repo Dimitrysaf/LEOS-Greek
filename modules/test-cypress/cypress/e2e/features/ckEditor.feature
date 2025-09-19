@@ -4,6 +4,7 @@
 @ckEditorScenarios
 Feature: CK Editor Regression Features
 
+    #issues/2887 : Tab key not working fine after change in indent/outdent
     @ckEditorPlugin @local
     Scenario: testing of different ck editor plugin in citation, recital and articles
         Given navigate to edit drafting application with "User1"
@@ -353,9 +354,9 @@ Feature: CK Editor Regression Features
         Then ck editor window is displayed
         And  table icon is disabled in ck editor
         When click close button of ck editor
-        When  click on edit icon of paragraph 1
+        When click on edit icon of paragraph 1
         Then ck editor window is displayed
-        And table icon is enabled in ck editor
+        And  table icon is enabled in ck editor
         When click close button of ck editor
 
     @ckEditorOpen @local
@@ -612,7 +613,7 @@ Feature: CK Editor Regression Features
         Then user is on act viewer page
         When click on annex 1 link
         Then user is on annex page
-        When refresh the browser
+#        When refresh the browser
         When click on toc edit button
         And  drag element "Paragraph" from element tree list and drop after node label "2. Text..." in navigation pane
         And  click on save and close button in navigation pane
@@ -633,7 +634,7 @@ Feature: CK Editor Regression Features
         Then ck editor window is not displayed
         And  total number of paragraph is 2
 
-    @trackChangesPlugin @local
+    @trackChangesPlugin @tabKeyInParagraph @local
     Scenario: Verify the TC plugin
         Given navigate to edit drafting application with "User1"
         Then user is on home page
@@ -1097,8 +1098,8 @@ Feature: CK Editor Regression Features
         And  add "wrapper paragraph" at current cursor position in edition mode
         And click save and close button of ck editor
         Then ck editor window is not displayed
-        When refresh the browser
-        Then user is on annex page
+#        When refresh the browser
+#        Then user is on annex page
         When click on edit icon of paragraph 1
         Then ck editor window is displayed
         When user clicks on the track changes action plugin
@@ -1108,26 +1109,22 @@ Feature: CK Editor Regression Features
         And  click enter from keyboard in edition mode
         And  add "intro subparagraph" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
-        And  click on increase indent icon present in ck editor panel
-        And  click on increase indent icon present in ck editor panel
+        And  click on tab key from keyboard
         And  add "point a sub point a" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point b sub point b" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
-        And  click on increase indent icon present in ck editor panel
-        And  click on increase indent icon present in ck editor panel
+        And  click on tab key from keyboard
         And  add "point i sub point i" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point ii sub point ii" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
-        And  click on increase indent icon present in ck editor panel
-        And  click on increase indent icon present in ck editor panel
+        And  click on tab key from keyboard
         And  add "point 1 sub point 1" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point 2 sub point 2" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
-        And  click on increase indent icon present in ck editor panel
-        And  click on increase indent icon present in ck editor panel
+        And  click on tab key from keyboard
         And  add "point - sub point -" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  add "point -- sub point --" at current cursor position in edition mode
@@ -1148,8 +1145,8 @@ Feature: CK Editor Regression Features
         Then paragraph should not contain a span tag in edition mode
         When click save and close button of ck editor
         Then ck editor window is not displayed
-        When refresh the browser
-        Then user is on annex page
+#        When refresh the browser
+#        Then user is on annex page
         And  total number of paragraph is 2
         And  content of paragraph 1 is "Text..."
         And  content of subparagraph with attribute name "refersto" and value "~INP" of paragraph 2 is "intro subparagraph"

@@ -68,8 +68,12 @@ class comparisonWindow {
         return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(pointListNumber1-1).children('point').eq(pointNumber1-1).children('list').eq(pointListNumber2-1).children('point').eq(pointNumber2-1).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
     }
 
+    getPointOfPointOfPointOfParagraphOfArticle(pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
+        return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(pointListNumber1-1).children('point').eq(pointNumber1-1).children('list').eq(pointListNumber2-1).children('point').eq(pointNumber2-1).children('list').eq(pointListNumber3-1).children('point').eq(pointNumber3-1);
+    }
+
     getSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
-        return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(pointListNumber1-1).children('point').eq(pointNumber1-1).children('list').eq(pointListNumber2-1).children('point').eq(pointNumber2-1).children('list').eq(pointListNumber3-1).children('point').eq(pointNumber3-1).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
+        return this.getPointOfPointOfPointOfParagraphOfArticle(pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
     }
 
     getNumTagOfPointOfPointOfPointOfParagraphFromArticle(pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber){

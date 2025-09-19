@@ -279,6 +279,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id, child));
     }
 
+    clickAtSpecificOffsetInPTagOfParagraphOfArticle(offset, pTagNumber, paragraphLi, paragraphDataAknElement) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find('p').eq(pTagNumber-1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
+    }
+
     clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("p[data-akn-element='" + pTagDataAknElement + "'").eq(pTagNumber - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
     }
@@ -517,7 +521,13 @@ class ckEditorWindow {
     }
 
     clickAtSpecificOffsetInPTagOfLevel(offSet, pTagNumber) {
-        this.elements.level().children('p').eq(pTagNumber-1).invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+        this.elements.level().children('p').eq(pTagNumber-1)
+            .then($el => {
+                const id = $el.attr("id") || $el.attr("data-akn-mp-id");
+                if (id) {
+                    this.moveCursor(offSet, `[id='${id}'], [data-akn-mp-id='${id}']`);
+                }
+            });
     }
 
     clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement) {
