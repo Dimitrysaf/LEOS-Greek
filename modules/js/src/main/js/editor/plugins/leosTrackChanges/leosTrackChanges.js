@@ -23,8 +23,9 @@ define(function leosTrackChangesModule(require) {
 
         // Track changes names and element types
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
-        ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        UID_ATTR: "data-akn-uid", ARTICLE:"article", SIGNATORY:"signatory", ID: "id",
+        SOFT_ACTION_ATTR: "data-akn-attr-softaction", LEOS_SOFT_ACTION_ATTR: "leos:softaction", LEOS_SOFT_ACTION_MOVE_FROM_VALUE: "move_from",
+        LEOS_ACTION_ATTR: "leos:action", ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
+        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", SIGNATORY:"signatory", ID: "id",
         CITATION:"citation", RECITAL:"recital", LEVEL: "level",
 
         DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_TC_ORIGINAL_INDENT_ACTION: "data-akn-tc-original-indent-action",
@@ -877,13 +878,16 @@ define(function leosTrackChangesModule(require) {
                 return true;
             }
 
+            this.processElement(editor, listElementToProcess, processedElements, actionName, isStructureTooComplex);
+
             return !this.isElementPresentInEditor(editor, listElementToProcess);
         },
 
         processElement: function (editor, element, processedElements, actionName, isStructureTooComplex) {
             this.injectTagIdsInNodeIncludingSpan(element);
             if (this.isElementPresentInEditor(editor, element) && !isStructureTooComplex[0]) {
-                var idToSend = element.getAttribute(core.ID);
+                var idToSend = element.getAttribute(core.ID) ? element.getAttribute(core.ID) :
+                    (element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) ? element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) : this.findSelector(element)) ;
                 var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
                 if (!lastTCElement || !processedElements || !lastTCElement.hasAttribute(core.ID)) {
                     return;

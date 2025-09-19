@@ -56,6 +56,10 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.*;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 
 @Service
 @Scope("prototype")

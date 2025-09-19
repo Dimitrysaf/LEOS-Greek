@@ -165,6 +165,7 @@ define(function leosArticleIndentListPluginModule(require) {
 
     function aknindentList(editor) {
         var that = this, database = this.database, context = this.context, range;
+        editor.fire("beforeAknIndentList", { isIndent: that.isIndent });
 
         function indent(listNode) {
             // Our starting and ending points of the range might be inside some blocks under a list item...

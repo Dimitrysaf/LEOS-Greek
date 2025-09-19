@@ -129,5 +129,4 @@ public class CatalogItem {
     public String getVisibleTo() {  return visibleTo; }
 
     public void setVisibleTo(String visibleTo) { this.visibleTo = visibleTo; }
-
 }
