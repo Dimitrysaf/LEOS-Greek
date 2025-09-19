@@ -28,6 +28,7 @@ import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.BillRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.services.ai.AIService;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
@@ -40,6 +41,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.light.Profile;
@@ -50,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,6 +86,7 @@ public abstract class BillServiceImpl implements BillService {
     protected final XPathCatalog xPathCatalog;
     protected final TrackChangesContext trackChangesContext;
     private final DocumentLanguageContext documentLanguageContext;
+    protected final AIService aiService;
 
     @Autowired
     BillServiceImpl(BillRepository billRepository, PackageRepository packageRepository,
@@ -92,7 +96,7 @@ public abstract class BillServiceImpl implements BillService {
                     ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                     MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
                     XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext,
-                    DocumentLanguageContext documentLanguageContext) {
+                    DocumentLanguageContext documentLanguageContext, AIService aiService) {
         this.billRepository = billRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -108,6 +112,7 @@ public abstract class BillServiceImpl implements BillService {
         this.xPathCatalog = xPathCatalog;
         this.trackChangesContext = trackChangesContext;
         this.documentLanguageContext = documentLanguageContext;
+        this.aiService = aiService;
     }
 
     @Override
@@ -151,6 +156,7 @@ public abstract class BillServiceImpl implements BillService {
         }
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
+        prepareForAIAnalysis(bill);
         return bill;
     }
 
@@ -159,6 +165,7 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Updating Bill metadata properties... [id={}]", id);
         Bill bill = billRepository.updateBill(ref, id, properties, latest);
         updateInternalReferencesAsync(bill);
+        prepareForAIAnalysis(bill);
         return bill;
     }
 
@@ -169,6 +176,7 @@ public abstract class BillServiceImpl implements BillService {
         if (updateInternalRefs) {
             updateInternalReferencesAsync(bill);
         }
+        prepareForAIAnalysis(bill);
         return bill;
     }
 
@@ -203,6 +211,7 @@ public abstract class BillServiceImpl implements BillService {
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
         
         LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        prepareForAIAnalysis(bill);
         return bill;
     }
 
@@ -222,10 +231,21 @@ public abstract class BillServiceImpl implements BillService {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(bill.getId(),
                     bill.getMetadata().get().getRef()));
+            aiService.prepareAnalysis(bill);
+            LOG.debug("updateExternalReferences processed for {}: ", bill.getMetadata().get().getRef());
         } catch (Exception e) {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
+    }
+
+    private void prepareForAIAnalysis(Bill bill) {
+        try {
+            aiService.prepareAnalysis(bill);
+            LOG.debug("Prepare AI Analysis for {}: ", bill.getMetadata().get().getRef());
+        } catch (Exception e) {
+            LOG.error("Error while preparing AI analysis", e);
+        }
     }
 
     @Override
