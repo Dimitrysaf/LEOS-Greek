@@ -25,3 +25,7 @@ When('click on create button', () => {
 Then(/^collapse all button is displayed in create new legislative document window$/, function () {
     createActPage.elements.collapseAllBtn().should('be.visible');
 });
+
+When(/^tick eea relevance in create document page$/, function () {
+    createActPage.clickEEARelevanceInputCheckBox();
+});

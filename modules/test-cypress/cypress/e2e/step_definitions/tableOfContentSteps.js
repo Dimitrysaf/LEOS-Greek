@@ -271,8 +271,8 @@ Then('error message disappears from table of content', function () {
     tableOfContent.elements.euiLabelDanger().should('not.be.visible');
 });
 
-When(`click on first contribution`, () => {
-    tableOfContent.clickFirstContribution();
+When(`click on contribution card {int}`, (cardNumber) => {
+    tableOfContent.clickContributionCard(cardNumber);
 });
 
 Then('app-versions-pane-group {int} contains card header title {string}', function (versionPaneIndex, cardHeaderTitle) {

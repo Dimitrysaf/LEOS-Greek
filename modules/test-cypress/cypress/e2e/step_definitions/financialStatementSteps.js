@@ -36,7 +36,7 @@ When('click on edit icon of subparagraph {int} of landscape level {int} in finan
     financialStatementPage.clickEditIconOfSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber);
 });
 
-Then('content of level {int} has below content', (levelNumber, datatable) => {
+Then('content of level {int} in financial statement page has below content', (levelNumber, datatable) => {
     financialStatementPage.getContentOfLevel(levelNumber).then((element) => {
         checkContentResult(element, datatable);
     });

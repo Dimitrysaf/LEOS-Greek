@@ -120,7 +120,7 @@ Feature: financial statement page regression features
     And  click delete button from keyboard in edition mode
     And  append "text" at p tag 1 of level in edition mode
     And  click save and close button of ck editor
-    Then content of level 2 has below content
+    Then content of level 2 in financial statement page has below content
       | del | "[...]"                           |
       | ins | "text"                            |
     When click on finalise button in ribbon toolbar

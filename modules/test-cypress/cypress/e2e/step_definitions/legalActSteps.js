@@ -47,7 +47,7 @@ When('mouseover and click on recital {int}', recitalNumber => {
 })
 
 When('mouseover and click on article {int}', articleNumber => {
-    cy.wait(1000)
+    cy.wait(500);
     legalActPage.mouseHoverAndClickOnArticle(articleNumber);
 })
 
@@ -218,16 +218,20 @@ Then(`content of subparagraph {int} of list {int} of paragraph {int} of article 
     legalActPage.getContentOfSubparagraphOfListOfParagraphFromArticle(subparagraphNumber, listNumber, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber, poinListNumber, paragraphNumber, articleNumber, content) => {
-    legalActPage.getContentOfSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, poinListNumber, paragraphNumber, articleNumber).should('include.text', content);
+Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber, pointListNumber, paragraphNumber, articleNumber, content) => {
+    legalActPage.getContentOfSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, pointListNumber, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber, content) => {
-    legalActPage.getContentOfSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber).should('include.text', content);
+Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber, content) => {
+    legalActPage.getContentOfSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber3, poinListNumber3, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber, content) => {
-    legalActPage.getContentOfSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, poinListNumber3, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber).should('include.text', content);
+Then(`content of subparagraph {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber, content) => {
+    legalActPage.getContentOfSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).should('include.text', content);
+});
+
+Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber, content) => {
+    legalActPage.getContentOfSubParagraphOfListOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).should('include.text', content);
 });
 
 Then(`content of subparagraph {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, paragraphNumber, articleNumber, content) => {
@@ -675,4 +679,8 @@ Then('the total number of article is {int}', function (expectedCount) {
 
 Then(/^content of clause (\d+) is "([^"]*)"$/, function (clauseNumber, content) {
     legalActPage.elements.clauseContent().should('have.text', content);
+});
+
+Then(/^text of eeaRelevance container of preface of bill is "([^"]*)"$/, function (text) {
+    legalActPage.elements.eeaRelevanceContainer().should('have.text', text);
 });
