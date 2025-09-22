@@ -1,5 +1,5 @@
 #Author: Satyabrata Das
-#Keywords Summary : Testing different functionalities in act viewer page in drafting instance
+#Keywords Summary : Testing different functionalities in act viewer page in drafting instance#
 
 @ProposalViewerScenarios
 Feature: act viewer page Regression Features

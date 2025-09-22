@@ -13,6 +13,7 @@ Feature: create act regression features
         When click on template "<templateProposal>" in create new legislative document window
         When click on next button in create document page
         And  provide document title "<oldProposalName>" in create document page
+        And  tick eea relevance in create document page
         And  click on create button
         Then user is on act viewer page
         When click on add button in annexes section
@@ -23,6 +24,7 @@ Feature: create act regression features
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is maximized
+        And  text of eeaRelevance container of preface of bill is "(Text with EEA relevance)"
         When mouseover and click on citation 2
         Then ck editor window is displayed
         When click at offset 59 of child 0 of citation in edition mode
@@ -59,6 +61,13 @@ Feature: create act regression features
         Then 3 articles are added in legal act by import oj
         When click on close button present in legal act page
         Then user is on act viewer page
+        When click on cover page link present in act viewer page
+        Then user is on cover page
+        And  text of eeaRelevance container of cover page is "(Text with EEA relevance)"
+        When click on close button present in cover page
+        Then user is on act viewer page
+        When click on details tab in act view page
+        Then eea Relevance is ticked in details tab
         When click on milestones tab in act view page
         And  click on add button in milestones tab
         Then add milestone window is displayed

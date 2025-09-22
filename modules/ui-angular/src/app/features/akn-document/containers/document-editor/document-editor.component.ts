@@ -62,7 +62,7 @@ import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LeosLightService } from '@/shared/services/leos-light.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
-import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
+import {capitalizeFirstLetter, unescapeHtml} from '@/shared/utils/string.utils';
 import {
   findNodeById,
   getNumberingTypeByLanguage, toCamelCaseEnum,
@@ -990,6 +990,19 @@ export class DocumentEditorComponent
       akomantosoEl
         .querySelectorAll('meta, coverPage')
         .forEach((el) => el.remove());
+    }
+    // Check if <doc> has name="ANNEX"
+    const docElement = akomantosoEl.querySelector('doc[name="ANNEX"]');
+    if (docElement) {
+      const headingBlocks = docElement.querySelectorAll('block[name="heading"]');
+      headingBlocks.forEach(block => {
+        // Get the current content
+        const originalContent = block.innerHTML;
+        // Unescape HTML entities and replace 'xml:id' with 'id'
+        const unescapedContent = unescapeHtml(originalContent).replace(/xml:id/g, 'id');
+        // Set the unescaped content back to the block
+        block.innerHTML = unescapedContent;
+      });
     }
 
     if (akomantosoId) {

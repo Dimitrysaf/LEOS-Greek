@@ -8,7 +8,7 @@ Feature: Annex Page Regression Features
     Given navigate to edit drafting application with "User1"
     Then user is on home page
 
-  @annexOperations @local
+  @annexOperations @tabKeyInLevel @local
   Scenario: create, delete of annexes and edit of text inside annex
     When click on Create act button
     Then user is on create new legislative document window
@@ -166,20 +166,25 @@ Feature: Annex Page Regression Features
     When mouseover and click on level 1
     Then ck editor window is displayed
     When click enter from keyboard in edition mode
-    And  click on increase indent icon present in ck editor panel
+    And  click on tab key from keyboard
     And  add "point a" at current cursor position in edition mode
     And  click enter from keyboard in edition mode
-    And  click on increase indent icon present in ck editor panel
+    And  click on tab key from keyboard
     And  add "point i" at current cursor position in edition mode
     And  click enter from keyboard in edition mode
-    And  click on increase indent icon present in ck editor panel
+    And  click on tab key from keyboard
     And  add "point 1" at current cursor position in edition mode
     And  click enter from keyboard in edition mode
-    And  click on increase indent icon present in ck editor panel
+    And  click on tab key from keyboard
     And  add "point -" at current cursor position in edition mode
     Then increase indent icon is disabled in ck editor
     When click save and close button of ck editor
     Then ck editor window is not displayed
+    Then content of subparagraph 1 of list of level 1 contains "Text..."
+    Then content of subparagraph with attribute name "refersto" and value "~INP" of list 1 of point 1 of list 1 of level 1 is "point a"
+    Then content of subparagraph 1 of list 1 of point 1 of list 1 of point 1 of list 1 of level 1 is "point i"
+    Then content of subparagraph 1 of list 1 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of level 1 is "point 1"
+    Then content of indent 1 of list 1 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of level 1 is "point -"
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
     When mouseover and click on level 1

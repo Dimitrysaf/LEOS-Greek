@@ -48,7 +48,7 @@ class tableOfContent {
         archiveThisVersionBtn: () => cy.get("button").contains('Archive this version'),
         dropdownContent: () => cy.get("eui-dropdown-content[role='menu']"),
         dropdownItemContentTextList: () => this.elements.dropdownContent().find('.eui-u-flex-align-items-start button .eui-dropdown-item__content-text'),
-        contributionCard: () => cy.get('eui-card.revisions-pane').eq(0),
+        contributionCard: () => cy.get('eui-card.revisions-pane'),
         euiLabelSuccess: () => cy.get('span.eui-label--success'),
         euiLabelDanger: () => cy.get('span.eui-label--danger'),
         euiLabelWarningList: () => cy.get('span.eui-label--warning'),
@@ -64,9 +64,8 @@ class tableOfContent {
         this.elements.contributionsPaneAccordion().click();
     }
 
-    clickFirstContribution() {
-        this.elements.contributionCard().click();
-
+    clickContributionCard(cardNumber) {
+        this.elements.contributionCard().eq(cardNumber-1).click();
     }
 
     clickEditBtn() {

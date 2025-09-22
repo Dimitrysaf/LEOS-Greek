@@ -990,19 +990,23 @@ define(function leosTrackChangesModule(require) {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                     var liParentElement = element.getParent();
-                    var pParentElement = element.getAscendant("p");
+                    var pOrDivParentElement = element.getAscendant({ p:1, div:1 });
                     if ( element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_TO
                         && this.checkIfAcceptIsProcessedInBackendMovedTo(editor, element, numberModule)) {
                         element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_TO));
                     }
-                    element.remove();
-                    if (pParentElement && !pParentElement.getText().trim()) {
-                        let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
-                        let isSignatureElement = leosPluginUtils.isSignatureElement(pParentElement);
-                        if (!!lastEditable && lastEditable.getId() == pParentElement.getId() || isSignatureElement) {
-                            pParentElement.appendBogus();
+                    this.removeElementAndEmptySubflow(element);
+
+                    if (pOrDivParentElement && !pOrDivParentElement.getText().trim()) {
+                        let lastEditable = leosPluginUtils.findLastEditable(pOrDivParentElement.getAscendant("div"));
+                        let isSignatureElement = leosPluginUtils.isSignatureElement(pOrDivParentElement);
+                        let isDuplicatedSignatureElement = isSignatureElement && leosPluginUtils.hasSiblingWithSameDataAknName(pOrDivParentElement);
+                        if (isDuplicatedSignatureElement) {
+                            pOrDivParentElement.remove();
+                        } else if (!!lastEditable && lastEditable.getId() == pOrDivParentElement.getId() || isSignatureElement) {
+                            pOrDivParentElement.appendBogus();
                             var range = editor.createRange();
-                            range.selectNodeContents(pParentElement);
+                            range.selectNodeContents(pOrDivParentElement);
                             range.collapse(true);
                             editor.getSelection().selectRanges([range]);
                             editor.focus();
@@ -1156,7 +1160,7 @@ define(function leosTrackChangesModule(require) {
             if(element.hasAttribute(core.DATA_AKN_ACTION_ENTER) && !element.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                 editor.fire('handleTcEnter', {data: element});
             } else {
-                if(element.getParent()) {
+                if (element.getParent()) {
                     core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
                 }
                 editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
@@ -1188,6 +1192,7 @@ define(function leosTrackChangesModule(require) {
             }
             editor.fire('key', {keyCode: keyCodeToUse, domEvent: ckEditorEvent});
         },
+
         rejectChange: function(editor, element, numberModule) {
             editor.getSelection().fake(element.getParent());
             var parentElem = element.getAscendant(el => {
@@ -1206,7 +1211,7 @@ define(function leosTrackChangesModule(require) {
             } else if(element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
                 if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
                     this.removeEnterInsert(element, editor, numberModule);
-                } else if((element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)
+                } else if ((element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)
                     || element.getAttribute(core.DATA_INDENT_ORIGIN_LEVEL)) && element.hasAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
                     if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION).toLowerCase() === 'indent') {
                         this.indentList(element, editor, false);
@@ -1336,7 +1341,9 @@ define(function leosTrackChangesModule(require) {
                     if (pParentElement && !pParentElement.getText().trim()) {
                         let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
                         let isSignatureElement = leosPluginUtils.isSignatureElement(pParentElement);
-                        if ((!lastEditable || lastEditable.getId() !== pParentElement.getId()) && !isSignatureElement) {
+                        let isDuplicatedSignatureElement = isSignatureElement && leosPluginUtils.hasSiblingWithSameDataAknName(pParentElement);
+                        if (!isSignatureElement && (!lastEditable || lastEditable.getId() !== pParentElement.getId())
+                                || isDuplicatedSignatureElement) {
                             pParentElement.remove();
                         } else {
                             pParentElement.appendBogus();
