@@ -95,6 +95,8 @@ public class MetadataUtil {
     public static final String ATTRIBUTE_VALUE ="value";
     public static final String ATTRIBUTE_CLASS ="class";
     public static final String ELEMENT_COVERPAGE ="coverPage";
+    public static final String ELEMENT_PREFACE ="preface";
+    public static final String ELEMENT_LONGTITLE ="longTitle";
     public static final String ELEMENT_FRBRWORK ="FRBRWork";
     public static final String ELEMENT_FRBRLANGUAGE ="FRBRlanguage";
     public static final String ELEMENT_TLCREFERENCE = "TLCReference";
