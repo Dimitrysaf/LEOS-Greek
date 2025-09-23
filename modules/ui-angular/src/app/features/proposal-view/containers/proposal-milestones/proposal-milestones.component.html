@@ -100,7 +100,7 @@
                 [disabled]="row.legFileStatus == MilestoneStatus.CustomTemplatePublished"
                 euiDropdownItem
                 (click)="openMilestonePublishToDgTemplateCatalog(row)"
-                *ngIf="proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_CREATE_TEMPLATE')"
+                *ngIf="row.title === 'Custom Template' && proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_CREATE_TEMPLATE')"
               >
                 {{
                   'page.collection.milestones.actions.publish-to-dg-template-catalog'
@@ -110,7 +110,7 @@
               <button
                 euiDropdownItem
                 (click)="openMilestoneSendCopyForContributionDialog(row)"
-                *ngIf="!proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
+                *ngIf="row.title !== 'Custom Template' && proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
               >
                 {{
                   'page.collection.milestones.actions.send-copy-for-contribution'
