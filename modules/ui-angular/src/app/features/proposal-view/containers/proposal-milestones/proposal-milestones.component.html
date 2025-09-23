@@ -110,7 +110,7 @@
               <button
                 euiDropdownItem
                 (click)="openMilestoneSendCopyForContributionDialog(row)"
-                *ngIf="row.title !== 'Custom Template' && proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
+                *ngIf="row.title !== 'Custom Template' && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
               >
                 {{
                   'page.collection.milestones.actions.send-copy-for-contribution'
