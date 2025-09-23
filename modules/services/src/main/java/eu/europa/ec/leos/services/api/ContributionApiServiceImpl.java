@@ -117,7 +117,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-
+import static eu.europa.ec.leos.services.support.XmlHelper.removeEnclosingTags;
 
 @Service
 public class ContributionApiServiceImpl implements ContributionApiService {
@@ -437,7 +437,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             Document doc = XercesUtils.createXercesDocument(xmlContent);
             Node block = XercesUtils.getElementByNameAndId(doc, BLOCK, elementId);
             if (block != null) {
-                String newTitle = block.getTextContent();
+                String newTitle = removeEnclosingTags(XercesUtils.nodeToString(block));
                 Annex annex = (Annex) document;
                 AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
                 AnnexMetadata updatedMetadata = metadata.builder().withTitle(newTitle).build();
