@@ -8,6 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { MilestoneDescriptor } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import {AppConfigService} from "@/core/services/app-config.service";
 
 type DGOption = { code: string; label: string };
 
@@ -27,6 +28,7 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
 
   targetUserForm: FormGroup;
   submitted = false;
+  defaultEntity: string;
 
   /** Organizations loaded from API */
   private ALL_DGS: DGOption[] = [];
@@ -55,11 +57,14 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   constructor(
     private fb: FormBuilder,
     private detailsService: ProposalDetailsService,
-    private cdr: ChangeDetectorRef,
-    private renderer: Renderer2,
+    private appConfig: AppConfigService
   ) {}
 
   ngOnInit(): void {
+    this.appConfig.config.subscribe((config) => {
+      this.defaultEntity = config.user.defaultEntity.organizationName;
+    });
+
     this.targetUserForm = this.fb.group({
       templateName: this.fb.control('', Validators.required),
       dgSearch: [''],
@@ -74,6 +79,14 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
         this.dgByLabel = new Map<string, DGOption>(this.ALL_DGS.map(o => [o.label, o]));
         this.allDgItems = this.ALL_DGS.map(o => new EuiAutoCompleteItem({ label: o.label, tooltip: { tooltipMessage: o.label } }));
         this.filteredDgItems = [...this.allDgItems];
+
+        // Set default DG selection (user's default entity)
+        if (this.defaultEntity) {
+          const defaultDg = this.ALL_DGS.find(dg => dg.code === this.defaultEntity);
+          if (defaultDg) {
+            this.addDg(defaultDg);
+          }
+        }
       });
 
     // React to autocomplete value changes (label or item), unify as label string
@@ -193,6 +206,11 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   /** Remove a chip */
   removeDg(index: number): void {
     const removed = this.selectedDgs[index];
+
+    if (removed.code === this.defaultEntity) {
+      return;
+    }
+
     this.selectedDgs = this.selectedDgs.filter((_, i) => i !== index);
 
     const nextCodes = (this.dgCtrl.value as string[]).filter(c => c !== removed.code);
