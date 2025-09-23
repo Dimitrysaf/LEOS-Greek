@@ -4,7 +4,7 @@ import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
 
 Then('user is on financial statement page', () => {
-    headerPage.getCurrentPageName().should("have.text", "Digital Financial Statement");
+    headerPage.getCurrentPageName().should("have.text", "Legislative Financial and Digital Statement");
     cy.wait(5000);
 });
 
@@ -36,7 +36,7 @@ When('click on edit icon of subparagraph {int} of landscape level {int} in finan
     financialStatementPage.clickEditIconOfSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber);
 });
 
-Then('content of level {int} has below content', (levelNumber, datatable) => {
+Then('content of level {int} in financial statement page has below content', (levelNumber, datatable) => {
     financialStatementPage.getContentOfLevel(levelNumber).then((element) => {
         checkContentResult(element, datatable);
     });

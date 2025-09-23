@@ -69,8 +69,8 @@ When(`click on home button`, () => {
     headerPage.clickHomeBtn();
 });
 
-When(/^wait for (\d+) milliseconds$/, function (milliseconds) {
-    cy.wait(milliseconds);
+When(/^wait for (\d+) milliseconds$/, function (milliSeconds) {
+    cy.wait(milliSeconds);
 });
 
 When(/^refresh the browser$/, function () {
@@ -79,4 +79,8 @@ When(/^refresh the browser$/, function () {
 
 Then(/^"([^"]*)" is displayed$/, function (content) {
     cy.contains(content).should('be.visible');
+});
+
+When('click on tab key from keyboard', function () {
+    cy.realPress('Tab', {});
 });

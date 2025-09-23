@@ -1831,6 +1831,13 @@ define(function leosPluginUtilsModule(require) {
         var elementName = element.getAttribute(DATA_AKN_NAME);
         return SIGNATURE_ELEMENTS.some(e => e === elementName);
     }
+
+    function _hasSiblingWithSameDataAknName(element) {
+        var elementName = element.getAttribute(DATA_AKN_NAME);
+        return !!(element.getPrevious(e => e.getAttribute(DATA_AKN_NAME) === elementName)
+            || element.getNext(e => e.getAttribute(DATA_AKN_NAME) === elementName));
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1924,6 +1931,7 @@ define(function leosPluginUtilsModule(require) {
         isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
         isSignatureElement: _isSignatureElement,
         handleIndentAttributes: _handleIndentAttributes,
+        hasSiblingWithSameDataAknName: _hasSiblingWithSameDataAknName,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,

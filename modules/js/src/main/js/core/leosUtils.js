@@ -47,6 +47,8 @@ define(function leosUtilsModule(require) {
     var BLOCKCONTAINER = "blockcontainer";
     var LEVEL = "level";
     var DOCPURPOSE = "docPurpose";
+    var BLOCKCONTAINER = "blockcontainer";
+    var BLOCK = "block";
     var ID = "id";
     var ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR =
         'article, citation, recitals, recital, :not(article) > paragraph, level, chapter, akntitle, part, section, subparagraph';
@@ -470,9 +472,10 @@ define(function leosUtilsModule(require) {
         NUM: NUM,
         ID: ID,
         HEADING: HEADING,
+        BLOCKCONTAINER:BLOCKCONTAINER,
         SPELLCHECKER: SPELLCHECKER,
-        BLOCKCONTAINER: BLOCKCONTAINER,
         LEVEL: LEVEL,
-        DOCPURPOSE: DOCPURPOSE
+        DOCPURPOSE: DOCPURPOSE,
+        BLOCK: BLOCK
     };
 });

@@ -155,6 +155,10 @@ Then(/^confidentiality level is "([^"]*)" in details tab$/, function (confidenti
     actViewerPage.elements.confidentialityLevelLabelValue().should('have.text', confidentialityLevel);
 });
 
+Then(/^eea Relevance is ticked in details tab$/, function () {
+    actViewerPage.elements.eeARelevanceCheckBoxValue().should('be.checked');
+});
+
 Then(/^EEA Relevance is unticked in details tab$/, function () {
     actViewerPage.elements.eeARelevanceCheckBoxValue().should('not.be.checked');
 });

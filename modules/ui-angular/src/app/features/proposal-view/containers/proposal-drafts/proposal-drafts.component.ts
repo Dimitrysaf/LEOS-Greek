@@ -29,6 +29,7 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 import { LoadingService } from "@/shared/services/loading.service";
 import { EuiGrowlService } from "@eui/core";
 import { HttpStatusCode } from "@angular/common/http";
+import { cleanDelInsert } from '@/shared/utils/string.utils';
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -129,7 +130,7 @@ export class ProposalDraftsComponent
 
   handleAnnexEditTitle(annex: Document) {
     this.title =
-      annex.title ||
+      cleanDelInsert(annex.title) ||
       this.translate.instant('page.collection.drafts.annex.table.tr.no-title');
     this.activeAnnexId = annex.id;
     this.editAnnexTitleDialog.openDialog();
@@ -287,4 +288,5 @@ export class ProposalDraftsComponent
     this.fsCreateOption = createOptions[fsKey];
     this.annexCreateOption = createOptions[annexKey];
   }
+   protected readonly cleanDelInsert = cleanDelInsert;
 }

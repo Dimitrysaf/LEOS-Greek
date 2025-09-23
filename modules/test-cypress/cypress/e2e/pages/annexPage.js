@@ -41,10 +41,10 @@ class annexPage {
     }
 
     clickEditIconOfParagraph(paragraphNumber) {
-        cy.xpath("(//div[contains(@class, 'orientation')]//paragraph)[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
+        cy.xpath("(//div[contains(@class, 'orientation')]//paragraph)[" + paragraphNumber + "]").scrollIntoView().realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
     }
 
-    getContentOfAnnex(levelNumber) {
+    getContentOfLevel(levelNumber) {
         return cy.xpath("(//div[contains(@class, 'orientation')]//level)[" + levelNumber + "]//content//aknp");
     }
 

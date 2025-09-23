@@ -277,6 +277,10 @@ When(`click at offset {int} of child {int} of li {int} with data-akn-element {st
     ckEditorWindow.clickAtSpecificOffsetInChildOfParagraphOfArticle(offset, child, paragraphLi, paragraphDataAknElement);
 });
 
+When(`click at offset {int} of pTag {int} of li {int} with data-akn-element {string} of article in edition mode`, function (offSet, pTagNumber, paragraphLi, paragraphDataAknElement) {
+    ckEditorWindow.clickAtSpecificOffsetInPTagOfParagraphOfArticle(offSet, pTagNumber, paragraphLi, paragraphDataAknElement);
+});
+
 Then('li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (li, dataAknElement, attributeName, attributeValue) {
     ckEditorWindow.getParagraphElementOfArticle(li, dataAknElement).should('have.attr', attributeName).and('equal', attributeValue);
 });

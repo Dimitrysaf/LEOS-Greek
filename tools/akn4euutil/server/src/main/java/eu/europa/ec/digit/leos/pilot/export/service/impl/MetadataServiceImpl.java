@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.ELEMENT_DATE;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.VALUE_CROSS_CONFERENCE_NAME;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.insertElementInCoverPage;
+import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isBillDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isMainDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.deleteElementsByXPath;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getChildNodeWithName;
@@ -136,8 +137,8 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public void processAdoptionLocation(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        addAdoptionLocationToMetaReference(fieldInfo, xmlFile);
         final ReferenceFieldInfo locationToLanguage = adaptLocationToLanguage(fieldInfo, xmlFile);
-        addAdoptionLocationToMetaReference(locationToLanguage, xmlFile);
         addAdoptionLocationToCoverPage(locationToLanguage, xmlFile);
         addAdoptionLocationToConclusion(locationToLanguage, xmlFile);
     }
@@ -1098,6 +1099,7 @@ public class MetadataServiceImpl implements MetadataService {
             xmlNodeRef.appendChild(authLangeElement);
         }
         processAuthenticLanguagesInCoverPage(fieldInfo.getValue(), xmlFile);
+        processAuthenticLanguagesAfterLongTitle(fieldInfo.getValue(), xmlFile);
     }
 
     public void processAuthenticLanguagesInCoverPage(List<String> authenticLang, XmlUtil.XmlFile xmlFile) {
@@ -1124,6 +1126,52 @@ public class MetadataServiceImpl implements MetadataService {
                     String.join(", ", langArray.subList(0, langArray.size() - 1)) + " " + ResourcesUtil.getMessage(language,
                     "coverpage" +
                     ".separator") + " " + langArray.get(langArray.size() - 1);
+            XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            authPElement.setTextContent(String.format(ResourcesUtil.getMessage(language, "authentic.languages.text.template"), langStr));
+            authContainerElement.appendChild(authPElement);
+        }
+    }
+
+    public void processAuthenticLanguagesAfterLongTitle(List<String> authenticLang, XmlUtil.XmlFile xmlFile) {
+        if (!isBillDocumentFile(xmlFile)) {
+            return;
+        }
+        final String language = readLanguageValue(xmlFile);
+        Node xmlNodePreface = xmlFile.getElementByName(MetadataUtil.ELEMENT_PREFACE);
+        if (xmlNodePreface == null) {
+            return;
+        }
+
+        Node xmlNodeLongTitle = XmlUtil.getChildNodeWithName(xmlNodePreface, MetadataUtil.ELEMENT_LONGTITLE);
+        if (xmlNodeLongTitle == null) {
+            return;
+        }
+
+        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodePreface, MetadataUtil.VALUE_AUTHENTIC_LANGUAGES_NAME);
+        if (xmlNodeContainer != null) {
+            xmlNodeContainer.getParentNode().removeChild(xmlNodeContainer);
+        }
+
+        if (!authenticLang.isEmpty()) {
+            final Element authContainerElement = xmlFile.newElement(MetadataUtil.ELEMENT_CONTAINER);
+            XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_AUTHENTIC_LANGUAGES_NAME);
+            if (xmlNodeLongTitle.getNextSibling() != null){
+                xmlNodePreface.insertBefore(authContainerElement, xmlNodeLongTitle.getNextSibling());
+            } else {
+                xmlNodePreface.appendChild(authContainerElement);
+            }
+            final Element authPElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
+            List<String> langArray = new ArrayList();
+
+            for (String lang: authenticLang) {
+                langArray.add(ResourcesUtil.getMessage(language, "authentic.language." + lang.toUpperCase()));
+            }
+            langArray = langArray.stream().sorted().collect(Collectors.toList());
+            final String langStr = langArray.size() == 1 ? langArray.get(0) :
+                    String.join(", ", langArray.subList(0, langArray.size() - 1)) + " " + ResourcesUtil.getMessage(language,
+                            "coverpage" +
+                                    ".separator") + " " + langArray.get(langArray.size() - 1);
             XmlUtil.setNodeAttributeValue(authContainerElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
             authPElement.setTextContent(String.format(ResourcesUtil.getMessage(language, "authentic.languages.text.template"), langStr));
             authContainerElement.appendChild(authPElement);
