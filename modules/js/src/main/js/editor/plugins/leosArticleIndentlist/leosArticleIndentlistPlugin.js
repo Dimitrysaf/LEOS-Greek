@@ -521,6 +521,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     range.startContainer.insertAfter(parentOl);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
+                    range.startContainer.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
                     range.startContainer.renameNode('p');
                     var newOl = new CKEDITOR.dom.element('ol');
                     parentLi.append(newOl);
@@ -556,6 +557,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     }
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
+                    range.startContainer.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
                     if (previous.getLast().$.nodeName === 'OL' && previous.getLast().getLast().getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) !== leosPluginUtils.SUBPARAGRAPH) {
                         range.startContainer.setAttribute(leosPluginUtils.REFERS_TO, leosPluginUtils.WRP);
                         previous.getLast().append(range.startContainer);

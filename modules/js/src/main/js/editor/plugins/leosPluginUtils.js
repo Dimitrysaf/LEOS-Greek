@@ -1436,7 +1436,7 @@ define(function leosPluginUtilsModule(require) {
             if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
                 node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
             }
-            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL)) {
+            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
                 node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
             }
             editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
