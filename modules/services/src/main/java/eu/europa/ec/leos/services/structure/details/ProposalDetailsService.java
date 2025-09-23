@@ -15,15 +15,33 @@ package eu.europa.ec.leos.services.structure.details;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.SignatureMetadata;
 import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
+import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.ORGANIZATION;
+import static eu.europa.ec.leos.services.support.XmlHelper.PERSON;
+import static eu.europa.ec.leos.services.support.XmlHelper.REFERS_TO_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.ROLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.SIGNATURE;
 
 @Component
 public class ProposalDetailsService {
@@ -36,13 +54,54 @@ public class ProposalDetailsService {
     @Value("${leos.proposal.details.name}")
     private String proposalDetailsName;
 
-    ConfigurationRepository configurationRepository;
-    LanguageGroupService languageService;
+    private final ConfigurationRepository configurationRepository;
+    private final TemplateService templateService;
+    private final LanguageGroupService languageService;
 
     @Autowired
-    public ProposalDetailsService(ConfigurationRepository configurationRepository, LanguageGroupService languageService) {
+    public ProposalDetailsService(ConfigurationRepository configurationRepository, TemplateService templateService, LanguageGroupService languageService) {
         this.configurationRepository = configurationRepository;
+        this.templateService = templateService;
         this.languageService = languageService;
+    }
+
+    public ProposalDetailsLists populateTemplateSignatures(ProposalDetailsLists proposalDetailsLists, List<XmlDocument> proposalDocs) {
+        Optional<XmlDocument> legalAct = proposalDocs.stream().filter((d) -> d.getCategory().equals(LeosCategory.BILL)).findAny();
+        if (legalAct.isPresent()) {
+            String template = legalAct.get().getMetadata().get().getDocTemplate();
+            XmlDocument templateDocument = templateService.getTemplate(template);
+            List<SignatureMetadata> templateSignatures = extractSignatures(templateDocument.getContent().get().getSource().getBytes());
+            proposalDetailsLists.setTemplateSignatures(templateSignatures);
+        }
+        return proposalDetailsLists;
+    }
+
+    private List<SignatureMetadata> extractSignatures(byte[] source) {
+        List<SignatureMetadata> signatures = new ArrayList<>();
+        try {
+            Document document = XercesUtils.createXercesDocument(source, true);
+            NodeList signatureNodes = XercesUtils.getElementsByName(document, SIGNATURE);
+            for (int i=0;i < signatureNodes.getLength();i++) {
+                Node signatureNode = signatureNodes.item(i);
+                SignatureMetadata signature = new SignatureMetadata();
+                List<Node> children = XercesUtils.getChildren(signatureNode);
+                for (Node child : children) {
+                    if (child.getNodeName().equals(ROLE)) {
+                        signature.setCommissionerTitle(XercesUtils.getAttributeValue(child, REFERS_TO_ATTR).replaceAll("~",""));
+                    }
+                    if (child.getNodeName().equals(ORGANIZATION)) {
+                        signature.setSpecialMention(XercesUtils.getAttributeValue(child, REFERS_TO_ATTR).replaceAll("~",""));
+                    }
+                    if (child.getNodeName().equals(PERSON)) {
+                        signature.setSigningCommissioner(child.getTextContent());
+                    }
+                    signatures.add(signature);
+                }
+            }
+        } catch (Exception ex) {
+            return signatures;
+        }
+        return signatures;
     }
 
     public ProposalDetailsLists getProposalDetailsLists() {

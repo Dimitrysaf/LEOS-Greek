@@ -48,6 +48,7 @@ export interface ProposalDetailsLists {
   specialMentions: string[] | null;
   languages: string[] | null;
   commissionerTitles: string[] | null;
+  templateSignatures: SignatureMetadata[] | null;
 }
 
 export interface ProposalDetails {

@@ -671,7 +671,6 @@ public abstract class ApiServiceImpl implements ApiService {
         LOG.trace(proposalRef);
         ProposalDetailsVO proposalDetails = new ProposalDetailsVO();
         ProposalDetailsLists proposalDetailsLists = proposalDetailsService.getProposalDetailsLists();
-        proposalDetails.setProposalDetailsLists(proposalDetailsLists);
         Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDateAsDate).reversed());
         Proposal proposal = null;
         byte[] proposalXmlContent = new byte[0];
@@ -694,6 +693,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
                 }
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                proposalDetailsLists = proposalDetailsService.populateTemplateSignatures(proposalDetailsLists, documents);
                 List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, true);
                 FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
                 legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
@@ -731,6 +731,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     milestonesVOsLock.unlockWrite(stamp);
                 }
                 proposalVO.setDetailsTabExclusions(getDetailsTabExclusions(proposal));
+                proposalDetails.setProposalDetailsLists(proposalDetailsLists);
                 proposalDetails.setDocument(proposalVO);
                 return Optional.of(proposalDetails);
             } catch (Exception e) {
