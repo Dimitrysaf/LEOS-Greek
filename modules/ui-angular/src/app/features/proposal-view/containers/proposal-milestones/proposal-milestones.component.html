@@ -234,6 +234,7 @@
 <app-proposal-milestone-publish-to-catalog-dialog
   #sendMilestonePublishToDgTemplateCatalog
   [milestone]="milestoneViewData"
+  [document]="proposal"
   (closed)="onMilestoneSendCopyForContributionDialogClosed()"
   *ngIf="sendCopyDialogVisible && milestoneViewData"
 ></app-proposal-milestone-publish-to-catalog-dialog>

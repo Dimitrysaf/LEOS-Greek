@@ -9,6 +9,7 @@ import { MilestoneDescriptor } from '@/shared/components/proposal-milestone-view
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import {AppConfigService} from "@/core/services/app-config.service";
+import {Document} from "@/shared";
 
 type DGOption = { code: string; label: string };
 
@@ -19,6 +20,7 @@ type DGOption = { code: string; label: string };
 })
 export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit, OnDestroy {
   @Input() milestone: MilestoneDescriptor;
+  @Input() document: Document;
   @Output() closed = new EventEmitter<void>();
 
   @ViewChild('dgAuto')
@@ -29,6 +31,7 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   targetUserForm: FormGroup;
   submitted = false;
   defaultEntity: string;
+  isLoadingTemplateInfo = false;
 
   /** Organizations loaded from API */
   private ALL_DGS: DGOption[] = [];
@@ -66,10 +69,14 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
     });
 
     this.targetUserForm = this.fb.group({
-      templateName: this.fb.control('', Validators.required),
-      dgSearch: [''],
+      templateName: this.fb.control({value: '', disabled: this.isLoadingTemplateInfo}, Validators.required),
+      dgSearch: [{value: '', disabled: this.isLoadingTemplateInfo}],
       dgCodes: this.fb.control<string[]>([])
     });
+
+    if (this.document?.ref) {
+      this.loadTemplateInfo(this.document?.ref);
+    }
 
     // Load organizations from API
     this.detailsService.getAllOrganizations()
@@ -244,6 +251,36 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   get showTemplateNameError(): boolean {
     const c = this.templateNameCtrl;
     return c.invalid && (this.submitted || c.dirty);
+  }
+
+  loadTemplateInfo(ref: string): void {
+    this.isLoadingTemplateInfo = true;
+
+    this.detailsService.getTemplateInfo(ref)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: templateInfo => {
+          if (templateInfo.templateName) {
+            this.templateNameCtrl.setValue(templateInfo.templateName);
+          }
+          if (templateInfo.templateVisibility) {
+            templateInfo.templateVisibility.forEach(dgCode => {
+              const dg = this.ALL_DGS.find(d => d.code === dgCode);
+              if (dg) {
+                this.addDg(dg);
+              }
+            });
+          }
+          this.isLoadingTemplateInfo = false;
+          this.templateNameCtrl.enable();
+          this.targetUserForm.get('dgSearch')?.enable();
+        },
+        error: () => {
+          this.isLoadingTemplateInfo = false;
+          this.templateNameCtrl.enable();
+          this.targetUserForm.get('dgSearch')?.enable();
+        }
+      });
   }
 
   publishTemplate(): void {

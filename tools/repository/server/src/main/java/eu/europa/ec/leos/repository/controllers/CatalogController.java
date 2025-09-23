@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.leos.repository.controllers;
 
+import eu.europa.ec.leos.repository.model.CustomTemplateInfo;
 import eu.europa.ec.leos.repository.exceptions.CatalogException;
-import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.services.CatalogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,11 +24,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -51,5 +53,16 @@ public class CatalogController {
             @RequestParam String userId) throws CatalogException {
         catalogService.publishCustomTemplate(legFileId, templateName, dgs, userId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/catalog/template/{packageId}",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Get template information by package ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Template information retrieved successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity<CustomTemplateInfo> getTemplateInfo(@PathVariable BigDecimal packageId) throws CatalogException {
+        CustomTemplateInfo templateInfo = catalogService.getTemplateInfo(packageId);
+        return ResponseEntity.ok(templateInfo);
     }
 }

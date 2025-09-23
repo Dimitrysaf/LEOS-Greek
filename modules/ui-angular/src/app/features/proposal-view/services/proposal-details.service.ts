@@ -779,6 +779,10 @@ export class ProposalDetailsService implements OnDestroy {
     return this.http.get<string[]>(`${apiBaseUrl}/secured/organizations`);
   }
 
+  getTemplateInfo(proposalRef: string): Observable<{templateName: string, templateVisibility: string[]}> {
+    return this.http.get<{templateName: string, templateVisibility: string[]}>(`${apiBaseUrl}/secured/catalog/template/${proposalRef}`);
+  }
+
   searchUsersByJobTitle(jobTitle: string): Observable<string[]> {
     return this.http.get<string[]>(`${apiBaseUrl}/secured/proposal/searchUsersByJobTitle`, {
       params: { jobTitle: jobTitle },

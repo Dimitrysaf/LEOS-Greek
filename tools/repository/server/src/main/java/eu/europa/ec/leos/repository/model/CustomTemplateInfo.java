@@ -11,15 +11,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository.services;
+package eu.europa.ec.leos.repository.model;
 
-import eu.europa.ec.leos.repository.model.CustomTemplateInfo;
-import eu.europa.ec.leos.repository.exceptions.CatalogException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-public interface CatalogService {
-    void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws CatalogException;
-    CustomTemplateInfo getTemplateInfo(BigDecimal packageId) throws CatalogException;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class CustomTemplateInfo {
+    private String templateName;
+    private List<String> templateVisibility;
 }

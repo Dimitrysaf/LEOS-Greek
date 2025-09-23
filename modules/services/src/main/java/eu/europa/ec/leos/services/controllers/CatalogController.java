@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
+import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 
@@ -57,6 +53,22 @@ public class CatalogController {
             LOG.error("Unexpected error occurred while publishing template - " + e.getMessage(), e);
             return new ResponseEntity<>(
                     Collections.singletonMap("error", "Unexpected error occurred while publishing template"),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    @GetMapping(value = "/template/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getTemplateInfo(@PathVariable("proposalRef") String proposalRef) {
+        try {
+            proposalRef = encodeParam(proposalRef);
+            CustomTemplateInfoResponse response = customTemplateService.getTemplateInfo(proposalRef);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while getting template info - " + e.getMessage(), e);
+            return new ResponseEntity<>(
+                    Collections.singletonMap("error", "Unexpected error occurred while getting template info"),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

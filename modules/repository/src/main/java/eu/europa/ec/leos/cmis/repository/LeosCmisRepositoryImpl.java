@@ -60,13 +60,7 @@ import javax.inject.Provider;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -734,6 +728,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     @Override
     public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) {
 
+    }
+
+    @Override
+    public Map<String, Object> getTemplateInfo(String packageId) {
+        return Collections.emptyMap();
     }
 
     @Override

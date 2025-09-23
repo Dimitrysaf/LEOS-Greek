@@ -141,6 +141,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestArchiveDocumentVersionURI;
     @Value("${leos.rest.repository.publish.custom.template}")
     private String leosRestPublishCustomTemplateURI;
+    @Value("${leos.rest.repository.info.custom.template}")
+    private String leosRestInfoCustomTemplateURI;
     @Value("${leos.rest.repository.find.document.search.versions}")
     private String leosRestSearchVersionsURI;
     @Value("${leos.rest.repository.find.recent.packages.uri}")
@@ -678,5 +680,11 @@ public class RestRepository extends AbstractRestClient {
         dgs.forEach(dg -> params.add("dgs", dg));
 
         postEntity(url, params, Object.class);
+    }
+    
+    public Map<String, Object> getTemplateInfo(String packageId) {
+        LOGGER.trace("Get Template Info [{}]", packageId);
+        String url = getUrl(leosRestInfoCustomTemplateURI);
+        return getEntity(url, Map.class, packageId);
     }
 }

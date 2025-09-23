@@ -19,6 +19,7 @@ import eu.europa.ec.leos.repository.entities.*;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.CatalogException;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
+import eu.europa.ec.leos.repository.model.CustomTemplateInfo;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.*;
 import org.apache.commons.lang3.StringUtils;
@@ -78,6 +79,7 @@ public class CatalogServiceImpl implements CatalogService {
     private final ConfigService configService;
     private final DocumentService documentService;
     private final MilestoneDocumentService milestoneDocumentService;
+    private final PackageRepository packageRepository;
 
     @Autowired
     public CatalogServiceImpl(DocumentRepository documentRepository,
@@ -92,7 +94,7 @@ public class CatalogServiceImpl implements CatalogService {
                               MilestoneDocumentService milestoneDocumentService,
                               ConfigRepository configRepository,
                               ConfigVersionRepository configVersionRepository,
-                              ConfigContentRepository configContentRepository) {
+                              ConfigContentRepository configContentRepository, PackageRepository packageRepository) {
         this.documentRepository = documentRepository;
         this.documentMilestoneRepository = documentMilestoneRepository;
         this.customTemplateEntitiesRepository = customTemplateEntitiesRepository;
@@ -106,6 +108,7 @@ public class CatalogServiceImpl implements CatalogService {
         this.configRepository = configRepository;
         this.configVersionRepository = configVersionRepository;
         this.configContentRepository = configContentRepository;
+        this.packageRepository = packageRepository;
     }
 
     // =============================================================================
@@ -142,7 +145,38 @@ public class CatalogServiceImpl implements CatalogService {
         DocumentMilestone docMilestone = updateCustomTemplateMilestones(pkg, getDocumentId(legFileId), userId);
         handleCatalog(docMilestone, existingEntities, dgs, templateName, userId, pkg);
     }
-    
+
+    @Override
+    public CustomTemplateInfo getTemplateInfo(BigDecimal packageId) throws CatalogException {
+        Package pck = packageRepository.findById(packageId).orElseThrow(() -> new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "Package not found"));
+        List<Document> allDocuments = documentRepository.findAllDocumentsByPackageId(pck);
+        List<DocumentMilestone> allMilestones = documentMilestoneRepository.findDocumentMilestonesByDocumentIn(allDocuments);
+
+        for (DocumentMilestone milestone : allMilestones) {
+            if (CustomTemplateMilestoneStatus.PUBLISHED.getValue().equals(milestone.getStatus()) &&
+                    CUSTOM_TEMPLATE_COMMENT.equals(milestone.getMilestoneComments())) {
+                Optional<CustomTemplateEntities> customEntities = customTemplateEntitiesRepository.findByPackageId(pck);
+
+                if (!customEntities.isPresent()){
+                    throw new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "Custom template entities not found");
+                }
+
+                List<String> entities = Arrays.asList(customEntities.get().getEntities().split(","));
+                String baseTemplate = getBaseTemplateNameFromProposal(pck);
+
+                if (baseTemplate == null) {
+                    throw new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "Base template not found");
+                }
+
+                String customName = getCustomNameFromCatalog(entities.get(0), baseTemplate, packageId.toString());
+
+                return new CustomTemplateInfo(customName, entities);
+            }
+        }
+
+        return new CustomTemplateInfo();
+    }
+
     // =============================================================================
     // VALIDATION METHODS
     // =============================================================================
@@ -1300,6 +1334,35 @@ public class CatalogServiceImpl implements CatalogService {
     // =============================================================================
     // ENTITY CATALOG OPERATIONS
     // =============================================================================
+
+    private String getCustomNameFromCatalog(String entityName, String baseTemplate, String packageId) throws CatalogException {
+        String catalogName = "catalog-" + entityName;
+        Optional<Config> config = configRepository.findConfigByName(catalogName);
+
+        if (config.isPresent()) {
+            ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
+            ConfigContent content = configContentRepository.findConfigContentByVersionId(version);
+
+            String customKey = baseTemplate + CUSTOM_TEMPLATE_SEPARATOR + packageId;
+
+            try {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                org.w3c.dom.Document catalogDoc = builder.parse(new ByteArrayInputStream(content.getContentString().getBytes(StandardCharsets.UTF_8)));
+
+                Element template = findTemplateByCustomKey(catalogDoc.getDocumentElement(), customKey);
+                if (template != null) {
+                    return template.getAttribute("custom-name");
+                }
+
+            } catch (Exception e) {
+                LOG.error("Error finding template from catalog", e);
+                throw new CatalogException(CatalogException.CatalogExceptionCode.PARA_NOT_FOUND, e.getMessage());
+            }
+        }
+
+        throw new CatalogException(CatalogException.CatalogExceptionCode.PARA_NOT_FOUND, "Couldn't not find template name.");
+    }
     
     private void removeTemplateFromEntityCatalog(String entityName, String packageId, String userId) throws CatalogException {
         String catalogName = "catalog-" + entityName;

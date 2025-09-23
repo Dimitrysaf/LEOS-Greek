@@ -20,6 +20,7 @@ import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.user.UserHelper;
@@ -31,10 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +45,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
     private final TemplateService templateService;
     private final SecurityContext securityContext;
     private final UserHelper userHelper;
+    private final PackageService packageService;
 
 
     @Override
@@ -87,5 +86,14 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         
         // Publish template with validated DG codes
         leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin());
+    }
+    
+    @Override
+    public CustomTemplateInfoResponse getTemplateInfo(String proposalRef) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        Map<String, Object> templateInfo = leosRepository.getTemplateInfo(leosPackage.getId());
+        String templateName = (String) templateInfo.get("templateName");
+        List<String> templateVisibility = (List<String>) templateInfo.get("templateVisibility");
+        return new CustomTemplateInfoResponse(templateName, templateVisibility);
     }
 }
