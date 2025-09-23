@@ -429,6 +429,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     newLi.insertAfter(range.startContainer.getParent());
                     if (newLi.getChildCount() === 1 && newLi.getFirst().$.nodeName === 'P') {
                         var html = newLi.getFirst().getHtml();
+                        leosPluginUtils.copyAllAttributes(newLi.getFirst(), newLi);
                         newLi.getFirst().remove();
                         newLi.setHtml(html);
                     }
