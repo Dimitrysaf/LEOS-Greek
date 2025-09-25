@@ -8,7 +8,8 @@ class createActPage {
         dialogHeader: () => cy.contains('Create new legislative document'),
         documentTitle: () => cy.get('input#docPurpose'),
         createBtn: () => cy.get('app-proposal-create-wizard .app-dialog-footer-content button.eui-button.eui-button--primary'),
-        eeARelevanceInputCheckBox: () => cy.get("input[formcontrolname='eeaRelevance']")
+        eeARelevanceInputCheckBox: () => cy.get("input[formcontrolname='eeaRelevance']"),
+        templateList: () => cy.get('cdk-nested-tree-node label'),
     }
 
     clickTemplateByName(templateName) {
@@ -30,5 +31,6 @@ class createActPage {
     clickEEARelevanceInputCheckBox() {
         this.elements.eeARelevanceInputCheckBox().click();
     }
+
 }
 export default new createActPage();

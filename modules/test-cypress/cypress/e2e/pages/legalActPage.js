@@ -341,5 +341,29 @@ class legalActPage {
     getTagFromArticle(articleNumber, tagName) {
         return this.getArticle(articleNumber).find(`> ${tagName}`);
     }
+
+    getImageOfRecital(recitalNumber) {
+        return this.getRecital(recitalNumber).find('img');
+    }
+
+    getSubflow(recitalNumber) {
+        return this.getRecital(recitalNumber).find('subflow[name="structuredContent"]');
+    }
+
+    getSubflowOfRecital(subFlowNumber, recitalNumber) {
+        return this.getSubflow(recitalNumber).eq(subFlowNumber-1);
+    }
+
+    getListOfRecital(subFlowNumber,recitalNumber){
+        return this.getSubflowOfRecital(subFlowNumber, recitalNumber).find('list point content');
+    }
+
+    getRowFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber) {
+        return this.getSubflowOfRecital(subFlowNumber, recitalNumber).find('table tbody tr');
+    }
+
+    getColumnFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber) {
+        return this.getRowFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber).eq(0).find('td');
+    }
 }
 export default new legalActPage();

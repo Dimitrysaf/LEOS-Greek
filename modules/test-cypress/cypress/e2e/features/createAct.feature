@@ -4,12 +4,36 @@
 @createProposalScenarios
 Feature: create act regression features
 
-    @createProposalByUploadingAndDownloadingLegFile @local
+    @createProposalByUploadingAndDownloadingLegFile @ValidateAct @local
     Scenario Outline: user is able to create the act using different templates successfully
         Given navigate to edit drafting application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
+        And  user can see the following templates in create new legislative document window
+            | templateName                                                                                        |
+            | SJ-023 - Proposal for a Regulation of the European Parliament and of the Council                    |
+            | SJ-024 - Proposal for a Directive of the European Parliament and of the Council                     |
+            | SJ-025 - Proposal for a Decision of the European Parliament and of the Council                      |
+            | SJ-019 - Proposal for a Council Decision                                                            |
+            | SJ-026 - Proposal for a Decision of the European Parliament and of the Council (without addressees) |
+            | SJ-003 - Commission Delegated Regulation (EU) .../...                                               |
+            | SJ-007 - Commission Delegated Directive (EU) .../...                                                |
+            | SJ-033 - Commission Delegated Decision (EU) .../... (entry into force by its publication)           |
+            | SJ-012 - Commission Delegated Decision (entry into force by its notification)                       |
+            | SJ-004 - Commission Implementing Regulation (EU)  .../...                                           |
+            | SJ-001 - Commission Regulation (EU) .../... (former PRAC)                                           |
+            | SJ-008 - Commission Implementing Directive (EU)  .../...                                            |
+            | SJ-005 - Commission Directive (EU) .../... (former PRAC)                                            |
+            | SJ-032 - Commission Implementing Decision (EU) .../... (entry into force by its publication)        |
+            | SJ-009 - Commission Implementing Decision (entry into force by its notification)                    |
+            | SJ-031 - Commission Implementing Decision (internal)                                                |
+            | SJ-002 - Commission Regulation (EU)  .../...                                                        |
+            | SJ-006 - Commission Directive (EU) .../...                                                          |
+            | SJ-011 - Commission Decision (entry into force by its notification)                                 |
+            | SJ-013 - Commission Decision (EU) .../... (entry into force by its publication)                     |
+            | SJ-030 - Commission Decision (internal)                                                             |
+            | SJ-037 - Commission decision  (State aid - entry force by its notification)                         |
         When click on template "<templateProposal>" in create new legislative document window
         When click on next button in create document page
         And  provide document title "<oldProposalName>" in create document page
