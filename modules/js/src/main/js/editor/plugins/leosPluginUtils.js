@@ -1384,7 +1384,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _handleNodeOnIndent(node, editor, isIndent, isChild) {
-        if (!node || node.type !== CKEDITOR.NODE_ELEMENT || node.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST) {
+        if (!node || node.type !== CKEDITOR.NODE_ELEMENT) {
             return;
         }
         var point = node.getAscendant(el => el.getName && (el.getName() === HTML_SUB_POINT
@@ -1889,7 +1889,6 @@ define(function leosPluginUtilsModule(require) {
         popNotInlineSubElement: _popNotInlineSubElement,
         pushNotInlineElements: _pushNotInlineElements,
         resetDataNumOnIndent: _resetDataNumOnIndent,
-        handleNodeOnIndent: _handleNodeOnIndent,
         moveChildren: _moveChildren,
         moveElementChildren: _moveElementChildren,
         manageParagraphs: _manageParagraphs,
