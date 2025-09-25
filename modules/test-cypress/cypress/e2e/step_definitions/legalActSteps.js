@@ -684,3 +684,28 @@ Then(/^content of clause (\d+) is "([^"]*)"$/, function (clauseNumber, content) 
 Then(/^text of eeaRelevance container of preface of bill is "([^"]*)"$/, function (text) {
     legalActPage.elements.eeaRelevanceContainer().should('have.text', text);
 });
+
+Then(`recital {int} contains image`, function (recitalNumber) {
+    legalActPage.getImageOfRecital(recitalNumber).should('exist');
+});
+
+Then(`recital {int} does not contain image`, function (recitalNumber) {
+    legalActPage.getImageOfRecital(recitalNumber).should('not.exist');
+});
+
+Then('content subflow of {int} of recital {int} contains a table with {int} row and {int} column', function (subFlowNumber, recitalNumber, rowNumber, columnNumber) {
+    legalActPage.getRowFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber).should('have.length', rowNumber);
+    legalActPage.getColumnFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber).should('have.length', columnNumber);
+});
+
+Then('content of subflow {int} of recital {int} contains a {string}', function (subFlowNumber, recitalNumber, text) {
+    legalActPage.getListOfRecital(subFlowNumber, recitalNumber).should('include.text', text);
+});
+
+Then('content of subflow {int} of recital {int} does not contain a {string}', function (subFlowNumber, recitalNumber, text) {
+    legalActPage.getSubflowOfRecital(subFlowNumber, recitalNumber).should('not.contain', text)
+});
+
+Then('recital {int} doest not contain subflow', function (recitalNumber) {
+    legalActPage.getSubflow(recitalNumber).should('not.exist');
+});

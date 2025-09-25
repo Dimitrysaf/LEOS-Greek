@@ -57,7 +57,7 @@ class annexPage {
     }
 
     getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
-        return this.getSubparagraphFromLevel(subparagraphNumber,  levelNumber).find('table tbody tr').eq(0).find('td');
+        return this. getRowFromTableOfSubparagraphFromLevel(subparagraphNumber,  levelNumber).eq(0).find('td');
     }
 
     getRowFromTableOfParagraph(paragraphNumber) {
@@ -65,7 +65,7 @@ class annexPage {
     }
 
     getColumnFromTableOfParagraph(paragraphNumber) {
-        return this.getParagraph(paragraphNumber).find('table tbody tr').eq(0).find('td');
+        return this.getRowFromTableOfParagraph(paragraphNumber).eq(0).find('td');
     }
 
     getSubparagraphFromLevel(subparagraphNumber, levelNumber) {
