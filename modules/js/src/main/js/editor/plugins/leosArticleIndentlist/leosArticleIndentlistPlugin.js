@@ -429,6 +429,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     newLi.insertAfter(range.startContainer.getParent());
                     if (newLi.getChildCount() === 1 && newLi.getFirst().$.nodeName === 'P') {
                         var html = newLi.getFirst().getHtml();
+                        leosPluginUtils.copyAllAttributes(newLi.getFirst(), newLi);
                         newLi.getFirst().remove();
                         newLi.setHtml(html);
                     }
@@ -437,6 +438,13 @@ define(function leosArticleIndentListPluginModule(require) {
                     }
                     if (originalNumber) {
                         newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
+                    if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
+                    } else {
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.POINT);
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     }
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'LI' && !range.startContainer.getPrevious()) {
                     // To outdent INTRO subparagraph to paragraph or point

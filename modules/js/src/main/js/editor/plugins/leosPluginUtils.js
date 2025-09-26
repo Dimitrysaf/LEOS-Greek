@@ -1448,6 +1448,14 @@ define(function leosPluginUtilsModule(require) {
             && element.attributes[DATA_AKN_ELEMENT].value == POINT);
     }
 
+    function _copyAllAttributes(sourceElement, targetElement) {
+        const attributes = sourceElement.getAttributes();
+        for (let attr in attributes) {
+            targetElement.setAttribute(attr, attributes[attr]);
+        }
+
+    }
+
     function _getArticleType(element, articleTypesConfig) {
         var type = REGULAR;
         var article = $(element.$).parents(ARTICLE);
@@ -1931,6 +1939,7 @@ define(function leosPluginUtilsModule(require) {
         isSignatureElement: _isSignatureElement,
         handleIndentAttributes: _handleIndentAttributes,
         hasSiblingWithSameDataAknName: _hasSiblingWithSameDataAknName,
+        copyAllAttributes: _copyAllAttributes,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
