@@ -407,12 +407,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
                     }
                 }).count() > 0;
 
-                String targetUser = XercesUtils.getChildContent(cloned, CLONED_TARGET_USER);
+                Proposal clonedProposal = findProposalByRef(clonedProposalRef);
                 String creationDate = XercesUtils.getChildContent(cloned, CLONED_CREATION_DATE);
                 String status = isContributionDone ?
                         messageHelper.getMessage("clone.proposal.status.contribution.done") :
                         XercesUtils.getChildContent(cloned, CLONED_STATUS);
-                cloneProposalMetadataVO.setTargetUser(targetUser);
+                cloneProposalMetadataVO.setTargetUser(clonedProposal.getCreatedBy());
                 cloneProposalMetadataVO.setCreationDate(getLeosDateFromString(creationDate));
                 cloneProposalMetadataVO.setRevisionStatus(status);
 
@@ -436,7 +436,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override public Proposal findProposal(String id, boolean latest) {
-        LOG.trace("Finding Memorandum... [id={}]", id);
+        LOG.trace("Finding Proposal... [id={}]", id);
         Proposal proposal = proposalRepository.findProposalById(id, latest);
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;

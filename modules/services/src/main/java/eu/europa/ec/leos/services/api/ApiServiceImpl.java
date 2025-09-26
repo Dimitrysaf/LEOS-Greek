@@ -596,7 +596,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 }
                 return Optional.of(proposalVO);
             } catch (Exception e) {
-                LOG.error("Package not found for proposal {}", proposalRef);
+                LOG.error("Unexpected error occoured while fetching proposal", e);
                 return Optional.empty();
             }
         }
