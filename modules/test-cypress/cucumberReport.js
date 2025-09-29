@@ -1,17 +1,17 @@
 const report = require("multiple-cucumber-html-reporter");
 
 report.generate({
-  jsonDir: "./cypress/report/",
-  reportPath: "./cypress/report/",
+  jsonDir: 'cypress/report',
+  reportPath: 'cypress/report',
   metadata: {
     browser: {
       name: "Chrome",
-      version: "123",
+      version: "139",
     },
-    device: "Local Machine",
+    device: "GitLab Runner",
     platform: {
-      name: "Windows Server",
-      version: "2019 datacentre",
+      name: "Ubuntu Linux Server",
+      version: "22.4",
     },
   },
 });

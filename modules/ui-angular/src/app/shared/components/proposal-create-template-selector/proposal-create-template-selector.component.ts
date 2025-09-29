@@ -12,7 +12,7 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { appConfig } from 'src/config';
 
-import { CatalogItem } from '@/shared';
+import {ApplicationRole, CatalogItem} from '@/shared';
 import { ProposalService } from '@/shared/services/proposal.service';
 import {
   EuiTreeComponent,
@@ -37,6 +37,7 @@ export class ProposalCreateTemplateSelectorComponent
   implements OnInit, OnDestroy
 {
   @Input() translationKey: 'document' | 'draft' = 'document';
+  @Input() userRoles!: ApplicationRole[];
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
@@ -153,13 +154,33 @@ export class ProposalCreateTemplateSelectorComponent
     );
   }
 
+  /**
+   * visibleTo is an optional attribute in catalog entries.
+   *       It must be an array of valid EdiT roles (e.g., "support").
+   *       If present and populated:
+   *       The entry is shown only to users whose role matches one in the list.
+   *       The entry is hidden from users whose role does not match.
+   *       If the attribute is not present, the entry is visible to all users.
+   *       Existing entries without visibleTo remain backward compatible.
+   * @param catalogItems
+   * @private
+   */
   private catalogToTreeNodes(catalogItems: CatalogItem[]) {
-    catalogItems = catalogItems.filter((c) => !c.hidden);
+    console.log(catalogItems);
+    catalogItems.forEach(item => {
+      // Access properties, e.g., item.visibleTo, item.someProperty
+      console.log(item);
+    });
+
+    catalogItems = catalogItems.filter(item =>
+      !item.hidden && (!item.visibleTo || item.visibleTo.trim() === '' ||
+      (!this.userRoles?.length || item.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole))))
+    );
     return catalogItems.map((item) => this.catalogItemToTreeItem(item));
   }
 
   private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
-    const { id, key, names, type, enabled, items, hidden } = item;
+    const { id, key, names, type, enabled, items, hidden, visibleTo } = item;
     const label = this.proposalService.getTranslation(names);
     const iconClass =
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
@@ -167,7 +188,10 @@ export class ProposalCreateTemplateSelectorComponent
     const children =
       type === 'CATEGORY' && !hidden && enabled
         ? items
-            .filter((child) => !child.hidden)
+            .filter((child) => !child.hidden &&
+              (!child.visibleTo || child.visibleTo.trim() === '' ||
+                (!this.userRoles?.length ||
+                  child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))))
             .map((child) => this.catalogItemToTreeItem(child))
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;

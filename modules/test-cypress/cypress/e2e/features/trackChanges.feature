@@ -28,6 +28,7 @@ Feature: Track Changes Feature
     # Open ckeditor
     When mouseover and click on article 1
     Then ck editor window is displayed
+    And  enable track changes is disabled
     # Do changes in text
     When move the cursor position to offset 38 in paragraph 1 of article in edition mode
     And  click enter from keyboard in edition mode
@@ -50,6 +51,7 @@ Feature: Track Changes Feature
     When click on insert after icon of article 1
     And  mouseover and click on article 2
     Then ck editor window is displayed
+    And  enable track changes is disabled
     When append "one" at offset 7 in numbered paragraph 1 of article in edition mode
     And  append "two" at offset 7 in numbered paragraph 2 of article in edition mode
     And  click enter from keyboard in edition mode
@@ -114,8 +116,8 @@ Feature: Track Changes Feature
       | ins  | "Text"    |
       | text | "updated" |
 
-
-  @addTrackChangesText @local
+  #https://code.europa.eu/leos/core/-/issues/2913
+  @addTrackChangesText @indentWithTrackChanges @local
   Scenario: Basic tests for add track changes text in an article in Legal Act
     Given navigate to edit drafting application with "User1"
     Then user is on home page
@@ -131,6 +133,25 @@ Feature: Track Changes Feature
     And  annotation side bar is present
     And  ribbon toolbar is maximized
     And  toc editing button is displayed and enabled
+    When click on insert after icon of article 1
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When click on three vertical dots for the element contains text "Article 2" in toc
+    When mouseover on change type category
+    When click on definition option in change type category
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    Then heading of article 2 contains "Definitions"
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click enter from keyboard in edition mode
+    When click on increase indent icon present in ck editor panel
+    When add "point 1" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When add "point 2" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
     When enable track changes
     When mouseover and click on article 1
     Then ck editor window is displayed
@@ -158,6 +179,24 @@ Feature: Track Changes Feature
       | ins  | "AB"                 |
       | ins  | "B"                  |
       | text | "umbered paragraph." |
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    When click at offset 7 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on increase indent icon present in ck editor panel
+    When click on increase indent icon present in ck editor panel
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    Then 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 2 has html "(2)"
+    Then 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 2 has html "(a)"
+    When mouseover and click on article 5
+    Then ck editor window is displayed
+    When click at offset 6 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click on increase indent icon present in ck editor panel
+    When click on increase indent icon present in ck editor panel
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    Then 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 5 has html "(b)"
+    Then 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 5 has html "(i)"
 
   @trackChangesFromRules @local
   # Page with information: https://citnet.tech.ec.europa.eu/CITnet/confluence/pages/viewpage.action?spaceKey=LEOS&title=Leos+-+Track+changes

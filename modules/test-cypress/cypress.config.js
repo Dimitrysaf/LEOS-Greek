@@ -1,9 +1,14 @@
-const cucumber = require('cypress-cucumber-preprocessor').default;
 const decompress = require('decompress');
 const { defineConfig } = require("cypress");
 const unzip = ({ path, file }) => decompress(path + '/' + file, path);
 const path = require('path');
 const fs = require('fs');
+
+const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
+const esbuildPkg = require("@badeball/cypress-cucumber-preprocessor/esbuild");
+const createEsbuildPlugin =
+    esbuildPkg.createEsbuildPlugin || esbuildPkg.default || esbuildPkg;
 
 module.exports = {
   unzip,
@@ -17,25 +22,16 @@ module.exports = defineConfig({
   numTestsKeptInMemory: 1,
   video: false,
   e2e: {
-    setupNodeEvents(on) {
-      // implement node event listeners here
-      on("before:browser:launch", (browser, launchOptions) => {
-        if (browser.name === 'chrome') {
-          launchOptions.args.push('--disable-dev-shm-usage');
-          launchOptions.args.push("--no-sandbox");
-          launchOptions.args.push("--disable-gpu");
-        }
-        /*if (["chrome", "edge"].includes(browser.name)) {
-          /!*if (browser.isHeadless) {
-            launchOptions.args.push("--no-sandbox");
-            launchOptions.args.push("--disable-gl-drawing-for-tests");
-            launchOptions.args.push("--disable-gpu");
-          }*!/
-
-        }*/
-        return launchOptions;
+    async setupNodeEvents(on, config) {
+      await addCucumberPreprocessorPlugin(on, config, {
+        experimentalSingleBuild: true,
+        // // Enable Cucumber Messages and JSON reports
+        // messages: { enabled: true, output: 'cucumber-messages.ndjson' }, // For low-level messages
+        // json: { enabled: true, output: 'cucumber-report.json' }, // For Cucumber JSON output
       });
-      on('file:preprocessor', cucumber());
+      on("file:preprocessor", createBundler({
+        plugins: [createEsbuildPlugin(config)],
+      }));
       on('task', {
         deleteFolder(folderName) {
           if (!fs.existsSync(folderName)) {
@@ -94,9 +90,10 @@ module.exports = defineConfig({
       on('task', {
         log(message) {
           console.log(message)
-          return null
+          return null;
         },
       })
+      return config;
     },
     experimentalStudio: true,
     specPattern: "cypress/e2e/**/*.feature",

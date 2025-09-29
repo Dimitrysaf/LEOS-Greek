@@ -171,6 +171,7 @@ class TemplateServiceImpl implements TemplateService {
         xstream.useAttributeFor(CatalogItem.class, "enabled");
         xstream.useAttributeFor(CatalogItem.class, "hidden");
         xstream.useAttributeFor(CatalogItem.class, "key");
+        xstream.useAttributeFor(CatalogItem.class, "visibleTo");
         xstream.useAttributeFor(CatalogItem.class, "mandatory");
         xstream.aliasAttribute(CatalogItem.class, "defaultDocument", "default");
         xstream.aliasField("names", CatalogItem.class, "nameMap");

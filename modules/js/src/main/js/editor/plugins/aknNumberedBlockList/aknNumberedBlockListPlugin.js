@@ -19,16 +19,25 @@ define(function aknNumberedBlockListPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var blockListTransformerStamp = require("plugins/leosBlockListTransformer/blockListTransformer");
     var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
+        var numberModule = require("plugins/leosNumber/listItemNumberModule");
+    var unumberModule = require("plugins/leosUnumber/listUnumberModule");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
+
     var pluginName = "aknNumberedBlockList";
+    var ORDERED_LIST_SELECTOR = "ol[data-akn-name='NumberedBlockList']";
+    var config = { attributes: false, childList: true, subtree: true };
+
     
     var LOG = require("logger");
 
     var pluginDefinition = {
         init : function init(editor) {
             $(editor.element.$).on("keyup mouseup", null, [editor], _handleClickEvent);
-
+            numberModule.init(editor);
+            unumberModule.init(editor);
             //Go through ol elements to set "data-akn-name" attribute and through ascendant li elements to set "data-akn-num" attributes.
             editor.on("change", function(event) {
+                _startObservingAllLists(event);
                 if (event.editor.checkDirty()) {
                     event.editor.fire('lockSnapshot');
                     var jqEditor = $(event.editor.editable().$);
@@ -70,6 +79,109 @@ define(function aknNumberedBlockListPluginModule(require) {
         }
     };
 
+    function _startObservingAllLists(event){
+        var editor = event.editor;
+        if(editor.editable && editor.editable().getChildren && editor.editable().getChildren().count() > 0){
+            _addMutationObserverToLists(editor.editable().find(ORDERED_LIST_SELECTOR).$)
+        }
+    }
+    function _addMutationObserverToLists(listsNodeList){
+        for (var i = 0; i < listsNodeList.length; i++){
+            var list = listsNodeList[i];
+            if (!list.listMutationObserver){
+                list.listMutationObserver = new MutationObserver(_processMutations);
+                list.listMutationObserver.observe(list, config);
+            }
+           unumberModule.resetElementAttributeOnIndents(list);
+           unumberModule.checkListsWithOnlyCrossheadings(list);
+        }
+    }
+    function _processMutations(mutationsList) {
+        var mutations = _getMutations(mutationsList);
+        leosPluginUtils.popSingleSubElement(mutations.singleSubPoints);
+        leosPluginUtils.popNotInlineSubElement(mutations.notInlineElements);
+    }
+    function _getMutations(mutationsList){
+        var listsWithoutIntro = []; // OLs without an intro
+        var isListPushed = {};      // already processed OLs
+        var singleSubPoints = [];   // single SubPoints
+        var isSubPointPushed = {};  // already processed SubPoints
+        var notInlineElements = [];
+        var isNotInlinePushed = {};
+        for(var i = 0; i < mutationsList.length; i++){
+            _pushMutations(mutationsList[i].target, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed, notInlineElements, isNotInlinePushed);
+        }
+        return {listsWithoutIntro: listsWithoutIntro,
+            singleSubPoints: singleSubPoints,
+            notInlineElements: notInlineElements};
+    }
+    function _pushMutations(node, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed, notInlineElements, isNotInlinePushed){
+        for (var i = 0; i < node.childNodes.length; i++){
+            var child = node.childNodes[i];
+            if(child.childNodes.length > 0){
+                _pushMutations(child, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed, notInlineElements, isNotInlinePushed);
+            }
+            _pushListsWithoutIntro(child, listsWithoutIntro, isListPushed);
+            _pushSingleSubPoints(node, child, singleSubPoints, isSubPointPushed);
+            leosPluginUtils.pushNotInlineElements(child, notInlineElements, isNotInlinePushed);
+        }
+        _pushListsWithoutIntro(node, listsWithoutIntro, isListPushed);
+        leosPluginUtils.pushNotInlineElements(node, notInlineElements, isNotInlinePushed);
+    }
+
+    /**
+     * Add "child" element into "listsWithoutIntro" if is not a correct OL structure.
+     * Correct structure:
+     * <li>
+     *  <p> </p> (or Text node, or span tag)  //TODO consider avoiding anything rather than p, and normalize in a second moment with _appendAllPreviousTextNodes()
+     *  <ol>
+     *      <li></li>
+     *      <li></li>
+     *  </ol>
+     * </li>
+     *
+     * @param child, OL to be processed
+     * @param listsWithoutIntro, array where to add the OL in case is not a correct structure
+     * @param isListPushed, array with already processed OLs
+     */
+    function _pushListsWithoutIntro(child, listsWithoutIntro, isListPushed){
+        var hasNoIntro = leosPluginUtils.getElementName(child) === leosPluginUtils.ORDER_LIST_ELEMENT
+            && (!child.previousSibling || leosPluginUtils.getElementName(child.previousSibling) !== leosPluginUtils.HTML_SUB_POINT)
+            && (!child.firstChild || leosPluginUtils.getElementName(child.firstChild) !== leosPluginUtils.HTML_POINT);
+        if(hasNoIntro && isListPushed[child] !== 1){
+            isListPushed[child] = 1;
+            listsWithoutIntro.push(child);
+        }
+    }
+
+    /**
+     * Add "child" element into "singleSubPoints" if is the only element inside a <li> node.
+     * Example: Add <p> to "singleSubPoints" if the structure is as below:
+     * <li>
+     *     <p> </p>
+     * </li>
+     *
+     * @param node, parent <li>
+     * @param child, element <p>
+     * @param singleSubPoints, single SubPoints which will be converted later into Points
+     * @param isSubPointPushed, SubPoints already processed
+     */
+    function _pushSingleSubPoints(node, child, singleSubPoints, isSubPointPushed){
+        var isSingleSubPoint = leosPluginUtils.getElementName(node) === leosPluginUtils.HTML_POINT && leosPluginUtils.getElementName(child) === leosPluginUtils.HTML_SUB_POINT
+            && !child.previousSibling && !child.nextSibling;
+        if(isSingleSubPoint){
+            var subPoint = new CKEDITOR.dom.element(child);
+            if(_getAscendantPoint(subPoint.getParent()) && isSubPointPushed[subPoint] !== 1){
+                isSubPointPushed[subPoint] = 1;
+                singleSubPoints.push(subPoint);
+            }
+        }
+    }
+
+    function _getAscendantPoint(element) {
+        return element.getAscendant(leosPluginUtils.HTML_POINT);
+    }
+
      var _handleClickEvent = function _handleClickEvent(event) {
         var range = event.data[0].getSelection().getRanges()[0];
         if(range.collapsed) {
@@ -94,6 +206,15 @@ define(function aknNumberedBlockListPluginModule(require) {
             akn : "leos:softdate",
             html : "data-akn-attr-softdate"
         }, {
+            akn: "leos:id-to-be-restored",
+            html: "data-akn-id-to-be-restored"
+        }, {
+            akn: "leos:renumber-origin",
+            html: "data-akn-renumber-origin"
+        }, {
+            akn: "leos:id-to-be-removed",
+            html: "data-akn-id-to-be-removed"
+        }, {
             akn : "leos:origin",
             html : "data-origin"
         }, {
@@ -113,6 +234,15 @@ define(function aknNumberedBlockListPluginModule(require) {
             }, {
                 akn : "leos:softdate",
                 html : "data-akn-attr-softdate"
+            }, {
+                akn: "leos:id-to-be-restored",
+                html: "data-akn-id-to-be-restored"
+            }, {
+                akn: "leos:renumber-origin",
+                html: "data-akn-renumber-origin"
+            }, {
+                akn: "leos:id-to-be-removed",
+                html: "data-akn-id-to-be-removed"
             }, {
                 akn : "leos:origin",
                 html : "data-origin"

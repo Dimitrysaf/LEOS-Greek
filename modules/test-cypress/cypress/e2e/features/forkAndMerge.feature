@@ -87,7 +87,99 @@ Feature: fork and merge features
     When click on create button in upload document page
     Then user is on act viewer page
     When click on add button in annexes section
-    Then total number of annexes present in act viewer page is 1
+    Then total number of annexes present in act viewer page is 2
+    When click on annex 1 link
+    Then user is on annex page
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When drag element "Paragraph" from element tree list and drop before node label "1. Text..." in navigation pane
+    Then success message "Paragraph has been added successfully!" is displayed in navigation pane
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    When click on edit icon of paragraph 1
+    Then ck editor window is displayed
+    When click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point i" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point 1" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point -" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And  add "point b" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point i" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point 1" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And  add "point c" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point i" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on decrease indent icon present in ck editor panel
+    And  add "point d" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on decrease indent icon present in ck editor panel
+    And  add "subparagraph" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    When mouseover and click on level 1
+    Then ck editor window is displayed
+    When click enter from keyboard in edition mode
+    And  add "intro subparagraph" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point i" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point 1" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point -" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And  add "point b" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point i" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point 1" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And  add "point c" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  add "point i" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on decrease indent icon present in ck editor panel
+    And  add "point d" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on decrease indent icon present in ck editor panel
+    And  add "wrapper subparagraph" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    When click on close button present in annex page
+    Then user is on act viewer page
     When click on milestones tab in act view page
     When click on add button in milestones tab
     And  click on create milestone button
@@ -203,6 +295,156 @@ Feature: fork and merge features
     And  paragraph 2 of article 9 contains attribute "leos:softmove_label" with value "MOVED from Article 4(2)"
     And  paragraph 2 of article 9 contains attribute "leos:origin" with value "ec"
     And  paragraph 2 of article 9 contains attribute "leos:softactionroot" with value "true"
+    When click on close button present in legal act page
+    Then user is on act viewer page
+    When click on annex 1 link
+    Then user is on annex page
+    When click on edit icon of paragraph 1
+    Then ck editor window is displayed
+#################
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of paragraph in edition mode
+#################
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+
+    When right click on li 1 with attribute name "data-akn-name" with value "indent" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                 |
+      | Move this point to... |
+    When click on li 1 with attribute name "data-akn-name" with value "indent" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+#################
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 2 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 2 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 2 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 2 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 2 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                 |
+      | Move this point to... |
+    When click on li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 2 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+#################
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 3 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 3 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "point" of li 3 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                 |
+      | Move this point to... |
+    When click on li 1 with attribute name "data-akn-element" with value "point" of li 3 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+#################
+    When right click on li 4 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                 |
+      | Move this point to... |
+    When click on li 4 with attribute name "data-akn-element" with value "point" of paragraph in edition mode
+#################
+    When right click on li 2 with attribute name "data-akn-element" with value "subparagraph" of paragraph in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+      | Move this subparagraph to... |
+    When click on li 2 with attribute name "data-akn-element" with value "subparagraph" of paragraph in edition mode
+#################
+    When click close button of ck editor
+    Then ck editor window is not displayed
+
+    When  mouseover and click on level 1
+    Then ck editor window is displayed
+#################
+    When right click on p tag with attribute name "data-akn-element" with value "subparagraph" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on p tag with attribute name "data-akn-element" with value "subparagraph" of level in edition mode
+#################
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of level in edition mode
+#################
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of level in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of level in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of level in edition mode
+
+    When right click on li 1 with attribute name "data-akn-name" with value "indent" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                 |
+      | Move this point to... |
+    When click on li 1 with attribute name "data-akn-name" with value "indent" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of level in edition mode
+#################
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 2 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 2 with attribute name "data-akn-element" with value "point" of level in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 2 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 1 with attribute name "data-akn-element" with value "point" of li 2 with attribute name "data-akn-element" with value "point" of level in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 2 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                 |
+      | Move this point to... |
+    When click on li 1 with attribute name "data-akn-element" with value "point" of li 1 with attribute name "data-akn-element" with value "point" of li 2 with attribute name "data-akn-element" with value "point" of level in edition mode
+#################
+    When right click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 3 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of li 3 with attribute name "data-akn-element" with value "point" of level in edition mode
+
+    When right click on li 1 with attribute name "data-akn-element" with value "point" of li 3 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                 |
+      | Move this point to... |
+    When click on li 1 with attribute name "data-akn-element" with value "point" of li 3 with attribute name "data-akn-element" with value "point" of level in edition mode
+#################
+    When right click on li 4 with attribute name "data-akn-element" with value "point" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                 |
+      | Move this point to... |
+    When click on li 4 with attribute name "data-akn-element" with value "point" of level in edition mode
+#################
+    When right click on li 2 with attribute name "data-akn-element" with value "subparagraph" of level in edition mode
+    Then below option present in "cke_panel_frame" iframe
+      | Paste                        |
+      | Move this subparagraph to... |
+    When click on li 2 with attribute name "data-akn-element" with value "subparagraph" of level in edition mode
+#################
+    When click close button of ck editor
+    Then ck editor window is not displayed
 
   @forkMerge @contributionPane @local
   Scenario: merge updated and moved elements from contribution
@@ -250,7 +492,8 @@ Feature: fork and merge features
     Then user is on legal act page
     And  annotation side bar is present
     And  enable track changes toggle bar is on in ribbon toolbar
-    When refresh the browser
+    And  enable track changes is disabled
+#    When refresh the browser
     When click on toc edit button
     And  click on "Article 1 - Scope 1. Text..." link in navigation pane
     And  drag node label "Article 1 - Scope 1. Text..." and drop to node label "Article 3 - Entry into force This Regulation" in navigation pane
@@ -274,7 +517,7 @@ Feature: fork and merge features
     And  minimize "Chapter 2 - Chapter heading..." link in navigation pane
     When click on toc edit button
     #And  click on "Chapter 1 - Chapter heading" link in navigation pane
-    And  drag node label "Chapter 1 - Chapter heading" and drop after node label "Chapter 2 - Chapter heading..." in navigation pane
+    And  drag node label "Chapter 1 - Chapter heading" and drop to node label "Chapter 2 - Chapter heading..." in navigation pane
     And  "Chapter  1" is showing as soft move title in navigation pane
     And  "MOVED" is showing as soft move label with soft move title " Chapter  1" in navigation pane
     And  "Chapter  #" is showing as soft move title in navigation pane
@@ -294,6 +537,20 @@ Feature: fork and merge features
     Then "Annex deletion confirm" dialog confirm box window is displayed
     When click on danger button in dialog box window
     Then total number of annexes present in act viewer page is 2
+    When click on annex 1 link
+    Then user is on annex page
+    When click on edit icon of level 1
+    Then ck editor window is displayed
+    When click at offset 7 of pTag 1 of level in edition mode
+    And  add "add new content in same paragraph" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  level 1 contains "Text...add new content in same paragraph"
+    And  content of level 1 has below content
+      | text | "Text..."       |
+      | ins  | "add new content in same paragraph" |
+    When click on close button present in annex page
+    Then user is on act viewer page
     When click on milestones tab in act view page
     When click on add button in milestones tab
     And  click on create milestone button
@@ -326,7 +583,7 @@ Feature: fork and merge features
     When click on cover page link present in act viewer page
     Then user is on cover page
     When click on contributions pane accordion
-    And  click on first contribution
+    And  click on contribution card 1
     Then contribution view container is displayed
     When click on merge actions menu of "docpurpose" 1
     And  click on merge action "Accept Change"
@@ -339,7 +596,7 @@ Feature: fork and merge features
     Then user is on legal act page
     And  annotation side bar is present
     When click on contributions pane accordion
-    And  click on first contribution
+    And  click on contribution card 1
     Then check that "chapter" with id "ectasxzT07u6ev8zH" is at position 1
     Then check that "chapter" with id "ecRdsDU6hHPKTgg5F" is at position 2
     When click on merge actions menu of "chapter" 1
@@ -452,3 +709,16 @@ Feature: fork and merge features
     Then check that "article" with id "ecpHTv9uxSm6OsxU0" is at position 3
     Then check that there is no merge action on "article" 2
     Then check that there is no merge action on "article" 3
+    When click on close button present in legal act page
+    Then user is on act viewer page
+    When click on annex 1 link
+    Then user is on annex page
+    When click on contributions pane accordion
+    And  click on contribution card 1
+    Then contribution view container is displayed
+    When click on merge actions menu of "level" 1
+    When click on merge action "Accept Change"
+    And  click on apply changes
+    And  click close button of merge section in ribbon toolbar
+    Then contribution view container is not displayed
+    Then level 1 contains "Text...add new content in same paragraph"

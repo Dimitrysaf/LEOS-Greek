@@ -365,12 +365,12 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 if (range.endContainer.type === CKEDITOR.NODE_TEXT && endNode.getParent().getName() === leosPluginUtils.ORDER_LIST_ELEMENT && endNode.getParent().getAttribute('data-akn-name') === 'aknAnnexList') {
                     endNode = range.endContainer.getParent().getName() === 'p' ? range.endContainer.getParent() : endNode;
                 }
-                _handleNode(endNode, editor, isIndent);
+                _handleNode(startNode, editor, isIndent);
             }
 
             var rangeWalker = new CKEDITOR.dom.walker(range);
             while (node = rangeWalker.next()) {
-                _handleNode(node, editor, isIndent);
+                _handleNode(startNode, editor, isIndent);
             }
         }
     }
@@ -381,7 +381,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
         }
         leosPluginUtils.handleIndentAttributes(node, editor, isIndent);
         if (!node.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) || node.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT).
-            toLowerCase() != leosPluginUtils.CROSSHEADING.toLowerCase()) {
+        toLowerCase() != leosPluginUtils.CROSSHEADING.toLowerCase()) {
             node.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
         }
         node.getChildren().toArray().forEach(_handleNode.bind(this, editor, isIndent));

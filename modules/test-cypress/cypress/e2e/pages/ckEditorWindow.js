@@ -35,6 +35,7 @@ class ckEditorWindow {
         level: () => this.elements.ckEditableInline().find("ol li[data-akn-element='level']"),
         paragraph: () => this.elements.ckEditableInline().find("ol li[data-akn-element='paragraph']"),
         article: () => this.elements.ckEditableInline().find('article ol'),
+        recitalSupportedList :()=> this.elements.ckEditableInline().find("ol[data-akn-name='recital'] > li"),
         refTag: () => this.elements.ckEditableInline().find('ref'),
         blockContainer: () => this.elements.ckEditableInline().find("div[data-akn-name='blockContainer']"),
         pTagFromBlockContainer: () => this.elements.blockContainer().find('p'),
@@ -44,7 +45,8 @@ class ckEditorWindow {
         ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2'),
         clauseContent: () => this.elements.ckEditableInline().find("#clause1 p[data-akn-mp-id='clause1ContentP']"),
         tcActionIcon: () => cy.get('.cke_combo__trackchangeactions'),
-        tcActionDropdown: () => cy.get('ul.cke_panel_list > li.cke_panel_listItem > a')
+        tcActionDropdown: () => cy.get('ul.cke_panel_list > li.cke_panel_listItem > a'),
+        insertListIcon :()=> cy.get('.cke_button__leosindentlist')
     }
 
     uploadImageFile(location, iframeClass) {
@@ -215,10 +217,6 @@ class ckEditorWindow {
         this.elements.bulletedListIcon().click();
     }
 
-    /*    clickBackgroundColorIcon() {
-            this.elements.backgroundColorBtn().click();
-        }*/
-
     appendInCkEditorLevel(text, pTagNumber) {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).type(text);
     }
@@ -277,6 +275,10 @@ class ckEditorWindow {
 
     clickAtSpecificOffsetInChildOfParagraphOfArticle(offset, child, paragraphLi, paragraphDataAknElement) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id, child));
+    }
+
+    clickAtSpecificOffsetInPTagOfParagraphOfArticle(offset, pTagNumber, paragraphLi, paragraphDataAknElement) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find('p').eq(pTagNumber-1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
     }
 
     clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement) {
@@ -388,8 +390,112 @@ class ckEditorWindow {
         this.elements.paragraph().invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
     }
 
+    getSubparagraphOfParagraph(liTag, attributeName, attributeValue) {
+        return this.elements.paragraph().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1);
+    }
+
+    rightClickOnSubparagraphOfParagraph(liTag, attributeName, attributeValue) {
+        this.getSubparagraphOfParagraph(liTag, attributeName, attributeValue).scrollIntoView().rightclick({ force: true });
+    }
+
+    clickAtSpecificOffsetInSubparagraphOfParagraph(offSet, liTag, attributeName, attributeValue) {
+        this.getSubparagraphOfParagraph(liTag, attributeName, attributeValue).invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+    }
+
+    clickOnSubparagraphOfParagraph(liTag, attributeName, attributeValue) {
+        this.elements.paragraph().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).click({ force: true });
+    }
+
+    rightClickOnFirstLayerElementOfParagraph(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.elements.paragraph().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).children('ol').children("li["+firstLayerAttributeName+"='"+firstLayerAttributeValue+"']").eq(liFirstLayerTag - 1).rightclick({ force: true });
+    }
+
+    clickOnFirstLayerElementOfParagraph(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.elements.paragraph().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).children('ol').children("li["+firstLayerAttributeName+"='"+firstLayerAttributeValue+"']").eq(liFirstLayerTag - 1).click({ force: true });
+    }
+
+    rightClickOnSecondLayerElementOfParagraph(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.getSecondLayerElementOfParagraph(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).rightclick({ force: true });
+    }
+
+    clickOnSecondLayerElementOfParagraph(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.getSecondLayerElementOfParagraph(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).click({ force: true });
+    }
+
+    rightClickOnThirdLayerElementOfParagraph(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.getThirdLayerElementOfParagraph(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).rightclick({ force: true });
+    }
+
+    clickOnThirdLayerElementOfParagraph(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.getThirdLayerElementOfParagraph(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).click({ force: true });
+    }
+
+    getSecondLayerElementOfParagraph(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue){
+        return this.elements.paragraph().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).children('ol').children("li["+firstLayerAttributeName+"='"+firstLayerAttributeValue+"']").eq(liFirstLayerTag - 1).children('ol').children("li["+secondLayerAttributeName+"='"+secondLayerAttributeValue+"']").eq(liSecondLayerTag - 1);
+    }
+
+    getThirdLayerElementOfParagraph(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue){
+        return this.getSecondLayerElementOfParagraph(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).children('ol').children("li["+thirdLayerAttributeName+"='"+thirdLayerAttributeValue+"']").eq(liThirdLayerTag - 1);
+    }
+
+    rightClickOnPTagSubparagraphOfLevel(attributeName, attributeValue) {
+        this.elements.level().children("p["+attributeName+"='"+attributeValue+"']").rightclick({ force: true });
+    }
+
+    clickOnPTagSubparagraphOfLevel(attributeName, attributeValue) {
+        this.elements.level().children("p["+attributeName+"='"+attributeValue+"']").click({ force: true });
+    }
+
+    rightClickOnSubparagraphOfLevel(liTag, attributeName, attributeValue) {
+        this.elements.level().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).rightclick({ force: true });
+    }
+
+    clickOnSubparagraphOfLevel(liTag, attributeName, attributeValue) {
+        this.elements.level().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).click({ force: true });
+    }
+
+    rightClickOnFirstLayerElementOfLevel(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.elements.level().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).children('ol').children("li["+firstLayerAttributeName+"='"+firstLayerAttributeValue+"']").eq(liFirstLayerTag - 1).rightclick({ force: true });
+    }
+
+    clickOnFirstLayerElementOfLevel(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.elements.level().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).children('ol').children("li["+firstLayerAttributeName+"='"+firstLayerAttributeValue+"']").eq(liFirstLayerTag - 1).click({ force: true });
+    }
+
+    rightClickOnSecondLayerElementOfLevel(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.getSecondLayerElementOfLevel(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).rightclick({ force: true });
+    }
+
+    clickOnSecondLayerElementOfLevel(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.getSecondLayerElementOfLevel(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).click({ force: true });
+    }
+
+    rightClickOnThirdLayerElementOfLevel(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.getThirdLayerElementOfLevel(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).rightclick({ force: true });
+    }
+
+    clickOnThirdLayerElementOfLevel(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
+        this.getThirdLayerElementOfLevel(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).click({ force: true });
+    }
+
+    getSecondLayerElementOfLevel(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue){
+        return this.elements.level().children('ol').children("li["+attributeName+"='"+attributeValue+"']").eq(liTag - 1).children('ol').children("li["+firstLayerAttributeName+"='"+firstLayerAttributeValue+"']").eq(liFirstLayerTag - 1).children('ol').children("li["+secondLayerAttributeName+"='"+secondLayerAttributeValue+"']").eq(liSecondLayerTag - 1);
+    }
+
+    getThirdLayerElementOfLevel(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue){
+        return this.getSecondLayerElementOfLevel(liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue).children('ol').children("li["+thirdLayerAttributeName+"='"+thirdLayerAttributeValue+"']").eq(liThirdLayerTag - 1);
+    }
+
     moveCursorToSpecificOffsetInFSLevel(offset, pTagNumber) {
-        this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "[id='" + id + "']"));
+        this.elements.ckEditableInline()
+            .find('ol li p')
+            .eq(pTagNumber - 1)
+            .then($el => {
+                const id = $el.attr("id") || $el.attr("data-akn-mp-id");
+                if (id) {
+                    this.moveCursor(offset, `[id='${id}'], [data-akn-mp-id='${id}']`);
+                }
+            });
     }
 
     getElementPTagOfLevel(pTagNumber) {
@@ -413,7 +519,13 @@ class ckEditorWindow {
     }
 
     clickAtSpecificOffsetInPTagOfLevel(offSet, pTagNumber) {
-        this.elements.level().children('p').eq(pTagNumber-1).invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+        this.elements.level().children('p').eq(pTagNumber-1)
+            .then($el => {
+                const id = $el.attr("id") || $el.attr("data-akn-mp-id");
+                if (id) {
+                    this.moveCursor(offSet, `[id='${id}'], [data-akn-mp-id='${id}']`);
+                }
+            });
     }
 
     clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement) {
@@ -477,11 +589,47 @@ class ckEditorWindow {
     }
 
     clickAcceptAll() {
-        this.elements.tcActionDropdown().contains('Accept All').click();
+        this.elements.tcActionDropdown().contains('Accept All').click({ force: true });
     }
 
     clickRejectAll() {
-        this.elements.tcActionDropdown().contains('Reject All').click();
+        this.elements.tcActionDropdown().contains('Reject All').click({ force: true });
+    }
+
+    clickInsertListIcon() {
+        this.elements.insertListIcon().click();
+    }
+
+    getRecitalSupportedList() {
+       return this.elements.recitalSupportedList();
+    }
+
+    getStructuredList(recitalLi) {
+        return cy.wrap(recitalLi).find('ul[data-akn-name="aknUnorderedList"] > li');
+    }
+
+    selectContentInlistOfRecital(offsetStart, offsetEnd, listNumber) {
+        this.elements.ckEditableInline().find("ol ul li[data-akn-element ='point']").eq(listNumber - 1).invoke('attr', 'id').then(id => this.selectContent(offsetStart, offsetEnd, "#" + id));
+    }
+
+    getCellOfRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement){
+        return this.elements.ckEditableInline().find("ol li[data-akn-element='" + dataAknElement + "']").eq(paragraphLi - 1).find("table tbody").eq(table - 1).find('tr').eq(row - 1).find('td').eq(cell - 1);
+    }
+
+    clickAtCellInRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement) {
+        this.getCellOfRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement).click();
+    }
+
+    rightClickAtCellInRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement) {
+        this.getCellOfRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement).trigger('contextmenu');
+    }
+
+    getCkeMenuButton() {
+        return this.getIframeBodyTcPlugin().find('a.cke_menubutton');
+    }
+
+    clickOnContextMenuItem(menuItemLabel) {
+        this.getCkeMenuButton().contains(menuItemLabel).click({ force: true });
     }
 
     selectContent(offsetStart, offsetEnd, element) {

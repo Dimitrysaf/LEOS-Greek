@@ -47,7 +47,9 @@ import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -106,6 +108,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
@@ -113,7 +116,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
-
+import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
+import static eu.europa.ec.leos.services.support.XmlHelper.removeEnclosingTags;
 
 @Service
 public class ContributionApiServiceImpl implements ContributionApiService {
@@ -152,6 +156,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final DocumentLanguageContext documentLanguageContext;
     private final Provider<CollectionContextService> proposalContextProvider;
+    private final AnnexService annexService;
 
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
@@ -182,7 +187,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       ProposalConverterService proposalConverterService,
                                       BillService billService,
                                       Provider<BillContextService> billContextProvider,
-                                      ArchiveService archiveService, CollectionUrlBuilder urlBuilder, Provider<CollectionContextService> proposalContextProvider) {
+                                      ArchiveService archiveService, CollectionUrlBuilder urlBuilder, Provider<CollectionContextService> proposalContextProvider,
+                                      AnnexService annexService) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
@@ -215,6 +221,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.archiveService = archiveService;
         this.urlBuilder = urlBuilder;
         this.proposalContextProvider = proposalContextProvider;
+        this.annexService = annexService;
     }
 
     private XmlDocument findDocumentByRef(String docRef) throws NotFoundException {
@@ -408,6 +415,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                         this.messageHelper.getMessage("contribution.merge.operation.message"),
                         XmlDocument.class
                 );
+                if(document.getCategory().equals(LeosCategory.ANNEX)) {
+                    document = updateAnnexTitle(document, mergeActions, xmlContent);
+                }
             }
         }
         if (request.isAcceptAllContributions() && Objects.nonNull(contribution)) {
@@ -415,6 +425,26 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         }
         mergeResult.setMergedContent(document.getContent().get().getSource().getBytes());
         return mergeResult;
+    }
+
+    private XmlDocument updateAnnexTitle(XmlDocument document, List<MergeActionVO> mergeActions, byte[] xmlContent) {
+        Optional<String> elementIds = mergeActions.stream()
+                .filter(vo -> BLOCK.equals(vo.getElementTagName()))
+                .map(MergeActionVO::getElementId)
+                .collect(Collectors.toList()).stream().findFirst();
+        if(elementIds.isPresent()) {
+            String elementId = elementIds.get();
+            Document doc = XercesUtils.createXercesDocument(xmlContent);
+            Node block = XercesUtils.getElementByNameAndId(doc, BLOCK, elementId);
+            if (block != null) {
+                String newTitle = removeEnclosingTags(XercesUtils.nodeToString(block));
+                Annex annex = (Annex) document;
+                AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
+                AnnexMetadata updatedMetadata = metadata.builder().withTitle(newTitle).build();
+                document = annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("contribution.merge.operation.message"), false);
+            }
+        }
+        return document;
     }
 
     @Override
@@ -752,7 +782,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 financialStatementContext.useLanguage(metadata.getLanguage());
                 financialStatementContext.useTranslated(false);
                 FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
-                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS);
+                SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(proposal.getContent().get().getSource().getBytes());
+                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_DIGIT_FINANC_LEGIS, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
             } else {
                 List<FinancialStatement> financialStatementList = financialStatementService.findFinancialStatementByPackagePath(leosPackage.getPath());
                 if (!financialStatementList.isEmpty()) {

@@ -1,7 +1,7 @@
-import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import tableOfContent from "../pages/tableOfContent";
 
-And('toc editing button is displayed and enabled', () => {
+Then('toc editing button is displayed and enabled', () => {
     tableOfContent.elements.editBtn().should('be.visible');
     tableOfContent.elements.editBtn().should('not.be.disabled');
 })
@@ -62,7 +62,7 @@ When(`click on title link in navigation pane`, () => {
     tableOfContent.clickFirstNestedTreeNode();
 });
 
-And(`last subversion of recent changes version card contains {string}`, (subversion) => {
+Then(`last subversion of recent changes version card contains {string}`, (subversion) => {
     tableOfContent.getLatestRecentVersionCardContent().should('have.text', subversion);
 });
 
@@ -153,12 +153,18 @@ When('drag node label {string} and drop to node label {string} in navigation pan
 });
 
 When('drag node label {string} and drop after node label {string} in navigation pane', function (dragLabel, dropLabel) {
-    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;');
+    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).invoke('attr', 'style', 'height: 24px; display: block;').wait(500);
     tableOfContent.getNodeLabelText(dragLabel)
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
         .wait(1000);
-    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel).trigger("mousemove", "top", {force: true}).trigger("mouseup", "top", {force: true}).wait(1000);
+    tableOfContent.getNextPlaceHolderOfNodeLabel(dropLabel)
+        .then($el => {
+            return cy.wrap($el)
+                .trigger('mousemove', "center", { force: true })
+                .trigger('mouseup', "center", { force: true });
+        })
+        .wait(1000);
 });
 
 When('drag node label {string} and drop before node label {string} in navigation pane', function (dragLabel, dropLabel) {
@@ -265,12 +271,8 @@ Then('error message disappears from table of content', function () {
     tableOfContent.elements.euiLabelDanger().should('not.be.visible');
 });
 
-When(`click on contributions pane accordion`, () => {
-    tableOfContent.clickContributionsPaneButton();
-});
-
-When(`click on first contribution`, () => {
-    tableOfContent.clickFirstContribution();
+When(`click on contribution card {int}`, (cardNumber) => {
+    tableOfContent.clickContributionCard(cardNumber);
 });
 
 Then('app-versions-pane-group {int} contains card header title {string}', function (versionPaneIndex, cardHeaderTitle) {
@@ -320,7 +322,7 @@ Then("subversion of recent changes version card doesn't contain {string}",functi
         .should('not.have.text', label.trim());
 });
 
-And("minimize {string} link in navigation pane", function (nodeLabel) {
+When("minimize {string} link in navigation pane", function (nodeLabel) {
     tableOfContent.minimizeNodeLabel(nodeLabel);
 });
 

@@ -56,6 +56,7 @@ export class TableOfContentItemVO {
   tocStyling?: string;
   trackChangeAction: string;
   numberingType: NumberingType;
+  deletable?: boolean;
 }
 
 export type AknTag =

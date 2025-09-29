@@ -22,12 +22,15 @@ define(function leosUtilsModule(require) {
     //var $ = require("jquery");
     var CKEDITOR = require("promise!ckEditor");
     var REGEX_ORIGIN = new RegExp("[leos:|data-](\\w-?)*origin");
+    var ZERO_WIDTH_SPACE = "^\u200B{7}$";
     
     var COUNCIL_INSTANCE = "COUNCIL";
     // configuration
 
     var PARAGRAPH_POINT_TAG = "LI";
     var SUBPARAGRAPH_SUBPOINT_TAG = "P";
+    var UNORDERED_LIST_TAG = "UL";
+    var DIV_TAG = "DIV";
     var TABLE_TAG = "TABLE";
     var TABLE_CELL_TAG = "TD";
     var TABLE_CELL_HEADER_TAG = "TH";
@@ -44,7 +47,12 @@ define(function leosUtilsModule(require) {
     var BLOCKCONTAINER = "blockcontainer";
     var LEVEL = "level";
     var DOCPURPOSE = "docPurpose";
+    var COVERPAGE = "coverpage";
+    var BLOCKCONTAINER = "blockcontainer";
+    var BLOCK = "block";
     var ID = "id";
+    var ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR =
+        'article, citation, recitals, recital, :not(article) > paragraph, level, chapter, akntitle, part, section, subparagraph';
     var KEYS = {
         "KEY_DELETE": 46,
         "KEY_ENTER": 13,
@@ -102,14 +110,14 @@ define(function leosUtilsModule(require) {
             }
             return true;
         }
-        function _containsOnlyDeletedElts(element) {
+        function _containsOnlyEmptyElts(element) {
             if (element.childNodes.length > 0) {
                 for (var j = 0; j < element.childNodes.length; j++) {
                     if (element.childNodes[j].nodeType === Node.TEXT_NODE) {
                         if (element.childNodes[0].textContent.trim() !== '') {
                             return false;
                         }
-                    } else {
+                    } else if (element.childNodes[j].tagName !== LINE_BREAK_TAG) {
                         return false;
                     }
                 }
@@ -125,9 +133,14 @@ define(function leosUtilsModule(require) {
             if (tocItem && tocItem.itemHeading === "MANDATORY") {
                 elementsToBeChecked.push(HEADING_TAG);
             }
+        } else if (el.tagName === DIV_TAG && el.parentElement?.getAttribute("data-akn-name") === "recital") {
+            elementsToBeChecked.push(DIV_TAG);
+        } else if (el.tagName === UNORDERED_LIST_TAG && el.parentElement?.getAttribute("data-akn-name") === "structuredContent") {
+            elementsToBeChecked.push(UNORDERED_LIST_TAG);
         }
         if (elementsToBeChecked.includes(el.tagName)) {
-            if (!$.trim(el.innerText)) {
+            var trimmedInnerText = $.trim(el.innerText);
+            if (!trimmedInnerText || trimmedInnerText.match(ZERO_WIDTH_SPACE)) {
                 if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
                     && el.parentElement 
                     && ((el.parentElement.tagName === TABLE_CELL_TAG &&
@@ -143,7 +156,7 @@ define(function leosUtilsModule(require) {
                     return el.children.length === 0 || _containsOnlyChildrenOf(el, childElementsToBeChecked);
                 }
             }
-            if (_containsOnlyDeletedElts(el)) {
+            if (_containsOnlyEmptyElts(el)) {
                 return true;
             }
             if (el.childNodes[0].nodeName === LINE_BREAK_TAG) {
@@ -322,13 +335,14 @@ define(function leosUtilsModule(require) {
                     "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                     "float: left !important; text-decoration: none !important;" +
                     "}\n";
-                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):before, " +
-                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):before {" +
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before {" +
                     "content: attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt" +
                     "}\n";
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before, " +
-                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before {" +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before, " +
+                    "ul > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before {" +
                     "content: '↰' attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt" +
                     "}\n";
@@ -336,11 +350,12 @@ define(function leosUtilsModule(require) {
             tcShowStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +
                 "[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:before { color: " + userColors[0] + " !important; &:hover, span." +
                 (isDocTcStyle ? "MathJax_CHTML" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } " +
-                "  &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):hover:not([id*=revision]) { background-color: white; }" +
-                " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover):not([id*=revision]) { background-color:" +
-                " white;  }"+
+                " &:has(:is(" + ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR + "):hover):hover:not([id*=revision]) { background-color: white; }" +
+                " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover):not([id*=revision]) { background-color: white;  }"+
                 " &:not(:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover)):not(&:hover):not([id*=revision]) { background-color: white;  }" +
                 "}\n";
+            tcShowStyle += ":is(" + ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR + "):not([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'])" +
+                " { background-color: white; }\n";
             tcShowStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
         }
         var tcHiddenStyle = "";
@@ -405,6 +420,35 @@ define(function leosUtilsModule(require) {
         return mouseX <= left || mouseX >= right || mouseY <= top || mouseY >= bottom;
     }
 
+    function _removeZeroWidthSpaces(elementId) {
+        $("#" + elementId).find("*").addBack().contents().filter(function () {
+            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
+                return this.textContent.match(ZERO_WIDTH_SPACE);
+            }
+            return false;
+        }).remove();
+        $("#" + elementId).parent().contents().filter(function () {
+            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
+                return this.textContent.match(ZERO_WIDTH_SPACE);
+            }
+            return false;
+        }).remove();
+    }
+
+    function _getHtmlDocFromMatch(tcElement, regex, editor) {
+        const matches = tcElement.$.innerHTML.match(regex);
+        if (matches) {
+            tcElement.$.innerHTML = matches.join('');
+        }
+        var data = {
+            dataValue: tcElement.$.innerHTML,
+            filter: editor.filter
+        }
+        var transformedFragment = editor.fire('toHtml', data);
+
+        return new DOMParser().parseFromString(transformedFragment.dataValue, 'text/html');
+    }
+
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
@@ -421,15 +465,19 @@ define(function leosUtilsModule(require) {
         getDocContainer: _getDocContainer,
         getElementPosition: _getElementPosition,
         isMouseOutsideEditor: _isMouseOutsideEditor,
+        removeZeroWidthSpaces: _removeZeroWidthSpaces,
+        getHtmlDocFromMatch: _getHtmlDocFromMatch,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE,
         KEYS: KEYS,
         PARAGRAPH: PARAGRAPH,
         NUM: NUM,
         ID: ID,
         HEADING: HEADING,
+        BLOCKCONTAINER:BLOCKCONTAINER,
         SPELLCHECKER: SPELLCHECKER,
-        BLOCKCONTAINER: BLOCKCONTAINER,
         LEVEL: LEVEL,
-        DOCPURPOSE: DOCPURPOSE
+        DOCPURPOSE: DOCPURPOSE,
+        BLOCK: BLOCK,
+        COVERPAGE: COVERPAGE
     };
 });

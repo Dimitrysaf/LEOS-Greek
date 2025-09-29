@@ -1,5 +1,5 @@
 #Author: Satyabrata Das
-#Keywords Summary : Testing different functionalities in act viewer page in drafting instance
+#Keywords Summary : Testing different functionalities in act viewer page in drafting instance#
 
 @ProposalViewerScenarios
 Feature: act viewer page Regression Features
@@ -11,31 +11,31 @@ Feature: act viewer page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "Automation Testing" in create document page
-    And  click on create button
+    When provide document title "Automation Testing" in create document page
+    When click on create button
     Then user is on act viewer page
 
   @createMilestone @local
   Scenario: verify that user is able to create milestone
     Given click on details tab in act view page
     Then active tab name is "Details"
-    And  template name is "SJ-023" in details tab
-    And  language is "EN" in details tab
-    And  confidentiality level is "STANDARD" in details tab
-    And  EEA Relevance is unticked in details tab
+    Then  template name is "SJ-023" in details tab
+    Then  language is "EN" in details tab
+    Then  confidentiality level is "STANDARD" in details tab
+    Then  EEA Relevance is unticked in details tab
     When click on milestones tab in act view page
-    And  click on add button in milestones tab
+    When  click on add button in milestones tab
     Then add milestone window is displayed
-    And  "For Interservice Consultation" option is selected by default
-    And  milestone title textBox is disabled
+    Then  "For Interservice Consultation" option is selected by default
+    Then  milestone title textBox is disabled
     When click on milestone type dropdown
     When click on option "Other" from milestone type dropdown
     Then milestone title textBox is enabled
-    And  type "Commission act" in milestone title textBox
+    When  type "Commission act" in milestone title textBox
     When click on create milestone button
     Then successful message contains "Milestone created"
-    And  "Commission act" is showing under title column of row 1 of milestones table
-    And  "File ready" is showing under status column of row 1 of milestones table
+    Then  "Commission act" is showing under title column of row 1 of milestones table
+    Then  "File ready" is showing under status column of row 1 of milestones table
 
   @verifyXmlInsideDownloadedLegFile @verifyExportButtonsPresent @local
   Scenario: verify name of xmls present inside downloaded leg file
@@ -45,10 +45,10 @@ Feature: act viewer page Regression Features
     Then total number of annexes present in act viewer page is 2
     When click on actions button
     Then export as pdf button is present
-    And  export as legiswrite button is present
+    Then  export as legiswrite button is present
     When click on download button
-    And  extract recent "zip" file present in download folder
-    And  extract recent "leg" file present in download folder
+    When  extract recent "zip" file present in download folder
+    When  extract recent "leg" file present in download folder
     Then xml files having separator "-" present in download folder contain below names
       | fileName                |
       | STAT_DIGIT_FINANC_LEGIS |

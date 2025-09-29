@@ -19,17 +19,52 @@ define(function aknUnorderedListPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var $ = require('jquery');
     var leosHierarchicalElementTransformerStamp = require("plugins/leosHierarchicalElementTransformer/hierarchicalElementTransformer");
+    var numberModule = require("plugins/leosNumber/listItemNumberModule");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
+    var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
 
     var pluginName = "aknUnorderedList";
 
-    var DATA_AKN_NUM = "data-akn-num";
+    var ENTER_KEY = 13;
+    var INDENT_LIST_CMD_NAME = "leosIndentList";
+    var iconIndentList = 'icons/indentedlist.png';
 
     var pluginDefinition = {
         init : function init(editor) {
+            editor.ui.addButton(INDENT_LIST_CMD_NAME, {
+                label: 'Insert List',
+                command: INDENT_LIST_CMD_NAME,
+                toolbar: 'unumberedList',
+                icon: this.path + iconIndentList
+            });
+
+            editor.addCommand(INDENT_LIST_CMD_NAME, {});
+
+            editor.on("beforeAknIndentList", leosPluginUtils.resetDataNumOnIndent);
             editor.on("change", resetDataAknNameForUnOrderedList, null, null, 0);
-            editor.on("change", resetIndentsIndicators, null, null, 1);
+            editor.on("change", resetNumbering, null, null, 1);
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : ENTER_KEY,
+                action : _onEnterKey
+            });
         }
     };
+
+    function _onEnterKey(context) {
+        var selectedElement = leosKeyHandler.getSelectedElement(context.selection);
+
+        function isFirstLevelEmptyPoint() {
+            return leosKeyHandler.isContentEmptyTextNode(selectedElement)
+                && leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.LIST_ITEM
+                && !selectedElement.getParent().getAscendant(leosPluginUtils.UNORDERED_LIST_ELEMENT);
+        }
+
+        if (isFirstLevelEmptyPoint() || leosPluginUtils.isSubparagraph(selectedElement) || leosPluginUtils.isUnorderedList(selectedElement)) {
+            context.event.cancel();
+        }
+    }
 
     function resetDataAknNameForUnOrderedList(event) {
         event.editor.fire( 'lockSnapshot' );
@@ -47,23 +82,23 @@ define(function aknUnorderedListPluginModule(require) {
         event.editor.fire( 'unlockSnapshot' );
     }
 
-    /*
-     * Resets the numbering of the points depending on nesting level. LEOS-1487: Current implementation simply goes through whole document and renumbers all
-     * ordered list items. For above reason this could cause some performance issues if so this implementation should be reconsidered.
-     * 
-     */
-    function resetIndentsIndicators(event) {
-        event.editor.fire( 'lockSnapshot' );
+    function resetNumbering(event) {
+        event.editor.fire('lockSnapshot');
         var jqEditor = $(event.editor.editable().$);
-        var unOrderedLists = jqEditor.find("*[data-akn-name='aknUnorderedList']");
-        for (var ii = 0; ii < unOrderedLists.length; ii++) {
-            var listItems = unOrderedLists[ii].children;
-            for (var jj = 0; jj < listItems.length; jj++) {
-                listItems[jj].setAttribute(DATA_AKN_NUM, "-");
-            }
-        }
-        event.editor.fire( 'unlockSnapshot' );
+        var unorderedLists = jqEditor.find("*[data-akn-name='aknUnorderedList']");
+        numberModule.updateNumbers(unorderedLists, numberModule.getSequences("IndentDash"));
+        event.editor.fire('unlockSnapshot');
+    }
 
+    function elementTagIndexProvider(element) {
+        if (!!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] === leosPluginUtils.INDENT) {
+            return 1;
+        } else if (element.name.toLowerCase() === leosPluginUtils.SUBPARAGRAPH.toLowerCase() ||
+            (!!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] === leosPluginUtils.SUBPARAGRAPH)) {
+            return 2;
+        } else {
+            return 0;
+        }
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
@@ -88,6 +123,15 @@ define(function aknUnorderedListPluginModule(require) {
                 akn : "leos:softdate",
                 html : "data-akn-attr-softdate"
             }, {
+                akn: "leos:id-to-be-restored",
+                html: "data-akn-id-to-be-restored"
+            }, {
+                akn: "leos:renumber-origin",
+                html: "data-akn-renumber-origin"
+            }, {
+                akn: "leos:id-to-be-removed",
+                html: "data-akn-id-to-be-removed"
+            }, {
                 html : "data-akn-name=aknUnorderedList"
             }, {
                 akn : "leos:action",
@@ -97,7 +141,7 @@ define(function aknUnorderedListPluginModule(require) {
                 html : "data-akn-uid"
             } ]
         },
-        rootElementsForFrom : [ "indent", "list" ],
+        rootElementsForFrom : [ "list",  { elementTags : ["point", "indent", "subparagraph"], elementTagIndexProvider : elementTagIndexProvider } ],
         contentWrapperForFrom : "subparagraph",
         rootElementsForTo : [ "ul", "li" ]
     });

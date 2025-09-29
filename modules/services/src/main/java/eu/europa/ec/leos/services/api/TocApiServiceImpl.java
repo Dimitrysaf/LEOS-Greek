@@ -67,13 +67,10 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentProcess
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.buildTableOfContentsItemVO;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getElementById;
-import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
-import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
@@ -181,6 +178,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     DocumentRules.Rule rule = tableOfContentDocumentRules.get(documentRulesKey);
                     for (TableOfContentItemVO tableOfContentItemVO : request.getTableOfContentItemVOs()) {
                     if (tableOfContentItemVO.getTagName().equals(AknTag.BODY)
+                                || tableOfContentItemVO.getTagName().equals(AknTag.PREAMBLE)
                                 || tableOfContentItemVO.getTagName().equals(AknTag.BLOCK)) {
                             validateTocStructure(rule, tableOfContentItemVO, checkDocumentRulesVO);
                         }
@@ -318,8 +316,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
-            case NOT_EMPTY:
+            case NOT_EMPTY_HIGHER_DIVISION:
                 if (checkHigherDivisionIsEmpty(tableOfContentItemVO)) {
+                    setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
+                }
+                break;
+            case NOT_EMPTY_ELEMENT:
+                if (checkElementIsEmpty(tableOfContentItemVO, rule)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
@@ -410,7 +413,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     }
                 }
                 break;
-            case NOT_EMPTY:
+            case NOT_EMPTY_HIGHER_DIVISION:
                 if (checkHigherDivisionIsEmpty(tableOfContentItemVO)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
@@ -578,6 +581,25 @@ public abstract class TocApiServiceImpl implements TocApiService {
         return false;
     }
 
+    private boolean checkElementIsEmpty(TableOfContentItemVO tableOfContentItemVO, DocumentRules.Rule rule) {
+        String elementName = rule.getTocItem().value();
+        TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, tableOfContentItemVO.getTagName());
+        if (tocItem.getAknTag().value().equals(elementName)) {
+            if (tableOfContentItemVO.getChildItems() != null
+                    && (tableOfContentItemVO.getChildItems().isEmpty()
+                    || tableOfContentItemVO.getChildItems().stream()
+                    .filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)) {
+                return true;
+            }
+        }
+        for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
+            if (checkElementIsEmpty(childTableOfContentItemVO, rule)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void setInvalidStructureWarning(CheckDocumentRulesVO checkDocumentRulesVO, String errorMessage) {
         if (!checkDocumentRulesVO.getMessageKey().contains(errorMessage)) {
             checkDocumentRulesVO.setValidStructure(false);
@@ -702,7 +724,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
             isTocItemSibling = true;
         } else if (CollectionUtils.isNotEmpty(targetTocItems) && targetTocItems.contains(sourceTocItem)) {
             //If target item type is root, source item will be added as child, else validate dropping item at dragged location
-            if (targetTocItem.isRoot()) {
+            if (targetTocItem.isRoot()
+                    && (sourceTocItem.isOnlySameParentAsChild() == null || !sourceTocItem.isOnlySameParentAsChild())) {
                 return true;
             }
             isTocItemSibling = false;
@@ -843,12 +866,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
 
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,
-                                                             final TocItem parentTocItem, final List<TocItem> parentTocItems) {
+            final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
         TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
                 sourceItem.getTagName());
         if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.stream().anyMatch(tocItem -> tocItem.getAknTag().equals(sourceItem.getTagName()))
-                || (!sourceTocItem.isSameParentAsChild() && parentTocItem.getAknTag().equals(sourceItem.getTagName()))) {
+                || (!sourceTocItem.isSameParentAsChild() && parentTocItem.getAknTag().equals(sourceItem.getTagName()))
+                || (sourceTocItem.isOnlySameParentAsChild() != null && sourceTocItem.isOnlySameParentAsChild() && !parentTocItem.getAknTag().value().equals(sourceTocItem.getAknTag().value()))) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");
             result.setSourceItem(sourceItem);

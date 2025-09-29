@@ -35,6 +35,7 @@ define(function leosArticleIndentListPluginModule(require) {
 
     var pluginName = "leosArticleIndentlist";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var isNotWhitespaces = CKEDITOR.dom.walker.whitespaces( true ),
         isNotBookmark = CKEDITOR.dom.walker.bookmark( false, true ),
@@ -78,7 +79,7 @@ define(function leosArticleIndentListPluginModule(require) {
                             // Don't indent if in first list item of the parent.
                             // Outdent, however, can always be done to collapse
                             // the list into a paragraph (div).
-                            if (this.isIndent && firstItemInPath(this.context, path, list))
+                            if (this.isIndent && editor.getCommand('indent').state !== CKEDITOR.TRISTATE_OFF)
                                 return;
 
                             // Exec related global indentation command. Global
@@ -164,6 +165,7 @@ define(function leosArticleIndentListPluginModule(require) {
 
     function aknindentList(editor) {
         var that = this, database = this.database, context = this.context, range;
+        editor.fire("beforeAknIndentList", { isIndent: that.isIndent });
 
         function indent(listNode) {
             // Our starting and ending points of the range might be inside some blocks under a list item...
@@ -411,7 +413,9 @@ define(function leosArticleIndentListPluginModule(require) {
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'P') {
                     // To outdent subparagraph (which is not INTRO or WRAPPER) to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     var newLi = doc.createElement('li');
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
                     range.startContainer.getParent().$.insertBefore(newLi.$, range.startContainer.$);
                     newLi.append(range.startContainer);
                     range.startContainer = newLi;
@@ -425,13 +429,29 @@ define(function leosArticleIndentListPluginModule(require) {
                     newLi.insertAfter(range.startContainer.getParent());
                     if (newLi.getChildCount() === 1 && newLi.getFirst().$.nodeName === 'P') {
                         var html = newLi.getFirst().getHtml();
+                        leosPluginUtils.copyAllAttributes(newLi.getFirst(), newLi);
                         newLi.getFirst().remove();
                         newLi.setHtml(html);
+                    }
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
+                    }
+                    if (originalNumber) {
+                        newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
+                    if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
+                    } else {
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.POINT);
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     }
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'LI' && !range.startContainer.getPrevious()) {
                     // To outdent INTRO subparagraph to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
@@ -446,11 +466,19 @@ define(function leosArticleIndentListPluginModule(require) {
                         nextElement = nextOfNextElement;
                     }
                     newLi.insertAfter(range.startContainer.getParent());
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
+                    }
+                    if (originalNumber) {
+                        newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (!this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && range.startContainer.$.nodeName === 'LI' && !range.startContainer.getNext()) {
                     // To outdent WRAP subparagraph to paragraph or point
                     var doc = range.startContainer.getParent().getDocument();
                     var newLi = doc.createElement('li');
                     var parentOl = range.startContainer.getParent();
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                    var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                     }
@@ -467,8 +495,15 @@ define(function leosArticleIndentListPluginModule(require) {
                         nextElement = nextOfNextElement;
                     }
                     newLi.insertAfter(range.startContainer.getParent());
+                    if (originalId) {
+                        newLi.setAttribute(leosPluginUtils.ID, originalId);
+                    }
+                    if (originalNumber) {
+                        newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && !(range.startContainer.$.nodeName === 'P' && !range.startContainer.getPrevious())) {
                     // To indent subparagraph to point, as the normal indent of paragraph would expand and indent ALL point, not only the paragraph
+                    var originalNumber = range.startContainer.getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.POINT);
                     range.startContainer.renameNode('li');
@@ -479,10 +514,18 @@ define(function leosArticleIndentListPluginModule(require) {
                         range.startContainer.getParent().$.insertBefore(newOl.$, range.startContainer.$);
                         newOl.append(range.startContainer);
                     }
+                    if (originalNumber) {
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
                 } else if (!this.isIndent && isLeaf) {
                     var parentLi = range.startContainer.getParent().getParent();
                     var parentOl = range.startContainer.getParent();
                     var nextLi = range.startContainer.getNext();
+                    var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    leosPluginUtils.handleIndentAttributes(range.startContainer, editor, !this.isIndent);
+                    if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
+                    }
                     range.startContainer.insertAfter(parentOl);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
@@ -515,6 +558,11 @@ define(function leosArticleIndentListPluginModule(require) {
                     }
                 } else if (this.isIndent && isLeaf) {
                     var previous = range.startContainer.getPrevious();
+                    var currentNum = range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    leosPluginUtils.handleIndentAttributes(range.startContainer, editor, this.isIndent);
+                    if (currentNum && !range.startContainer.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                        range.startContainer.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, currentNum);
+                    }
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBPARAGRAPH);
                     range.startContainer.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
@@ -649,8 +697,8 @@ define(function leosArticleIndentListPluginModule(require) {
             for (var child_idx = 0; child_idx < childList.count(); child_idx++) {
                 var child = childList.getItem(child_idx);
                 var child_name = leosPluginUtils.getElementName(child);
-                // only if we find an order_list_element (ol) it means we found another depth level
-                if (child_name === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                // only if we find an order_list_element (ol) or UNORDERED_LIST_ELEMENT (ul) it means we found another depth level
+                if (child_name === leosPluginUtils.ORDER_LIST_ELEMENT || child_name === leosPluginUtils.UNORDERED_LIST_ELEMENT) {
                     level = 1;
                     //LOG.debug(child_idx+"-th child found: " + child_name + ", calculated level: " + level + ", stopLevel: " + stopLevel);
                     if (level >= stopLevel) {

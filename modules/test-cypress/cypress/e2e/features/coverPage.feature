@@ -97,6 +97,8 @@ Feature: cover page Regression Features
         And  ribbon toolbar is maximized
         And  toc editing button is displayed and enabled
         And  preface long title docPurpose contains "Automation Testing Cover Page"
+        When click on "Article 1 - Scope 1. Text..." link in navigation pane
+        Then article 1 is displayed
         When click on versions pane accordion
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section

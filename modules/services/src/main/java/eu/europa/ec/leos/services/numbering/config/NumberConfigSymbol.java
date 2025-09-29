@@ -2,10 +2,11 @@ package eu.europa.ec.leos.services.numbering.config;
 
 public class NumberConfigSymbol extends NumberConfigAbstract implements NumberConfig {
 
-    public NumberConfigSymbol(String symbol, String prefix, String suffix) {
+    public NumberConfigSymbol(String symbol, String prefix, String suffix, boolean suffixInEnd) {
         this.numberToShow = symbol;
         this.prefix = prefix;
         this.suffix = suffix;
+        this.suffixInEnd = suffixInEnd;
     }
 
     @Override
@@ -31,4 +32,9 @@ public class NumberConfigSymbol extends NumberConfigAbstract implements NumberCo
     protected String getImplName() {
         return this.getClass().getSimpleName();
     }
+
+    public boolean isSuffixInEnd() {
+        return this.suffixInEnd;
+    }
+
 }

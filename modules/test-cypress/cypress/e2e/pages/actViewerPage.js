@@ -63,7 +63,7 @@ class actViewerPage {
     }
 
     clickAddAnnexBtn(){
-        this.elements.AddBtnAnnex().click();
+        this.elements.AddBtnAnnex().click().wait(500);
     }
 
     clickReorderButton(){

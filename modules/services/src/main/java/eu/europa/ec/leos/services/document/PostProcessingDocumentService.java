@@ -106,7 +106,6 @@ public abstract class PostProcessingDocumentService {
     private String addClonedProposalRef(String clonedDocumentId, CloneProposalMetadataVO cloneProposalMetadataVO) {
         StringBuilder clonedProposalRef = new StringBuilder();
         return clonedProposalRef.append("<clonedProposalRef ref=\"").append(clonedDocumentId).append("\">")
-                .append("<targetUser>").append(cloneProposalMetadataVO.getTargetUser()).append("</targetUser>")
                 .append("<creationDate>").append(cloneProposalMetadataVO.getCreationDate()).append("</creationDate>")
                 .append("<status>").append(cloneProposalMetadataVO.getRevisionStatus()).append("</status>")
                 .append("</clonedProposalRef>").toString();

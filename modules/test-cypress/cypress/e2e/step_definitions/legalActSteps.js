@@ -1,4 +1,4 @@
-import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import legalActPage from "../pages/legalActPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
@@ -47,7 +47,7 @@ When('mouseover and click on recital {int}', recitalNumber => {
 })
 
 When('mouseover and click on article {int}', articleNumber => {
-    cy.wait(1000)
+    cy.wait(500);
     legalActPage.mouseHoverAndClickOnArticle(articleNumber);
 })
 
@@ -86,19 +86,19 @@ When('{int} paragraphs are present in article {int}', (paragraphNumber, articleN
     legalActPage.getAllParagraphFromArticle(articleNumber).should('have.length', paragraphNumber);
 })
 
-And('citation {int} contains {string}', (citationNumber, text) => {
+Then('citation {int} contains {string}', (citationNumber, text) => {
     legalActPage.getCitation(citationNumber).contains(text);
 })
 
-And("citation {int} doesn't contain {string}", (citationNumber, text) => {
+Then("citation {int} doesn't contain {string}", (citationNumber, text) => {
     legalActPage.getCitation(citationNumber).should('not.include.text', text)
 })
 
-And('recital {int} contains {string}', (recitalNumber, text) => {
+Then('recital {int} contains {string}', (recitalNumber, text) => {
     legalActPage.getRecital(recitalNumber).contains(text);
 })
 
-And("recital {int} doesn't contain {string}", (recitalNumber, text) => {
+Then("recital {int} doesn't contain {string}", (recitalNumber, text) => {
     legalActPage.getRecital(recitalNumber).should('not.include.text', text)
 })
 
@@ -138,63 +138,63 @@ Then(`article {int} doesn't contain indent tag`, (articleNumber) => {
     legalActPage.getIndentTagFromArticle(articleNumber).should('not.exist');
 });
 
-And(`num tag of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, content) => {
+Then(`num tag of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).should('have.text', content);
 });
 
-And(`num tag of point {int} of list {int} of paragraph {int} of article {int} contains attribute {string} with value {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, attributeName, attributeValue) => {
+Then(`num tag of point {int} of list {int} of paragraph {int} of article {int} contains attribute {string} with value {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, attributeName, attributeValue) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).should('have.attr', attributeName, attributeValue);
 });
 
-And(`num tag of point {int} of list {int} of paragraph {int} of article {int} doesn't have attribute {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, attributeName) => {
+Then(`num tag of point {int} of list {int} of paragraph {int} of article {int} doesn't have attribute {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, attributeName) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).not('have.attr', attributeName);
 });
 
-And(`num tag of point {int} of list {int} of paragraph {int} of article {int} has html {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, content) => {
+Then(`num tag of point {int} of list {int} of paragraph {int} of article {int} has html {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).should('have.html', content);
 });
 
-And(`{string} tag {int} of num tag of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (typeOfTag, numberOfTag, pointNumber, listNumber, paragraphNumber, articleNumber, content) => {
+Then(`{string} tag {int} of num tag of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (typeOfTag, numberOfTag, pointNumber, listNumber, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).should('have.text', content);
 });
 
-And(`{string} tag {int} of num tag of point {int} of list {int} of paragraph {int} of article {int} has attribute {string} with value {string}`, (typeOfTag, numberOfTag, pointNumber, listNumber, paragraphNumber, articleNumber, attributeName, attributeValue) => {
+Then(`{string} tag {int} of num tag of point {int} of list {int} of paragraph {int} of article {int} has attribute {string} with value {string}`, (typeOfTag, numberOfTag, pointNumber, listNumber, paragraphNumber, articleNumber, attributeName, attributeValue) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).should('have.attr', attributeName, attributeValue);
 });
 
-And(`{string} tag {int} of num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} has html {string}`, (typeOfTag, numberOfTag, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
+Then(`{string} tag {int} of num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} has html {string}`, (typeOfTag, numberOfTag, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfPointOfPointOfParagraphFromArticle(pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).should('have.html', content);
 });
 
-And(`{string} tag {int} of num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} has attribute {string} with value {string}`, (typeOfTag, numberOfTag, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, attributeName, attributeValue) => {
+Then(`{string} tag {int} of num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} has attribute {string} with value {string}`, (typeOfTag, numberOfTag, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, attributeName, attributeValue) => {
     legalActPage.getNumTagOfPointOfPointOfParagraphFromArticle(pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).should('have.attr', attributeName, attributeValue);
 });
 
-And(`{string} tag {int} of num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} doesn't have attribute {string}`, (typeOfTag, numberOfTag, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, attributeName) => {
+Then(`{string} tag {int} of num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} doesn't have attribute {string}`, (typeOfTag, numberOfTag, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, attributeName) => {
     legalActPage.getNumTagOfPointOfPointOfParagraphFromArticle(pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).not('have.attr', attributeName);
 });
 
-And(`{string} tag {int} of num tag of point {int} of list {int} of paragraph {int} of article {int} has html {string}`, (typeOfTag, numberOfTag, pointNumber, listNumber, paragraphNumber, articleNumber, text) => {
+Then(`{string} tag {int} of num tag of point {int} of list {int} of paragraph {int} of article {int} has html {string}`, (typeOfTag, numberOfTag, pointNumber, listNumber, paragraphNumber, articleNumber, text) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).should('have.html', text);
 });
 
-And(`{string} tag {int} of num tag of point {int} of list {int} of paragraph {int} of article {int} doesn't have attribute {string}`, (typeOfTag, numberOfTag, pointNumber, listNumber, paragraphNumber, articleNumber, attributeName) => {
+Then(`{string} tag {int} of num tag of point {int} of list {int} of paragraph {int} of article {int} doesn't have attribute {string}`, (typeOfTag, numberOfTag, pointNumber, listNumber, paragraphNumber, articleNumber, attributeName) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).not('have.attr', attributeName);
 });
 
-And(`{string} tag of num tag of point {int} of list {int} of paragraph {int} of article {int} should not exist`, (typeOfTag, pointNumber, listNumber, paragraphNumber, articleNumber) => {
+Then(`{string} tag of num tag of point {int} of list {int} of paragraph {int} of article {int} should not exist`, (typeOfTag, pointNumber, listNumber, paragraphNumber, articleNumber) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find(typeOfTag).should('not.exist');
 });
 
-And(`num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
+Then(`num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfPointOfPointOfParagraphFromArticle(pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).should('have.text', content);
 });
 
-And(`num tag of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
+Then(`num tag of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfPointOfPointOfPointOfParagraphFromArticle(pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).should('have.text', content);
 });
 
-And(`num tag of indent {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (indentNumber, listNumber4, pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
+Then(`num tag of indent {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (indentNumber, listNumber4, pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfIndentOfPointOfPointOfPointOfParagraphFromArticle(indentNumber, listNumber4, pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).should('have.text', content);
 });
 
@@ -202,15 +202,15 @@ Then(`content of point {int} of list {int} of paragraph {int} of article {int} c
     legalActPage.getContentOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`content of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
+Then(`content of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
     legalActPage.getContentOfPointOfPointOfParagraphFromArticle(pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`content of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
+Then(`content of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
     legalActPage.getContentOfPointOfPointOfPointOfParagraphFromArticle(pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`content of indent {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (indentNumber, listNumber4, pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
+Then(`content of indent {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (indentNumber, listNumber4, pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
     legalActPage.getContentOfIndentOfPointOfPointOfPointOfParagraphFromArticle(indentNumber, listNumber4, pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).should('have.text', content);
 });
 
@@ -218,63 +218,67 @@ Then(`content of subparagraph {int} of list {int} of paragraph {int} of article 
     legalActPage.getContentOfSubparagraphOfListOfParagraphFromArticle(subparagraphNumber, listNumber, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`content of subparagraph {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber, poinListNumber, paragraphNumber, articleNumber, content) => {
-    legalActPage.getContentOfSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, poinListNumber, paragraphNumber, articleNumber).should('include.text', content);
+Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber, pointListNumber, paragraphNumber, articleNumber, content) => {
+    legalActPage.getContentOfSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, pointListNumber, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`content of subparagraph {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber, content) => {
-    legalActPage.getContentOfSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber).should('include.text', content);
+Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber, content) => {
+    legalActPage.getContentOfSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`content of subparagraph {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber3, poinListNumber3, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber, content) => {
-    legalActPage.getContentOfSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, poinListNumber3, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber).should('include.text', content);
+Then(`content of subparagraph {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber, content) => {
+    legalActPage.getContentOfSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`content of subparagraph {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, paragraphNumber, articleNumber, content) => {
+Then(`content of subparagraph {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, subParagraphListNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber, content) => {
+    legalActPage.getContentOfSubParagraphOfListOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).should('include.text', content);
+});
+
+Then(`content of subparagraph {int} of paragraph {int} of article {int} contains {string}`, (subparagraphNumber, paragraphNumber, articleNumber, content) => {
     legalActPage.getContentOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`num tag of paragraph {int} of article {int} contains {string}`, (paragraphNumber, articleNumber, content) => {
+Then(`num tag of paragraph {int} of article {int} contains {string}`, (paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('include.text', content);
 });
 
-And(`num tag of paragraph {int} of article {int} has html {string}`, (paragraphNumber, articleNumber, content) => {
+Then(`num tag of paragraph {int} of article {int} has html {string}`, (paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('have.html', content);
 });
 
-And(`{string} tag {int} of num tag of paragraph {int} of article {int} has text {string}`, (typeOfTag, numberOfTag, paragraphNumber, articleNumber, content) => {
+Then(`{string} tag {int} of num tag of paragraph {int} of article {int} has text {string}`, (typeOfTag, numberOfTag, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).should('have.text', content);
 });
 
-And(`{string} tag {int} of num tag of paragraph {int} of article {int} has html {string}`, (typeOfTag, numberOfTag, paragraphNumber, articleNumber, content) => {
+Then(`{string} tag {int} of num tag of paragraph {int} of article {int} has html {string}`, (typeOfTag, numberOfTag, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).should('have.html', content);
 });
 
-And(`{string} tag in num tag of paragraph {int} of article {int} should not exist`, (typeOfTag, paragraphNumber, articleNumber) => {
+Then(`{string} tag in num tag of paragraph {int} of article {int} should not exist`, (typeOfTag, paragraphNumber, articleNumber) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(typeOfTag).should('not.exist');
 });
 
-And(`{string} tag {int} of num tag of paragraph {int} of article {int} has attribute {string} with value {string}`, (typeOfTag, numberOfTag, paragraphNumber, articleNumber, attributeName, attributeValue) => {
+Then(`{string} tag {int} of num tag of paragraph {int} of article {int} has attribute {string} with value {string}`, (typeOfTag, numberOfTag, paragraphNumber, articleNumber, attributeName, attributeValue) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).should('have.attr', attributeName, attributeValue);
 });
 
-And(`{string} tag {int} of num tag of paragraph {int} of article {int} doesn't have attribute {string}`, (typeOfTag, numberOfTag, paragraphNumber, articleNumber, attributeName) => {
+Then(`{string} tag {int} of num tag of paragraph {int} of article {int} doesn't have attribute {string}`, (typeOfTag, numberOfTag, paragraphNumber, articleNumber, attributeName) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(typeOfTag).eq(numberOfTag-1).not('have.attr', attributeName);
 });
 
-And(`{string} tag of num tag of paragraph {int} of article {int} should not exist`, (typeOfTag, paragraphNumber, articleNumber) => {
+Then(`{string} tag of num tag of paragraph {int} of article {int} should not exist`, (typeOfTag, paragraphNumber, articleNumber) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(typeOfTag).should('not.exist');
 });
 
-And(`num tag of paragraph {int} of article {int} contains html {string}`, (paragraphNumber, articleNumber, content) => {
+Then(`num tag of paragraph {int} of article {int} contains html {string}`, (paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).invoke('html').should('match', new RegExp(content));
 });
 
-And(`num tag of paragraph {int} of article {int} does not contain html {string}`, (paragraphNumber, articleNumber, content) => {
+Then(`num tag of paragraph {int} of article {int} does not contain html {string}`, (paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).invoke('html').should('not.match', new RegExp(content));
 });
 
-And(`num tag of paragraph {int} of article {int} should not exist`, (paragraphNumber, articleNumber) => {
+Then(`num tag of paragraph {int} of article {int} should not exist`, (paragraphNumber, articleNumber) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('not.exist');
 });
 
@@ -536,7 +540,7 @@ Then('ins tag of aknp tag of recital {int} contains value {string}', function (r
     legalActPage.getAknpTagOfRecital(recitalNumber).find(tagName).should('have.text', value);
 });
 
-And('del tag with attribute {string} and value {string} of num tag of recital {int} contains value {string}', function (attributeName, attributeValue, recitalNumber, value) {
+Then('del tag with attribute {string} and value {string} of num tag of recital {int} contains value {string}', function (attributeName, attributeValue, recitalNumber, value) {
     const tagName = 'del';
     legalActPage.getNumTagOfRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
 });
@@ -614,7 +618,7 @@ When(/^click on delete icon of article (\d+)$/, function (articleNumber) {
     legalActPage.clickDeleteIconOfArticle(articleNumber);
 });
 
-And('all recitals has {string} tag', (tagName) => {
+Then('all recitals has {string} tag', (tagName) => {
     legalActPage.elements.recital().find(tagName).should('exist');
     legalActPage.elements.recital().children().first().each((el, i) => {
         cy.wrap(el).invoke('text')
@@ -660,11 +664,11 @@ Then(/^recital number (\d+) contains mref tag with attribute "([^"]*)" and value
     legalActPage.getRecital(recitalNumber).find('mref').invoke('attr', attributeName).should('eq', attributeValue);
 });
 
-And('all articles has {string} tag', (tagName) => {
+Then('all articles has {string} tag', (tagName) => {
     legalActPage.elements.article().find(tagName).should('exist');
 });
 
-And('{string} tag of article {int} contains {string}', function (tagName, articleNumber, expectedText) {
+Then('{string} tag of article {int} contains {string}', function (tagName, articleNumber, expectedText) {
     legalActPage.getTagFromArticle(articleNumber, tagName)
         .should('have.text', expectedText);
 });
@@ -673,10 +677,35 @@ Then('the total number of article is {int}', function (expectedCount) {
     legalActPage.elements.article().should('have.length', expectedCount)
 });
 
-Then('the total number of article is {int}', function (expectedCount) {
-    legalActPage.elements.article().should('have.length', expectedCount)
+Then(/^content of clause (\d+) is "([^"]*)"$/, function (clauseNumber, content) {
+    legalActPage.elements.clauseContent().should('have.text', content);
 });
 
-And(/^content of clause (\d+) is "([^"]*)"$/, function (clauseNumber, content) {
-    legalActPage.elements.clauseContent().should('have.text', content);
+Then(/^text of eeaRelevance container of preface of bill is "([^"]*)"$/, function (text) {
+    legalActPage.elements.eeaRelevanceContainer().should('have.text', text);
+});
+
+Then(`recital {int} contains image`, function (recitalNumber) {
+    legalActPage.getImageOfRecital(recitalNumber).should('exist');
+});
+
+Then(`recital {int} does not contain image`, function (recitalNumber) {
+    legalActPage.getImageOfRecital(recitalNumber).should('not.exist');
+});
+
+Then('content subflow of {int} of recital {int} contains a table with {int} row and {int} column', function (subFlowNumber, recitalNumber, rowNumber, columnNumber) {
+    legalActPage.getRowFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber).should('have.length', rowNumber);
+    legalActPage.getColumnFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber).should('have.length', columnNumber);
+});
+
+Then('content of subflow {int} of recital {int} contains a {string}', function (subFlowNumber, recitalNumber, text) {
+    legalActPage.getListOfRecital(subFlowNumber, recitalNumber).should('include.text', text);
+});
+
+Then('content of subflow {int} of recital {int} does not contain a {string}', function (subFlowNumber, recitalNumber, text) {
+    legalActPage.getSubflowOfRecital(subFlowNumber, recitalNumber).should('not.contain', text)
+});
+
+Then('recital {int} doest not contain subflow', function (recitalNumber) {
+    legalActPage.getSubflow(recitalNumber).should('not.exist');
 });

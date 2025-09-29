@@ -62,7 +62,7 @@ import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LeosLightService } from '@/shared/services/leos-light.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
-import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
+import {capitalizeFirstLetter, unescapeHtml} from '@/shared/utils/string.utils';
 import {
   findNodeById,
   getNumberingTypeByLanguage, toCamelCaseEnum,
@@ -606,7 +606,7 @@ export class DocumentEditorComponent
   handleSave(isClosing: boolean) {
     this.loadingService.setLoading(true);
     this.tocService.resetOriginalToc();
-    this.tocService.setBlockReloadOfToc();
+    this.tocService.setBlockReloadOfToc(true);
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
     this.tocService
@@ -616,6 +616,7 @@ export class DocumentEditorComponent
         next: (res) => {
           this.tocService.refreshToc(res, this.documentRef, this.documentType);
           this.tocService.resetOriginalToc(res);
+          this.tocService.setBlockReloadOfToc(false);
         },
         error: (err) => {
           console.log("Error while saving toc: " + err);
@@ -649,9 +650,13 @@ export class DocumentEditorComponent
     if (item.tagName === 'CROSS_HEADING') {
       return this.translateService.instant('toc.item.type.crossheading');
     } else {
-      return this.translateService.instant(
-        'toc.item.type.' + toCamelCaseEnum(item.tagName).toLowerCase(),
-      );
+      const key = 'toc.item.type.' + toCamelCaseEnum(item.tagName).toLowerCase();
+      const keyForMenu = 'toc.item.type.' + toCamelCaseEnum(item.tagName).toLowerCase() + '.edit.menu';
+      let valueToMenuItem = this.translateService.instant(key);
+      if (this.translateService.instant(keyForMenu) !== keyForMenu) {
+        valueToMenuItem = this.translateService.instant(keyForMenu);
+      }
+      return valueToMenuItem;
     }
   }
 
@@ -985,6 +990,19 @@ export class DocumentEditorComponent
       akomantosoEl
         .querySelectorAll('meta, coverPage')
         .forEach((el) => el.remove());
+    }
+    // Check if <doc> has name="ANNEX"
+    const docElement = akomantosoEl.querySelector('doc[name="ANNEX"]');
+    if (docElement) {
+      const headingBlocks = docElement.querySelectorAll('block[name="heading"]');
+      headingBlocks.forEach(block => {
+        // Get the current content
+        const originalContent = block.innerHTML;
+        // Unescape HTML entities and replace 'xml:id' with 'id'
+        const unescapedContent = unescapeHtml(originalContent).replace(/xml:id/g, 'id');
+        // Set the unescaped content back to the block
+        block.innerHTML = unescapedContent;
+      });
     }
 
     if (akomantosoId) {

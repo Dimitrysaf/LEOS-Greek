@@ -147,6 +147,7 @@ export class DocumentService {
   }>;
   pageSize = 10;
   isReloadRequired = false;
+  isToRestoreOrToRemoveData = false;
   public trackChangesStatus$: Observable<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
@@ -203,6 +204,7 @@ export class DocumentService {
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
   private searchLimitReachedSymbolBS = new BehaviorSubject<string>("");
+  private documentCollectionBS = new BehaviorSubject<string>("");
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
   private isEditorOpenBS = new BehaviorSubject<boolean>(false);
   private getElementContentBS = new BehaviorSubject<{
@@ -667,7 +669,7 @@ export class DocumentService {
   }
 
   setBlockReloadOfToc() {
-    this.tocService.setBlockReloadOfToc();
+    this.tocService.setBlockReloadOfToc(false);
   }
 
   showRefreshWarning() {
@@ -1325,6 +1327,14 @@ export class DocumentService {
 
   setDidDocumentLoadAndRender(loaded: boolean) {
     this.isDocumentLoadedBS.next(loaded);
+  }
+
+  setDocumentCollectionName(documentCollection: string) {
+    this.documentCollectionBS.next(documentCollection);
+  }
+
+  getDocumentCollectionName() {
+    return this.documentCollectionBS.value;
   }
 
   setIsClonedProposal(cloned: boolean) {
