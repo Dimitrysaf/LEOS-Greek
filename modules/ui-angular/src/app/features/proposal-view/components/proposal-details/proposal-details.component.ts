@@ -17,6 +17,7 @@ import {EuiGrowlService} from "@eui/core";
 import {TranslateService} from "@ngx-translate/core";
 import moment from 'moment';
 import { AppConfigService } from '@/core/services/app-config.service';
+import {EuiDialogComponent} from "@eui/components/eui-dialog";
 
 @Component({
   selector: 'app-proposal-details',
@@ -27,6 +28,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
   @Input() proposalDetails: ProposalDetailsLists;
   @Input() detailsTabExclusions: DetailsTabExclusions
+  @ViewChild('resetConfirmation') resetConfirmation: EuiDialogComponent;
   leosConfig: LeosConfig;
   permissions: Permission[];
   eeaRelevance: boolean;
@@ -602,7 +604,16 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  cancelResetAdoptionInformation() {
+    this.resetConfirmation.closeDialog();
+  }
+
+  startResetAdoptionInformation() {
+    this.resetConfirmation.openDialog();
+  }
+
   resetAdoptionInformation() {
+    this.resetConfirmation.closeDialog();
     this.adoptionDate = null;
     this.adoptionPlace = this.adoptionPlaces[0];
     this.institutionalRef = false;
