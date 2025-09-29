@@ -295,7 +295,6 @@
   "page.collection.exports.table.actions.delete-dialog.description": "Are you sure you want to delete export ?",
   "page.collection.drafts.annex-reorder-dialog.hint": "You can reorder annexes by dragging and dropping items from the list",
   "page.collection.actions-dropdown.label": "Actions",
-  "page.collection.actions-dropdown.share": "Share",
   "page.collection.actions-dropdown.changeTitle": "Change title",
   "page.collection.actions-dropdown.download": "Download",
   "page.collection.actions-dropdown.export.pdf": "Export as PDF",

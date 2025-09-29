@@ -767,7 +767,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 proposalDetails.setDocument(proposalVO);
                 return Optional.of(proposalDetails);
             } catch (Exception e) {
-                LOG.error("Package not found for proposal {}", proposalRef);
+                LOG.error("Unexpected error occoured while fetching proposal", e);
                 return Optional.empty();
             }
         }
@@ -1356,16 +1356,16 @@ public abstract class ApiServiceImpl implements ApiService {
         }
 
         String elementToAdd = new StringBuilder(DEL_START_TAG) //delete tag added
-                .append(XMLID).append("=\"").append(IdGenerator.generateId()).append(BACKSLASH_QUOTE) //id
                 .append(uid)
+                .append(" ")
                 .append(title)
                 .append(">")
                 .append(escapeXml10(normalizeSpace(origText)))
                 .append(DEL_END_TAG)
                 // insert tag added
                 .append(INS_START_TAG)
-                .append(XMLID).append("=\"").append(IdGenerator.generateId()).append(BACKSLASH_QUOTE) //id
                 .append(uid)
+                .append(" ")
                 .append(title)
                 .append(">")
                 .append(escapeXml10(normalizeSpace(newText)))
