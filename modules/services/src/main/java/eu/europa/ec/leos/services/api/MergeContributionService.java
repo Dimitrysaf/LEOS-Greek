@@ -1694,6 +1694,13 @@ public class MergeContributionService {
                     }
                     found = true;
                 }
+                if(isIns && !found  && nextNodeParent == null && previousNodeParent == null &&
+                        XercesUtils.hasAscendantOfType(originalUpdatedNode, "subparagraph")){
+                    if (!withTrackChanges) {
+                        XercesUtils.replaceNodeContent(originalUpdatedNode, contentToBeAddedOrRemoved);
+                        found = true;
+                    }
+                }
                 if (refOriginalParentNode != null) {
                     xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refOriginalParentNode), getId(refOriginalParentNode));
                 }
@@ -1750,7 +1757,9 @@ public class MergeContributionService {
 
         String cleanedElementId = removesPrefixFromElementId(elementId);
 
-        if (!hasSplitAttr) {
+        if (!hasSplitAttr ||
+                (contributionNode.getNodeName().equalsIgnoreCase("level")
+                        && XercesUtils.countChildren(contributionNode, Arrays.asList("subparagraph")) > 0)) {
             // Undo merging from inside main element
             xmlContent = undoTrackChangesInContributionNode(
                     xmlContent,
@@ -1845,7 +1854,7 @@ public class MergeContributionService {
                 xmlContent, impactedElements, tocItemsList, mergingCompletelySuccessfull);
 
         // Undo merging of inserted elements from inside main element
-        xmlContent = undoInsertedElementsInContributionNode(contributionNode, xmlContent, elementId, impactedElements, tocItemsList);
+        xmlContent = undoInsertedElementsInContributionNode(contributionNode, xmlContent, elementId, impactedElements, tocItemsList, mergingCompletelySuccessfull);
 
         xmlContent = undoNumberOfArticlesInContributionNode(xmlContent, contributionNode, elementId, tocItemsList);
 
@@ -2340,9 +2349,14 @@ public class MergeContributionService {
     // Undo added tracked elements in contribution node
     private byte[] undoInsertedElementsInContributionNode(Node contributionNode, byte[] xmlContent, String elementId,
                                                           List<String> impactedElements,
-                                                          List<TocItem> tocItemsList) {
+                                                          List<TocItem> tocItemsList, AtomicBoolean mergingCompletelySuccessfull) {
         NodeList addedElts = XercesUtils.getElementsByXPath(contributionNode,
                 "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_ACTION_ATTR + " = '" + LEOS_TC_INSERT_ACTION + "']");
+        if(addedElts.getLength() == 0){
+            addedElts = XercesUtils.getElementsByXPath(contributionNode,
+                    "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_ACTION_ENTER + " = '" + LEOS_TC_INSERT_ACTION + "']");
+        }
+
         for (int i = 0; i < addedElts.getLength(); i++) {
             Node addedElt = addedElts.item(i);
             Node realImpactedElt = getRealUpdatedNodeOnUndo(xmlContent, addedElt, true);
@@ -2357,6 +2371,7 @@ public class MergeContributionService {
                     xmlContent = manageOnElementDeletion(xmlContent, getId(originalNodeToBeDeleted.getParentNode()), null);
                     xmlContent = renumberFragment(xmlContent, getId(sibling), tocItemsList);
                     impactedElements.add(getId(realImpactedElt));
+                    mergingCompletelySuccessfull.set(true);
                 }
             }
         }
