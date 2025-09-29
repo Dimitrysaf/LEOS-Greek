@@ -25,8 +25,9 @@ define(function leosTrackChangesModule(require) {
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
         SOFT_ACTION_ATTR: "data-akn-attr-softaction", LEOS_SOFT_ACTION_ATTR: "leos:softaction", LEOS_SOFT_ACTION_MOVE_FROM_VALUE: "move_from",
         LEOS_ACTION_ATTR: "leos:action", ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", SIGNATORY:"signatory", ID: "id",
-        CITATION:"citation", RECITAL:"recital", LEVEL: "level",
+        LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid", ARTICLE:"article", SIGNATORY:"signatory", SIGNATURE: "signature", ID: "id",
+        CITATION:"citation", RECITAL:"recital", LEVEL: "level", TABLE: "table", ORGANIZATION: "organization", ROLE: "role", PERSON: "person",
+        SIGNATURE_SELECTOR: ":has(p[data-akn-name='organization'] ~ p[data-akn-name='role'] ~ p[data-akn-name='person'])",
 
         DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_TC_ORIGINAL_INDENT_ACTION: "data-akn-tc-original-indent-action",
         DATA_INDENT_ORIGIN_LEVEL: "data-indent-origin-indent-level", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
@@ -271,6 +272,17 @@ define(function leosTrackChangesModule(require) {
         },
 
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
+
+            // function added in #2738, check if it can be removed in #2739
+            function isEmptyDeleteTrackChange() {
+                return selectedElement.is('br') && core.isTrackChangeElement(selectedElement.getAscendant(core.TRACKCHANGES_ELEMENT), core.DELETE_ACTION);
+            }
+
+            function insertAlternativeSignature() {
+                core.updateTransformedAlternateSignatory(tcElement, editor);
+                tcElement.insertAfter(range.startContainer.getAscendant('td', true).getLast());
+            }
+
             editor.fire('lockSnapshot', { "dontUpdate": true });
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
@@ -293,8 +305,7 @@ define(function leosTrackChangesModule(require) {
                         this.updateTransformedAlternateArticle(tcElement, editor);
                         tcElement.insertAfter(range.startContainer.getAscendant('ol').getLast());
                     } else if (range.root.getLast().getAttribute  && range.root.getLast().getAttribute(core.DATA_AKN_NAME) === core.SIGNATORY) {
-                        this.updateTransformedAlternateSignatory(tcElement, editor);
-                        tcElement.insertAfter(range.startContainer.getAscendant('td').getLast());
+                        insertAlternativeSignature();
                     } else {
                         tcElement.insertAfter(selectedElement);
                     }
@@ -302,6 +313,16 @@ define(function leosTrackChangesModule(require) {
                     tcElement.insertAfter(selectedElement);
                 }
                 tcElement.mergeSiblings();
+            // condition added in #2738, check if it can be removed in #2739
+            } else if (isEmptyDeleteTrackChange() && range.getCommonAncestor().getAttribute
+                    && range.getCommonAncestor().getAttribute(core.DATA_AKN_NAME) === core.SIGNATURE) {
+                insertAlternativeSignature();
+                while (isEmptyDeleteTrackChange()) {
+                    range.setStartAfter(selectedElement.getParent().getParent());
+                    range.select();
+                    selectedElement.getParent().getParent().remove();
+                    selectedElement = editor.getSelection().getStartElement();
+                }
             } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
                 tcElement.insertAfter(selectedElement);
             } else {
@@ -999,9 +1020,9 @@ define(function leosTrackChangesModule(require) {
 
                     if (pOrDivParentElement && !pOrDivParentElement.getText().trim()) {
                         let lastEditable = leosPluginUtils.findLastEditable(pOrDivParentElement.getAscendant("div"));
-                        let isSignatureElement = leosPluginUtils.isSignatureElement(pOrDivParentElement);
-                        let isDuplicatedSignatureElement = isSignatureElement && leosPluginUtils.hasSiblingWithSameDataAknName(pOrDivParentElement);
-                        if (isDuplicatedSignatureElement) {
+                        let isSignatureElement = leosPluginUtils.isSignatureElement(pOrDivParentElement.$);
+                        // condition added in #2738, check if it can be removed in #2739
+                        if (leosPluginUtils.isDuplicatedSignatureElement(pOrDivParentElement.$)) {
                             pOrDivParentElement.remove();
                         } else if (!!lastEditable && lastEditable.getId() == pOrDivParentElement.getId() || isSignatureElement) {
                             pOrDivParentElement.appendBogus();
@@ -1196,8 +1217,33 @@ define(function leosTrackChangesModule(require) {
         rejectChange: function(editor, element, numberModule) {
             editor.getSelection().fake(element.getParent());
             var parentElem = element.getAscendant(el => {
-                return (el.getName && (el.getName() === 'div' || el.getName() === core.ARTICLE) && el.getAttribute('data-akn-action-alter') === 'true');
+                return (el.getName && (el.getName() === 'div' || el.getName() === core.ARTICLE || el.getName() === core.TABLE)
+                    && el.getAttribute('data-akn-action-alter') === 'true');
             });
+
+            // function added in #2738, check if it can be removed in #2739
+            function isAlternativeSignatureBlock() {
+                if (parentElem && parentElem.is(core.TABLE)) {
+                    return containsAllSignatureElements(element);
+                }
+                return false;
+            }
+
+            // function added in #2738, check if it can be removed in #2739
+            function isAlternativeSignatureBlockAndSignatureElementMissing() {
+                if (isAlternativeSignatureBlock()) {
+                    return !containsAllSignatureElements(element.getParent());
+                }
+                return false;
+            }
+
+            function containsAllSignatureElements(element) {
+                const childElements = element.getChildren().toArray();
+                return childElements.some(e => e.getAttribute && e.getAttribute(core.DATA_AKN_NAME) === core.ORGANIZATION)
+                    && childElements.some(e => e.getAttribute && e.getAttribute(core.DATA_AKN_NAME) === core.ROLE)
+                    && childElements.some(e => e.getAttribute && e.getAttribute(core.DATA_AKN_NAME) === core.PERSON);
+            }
+
             if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                 (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
                 if (this.checkIfRejectIsProcessedInBackend(editor, element, numberModule)) {
@@ -1334,16 +1380,18 @@ define(function leosTrackChangesModule(require) {
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 if(parentElem && parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE && element.getAscendant("li")) {
                     element.getAscendant("li").remove();
-                }else {
+                } else if (isAlternativeSignatureBlockAndSignatureElementMissing()) {
+                    return;
+                } else {
                     var liParentElement = element.getAscendant("li");
                     var pParentElement = element.getAscendant("p");
                     element.remove();
                     if (pParentElement && !pParentElement.getText().trim()) {
                         let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
-                        let isSignatureElement = leosPluginUtils.isSignatureElement(pParentElement);
-                        let isDuplicatedSignatureElement = isSignatureElement && leosPluginUtils.hasSiblingWithSameDataAknName(pParentElement);
+                        let isSignatureElement = leosPluginUtils.isSignatureElement(pParentElement.$);
                         if (!isSignatureElement && (!lastEditable || lastEditable.getId() !== pParentElement.getId())
-                                || isDuplicatedSignatureElement) {
+                                // condition added in #2738, check if it can be removed in #2739
+                                || leosPluginUtils.isDuplicatedSignatureElement(pParentElement.$)) {
                             pParentElement.remove();
                         } else {
                             pParentElement.appendBogus();
@@ -1369,7 +1417,8 @@ define(function leosTrackChangesModule(require) {
                     if(parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE) {
                         core.removeTrackChangesAttributesForNumbering(element.getAscendant("li"));
                         core.addTrackChangesAttributes(editor, element, core.INSERT_ACTION);
-                    } else {
+                    // condition added in #2738, check if it can be removed in #2739
+                    } else if (parentElem.getAttribute(core.DATA_AKN_NAME) !== core.SIGNATORY || isAlternativeSignatureBlock()) {
                         core.removeTrackChangesAttributesForAlternative(parentElem);
                     }
                 }

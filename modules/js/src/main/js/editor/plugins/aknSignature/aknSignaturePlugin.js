@@ -17,6 +17,7 @@ define(function aknSignaturePluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
+    var pluginUtils = require("plugins/leosPluginUtils");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
 
     var pluginName = "aknSignature";
@@ -76,9 +77,12 @@ define(function aknSignaturePluginModule(require) {
                 var tagName = startElement.$.localName;
                 if (tagName === 'p') {
                     if (startElement.getText().trim() == "") {
-                        //Cancel the event
-                        e.stopImmediatePropagation();
-                        return false;
+                        // condition added in #2738, check if it can be removed in #2739
+                        if (e.keyCode === DELETE || !pluginUtils.isDuplicatedSignatureElement(startElement.$)) {
+                            //Cancel the event
+                            e.stopImmediatePropagation();
+                            return false;
+                        }
                     } else if (e.keyCode === BACKSPACE && selection.getRanges()[0].startOffset == 0) {
                         if (prevNode == null || prevNode.getText().length === 0 || prevNode.$.localName === 'p') {
                             e.stopImmediatePropagation();
