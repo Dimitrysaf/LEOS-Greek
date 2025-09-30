@@ -51,6 +51,7 @@ import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
@@ -127,7 +128,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -144,8 +144,11 @@ import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneH
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.services.metadata.MetadataServiceImpl.FILE_NOT_DELETED;
+import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
+import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
+import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 
 @Service
 public abstract class ApiServiceImpl implements ApiService {
@@ -731,7 +734,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 proposalDetails.setDocument(proposalVO);
                 return Optional.of(proposalDetails);
             } catch (Exception e) {
-                LOG.error("Package not found for proposal {}", proposalRef);
+                LOG.error("Unexpected error occoured while fetching proposal", e);
                 return Optional.empty();
             }
         }
@@ -1279,9 +1282,63 @@ public abstract class ApiServiceImpl implements ApiService {
     public void updateAnnexTitle(String proposalRef, String annexId, String annexTitle) {
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
+
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        if (proposal != null && proposal.isClonedProposal() && this.securityContext != null) {
+            String metadataTitle = StringUtils.isEmpty(metadata.getTitle()) ? "Annex" : metadata.getTitle();
+            if(metadataTitle.contains("<del") || metadataTitle.contains("<ins")){
+                metadataTitle = metadataTitle.replaceAll("<ins[^>]*?>[\\s\\S]*?</ins>|</?del[^>]*?>", "");
+            }
+            annexTitle = generateTrackChangesText(metadataTitle, annexTitle);
+        }
+
         AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
         annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false);
         documentViewService.updateDocumentView(annex);
+    }
+
+    public String generateTrackChangesText(String origText, String newText) {
+
+        final String LEOS_UID_PREFIX = " leos:uid=\"";
+        final String LEOS_TITLE_PREFIX = " leos:title=\"";
+        final String INS_END_TAG = "</ins>";
+        final String INS_START_TAG = "<ins ";
+        final String DEL_END_TAG = "</del>";
+        final String DEL_START_TAG = "<del ";
+        final String BACKSLASH_QUOTE = "\"";
+
+        String userLogin = null;
+        String userName = null;
+        User user = securityContext != null && securityContext.hasAuthenticationInContext() ? securityContext.getUser() : null;
+        if (user != null){
+            userLogin = user.getLogin();
+            userName = user.getName();
+        }
+
+        String uid = "";
+        String title = "";
+        if(userLogin != null && userName!= null) {
+            uid =  new StringBuilder(LEOS_UID_PREFIX).append(userLogin).append(BACKSLASH_QUOTE).toString();
+            title =   new StringBuilder(LEOS_TITLE_PREFIX).append(getTitleValue(securityContext)).append(BACKSLASH_QUOTE).toString();
+        }
+
+        String elementToAdd = new StringBuilder(DEL_START_TAG) //delete tag added
+                .append(uid)
+                .append(" ")
+                .append(title)
+                .append(">")
+                .append(escapeXml10(normalizeSpace(origText)))
+                .append(DEL_END_TAG)
+                // insert tag added
+                .append(INS_START_TAG)
+                .append(uid)
+                .append(" ")
+                .append(title)
+                .append(">")
+                .append(escapeXml10(normalizeSpace(newText)))
+                .append(INS_END_TAG).toString();
+        LOG.info("Element to add {}", elementToAdd);
+        return elementToAdd;
     }
 
     @Override

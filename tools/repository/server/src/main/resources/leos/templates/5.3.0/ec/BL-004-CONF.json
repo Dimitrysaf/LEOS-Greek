@@ -58,10 +58,10 @@
       "targets": [
         {
           "destinationPath": "//clause[1]",
-          "position": "AFTER-WRAPPER"
+          "position": "BEFORE-WRAPPER"
         }
       ],
-      "content": "<guidance id=\"guidance-article-2\" class=\"guidance-green-block\"><span id=\"clause-article-2\">[Choose between the two options above. The second option must be used where the Regulation is binding and directly applicable <b>only in certain</b> Member States in accordance with the Treaties.]</span></guidance>"
+      "content": "<guidance id=\"guidance-article-2\" class=\"guidance-green-block\"><span id=\"clause-article-2\">[Choose between the two options below. The second option must be used where the Regulation is binding and directly applicable <b>only in certain</b> Member States in accordance with the Treaties.]</span></guidance>"
     },
     {
       "targets": [

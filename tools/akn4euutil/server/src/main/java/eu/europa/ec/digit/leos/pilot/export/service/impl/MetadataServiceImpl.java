@@ -136,8 +136,8 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public void processAdoptionLocation(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        addAdoptionLocationToMetaReference(fieldInfo, xmlFile);
         final ReferenceFieldInfo locationToLanguage = adaptLocationToLanguage(fieldInfo, xmlFile);
-        addAdoptionLocationToMetaReference(locationToLanguage, xmlFile);
         addAdoptionLocationToCoverPage(locationToLanguage, xmlFile);
         addAdoptionLocationToConclusion(locationToLanguage, xmlFile);
     }

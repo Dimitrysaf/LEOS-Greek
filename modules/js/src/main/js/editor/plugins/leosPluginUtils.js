@@ -1384,7 +1384,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _handleNodeOnIndent(node, editor, isIndent, isChild) {
-        if (!node || node.type !== CKEDITOR.NODE_ELEMENT || node.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST) {
+        if (!node || node.type !== CKEDITOR.NODE_ELEMENT) {
             return;
         }
         var point = node.getAscendant(el => el.getName && (el.getName() === HTML_SUB_POINT
@@ -1436,7 +1436,7 @@ define(function leosPluginUtilsModule(require) {
             if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
                 node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
             }
-            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL)) {
+            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
                 node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
             }
             editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
@@ -1446,6 +1446,14 @@ define(function leosPluginUtilsModule(require) {
     function _hasPointAttribute(element) {
         return (!!element.attributes[DATA_AKN_ELEMENT]
             && element.attributes[DATA_AKN_ELEMENT].value == POINT);
+    }
+
+    function _copyAllAttributes(sourceElement, targetElement) {
+        const attributes = sourceElement.getAttributes();
+        for (let attr in attributes) {
+            targetElement.setAttribute(attr, attributes[attr]);
+        }
+
     }
 
     function _getArticleType(element, articleTypesConfig) {
@@ -1889,7 +1897,6 @@ define(function leosPluginUtilsModule(require) {
         popNotInlineSubElement: _popNotInlineSubElement,
         pushNotInlineElements: _pushNotInlineElements,
         resetDataNumOnIndent: _resetDataNumOnIndent,
-        handleNodeOnIndent: _handleNodeOnIndent,
         moveChildren: _moveChildren,
         moveElementChildren: _moveElementChildren,
         manageParagraphs: _manageParagraphs,
@@ -1932,6 +1939,7 @@ define(function leosPluginUtilsModule(require) {
         isSignatureElement: _isSignatureElement,
         handleIndentAttributes: _handleIndentAttributes,
         hasSiblingWithSameDataAknName: _hasSiblingWithSameDataAknName,
+        copyAllAttributes: _copyAllAttributes,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,

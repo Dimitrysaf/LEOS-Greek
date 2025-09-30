@@ -74,6 +74,31 @@ Feature: financial statement page regression features
     And  total number of selected checkbox inside level "1.4." is 0
     When user selects all the checkboxes of level "1.4."
     Then total number of selected checkbox inside level "1.4." is 4
+    When user selects checkbox 1 of level "1.6."
+    Then checkbox 1 of level "1.6." is selected
+    And  total number of selected checkbox inside level "1.6." is 1
+    When user selects checkbox 2 of level "1.6."
+    Then checkbox 2 of level "1.6." is selected
+    And  total number of selected checkbox inside level "1.6." is 2
+    When user deselects checkbox 1 of level "1.6."
+    Then checkbox 1 of level "1.6." is deselected
+    And  total number of selected checkbox inside level "1.6." is 1
+    When user deselects checkbox 2 of level "1.6."
+    Then checkbox 2 of level "1.6." is deselected
+    And  total number of selected checkbox inside level "1.6." is 0
+    ##### Calendar field validation #####
+    When click on calender field 1 of level "1.6."
+    And  user selects "15.09.2023" from the calendar field 1
+    And  click on calender field 2 of level "1.6."
+    And  user selects "15.9.2025" from the calendar field 2
+    Then calendar field 1 of level "1.6." has value "15.9.2023"
+    And  calendar field 2 of level "1.6." has value "15.9.2025"
+    When click on calender field 3 of level "1.6."
+    And  user selects "15.10.2025" from the calendar field 3
+    And  click on calender field 4 of level "1.6."
+    And  user selects "15.11.2027" from the calendar field 4
+    Then calendar field 3 of level "1.6." has value "2025"
+    And  calendar field 4 of level "1.6." has value "2027"
     When click on close button on financial statement page
     Then user is on act viewer page
     When click on milestones tab in act view page
@@ -120,7 +145,7 @@ Feature: financial statement page regression features
     And  click delete button from keyboard in edition mode
     And  append "text" at p tag 1 of level in edition mode
     And  click save and close button of ck editor
-    Then content of level 2 has below content
+    Then content of level 2 in financial statement page has below content
       | del | "[...]"                           |
       | ins | "text"                            |
     When click on finalise button in ribbon toolbar
@@ -227,3 +252,4 @@ Feature: financial statement page regression features
     When click on delete button in dialog box window
     Then " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
+

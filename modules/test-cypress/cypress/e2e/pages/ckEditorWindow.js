@@ -35,6 +35,7 @@ class ckEditorWindow {
         level: () => this.elements.ckEditableInline().find("ol li[data-akn-element='level']"),
         paragraph: () => this.elements.ckEditableInline().find("ol li[data-akn-element='paragraph']"),
         article: () => this.elements.ckEditableInline().find('article ol'),
+        recitalSupportedList :()=> this.elements.ckEditableInline().find("ol[data-akn-name='recital'] > li"),
         refTag: () => this.elements.ckEditableInline().find('ref'),
         blockContainer: () => this.elements.ckEditableInline().find("div[data-akn-name='blockContainer']"),
         pTagFromBlockContainer: () => this.elements.blockContainer().find('p'),
@@ -44,7 +45,8 @@ class ckEditorWindow {
         ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2'),
         clauseContent: () => this.elements.ckEditableInline().find("#clause1 p[data-akn-mp-id='clause1ContentP']"),
         tcActionIcon: () => cy.get('.cke_combo__trackchangeactions'),
-        tcActionDropdown: () => cy.get('ul.cke_panel_list > li.cke_panel_listItem > a')
+        tcActionDropdown: () => cy.get('ul.cke_panel_list > li.cke_panel_listItem > a'),
+        insertListIcon :()=> cy.get('.cke_button__leosindentlist')
     }
 
     uploadImageFile(location, iframeClass) {
@@ -215,10 +217,6 @@ class ckEditorWindow {
         this.elements.bulletedListIcon().click();
     }
 
-    /*    clickBackgroundColorIcon() {
-            this.elements.backgroundColorBtn().click();
-        }*/
-
     appendInCkEditorLevel(text, pTagNumber) {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).type(text);
     }
@@ -277,6 +275,10 @@ class ckEditorWindow {
 
     clickAtSpecificOffsetInChildOfParagraphOfArticle(offset, child, paragraphLi, paragraphDataAknElement) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id, child));
+    }
+
+    clickAtSpecificOffsetInPTagOfParagraphOfArticle(offset, pTagNumber, paragraphLi, paragraphDataAknElement) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find('p').eq(pTagNumber-1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
     }
 
     clickAtSpecificOffsetInSubparagraphOfParagraphOfArticle(offset, pTagNumber, pTagDataAknElement, paragraphLi, paragraphDataAknElement) {
@@ -517,7 +519,13 @@ class ckEditorWindow {
     }
 
     clickAtSpecificOffsetInPTagOfLevel(offSet, pTagNumber) {
-        this.elements.level().children('p').eq(pTagNumber-1).invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"));
+        this.elements.level().children('p').eq(pTagNumber-1)
+            .then($el => {
+                const id = $el.attr("id") || $el.attr("data-akn-mp-id");
+                if (id) {
+                    this.moveCursor(offSet, `[id='${id}'], [data-akn-mp-id='${id}']`);
+                }
+            });
     }
 
     clickAtSpecificOffsetInParagraph(offSet, paragraphLi, dataAknElement) {
@@ -586,6 +594,42 @@ class ckEditorWindow {
 
     clickRejectAll() {
         this.elements.tcActionDropdown().contains('Reject All').click({ force: true });
+    }
+
+    clickInsertListIcon() {
+        this.elements.insertListIcon().click();
+    }
+
+    getRecitalSupportedList() {
+       return this.elements.recitalSupportedList();
+    }
+
+    getStructuredList(recitalLi) {
+        return cy.wrap(recitalLi).find('ul[data-akn-name="aknUnorderedList"] > li');
+    }
+
+    selectContentInlistOfRecital(offsetStart, offsetEnd, listNumber) {
+        this.elements.ckEditableInline().find("ol ul li[data-akn-element ='point']").eq(listNumber - 1).invoke('attr', 'id').then(id => this.selectContent(offsetStart, offsetEnd, "#" + id));
+    }
+
+    getCellOfRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement){
+        return this.elements.ckEditableInline().find("ol li[data-akn-element='" + dataAknElement + "']").eq(paragraphLi - 1).find("table tbody").eq(table - 1).find('tr').eq(row - 1).find('td').eq(cell - 1);
+    }
+
+    clickAtCellInRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement) {
+        this.getCellOfRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement).click();
+    }
+
+    rightClickAtCellInRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement) {
+        this.getCellOfRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement).trigger('contextmenu');
+    }
+
+    getCkeMenuButton() {
+        return this.getIframeBodyTcPlugin().find('a.cke_menubutton');
+    }
+
+    clickOnContextMenuItem(menuItemLabel) {
+        this.getCkeMenuButton().contains(menuItemLabel).click({ force: true });
     }
 
     selectContent(offsetStart, offsetEnd, element) {

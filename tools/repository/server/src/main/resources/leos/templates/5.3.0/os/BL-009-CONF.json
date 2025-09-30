@@ -49,7 +49,7 @@
       "targets": [
         {
           "destinationPath": "(//article)[2]",
-          "position": "AFTER-WRAPPER"
+          "position": "BEFORE-WRAPPER"
         }
       ],
       "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose between the two options, depending on the addressees of the act.]</span></guidance>"

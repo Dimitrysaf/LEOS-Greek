@@ -36,7 +36,7 @@ When('click on edit icon of subparagraph {int} of landscape level {int} in finan
     financialStatementPage.clickEditIconOfSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber);
 });
 
-Then('content of level {int} has below content', (levelNumber, datatable) => {
+Then('content of level {int} in financial statement page has below content', (levelNumber, datatable) => {
     financialStatementPage.getContentOfLevel(levelNumber).then((element) => {
         checkContentResult(element, datatable);
     });
@@ -93,6 +93,7 @@ When(/^user selects checkbox (\d+) of level "([^"]*)"$/, function (checkboxIndex
 
 Then(/^checkbox (\d+) of level "([^"]*)" is selected$/, function (checkboxIndex, levelName) {
     financialStatementPage.getCheckBoxInLevel(checkboxIndex, levelName).should('have.attr', 'name', 'checked');
+
 });
 
 When('user deselects checkbox {int} of level {string}', (checkboxIndex, levelNum) => {
@@ -123,10 +124,17 @@ When(/^right click on repeatable subparagraph (\d+) of level "([^"]*)"$/, functi
     financialStatementPage.getRepeatedSubparagraphOfLevel(repeatableSubparagraphNumber, levelName).rightclick();
 });
 
-Then ('repeatable subparagraph {int} of level {string} does not contain attribute name {string} with value {string}',(repeatableSubparagraphNumber, levelName, attributeName, attributeValue)=>{
+Then ('repeatable subparagraph {int} of level {string} does not contain attribute name {string} with value {string}',function(repeatableSubparagraphNumber, levelName, attributeName, attributeValue){
     financialStatementPage.getRepeatedSubparagraphOfLevel(repeatableSubparagraphNumber, levelName).should('not.have.attr', attributeName, attributeValue);
 })
 
-/*When(/^scroll the view into level "([^"]*)"$/, function (levelName) {
-    financialStatementPage.getLevelByNum(levelName).scrollIntoView();
-});*/
+When('click on calender field {int} of level {string}', function(index, levelNumber) {
+    financialStatementPage.clickCalendarField(index, levelNumber)
+});
+When('user selects {string} from the calendar field {int}', function(dateStr, indexNumber) {
+    financialStatementPage.selectCalendarField(dateStr, indexNumber);
+})
+
+Then('calendar field {int} of level {string} has value {string}',function(index,levelNumber,expectedDate) {
+    financialStatementPage.getAllDatePicker(index, levelNumber).should('have.value', expectedDate);
+});

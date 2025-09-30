@@ -4,15 +4,40 @@
 @createProposalScenarios
 Feature: create act regression features
 
-    @createProposalByUploadingAndDownloadingLegFile @local
+    @createProposalByUploadingAndDownloadingLegFile @ValidateAct @local
     Scenario Outline: user is able to create the act using different templates successfully
         Given navigate to edit drafting application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
+        And  user can see the following templates in create new legislative document window
+            | templateName                                                                                        |
+            | SJ-023 - Proposal for a Regulation of the European Parliament and of the Council                    |
+            | SJ-024 - Proposal for a Directive of the European Parliament and of the Council                     |
+            | SJ-025 - Proposal for a Decision of the European Parliament and of the Council                      |
+            | SJ-019 - Proposal for a Council Decision                                                            |
+            | SJ-026 - Proposal for a Decision of the European Parliament and of the Council (without addressees) |
+            | SJ-003 - Commission Delegated Regulation (EU) .../...                                               |
+            | SJ-007 - Commission Delegated Directive (EU) .../...                                                |
+            | SJ-033 - Commission Delegated Decision (EU) .../... (entry into force by its publication)           |
+            | SJ-012 - Commission Delegated Decision (entry into force by its notification)                       |
+            | SJ-004 - Commission Implementing Regulation (EU)  .../...                                           |
+            | SJ-001 - Commission Regulation (EU) .../... (former PRAC)                                           |
+            | SJ-008 - Commission Implementing Directive (EU)  .../...                                            |
+            | SJ-005 - Commission Directive (EU) .../... (former PRAC)                                            |
+            | SJ-032 - Commission Implementing Decision (EU) .../... (entry into force by its publication)        |
+            | SJ-009 - Commission Implementing Decision (entry into force by its notification)                    |
+            | SJ-031 - Commission Implementing Decision (internal)                                                |
+            | SJ-002 - Commission Regulation (EU)  .../...                                                        |
+            | SJ-006 - Commission Directive (EU) .../...                                                          |
+            | SJ-011 - Commission Decision (entry into force by its notification)                                 |
+            | SJ-013 - Commission Decision (EU) .../... (entry into force by its publication)                     |
+            | SJ-030 - Commission Decision (internal)                                                             |
+            | SJ-037 - Commission decision  (State aid - entry force by its notification)                         |
         When click on template "<templateProposal>" in create new legislative document window
         When click on next button in create document page
         And  provide document title "<oldProposalName>" in create document page
+        And  tick eea relevance in create document page
         And  click on create button
         Then user is on act viewer page
         When click on add button in annexes section
@@ -23,6 +48,7 @@ Feature: create act regression features
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is maximized
+        And  text of eeaRelevance container of preface of bill is "(Text with EEA relevance)"
         When mouseover and click on citation 2
         Then ck editor window is displayed
         When click at offset 59 of child 0 of citation in edition mode
@@ -59,6 +85,13 @@ Feature: create act regression features
         Then 3 articles are added in legal act by import oj
         When click on close button present in legal act page
         Then user is on act viewer page
+        When click on cover page link present in act viewer page
+        Then user is on cover page
+        And  text of eeaRelevance container of cover page is "(Text with EEA relevance)"
+        When click on close button present in cover page
+        Then user is on act viewer page
+        When click on details tab in act view page
+        Then eea Relevance is ticked in details tab
         When click on milestones tab in act view page
         And  click on add button in milestones tab
         Then add milestone window is displayed

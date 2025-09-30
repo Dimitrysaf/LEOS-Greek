@@ -1167,6 +1167,9 @@ define(function leosTrackChangesPluginModule(require) {
         if(!olOrderedList || olOrderedList.length == 0){
             olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknAnnexOrderedList']");
         }
+        if (!olOrderedList || olOrderedList.length == 0) {
+           olOrderedList = eventDataAsObject.find("ul[data-akn-name='UnNumberedBlockList'], ol[data-akn-name='NumberedBlockList']");
+        }
         if(!!olOrderedList && olOrderedList.length > 0){
             for (let i = 0; i < olOrderedList.length; i++) {
                 _checkEmptyOLAndRemove(olOrderedList[i], eventDataAsObject.attr('id'));
@@ -1179,7 +1182,7 @@ define(function leosTrackChangesPluginModule(require) {
         if (elem.childNodes.length === 0 ||
             (elem.childNodes.length === 1 && elem.childNodes[0].getAttribute("data-akn-element") !== "point")) {
             var parent = elem.parentNode;
-            if(parent.getAttribute('id') === idToExit){
+            if (parent === null || parent.nodeType !== Node.ELEMENT_NODE || parent.getAttribute('id') === idToExit) {
                 return;
             }
             var doRemove = true;
