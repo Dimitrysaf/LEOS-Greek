@@ -117,6 +117,7 @@ export class ProposalService {
   proposals$: Observable<Document[]>;
   totalResults$: Observable<number>;
   templateCatalog$: Observable<CatalogItem[]>;
+  customTemplateCatalog$: Observable<CatalogItem[]>;
 
   private defaultLanguage: string;
   private userLang: string;
@@ -124,6 +125,7 @@ export class ProposalService {
   private sortOrderBS = new BehaviorSubject(DEFAULT_SORT_ORDER);
   private limitBS = new BehaviorSubject<number>(DEFAULT_LIMIT);
   private pageBS = new BehaviorSubject<number>(DEFAULT_PAGE);
+  private customTemplateCatalogBS = new BehaviorSubject<CatalogItem[]>([]);
   private params$: Observable<ListProposalsWithFilterBody>;
   private proposalResponse$: Observable<ListProposalsWithFilterResponse>;
 
@@ -141,6 +143,7 @@ export class ProposalService {
     this.templateCatalog$ = this.http
       .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getTemplates`)
       .pipe(shareReplay(1));
+    this.customTemplateCatalog$ = this.customTemplateCatalogBS.asObservable();
 
     this.filters$ = this.filtersBS.pipe(
       distinctUntilChanged(ProposalService.eqFilters),
@@ -184,6 +187,14 @@ export class ProposalService {
 
     this.totalResults$ = this.proposalResponse$.pipe(pluck('proposalCount'));
     this.proposals$ = this.proposalResponse$.pipe(pluck('proposals'));
+  }
+
+  loadCustomTemplateCatalog() {
+    this.http
+      .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getCustomTemplates`)
+      .subscribe((customTemplatesCatalog) => {
+        this.customTemplateCatalogBS.next(customTemplatesCatalog);
+      });
   }
 
   setSortOrder(order: boolean) {

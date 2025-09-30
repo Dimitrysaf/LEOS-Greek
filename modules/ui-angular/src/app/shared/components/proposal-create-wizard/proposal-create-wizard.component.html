@@ -42,16 +42,45 @@
     label="Template selection"
     [isCompleted]="!!(selectedTemplate && selectedLanguage)"
   >
-      <app-proposal-create-template-selector
-        [documentCollectionName]="documentCollectionName"
-        [proposalTemplate]="proposalTemplate"
-        [isCopyChangeAct]="isCopyChangeAct"
-        [userRoles]="userRoles"
-        #templateSelector
-        (navigationClick)="onNavigation(+1)"
-        (selectTemplate)="handleSelectTemplate($event)"
-        (selectLanguage)="handleSelectLanguage($event)"
-      ></app-proposal-create-template-selector>
+    <!-- Tabs -->
+    <eui-tabs (tabSelect)="onTabSelected($event)"><!-- *ngIf="isOpened"-->
+      <eui-tab>
+        <eui-tab-label>
+          {{ 'page.workspace.create-tab.base.title' | translate }}
+        </eui-tab-label>
+        <eui-tab-content *ngIf="activeTabIndex === 0">
+          <app-proposal-create-template-selector
+            [documentCollectionName]="documentCollectionName"
+            [proposalTemplate]="proposalTemplate"
+            [isCustomTemplatesCatalog]=false
+            [isCopyChangeAct]="isCopyChangeAct"
+            [userRoles]="userRoles"
+            #templateSelector
+            (navigationClick)="onNavigation(+1)"
+            (selectTemplate)="handleSelectTemplate($event)"
+            (selectLanguage)="handleSelectLanguage($event)"
+          ></app-proposal-create-template-selector>
+        </eui-tab-content>
+      </eui-tab>
+      <eui-tab [isDisabled]=isCopyChangeAct>
+        <eui-tab-label>
+          {{ 'page.workspace.create-tab.custom.title' | translate }}
+        </eui-tab-label>
+        <eui-tab-content *ngIf="activeTabIndex === 1">
+          <app-proposal-create-template-selector
+            [documentCollectionName]="documentCollectionName"
+            [proposalTemplate]="proposalTemplate"
+            [isCustomTemplatesCatalog]=true
+            [isCopyChangeAct]="isCopyChangeAct"
+            [userRoles]="userRoles"
+            #templateSelector
+            (navigationClick)="onNavigation(+1)"
+            (selectTemplate)="handleSelectTemplate($event)"
+            (selectLanguage)="handleSelectLanguage($event)"
+          ></app-proposal-create-template-selector>
+        </eui-tab-content>
+      </eui-tab>
+    </eui-tabs>
   </eui-wizard-step>
   <eui-wizard-step
     label="Document metadata"
@@ -59,6 +88,7 @@
   >
       <app-proposal-create-form
         [createForm]="createForm"
+        [isCustomTemplate]="!!(selectedTemplate?.customName)"
       ></app-proposal-create-form>
   </eui-wizard-step>
 </eui-wizard>

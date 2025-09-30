@@ -17,6 +17,9 @@ import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.s
 
 import {ProposalMilestoneSendCopyDialogComponent} from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
 import { EuiDialogService } from '@eui/components/eui-dialog';
+import {
+  ProposalMilestonePublishToCatalogDialogComponent
+} from "@/features/proposal-view/containers/proposal-milestone-publish-to-dg-template-catalog/proposal-milestone-publish-to-catalog-dialog.component";
 
 const MILESTONE_RELOAD_INTERVAL = 10000;
 
@@ -40,6 +43,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   milestoneViewDialog: ProposalMilestoneViewComponent;
   @ViewChild('sendMilestoneCopyForContributionDialog')
   sendMilestoneCopyForContributionDialog: ProposalMilestoneSendCopyDialogComponent;
+  @ViewChild('sendMilestonePublishToDgTemplateCatalog')
+  sendMilestonePublishToDgTemplateCatalog: ProposalMilestonePublishToCatalogDialogComponent;
   @ViewChild('milestoneAnnotationWarningModal')
   milestoneAnnotationWarningModal: MilestoneAnnotationWarningModalComponent;
   milestoneViewData: MilestoneDescriptor = null;
@@ -178,6 +183,12 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     setTimeout(() => this.sendMilestoneCopyForContributionDialog.open(), 0);
   }
 
+  openMilestonePublishToDgTemplateCatalog(milestone: MilestoneDescriptor) {
+    this.sendCopyDialogVisible = true;
+    this.milestoneViewData = milestone;
+    setTimeout(() => this.sendMilestonePublishToDgTemplateCatalog.open(), 0);
+  }
+
   onMilestoneSendCopyForContributionDialogClosed() {
     this.sendCopyDialogVisible = false;
     this.milestoneViewData = null;
@@ -223,6 +234,14 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       case MilestoneStatus.RevisionSent:
         return this.translateService.instant(
           'page.workspace.milestones.status.revision-sent',
+        );
+      case MilestoneStatus.CustomTemplatePublished:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.ct-published',
+        );
+      case MilestoneStatus.CustomTemplateUnPublished:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.ct-unpublished',
         );
       default:
         return status;
@@ -301,4 +320,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     return clonedMilestone;
   }
+
+  protected readonly MilestoneStatus = MilestoneStatus;
 }

@@ -66,4 +66,19 @@ public class ProposalMilestoneServiceImpl extends AbstractMilestoneService {
         exportOptions.setWithSuggestions(false);
         return legService.createLegPackage(proposalId, exportOptions);
     }
+
+    @Override
+    protected LegPackage createLegPackage(String proposalId, boolean withAnnotations) throws IOException {
+        if(cloneContext != null && cloneContext.isClonedProposal()) {
+            ExportLW exportOptions = new ExportLW(ExportOptions.Output.PDF, true);
+            exportOptions.setWithSuggestions(false);
+            exportOptions.setWithAnnotations(withAnnotations);
+            exportOptions.setWithAnonymization(false);
+            exportOptions.setWithTrackChangesAnonymization(false);
+            return legService.createLegPackageForClone(proposalId, exportOptions);
+        }
+        ExportLW exportOptions = new ExportLW(ExportOptions.Output.WORD, false, ComparisonType.NONE);
+        exportOptions.setWithSuggestions(false);
+        return legService.createLegPackage(proposalId, exportOptions);
+    }
 }

@@ -37,6 +37,8 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -65,8 +67,12 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC
 public class CollectionContextProposalService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextProposalService.class);
 
-    CollectionContextProposalService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, Provider<AnnexContextService> annexContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
-        super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext,
+    CollectionContextProposalService(CustomTemplateService customTemplateService, TemplateService templateService, PackageService packageService,
+            ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
+            Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider,
+            Provider<FinancialStatementContextService> financialStatementContextProvider, Provider<AnnexContextService> annexContextProvider,
+            ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
+        super(customTemplateService, templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext,
                 explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper, xmlContentProcessor);
     }
 
@@ -84,7 +90,9 @@ public class CollectionContextProposalService extends CollectionContextService {
         templatePropertiesMap.put(DOCUMENT_DEFAULT_TRUE_TEMPLATES, "");
         templatePropertiesMap.put(DOCUMENT_DEFAULT_FALSE_TEMPLATES, "");
         try {
-            catalogItems = templateService.getTemplatesCatalog();
+            catalogItems = templateKey.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) ?
+                    customTemplateService.getCustomTemplatesCatalog() :
+                    templateService.getTemplatesCatalog();
             getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving catalog items " + e.getMessage());

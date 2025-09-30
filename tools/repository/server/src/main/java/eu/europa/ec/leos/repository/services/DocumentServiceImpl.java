@@ -16,26 +16,16 @@ package eu.europa.ec.leos.repository.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
+import eu.europa.ec.leos.repository.common.CustomTemplateMilestoneStatus;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
+import eu.europa.ec.leos.repository.entities.*;
 import eu.europa.ec.leos.repository.entities.Document;
-import eu.europa.ec.leos.repository.entities.DocumentCategories;
-import eu.europa.ec.leos.repository.entities.DocumentContent;
-import eu.europa.ec.leos.repository.entities.DocumentProperties;
-import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
-import eu.europa.ec.leos.repository.entities.DocumentV;
-import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
-import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentPropertiesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentVersionRepository;
-import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import eu.europa.ec.leos.repository.repositories.*;
+import eu.europa.ec.leos.repository.entities.CustomTemplateEntities;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import org.apache.commons.lang3.StringUtils;
@@ -50,9 +40,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -69,11 +62,22 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+
 @Service
 public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceImpl.class);
     private static final int MAX_RESULT_DEFAULT = 100;
     private static final String XML_DOC_EXT = ".xml";
+    private static final String CUSTOM_TEMPLATE_COMMENT = "Custom Template";
 
     private final DocumentRepository documentRepository;
     private final DocumentVRepository documentVRepository;
@@ -90,17 +94,16 @@ public class DocumentServiceImpl implements DocumentService {
     private final EntityManager entityManager;
 
     private static final ObjectMapper mapper = new ObjectMapper();
-
     @Autowired
     public DocumentServiceImpl(DocumentRepository documentRepository, DocumentVRepository documentVRepository,
-            DocumentVersionRepository documentVersionRepository, DocumentContentRepository documentContentRepository,
-            DocumentCategoriesRepository documentCategoriesRepository,
-            DocumentPropertiesRepository documentPropertiesRepository,
-            DocumentPropertyValuesRepository documentPropertyValuesRepository,
-            PackageRepository packageRepository, PackageService packageService,
-            CollaboratorsService collaboratorsService,
-            MilestoneDocumentService milestoneDocumentService,
-            ConfigService configService, EntityManager entityManager) {
+                               DocumentVersionRepository documentVersionRepository, DocumentContentRepository documentContentRepository,
+                               DocumentCategoriesRepository documentCategoriesRepository,
+                               DocumentPropertiesRepository documentPropertiesRepository,
+                               DocumentPropertyValuesRepository documentPropertyValuesRepository,
+                               PackageRepository packageRepository, PackageService packageService,
+                               CollaboratorsService collaboratorsService,
+                               MilestoneDocumentService milestoneDocumentService,
+                               ConfigService configService, EntityManager entityManager) {
         this.documentRepository = documentRepository;
         this.documentVRepository = documentVRepository;
         this.documentVersionRepository = documentVersionRepository;

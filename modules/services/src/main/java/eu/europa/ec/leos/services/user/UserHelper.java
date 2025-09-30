@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,6 +46,9 @@ public class UserHelper {
     private static final String DOMAIN_SEPARATOR="/";
 
     private static final String MAIN_DOCUMENT_FILE_NAME = "main";
+
+    @Value("${leos.templates.catalog}")
+    private String templatesCatalog;
 
     public User getUser(String login) {
         //Remove auth domain from CMIS. admin/XXX ecas/YYYY
@@ -120,4 +124,7 @@ public class UserHelper {
         return LegUtils.fetchMilestoneVersion(legDocument);
     }
 
+    public String getUserDgCustomTemplatesCatalog() {
+        return templatesCatalog + "-" + securityContext.getUser().getDefaultEntity().getOrganizationName();
+    }
 }

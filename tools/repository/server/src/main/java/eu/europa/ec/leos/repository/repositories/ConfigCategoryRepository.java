@@ -17,8 +17,10 @@ import eu.europa.ec.leos.repository.entities.ConfigCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface ConfigCategoryRepository extends JpaRepository<ConfigCategory, BigDecimal> {
     Optional<ConfigCategory> findConfigCategoriesByCategoryCode(String categoryCode);
+    List<ConfigCategory> findConfigCategoriesByCategoryCodeIn(List<String> categoryCodes);
 }

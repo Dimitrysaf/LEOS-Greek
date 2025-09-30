@@ -39,4 +39,12 @@ public class MandateMilestoneServiceImpl extends AbstractMilestoneService {
         exportOptions.setWithSuggestions(false);
         return legService.createLegPackage(proposalId, exportOptions);
     }
+
+    @Override
+    protected LegPackage createLegPackage(String proposalId, boolean withAnnotations) throws IOException {
+        ExportDW exportOptions = new ExportDW(ExportOptions.Output.WORD, false);
+        exportOptions.setWithSuggestions(false);
+        exportOptions.setWithAnnotations(withAnnotations);
+        return legService.createLegPackage(proposalId, exportOptions);
+    }
 }

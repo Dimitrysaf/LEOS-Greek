@@ -106,4 +106,9 @@ public class UserServiceImpl implements UserService {
         return preAuthRequest;
     }
 
+    @Override
+    public List<String> getAllOrganizations() {
+        return usersClient.getAllOrganizations();
+    }
+
 }

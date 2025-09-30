@@ -439,7 +439,11 @@ public interface LeosRepository {
 
     void deletePackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators);
 
-    void  archiveDocumentVersion(String documentRef, String version);
+    void archiveDocumentVersion(String documentRef, String version);
+
+    void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId);
+    
+    Map<String, Object> getTemplateInfo(String packageId);
 
 
 }

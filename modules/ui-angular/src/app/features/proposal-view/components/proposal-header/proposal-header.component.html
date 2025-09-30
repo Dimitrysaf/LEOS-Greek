@@ -21,6 +21,7 @@
         [proposalTemplate]="proposalTemplate"
         [proposalLanguage]="proposalLanguage"
         [documentCollectionName]="documentCollectionName"
+        [customTemplateAct]="customTemplateAct"
         class="eui-u-ml-s"
       ></app-proposal-actions-dropdown>
       <button
@@ -47,14 +48,33 @@
   <eui-chip *ngIf="originRef" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
     <span euiLabel>{{ originRef }}</span>
   </eui-chip>
-</header>
-<header
-  *ngIf="customTemplateAct"
-  class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-l"
->
-  <eui-chip euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+
+  <eui-chip *ngIf="customTemplateAct" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
     <span euiLabel>{{
         'page.collection.proposal-header.custom-template-act' | translate
+      }}</span>
+  </eui-chip>
+
+  <eui-chip *ngIf="isPublished" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+    <span euiLabel>{{
+        'page.collection.proposal-header.is-published' | translate
+      }}</span>
+  </eui-chip>
+</header>
+
+<header
+  class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-l"
+>
+
+  <eui-chip *ngIf="customTemplateAct" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+    <span euiLabel>{{
+        'page.collection.proposal-header.custom-template-act' | translate
+      }}</span>
+  </eui-chip>
+
+  <eui-chip *ngIf="isPublished" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+    <span euiLabel>{{
+        'page.collection.proposal-header.is-published' | translate
       }}</span>
   </eui-chip>
 </header>

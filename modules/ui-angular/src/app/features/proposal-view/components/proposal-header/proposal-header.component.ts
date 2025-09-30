@@ -41,6 +41,7 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
   @Input() proposalLanguage!: string;
   @Input() documentCollectionName!: string;
   @Input() customTemplateAct: boolean;
+  @Input() isPublished: boolean;
 
   title: string;
   createForm: FormGroup;
@@ -78,6 +79,8 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
         .checkAndUpdateFavouriteStatus(this.proposalDetailsService.proposalRef)
         .pipe(takeUntil(this.destroy$))
         .subscribe();
+
+      this.proposalDetailsService.loadProposalMilestones();
     }
 
     this.landingPageService.isFavourite$

@@ -48,6 +48,7 @@ public class StructureConfigUtils {
     public static final String NUM_HEADING_SEPARATOR = " - ";
     public static final String HASH_NUM_VALUE = "#";
     public static final String CONTENT_SEPARATOR = " ";
+    public static final String CUSTOM_TEMPLATE_SEPARATOR = "_";
     private static final String NUMBERING_TYPE = "NumberingType '";
 
     public static List<TocItemType> getTocItemTypesByTagName(List<TocItem> tocItems, String tagName) {
