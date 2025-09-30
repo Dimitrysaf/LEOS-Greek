@@ -712,7 +712,6 @@ public abstract class ApiServiceImpl implements ApiService {
         LOG.trace(proposalRef);
         ProposalDetailsVO proposalDetails = new ProposalDetailsVO();
         ProposalDetailsLists proposalDetailsLists = proposalDetailsService.getProposalDetailsLists();
-        proposalDetails.setProposalDetailsLists(proposalDetailsLists);
         Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDateAsDate).reversed());
         Proposal proposal = null;
         byte[] proposalXmlContent = new byte[0];
@@ -735,6 +734,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
                 }
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                proposalDetailsLists = proposalDetailsService.populateTemplateSignatures(proposalDetailsLists, documents);
                 List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, true);
                 FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
                 legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
@@ -772,10 +772,11 @@ public abstract class ApiServiceImpl implements ApiService {
                     milestonesVOsLock.unlockWrite(stamp);
                 }
                 proposalVO.setDetailsTabExclusions(getDetailsTabExclusions(proposal));
+                proposalDetails.setProposalDetailsLists(proposalDetailsLists);
                 proposalDetails.setDocument(proposalVO);
                 return Optional.of(proposalDetails);
             } catch (Exception e) {
-                LOG.error("Package not found for proposal {}, Error {}", proposalRef, e);
+                LOG.error("Unexpected error occoured while fetching proposal", e);
                 return Optional.empty();
             }
         }
@@ -1374,16 +1375,16 @@ public abstract class ApiServiceImpl implements ApiService {
         }
 
         String elementToAdd = new StringBuilder(DEL_START_TAG) //delete tag added
-                .append(XMLID).append("=\"").append(IdGenerator.generateId()).append(BACKSLASH_QUOTE) //id
                 .append(uid)
+                .append(" ")
                 .append(title)
                 .append(">")
                 .append(escapeXml10(normalizeSpace(origText)))
                 .append(DEL_END_TAG)
                 // insert tag added
                 .append(INS_START_TAG)
-                .append(XMLID).append("=\"").append(IdGenerator.generateId()).append(BACKSLASH_QUOTE) //id
                 .append(uid)
+                .append(" ")
                 .append(title)
                 .append(">")
                 .append(escapeXml10(normalizeSpace(newText)))

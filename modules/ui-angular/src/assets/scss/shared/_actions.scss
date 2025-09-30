@@ -396,10 +396,12 @@ $BLACK : #000000;
     .merge-contribution-wrapper {
         @extend %mergeContributionWrapper;
     }
-    block.merge-contribution-wrapper {
+
+    block.merge-contribution-wrapper, docpurpose.merge-contribution-wrapper {
       @extend %mergeContributionWrapper;
       margin-bottom:0px;
     }
+
     container.merge-contribution-wrapper {
         @extend %mergeContributionWrapper;
         display: inline-block;

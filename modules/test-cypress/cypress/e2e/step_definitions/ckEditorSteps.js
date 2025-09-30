@@ -637,6 +637,7 @@ When(/^click at offset (\d+) of pTag (\d+) of level in edition mode$/, function 
     ckEditorWindow.clickAtSpecificOffsetInPTagOfLevel(offSet, pTagNumber);
 });
 
+
 Then('level contains attribute name {string} with attribute value {string} in edition mode', function (attributeName, attributeValue) {
     ckEditorWindow.getElementLiTagOfLevel().should('have.attr', attributeName).and('equal', attributeValue);
 });
@@ -693,7 +694,7 @@ When('user clicks on the track changes action plugin', () => {
     ckEditorWindow.clickTrackChangesActionPlugin();
 });
 
-Then('track changes action dropdown displays the following options:', (dataTable) => {
+Then('track changes action dropdown displays the following options:', function(dataTable) {
     const expectedActionList = dataTable.raw().flat();
     ckEditorWindow.getCkePanelListItem()
         .should('have.length', expectedActionList.length)
@@ -818,4 +819,45 @@ When(/^right click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)
 
 When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of level in edition mode$/, function (liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue) {
     ckEditorWindow.clickOnThirdLayerElementOfLevel(liThirdLayerTag, thirdLayerAttributeName, thirdLayerAttributeValue, liSecondLayerTag, secondLayerAttributeName, secondLayerAttributeValue, liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue, liTag, attributeName, attributeValue);
+});
+
+Then('level contains span tag with attribute name {string} and value {string} in edition mode', function (attrName, attrValue) {
+    ckEditorWindow.elements.level().find(`span[${attrName}="${attrValue}"]`).should('exist');
+});
+
+Then('level does not contain span tag with attribute name {string} with value {string} in edition mode', function (attrName, attrValue) {
+    ckEditorWindow.elements.level().find(`span[${attrName}="${attrValue}"]`).should('not.exist');
+})
+
+When('click on insert list icon present in ck editor panel', () => {
+    ckEditorWindow.clickInsertListIcon();
+})
+
+Then(`insert list icon is disabled in ck editor panel`, () => {
+    ckEditorWindow.elements.insertListIcon().invoke('attr', 'class').should('contain', 'disabled');
+});
+
+Then('li contains attribute {string} with value {string} and list li contains attribute {string} with value {string} in edition mode', function (recitalAttr, recitalValue, listAttr, listValue) {
+    ckEditorWindow.getRecitalSupportedList().each(($recitalLi) => {
+        cy.wrap($recitalLi).should('have.attr', recitalAttr, recitalValue);
+        ckEditorWindow.getStructuredList($recitalLi).each(($listLi) => {
+            cy.wrap($listLi).should('have.attr', listAttr, listValue);
+        });
+    });
+});
+
+When('select content from offset {int} till offset {int} in list {int} of recital in edition mode', function (offsetStart, offsetEnd, listNumber) {
+    ckEditorWindow.selectContentInlistOfRecital(offsetStart, offsetEnd, listNumber);
+});
+
+When(`click on cell {int} of row {int} of table {int} of li {int} with data-akn-element {string} in edition mode`, function (cell, row, table, paragraphLi, dataAknElement) {
+    ckEditorWindow.clickAtCellInRowInTableOfRecital(cell, row, table, paragraphLi, dataAknElement);
+});
+
+When('right click on cell {int} of row {int} of table {int} of li {int} with data-akn-element {string} in edition mode', function (cell, row, table, paragraphLi, elementType) {
+    ckEditorWindow.rightClickAtCellInRowInTableOfRecital(cell, row, table, paragraphLi, elementType)
+})
+
+When('user select {string} from the context menu', function (menuItemLabel) {
+    ckEditorWindow.clickOnContextMenuItem(menuItemLabel);
 });

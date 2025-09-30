@@ -312,7 +312,6 @@
   "page.editor.actions-undo-merge-contributions.title": "Tous les changements n'ont pas pu être annulés",
   "page.editor.actions-undo-merge-contributions.content": "L'annulation de certains changements n'a pas pu être effectuée. Il s'agit probablement de changements d'indentation. Veuillez les corriger manuellement si nécessaire, s'il vous plaît.",
   "page.collection.actions-dropdown.label": "Actions",
-  "page.collection.actions-dropdown.share": "Partager",
   "page.collection.actions-dropdown.changeTitle": "Modifier le titre",
   "page.collection.actions-dropdown.download": "Télécharger",
   "page.collection.actions-dropdown.export.pdf": "Exporter en PDF",

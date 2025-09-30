@@ -1,5 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component, Input, OnDestroy, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { Permission } from '@/shared';
@@ -27,10 +26,6 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   @Input() documentCollectionName!: string;
   @Input() customTemplateAct: boolean;
 
-  mailtoHeader = 'mailto:?';
-  subjectProp = 'subject=';
-  bodyProp = 'body=';
-  amp = '&amp;';
   @ViewChild('proposalDeleteConf')
   proposalDeleteConf: ConfirmDeleteDialogComponent;
   @ViewChild('proposalDeleteCannotConf')
@@ -44,9 +39,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   private destroy$: Subject<any> = new Subject();
 
   constructor(
-    public proposalDetailsService: ProposalDetailsService,
-    private sanitizer: DomSanitizer,
-  ) {
+    public proposalDetailsService: ProposalDetailsService) {
     proposalDetailsService.permissions$.subscribe((permissions) => {
       this.canExportLW = permissions.includes('CAN_EXPORT_LW');
       this.canValidate = permissions.includes('CAN_VALIDATE');
@@ -97,11 +90,5 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
     } else {
       this.proposalDeleteCannotConf.confirmDialog.openDialog();
     }
-  }
-
-  getStringifiedMailTo() {
-    const activeUrl = window.location.href;
-    const url = `${this.mailtoHeader}${this.subjectProp}Shared Proposal&${this.bodyProp}${activeUrl}`;
-    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 }
