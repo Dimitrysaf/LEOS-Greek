@@ -676,7 +676,8 @@ define(function elementEditorModule(require) {
             emptyElements.each(function(){
                 var isAknParagraph = ($(this).is("p") && $(this).attr("data-akn-name") == "aknParagraph");
                 var isSubparagraph = ($(this).is("p") && $(this).attr("data-akn-element") == "subparagraph");
-                if(!$(this).is("li,br") && !isSubparagraph && !isAknParagraph){
+                // last condition added in #2738, check if it can be removed in #2739
+                if (!$(this).is("li,br") && !isSubparagraph && !isAknParagraph && !leosPluginUtils.isDuplicatedSignatureElement(this)) {
                     isEmptyElementFound = true;
                 }
             })
