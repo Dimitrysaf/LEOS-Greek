@@ -95,8 +95,8 @@ public class ProposalDetailsService {
                     if (child.getNodeName().equals(PERSON)) {
                         signature.setSigningCommissioner(child.getTextContent());
                     }
-                    signatures.add(signature);
                 }
+                signatures.add(signature);
             }
         } catch (Exception ex) {
             return signatures;
