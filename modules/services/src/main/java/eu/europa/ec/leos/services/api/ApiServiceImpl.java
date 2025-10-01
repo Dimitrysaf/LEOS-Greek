@@ -1415,6 +1415,7 @@ public abstract class ApiServiceImpl implements ApiService {
         LOG.trace(("Creating new milestone..."));
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
+            String correctedMilestone = new String(milestoneComment.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             String proposalId = proposal.getId();
             byte[] proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
                     proposal.getContent().get().getSource().getBytes() : new byte[0];
@@ -1426,8 +1427,8 @@ public abstract class ApiServiceImpl implements ApiService {
                 throw new CreateMilestoneException();
             }
             final String versionComment = messageHelper.getMessage("milestone.versionComment");
-            createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
-            milestoneService.createMilestone(proposalId, milestoneComment);
+            createMajorVersions(proposalRef, correctedMilestone, versionComment, collectionContextProvider.get());
+            milestoneService.createMilestone(proposalId, correctedMilestone);
         }
         return null;
     }

@@ -65,6 +65,10 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         if (user == null) {
             throw new IllegalStateException("No authenticated user found");
         }
+
+        if (!user.getRoles().contains("TEMPLATE_MANAGER") && !user.getRoles().contains("SUPPORT")){
+            throw new IllegalStateException("This user is not allowed to publish.");
+        }
         
         // Add user's entity organizations to DG codes if not already present
         List<String> finalDgCodes = new ArrayList<>(dgCodes);

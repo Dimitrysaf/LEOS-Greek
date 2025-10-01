@@ -321,5 +321,9 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     return clonedMilestone;
   }
 
+  get customTemplateText(): string {
+    return this.translateService.instant('page.collection.milestones.type.custom-template');
+  }
+
   protected readonly MilestoneStatus = MilestoneStatus;
 }
