@@ -199,7 +199,10 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
         if (option && option.value === OTHER_VALUE) {
           milestonesTitle.setValue('');
           milestonesTitle.enable();
-          milestonesTitle.setValidators([Validators.required]);
+          milestonesTitle.setValidators([
+            Validators.required,
+            this.forbiddenTextValidator('Custom Template')
+          ]);
         } else if (option) {
           milestonesTitle.setValue(option.label);
           milestonesTitle.disable();
@@ -208,4 +211,14 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
         milestonesTitle.updateValueAndValidity();
       });
   }
+
+  private forbiddenTextValidator(forbiddenText: string) {
+    return (control: FormControl) => {
+      if (control.value && control.value.trim() === forbiddenText) {
+        return { forbiddenText: { value: control.value } };
+      }
+      return null;
+    };
+  }
+
 }

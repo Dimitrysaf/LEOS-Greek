@@ -97,7 +97,7 @@
             </button>
             <ng-container *appShowOnInstance="['ec', 'os']">
               <button
-                [disabled]="row.legFileStatus == MilestoneStatus.CustomTemplatePublished"
+                [disabled]="row.legFileStatus == MilestoneStatus.CustomTemplatePublished || row.legFileStatus == MilestoneStatus.InPreparation"
                 euiDropdownItem
                 (click)="openMilestonePublishToDgTemplateCatalog(row)"
                 *ngIf="row.title === 'Custom Template' && proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_CREATE_TEMPLATE')"
