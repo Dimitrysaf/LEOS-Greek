@@ -422,11 +422,11 @@ public class CatalogServiceImpl implements CatalogService {
     
     private String createCatalogWithCategoriesOnly() throws CatalogException {
         try {
-            byte[] catalogContent = getCatalogFromDatabase();
+            String catalogContent = getCatalogFromDatabase();
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document sourceDoc = builder.parse(new ByteArrayInputStream(catalogContent));
+            org.w3c.dom.Document sourceDoc = builder.parse(new ByteArrayInputStream(catalogContent.getBytes(StandardCharsets.UTF_8)));
 
             org.w3c.dom.Document targetDoc = builder.newDocument();
 
@@ -459,7 +459,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    protected byte[] getCatalogFromDatabase() throws CatalogException {
+    protected String getCatalogFromDatabase() throws CatalogException {
 
         try {
             configService.findConfigByName("catalog");
@@ -544,14 +544,14 @@ public class CatalogServiceImpl implements CatalogService {
     private String insertTemplateIntoCatalog(String existingCatalogXml, String templateKey, String templateName, String packageId) throws CatalogException {
         try {
             // Get the full catalog from DB to find the template
-            byte[] fullCatalogContent = getCatalogFromDatabase();
+            String fullCatalogContent = getCatalogFromDatabase();
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
 
             // Parse both documents
             org.w3c.dom.Document existingCatalogDoc = builder.parse(new ByteArrayInputStream(existingCatalogXml.getBytes("UTF-8")));
-            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent));
+            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent.getBytes(StandardCharsets.UTF_8)));
 
             // Find the template in the full catalog
             Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
@@ -906,10 +906,10 @@ public class CatalogServiceImpl implements CatalogService {
 
     private String insertTemplateIntoCatalogAndExtractKeys(String existingCatalogXml, String templateKey, String templateName, String packageId, Set<String> extractedKeys) throws CatalogException {
         try {
-            byte[] fullCatalogContent = getCatalogFromDatabase();
+            String fullCatalogContent = getCatalogFromDatabase();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent));
+            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent.getBytes(StandardCharsets.UTF_8)));
 
             Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
             if (templateElement != null) {
@@ -1316,11 +1316,11 @@ public class CatalogServiceImpl implements CatalogService {
             version = configVersionRepository.save(version);
 
             ConfigContent content = new ConfigContent();
-            content.setContent(configFile.getContent());
+            content.setContent(configFile.getContent().getBytes(StandardCharsets.UTF_8));
             content.setContentStreamMimeType("application/json");
             content.setContentStreamFilename(customKey + ".json");
             content.setContentStreamId(config.getId().toString());
-            content.setContentStreamLength(String.valueOf(configFile.getContent().length));
+            content.setContentStreamLength(String.valueOf(configFile.getContent().getBytes(StandardCharsets.UTF_8).length));
             content.setAuditCBy(userId);
             content.setAuditCDate(LocalDateTime.now());
             content.setVersionId(version);

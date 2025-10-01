@@ -312,7 +312,7 @@ public class CatalogServiceImplTest {
         }
 
         ConfigurationV mockCatalogConfig = new ConfigurationV();
-        mockCatalogConfig.setContent("<catalog><item type='CATEGORY' key='test'></item></catalog>".getBytes());
+        mockCatalogConfig.setContent("<catalog><item type='CATEGORY' key='test'></item></catalog>");
         when(configurationVRepository.findConfigurationByName("catalog"))
             .thenReturn(Optional.of(mockCatalogConfig));
         
