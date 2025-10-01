@@ -761,6 +761,7 @@ public class CatalogServiceImpl implements CatalogService {
             config.setAuditLastMDate(LocalDateTime.now());
             config.setLanguage("EN");
             config.setConfigCategory(templateCatalogCategory);
+            config.setObjectId(BigDecimal.ZERO);
             config = configRepository.save(config);
 
             // Step 2: Create version entry
@@ -1091,6 +1092,7 @@ public class CatalogServiceImpl implements CatalogService {
                 config.setAuditLastMDate(LocalDateTime.now());
                 config.setLanguage("en");
                 config.setConfigCategory(templateCategory);
+                config.setObjectId(BigDecimal.ZERO);
                 config = configRepository.save(config);
             }
 
@@ -1297,6 +1299,7 @@ public class CatalogServiceImpl implements CatalogService {
                 config.setAuditLastMDate(LocalDateTime.now());
                 config.setLanguage("en");
                 config.setConfigCategory(templateCategory);
+                config.setObjectId(BigDecimal.ZERO);
                 config = configRepository.save(config);
             }
 
