@@ -445,6 +445,8 @@
   "page.editor.search.results.separator": "de",
   "page.editor.zoom": "Zoom",
   "page.editor.search.results.not.found": "Non trouvé",
+  "page.editor.ai.prefill.digital.dimensions.lfds.button": "Pré-remplir les dimensions digitales",
+  "page.editor.ai.prefill.digital.dimensions.lfds.error": "Erreur lors de l'acquisition des valeurs pré-remplies",
   "page.text.search.replace.all.button": "d'accord",
   "page.text.search.replace.all.title": "Remplacer tout le texte",
   "page.text.search.replacement.count": "occurrences remplacées",

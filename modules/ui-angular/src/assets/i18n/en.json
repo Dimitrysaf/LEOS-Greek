@@ -445,6 +445,8 @@
   "page.editor.search.wholeWords.label": "Whole Words",
   "page.editor.search.results.separator": "of",
   "page.editor.search.results.not.found": "Not Found",
+  "page.editor.ai.prefill.digital.dimensions.lfds.button": "Prefill digital dimensions",
+  "page.editor.ai.prefill.digital.dimensions.lfds.error": "Error occurred while trying to get prefill values",
   "page.text.search.replace.all.button": "Ok",
   "page.text.search.replace.all.title": "Replace all text",
   "page.text.search.replacement.count": "occurrences replaced.",
