@@ -201,7 +201,7 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
           milestonesTitle.enable();
           milestonesTitle.setValidators([
             Validators.required,
-            this.forbiddenTextValidator(this.translateService.instant('page.collection.milestones.actions.publish-to-dg-template-catalog'))
+            this.forbiddenTextValidator(this.translateService.instant('page.collection.milestones.type.custom-template'))
           ]);
         } else if (option) {
           milestonesTitle.setValue(option.label);
