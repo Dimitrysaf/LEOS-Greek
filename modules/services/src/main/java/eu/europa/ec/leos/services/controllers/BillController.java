@@ -61,6 +61,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -399,6 +400,7 @@ public class BillController {
             DocumentViewResponse bill = this.billApiService.restoreToVersion(documentRef, targetVersion);
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
+            LOG.error("Error occured while getting anex element - " + Arrays.toString(e.getStackTrace()));
             LOG.error("Error occured while getting anex element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -2,10 +2,11 @@ package eu.europa.ec.leos.domain.repository.common;
 
 import eu.europa.ec.leos.model.user.Collaborator;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class SecurityData implements Securable {
+public class SecurityData implements Securable, Serializable {
 
     private final List<Collaborator> collaborators;
 

@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.repository;
 
-public enum LeosCategory {
+import java.io.Serializable;
+
+public enum LeosCategory implements Serializable {
     PROPOSAL,
     MEMORANDUM,
     BILL,
