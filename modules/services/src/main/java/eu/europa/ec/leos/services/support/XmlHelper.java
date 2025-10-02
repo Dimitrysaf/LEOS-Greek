@@ -450,7 +450,7 @@ public class XmlHelper {
 
     private static String getHeadingText(String tocTagName, String heading, MessageHelper messageHelper) {
        String defaultHeadingContent = messageHelper.getMessage("toc.item.type." + tocTagName + ".heading");
-        if (defaultHeadingContent.equals("toc.item.type." + tocTagName + ".heading")) {
+        if (("toc.item.type." + tocTagName + ".heading").equals(defaultHeadingContent)) {
             return heading;
         }
         return defaultHeadingContent;
