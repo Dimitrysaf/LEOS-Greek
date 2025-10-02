@@ -17,6 +17,7 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.ConValidatorService;
@@ -104,13 +105,13 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
                                   DocumentViewService documentViewService, ConValidatorService conValidatorService,
                                   GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                                   ProposalDetailsService proposalDetailsService,
-                                  TemplateConfigurationService templateConfigurationService) {
+                                  TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper) {
         super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap,
                 exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
                 xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
                 validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
                 trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
-                templateConfigurationService);
+                templateConfigurationService,languageHelper);
         this.conValidatorService = conValidatorService;
     }
 
