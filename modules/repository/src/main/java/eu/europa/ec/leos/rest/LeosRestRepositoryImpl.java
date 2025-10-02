@@ -623,9 +623,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(name).orElseThrow(() -> new IllegalArgumentException("Document not found! [path=" + path +
-                    ", name=" + name + ']'));
-        if (doc.getCategory().contains("TEMPLATE")) {
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("404 NOT_FOUND Document not found! [path=" + path + ", name=" + name + ']'));
+        if (doc.getCategory() == null) {
+            throw new IllegalArgumentException("404 NOT_FOUND Document not found! [path=" + path + ", name=" + name + ']');
+        } else if (doc.getCategory().contains("TEMPLATE")) {
             try {
                 populateTemplateMetadataFromContent(doc);
             } catch (Exception e) {
@@ -1149,6 +1151,20 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public void archiveDocumentVersion(String docRef, String version) {
         logger.trace("Archiving document {} version {}", docRef, version);
         repository.archiveDocumentVersion(docRef, version);
+    }
+
+    @Override
+    @PerformanceLogger
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) {
+        logger.trace("publishing custom template {}", legFileId);
+        repository.publishCustomTemplate(legFileId, templateName, dgs, userId);
+    }
+    
+    @Override
+    @PerformanceLogger
+    public Map<String, Object> getTemplateInfo(String packageId) {
+        logger.trace("Getting template info for packageId: {}", packageId);
+        return repository.getTemplateInfo(packageId);
     }
 
     @Override

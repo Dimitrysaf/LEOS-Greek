@@ -364,6 +364,11 @@
       </eui-card-content>
     </eui-card>
   </div>
+  <div class="col-md-1 d-flex align-items-start pt-2">
+    <button euiButton euiPrimary (click)="startResetAdoptionInformation()" [euiDisabled]="!couldBeReset()">
+      {{ 'global.actions.reset' | translate }}
+    </button>
+  </div>
 </div>
 
 <div class="row eui-u-mt-l d-flex align-items-start" *ngIf="isAutonomousAct && !detailsTabExclusions?.coverPageSection">
@@ -770,3 +775,21 @@
     </eui-card>
   </div>
 </div>
+
+
+<eui-dialog
+  #resetConfirmation
+  [title]="'page.collection.details.reset.title' | translate"
+  [acceptLabel]="'page.collection.details.reset.accept' | translate"
+  [dismissLabel]="'page.collection.details.reset.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="cancelResetAdoptionInformation()"
+  (close)="cancelResetAdoptionInformation()"
+  (accept)="resetAdoptionInformation()"
+  (dismiss)="cancelResetAdoptionInformation()"
+>
+  <p>{{ 'page.collection.details.reset.text' | translate }}</p>
+</eui-dialog>

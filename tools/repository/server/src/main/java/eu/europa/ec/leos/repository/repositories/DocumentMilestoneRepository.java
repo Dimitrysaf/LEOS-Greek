@@ -23,4 +23,9 @@ import java.util.List;
 
 public interface DocumentMilestoneRepository extends JpaRepository<DocumentMilestone, BigDecimal> {
     List<DocumentMilestone> findDocumentMilestonesByDocument(Document document);
+
+    List<DocumentMilestone> findDocumentMilestonesByDocumentIn(List<Document> documents);
+
+    DocumentMilestone findByDocumentId(BigDecimal id);
+
 }

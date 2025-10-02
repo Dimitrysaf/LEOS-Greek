@@ -119,7 +119,7 @@ define(function leosPluginUtilsModule(require) {
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~ART_DEF";
     var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-number'];
-    var SIGNATURE_ELEMENTS = ['organization', 'role', 'person'];
+    var SIGNATURE = 'signature';
 
     var commonAttributes = [
         { akn: "xml:id", html: "id" },
@@ -1384,7 +1384,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _handleNodeOnIndent(node, editor, isIndent, isChild) {
-        if (!node || node.type !== CKEDITOR.NODE_ELEMENT || node.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST) {
+        if (!node || node.type !== CKEDITOR.NODE_ELEMENT) {
             return;
         }
         var point = node.getAscendant(el => el.getName && (el.getName() === HTML_SUB_POINT
@@ -1436,7 +1436,7 @@ define(function leosPluginUtilsModule(require) {
             if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
                 node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
             }
-            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL)) {
+            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
                 node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
             }
             editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
@@ -1446,6 +1446,14 @@ define(function leosPluginUtilsModule(require) {
     function _hasPointAttribute(element) {
         return (!!element.attributes[DATA_AKN_ELEMENT]
             && element.attributes[DATA_AKN_ELEMENT].value == POINT);
+    }
+
+    function _copyAllAttributes(sourceElement, targetElement) {
+        const attributes = sourceElement.getAttributes();
+        for (let attr in attributes) {
+            targetElement.setAttribute(attr, attributes[attr]);
+        }
+
     }
 
     function _getArticleType(element, articleTypesConfig) {
@@ -1828,14 +1836,19 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isSignatureElement(element) {
-        var elementName = element.getAttribute(DATA_AKN_NAME);
-        return SIGNATURE_ELEMENTS.some(e => e === elementName);
+        return element.parentElement?.getAttribute(DATA_AKN_NAME) === SIGNATURE;
     }
 
-    function _hasSiblingWithSameDataAknName(element) {
-        var elementName = element.getAttribute(DATA_AKN_NAME);
-        return !!(element.getPrevious(e => e.getAttribute(DATA_AKN_NAME) === elementName)
-            || element.getNext(e => e.getAttribute(DATA_AKN_NAME) === elementName));
+    // function added in #2738, check if it can be removed in #2739
+    function _isDuplicatedSignatureElement(element) {
+        return _isSignatureElement(element) && !_isOnlyElementOfTypeInSignature(element);
+    }
+
+    // function added in #2738, check if it can be removed in #2739
+    function _isOnlyElementOfTypeInSignature(element) {
+        const elementName = element.getAttribute(DATA_AKN_NAME);
+        const elementSelector = "p[data-akn-name='" + elementName + "']";
+        return $(element.parentElement).find(elementSelector).length === 1;
     }
 
     return {
@@ -1889,7 +1902,6 @@ define(function leosPluginUtilsModule(require) {
         popNotInlineSubElement: _popNotInlineSubElement,
         pushNotInlineElements: _pushNotInlineElements,
         resetDataNumOnIndent: _resetDataNumOnIndent,
-        handleNodeOnIndent: _handleNodeOnIndent,
         moveChildren: _moveChildren,
         moveElementChildren: _moveElementChildren,
         manageParagraphs: _manageParagraphs,
@@ -1930,8 +1942,9 @@ define(function leosPluginUtilsModule(require) {
         isLeaf: _isLeaf,
         isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
         isSignatureElement: _isSignatureElement,
+        isDuplicatedSignatureElement: _isDuplicatedSignatureElement,
         handleIndentAttributes: _handleIndentAttributes,
-        hasSiblingWithSameDataAknName: _hasSiblingWithSameDataAknName,
+        copyAllAttributes: _copyAllAttributes,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,

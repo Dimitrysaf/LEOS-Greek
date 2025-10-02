@@ -370,6 +370,32 @@ define(function listUnumberModule(require) {
                 }
                 list.remove();
             }
+            var ulParents = $(list).parents(leosPluginUtils.UNORDERED_LIST_ELEMENT);
+            if (ulParents.length > 0) {
+                var ulParent = ulParents[0];
+                if (ulParent.getAttribute(leosPluginUtils.DATA_AKN_NAME).toLowerCase() != leosPluginUtils.AKN_ORDERED_ANNEX_LIST.toLowerCase()) {
+                    ulParent = list.parentElement;
+                    for (var child of list.children) {
+                        var dataAknElementAttr = child.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
+                        if (dataAknElementAttr == null || dataAknElementAttr.toLowerCase() != leosPluginUtils.SUBPARAGRAPH.toLowerCase()) {
+                            leosPluginUtils.convertToCrossheading(child, list);
+                        }
+                    }
+                }
+                var listChildren = Array.from(list.children);
+                var indexInList = _getIndexInParentList(ulParent, list);
+                if (indexInList < ulParent.children.length - 1) {
+                    var nextSibling = ulParent.children[indexInList + 1];
+                    for (var child of listChildren) {
+                        ulParent.insertBefore(child, nextSibling);
+                    }
+                } else {
+                    for (var child of listChildren) {
+                        ulParent.appendChild(child);
+                    }
+                }
+                list.remove();
+            }
         }
     }
 

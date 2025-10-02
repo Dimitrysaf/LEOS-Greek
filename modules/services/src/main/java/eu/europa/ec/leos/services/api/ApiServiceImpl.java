@@ -101,6 +101,7 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
 import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -175,6 +176,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private static final String MILESTONE = "milestone";
     protected final ProposalService proposalService;
     protected final ExportService exportService;
+    private final CustomTemplateService customTemplateService;
     private final TemplateService templateService;
     private final WorkspaceService workspaceService;
     private final UserService userService;
@@ -214,7 +216,8 @@ public abstract class ApiServiceImpl implements ApiService {
     private String cloneOriginRef;
 
     @Autowired
-    public ApiServiceImpl(TemplateService templateService,
+    public ApiServiceImpl(CustomTemplateService customTemplateService,
+                          TemplateService templateService,
                           WorkspaceService workspaceService,
                           UserService userService,
                           CreateCollectionService createCollectionService,
@@ -243,6 +246,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
                           TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper) {
+        this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -731,6 +735,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
                 }
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                proposalDetailsLists = proposalDetailsService.populateTemplateSignatures(proposalDetailsLists, documents);
                 List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, true);
                 FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
                 legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
@@ -768,10 +773,11 @@ public abstract class ApiServiceImpl implements ApiService {
                     milestonesVOsLock.unlockWrite(stamp);
                 }
                 proposalVO.setDetailsTabExclusions(getDetailsTabExclusions(proposal));
+                proposalDetails.setProposalDetailsLists(proposalDetailsLists);
                 proposalDetails.setDocument(proposalVO);
                 return Optional.of(proposalDetails);
             } catch (Exception e) {
-                LOG.error("Package not found for proposal {}", proposalRef);
+                LOG.error("Unexpected error occoured while fetching proposal", e);
                 return Optional.empty();
             }
         }
@@ -1040,6 +1046,16 @@ public abstract class ApiServiceImpl implements ApiService {
             try {
                 populateTrackChangesContext(proposal);
                 LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+
+                if (proposal.getMetadata() != null && proposal.getMetadata().get().isCustomTemplateAct()){
+                    List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                    documents.forEach(document -> {
+                        if (document.getCategory().equals(LeosCategory.ANNEX)){
+                            throw new RuntimeException("You cannot add more than one Annex to a Custom Template.");
+                        }
+                    });
+                }
+
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
                 BillContextService billContext = billContextProvider.get();
@@ -1360,16 +1376,16 @@ public abstract class ApiServiceImpl implements ApiService {
         }
 
         String elementToAdd = new StringBuilder(DEL_START_TAG) //delete tag added
-                .append(XMLID).append("=\"").append(IdGenerator.generateId()).append(BACKSLASH_QUOTE) //id
                 .append(uid)
+                .append(" ")
                 .append(title)
                 .append(">")
                 .append(escapeXml10(normalizeSpace(origText)))
                 .append(DEL_END_TAG)
                 // insert tag added
                 .append(INS_START_TAG)
-                .append(XMLID).append("=\"").append(IdGenerator.generateId()).append(BACKSLASH_QUOTE) //id
                 .append(uid)
+                .append(" ")
                 .append(title)
                 .append(">")
                 .append(escapeXml10(normalizeSpace(newText)))
@@ -1400,6 +1416,7 @@ public abstract class ApiServiceImpl implements ApiService {
         LOG.trace(("Creating new milestone..."));
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
+            String correctedMilestone = new String(milestoneComment.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             String proposalId = proposal.getId();
             byte[] proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
                     proposal.getContent().get().getSource().getBytes() : new byte[0];
@@ -1411,8 +1428,8 @@ public abstract class ApiServiceImpl implements ApiService {
                 throw new CreateMilestoneException();
             }
             final String versionComment = messageHelper.getMessage("milestone.versionComment");
-            createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
-            milestoneService.createMilestone(proposalId, milestoneComment);
+            createMajorVersions(proposalRef, correctedMilestone, versionComment, collectionContextProvider.get());
+            milestoneService.createMilestone(proposalId, correctedMilestone);
         }
         return null;
     }

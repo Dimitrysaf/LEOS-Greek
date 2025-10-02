@@ -26,6 +26,8 @@ import eu.europa.ec.leos.services.support.converter.DescriptionMapConverter;
 import eu.europa.ec.leos.services.support.converter.LanguageMapConverter;
 import eu.europa.ec.leos.services.support.converter.NameMapConverter;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
+import eu.europa.ec.leos.services.user.UserHelper;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.catalog.Catalog;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
@@ -48,6 +50,7 @@ class TemplateServiceImpl implements TemplateService {
     private static final Logger LOG = LoggerFactory.getLogger(TemplateServiceImpl.class);
 
     private final ConfigurationRepository configRepository;
+    private final UserHelper userHelper;
 
     @Value("${leos.templates.path}")
     private String templatesPath;
@@ -61,28 +64,38 @@ class TemplateServiceImpl implements TemplateService {
     @Autowired
     TemplateConfigurationService templateConfigurationService;
 
-    TemplateServiceImpl(ConfigurationRepository configRepository) {
+    TemplateServiceImpl(ConfigurationRepository configRepository, UserHelper userHelper) {
         this.configRepository = configRepository;
+        this.userHelper = userHelper;
     }
 
     @Override
     public List<CatalogItem> getTemplatesCatalog() throws IOException {
+        return getCatalog(templatesCatalog);
+    }
+
+    @Override
+    public List<CatalogItem> getTemplatesCatalog(String customTemplatesCatalog) throws IOException {
+        return getCatalog(customTemplatesCatalog);
+    }
+
+    private List<CatalogItem> getCatalog(String templatesCatalog) throws IOException {
         List<CatalogItem> catalogList = getCatalogItems(templatesCatalog);
-        removeNotAllowedProposals(catalogList);
+        removeNotAllowedProposals(catalogList, templatesCatalog);
         return catalogList;
     }
 
-    private boolean removeNotAllowedProposals(List<CatalogItem> catalogList) throws JsonProcessingException {
+    private boolean removeNotAllowedProposals(List<CatalogItem> catalogList, String templatesCatalog) throws JsonProcessingException {
         boolean hasTemplate = false;
         for (CatalogItem catalogItem : catalogList) {
             if (catalogItem.isHidden() == null || !catalogItem.isHidden()) {
                 boolean removeThisItem = true;
-                if (catalogItem.getType().name().equals(CatalogItem.ItemType.TEMPLATE.name()) && verifyIfItemShouldBeProcessed(catalogItem)) {
+                if (catalogItem.getType().name().equals(CatalogItem.ItemType.TEMPLATE.name()) && verifyIfItemShouldBeProcessed(catalogItem, templatesCatalog)) {
                     hasTemplate = true;
                     removeThisItem = false;
                 }
                 if (!catalogItem.getType().name().equals(CatalogItem.ItemType.TEMPLATE.name()) && catalogItem.getItems() != null) {
-                    boolean childrenHasTemplate = removeNotAllowedProposals(catalogItem.getItems());
+                    boolean childrenHasTemplate = removeNotAllowedProposals(catalogItem.getItems(), templatesCatalog);
                     if (childrenHasTemplate) {
                         hasTemplate = true;
                         removeThisItem = false;
@@ -96,10 +109,10 @@ class TemplateServiceImpl implements TemplateService {
         return hasTemplate;
     }
 
-    private boolean verifyIfItemShouldBeProcessed(CatalogItem catalogItem) throws JsonProcessingException {
+    private boolean verifyIfItemShouldBeProcessed(CatalogItem catalogItem, String templatesCatalog) throws JsonProcessingException {
         boolean itemShouldBeProcessed = true;
         ObjectMapper objectMapper = new ObjectMapper();
-        String catalogConf = templateConfigurationService.getTemplateConfiguration("catalog");
+        String catalogConf = templateConfigurationService.getTemplateConfiguration(templatesCatalog);
         JsonNode catalogNode = objectMapper.readTree(catalogConf);
         if (catalogNode != null && catalogNode.get(catalogItem.getKey()) != null) {
             if (catalogNode.get(catalogItem.getKey()).get("environments") != null) {
@@ -174,6 +187,7 @@ class TemplateServiceImpl implements TemplateService {
         xstream.useAttributeFor(CatalogItem.class, "key");
         xstream.useAttributeFor(CatalogItem.class, "visibleTo");
         xstream.useAttributeFor(CatalogItem.class, "mandatory");
+        xstream.aliasAttribute(CatalogItem.class, "customName", "custom-name");
         xstream.aliasAttribute(CatalogItem.class, "defaultDocument", "default");
         xstream.aliasField("names", CatalogItem.class, "nameMap");
         xstream.registerLocalConverter(CatalogItem.class, "nameMap", new NameMapConverter());
@@ -221,7 +235,10 @@ class TemplateServiceImpl implements TemplateService {
 
     @Override
     public CatalogItem getTemplateItem(String name) throws IOException {
-        return getTemplateItem(getTemplatesCatalog(), name);
+        List<CatalogItem> templatesCatalog = name.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) ?
+                getTemplatesCatalog(userHelper.getUserDgCustomTemplatesCatalog()) :
+                getTemplatesCatalog();
+        return getTemplateItem(templatesCatalog, name);
     }
 
     private CatalogItem getTemplateItem(List<CatalogItem> catalogItems, String name) {

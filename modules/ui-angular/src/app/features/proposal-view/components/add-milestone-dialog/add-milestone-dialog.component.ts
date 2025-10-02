@@ -35,6 +35,7 @@ const OTHER_VALUE = 'other';
 })
 export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   @Input() isCloneProposal: boolean;
+  @Input() isCustomTemplate: boolean;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
   form: FormGroup;
@@ -54,7 +55,7 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.types = this.isCloneProposal
       ? this.getTypeOptionsClonedProposal()
-      : this.getTypeOptions();
+      : this.isCustomTemplate ? this.getCustomTemplateOption() : this.getTypeOptions();
     this.defaultType = this.types[0];
     this.buildForm();
     this.form.patchValue({
@@ -165,6 +166,29 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  private getCustomTemplateOption() {
+    const option = (key: string, value: string): TypeOption => ({
+      label: this.translateService.instant(key),
+      value,
+    });
+      return [
+        option(
+          'page.collection.milestones.type.proposal1',
+          'For Interservice Consultation',
+        ),
+        option('page.collection.milestones.type.proposal2', 'For Decision'),
+        option(
+          'page.collection.milestones.type.proposal3',
+          'Revision after Interservice Consultation',
+        ),
+        option(
+          'page.collection.milestones.type.custom-template',
+          'Custom Template',
+        ),
+        option('page.collection.milestones.type.other', OTHER_VALUE)
+      ];
+  }
+
   private handleChanges() {
     this.form
       .get('milestonesType')
@@ -175,7 +199,10 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
         if (option && option.value === OTHER_VALUE) {
           milestonesTitle.setValue('');
           milestonesTitle.enable();
-          milestonesTitle.setValidators([Validators.required]);
+          milestonesTitle.setValidators([
+            Validators.required,
+            this.forbiddenTextValidator(this.translateService.instant('page.collection.milestones.actions.publish-to-dg-template-catalog'))
+          ]);
         } else if (option) {
           milestonesTitle.setValue(option.label);
           milestonesTitle.disable();
@@ -184,4 +211,14 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
         milestonesTitle.updateValueAndValidity();
       });
   }
+
+  private forbiddenTextValidator(forbiddenText: string) {
+    return (control: FormControl) => {
+      if (control.value && control.value.trim() === forbiddenText) {
+        return { forbiddenText: { value: control.value } };
+      }
+      return null;
+    };
+  }
+
 }

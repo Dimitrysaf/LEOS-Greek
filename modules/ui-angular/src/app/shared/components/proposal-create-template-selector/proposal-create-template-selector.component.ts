@@ -39,6 +39,7 @@ export class ProposalCreateTemplateSelectorComponent
   @Input() translationKey: 'document' | 'draft' = 'document';
   @Input() disabled: boolean = false;
   @Input() isCopyChangeAct!: boolean;
+  @Input() isCustomTemplatesCatalog!: boolean;
   @Input() documentCollectionName!: string;
   @Input() proposalTemplate!: string;
   @Input() userRoles!: ApplicationRole[];
@@ -144,12 +145,19 @@ export class ProposalCreateTemplateSelectorComponent
 
   initialize(disabled:boolean) {
     this.disabled = disabled;
-    this.proposalService.templateCatalog$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((catalog) => {
-        this.loadTemplates(catalog);
-        this.cd.detectChanges(); // trigger `treeComponent` update
-      });
+    this.isCustomTemplatesCatalog ?
+      this.proposalService.customTemplateCatalog$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((catalog) => {
+          this.loadTemplates(catalog);
+          this.cd.detectChanges(); // trigger `treeComponent` update
+        }) :
+      this.proposalService.templateCatalog$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((catalog) => {
+          this.loadTemplates(catalog);
+          this.cd.detectChanges(); // trigger `treeComponent` update
+        });
   }
 
   private loadTemplates(catalogItems: CatalogItem[] | null) {
@@ -195,8 +203,9 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
-    const { id, documentCollection, key, names, type, enabled, items, hidden, visibleTo } = item;
-    const label = this.proposalService.getTranslation(names);
+    const { id, documentCollection, key, names, customName, type, enabled, items, hidden, visibleTo } = item;
+    let tooltipLabel = this.proposalService.getTranslation(names);
+    const label = customName ? (key.substring(0, key.lastIndexOf('_')) + ' - ' + customName) : tooltipLabel;
     const iconClass =
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
     let disabled = !enabled;
@@ -215,7 +224,6 @@ export class ProposalCreateTemplateSelectorComponent
     const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
     disabled = disabled || this.disabled || !isSameDocCollection || sameTemplate;
 
-    let tooltipLabel = '';
     if(isEmptyCategory){
       tooltipLabel = 'empty-category';
     }else if(isTemplate){

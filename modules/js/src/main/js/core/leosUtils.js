@@ -47,6 +47,7 @@ define(function leosUtilsModule(require) {
     var BLOCKCONTAINER = "blockcontainer";
     var LEVEL = "level";
     var DOCPURPOSE = "docPurpose";
+    var COVERPAGE = "coverpage";
     var BLOCKCONTAINER = "blockcontainer";
     var BLOCK = "block";
     var ID = "id";
@@ -476,6 +477,7 @@ define(function leosUtilsModule(require) {
         SPELLCHECKER: SPELLCHECKER,
         LEVEL: LEVEL,
         DOCPURPOSE: DOCPURPOSE,
-        BLOCK: BLOCK
+        BLOCK: BLOCK,
+        COVERPAGE: COVERPAGE
     };
 });

@@ -37,6 +37,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
@@ -50,6 +51,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
@@ -87,12 +89,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
@@ -124,6 +121,7 @@ public class LeosApiController {
     private final ApiService apiService;
     private final UserService userService;
     private final CoEditionInfoHandler coEditionInfoHandler;
+    private final CustomTemplateService customTemplateService;
 
     private final ConfigService configService;
     private final SecurityContext securityContext;
@@ -145,7 +143,8 @@ public class LeosApiController {
                              EventBus leosApplicationEventBus, ExportService exportService,
                              CreateCollectionService createCollectionService, Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
-                             SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler) {
+                             SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
+                             CustomTemplateService customTemplateService) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -161,6 +160,7 @@ public class LeosApiController {
         this.securityContext = securityContext;
         this.userService = userService;
         this.coEditionInfoHandler = coEditionInfoHandler;
+        this.customTemplateService = customTemplateService;
     }
 
     @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -562,6 +562,9 @@ public class LeosApiController {
         }
     }
 
+
+
+
     @RequestMapping(value = "/secured/proposals/{proposalRef}/createAnnex", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -833,6 +836,18 @@ public class LeosApiController {
         catch (Exception e) {
             LOG.error("Error occurred while getting Html renditions - {}", e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting Html renditions", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getOrganizations() {
+        try {
+            List<String> organizations = userService.getAllOrganizations();
+            return new ResponseEntity<>(organizations, HttpStatus.OK);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while retrieving organizations: " + ex.getMessage());
+            return new ResponseEntity<>("Error occurred while retrieving organizations", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

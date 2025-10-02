@@ -300,7 +300,19 @@ define(function leosTrackChangesPluginModule(require) {
                         editor.getSelection().selectElement(new CKEDITOR.dom.element(currentElement));
                     }
                     if (!core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
-                        style.apply(editor, deleteTcStyle);
+                        const insertedAlternativeSignatures = $(currentElement).find(core.TRACKCHANGES_ELEMENT_SELECTOR + core.SIGNATURE_SELECTOR);
+                        // condition added in #2738, check if it can be removed in #2739
+                        if (isSignatory && insertedAlternativeSignatures.length > 0) {
+                            let insertedAlternativeSignature = new CKEDITOR.dom.element(insertedAlternativeSignatures[0]);
+                            insertedAlternativeSignature.getChildren().toArray().forEach(child => {
+                                child.getFirst().remove();
+                                child.appendBogus();
+                            });
+                            insertedAlternativeSignature.setAttribute(core.ACTION_ATTR, core.DELETE_ACTION);
+                            editor.getSelection().selectElement(insertedAlternativeSignature);
+                        } else {
+                            style.apply(editor, deleteTcStyle);
+                        }
                     }
                     var tempEle = editor.document.createElement('div');
                     tempEle.$.innerHTML = option.content;
@@ -1167,6 +1179,9 @@ define(function leosTrackChangesPluginModule(require) {
         if(!olOrderedList || olOrderedList.length == 0){
             olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknAnnexOrderedList']");
         }
+        if (!olOrderedList || olOrderedList.length == 0) {
+           olOrderedList = eventDataAsObject.find("ul[data-akn-name='UnNumberedBlockList'], ol[data-akn-name='NumberedBlockList']");
+        }
         if(!!olOrderedList && olOrderedList.length > 0){
             for (let i = 0; i < olOrderedList.length; i++) {
                 _checkEmptyOLAndRemove(olOrderedList[i], eventDataAsObject.attr('id'));
@@ -1179,7 +1194,7 @@ define(function leosTrackChangesPluginModule(require) {
         if (elem.childNodes.length === 0 ||
             (elem.childNodes.length === 1 && elem.childNodes[0].getAttribute("data-akn-element") !== "point")) {
             var parent = elem.parentNode;
-            if(parent.getAttribute('id') === idToExit){
+            if (parent === null || parent.nodeType !== Node.ELEMENT_NODE || parent.getAttribute('id') === idToExit) {
                 return;
             }
             var doRemove = true;

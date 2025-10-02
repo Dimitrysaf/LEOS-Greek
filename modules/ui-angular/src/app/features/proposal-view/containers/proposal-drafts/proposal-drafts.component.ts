@@ -54,7 +54,8 @@ export class ProposalDraftsComponent
   proposalRef: string;
   coEditionMap: Record<string, CoEditionVO[]> = null;
   permissions: Permission[];
-  createOptions: object;
+  annexCreateOption: string;
+  fsCreateOption: string;
 
   @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
@@ -251,7 +252,7 @@ export class ProposalDraftsComponent
       ),
       content: this.translate.instant(
         'page.collection.drafts.financial-statement.delete.confirm-dialog.body',
-      ) + (this.createOptions['FS-001'] === 'DEFAULT_TRUE' ? '<br/>' + this.translate.instant(
+      ) + (this.fsCreateOption === 'DEFAULT_TRUE' ? '<br/>' + this.translate.instant(
         'page.collection.drafts.financial-statement.delete.confirm-dialog.justification',
       ): ""),
       acceptLabel: this.translate.instant('global.actions.delete'),
@@ -266,7 +267,7 @@ export class ProposalDraftsComponent
   private populateView() {
     const getChildDocument = (type: DocumentType) =>
       this.proposal.childDocuments.find((d) => d.category === type) ?? null;
-    this.createOptions = JSON.parse(this.proposal.creationOptions);
+    this.setCreateOptions();
     this.coverpage = getChildDocument('COVERPAGE');
     this.memorandum = getChildDocument('MEMORANDUM');
     this.document = getChildDocument('BILL');
@@ -277,6 +278,15 @@ export class ProposalDraftsComponent
     this.annexes =
       this.document?.childDocuments.filter((d) => d.category === 'ANNEX') ??
       null;
+  }
+
+  private setCreateOptions() {
+    const createOptions = JSON.parse(this.proposal.creationOptions);
+    const createOptionsKeys = Object.keys(createOptions);
+    const fsKey = createOptionsKeys.find(key => key.startsWith('FS-001'));
+    const annexKey = createOptionsKeys.find(key => key.startsWith('SG-017'));
+    this.fsCreateOption = createOptions[fsKey];
+    this.annexCreateOption = createOptions[annexKey];
   }
    protected readonly cleanDelInsert = cleanDelInsert;
 }

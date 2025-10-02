@@ -125,6 +125,7 @@ public class XmlHelper {
     public static final String CLAUSE = "clause";
     public static final String CONCLUSIONS = "conclusions";
     public static final String ORGANIZATION = "organization";
+    public static final String SIGNATURE = "signature";
     public static final String ROLE = "role";
     public static final String PERSON = "person";
     public static final String MAIN_BODY = "mainBody";

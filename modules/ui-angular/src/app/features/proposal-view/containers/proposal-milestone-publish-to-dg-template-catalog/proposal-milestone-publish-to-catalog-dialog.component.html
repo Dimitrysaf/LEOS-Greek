@@ -1,0 +1,93 @@
+<eui-dialog
+  #sendMilestonePublishToDgTemplateCatalog
+  [title]="'page.collection.milestones.publish-to-catalog.title' | translate"
+  [isHandleCloseOnDismiss]="true"
+  [isHandleCloseOnEscape]="true"
+  [isHandleCloseOnClose]="true"
+  (clickOutside)="close()"
+  (dismiss)="close()"
+  (escape)="close()"
+  (dialogClose)="close()"
+>
+  <!-- Body -->
+  <div [formGroup]="targetUserForm">
+
+    <div euiInputGroup class="row eui-u-flex-justify-content-center">
+      <div class="col-md-3">
+        <label euiLabel for="templateName">
+          {{ 'page.collection.milestones.publish-to-catalog.template-name' | translate }}
+        </label>
+      </div>
+      <div class="col-md-9">
+        <input
+          euiInputText
+          id="templateName"
+          type="text"
+          formControlName="templateName"
+        />
+      </div>
+    </div>
+
+    <div euiInputGroup class="row eui-u-flex-justify-content-center">
+      <div class="col-md-3">
+        <label euiLabel for="dgSearch">
+          {{ 'page.collection.milestones.publish-to-catalog.template-visibility' | translate }}
+        </label>
+      </div>
+      <div class="col-md-9">
+        <!-- Small helper text -->
+        <small class="eui-field-description">
+          {{ 'page.collection.milestones.publish-to-catalog.visibility' | translate }}
+          <!-- Or hardcode: My DG and DG(s) -->
+        </small>
+
+        <div class="dg-select-container" #dgContainer>
+          <ul class="dg-selection-list">
+            <li class="dg-selection-item" *ngFor="let dg of selectedDgs; let i = index">
+              <span class="chip">
+                {{ dg.label }}
+                <span class="chip-x" (click)="removeDg(i)" title="Remove">✖</span>
+              </span>
+            </li>
+            <li class="dg-filter-input">
+              <input
+                #dgInput
+                type="text"
+                placeholder="Search DGs…"
+                formControlName="dgSearch"
+                (input)="onDgSearch(dgInput.value)"
+                (focus)="onInputFocus()"
+                (blur)="onInputBlur()"
+              />
+            </li>
+          </ul>
+        </div>
+
+        <input type="hidden" formControlName="dgCodes" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <eui-dialog-footer>
+    <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-justify-content-end">
+      <button type="button" class="eui-u-mr-xs" euiButton euiSecondary (click)="close()">
+        {{ 'global.actions.cancel' | translate }}
+      </button>
+      <button [disabled]="!isFormValid" type="button" euiButton euiPrimary (click)="publishTemplate()">
+        {{ 'page.collection.milestones.publish-to-catalog.publish' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>
+
+<!-- Dropdown positioned outside dialog -->
+<div class="dg-suggestion-container" *ngIf="showSuggestions" [style.top.px]="dropdownTop" [style.left.px]="dropdownLeft" [style.width.px]="dropdownWidth">
+  <ul class="dg-suggestion-list">
+    <li *ngFor="let item of filteredDgItems; let i = index"
+        class="dg-suggestion-item"
+        (click)="selectDg(item.label)">
+      {{ item.label }}
+    </li>
+  </ul>
+</div>

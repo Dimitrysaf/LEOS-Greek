@@ -17,9 +17,7 @@ import {EuiGrowlService} from "@eui/core";
 import {TranslateService} from "@ngx-translate/core";
 import moment from 'moment';
 import { AppConfigService } from '@/core/services/app-config.service';
-import {EuiSelectComponent} from "@eui/components/eui-select";
-import {EuiInputTextComponent} from "@eui/components/eui-input-text";
-import {LoadingService} from "@/shared/services/loading.service";
+import {EuiDialogComponent} from "@eui/components/eui-dialog";
 
 @Component({
   selector: 'app-proposal-details',
@@ -30,6 +28,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
   @Input() proposalDetails: ProposalDetailsLists;
   @Input() detailsTabExclusions: DetailsTabExclusions
+  @ViewChild('resetConfirmation') resetConfirmation: EuiDialogComponent;
   leosConfig: LeosConfig;
   permissions: Permission[];
   eeaRelevance: boolean;
@@ -603,6 +602,59 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next(null);
     this.destroy$.complete();
+  }
+
+  cancelResetAdoptionInformation() {
+    this.resetConfirmation.closeDialog();
+  }
+
+  startResetAdoptionInformation() {
+    this.resetConfirmation.openDialog();
+  }
+
+  resetAdoptionInformation() {
+    this.resetConfirmation.closeDialog();
+    this.adoptionDate = null;
+    this.adoptionPlace = this.adoptionPlaces[0];
+    this.institutionalRef = false;
+    this.institutionalRefActingEntity = null;
+    this.institutionalReferenceFinalVersion = false;
+    this.institutionalRefNumber = null;
+    this.institutionalRefYear = null;
+    this.interInstitutionalRef = false;
+    this.interInstitutionalRefNumber = null;
+    this.interInstitutionalRefType = null;
+    this.interInstitutionalRefYear = null;
+    this.stamp = false;
+    for (let i = 0; i < this.signatures.length; i++) {
+      let signature = this.signatures[i];
+      signature.commissionerTitle = this.proposalDetails.templateSignatures[i].commissionerTitle;
+      signature.signingCommissioner = this.proposalDetails.templateSignatures[i].signingCommissioner;
+      this.populateSigningCommissioner(signature);
+      signature.specialMention = this.proposalDetails.templateSignatures[i].specialMention;
+    }
+    this.saveGeneralDetails();
+  }
+
+  couldBeReset(): boolean {
+    if (this.adoptionDate == null
+      && this.adoptionPlace == this.adoptionPlaces[0]
+      && !this.institutionalRef
+      && !this.institutionalReferenceFinalVersion
+      && !this.interInstitutionalRef
+      && !this.stamp) {
+      for (let i = 0; i < this.signatures.length; i++) {
+        let signature = this.signatures[i];
+        if (signature.commissionerTitle != this.proposalDetails.templateSignatures[i].commissionerTitle
+            || signature.signingCommissioner != this.proposalDetails.templateSignatures[i].signingCommissioner
+            || signature.specialMention != this.proposalDetails.templateSignatures[i].specialMention) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return true;
+    }
   }
 
   saveGeneralDetails() {

@@ -48,6 +48,8 @@ import {
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 import {SearchAndReplaceAllResponse} from "@/features/akn-document/models/search-replace-response.model";
+import {AIService} from "@/shared/services/ai.service";
+import {AnalysisResults} from "@/shared/models/leos.ai.model";
 
 
 export enum RelevantElements {
@@ -148,10 +150,13 @@ export class DocumentService {
   pageSize = 10;
   isReloadRequired = false;
   isToRestoreOrToRemoveData = false;
+  proposalRef: string;
   public trackChangesStatus$: Observable<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
   }>;
+  public aiAnalysisResults$: Observable<AnalysisResults>;
+
   public annexDocNumber = 0;
 
   private documentPageTitleBS = new BehaviorSubject<string>('');
@@ -232,6 +237,8 @@ export class DocumentService {
     isTrackChangesShowed: boolean;
   }>({ isTrackChangesEnabled: false, isTrackChangesShowed: false });
 
+  private aiAnalysisResultsBS = new BehaviorSubject<AnalysisResults>(null);
+
   private getAnnotations?: () => Promise<string>;
   private refreshAnnotateCall?: () => void;
   private currentDocumentRef: string;
@@ -251,6 +258,7 @@ export class DocumentService {
     private loadingService: LoadingService,
     private tocService: TableOfContentService,
     private envService: EnvironmentService,
+    private aiService: AIService,
   ) {
     appConfig.config.subscribe((conf) => {
       this.minSearchChar = conf.searchOnMinimumCharacter;
@@ -386,6 +394,7 @@ export class DocumentService {
     this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
     this.getElementContent$ = this.getElementContentBS.asObservable();
     this.updateElementContent$ = this.updateElementContentBS.asObservable();
+    this.aiAnalysisResults$ = this.aiAnalysisResultsBS.asObservable();
   }
 
   hasUpdatePermission() {
@@ -1034,6 +1043,17 @@ export class DocumentService {
     this.updatedContentToSaveAfterReplace = null;
   }
 
+  aiDisplayText() {
+    this.aiService.analysisResult$.subscribe((analysisResult) => {
+      this.aiAnalysisResultsBS.next(analysisResult);
+    });
+    this.aiService.prefillDigitalDimensionsLFDS(this.proposalRef);
+  }
+
+  prepareAnalysis() {
+    this.aiService.prepareAnalysis(this.proposalRef);
+  }
+
   toggleReplacePane(open?: boolean) {
     this.toggleSubject(this.replacePaneOpenBS, open);
   }
@@ -1585,6 +1605,7 @@ export class DocumentService {
 
   private getCollaborators(proposalRef: string) {
     if (!proposalRef) return of([]);
+    this.proposalRef = proposalRef;
     return this.http.get<Collaborator[]>(
       `${apiBaseUrl}/secured/proposal/${proposalRef}/collaborators`,
     );

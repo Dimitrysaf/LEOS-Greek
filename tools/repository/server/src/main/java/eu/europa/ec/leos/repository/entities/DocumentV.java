@@ -86,6 +86,8 @@ public class DocumentV implements Serializable {
     private String categoryCode;
     @Column(name = "CATEGORY_DESC", updatable = false)
     private String categoryDesc;
+    @Column(name = "CONFIG_CATEGORY_ID", updatable = false)
+    private BigDecimal configCategoryId;
     @Column(name = "NAME", updatable = false)
     private String name;
     @Column(name = "CLONED_FROM", updatable = false)
@@ -226,6 +228,14 @@ public class DocumentV implements Serializable {
 
     public void setCategoryDesc(String categoryDesc) {
         this.categoryDesc = categoryDesc;
+    }
+
+    public BigDecimal getConfigCategoryId() {
+        return configCategoryId;
+    }
+
+    public void setConfigCategoryId(BigDecimal configCategoryId) {
+        this.configCategoryId = configCategoryId;
     }
 
     public String getComments() {

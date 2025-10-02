@@ -43,6 +43,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
@@ -137,6 +139,10 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestArchiveDocumentURI;
     @Value("${leos.rest.repository.archive.document.version}")
     private String leosRestArchiveDocumentVersionURI;
+    @Value("${leos.rest.repository.publish.custom.template}")
+    private String leosRestPublishCustomTemplateURI;
+    @Value("${leos.rest.repository.info.custom.template}")
+    private String leosRestInfoCustomTemplateURI;
     @Value("${leos.rest.repository.find.document.search.versions}")
     private String leosRestSearchVersionsURI;
     @Value("${leos.rest.repository.find.recent.packages.uri}")
@@ -661,5 +667,24 @@ public class RestRepository extends AbstractRestClient {
         String url = getUrl(leosRestArchiveDocumentVersionURI);
         LeosDocument resp = putEntity(url, null, LeosDocument.class, docRef, version);
         return resp;
+    }
+
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) {
+        LOGGER.trace("Publish Custom Template [{}]", legFileId);
+        String url = getUrl(leosRestPublishCustomTemplateURI);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("legFileId", legFileId);
+        params.add("templateName", templateName);
+        params.add("userId", userId);
+        dgs.forEach(dg -> params.add("dgs", dg));
+
+        postEntity(url, params, Object.class);
+    }
+    
+    public Map<String, Object> getTemplateInfo(String packageId) {
+        LOGGER.trace("Get Template Info [{}]", packageId);
+        String url = getUrl(leosRestInfoCustomTemplateURI);
+        return getEntity(url, Map.class, packageId);
     }
 }
