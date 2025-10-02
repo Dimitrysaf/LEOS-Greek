@@ -48,6 +48,7 @@ import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
+import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
@@ -206,6 +207,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
     private final TemplateConfigurationService templateConfigurationService;
+    private final LanguageHelper languageHelper;
 
     private DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
@@ -240,7 +242,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
-                          TemplateConfigurationService templateConfigurationService) {
+                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -275,6 +277,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.coverPageApiService = coverPageApiService;
         this.proposalDetailsService = proposalDetailsService;
         this.templateConfigurationService = templateConfigurationService;
+        this.languageHelper = languageHelper;
     }
 
     private static String readFileToString(File file) throws IOException {
@@ -714,6 +717,8 @@ public abstract class ApiServiceImpl implements ApiService {
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
         }
         if (proposal != null) {
+            String language = proposal.getMetadata().get().getLanguage();
+            languageHelper.setProposalLanguageTag(language.toLowerCase());
             String proposalId = proposal.getId();
             proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null)
                     ? proposal.getContent().get().getSource().getBytes()

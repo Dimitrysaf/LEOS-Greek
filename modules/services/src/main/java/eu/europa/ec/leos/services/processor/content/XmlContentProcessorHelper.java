@@ -613,49 +613,50 @@ public class XmlContentProcessorHelper {
         if ((tocItem.getItemHeading().equals(OptionsType.MANDATORY) ||
                 tocItem.getItemHeading().equals(OptionsType.OPTIONAL)) &&
                         ((newHeading != null) && !StringUtils.isEmpty(newHeading.replaceAll(NBSP, EMPTY_STRING).trim()))) {
-            headingNode = extractOrBuildHeaderElement(node, tocItems, newHeading, isTrackChangesEnabled, userLogin, title);
+            headingNode = extractOrBuildHeaderElement(node,tocVo.isNewNode(), tocItems, newHeading, isTrackChangesEnabled, userLogin, title);
             if (tocVo.isUndeleted()) {
                 XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, EMPTY_STRING, true);
             }
         } else if (tocItem.getItemHeading().equals(OptionsType.OPTIONAL)
                 && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
-            headingNode = extractOrBuildHeaderElement(node, tocItems, EMPTY_STRING, isTrackChangesEnabled, userLogin, title);
+            headingNode = extractOrBuildHeaderElement(node,tocVo.isNewNode(), tocItems, EMPTY_STRING, isTrackChangesEnabled, userLogin, title);
             XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
             updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null);
         }
         return headingNode;
     }
 
-    private static Node extractOrBuildHeaderElement(Node node, List<TocItem> tocItems, String newHeading, boolean isTrackChangesEnabled, String userLogin, String title) {
+    private static Node extractOrBuildHeaderElement(Node node, Boolean isNewNode, List<TocItem> tocItems, String newHeading, boolean isTrackChangesEnabled, String userLogin, String title) {
         Node headingNode = XercesUtils.getFirstChild(node, HEADING);
         if (headingNode == null) {
             headingNode = createElement(node.getOwnerDocument(), HEADING, newHeading);
         } else if (!StringUtils.equals(newHeading, StringEscapeUtils.unescapeXml(getHeadingTextContentWithoutDel(headingNode)))) {
-            if(isTrackChangesEnabled) {
-                TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems,  headingNode.getNodeName(), XercesUtils.getAttributes(headingNode));
-
-                Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
-                if(delNode != null) {
-                    if(delNode.getTextContent().equals(newHeading)) {
-                        // Switched back original type
-                        headingNode = headingNode.cloneNode(false);
-                        headingNode.setTextContent(null);
-                        headingNode.setTextContent(newHeading);
+            if (!isNewNode) {
+                if(isTrackChangesEnabled) {
+                    TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems,  headingNode.getNodeName(), XercesUtils.getAttributes(headingNode));
+                    Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
+                    if(delNode != null) {
+                        if(delNode.getTextContent().equals(newHeading)) {
+                            // Switched back original type
+                            headingNode = headingNode.cloneNode(false);
+                            headingNode.setTextContent(null);
+                            headingNode.setTextContent(newHeading);
+                        } else {
+                            // Changed to another type
+                            headingNode = addTrackChangeElements(node.getOwnerDocument(), headingNode, delNode.getTextContent(), newHeading, userLogin, title);
+                            addAttribute(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE, tocItemType.value());
+                        }
                     } else {
-                        // Changed to another type
-                        headingNode = addTrackChangeElements(node.getOwnerDocument(), headingNode, delNode.getTextContent(), newHeading, userLogin, title);
-                        addAttribute(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE, tocItemType.value());
+                        if (!headingNode.getTextContent().equals(newHeading)) {
+                            // Changed to new type for the first time
+                            headingNode = addTrackChangeElements(node.getOwnerDocument(), headingNode, headingNode.getTextContent(), newHeading, userLogin, title);
+                            addAttribute(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE, tocItemType.value());
+                        }
                     }
                 } else {
-                    if (!headingNode.getTextContent().equals(newHeading)) {
-                        // Changed to new type for the first time
-                        headingNode = addTrackChangeElements(node.getOwnerDocument(), headingNode, headingNode.getTextContent(), newHeading, userLogin, title);
-                        addAttribute(headingNode, LEOS_TC_ORIGINAL_ITEM_TYPE, tocItemType.value());
-                    }
+                    headingNode = headingNode.cloneNode(false);
+                    headingNode.setTextContent(newHeading);
                 }
-            } else {
-                headingNode = headingNode.cloneNode(false);
-                headingNode.setTextContent(newHeading);
             }
         }
         return headingNode;
