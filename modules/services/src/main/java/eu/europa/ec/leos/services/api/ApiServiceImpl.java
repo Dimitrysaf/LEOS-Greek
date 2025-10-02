@@ -299,6 +299,12 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
+    public List<CatalogItem> getCustomTemplates() throws IOException {
+        return customTemplateService.getCustomTemplatesCatalog();
+    }
+
+
+    @Override
     public CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException {
         List<XmlDocument> documents = getAllDocuments(request.getProposalRef());
         return createProposalFromExisting(request.getTemplateId(), request.getTemplateName(),
