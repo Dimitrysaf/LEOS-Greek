@@ -303,7 +303,6 @@ public abstract class ApiServiceImpl implements ApiService {
         return customTemplateService.getCustomTemplatesCatalog();
     }
 
-
     @Override
     public CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException {
         List<XmlDocument> documents = getAllDocuments(request.getProposalRef());
