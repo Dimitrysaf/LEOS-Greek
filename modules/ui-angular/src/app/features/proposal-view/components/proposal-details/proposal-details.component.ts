@@ -31,6 +31,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('resetConfirmation') resetConfirmation: EuiDialogComponent;
   leosConfig: LeosConfig;
   permissions: Permission[];
+  templateId: string;
   eeaRelevance: boolean;
   isAuthenticLang: boolean;
   isVerticalShift: boolean;
@@ -239,6 +240,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.selectedLanguages[lang] = false;
     });
 
+    const index = this.proposal.metadata.template.lastIndexOf('_');
+    this.templateId = index > -1 ? this.proposal.metadata.template.substring(0, index) : this.proposal.metadata.template;
     this.eeaRelevance = this.proposal.metadata.eeaRelevance;
     this.packageTitle = this.proposal.metadata.packageTitle;
     this.authenticLang = cloneDeep(this.proposal.metadata.authenticLang);
