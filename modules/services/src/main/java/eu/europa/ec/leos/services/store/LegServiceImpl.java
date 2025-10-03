@@ -56,6 +56,7 @@ import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.export.RelevantElements;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
+import eu.europa.ec.leos.services.pagecounter.PageCounter;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -159,6 +160,7 @@ public class LegServiceImpl implements LegService {
     private final XPathCatalog xPathCatalog;
     private final DocumentLanguageContext documentLanguageContext;
     private final UserService userService;
+    private final PageCounter pageCounter;
 
     private static final String MEDIA_DIR = "media/";
     private static final String ANNOT_FILE_EXT = ".json";
@@ -208,7 +210,8 @@ public class LegServiceImpl implements LegService {
                           ProposalService proposalService,
                           XPathCatalog xPathCatalog,
                           ExplanatoryService explanatoryService, FinancialStatementService financialStatementService,
-                          DocumentLanguageContext documentLanguageContext, UserService userService) {
+                          DocumentLanguageContext documentLanguageContext, UserService userService,
+                          PageCounter pageCounter) {
         this.packageRepository = packageRepository;
         this.workspaceRepository = workspaceRepository;
         this.attachmentProcessor = attachmentProcessor;
@@ -232,6 +235,7 @@ public class LegServiceImpl implements LegService {
         this.financialStatementService = financialStatementService;
         this.documentLanguageContext = documentLanguageContext;
         this.userService = userService;
+        this.pageCounter = pageCounter;
     }
 
     @Override
@@ -697,6 +701,8 @@ public class LegServiceImpl implements LegService {
             xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
             xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
+        String numberOfPages = pageCounter.countPages(xmlContent);
+        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(financialStatement.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef);
@@ -895,6 +901,8 @@ public class LegServiceImpl implements LegService {
             SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement) {
         byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToProposal(proposal, xmlContent);
+        String numberOfPages = pageCounter.countPages(xmlContent);
+        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().get().getLanguage()), xmlContent);
 
@@ -961,6 +969,8 @@ public class LegServiceImpl implements LegService {
 
         byte[] xmlContent = memorandum.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToMemorandum(memorandum, xmlContent);
+        String numberOfPages = pageCounter.countPages(xmlContent);
+        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(memorandum.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, memorandum.getMetadata().get().getRef(), memorandum.getName(), exportOptions, proposalRef);
@@ -1003,6 +1013,8 @@ public class LegServiceImpl implements LegService {
     private ExportResource enrichZipWithBill(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Map<String, String> proposalRefsMap,
                                              Bill bill, Proposal proposal, byte[] xmlContent) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
+        String numberOfPages = pageCounter.countPages(xmlContent);
+        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(bill.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), exportOptions, proposal.getMetadata().getOrNull().getRef());
@@ -1108,6 +1120,8 @@ public class LegServiceImpl implements LegService {
             xmlContent = addRelevantElements(exportOptions, annex.getVersionLabel(), xmlContent);
             xmlContent = addCommentsMetadata(exportOptions.getComments(), xmlContent);
         }
+        String numberOfPages = pageCounter.countPages(xmlContent);
+        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(annex.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, annex.getMetadata().get().getRef(), annex.getName(), exportOptions, proposalRef);
@@ -1145,6 +1159,8 @@ public class LegServiceImpl implements LegService {
             xmlContent = addRelevantElements(exportOptions, explanatory.getVersionLabel(), xmlContent);
             xmlContent = addCommentsMetadata(exportOptions.getComments(), xmlContent);
         }
+        String numberOfPages = pageCounter.countPages(xmlContent);
+        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(explanatory.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, explanatory.getMetadata().get().getRef(), explanatory.getName(), exportOptions, proposalRef);

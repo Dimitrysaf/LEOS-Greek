@@ -1669,4 +1669,24 @@ public class XercesUtils {
         purposeFromXml = LeosDomainUtil.unWrapXmlFragment(purposeFromXml);
         return purposeFromXml;
     }
+
+    public static byte[] addPageCountTag(byte[] xmlContent, String value) {
+        if (value == null) {
+            return xmlContent;
+        } else {
+            Document document = createXercesDocument(xmlContent);
+            Node pageCountNode = XercesUtils.getFirstElementByXPath(document, XPathCatalog.getXPathProprietary() + "/leos:pageCount");
+            if (pageCountNode != null) {
+                pageCountNode.setTextContent(value);
+            } else {
+                NodeList nodeList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathProprietary());
+                Node node = nodeList.item(0);
+                Element pageCountTag = document.createElement("leos:pageCount");
+                pageCountTag.setTextContent(value);
+                node.appendChild(pageCountTag);
+            }
+            return nodeToByteArray(document);
+        }
+    }
+
 }
