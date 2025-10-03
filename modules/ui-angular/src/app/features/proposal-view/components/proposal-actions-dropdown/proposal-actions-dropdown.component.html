@@ -27,9 +27,6 @@
           {{ 'page.collection.actions-dropdown.validate' | translate }}
         </button>
       </ng-container>
-      <a euiDropdownItem target="_blank" [href]="getStringifiedMailTo()">{{
-          'page.collection.actions-dropdown.share' | translate
-        }}</a>
       <ng-container>
         <button euiDropdownItem *ngIf="permissions.includes('CAN_DELETE') && !translated" (click)="handleConfirmationDelete()"
                 class=eui-u-color-danger-100>

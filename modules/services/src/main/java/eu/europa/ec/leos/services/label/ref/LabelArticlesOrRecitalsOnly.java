@@ -13,11 +13,12 @@ import java.util.Map;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 
 @Component
 public class LabelArticlesOrRecitalsOnly extends LabelHandler {
 
-    private static final List<String> NODES_TO_CONSIDER = Arrays.asList(ARTICLE, RECITAL);
+    private static final List<String> NODES_TO_CONSIDER = Arrays.asList(ARTICLE, RECITAL, RECITALS);
     
     @Override
     public boolean canProcess(List<TreeNode> refs) {

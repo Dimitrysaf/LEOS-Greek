@@ -144,6 +144,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
 
         CollectionContextService context = proposalContextProvider.get();
+        context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
+        context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
         context.useDocument(propDocument);
         context.useIdsAndUrlsHolder(idsAndUrlsHolder);
         context.useCloneProposal(false);

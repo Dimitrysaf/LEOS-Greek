@@ -15,7 +15,7 @@ import {
 } from '@/features/akn-document/services/track-changes-actions.service';
 import { DocumentConfig, LeosConfig, Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
-import {EuiDialogService} from "@eui/components/eui-dialog";
+import {EuiDialogConfig, EuiDialogService} from "@eui/components/eui-dialog";
 import {TranslateService} from "@ngx-translate/core";
 
 @Component({
@@ -44,6 +44,8 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject();
 
   private mouseLocation: { left: number; top: number } = { left: 0, top: 0 };
+  private ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR: string =
+    'article, citation, recitals, recital, :not(article) > paragraph, level, chapter, akntitle, part, section, subparagraph';
 
   constructor(
     private http: HttpClient,
@@ -91,8 +93,9 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   addTrackChangesEvents() {
     this.trackChangesDr?.forEach((tc) => {
       tc.addEventListener('contextmenu', (e) => {
-        if (this.seeTrackChanges()) {
+        if (this.seeTrackChanges() && e.target instanceof Element && e.target.closest(this.ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR) === e.currentTarget) {
           e.preventDefault();
+          e.stopPropagation();
           this.showMenu(e);
         }
       });
@@ -150,8 +153,10 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   onAccept() {
-    if (this.currentElement.getAttribute("leos:optional") === "true"
-      || (this.currentElement.children && this.currentElement.children[1] && this.currentElement.children[1].getAttribute("leos:optional") === "true")) {
+    if (this.currentElement.getAttribute("leos:optional") === "true" ||
+        (this.currentElement.children &&
+          Array.from(this.currentElement.children).some((child: HTMLElement) => child.getAttribute("leos:optional") === "true"))) {
+
       this.dialogService.openDialog({
         title: this.translateService.instant(
           'page.editor.element-delete-dialog.optional.title',
@@ -162,19 +167,33 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
         hasDismissButton: false,
         accept: () => { },
       });
+    } else if (this.trackChangeAction === TrackChangeAction.DEL && this.currentElement.querySelector(this.ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR)) {
+      this.openDeleteDialog(this.acceptTrackChange);
     } else {
-      this.trackChangesActionsService.applyTrackChangeAction(
-        this.trackChangeAction,
-        {
-          elementType: this.currentElement.tagName.toLowerCase(),
-          elementId: this.currentElement.id,
-        },
-        this.doc,
-      );
+      this.acceptTrackChange();
     }
   }
 
   onReject() {
+    if (this.trackChangeAction === TrackChangeAction.ADD && this.currentElement.querySelector(this.ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR)) {
+      this.openDeleteDialog(this.rejectTrackChange);
+    } else {
+      this.rejectTrackChange();
+    }
+  }
+
+  private acceptTrackChange = () => {
+    this.trackChangesActionsService.applyTrackChangeAction(
+      this.trackChangeAction,
+      {
+        elementType: this.currentElement.tagName.toLowerCase(),
+        elementId: this.currentElement.id,
+      },
+      this.doc,
+    );
+  }
+
+  private rejectTrackChange = () => {
     this.trackChangesActionsService.rejectTrackChangeAction(
       this.trackChangeAction,
       {
@@ -182,6 +201,23 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
         elementId: this.currentElement.id,
       },
       this.doc,
+    );
+  }
+
+  private openDeleteDialog(action: Function) {
+    this.dialogService.openDialog(
+      new EuiDialogConfig({
+        dialogId: 'delete-dialog-id',
+        title: this.translateService.instant(
+          'toc.edit.window.item.selected.delete-dialog.title',
+        ),
+        content: this.translateService.instant(
+          'toc.edit.window.item.selected.delete-dialog.desc',
+        ),
+        acceptLabel: this.translateService.instant('global.actions.delete'),
+        typeClass: 'danger',
+        accept: () => action(),
+      }),
     );
   }
 

@@ -9,14 +9,15 @@ public class NumberConfigGreekAlpha extends NumberConfigAbstract implements Numb
     private static final int GREEK_LOWERCASE_START = 945;
     private static final int ALPHABET_LENGTH = 25;
 
-    public NumberConfigGreekAlpha(boolean isUpperCase, String prefix, String suffix) {
+    public NumberConfigGreekAlpha(boolean isUpperCase, String prefix, String suffix, boolean suffixInEnd) {
         this.prefix = prefix;
         this.suffix = suffix;
         this.isUpperCase = isUpperCase;
+        this.suffixInEnd = suffixInEnd;
     }
 
     public NumberConfigGreekAlpha() {
-        this(false, "", "");
+        this(false, "", "", true);
     }
 
     @Override
@@ -63,6 +64,10 @@ public class NumberConfigGreekAlpha extends NumberConfigAbstract implements Numb
     @Override
     protected String getImplName() {
         return this.getClass().getSimpleName();
+    }
+
+    public boolean isSuffixInEnd() {
+        return this.suffixInEnd;
     }
 
 }

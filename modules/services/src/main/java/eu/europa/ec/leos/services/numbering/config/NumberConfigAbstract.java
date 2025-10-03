@@ -15,6 +15,7 @@ public abstract class NumberConfigAbstract implements NumberConfig {
     protected String numberToShow;
     protected String prefix;
     protected String suffix;
+    protected boolean suffixInEnd;
     protected boolean isUpperCase;
     protected boolean isComplex;
 

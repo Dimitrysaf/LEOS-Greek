@@ -279,10 +279,13 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("handleTcAlternateClause", function (event) {
                 function changeOption(option, callback) {
                     var currentElement = editor.element.$.firstChild;
-                    if (currentElement && currentElement.firstChild && currentElement.firstChild.id === 'spellchecker-contextmenu' && editor.element.$.childNodes[1]) {
+                    if (currentElement && (currentElement.firstChild && currentElement.firstChild.id === 'spellchecker-contextmenu'
+                            || !currentElement.getAttribute('leos:alternative'))
+                        && editor.element.$.childNodes[1]) {
                         currentElement = editor.element.$.childNodes[1];
                     }
                     core.addTrackChangesAttributesForAlternative(editor, currentElement, currentIndex);
+                    var isSignatory = currentElement && currentElement.getAttribute('data-akn-name') === core.SIGNATORY;
                     var isArticle = currentElement && currentElement.getAttribute('data-akn-name') === core.ARTICLE;
                     if(isArticle) {
                         currentElement.childNodes.forEach(child => {
@@ -297,11 +300,23 @@ define(function leosTrackChangesPluginModule(require) {
                         editor.getSelection().selectElement(new CKEDITOR.dom.element(currentElement));
                     }
                     if (!core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
-                        style.apply(editor, deleteTcStyle);
+                        const insertedAlternativeSignatures = $(currentElement).find(core.TRACKCHANGES_ELEMENT_SELECTOR + core.SIGNATURE_SELECTOR);
+                        // condition added in #2738, check if it can be removed in #2739
+                        if (isSignatory && insertedAlternativeSignatures.length > 0) {
+                            let insertedAlternativeSignature = new CKEDITOR.dom.element(insertedAlternativeSignatures[0]);
+                            insertedAlternativeSignature.getChildren().toArray().forEach(child => {
+                                child.getFirst().remove();
+                                child.appendBogus();
+                            });
+                            insertedAlternativeSignature.setAttribute(core.ACTION_ATTR, core.DELETE_ACTION);
+                            editor.getSelection().selectElement(insertedAlternativeSignature);
+                        } else {
+                            style.apply(editor, deleteTcStyle);
+                        }
                     }
                     var tempEle = editor.document.createElement('div');
                     tempEle.$.innerHTML = option.content;
-                    var content = isArticle ? tempEle.$.innerHTML : tempEle.$.innerText;
+                    var content = isArticle || isSignatory ? tempEle.$.innerHTML : tempEle.$.innerText;
                     actions.insertNewData(editor, content);
 
                     if(callback) {
@@ -317,7 +332,9 @@ define(function leosTrackChangesPluginModule(require) {
                     var newOption = optionList.list.find(listOfOption => listOfOption.index == newIndex);
 
                     var currentElement = ckeditor.element.$.firstChild;
-                    if (currentElement && currentElement.firstChild && currentElement.firstChild.id === 'spellchecker-contextmenu' && ckeditor.element.$.childNodes[1]) {
+                    if (currentElement && (currentElement.firstChild && currentElement.firstChild.id === 'spellchecker-contextmenu'
+                            || !currentElement.getAttribute('leos:alternative'))
+                        && editor.element.$.childNodes[1]) {
                         currentElement = ckeditor.element.$.childNodes[1];
                     }
                     var currentIndex = currentElement.getAttribute("leos:selectedoption");
@@ -388,7 +405,9 @@ define(function leosTrackChangesPluginModule(require) {
                     if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
                         && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
                         && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
-                        if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                        if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)
+                            || element.getAttribute(core.DATA_INDENT_ORIGIN_LEVEL)
+                            && element.getAttribute(core.DATA_INDENT_ORIGIN_LEVEL) != leosPluginUtils.calculateListDepthWithoutRoot(CKEDITOR.dom.element.get(element))) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         } else {
                             core.removeTrackChangesAttributesForNumbering(element);
@@ -753,6 +772,8 @@ define(function leosTrackChangesPluginModule(require) {
                             core.setToEditablePosition(editor, trackedDeletedOrMovedToElement, core.CARET_END);
                         }
                         break;
+                    case "leosIndentList":
+                        handleMutations = true;
                 }
             });
 
@@ -979,6 +1000,12 @@ define(function leosTrackChangesPluginModule(require) {
                                             processModification(new CKEDITOR.dom.element(target));
                                         }
                                         break;
+                                    } else if ((node.tagName === "DIV") && !node.id) { // It is a new list inside div (recital)
+                                        var newList = node.querySelector("li");
+                                        if (newList) {
+                                            core.addTrackChangesAttributesForNumbering(editor, newList, core.INSERT_ACTION);
+                                        }
+                                        break;
                                     }
                                 }
                             } else if (mutation.type === "attributes") {
@@ -1152,6 +1179,9 @@ define(function leosTrackChangesPluginModule(require) {
         if(!olOrderedList || olOrderedList.length == 0){
             olOrderedList = eventDataAsObject.find("ol[data-akn-name='aknAnnexOrderedList']");
         }
+        if (!olOrderedList || olOrderedList.length == 0) {
+           olOrderedList = eventDataAsObject.find("ul[data-akn-name='UnNumberedBlockList'], ol[data-akn-name='NumberedBlockList']");
+        }
         if(!!olOrderedList && olOrderedList.length > 0){
             for (let i = 0; i < olOrderedList.length; i++) {
                 _checkEmptyOLAndRemove(olOrderedList[i], eventDataAsObject.attr('id'));
@@ -1164,7 +1194,7 @@ define(function leosTrackChangesPluginModule(require) {
         if (elem.childNodes.length === 0 ||
             (elem.childNodes.length === 1 && elem.childNodes[0].getAttribute("data-akn-element") !== "point")) {
             var parent = elem.parentNode;
-            if(parent.getAttribute('id') === idToExit){
+            if (parent === null || parent.nodeType !== Node.ELEMENT_NODE || parent.getAttribute('id') === idToExit) {
                 return;
             }
             var doRemove = true;

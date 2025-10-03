@@ -51,9 +51,7 @@ public interface ProposalService {
 
     Proposal updateProposal(String proposalId, byte[] updatedBytes, Map<String, Object> properties);
 
-    Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory);
-
-    Proposal addComponent(Proposal proposal, String id, LeosCategory leosCategory);
+    Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory, String refersToOfDocument, String showAs);
 
     Proposal updateProposalWithMilestoneComments(Proposal proposal, List<String> milestoneComments, VersionType versionType, String comment);
 

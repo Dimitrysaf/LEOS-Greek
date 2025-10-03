@@ -4,6 +4,7 @@
 @ckEditorScenarios
 Feature: CK Editor Regression Features
 
+    #issues/2887 : Tab key not working fine after change in indent/outdent
     @ckEditorPlugin @local
     Scenario: testing of different ck editor plugin in citation, recital and articles
         Given navigate to edit drafting application with "User1"
@@ -345,16 +346,17 @@ Feature: CK Editor Regression Features
         When click save and close button of ck editor
         Then content of paragraph 2 contains a table with 3 row and 2 column
         #### Workaround to get attr 'id' of new paragraph for table #####
-        When refresh the browser
-        Then user is on annex page
+        #When refresh the browser
+        #Then user is on annex page
         ####
         When click on edit icon of level 1
         When click on edit icon of paragraph 2
         Then ck editor window is displayed
         And  table icon is disabled in ck editor
-        When mouseover and click on paragraph 1
+        When click close button of ck editor
+        When click on edit icon of paragraph 1
         Then ck editor window is displayed
-        And table icon is enabled in ck editor
+        And  table icon is enabled in ck editor
         When click close button of ck editor
 
     @ckEditorOpen @local
@@ -611,7 +613,7 @@ Feature: CK Editor Regression Features
         Then user is on act viewer page
         When click on annex 1 link
         Then user is on annex page
-        When refresh the browser
+#        When refresh the browser
         When click on toc edit button
         And  drag element "Paragraph" from element tree list and drop after node label "2. Text..." in navigation pane
         And  click on save and close button in navigation pane
@@ -632,7 +634,7 @@ Feature: CK Editor Regression Features
         Then ck editor window is not displayed
         And  total number of paragraph is 2
 
-    @trackChangesPlugin @local
+    @trackChangesPlugin @tabKeyInParagraph @local
     Scenario: Verify the TC plugin
         Given navigate to edit drafting application with "User1"
         Then user is on home page
@@ -1096,8 +1098,8 @@ Feature: CK Editor Regression Features
         And  add "wrapper paragraph" at current cursor position in edition mode
         And click save and close button of ck editor
         Then ck editor window is not displayed
-        When refresh the browser
-        Then user is on annex page
+#        When refresh the browser
+#        Then user is on annex page
         When click on edit icon of paragraph 1
         Then ck editor window is displayed
         When user clicks on the track changes action plugin
@@ -1107,7 +1109,111 @@ Feature: CK Editor Regression Features
         And  click enter from keyboard in edition mode
         And  add "intro subparagraph" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
-        And  click on increase indent icon present in ck editor panel
+        And  click on tab key from keyboard
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on tab key from keyboard
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on tab key from keyboard
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on tab key from keyboard
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point 3 sub point 3" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point iii sub point iii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point c sub point c" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "wrapper subparagraph" at current cursor position in edition mode
+        And  user clicks on the track changes action plugin
+        And  click on accept all changes dropdown button
+        Then paragraph should not contain a span tag in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+#        When refresh the browser
+#        Then user is on annex page
+        And  total number of paragraph is 2
+        And  content of paragraph 1 is "Text..."
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of paragraph 2 is "intro subparagraph"
+        And  content of point 1 of paragraph 2 is "point a sub point a"
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of paragraph 2 is "point b sub point b"
+        And  content of point 1 of point 2 of paragraph 2 is "point i sub point i"
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of point 2 of paragraph 2 is "point ii sub point ii"
+        And  content of point 1 of point 2 of point 2 of paragraph 2 is "point 1 sub point 1"
+        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of point 2 of point 2 of paragraph 2 is "point 2 sub point 2"
+        And  content of point 1 of point 2 of point 2 of point 2 of paragraph 2 is "point - sub point -"
+        And  content of point 2 of point 2 of point 2 of point 2 of paragraph 2 is "point -- sub point --"
+        And  content of point 3 of point 2 of point 2 of paragraph 2 is "point 3 sub point 3"
+        And  content of point 3 of point 2 of paragraph 2 is "point iii sub point iii"
+        And  content of point 3 of point 2 of paragraph 2 is "point iii sub point iii"
+        And  content of point 3 of paragraph 2 is "point c sub point c"
+        And  content of subparagraph with attribute name "refersto" and value "~WRP" of paragraph 2 is "wrapper subparagraph"
+
+    @ckEditorPluginInLFDS @local
+    Scenario: testing of different ck editor plugin in Legislative Financial and Digital Statement
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "ck editor plugin scenarios in LFDS" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on financial statement link present in act viewer page
+        Then user is on financial statement page
+        When mouseover and click on level 2 in financial statement page
+        Then ck editor window is displayed
+        When click on insert footnote icon present in ck editor panel
+        Then cke dialog window is displayed with title "Edit Footnote"
+        When type "new footnote" in cke dialog textarea
+        And  click on ok button in cke dialog window
+        Then level contains span tag with attribute name "data-akn-name" and value "aknAuthorialNote" in edition mode
+        Then authorial note with marker "(1)" and title "new footnote" is present inside level in edition mode
+        When click delete button from keyboard in edition mode
+        Then level does not contain span tag with attribute name "data-akn-name" with value "aknAuthorialNote" in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+
+    @acceptAllRejectAllPluginInLFDS @local
+    Scenario: Accept all and reject all functionality in Legislative Financial and Digital Statement
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "accept all and reject all ck editor plugin scenarios in LFDS" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on financial statement link present in act viewer page
+        Then user is on financial statement page
+        When enable track changes
+        Then enable track changes toggle bar is on in ribbon toolbar
+        When mouseover and click on level 2 in financial statement page
+        Then ck editor window is displayed
+        When click at offset 5 of pTag 1 of level in edition mode
+        And  add "new text" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "mmanual testing " at current cursor position in edition mode
+        When click on add subparagraph icon present in ck editor panel
+        And  add "manual testing 1" at current cursor position in edition mode
+        And click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
         And  add "point a sub point a" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
@@ -1132,36 +1238,129 @@ Feature: CK Editor Regression Features
         And  add "point -- sub point --" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on decrease indent icon present in ck editor panel
+        And  click on decrease indent icon present in ck editor panel
         And  add "point 3 sub point 3" at current cursor position in edition mode
+        Then level contains span tag with attribute name "data-akn-action" and value "insert" in edition mode
+        When user clicks on the track changes action plugin
+        And  click on reject all changes dropdown button
+        Then level should not contain a span tag in edition mode
+        And  pTag 1 of level contains "[...]" in edition mode
+        # accept all changes
+        When click at offset 5 of pTag 1 of level in edition mode
+        And  add "new text" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "mmanual testing " at current cursor position in edition mode
+        When click on add subparagraph icon present in ck editor panel
+        And  add "manual testing 1" at current cursor position in edition mode
+        And click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click on increase indent icon present in ck editor panel
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
         And  click on decrease indent icon present in ck editor panel
-        And  add "point iii sub point iii" at current cursor position in edition mode
-        And  click enter from keyboard in edition mode
         And  click on decrease indent icon present in ck editor panel
-        And  add "point c sub point c" at current cursor position in edition mode
-        And  click enter from keyboard in edition mode
-        And  click on decrease indent icon present in ck editor panel
-        And  add "wrapper subparagraph" at current cursor position in edition mode
-        And  user clicks on the track changes action plugin
+        And  add "point 3 sub point 3" at current cursor position in edition mode
+        Then level contains span tag with attribute name "data-akn-action" and value "insert" in edition mode
+        When user clicks on the track changes action plugin
         And  click on accept all changes dropdown button
-        Then paragraph should not contain a span tag in edition mode
+        Then level should not contain a span tag in edition mode
         When click save and close button of ck editor
         Then ck editor window is not displayed
-        When refresh the browser
-        Then user is on annex page
-        And  total number of paragraph is 2
-        And  content of paragraph 1 is "Text..."
-        And  content of subparagraph with attribute name "refersto" and value "~INP" of paragraph 2 is "intro subparagraph"
-        And  content of point 1 of paragraph 2 is "point a sub point a"
-        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of paragraph 2 is "point b sub point b"
-        And  content of point 1 of point 2 of paragraph 2 is "point i sub point i"
-        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of point 2 of paragraph 2 is "point ii sub point ii"
-        And  content of point 1 of point 2 of point 2 of paragraph 2 is "point 1 sub point 1"
-        And  content of subparagraph with attribute name "refersto" and value "~INP" of list of point 2 of point 2 of point 2 of paragraph 2 is "point 2 sub point 2"
-        And  content of point 1 of point 2 of point 2 of point 2 of paragraph 2 is "point - sub point -"
-        And  content of point 2 of point 2 of point 2 of point 2 of paragraph 2 is "point -- sub point --"
-        And  content of point 3 of point 2 of point 2 of paragraph 2 is "point 3 sub point 3"
-        And  content of point 3 of point 2 of paragraph 2 is "point iii sub point iii"
-        And  content of point 3 of point 2 of paragraph 2 is "point iii sub point iii"
-        And  content of point 3 of paragraph 2 is "point c sub point c"
-        And  content of subparagraph with attribute name "refersto" and value "~WRP" of paragraph 2 is "wrapper subparagraph"
+
+    @ckEditorPluginRecital @autonomousAct @local
+    Scenario: testing of different ck editor plugin in Autonomous act -recital
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-008" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "CK Editor Scenarios for Recital in Autonomous Act" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        ### Image #######
+        When mouseover and click on recital 1
+        Then ck editor window is displayed
+        When click on image icon present in ck editor panel
+        Then cke dialog window is displayed with title "Image"
+        When upload an image file from a relative location "the-quick-fox.jpg" in iframe "cke_dialog_ui_input_file"
+        When click dialog ok button
+        When click save and close button of ck editor
+        Then recital 1 contains image
+        When mouseover and click on recital 1
+        Then ck editor window is displayed
+        When click backspace from keyboard in edition mode
+        When click save and close button of ck editor
+        Then recital 1 does not contain image
+#        ###Table Properties###
+        When mouseover and click on recital 2
+        Then ck editor window is displayed
+        And  click on table icon present in ck editor panel
+        Then cke dialog window is displayed with title "Table Properties"
+        When click on ok button in cke dialog window
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  content subflow of 1 of recital 2 contains a table with 3 row and 2 column
+        When mouseover and click on recital 2
+        Then ck editor window is displayed
+        When click on cell 1 of row 1 of table 1 of li 1 with data-akn-element "recital" in edition mode
+        And  right click on cell 1 of row 1 of table 1 of li 1 with data-akn-element "recital" in edition mode
+        And  user select "Delete Table" from the context menu
+        And  click save and close button of ck editor
+        Then recital 2 doest not contain subflow
+        ######### Recital List #######
+        When mouseover and click on recital 3
+        Then ck editor window is displayed
+        When click on insert list icon present in ck editor panel
+        Then insert list icon is disabled in ck editor panel
+        When add "list item 1" at current cursor position in edition mode
+        When click enter from keyboard in edition mode
+        And  add "list item 2" at current cursor position in edition mode
+        When click enter from keyboard in edition mode
+        And  add "list item 3" at current cursor position in edition mode
+        When click enter from keyboard in edition mode
+        And  add "list item 4" at current cursor position in edition mode
+        Then li contains attribute "data-akn-name" with value "recital" and list li contains attribute "data-akn-num" with value "—" in edition mode
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  content of subflow 1 of recital 3 contains a "list item 1"
+        And  content of subflow 1 of recital 3 contains a "list item 2"
+        And  content of subflow 1 of recital 3 contains a "list item 3"
+        And  content of subflow 1 of recital 3 contains a "list item 4"
+        When mouseover and click on recital 3
+        Then ck editor window is displayed
+        When select content from offset 0 till offset 11 in list 4 of recital in edition mode
+        And  click backspace from keyboard in edition mode
+        And  click backspace from keyboard in edition mode
+        When select content from offset 0 till offset 11 in list 3 of recital in edition mode
+        And  click backspace from keyboard in edition mode
+        And  click backspace from keyboard in edition mode
+        When select content from offset 0 till offset 11 in list 2 of recital in edition mode
+        And  click backspace from keyboard in edition mode
+        And  click backspace from keyboard in edition mode
+        When select content from offset 0 till offset 11 in list 1 of recital in edition mode
+        And  click backspace from keyboard in edition mode
+        And  click backspace from keyboard in edition mode
+        When click save and close button of ck editor
+        Then recital 3 doest not contain subflow

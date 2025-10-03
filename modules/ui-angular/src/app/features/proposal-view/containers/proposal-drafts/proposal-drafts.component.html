@@ -25,7 +25,7 @@
 </ng-container>
 
 <!-- SECTION: MEMORANDUM -->
-<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum && this.createOptions['EM-LP01']">
+<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum">
     <eui-card-header>
         <eui-card-header-title>
             <div class="eui-u-display-flex eui-u-flex-row">
@@ -408,7 +408,7 @@
                                         (click)="$event.preventDefault()"
                                 ><strong>{{
                                     row.title
-                                        ? row.title
+                                        ? cleanDelInsert(row.title)
                                         : ('page.collection.drafts.annex.table.tr.no-title'
                                             | translate)
                                     }}</strong></a

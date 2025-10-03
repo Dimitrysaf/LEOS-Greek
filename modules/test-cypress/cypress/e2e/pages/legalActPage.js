@@ -8,6 +8,7 @@ class legalActPage {
         clause: () => cy.get('clause'),
         clauseContent: () => this.elements.clause().find('content').find('aknp'),
         preface: () => this.elements.bill().find('preface'),
+        eeaRelevanceContainer : () => this.elements.preface().find("container[name='eeaRelevance']"),
         longTitle: () => this.elements.preface().find('longtitle'),
         docPurpose: () => this.elements.longTitle().find('docpurpose'),
         recitalFromImportOj: () => cy.get("recital[id^='impXrec']"),
@@ -169,16 +170,24 @@ class legalActPage {
         return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(listNumber-1).children('subparagraph').eq(subparagraphNumber-1);
     }
 
-    getSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, poinListNumber, paragraphNumber, articleNumber){
-        return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(poinListNumber-1).children('point').eq(pointNumber-1).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
+    getSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, pointListNumber, paragraphNumber, articleNumber){
+        return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(pointListNumber-1).children('point').eq(pointNumber-1).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
     }
 
-    getSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber){
-        return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(poinListNumber1-1).children('point').eq(pointNumber1-1).children('list').eq(poinListNumber2-1).children('point').eq(pointNumber2-1).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
+    getSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
+        return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(pointListNumber1-1).children('point').eq(pointNumber1-1).children('list').eq(pointListNumber2-1).children('point').eq(pointNumber2-1).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
     }
 
-    getSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, poinListNumber3, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber){
-        return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(poinListNumber1-1).children('point').eq(pointNumber1-1).children('list').eq(poinListNumber2-1).children('point').eq(pointNumber2-1).children('list').eq(poinListNumber3-1).children('point').eq(pointNumber3-1).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
+    getPointOfPointOfPointOfParagraphOfArticle(pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
+        return this.getParagraphFromArticle(paragraphNumber, articleNumber).children('list').eq(pointListNumber1-1).children('point').eq(pointNumber1-1).children('list').eq(pointListNumber2-1).children('point').eq(pointNumber2-1).children('list').eq(pointListNumber3-1).children('point').eq(pointNumber3-1);
+    }
+
+    getSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
+        return this.getPointOfPointOfPointOfParagraphOfArticle(pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).children('subparagraph').eq(subparagraphNumber-1);
+    }
+
+    getSubParagraphOfListOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
+        return this.getPointOfPointOfPointOfParagraphOfArticle(pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).children('list').eq(subParagraphListNumber-1).children('subparagraph').eq(subparagraphNumber-1);
     }
 
     getSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber){
@@ -237,16 +246,20 @@ class legalActPage {
         return this.getSubparagraphOfListOfParagraphFromArticle(subparagraphNumber, listNumber, paragraphNumber, articleNumber).find('content aknp');
     }
 
-    getContentOfSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, poinListNumber, paragraphNumber, articleNumber){
-        return this.getSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, poinListNumber, paragraphNumber, articleNumber).find('content aknp');
+    getContentOfSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, pointListNumber, paragraphNumber, articleNumber){
+        return this.getSubParagraphOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber, pointListNumber, paragraphNumber, articleNumber).find('content aknp');
     }
 
-    getContentOfSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber){
-        return this.getSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber).find('content aknp');
+    getContentOfSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
+        return this.getSubParagraphOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).find('content aknp');
     }
 
-    getContentOfSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, poinListNumber3, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber){
-        return this.getSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, poinListNumber3, pointNumber2, poinListNumber2, pointNumber1, poinListNumber1, paragraphNumber, articleNumber).find('content aknp');
+    getContentOfSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
+        return this.getSubParagraphOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).find('content aknp');
+    }
+
+    getContentOfSubParagraphOfListOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber){
+        return this.getSubParagraphOfListOfPointOfPointOfPointOfParagraphOfArticle(subparagraphNumber, subParagraphListNumber, pointNumber3, pointListNumber3, pointNumber2, pointListNumber2, pointNumber1, pointListNumber1, paragraphNumber, articleNumber).find('content aknp');
     }
 
     getContentOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber){
@@ -327,6 +340,30 @@ class legalActPage {
 
     getTagFromArticle(articleNumber, tagName) {
         return this.getArticle(articleNumber).find(`> ${tagName}`);
+    }
+
+    getImageOfRecital(recitalNumber) {
+        return this.getRecital(recitalNumber).find('img');
+    }
+
+    getSubflow(recitalNumber) {
+        return this.getRecital(recitalNumber).find('subflow[name="structuredContent"]');
+    }
+
+    getSubflowOfRecital(subFlowNumber, recitalNumber) {
+        return this.getSubflow(recitalNumber).eq(subFlowNumber-1);
+    }
+
+    getListOfRecital(subFlowNumber,recitalNumber){
+        return this.getSubflowOfRecital(subFlowNumber, recitalNumber).find('list point content');
+    }
+
+    getRowFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber) {
+        return this.getSubflowOfRecital(subFlowNumber, recitalNumber).find('table tbody tr');
+    }
+
+    getColumnFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber) {
+        return this.getRowFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber).eq(0).find('td');
     }
 }
 export default new legalActPage();

@@ -11,7 +11,7 @@ import {
   EuiPaginatorComponent,
 } from '@eui/components/eui-paginator';
 import { EuiBreadcrumbService } from '@eui/components/layout';
-import { ProcedureType } from '@leos/shared';
+import {ApplicationRole, ProcedureType} from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest,
@@ -62,12 +62,14 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
   canCreateMandate = false;
   canCreateProposal = false;
   canUpload = false;
+  userRoles: ApplicationRole[];
 
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
   @ViewChild('filters') filtersComponent: ProposalsFiltersComponent;
 
   protected readonly homeUrl = document.baseURI;
+
 
   constructor(
     private router: Router,
@@ -219,7 +221,10 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
       this.canCreateMandate = CN;
       this.canCreateProposal = !CN;
       this.canUpload = CAN_UPLOAD;
+      this.userRoles =  config.user.roles;
+      console.log(this.userRoles);
     });
+
   }
 
   private manageBreadCrumbsRepository() {
@@ -235,5 +240,9 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
         link: null,
       },
     ]);
+  }
+
+  handleCreate() {
+    this.createProposalService.openProposalCreateDialog(this.userRoles);
   }
 }

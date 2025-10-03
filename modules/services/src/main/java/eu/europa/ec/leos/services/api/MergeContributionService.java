@@ -1243,10 +1243,6 @@ public class MergeContributionService {
         } else if (xmlNum != null && !withTrackChanges && !getId(firstChild).equals(getId(xmlNode))) {
             xmlNum.setTextContent("#");
             xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNum), getId(xmlNum));
-        } else if (xmlNum != null && !withTrackChanges && getId(firstChild).equals(getId(xmlNode))) {
-            Node refInsNode = getFirstChild(contributionNum, "ins");
-            xmlNum.setTextContent(refInsNode.getTextContent());
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNum), getId(xmlNum));
         }
         return xmlContent;
     }
@@ -1694,6 +1690,13 @@ public class MergeContributionService {
                     }
                     found = true;
                 }
+                if(isIns && !found  && nextNodeParent == null && previousNodeParent == null &&
+                        XercesUtils.hasAscendantOfType(originalUpdatedNode, "subparagraph")){
+                    if (!withTrackChanges) {
+                        XercesUtils.replaceNodeContent(originalUpdatedNode, contentToBeAddedOrRemoved);
+                        found = true;
+                    }
+                }
                 if (refOriginalParentNode != null) {
                     xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refOriginalParentNode), getId(refOriginalParentNode));
                 }
@@ -1750,7 +1753,9 @@ public class MergeContributionService {
 
         String cleanedElementId = removesPrefixFromElementId(elementId);
 
-        if (!hasSplitAttr) {
+        if (!hasSplitAttr ||
+                (contributionNode.getNodeName().equalsIgnoreCase("level")
+                        && XercesUtils.countChildren(contributionNode, Arrays.asList("subparagraph")) > 0)) {
             // Undo merging from inside main element
             xmlContent = undoTrackChangesInContributionNode(
                     xmlContent,
@@ -1845,7 +1850,7 @@ public class MergeContributionService {
                 xmlContent, impactedElements, tocItemsList, mergingCompletelySuccessfull);
 
         // Undo merging of inserted elements from inside main element
-        xmlContent = undoInsertedElementsInContributionNode(contributionNode, xmlContent, elementId, impactedElements, tocItemsList);
+        xmlContent = undoInsertedElementsInContributionNode(contributionNode, xmlContent, elementId, impactedElements, tocItemsList, mergingCompletelySuccessfull);
 
         xmlContent = undoNumberOfArticlesInContributionNode(xmlContent, contributionNode, elementId, tocItemsList);
 
@@ -2036,23 +2041,35 @@ public class MergeContributionService {
                     }
                 }
                 if (previousNodeParent != null && !found) {
-                    String contentToBeUpdated = nodeToString(previousNodeParent);
-                    String contentToCompareTo = getContentNodeAsXmlFragment(previousNodeParent);
-                    String strToBeFound = contentToBeRemoved;
-                    if (StringUtils.countMatches(contentToBeUpdated, strToBeFound) == 1 && StringUtils.countMatches(contentToCompareTo, strToBeFound) == 1) {
-                        XercesUtils.replaceElement(previousNodeParent, contentToBeUpdated.replaceFirst(Pattern.quote(strToBeFound),
-                                ""));
+                    Node insElement = getFirstChild(previousNodeParent, LEOS_TC_INSERT_ELEMENT_NAME);
+                    if(this.hasDocAnnexAncestorAndIsBlockHeading(previousNodeParent) && insElement != null){
+                        previousNodeParent.removeChild(insElement);
                         found = true;
+                    }else {
+                        String contentToBeUpdated = nodeToString(previousNodeParent);
+                        String contentToCompareTo = getContentNodeAsXmlFragment(previousNodeParent);
+                        String strToBeFound = contentToBeRemoved;
+                        if (StringUtils.countMatches(contentToBeUpdated, strToBeFound) == 1 && StringUtils.countMatches(contentToCompareTo, strToBeFound) == 1) {
+                            XercesUtils.replaceElement(previousNodeParent, contentToBeUpdated.replaceFirst(Pattern.quote(strToBeFound),
+                                    ""));
+                            found = true;
+                        }
                     }
                 }
                 if (nextNodeParent != null && !found) {
-                    String contentToBeUpdated = nodeToString(nextNodeParent);
-                    String contentToCompareTo = getContentNodeAsXmlFragment(nextNodeParent);
-                    String strToBeFound = contentToBeRemoved;
-                    if (StringUtils.countMatches(contentToBeUpdated, strToBeFound) == 1 && StringUtils.countMatches(contentToCompareTo, strToBeFound) == 1) {
-                        XercesUtils.replaceElement(nextNodeParent, contentToBeUpdated.replaceFirst(Pattern.quote(strToBeFound),
-                                ""));
+                    Node insElement = getFirstChild(nextNodeParent, LEOS_TC_INSERT_ELEMENT_NAME);
+                    if(this.hasDocAnnexAncestorAndIsBlockHeading(nextNodeParent) && insElement != null){
+                        nextNodeParent.removeChild(insElement);
                         found = true;
+                    }else {
+                        String contentToBeUpdated = nodeToString(nextNodeParent);
+                        String contentToCompareTo = getContentNodeAsXmlFragment(nextNodeParent);
+                        String strToBeFound = contentToBeRemoved;
+                        if (StringUtils.countMatches(contentToBeUpdated, strToBeFound) == 1 && StringUtils.countMatches(contentToCompareTo, strToBeFound) == 1) {
+                            XercesUtils.replaceElement(nextNodeParent, contentToBeUpdated.replaceFirst(Pattern.quote(strToBeFound),
+                                    ""));
+                            found = true;
+                        }
                     }
                 }
                 if (refOriginalParentNode != null) {
@@ -2160,6 +2177,9 @@ public class MergeContributionService {
                     }
                 }
                 if (!found && previousNodeParent == null && nextNodeParent == null) {
+                    if(this.hasDocAnnexAncestorAndIsBlockHeading(originalUpdatedNode) && getFirstChild(originalUpdatedNode, LEOS_TC_DELETE_ELEMENT_NAME) != null){
+                        this.removeDelChildWithContent(originalUpdatedNode, contentToBeAdded);
+                    }
                     originalUpdatedNode = XercesUtils.appendToNodeContent(originalUpdatedNode,
                             contentToBeAdded, false);
                     xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode));
@@ -2171,6 +2191,53 @@ public class MergeContributionService {
             }
         }
         return xmlContent;
+    }
+
+    private boolean hasDocAnnexAncestorAndIsBlockHeading(Node originalUpdatedNode) {
+        // Check if the node itself is a "block" with attribute name="heading"
+        if (originalUpdatedNode.getNodeType() != Node.ELEMENT_NODE) {
+            return false;
+        }
+        org.w3c.dom.Element element = (org.w3c.dom.Element) originalUpdatedNode;
+        if (!"block".equalsIgnoreCase(element.getTagName()) ||
+                !"heading".equals(element.getAttribute("name"))) {
+            return false;
+        }
+
+        // Check for ancestor with tag "doc" and attribute name="ANNEX"
+        Node currentNode = originalUpdatedNode.getParentNode();
+        while (currentNode != null) {
+            if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
+                org.w3c.dom.Element ancestorElement = (org.w3c.dom.Element) currentNode;
+                if ("doc".equalsIgnoreCase(ancestorElement.getTagName()) &&
+                        "ANNEX".equals(ancestorElement.getAttribute("name"))) {
+                    return true;
+                }
+            }
+            currentNode = currentNode.getParentNode();
+        }
+        return false;
+    }
+
+    private void removeDelChildWithContent(Node originalUpdatedNode, String originalValue) {
+        if (originalUpdatedNode == null || originalValue == null) {
+            return;
+        }
+
+        // Get all child nodes with tag "del"
+        NodeList childNodes = originalUpdatedNode.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                org.w3c.dom.Element element = (org.w3c.dom.Element) child;
+                if (LEOS_TC_DELETE_ELEMENT_NAME.equalsIgnoreCase(element.getTagName()) &&
+                        originalValue.equals(element.getTextContent().trim())) {
+                    originalUpdatedNode.removeChild(child);
+                    // Assuming only one matching child needs to be removed
+                    break;
+                }
+            }
+        }
     }
 
     private byte[] undoMoveElement(byte[] xmlContent, Node contributionNode, String idWithoutMovedPrefix,
@@ -2278,9 +2345,14 @@ public class MergeContributionService {
     // Undo added tracked elements in contribution node
     private byte[] undoInsertedElementsInContributionNode(Node contributionNode, byte[] xmlContent, String elementId,
                                                           List<String> impactedElements,
-                                                          List<TocItem> tocItemsList) {
+                                                          List<TocItem> tocItemsList, AtomicBoolean mergingCompletelySuccessfull) {
         NodeList addedElts = XercesUtils.getElementsByXPath(contributionNode,
                 "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_ACTION_ATTR + " = '" + LEOS_TC_INSERT_ACTION + "']");
+        if(addedElts.getLength() == 0){
+            addedElts = XercesUtils.getElementsByXPath(contributionNode,
+                    "//*[@" + XMLID + " = '" + elementId + "']//*[@" + LEOS_ACTION_ENTER + " = '" + LEOS_TC_INSERT_ACTION + "']");
+        }
+
         for (int i = 0; i < addedElts.getLength(); i++) {
             Node addedElt = addedElts.item(i);
             Node realImpactedElt = getRealUpdatedNodeOnUndo(xmlContent, addedElt, true);
@@ -2295,6 +2367,7 @@ public class MergeContributionService {
                     xmlContent = manageOnElementDeletion(xmlContent, getId(originalNodeToBeDeleted.getParentNode()), null);
                     xmlContent = renumberFragment(xmlContent, getId(sibling), tocItemsList);
                     impactedElements.add(getId(realImpactedElt));
+                    mergingCompletelySuccessfull.set(true);
                 }
             }
         }

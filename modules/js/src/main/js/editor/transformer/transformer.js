@@ -44,6 +44,7 @@ define(function transformerModule(require) {
             if(this._isCKEditorWidget(params.fragment) || this._skipTransformation(params)) {
                 return;
             }
+            this._removeSpellcheckerContextmenuContainer(params.fragment);
             this._.direction = params.direction;
             this._.transformationConfigResolver = params.transformationConfigResolver;
             var bindedTransformElement = LODASH.bind(this._transformElement, this);
@@ -52,11 +53,19 @@ define(function transformerModule(require) {
             return transformedProducts;
         },
         _isCKEditorWidget : function _isCKEditorWidget(fragment) {
-            if(!fragment || !fragment.children || fragment.children.length == 0) {
+            return this._hasFirstChildWithClass(fragment, "cke_widget_wrapper");
+        },
+        _removeSpellcheckerContextmenuContainer : function _removeSpellcheckerContextmenuContainer(fragment) {
+            if (this._hasFirstChildWithClass(fragment, "contextmenu-container")) {
+                fragment.getFirst().remove();
+            }
+        },
+        _hasFirstChildWithClass : function _isClass(fragment, className) {
+            if (!fragment || !fragment.children || fragment.children.length == 0) {
                 return false;
             }
             var rootElement = fragment.children[0];
-            return (rootElement && rootElement.hasClass && rootElement.hasClass("cke_widget_wrapper"));
+            return (rootElement && rootElement.hasClass && rootElement.hasClass(className));
         },
         _skipTransformation : function _skipTransformation(params) {
             if (params.transformationConfigResolver._ && params.transformationConfigResolver._.resolverConfigs) {

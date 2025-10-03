@@ -147,6 +147,7 @@ export class DocumentService {
   }>;
   pageSize = 10;
   isReloadRequired = false;
+  isToRestoreOrToRemoveData = false;
   public trackChangesStatus$: Observable<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
@@ -203,6 +204,7 @@ export class DocumentService {
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
   private searchLimitReachedSymbolBS = new BehaviorSubject<string>("");
+  private documentCollectionBS = new BehaviorSubject<string>("");
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
   private isEditorOpenBS = new BehaviorSubject<boolean>(false);
   private getElementContentBS = new BehaviorSubject<{
@@ -667,7 +669,7 @@ export class DocumentService {
   }
 
   setBlockReloadOfToc() {
-    this.tocService.setBlockReloadOfToc();
+    this.tocService.setBlockReloadOfToc(false);
   }
 
   showRefreshWarning() {
@@ -1327,6 +1329,14 @@ export class DocumentService {
     this.isDocumentLoadedBS.next(loaded);
   }
 
+  setDocumentCollectionName(documentCollection: string) {
+    this.documentCollectionBS.next(documentCollection);
+  }
+
+  getDocumentCollectionName() {
+    return this.documentCollectionBS.value;
+  }
+
   setIsClonedProposal(cloned: boolean) {
     this.isClonedProposalBS.next(cloned);
     this.tocService.setIsClonedProposal(cloned);
@@ -1595,7 +1605,7 @@ export class DocumentService {
     }
     /** Entity collaborators **/
     const entityCollaborators = collaborators
-      .filter((c) => c.login === c.entity.name)
+      .filter((c) => c.login === c.entity?.name)
       .sort((c1, c2) => {
         const c1l = c1.entity.name.split(".").length - 1,
           c2l = c2.entity.name.split(".").length - 1;

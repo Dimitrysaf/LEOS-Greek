@@ -1,4 +1,4 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 require('@cypress/xpath');
 import coverPage from "../pages/coverPage";
 import headerPage from "../pages/headerPage";
@@ -26,4 +26,8 @@ When(`click on long title of doc purpose`, () => {
 
 When(/^click on edit icon of docPurpose$/, function () {
     coverPage.clickEditIconOfDocPurpose();
+});
+
+Then('text of eeaRelevance container of cover page is {string}', function (text) {
+    coverPage.elements.eeaRelevanceContainer().should("have.text", text);
 });

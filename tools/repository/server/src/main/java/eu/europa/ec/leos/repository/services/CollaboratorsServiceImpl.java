@@ -24,6 +24,7 @@ import eu.europa.ec.leos.repository.repositories.LeosClientsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -210,6 +211,9 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
     }
 
     private void updateCollaborator(Package pkg, Collaborator c, String userId) {
+        if (StringUtils.isEmpty(c.getEntity())) {
+            return;
+        }
         LocalDateTime creationDate = LocalDateTime.now();
         //Extend the search to wor
         final Optional<LeosClients> leosClient = (c.getLeosClientId()!=null)?leosClientsRepository.findByName(c.getLeosClientId()):Optional.empty();

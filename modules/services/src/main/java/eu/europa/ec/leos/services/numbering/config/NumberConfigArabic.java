@@ -2,13 +2,14 @@ package eu.europa.ec.leos.services.numbering.config;
 
 public class NumberConfigArabic extends NumberConfigAbstract implements NumberConfig {
 
-    public NumberConfigArabic(String prefix, String suffix) {
+    public NumberConfigArabic(String prefix, String suffix, boolean suffixInEnd) {
         this.prefix = prefix;
         this.suffix = suffix;
+        this.suffixInEnd = suffixInEnd;
     }
 
     public NumberConfigArabic() {
-        this("", "");
+        this("", "", true);
     }
 
     @Override
@@ -55,6 +56,10 @@ public class NumberConfigArabic extends NumberConfigAbstract implements NumberCo
     @Override
     protected String getImplName() {
         return this.getClass().getSimpleName();
+    }
+
+    public boolean isSuffixInEnd() {
+        return this.suffixInEnd;
     }
 
 }

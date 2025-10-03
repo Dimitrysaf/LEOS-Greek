@@ -68,7 +68,7 @@ define(function aknOrganizationPluginModule(require) {
 
     var transformationConfig = {
         akn: ORGANIZATION_NAME,
-        html: "p[class=akn-" + ORGANIZATION_NAME + "]",
+        html: "p[data-akn-name=" + ORGANIZATION_NAME + "]",
         attr: [{
             akn: "xml:id",
             html: "id"
@@ -76,7 +76,7 @@ define(function aknOrganizationPluginModule(require) {
             akn: "refersTo",
             html : "refersto"
         }, {
-            html: ["class", "akn-" + ORGANIZATION_NAME].join("=")
+            html: ["data-akn-name", ORGANIZATION_NAME].join("=")
         }],
         sub: {
             akn: "text",

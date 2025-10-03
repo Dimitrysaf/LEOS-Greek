@@ -20,6 +20,7 @@ define(function hierarchicalElementTransformer(require) {
     var INLINE_FROM_MATCH = /^(text|span|strong|em|u|sup|sub|br|a|img|mref|del)$/;
     var TABLE_ELEMENT_MATCH = /^(table)$/;
 
+    var DATA_AKN_NAME = "data-akn-name";
     var DATA_AKN_NUM = "data-akn-num";
     var DATA_AKN_INLINE_NAME = "data-akn-inline-name";
     var DATA_AKN_NUM_ID = "data-akn-num-id";
@@ -89,12 +90,20 @@ define(function hierarchicalElementTransformer(require) {
     var LEOS_INDENT_ORIGIN_NUMBER_ORIGIN = "leos:indent-origin-num-origin";
     var LEOS_INDENT_ORIGIN_TYPE = "leos:indent-origin-type";
     var LEOS_INDENT_UNUMBERED_PARAGRAPH = "leos:indent-unumbered-paragraph";
+    var LEOS_TC_ORIGINAL_NUMBER = "leos:tc-original-number";
     var DATA_REFERS_TO = "refersto";
     var LEOS_REFERS_TO = "refersTo";
     var STYLE = "style";
     var INLINE_NUM = "crossHnum";
     var PARAGRAPH = 'paragraph';
     var AKN_NUMBERED_PARAGRAPH = 'aknNumberedParagraph';
+    var RECITAL = "recital";
+    var SUBFLOW_NAME = "structuredContent";
+    var DATA_AKN_SUBFLOW_ID = "data-akn-subflow-id";
+    var DATA_AKN_HCONTAINER_ID = "data-akn-hcontainer-id";
+    var DATA_AKN_SUB_HCONTAINER_ID = "data-akn-sub-hcontainer-id";
+    var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
+    var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
 
     /*
      * Create content elements with wrapping element(e.g.: alinea, subparagraph)
@@ -202,7 +211,7 @@ define(function hierarchicalElementTransformer(require) {
                         action: "passAttributeTransformer"
                     }, {
                         from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                        to: "leos:tc-original-number",
+                        to: LEOS_TC_ORIGINAL_NUMBER,
                         action: "passAttributeTransformer"
                     }, {
                         from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -290,7 +299,25 @@ define(function hierarchicalElementTransformer(require) {
         var that = this;
         element.children.forEach(function (childElement) {
             var childElementName = that._getElementName(childElement);
-            if ((typeof childElement.parent.attributes[DATA_AKN_CROSS_HEADING_TYPE] !== 'undefined') && childElement.parent.attributes[DATA_AKN_CROSS_HEADING_TYPE] == "list") {
+
+            function createInlineGroup() {
+                if (childElement.getAscendant('li')?.attributes[DATA_AKN_NAME] === RECITAL) {
+                    createMpRecitalAA.call(that, childElement.parent, rootPath, inlineGroup);
+                } else {
+                    var contentId = childElement.parent.attributes[DATA_AKN_WRAPPED_CONTENT_ID] ?
+                        DATA_AKN_WRAPPED_CONTENT_ID : DATA_AKN_CONTENT_ID;
+
+                    var contentOrigin = childElement.parent.attributes[DATA_WRAPPED_CONTENT_ORIGIN] ?
+                        DATA_WRAPPED_CONTENT_ORIGIN : DATA_CONTENT_ORIGIN;
+
+                    createContent.call(that, childElement.parent, rootPath, inlineGroup, contentId, contentOrigin);
+                }
+                inlineGroup = [];
+            }
+
+            if (childElement.parent.attributes[DATA_AKN_NAME] === RECITAL) {
+                createContentDirectly.call(that, childElement, rootPath);
+            } else if ((typeof childElement.parent.attributes[DATA_AKN_CROSS_HEADING_TYPE] !== 'undefined') && childElement.parent.attributes[DATA_AKN_CROSS_HEADING_TYPE] == "list") {
                 if (childElementName === "text") {
                     that.mapToChildProducts(element, {
                         toPath: rootPath,
@@ -306,17 +333,12 @@ define(function hierarchicalElementTransformer(require) {
                 inlineGroup.push(childElement);
                 var nextElementName = childElement.next ? that._getElementName(childElement.next) : null;
                 if (!nextElementName || !INLINE_FROM_MATCH.test(nextElementName)) {
-                    var contentId = childElement.parent.attributes[DATA_AKN_WRAPPED_CONTENT_ID] ?
-                        DATA_AKN_WRAPPED_CONTENT_ID : DATA_AKN_CONTENT_ID;
-
-                    var contentOrigin = childElement.parent.attributes[DATA_WRAPPED_CONTENT_ORIGIN] ?
-                        DATA_WRAPPED_CONTENT_ORIGIN : DATA_CONTENT_ORIGIN;
-
-                    createContent.call(that, childElement.parent, rootPath, inlineGroup, contentId, contentOrigin);
-                    inlineGroup = [];
+                    createInlineGroup();
                 }
             } else if (childElementName === "p") {
                 createContent.call(that, childElement, rootPath, childElement.children, DATA_AKN_WRAPPED_CONTENT_ID, DATA_CONTENT_ORIGIN);
+            } else if (childElement.getAscendant('li')?.attributes[DATA_AKN_NAME] === RECITAL) {
+                createMpRecitalAA.call(that, childElement.parent, rootPath, [childElement]);
             } else if (TABLE_ELEMENT_MATCH.test(childElementName)) {
                 wrapElementWithContent.call(that, childElement, rootPath, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN);
             } else {
@@ -325,6 +347,82 @@ define(function hierarchicalElementTransformer(require) {
                 });
             }
         });
+    }
+
+    function createMpRecitalAA(element, contentPath, contentChildren) {
+        this.mapToChildProducts(element, {
+            toPath: contentPath,
+            toChild: "mp",
+            attrs: [{
+                from: "id",
+                to: "xml:id",
+                action: "passAttributeTransformer"
+            }, {
+                from: DATA_MP_ORIGIN,
+                to: "leos:origin",
+                action: "passAttributeTransformer"
+            }]
+        });
+        contentPath += "/mp";
+        if (element.attributes[DATA_AKN_NAME] === SUBFLOW_NAME) {
+            this.mapToChildProducts(element, {
+                toPath: contentPath,
+                toChild: "subflow",
+                attrs: [{
+                    from: DATA_AKN_SUBFLOW_ID,
+                    to: "xml:id",
+                    action: "passAttributeTransformer"
+                }, {
+                    from: DATA_AKN_NAME,
+                    to: "name",
+                    action: "passAttributeTransformer"
+                }]
+            });
+            contentPath += "/subflow";
+            if (element.attributes[DATA_AKN_HCONTAINER]) {
+                this.mapToChildProducts(element, {
+                    toPath: contentPath,
+                    toChild: "hcontainer",
+                    attrs: [{
+                        from: DATA_AKN_HCONTAINER_ID,
+                        to: "xml:id",
+                        action: "passAttributeTransformer"
+                    }, {
+                        from: DATA_AKN_HCONTAINER,
+                        to: "name",
+                        action: "passAttributeTransformer"
+                    }]
+                });
+                contentPath += "/hcontainer";
+                if (element.attributes[DATA_AKN_SUB_HCONTAINER]) {
+                    this.mapToChildProducts(element, {
+                        toPath: contentPath,
+                        toChild: "hcontainer",
+                        attrs: [{
+                            from: DATA_AKN_SUB_HCONTAINER_ID,
+                            to: "xml:id",
+                            action: "passAttributeTransformer"
+                        }, {
+                            from: DATA_AKN_SUB_HCONTAINER,
+                            to: "name",
+                            action: "passAttributeTransformer"
+                        }]
+                    });
+                    contentPath += "/hcontainer";
+                    if (contentChildren[0].name === 'img') {
+                        createContent.call(this, element, contentPath, contentChildren, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN);
+                    } else {
+                        wrapElementWithContent.call(this, contentChildren[0], contentPath, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN)
+                    }
+                }
+            } else {
+                this.mapToNestedChildProduct(contentChildren[0], {
+                    toPath: contentPath
+                });
+            }
+        } else {
+            createContentChildren.call(this, element, contentPath, contentChildren);
+        }
     }
 
     function createContent(element, rootPath, contentChildren, contentId, contentOrigin) {
@@ -551,6 +649,15 @@ define(function hierarchicalElementTransformer(require) {
             var rootElementsWithCrossHeadingInlineAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/inline\/text"].join("")));
             var rootElementsWithContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content"].join("")));
             var rootElementsWithContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content\/mp"].join("")));
+            var rootElementsWithMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp"].join("")));
+            var rootElementsWithMpAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/text"].join("")));
+            var rootElementsWithMpAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/((?!text|subflow).)+"].join("")));
+            var rootElementsWithSubflowForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow"].join("")));
+            var rootElementsWithSubflowAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/((?!hcontainer).)+"].join("")));
+            var rootElementsWithSubflowSubHcontainerAndContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content"].join("")));
+            var rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp"].join("")));
+            var rootElementsWithSubflowSubHcontainerContentMpAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp\/.+"].join("")));
+            var rootElementsWithSubflowSubHcontainerContentAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/((?!mp).)+"].join("")));
             // path = paragraph/subparagraph
             var rootElementsWithContentWrapperForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, PSR, contentWrapperForFrom].join("")));
             //path = paragraph/subparagraph/content
@@ -581,6 +688,7 @@ define(function hierarchicalElementTransformer(require) {
             //path section
             var rootsElementsPathForTo = rootElementsForTo.join("/");
             var rootsElementsWithPPathForTo = [rootsElementsPathForTo, "p"].join("/");
+            var rootsElementsWithDivPathForTo = [rootsElementsPathForTo, "div"].join("/");
             // <=end of path section
 
             //content wrapper id (for e.g. data-akn-subparagraph-id)
@@ -737,7 +845,7 @@ define(function hierarchicalElementTransformer(require) {
                                             to: DATA_AKN_TITLE_NUMBER,
                                             action: "passAttributeTransformer"
                                         }, {
-                                            from: "leos:tc-original-number",
+                                            from: LEOS_TC_ORIGINAL_NUMBER,
                                             to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                             action: "passAttributeTransformer"
                                         }, {
@@ -804,7 +912,7 @@ define(function hierarchicalElementTransformer(require) {
                                         to: DATA_AKN_TITLE_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
-                                        from: "leos:tc-original-number",
+                                        from: LEOS_TC_ORIGINAL_NUMBER,
                                         to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
@@ -827,7 +935,7 @@ define(function hierarchicalElementTransformer(require) {
                                             action: "passAttributeTransformer"
                                         }, {
                                             from: "leos:title",
-                                            to: DATA_AKN_TITLE_ENTER    ,
+                                            to: DATA_AKN_TITLE_ENTER,
                                             action: "passAttributeTransformer"
                                         }]
                                     });
@@ -851,13 +959,13 @@ define(function hierarchicalElementTransformer(require) {
                                     });
                                 }
                             } else if (rootElementsWithNumWithDelTextForFromRegExp.test(path)) {
-                                if (element.parent.attributes["leos:action-number"] === DELETE && !element.parent.attributes["leos:tc-original-number"]) {
+                                if (element.parent.attributes["leos:action-number"] === DELETE && !element.parent.attributes[LEOS_TC_ORIGINAL_NUMBER]) {
                                     this.mapToProducts(element, {
                                         toPath: rootsElementsPathForTo,
                                         toAttribute: DATA_AKN_NUM
                                     });
                                 }
-                                if (element.parent.attributes["leos:action-number"] === DELETE && element.parent.attributes["leos:tc-original-number"]) {
+                                if (element.parent.attributes["leos:action-number"] === DELETE && element.parent.attributes[LEOS_TC_ORIGINAL_NUMBER]) {
                                     this.mapToProducts(element, {
                                         toPath: rootsElementsPathForTo,
                                         toAttribute: DATA_AKN_TC_ORIGINAL_NUMBER
@@ -879,7 +987,7 @@ define(function hierarchicalElementTransformer(require) {
                                         to: DATA_AKN_TITLE_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
-                                        from: "leos:tc-original-number",
+                                        from: LEOS_TC_ORIGINAL_NUMBER,
                                         to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
@@ -932,6 +1040,78 @@ define(function hierarchicalElementTransformer(require) {
                                     }, {
                                         from: "leos:origin",
                                         to: DATA_CONTENT_ORIGIN,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
+                            } else if (rootElementsWithMpForFromRegExp.test(path)) {
+                                this.mapToChildProducts(element, {
+                                    toPath: rootsElementsPathForTo,
+                                    toChild: "div",
+                                    attrs: [{
+                                        from: "xml:id",
+                                        to: "id",
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "leos:origin",
+                                        to: DATA_MP_ORIGIN,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
+                            } else if (rootElementsWithMpAndTextForFromRegExp.test(path)) {
+                                this.mapToChildProducts(element, {
+                                    toPath: rootsElementsWithDivPathForTo,
+                                    toChild: "text",
+                                    toChildTextValue: element.value
+                                });
+                            } else if (rootElementsWithSubflowForFromRegExp.test(path)) {
+                                this.mapToProducts(element, {
+                                    toPath: rootsElementsWithDivPathForTo,
+                                    attrs: [{
+                                        from: "xml:id",
+                                        to: DATA_AKN_SUBFLOW_ID,
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "name",
+                                        to: DATA_AKN_NAME,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
+                            } else if (rootElementsWithSubflowSubHcontainerAndContentForFromRegExp.test(path)) {
+                                this.mapToProducts(element, {
+                                    toPath: rootsElementsWithDivPathForTo,
+                                    attrs: [{
+                                        to: DATA_AKN_HCONTAINER_ID,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "xml:id", element.parent),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "name",
+                                        to: DATA_AKN_HCONTAINER,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "name", element.parent),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_SUB_HCONTAINER_ID,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "xml:id", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_SUB_HCONTAINER,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "name", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "xml:id",
+                                        to: DATA_AKN_CONTENT_ID,
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "leos:origin",
+                                        to: DATA_CONTENT_ORIGIN,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
+                            } else if (rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp.test(path)) {
+                                this.mapToProducts(element, {
+                                    toPath: rootsElementsWithDivPathForTo,
+                                    attrs: [{
+                                        from: "xml:id",
+                                        to: DATA_AKN_MP_ID,
                                         action: "passAttributeTransformer"
                                     }]
                                 });
@@ -1092,6 +1272,10 @@ define(function hierarchicalElementTransformer(require) {
                                         to: "data-akn-element",
                                         toValue: contentWrapperForFrom,
                                         action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, LEOS_TC_ORIGINAL_NUMBER, element),
+                                        action: "passAttributeTransformer"
                                     }]
                                 });
                             } else if (rootElementsWithContentWrapperAndTextForFromRegExp.test(path)) {
@@ -1135,6 +1319,12 @@ define(function hierarchicalElementTransformer(require) {
                             } else if (rootElementsWithNestedElementForFromRegExp.test(path)) {
                                 this.mapToNestedChildProduct(element, {
                                     toPath: rootsElementsPathForTo
+                                });
+                            } else if (rootElementsWithMpAndNestedForFromRegExp.test(path) || rootElementsWithSubflowAndNestedForFromRegExp.test(path) ||
+                                rootElementsWithSubflowSubHcontainerContentAndNestedForFromRegExp.test(path) ||
+                                rootElementsWithSubflowSubHcontainerContentMpAndNestedForFromRegExp.test(path)) {
+                                this.mapToNestedChildProduct(element, {
+                                    toPath: rootsElementsWithDivPathForTo
                                 });
                             }
                         },
@@ -1528,7 +1718,8 @@ define(function hierarchicalElementTransformer(require) {
                                         if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
                                             && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW
                                             && !element.attributes[DATA_AKN_ACTION_ENTER]
-                                            && element.attributes[DATA_AKN_NUM] !== element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]) {
+                                            && (element.attributes[DATA_AKN_NUM] !== element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]
+                                                || element.attributes[DATA_INDENT_ORIGIN_LEVEL])) {
                                             this.mapToChildProducts(element, {
                                                 toPath: contentPath,
                                                 toChild: "del",
@@ -1542,7 +1733,7 @@ define(function hierarchicalElementTransformer(require) {
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                    to: "leos:tc-original-number",
+                                                    to: LEOS_TC_ORIGINAL_NUMBER,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -1580,7 +1771,7 @@ define(function hierarchicalElementTransformer(require) {
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                    to: "leos:tc-original-number",
+                                                    to: LEOS_TC_ORIGINAL_NUMBER,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -1872,7 +2063,7 @@ define(function hierarchicalElementTransformer(require) {
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                to: "leos:tc-original-number",
+                                                to: LEOS_TC_ORIGINAL_NUMBER,
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -1957,7 +2148,7 @@ define(function hierarchicalElementTransformer(require) {
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                    to: "leos:tc-original-number",
+                                                    to: LEOS_TC_ORIGINAL_NUMBER,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -1995,7 +2186,7 @@ define(function hierarchicalElementTransformer(require) {
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                    to: "leos:tc-original-number",
+                                                    to: LEOS_TC_ORIGINAL_NUMBER,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -2142,7 +2333,7 @@ define(function hierarchicalElementTransformer(require) {
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                to: "leos:tc-original-number",
+                                                to: LEOS_TC_ORIGINAL_NUMBER,
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_TC_ORIGINAL_INDENT_ACTION,
@@ -2165,7 +2356,7 @@ define(function hierarchicalElementTransformer(require) {
                                     }
                                 }
                                 var isContentWrapperPresent = shouldContentBeWrapped.call(this, element);
-                                if (isContentWrapperPresent) {
+                                if (isContentWrapperPresent && contentWrapperForFrom) {
                                     createContentWrapper.call(this, element, rootsElementsPathForFrom, contentWrapperForFrom);
                                 } else {
                                     createContentDirectly.call(this, element, rootsElementsPathForFrom);

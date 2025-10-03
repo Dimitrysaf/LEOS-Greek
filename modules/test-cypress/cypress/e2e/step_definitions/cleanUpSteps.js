@@ -1,10 +1,10 @@
-import { And } from "cypress-cucumber-preprocessor/steps";
+import { When } from "@badeball/cypress-cucumber-preprocessor";
 import repositoryBrowserPage from "../pages/repositoryBrowserPage";
 import actViewerPage from "../pages/actViewerPage";
 import dialogBoxPage from "../pages/euiDialogBoxPage";
 import headerPage from "../pages/headerPage";
 
-And(`delete all the acts containing keyword {string}`, (keyword) => {
+When(`delete all the acts containing keyword {string}`, (keyword) => {
     repositoryBrowserPage.getProposalCount(keyword).then((count) => {
         for (let i = 0; i < count; i++) {
             repositoryBrowserPage.openFirstProposal();
