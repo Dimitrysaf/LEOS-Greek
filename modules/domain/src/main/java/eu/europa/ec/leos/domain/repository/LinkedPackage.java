@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.repository;
 
-public class LinkedPackage {
+import java.io.Serializable;
+
+public class LinkedPackage implements Serializable {
 
     private String id;
     private String packageId;
