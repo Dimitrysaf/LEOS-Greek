@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 @Instance(instances = {InstanceType.OS})
 public class LeosPageCounter implements PageCounter {
 
-    public String countPages(byte[] xmlContent) {
+    public int charCount(byte[] xmlContent) {
+        return 0;
+    }
+
+    public String countPages(int charCount) {
         return null;
     }
 

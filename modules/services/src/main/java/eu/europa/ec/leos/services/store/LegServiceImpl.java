@@ -107,7 +107,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.api.ApiServiceImpl.DOC_VERSION_SEPARATOR;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
@@ -595,6 +594,7 @@ public class LegServiceImpl implements LegService {
         SpecificDocumentInformationDTO specificDocumentInformationForBill = null;
         SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement = null;
 
+        int totalPageCount = 0;
         for (XmlDocument xmlDocument : xmlDocuments) {
             if (xmlDocument.getCategory().equals(LeosCategory.MEMORANDUM)) {
                 specificDocumentInformationForMemorandum = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
@@ -605,9 +605,11 @@ public class LegServiceImpl implements LegService {
             if (xmlDocument.getCategory().equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
                 specificDocumentInformationForFinancialStatement = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
             }
+            int pageCount = pageCounter.charCount(xmlDocument.getContent().get().getSource().getBytes());
+            totalPageCount += pageCount;
         }
 
-        final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal, specificDocumentInformationForMemorandum, specificDocumentInformationForBill, specificDocumentInformationForFinancialStatement);
+        final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal, specificDocumentInformationForMemorandum, specificDocumentInformationForBill, specificDocumentInformationForFinancialStatement, totalPageCount);
         legPackage.addContainedFile(proposal.getVersionedReference());
         String language = proposal.getMetadata().get().getLanguage();
         documentLanguageContext.setDocumentLanguage(language);
@@ -701,8 +703,6 @@ public class LegServiceImpl implements LegService {
             xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
             xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
-        String numberOfPages = pageCounter.countPages(xmlContent);
-        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(financialStatement.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef);
@@ -898,11 +898,12 @@ public class LegServiceImpl implements LegService {
 
     private Map<String, String> enrichZipWithProposal(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Proposal proposal,
             SpecificDocumentInformationDTO specificDocumentInformationForMemorandum, SpecificDocumentInformationDTO specificDocumentInformationForBill,
-            SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement) {
+            SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement, int totalPageCount) {
         byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToProposal(proposal, xmlContent);
-        String numberOfPages = pageCounter.countPages(xmlContent);
-        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
+        if (totalPageCount > 0) {
+            xmlContent = XercesUtils.addTotalPageCountTag(xmlContent, pageCounter.countPages(totalPageCount));
+        }
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().get().getLanguage()), xmlContent);
 
@@ -969,8 +970,6 @@ public class LegServiceImpl implements LegService {
 
         byte[] xmlContent = memorandum.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToMemorandum(memorandum, xmlContent);
-        String numberOfPages = pageCounter.countPages(xmlContent);
-        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(memorandum.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, memorandum.getMetadata().get().getRef(), memorandum.getName(), exportOptions, proposalRef);
@@ -1013,8 +1012,6 @@ public class LegServiceImpl implements LegService {
     private ExportResource enrichZipWithBill(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Map<String, String> proposalRefsMap,
                                              Bill bill, Proposal proposal, byte[] xmlContent) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
-        String numberOfPages = pageCounter.countPages(xmlContent);
-        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(bill.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), exportOptions, proposal.getMetadata().getOrNull().getRef());
@@ -1120,8 +1117,6 @@ public class LegServiceImpl implements LegService {
             xmlContent = addRelevantElements(exportOptions, annex.getVersionLabel(), xmlContent);
             xmlContent = addCommentsMetadata(exportOptions.getComments(), xmlContent);
         }
-        String numberOfPages = pageCounter.countPages(xmlContent);
-        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(annex.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, annex.getMetadata().get().getRef(), annex.getName(), exportOptions, proposalRef);
@@ -1159,8 +1154,6 @@ public class LegServiceImpl implements LegService {
             xmlContent = addRelevantElements(exportOptions, explanatory.getVersionLabel(), xmlContent);
             xmlContent = addCommentsMetadata(exportOptions.getComments(), xmlContent);
         }
-        String numberOfPages = pageCounter.countPages(xmlContent);
-        xmlContent = XercesUtils.addPageCountTag(xmlContent, numberOfPages);
         contentToZip.put(explanatory.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, explanatory.getMetadata().get().getRef(), explanatory.getName(), exportOptions, proposalRef);
