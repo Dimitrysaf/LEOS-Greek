@@ -50,6 +50,16 @@ public class LanguageHelper {
     @Value("${leos.i18n.defaultLanguageTag}")
     private String defaultLanguageTag;
 
+    private String proposalLanguageTag;
+
+    public String getProposalLanguageTag() {
+        return proposalLanguageTag;
+    }
+
+    public void setProposalLanguageTag(String proposalLanguageTag) {
+        this.proposalLanguageTag = proposalLanguageTag;
+    }
+
     private ImmutableSet<Locale> configuredLocales;
 
     @PostConstruct
@@ -126,7 +136,9 @@ public class LanguageHelper {
     }
 
     public Locale getCurrentLocale() {
-        // FIX ME dynamically obtain the current locale
+        if (StringUtils.isNotBlank(proposalLanguageTag)) {
+            return resolveLocale(proposalLanguageTag).orElseGet(this::getDefaultLocale);
+        }
         return getDefaultLocale();
     }
 

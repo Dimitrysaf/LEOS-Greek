@@ -375,7 +375,7 @@ public class XmlHelper {
                         && tocItem.isNumWithType()
                         ? StringUtils.capitalize(messageHelper.getMessage("toc.item.type." + tocItem.getAknTag().value() + ".number"))
                         + " " + num : num),
-                HEADING, Collections.singletonMap(HEADING_PLACEHOLDER_ESCAPED, heading), CONTENT,
+                HEADING, Collections.singletonMap(HEADING_PLACEHOLDER_ESCAPED, getHeadingText(tocItem.getAknTag().value(),heading, messageHelper) ), CONTENT,
                 Collections.singletonMap(CONTENT_TEXT_PLACEHOLDER_ESCAPED, getDefaultContentText(tocItem.getAknTag().value(), messageHelper))));
     }
 
@@ -446,6 +446,14 @@ public class XmlHelper {
             sb.replace(m.start(), m.end(), replacement);
             start = m.start() + replacement.length();
         }
+    }
+
+    private static String getHeadingText(String tocTagName, String heading, MessageHelper messageHelper) {
+       String defaultHeadingContent = messageHelper.getMessage("toc.item.type." + tocTagName + ".heading");
+        if (("toc.item.type." + tocTagName + ".heading").equals(defaultHeadingContent)) {
+            return heading;
+        }
+        return defaultHeadingContent;
     }
 
     private static String getDefaultContentText(String tocTagName, MessageHelper messageHelper) {
