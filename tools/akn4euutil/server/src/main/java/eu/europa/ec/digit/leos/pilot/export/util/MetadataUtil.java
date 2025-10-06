@@ -77,6 +77,7 @@ public class MetadataUtil {
     public static final String ELEMENT_DATE="date";
     public static final String VALUE_ONE ="1";
     public static final String VALUE_ZERO ="0";
+    public static final String VALUE_TEMPLATE = "template";
     public static final String MESSAGE_LOCATION_NOT_SUPPORTED ="Location not supported";
     public static final String MESSAGE_INVALID_ISO_DATE ="Invalid iso date";
     public static final String MESSAGE_INVALID_FIELD_VALUE ="Invalid field value";

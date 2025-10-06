@@ -706,4 +706,12 @@ public class MetadataServiceImpl implements MetadataService {
         if (personNode == null) return;
         personNode.setTextContent(fieldInfo.getDisplayValue());
     }
+
+    @Override
+    public void removeTemplateClassAttributes(XmlUtil.XmlFile xmlFile) {
+        final NodeList nodeList = xmlFile.getElementsWithAttributeValue(MetadataUtil.ATTRIBUTE_CLASS, MetadataUtil.VALUE_TEMPLATE);
+        for(int i=0; i<nodeList.getLength(); i++) {
+            XmlUtil.removeNodeAttributeValue(nodeList.item(i), MetadataUtil.ATTRIBUTE_CLASS);
+        }
+    }
 }
