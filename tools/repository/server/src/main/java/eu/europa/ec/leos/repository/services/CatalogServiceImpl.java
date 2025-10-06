@@ -391,8 +391,6 @@ public class CatalogServiceImpl implements CatalogService {
     private void saveTemplateArtifacts(DocumentMilestone documentMilestone, Set<String> templateKeys, List<DocumentV> latestDocuments, String packageId, String userId) throws CatalogException {
         List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(templateKeys);
         List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
-
-//        markPreviousCustomTemplateVersionsAsNotLatest(packageId);
         
         saveDocumentsOfPublishedTemplates(documentMilestone, latestDocuments, configurationVList, configCategories, packageId, userId);
         saveConfigFiles(templateKeys, packageId, userId);
