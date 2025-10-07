@@ -41,7 +41,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     private final LeosRepository leosRepository;
 
     @Autowired
-    public WorkspaceRepositoryImpl(@Qualifier("leosRestRepositoryImpl") LeosRepository leosRepository) {
+    public WorkspaceRepositoryImpl(LeosRepository leosRepository) {
         this.leosRepository = leosRepository;
     }
 
