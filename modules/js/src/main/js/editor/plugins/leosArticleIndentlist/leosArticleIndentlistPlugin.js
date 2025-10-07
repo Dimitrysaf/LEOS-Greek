@@ -486,6 +486,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     range.startContainer.removeAttribute(leosPluginUtils.REFERS_TO);
                     range.startContainer.getParent().getParent().$.insertBefore(newLi.$, range.startContainer.getParent().$);
                     newLi.append(range.startContainer);
+                    leosPluginUtils.copyAllAttributes(range.startContainer, newLi);
                     range.startContainer = newLi;
                     range.endContainer = range.startContainer;
                     var nextElement = parentOl.getNext();
