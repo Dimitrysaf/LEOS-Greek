@@ -717,9 +717,13 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     public void removeDateIfNeeded(XmlUtil.XmlFile xmlFile) {
-        this.removeCoverPageDateIfNeeded(xmlFile);
         this.removeConclusionsDateIfNeeded(xmlFile);
-        this.removeLongTitleDateIfNeeded(xmlFile);
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            this.removeCoverPageDateIfNeeded(xmlFile);
+        }
+        if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
+            this.removeLongTitleDateIfNeeded(xmlFile);
+        }
     }
 
     private void removeConclusionsDateIfNeeded(XmlUtil.XmlFile xmlFile) {
@@ -744,7 +748,7 @@ public class MetadataServiceImpl implements MetadataService {
         final Node containerMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(coverPage, MetadataUtil.VALUE_MAIN_DOC);
         if (containerMainDoc == null) return;
 
-        final Node blockPlaceAndDate = XmlUtil.getXmlChildNodeWithNameAttributeValue(coverPage, MetadataUtil.VALUE_PLACE_AND_DATE);
+        final Node blockPlaceAndDate = XmlUtil.getXmlChildNodeWithNameAttributeValue(containerMainDoc, MetadataUtil.VALUE_PLACE_AND_DATE);
         if (blockPlaceAndDate == null) return;
 
         final Node dateNode = XmlUtil.getChildNodeWithName(blockPlaceAndDate, MetadataUtil.ELEMENT_DATE);
@@ -756,8 +760,6 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void removeLongTitleDateIfNeeded(XmlUtil.XmlFile xmlFile) {
-        if (!MetadataUtil.isMainDocumentFile(xmlFile) && !MetadataUtil.isBillXmlDocument(xmlFile)) return;
-
         final Node longTitle = xmlFile.getElementByName(MetadataUtil.ELEMENT_LONG_TITLE);
         if (longTitle == null) return;
 
