@@ -5,6 +5,7 @@ import eu.europa.ec.leos.services.filter.ForwardSlashFilter;
 import eu.europa.ec.leos.services.filter.MilestoneCssFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -24,12 +25,13 @@ public class WebConfig {
     // ========== Servlet Registrations ==========
 
     @Bean
-    public ServletRegistrationBean<DispatcherServlet> apiDispatcherServlet() {
+    public ServletRegistrationBean<DispatcherServlet> apiDispatcherServlet(ApplicationContext parentContext) {
         // Create dispatcher servlet
         DispatcherServlet servlet = new DispatcherServlet();
 
         // Create XML context for dispatcher-servlet.xml
         XmlWebApplicationContext context = new XmlWebApplicationContext();
+        context.setParent(parentContext);
         context.setConfigLocation("/WEB-INF/dispatcher-servlet.xml");
         servlet.setApplicationContext(context);
 
@@ -44,12 +46,13 @@ public class WebConfig {
     }
 
     @Bean
-    public ServletRegistrationBean<DispatcherServlet> uiDispatcherServlet() {
+    public ServletRegistrationBean<DispatcherServlet> uiDispatcherServlet(ApplicationContext parentContext) {
         // Create dispatcher servlet
         DispatcherServlet servlet = new DispatcherServlet();
 
         // Create XML context for ui-dispatcher-servlet.xml
         XmlWebApplicationContext context = new XmlWebApplicationContext();
+        context.setParent(parentContext);
         context.setConfigLocation("/WEB-INF/ui-dispatcher-servlet.xml");
         servlet.setApplicationContext(context);
 
