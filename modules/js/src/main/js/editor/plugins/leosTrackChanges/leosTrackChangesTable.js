@@ -272,11 +272,19 @@ define(function leosTrackChangesTableModule(require) {
             var parent = table.getParent(),
                 editable = editor.editable();
 
-            if (parent.getChildCount() == 1 && !parent.is("td", "th", "li") && !parent.equals(editable))
-                table = parent;
+            // Check if table is the only element in the editor (ignoring whitespace nodes)
+            var isOnlyElement = editable.getChildCount() === 1 ||
+                    (
+                        (editable.getFirst().is('table') &&
+                            editable.getLast().type === CKEDITOR.NODE_TEXT &&
+                            editable.getLast().getText().trim() === '') ||
+                        (editable.getChild(1).equals(parent) && parent.getChildCount() === 1)
+                    );
 
+            if (parent.getChildCount() == 1 && !parent.is('td', 'th', 'li') && !parent.equals(editable) && !isOnlyElement){
+                table = parent;
+            }
             var range = editor.createRange();
-            range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
             var removeTable = true;
             if (table.getId()) {
                 var currentUserId = core.getUserId(editor);
@@ -290,8 +298,24 @@ define(function leosTrackChangesTableModule(require) {
                     }
                 });
             }
+
+
             if (removeTable) {
-                table.remove();
+                if (isOnlyElement) {
+                    // Create paragraph before removing table to maintain cursor position
+                    var newParagraph = editor.document.createElement('p');
+                    newParagraph.insertBefore(table);
+                    table.remove();
+
+                    range.selectNodeContents(newParagraph);
+                    range.collapse(true);
+                    editor.getSelection().selectRanges([range]);
+                    editor.focus();
+                } else {
+                    // Move range before table, remove it, then select the range
+                    range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
+                    table.remove();
+                }
             }
             range.select();
             editor.focus();
