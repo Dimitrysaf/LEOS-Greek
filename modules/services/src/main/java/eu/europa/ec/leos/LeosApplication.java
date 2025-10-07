@@ -21,17 +21,10 @@ public class LeosApplication extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        System.out.println("*** SpringBootServletInitializer.configure() called! ***");
-
-        // Enable debug logging for Spring context loading
-        System.setProperty("logging.level.org.springframework", "DEBUG");
-        System.setProperty("logging.level.org.springframework.beans", "DEBUG");
-
         return application.sources(LeosApplication.class);
     }
 
     public static void main(String[] args) {
-        System.out.println("*** Main method called ***");
         SpringApplication.run(LeosApplication.class, args);
     }
 }
