@@ -8,18 +8,21 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 
-@Configuration
-public class RootContextInitializer implements ServletContextInitializer, ApplicationContextAware {
-
-    private ApplicationContext applicationContext;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public void onStartup(ServletContext servletContext) {
-        servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
-    }
-}
+//@Configuration
+//public class RootContextInitializer implements ServletContextInitializer, ApplicationContextAware {
+//
+//    private ApplicationContext applicationContext;
+//
+//    @Override
+//    public void setApplicationContext(ApplicationContext applicationContext) {
+//        this.applicationContext = applicationContext;
+//    }
+//
+//    @Override
+//    public void onStartup(ServletContext servletContext) {
+//        // Only set root context if it doesn't already exist (for WebLogic)
+//        if (servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) == null) {
+//            servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
+//        }
+//    }
+//}

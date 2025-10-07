@@ -27,19 +27,19 @@
     </session-config>
 
     <!-- Hook for Spring Security-->
-    <filter>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
+<!--    <filter>-->
+<!--        <filter-name>springSecurityFilterChain</filter-name>-->
+<!--        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
+<!--        <async-supported>true</async-supported>-->
+<!--    </filter>-->
 
     <!-- Spring security should be applied only to Secure URLs -->
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/api/secured/*</url-pattern>
-        <url-pattern>/saml/*</url-pattern>
-        <url-pattern>/ui/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>ASYNC</dispatcher>
-    </filter-mapping>
+<!--    <filter-mapping>-->
+<!--        <filter-name>springSecurityFilterChain</filter-name>-->
+<!--        <url-pattern>/api/secured/*</url-pattern>-->
+<!--        <url-pattern>/saml/*</url-pattern>-->
+<!--        <url-pattern>/ui/*</url-pattern>-->
+<!--        <dispatcher>REQUEST</dispatcher>-->
+<!--        <dispatcher>ASYNC</dispatcher>-->
+<!--    </filter-mapping>-->
 </web-app>
