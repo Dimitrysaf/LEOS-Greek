@@ -140,4 +140,12 @@ public interface MetadataService {
      * @param pos
      * */
     void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, int pos);
+
+    /**
+     * Removes class="template" attribute from all nodes that use it.
+     * @param xmlFile XmlFile to modify
+     * */
+    void removeTemplateClassAttributes(XmlUtil.XmlFile xmlFile);
+
+    void removeDateIfNeeded(XmlUtil.XmlFile xmlFile);
 }
