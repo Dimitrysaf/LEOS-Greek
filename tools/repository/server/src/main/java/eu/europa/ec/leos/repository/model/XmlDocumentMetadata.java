@@ -34,6 +34,7 @@ public class XmlDocumentMetadata {
     private String category;
     private String docStage;
     private String docType;
+    private String actType;
     private String docPurpose;
     private String procedureType;
     private String packageTitle;
@@ -59,6 +60,7 @@ public class XmlDocumentMetadata {
     public XmlDocumentMetadata(DocumentV doc, List<Collaborator> collaborators) {
         this.docStage = doc.getDocStage();
         this.docType = doc.getDocType();
+        this.actType = doc.getActType();
         this.docPurpose = doc.getDocPurpose();
         this.procedureType = doc.getProcedureType();
         this.template = doc.getTemplate();
@@ -80,6 +82,7 @@ public class XmlDocumentMetadata {
     public XmlDocumentMetadata(Document doc, DocumentContent docContent, List<Collaborator> collaborators) {
         this.docStage = doc.getDocStage();
         this.docType = docContent.getDocType();
+        this.actType = docContent.getActType();
         this.docPurpose = docContent.getDocPurpose();
         this.procedureType = doc.getProcedureType();
         this.template = docContent.getTemplate();
@@ -102,6 +105,9 @@ public class XmlDocumentMetadata {
         Map<String, Object> metadataMap = new HashMap<String, Object>();
         if (this.getDocStage() != null) {
             metadataMap.put("docStage", this.getDocStage());
+        }
+        if (this.getActType() != null) {
+            metadataMap.put("actType", this.getActType());
         }
         if (this.getDocType() != null) {
             metadataMap.put("docType", this.getDocType());
@@ -187,6 +193,14 @@ public class XmlDocumentMetadata {
 
     public void setDocStage(String docStage) {
         this.docStage = docStage;
+    }
+
+    public String getActType() {
+        return actType;
+    }
+
+    public void setActType(String actType) {
+        this.actType = actType;
     }
 
     public String getDocType() {

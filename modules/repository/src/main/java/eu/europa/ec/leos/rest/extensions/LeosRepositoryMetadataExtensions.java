@@ -34,8 +34,9 @@ class LeosRepositoryMetadataExtensions {
     private static RepositoryPropertiesMapper repositoryPropertiesMapper = new RestProperties();
 
     private static class CommonMetadataProperties {
-        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress, creationOptions;
-        Boolean eeaRelevance, imported;
+        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress, creationOptions, authenticLanguage, coverPageType, actType,
+        docType, procedureType;
+        Boolean eeaRelevance, imported, customTemplateAct;
     }
 
     static Option<ProfileMetaData> getProfileMetaDataOption(eu.europa.ec.leos.rest.support.model.LeosDocument leosDocument) {
@@ -55,6 +56,9 @@ class LeosRepositoryMetadataExtensions {
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             metadata.setCreationOptions(props.creationOptions);
+            metadata.setActType(props.actType);
+            metadata.setProcedureType(props.procedureType);
+
             return Option.some(metadata);
         });
     }
@@ -135,6 +139,9 @@ class LeosRepositoryMetadataExtensions {
         props.template = getTemplate(doc);
         props.language = getLanguage(doc);
         props.docTemplate = getMetadataDocTemplate(doc);
+        props.docType = getMetadataDocType(doc);
+        props.actType = getMetadataActType(doc);
+        props.procedureType = getMetadataProcedureType(doc);
         props.ref = getMetadataRef(doc);
         props.eeaRelevance = getMetadataEeaRelevance(doc);
         props.callbackAddress = getMetadataCallbaclAddress(doc);
@@ -164,6 +171,18 @@ class LeosRepositoryMetadataExtensions {
 
     private static String getMetadataDocTemplate(LeosDocument leosDocument) {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE));
+    }
+
+    private static String getMetadataDocType(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTYPE));
+    }
+
+    private static String getMetadataProcedureType(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PROCEDURE_TYPE));
+    }
+
+    private static String getMetadataActType(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_ACT_TYPE));
     }
 
     private static boolean getMetadataEeaRelevance(LeosDocument leosDocument) {
