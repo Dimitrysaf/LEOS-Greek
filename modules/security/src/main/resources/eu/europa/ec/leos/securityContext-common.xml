@@ -50,9 +50,6 @@
         <sec:authentication-provider ref="leosApiAuthenticationProvider"/>
     </sec:authentication-manager>
 
-<!--    <bean id="leosApiAuthenticationProvider"-->
-<!--          class="eu.europa.ec.leos.api.auth.LeosApiAuthenticationProvider">-->
-<!--    </bean>-->
 
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass" value="org.springframework.security.core.context.SecurityContextHolder" />
