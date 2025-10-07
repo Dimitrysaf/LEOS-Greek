@@ -36,7 +36,7 @@ public class InstanceCondition implements ConfigurationCondition {
         String leosInstance = conditionContext.getEnvironment().getProperty("leos.instance");
         if (leosInstance == null) {
             // Fallback to system properties or default
-            leosInstance = conditionContext.getEnvironment().getProperty("leos.build.instance", "os");
+            leosInstance = conditionContext.getEnvironment().getProperty("leos.build.instance", "OS");
         }
 
         InstanceType currentInstance = InstanceType.valueOf(leosInstance);
