@@ -41,9 +41,7 @@
         <property name="mappableRolesRetriever" ref="j2eeMappableRolesRetriever"/>
     </bean>
 
-<!--    <bean id="j2eeMappableRolesRetriever"-->
-<!--          class="org.springframework.security.web.authentication.preauth.j2ee.J2eeBasedMappableAttributesRetriever">-->
-<!--    </bean>-->
+
     <bean id="j2eeMappableRolesRetriever"
           class="eu.europa.ec.leos.security.ConfigurableMappableAttributesRetriever">
     </bean>
@@ -58,12 +56,6 @@
         <property name="preAuthenticatedUserDetailsService" ref="leosSecurityUserService"/>
     </bean>
 
-     <!-- Service to allow custom loading of user details and authorities -->
-<!--    <bean id="leosSecurityUserService" class="eu.europa.ec.leos.security.LeosSecurityUserService">-->
-<!--        <constructor-arg>-->
-<!--            <bean class="eu.europa.ec.leos.integration.rest.UsersClientImpl"/>-->
-<!--        </constructor-arg>-->
-<!--    </bean>-->
 
     <bean id="jeePreAuthFailureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
         <property name="useForward" value="true"/>

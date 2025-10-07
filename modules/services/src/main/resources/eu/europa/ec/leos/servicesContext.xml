@@ -28,7 +28,6 @@
         <constructor-arg ref="defaultSimpleAsyncTaskExecutor"/>
     </bean>
     <task:scheduler id="taskScheduler" pool-size="5"/>
-<!--    <task:annotation-driven scheduler="taskScheduler" executor="delegatingSecurityContextAsyncTaskExecutor"/>-->
 
         <!-- Message Source -->
     <bean id="servicesMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

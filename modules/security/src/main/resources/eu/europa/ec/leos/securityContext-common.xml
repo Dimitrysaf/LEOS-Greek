@@ -35,8 +35,6 @@
         </property>
     </bean>
 
-<!--    <bean id="restAuthenticationEntryPoint" class="eu.europa.ec.leos.api.auth.RestAuthenticationEntryPoint"/>-->
-
     <bean id="leosApiAuthenticationFilter" class="eu.europa.ec.leos.api.auth.LeosApiAuthenticationFilter">
         <constructor-arg value="${leos.api.filter.processor.url}" />
         <constructor-arg ref="tokenService" />

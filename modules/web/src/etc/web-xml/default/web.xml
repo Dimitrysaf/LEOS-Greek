@@ -26,22 +26,6 @@
         <!-- session timeout should always be more then double of heartbeat  -->
     </session-config>
 
-    <!-- Hook for Spring Security -->
-<!--    <filter>-->
-<!--        <filter-name>springSecurityFilterChain</filter-name>-->
-<!--        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
-<!--        <async-supported>true</async-supported>-->
-<!--    </filter>-->
-
-    <!-- Spring security should be applied only to Secure URLs -->
-<!--    <filter-mapping>-->
-<!--        <filter-name>springSecurityFilterChain</filter-name>-->
-<!--        <url-pattern>/api/secured/*</url-pattern>-->
-<!--        <url-pattern>/ui/*</url-pattern>-->
-<!--        <dispatcher>REQUEST</dispatcher>-->
-<!--        <dispatcher>ASYNC</dispatcher>-->
-<!--    </filter-mapping>-->
-
     <!-- User authentication -->
     <login-config>
         <auth-method>${leos.web.auth.method}</auth-method>
