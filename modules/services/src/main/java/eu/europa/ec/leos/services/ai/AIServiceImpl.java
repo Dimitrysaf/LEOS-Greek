@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ID;
 import static eu.europa.ec.leos.services.support.XmlHelper.MREF;
@@ -38,10 +39,12 @@ public class AIServiceImpl implements AIService {
     private final BillRepository billRepository;
     private final ReferenceLabelService referenceLabelService;
     private final FinancialStatementService financialStatementService;
+    private final Properties applicationProperties;
 
     @Autowired
     AIServiceImpl(Optional<AIProvider> provider, PackageService packageService, BillRepository billRepository, ReferenceLabelService referenceLabelService,
-                  FinancialStatementService financialStatementService) {
+                  FinancialStatementService financialStatementService, Properties applicationProperties) {
+        this.applicationProperties = applicationProperties;
         provider.ifPresent(p -> this.provider = p);
         this.packageService = packageService;
         this.billRepository = billRepository;
@@ -52,7 +55,8 @@ public class AIServiceImpl implements AIService {
     @Override
     public void prepareAnalysis(final String proposalRef) {
         Validate.notNull(proposalRef, "proposalRef must not be null");
-        if (provider == null) {
+        Boolean isFeatureEnabled = applicationProperties.getProperty("leos.ai.enabled", "false").equals("true");
+        if (provider == null || !isFeatureEnabled) {
             return;
         }
 
@@ -71,7 +75,8 @@ public class AIServiceImpl implements AIService {
     @Override
     public void prepareAnalysis(final Bill bill) {
         Validate.notNull(bill, "bill must not be null");
-        if (provider == null) {
+        Boolean isFeatureEnabled = applicationProperties.getProperty("leos.ai.enabled", "false").equals("true");
+        if (provider == null || !isFeatureEnabled) {
             return;
         }
 
@@ -83,7 +88,8 @@ public class AIServiceImpl implements AIService {
     @Override
     public AnalysisResults prefillDigitalDimensionsLFDS(final String proposalRef) {
         Validate.notNull(proposalRef, "proposalRef must not be null");
-        if (provider == null) {
+        Boolean isFeatureEnabled = applicationProperties.getProperty("leos.ai.enabled", "false").equals("true");
+        if (provider == null || !isFeatureEnabled) {
             return new AnalysisResults();
         }
 
