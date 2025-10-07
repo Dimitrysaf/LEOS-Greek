@@ -22,14 +22,16 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import eu.europa.ec.leos.services.coedition.cache.CoEditionCacheEntryListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
+import com.hazelcast.map.IMap;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
 
 @Component
 public class EditionInfoRepositoryImpl implements EditionInfoRepository {
@@ -38,6 +40,8 @@ public class EditionInfoRepositoryImpl implements EditionInfoRepository {
     private CacheManager cacheManager;
 
     private Cache coEditionCache;
+
+    private static final Logger LOG = LoggerFactory.getLogger(EditionInfoRepositoryImpl.class);
 
     @PostConstruct
     public void CoEditionCacheInit() {
@@ -52,37 +56,58 @@ public class EditionInfoRepositoryImpl implements EditionInfoRepository {
 
     @Override
     public CoEditionVO removeInfo(CoEditionVO editionVo) {
-        Ehcache cache = (Ehcache)coEditionCache.getNativeCache();
-        Map<Object, Element> cacheElements = cache.getAll(cache.getKeys());
-        List<Element> infoToRemove = cacheElements.values().stream()
-                .filter(c -> ((String)c.getObjectKey()).startsWith(editionVo.getDocumentId() + "_") &&
-                        c.getObjectValue().equals(editionVo)).collect(Collectors.toList());
-        infoToRemove.forEach(c -> coEditionCache.evict(c.getObjectKey()));
-        return infoToRemove.size() > 0 ? editionVo : null;
+        IMap<Object, Object> nativeMap = (IMap<Object, Object>) coEditionCache.getNativeCache();
+
+        // Find matching entries
+        List<Object> keysToRemove = nativeMap.entrySet().stream()
+                .filter(entry -> {
+                    String key = (String) entry.getKey();
+                    Object value = entry.getValue();
+                    boolean keyMatches = key.startsWith(editionVo.getDocumentId() + "_");
+                    boolean valueMatches = value.equals(editionVo);
+                    return keyMatches && valueMatches;
+                })
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        keysToRemove.forEach(key -> {
+            // Use direct Hazelcast removal instead of Spring Cache evict
+            IMap<Object, Object> nativeMapRemoval = (IMap<Object, Object>) coEditionCache.getNativeCache();
+            nativeMapRemoval.remove(key);
+        });
+
+        return keysToRemove.size() > 0 ? editionVo : null;
     }
 
     @Override
     public List<CoEditionVO> getCurrentEditInfo(String docId) {
-        return this.getEditInfo(c -> ((String)c.getObjectKey()).startsWith(docId + "_"));
+        return this.getEditInfo(entry -> {
+            String key = (String) entry.getKey();
+            return key.startsWith(docId + "_");
+        });
     }
 
     @Override
     public List<CoEditionVO> getSessionEditInfo(String sessionId) {
-        return this.getEditInfo(c -> ((CoEditionVO)c.getObjectValue()).getSessionId() != null && ((CoEditionVO)c.getObjectValue()).getSessionId().equals(sessionId));
+        return this.getEditInfo(entry -> {
+            CoEditionVO value = (CoEditionVO) entry.getValue();
+            return value.getSessionId() != null && value.getSessionId().equals(sessionId);
+        });
     }
 
     @Override
     public List<CoEditionVO> getAllEditInfo() {
-        return this.getEditInfo(c -> true);
+        return this.getEditInfo(entry -> true);
     }
 
-    private List<CoEditionVO> getEditInfo(Predicate<Element> infoFilter) {
-        Ehcache cache = (Ehcache)coEditionCache.getNativeCache();
-        Map<Object, Element> cacheElements = cache.getAll(cache.getKeys());
-        List<CoEditionVO> infoCoEdition = cacheElements.values().stream()
+    private List<CoEditionVO> getEditInfo(Predicate<Map.Entry<Object, Object>> infoFilter) {
+        IMap<Object, Object> nativeMap = (IMap<Object, Object>) coEditionCache.getNativeCache();
+
+        List<CoEditionVO> infoCoEdition = nativeMap.entrySet().stream()
                 .filter(infoFilter)
-                .map(c -> ((CoEditionVO)c.getObjectValue())).collect(Collectors.toList());
+                .map(entry -> (CoEditionVO) entry.getValue())
+                .collect(Collectors.toList());
+
         return Collections.unmodifiableList(infoCoEdition);
     }
-
 }

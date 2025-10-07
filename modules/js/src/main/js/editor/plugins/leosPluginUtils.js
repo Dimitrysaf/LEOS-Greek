@@ -119,7 +119,7 @@ define(function leosPluginUtilsModule(require) {
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~ART_DEF";
     var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-number'];
-    var SIGNATURE_ELEMENTS = ['organization', 'role', 'person'];
+    var SIGNATURE = 'signature';
 
     var commonAttributes = [
         { akn: "xml:id", html: "id" },
@@ -1403,7 +1403,7 @@ define(function leosPluginUtilsModule(require) {
     function _handleIndentAttributes(node, editor, isIndent, isChild) {
         if (editor.LEOS.isTrackChangesEnabled && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
             var elementName = node.getAttribute(DATA_AKN_ELEMENT).toUpperCase();
-            switch(elementName) {
+            switch (elementName) {
                 case "ALINEA":
                     elementName = "OTHER_SUBPOINT";
                     break;
@@ -1420,27 +1420,39 @@ define(function leosPluginUtilsModule(require) {
                     elementName = "POINT";
                     break;
             }
-            if (elementName == 'PARAGRAPH'
-                || elementName == 'OTHER_SUBPARAGRAPH'
-                || elementName == 'OTHER_SUBPOINT'
-                || !!node.getAttribute(DATA_AKN_NUM_ID)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_TYPE, elementName);
-                node.getAttribute(DATA_AKN_NUM) ? node.setAttribute(DATA_INDENT_ORIGIN_NUMBER, node.getAttribute(DATA_AKN_NUM)) : null;
+
+            if (node.getAttribute('refersto') === '~INP' && node.getAttribute('data-akn-name') && node.getAttribute('data-akn-name') === 'subparagraph'
+                && node.getParent().getAttribute('data-akn-name') && node.getParent().getAttribute('data-akn-name') === 'aknOrderedList'
+                && node.getParent().getParent().getAttribute('data-akn-name') && node.getParent().getParent().getAttribute('data-akn-name') === 'point') {
+                var parentPoint = node.getParent().getParent();
+                _setIndentAttrs(elementName, parentPoint, isChild, isIndent, editor);
+            } else {
+                _setIndentAttrs(elementName, node, isChild, isIndent, editor);
             }
-            if (!!node.getAttribute(DATA_AKN_NUM_ID)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ID, node.getAttribute(DATA_AKN_NUM_ID));
-            }
-            if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
-            }
-            if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
-                node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
-            }
-            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
-                node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
-            }
-            editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
         }
+    }
+
+    function _setIndentAttrs(elementName, node, isChild, isIndent, editor) {
+        if (elementName == 'PARAGRAPH'
+            || elementName == 'OTHER_SUBPARAGRAPH'
+            || elementName == 'OTHER_SUBPOINT'
+            || !!node.getAttribute(DATA_AKN_NUM_ID)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_TYPE, elementName);
+            node.getAttribute(DATA_AKN_NUM) ? node.setAttribute(DATA_INDENT_ORIGIN_NUMBER, node.getAttribute(DATA_AKN_NUM)) : null;
+        }
+        if (!!node.getAttribute(DATA_AKN_NUM_ID)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ID, node.getAttribute(DATA_AKN_NUM_ID));
+        }
+        if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
+        }
+        if (!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
+            node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
+        }
+        if (!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
+            node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
+        }
+        editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
     }
 
     function _hasPointAttribute(element) {
@@ -1836,14 +1848,19 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isSignatureElement(element) {
-        var elementName = element.getAttribute(DATA_AKN_NAME);
-        return SIGNATURE_ELEMENTS.some(e => e === elementName);
+        return element.parentElement?.getAttribute(DATA_AKN_NAME) === SIGNATURE;
     }
 
-    function _hasSiblingWithSameDataAknName(element) {
-        var elementName = element.getAttribute(DATA_AKN_NAME);
-        return !!(element.getPrevious(e => e.getAttribute(DATA_AKN_NAME) === elementName)
-            || element.getNext(e => e.getAttribute(DATA_AKN_NAME) === elementName));
+    // function added in #2738, check if it can be removed in #2739
+    function _isDuplicatedSignatureElement(element) {
+        return _isSignatureElement(element) && !_isOnlyElementOfTypeInSignature(element);
+    }
+
+    // function added in #2738, check if it can be removed in #2739
+    function _isOnlyElementOfTypeInSignature(element) {
+        const elementName = element.getAttribute(DATA_AKN_NAME);
+        const elementSelector = "p[data-akn-name='" + elementName + "']";
+        return $(element.parentElement).find(elementSelector).length === 1;
     }
 
     return {
@@ -1937,8 +1954,8 @@ define(function leosPluginUtilsModule(require) {
         isLeaf: _isLeaf,
         isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
         isSignatureElement: _isSignatureElement,
+        isDuplicatedSignatureElement: _isDuplicatedSignatureElement,
         handleIndentAttributes: _handleIndentAttributes,
-        hasSiblingWithSameDataAknName: _hasSiblingWithSameDataAknName,
         copyAllAttributes: _copyAllAttributes,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,

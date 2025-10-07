@@ -21,6 +21,7 @@ define(function leosTransformerPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var numberModule = require("plugins/leosNumber/listItemNumberModule");
     var UTILS = require("core/leosUtils");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
 
     var pluginName = "leosTransformer";
     var ORDERED_LIST_SELECTOR = "ol[data-akn-name='aknOrderedList']";
@@ -62,7 +63,9 @@ define(function leosTransformerPluginModule(require) {
     function _cleanElements(data) {
         var eventDataAsObject = $(data);
         var elementsToRemove =  eventDataAsObject
-            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph'] ,p[data-akn-name='aknParagraph']")
+            .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph'] ,p[data-akn-name='aknParagraph'], " +
+                // added in #2738, check if it can be removed in #2739
+                "p[data-akn-name='organization'], p[data-akn-name='role'], p[data-akn-name='person']")
             .find("*").addBack().filter(function() {
                 return UTILS.isEmptyElement(this);
             });
@@ -97,10 +100,12 @@ define(function leosTransformerPluginModule(require) {
         var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
         var isParentBlockContainer = $(elem).parent().attr('data-akn-name')==="blockContainer";
         isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList && !isParentBlockContainer;
-        if (($(elem).parents('table').length === 0)
-            && (!$(elem).attr("refersto") || $(elem).attr("refersto") === '~WRP')
-            && !isPBeforeTable &&
-            UTILS.isEmptyElement(elem) && ($.trim($(elem).text()) === '')) {
+        // first condition added in #2738, check if it can be removed in #2739
+        if ((leosPluginUtils.isDuplicatedSignatureElement(elem) ||
+                ($(elem).parents('table').length === 0)
+                && (!$(elem).attr("refersto") || $(elem).attr("refersto") === '~WRP')
+                && !isPBeforeTable)
+            && UTILS.isEmptyElement(elem) && ($.trim($(elem).text()) === '')) {
             var parent = $(elem).parent();
             $(elem).remove();
             _checkEmptyAndRemove(0, parent);

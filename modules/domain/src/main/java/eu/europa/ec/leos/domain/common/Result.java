@@ -15,9 +15,10 @@
 // Class inspired by com.vaadin.data.SimpleResult
 package eu.europa.ec.leos.domain.common;
 
+import java.io.Serializable;
 import java.util.Optional;
 
-public class Result<R> {
+public class Result<R> implements Serializable {
 
     private final R value;
     private final ErrorCode errorCode;

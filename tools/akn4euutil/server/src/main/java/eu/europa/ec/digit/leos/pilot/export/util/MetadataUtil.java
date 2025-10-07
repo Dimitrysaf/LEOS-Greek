@@ -55,6 +55,7 @@ public class MetadataUtil {
     public static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\)(\\s{0,1})([0-9]+)(\\s{0,1})([A-Za-z]{0,5})";
     public static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER";
     public static final String INSERT_COTE_SHORT_VALUE_PATTERN = "%s/%s/%s";
+    public static final String INSERT_COTE_ID_PATTERN = "%s_%s_%s";
     public static final String INTERINSTITUTIONAL_COTE_PARSE_PATTERN = "([0-9]{4})/([0-9]+) \\(([A-Za-z0-9]+)\\)";
     public static final String INTERINSTITUTIONAL_COTE_ID_PATTERN = "procedure_%s_%s";
     public static final String INTERINSTITUTIONAL_COTE_HREF_PATTERN = "http://eur-lex.europa.eu/procedure/__LANG__/%s_%s";
@@ -405,7 +406,7 @@ public class MetadataUtil {
         String year = fieldValue.substring(bracketIndex+1, closingBracketIndex);
         String number = readCoteNumber(fieldValue, closingBracketIndex+1);
 
-        String id = IdGenerator.generateId();
+        String id = String.format(INSERT_COTE_ID_PATTERN, type, year, number);
         String shortValue = String.format(INSERT_COTE_SHORT_VALUE_PATTERN, type, year, number);
         return new ReferenceFieldInfo(id, INSERT_COTE_HREF, fieldValue, shortValue, coteType);
     }
