@@ -14,6 +14,7 @@ import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.util.IdGenerator;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ResourcesUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -119,7 +120,7 @@ public class MetadataServiceImpl implements MetadataService {
         final Node longTitle = xmlFile.getElementByName("longTitle");
         if (longTitle == null) return;
 
-        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, "p");
+        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, MetadataUtil.ELEMENT_P);
         if (pNode == null) return;
 
         final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
@@ -185,7 +186,7 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        List<Node> xmlNodesP = XmlUtil.getChildNodesWithName(xmlNodeConclusions, "p");
+        List<Node> xmlNodesP = XmlUtil.getChildNodesWithName(xmlNodeConclusions, MetadataUtil.ELEMENT_P);
         if (xmlNodesP.isEmpty()) {
             return;
         }
@@ -612,7 +613,7 @@ public class MetadataServiceImpl implements MetadataService {
         refElement.setTextContent(reference.getDisplayValue());
         refElement.setAttribute(MetadataUtil.ATTRIBUTE_HREF, reference.getHref());
 
-        final Element referenceElement = xmlFile.newElement("p");
+        final Element referenceElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
         XmlUtil.setNodeAttributeValue(referenceElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         referenceElement.appendChild(xmlFile.createTextNode("{"));
         referenceElement.appendChild(refElement);
@@ -712,6 +713,27 @@ public class MetadataServiceImpl implements MetadataService {
         final NodeList nodeList = xmlFile.getElementsWithAttributeValue(MetadataUtil.ATTRIBUTE_CLASS, MetadataUtil.VALUE_TEMPLATE);
         for(int i=0; i<nodeList.getLength(); i++) {
             XmlUtil.removeNodeAttributeValue(nodeList.item(i), MetadataUtil.ATTRIBUTE_CLASS);
+        }
+    }
+
+    public void removeDateIfNeeded(XmlUtil.XmlFile xmlFile) {
+        final Node conclusions = xmlFile.getElementByName(MetadataUtil.ELEMENT_CONCLUSIONS);
+        if (conclusions == null) {
+            return;
+        }
+
+        final Node pNode = XmlUtil.getChildNodeWithName(conclusions, MetadataUtil.ELEMENT_P);
+        if (pNode == null) {
+            return;
+        }
+
+        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
+        if (dateNode == null) {
+            return;
+        }
+
+        if (StringUtil.isEmpty(dateNode.getTextContent())) {
+            pNode.removeChild(dateNode);
         }
     }
 }

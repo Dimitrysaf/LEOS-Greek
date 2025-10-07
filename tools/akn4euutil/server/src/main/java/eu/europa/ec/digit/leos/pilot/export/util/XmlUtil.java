@@ -39,7 +39,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,8 +67,6 @@ public class XmlUtil {
     public static final String NAMESPACE_AKN4EU_URI = "http://imfc.europa.eu/akn4eu";
     public static final String TAG_AKN4EU_NAME = "akn4eu:akn4euVersion";
     private static final int NO_MATCH_INDEX_VALUE = -1;
-
-    // //*[@id='4']
 
     public static class XmlFile {
         private Document xmlDocument;
@@ -166,8 +163,6 @@ public class XmlUtil {
             return this.xmlDocument.getElementsByTagName(name);
         }
 
-        //see: https://stackoverflow.com/questions/8445408/how-to-get-specific-xml-elements-with-specific-attribute-value
-        //see: https://stackoverflow.com/questions/14248063/xpath-to-select-element-by-attribute-value
         public NodeList getElementsWithAttributeValue(final String attributeName, final String attributeValue) {
             final XPathFactory xPathFactory = XPathFactory.newInstance();
             final XPath xPath = xPathFactory.newXPath();

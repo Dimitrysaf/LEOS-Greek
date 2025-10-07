@@ -146,4 +146,6 @@ public interface MetadataService {
      * @param xmlFile XmlFile to modify
      * */
     void removeTemplateClassAttributes(XmlUtil.XmlFile xmlFile);
+
+    void removeDateIfNeeded(XmlUtil.XmlFile xmlFile);
 }

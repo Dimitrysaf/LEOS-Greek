@@ -103,6 +103,7 @@ public class MetadataUtil {
     public static final String ELEMENT_ROLE = "role";
     public static final String ELEMENT_PERSON = "person";
     public static final String ELEMENT_SIGNATURE = "signature";
+    public static final String ELEMENT_P = "p";
 
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",

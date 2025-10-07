@@ -218,6 +218,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
         documentXmlFiles.stream().forEach((xmlFile) -> {
             metadataService.removeTemplateClassAttributes(xmlFile);
+            metadataService.removeDateIfNeeded(xmlFile);
         });
 
         final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
