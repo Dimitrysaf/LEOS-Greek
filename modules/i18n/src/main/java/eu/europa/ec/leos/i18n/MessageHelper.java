@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 
+import java.nio.charset.StandardCharsets;
+
 public abstract class MessageHelper {
 
     @Autowired
@@ -45,7 +47,8 @@ public abstract class MessageHelper {
                 message = key;
             }
         }
-        return message;
+        String decodedMessage = new String(message.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        return decodedMessage;
     }
 
 }
