@@ -287,10 +287,8 @@ public class MetadataServiceImpl implements MetadataService {
         if (xmlNodeDate == null) {
             return;
         }
-        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
-
-        String displayValue = readEmissionDataDisplayValue(fieldInfo, xmlFile);
-        MetadataUtil.removeClassAttribute(xmlNodeDate);
+        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId().isEmpty() ? "2999-01-01" : fieldInfo.getId());
+        final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
         xmlNodeDate.setTextContent(displayValue);
     }
 
@@ -306,7 +304,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         Node xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, MetadataUtil.VALUE_CONCLUSION_NODE_IDNEW);
         if (xmlNodeConclusionsP == null) {
-            xmlNodeConclusionsP = XmlUtil.getXmlChildNodeWithXmlIdAttributeValue(xmlNodeConclusions, MetadataUtil.VALUE_CONCLUSION_NODE_ID);
+            xmlNodeConclusionsP = XmlUtil.getChildNodeWithName(xmlNodeConclusions, MetadataUtil.ELEMENT_P);
         }
         if (xmlNodeConclusionsP == null) {
             return;
@@ -317,9 +315,8 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
-        MetadataUtil.removeClassAttribute(xmlNodeDate);
-        String displayValue = this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
+        XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId().isEmpty() ? "2999-01-01" : fieldInfo.getId());
+        final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
         xmlNodeDate.setTextContent(displayValue);
     }
 
