@@ -268,18 +268,18 @@
                 </select>
               </div>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference">
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference" *ngIf="!isAutonomousAct">
               <span (click)="$event.stopPropagation()">
                 <input
                   name="checkbox-inter-institutional-ref"
                   euiInputCheckBox
-                  (change)="handleChange()"
+                  (change)="onInterInstitutionalRefChecked($event)"
                   [(ngModel)]="interInstitutionalRef"
                 />
               </span>
               <strong>{{'page.collection.details.inter.institutional.reference' | translate}}</strong>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference2">
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference2" *ngIf="!isAutonomousAct">
               <div class="adoption-info-institutional-reference">
                 <select euiSelect [(ngModel)]="interInstitutionalRefYear" (ngModelChange)="handleChange()" name="interInstitutionalRefYear"
                         id="interInstitutionalRefYear"

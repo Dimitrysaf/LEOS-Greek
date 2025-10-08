@@ -531,6 +531,14 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.handleChange();
   }
 
+  onInterInstitutionalRefChecked(event: Event) {
+    const interInstitutionalRef = ((event.target as HTMLInputElement).checked);
+    if (interInstitutionalRef) {
+      this.interInstitutionalRefYear = (new Date()).getFullYear();
+    }
+    this.handleChange();
+  }
+
   handleChange() {
     this.enableSave = this.isChanged() && this.isValid();
     if (!this.isInterInstitutionalRefValid()) {
