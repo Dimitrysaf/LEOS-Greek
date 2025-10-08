@@ -285,6 +285,7 @@ define(function leosTrackChangesTableModule(require) {
                 table = parent;
             }
             var range = editor.createRange();
+            range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
             var removeTable = true;
             if (table.getId()) {
                 var currentUserId = core.getUserId(editor);
@@ -298,24 +299,17 @@ define(function leosTrackChangesTableModule(require) {
                     }
                 });
             }
-
-
             if (removeTable) {
                 if (isOnlyElement) {
                     // Create paragraph before removing table to maintain cursor position
                     var newParagraph = editor.document.createElement('p');
                     newParagraph.insertBefore(table);
-                    table.remove();
-
                     range.selectNodeContents(newParagraph);
                     range.collapse(true);
                     editor.getSelection().selectRanges([range]);
                     editor.focus();
-                } else {
-                    // Move range before table, remove it, then select the range
-                    range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
-                    table.remove();
                 }
+                table.remove();
             }
             range.select();
             editor.focus();
