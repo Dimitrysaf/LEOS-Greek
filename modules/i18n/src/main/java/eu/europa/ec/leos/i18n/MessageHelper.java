@@ -47,8 +47,7 @@ public abstract class MessageHelper {
                 message = key;
             }
         }
-        String decodedMessage = new String(message.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        return decodedMessage;
+        return message;
     }
 
 }
