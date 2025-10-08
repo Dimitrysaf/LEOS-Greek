@@ -736,6 +736,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public <D extends LeosDocument> String findDocumentRefByPackageIdAndCategory(Class<? extends D> type, String packageId, String category) {
+        return "";
+    }
+
+    @Override
     public Map<String, Object> findDocumentMetadataByRef(String ref, Class type) {
         return null;
     }

@@ -125,4 +125,6 @@ public interface ApiService {
     void validateProposal(String proposalRef) throws Exception;
 
     LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) throws IOException;
+
+    String findDocumentRefByPackageIdAndCategory(String packageId, String category);
 }

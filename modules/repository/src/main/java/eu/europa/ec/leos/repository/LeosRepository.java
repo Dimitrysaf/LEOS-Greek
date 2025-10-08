@@ -445,5 +445,6 @@ public interface LeosRepository {
     
     Map<String, Object> getTemplateInfo(String packageId);
 
+    <D extends LeosDocument> String findDocumentRefByPackageIdAndCategory(Class<? extends D> type, String packageId, String category);
 
 }

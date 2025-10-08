@@ -25,35 +25,38 @@ import {
 
 
 @NgModule({
-  declarations: [
-    ProposalActionsDropdownComponent,
-    ProposalDetailsComponent,
-    ProposalDraftsComponent,
-    ProposalMilestonesComponent,
-    ProposalViewComponent,
-    ProposalCollaboratorsComponent,
-    ProposalCollaboratorsDialogComponent,
-    ProposalHeaderComponent,
-    ProposalLastUpdatedOnComponent,
-    ProposalExportsComponent,
-    AddMilestoneDialogComponent,
-    ProposalMilestoneSendCopyDialogComponent,
-    ProposalMilestonePublishToCatalogDialogComponent,
-    MilestoneAnnotationWarningModalComponent
-  ],
-  imports: [
-    ProposalViewRoutingModule,
-    SharedModule,
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatDatepickerToggle,
-    MatHint,
-    MatLabel,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatSuffix,
-  ],
-  providers: [ProposalService],
+    declarations: [
+        ProposalActionsDropdownComponent,
+        ProposalDetailsComponent,
+        ProposalDraftsComponent,
+        ProposalMilestonesComponent,
+        ProposalViewComponent,
+        ProposalCollaboratorsComponent,
+        ProposalCollaboratorsDialogComponent,
+        ProposalHeaderComponent,
+        ProposalLastUpdatedOnComponent,
+        ProposalExportsComponent,
+        AddMilestoneDialogComponent,
+        ProposalMilestoneSendCopyDialogComponent,
+        ProposalMilestonePublishToCatalogDialogComponent,
+        MilestoneAnnotationWarningModalComponent
+    ],
+    imports: [
+        ProposalViewRoutingModule,
+        SharedModule,
+        CommonModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatDatepickerToggle,
+        MatHint,
+        MatLabel,
+        MatDatepicker,
+        MatDatepickerInput,
+        MatSuffix,
+    ],
+    providers: [ProposalService],
+    exports: [
+        ProposalMilestonePublishToCatalogDialogComponent
+    ]
 })
 export class ProposalViewModule {}

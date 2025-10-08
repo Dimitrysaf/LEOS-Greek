@@ -52,7 +52,7 @@
         </div>
       </div>
       <!-- Searchbar-->
-      <div class="eui-b-pl-xl middle-body-content">
+      <div class="eui-b-pl-xl middle-body-content"  *ngIf="!isAdminView">
         <app-proposal-filter-home
           class="filter-container"
           (searchInitiation)="toggleProposalCardVisibility($event)"
@@ -64,7 +64,7 @@
         ></app-proposal-home-card>
       </div>
       <!-- Cards-->
-      <div class="cards-containers">
+      <div class="cards-containers"  *ngIf="!isAdminView">
         <app-proposal-home-card
           class="card-container"
           icon="pulse:sharp"
@@ -78,6 +78,15 @@
           labelKey="page.home.my-favourites"
           [packages]="favouritesPackages$ | async"
         ></app-proposal-home-card>
+      </div>
+      <!--Admin View-->
+      <div *ngIf="isAdminView">
+        <app-proposal-view-custom-template
+          [documentCollectionName]="documentCollectionName"
+          [proposalTemplate]="proposalTemplate"
+          [isCustomTemplatesCatalog]=true
+          [userRoles]="userRoles"
+        ></app-proposal-view-custom-template>
       </div>
     </div>
   </eui-page-content>

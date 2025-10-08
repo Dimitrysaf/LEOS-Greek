@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { UserState } from '@eui/base';
 import {
@@ -56,6 +56,9 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   paginatorComponent: EuiPaginatorComponent;
   @ViewChild('filters') filtersComponent: ProposalFilterHomeComponent;
   showProposalCard = false;
+  isAdminView = false;
+  documentCollectionName: string;
+  proposalTemplate: string;
   canCreateDraft = false;
   canCreateMandate = false;
   canCreateProposal = false;
@@ -103,21 +106,24 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     this.route.queryParamMap.subscribe((paramsMap) =>
       this.applyQueryParams(paramsMap),
     );
-
-    combineLatest({
-      filters: this.proposalService.filters$,
-      sortOrder: this.proposalService.sortOrder$,
-      limit: this.proposalService.limit$,
-      page: this.proposalService.page$,
-    })
-      .pipe(
-        map(LandingPageComponent.stateToQueryParams),
-        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-      )
-      .subscribe((params) => {
-        this.setQueryParams(params);
-      });
+    if (!this.isAdminView) {
+      combineLatest({
+        filters: this.proposalService.filters$,
+        sortOrder: this.proposalService.sortOrder$,
+        limit: this.proposalService.limit$,
+        page: this.proposalService.page$,
+      })
+        .pipe(
+          map(LandingPageComponent.stateToQueryParams),
+          distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+        )
+        .subscribe((params) => {
+          this.setQueryParams(params);
+        });
+    }
     this.setPermissions();
+   // this.documentCollectionName =  this.config.documentCollectionName;
+   // this.proposalTemplate =  this.config.proposalTemplate;
   }
 
   ngOnDestroy() {
@@ -181,6 +187,8 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   }
 
   private applyQueryParams(paramsMap: ParamMap) {
+    const from = paramsMap.get('from') || 'home'; // default to home if missing
+    this.isAdminView = from === 'adminView';
     const { filters, limit, page } =
       LandingPageComponent.queryParamsToState(paramsMap);
 

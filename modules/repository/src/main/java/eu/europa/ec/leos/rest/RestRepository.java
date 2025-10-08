@@ -113,6 +113,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestGetAllVersionsURI;
     @Value("${leos.rest.repository.count.recent.minor.versions}")
     private String leosRestGetRecentMinorVersionsCountURI;
+    @Value("${leos.rest.repository.document.ref.package.id}")
+    private String leosRestGetDocumentRefURI;
     @Value("${leos.rest.repository.find.document.first.version}")
     private String leosRestFindFirstVersionURI;
     @Value("${leos.rest.repository.find.document.by.version}")
@@ -500,6 +502,13 @@ public class RestRepository extends AbstractRestClient {
         LOGGER.trace("Get all minors Count for Intermediate [docRef={}, versionLabel={} ]", docRef, versionLabel);
         String url = getUrl(leosRestGetRecentMinorVersionsCountURI + "?versionLabel={versionLabel}");
         Integer resp = getEntity(url, Integer.class, docRef, versionLabel);
+        return resp;
+    }
+
+    String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
+        LOGGER.trace("Get document reference by package Id and Category [packageId={}, category={} ]", packageId, category);
+        String url = getUrl(leosRestGetDocumentRefURI + "?category={category}");
+        String resp = getEntity(url, String.class, packageId, category);
         return resp;
     }
 

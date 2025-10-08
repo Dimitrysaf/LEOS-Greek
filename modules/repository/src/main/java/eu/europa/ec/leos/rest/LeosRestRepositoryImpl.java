@@ -907,6 +907,13 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         return recentMinorVersionsCountCount;
     }
 
+    @Override
+    @PerformanceLogger
+    public <D extends LeosDocument> String findDocumentRefByPackageIdAndCategory(Class<? extends D> type, String packageId, String category) {
+        String documentRef = repository.findDocumentRefByPackageIdAndCategory(packageId, category);
+        return documentRef;
+    }
+
     private void checkSecurityContextEnsureUserIsPresent() {
         if(isEmpty(securityContext.getUser())) {
             throw new IllegalStateException("Missing user in security context");

@@ -126,6 +126,11 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   open() {
     this.sendMilestonePublishToDgTemplateCatalog.openDialog();
   }
+  openNameAndDgTemplateCatalog(documentRef) {
+    this.loadTemplateInfo(documentRef);
+    this.sendMilestonePublishToDgTemplateCatalog.openDialog();
+  }
+
 
   close() {
     this.sendMilestonePublishToDgTemplateCatalog.closeDialog();

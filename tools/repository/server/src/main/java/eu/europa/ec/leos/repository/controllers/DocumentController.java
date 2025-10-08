@@ -423,5 +423,17 @@ public class DocumentController {
     }
 
 
+    @GetMapping(path = "/documents/find-by-packageId/{packageId}",
+            consumes = {},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Find proposal ref by packageId and category")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "LEG Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(@PathVariable("packageId") String packageId,
+                                                       @RequestParam(value="category", required=false, defaultValue="%25") String categoryCode) {
+        String documentRef = documentService.findDocumentRefByPackageIdAndCategory(packageId, categoryCode);
+        return ResponseEntity.ok(documentRef);
+    }
 
 }

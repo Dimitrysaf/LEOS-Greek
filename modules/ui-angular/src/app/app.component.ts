@@ -22,6 +22,9 @@ import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service'
 import {NotificationsService} from './shared/services/notifications.service';
 import {DocumentService} from "@/shared/services/document.service";
 import {DomSanitizer, Title} from '@angular/platform-browser';
+import {CreateProposalService} from "@/shared/services/create-proposal.service";
+import {ApplicationRole} from "@/shared";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -47,12 +50,17 @@ export class AppComponent implements OnInit, OnDestroy {
   userPreferencesState: Observable<UserPreferences>;
   profile: Profile;
   isNotificationsShown$: Observable<boolean>;
+  userRoles: ApplicationRole[];
   listSupportButtons = [
     { id: 1, label: 'app.support.contact-us' },
     { id: 2, label: 'app.support.learn' },
     { id: 3, label: 'app.support.go-pro' },
     { id: 4, label: 'app.support.decide' },
   ];
+  listAdministrationButtoms =[
+    { id: 1, label: 'app.administration.catalog' }
+  ];
+
 
   notifications: Notification[];
 
@@ -68,7 +76,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private documentService: DocumentService,
     private titleService: Title,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    protected createProposalService: CreateProposalService,
+    private router: Router
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
     this.i18nState = this.store.select(getI18nState);
@@ -90,6 +100,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.headerTitleHtml = config.headerTitle;
       const plainTextTitle = this.stripHtmlTags(this.headerTitleHtml);
       this.titleService.setTitle(plainTextTitle);
+      this.userRoles =  config.user.roles;
     });
 
     this.documentService.documentConfig$
@@ -152,6 +163,17 @@ export class AppComponent implements OnInit, OnDestroy {
       case 4: {
         window.location.href =
           'https://intragate.ec.europa.eu/decide/sep/entrance';
+        break;
+      }
+    }
+  }
+
+  onAdminListItemClicked(item) {
+    switch (item.id) {
+      case 1: {
+       // this.router.navigate(['/home/admin'])
+        this.router.navigate(['/home/admin'], { queryParams: { from: 'adminView' } });
+        //this.createProposalService.viewCustomTemplateDialog(this.userRoles);
         break;
       }
     }

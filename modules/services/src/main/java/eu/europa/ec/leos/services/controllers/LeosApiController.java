@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.eventbus.EventBus;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
@@ -850,4 +851,17 @@ public class LeosApiController {
             return new ResponseEntity<>("Error occurred while retrieving organizations", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/secured/document-ref/{packageId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(@PathVariable("packageId") String packageId) {
+        try {
+            String documentRef = apiService.findDocumentRefByPackageIdAndCategory(packageId,LeosCategory.PROPOSAL.name());
+            return new ResponseEntity<>(documentRef, HttpStatus.OK);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while find DocumentRef By PackageId and Category: " + ex.getMessage());
+            return new ResponseEntity<>("Error occurred while find DocumentRef By PackageId and Category", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

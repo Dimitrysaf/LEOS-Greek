@@ -91,4 +91,6 @@ public interface DocumentService {
     long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 
     LeosDocument findTemplateByName(String ref) throws RepositoryException;
+
+    String findDocumentRefByPackageIdAndCategory(final String pkgId, final String categoryCode);
 }
