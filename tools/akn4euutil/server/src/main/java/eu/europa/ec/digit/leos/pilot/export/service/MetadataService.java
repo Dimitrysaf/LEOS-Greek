@@ -143,7 +143,6 @@ public interface MetadataService {
      * Process the adoption date field and add the data to the xml
      * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
      * @param xmlFile XML file to add the adoption date
-     * @param pos
      * */
     void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
 
@@ -181,4 +180,12 @@ public interface MetadataService {
      * @param xmlFile XML file to add the adoption date
      * */
     void processCorrigendumAddendum(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+
+    /**
+     * Removes class="template" attribute from all nodes that use it.
+     * @param xmlFile XmlFile to modify
+     * */
+    void removeTemplateClassAttributes(XmlUtil.XmlFile xmlFile);
+
+    void removeDateIfNeeded(XmlUtil.XmlFile xmlFile);
 }

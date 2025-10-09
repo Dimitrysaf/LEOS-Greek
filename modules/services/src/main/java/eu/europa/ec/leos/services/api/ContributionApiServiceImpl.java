@@ -439,6 +439,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             Node block = XercesUtils.getElementByNameAndId(doc, BLOCK, elementId);
             if (block != null) {
                 String newTitle = removeEnclosingTags(XercesUtils.nodeToString(block));
+                newTitle = transformInsToDelAndConcat(newTitle);
                 Annex annex = (Annex) document;
                 AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
                 AnnexMetadata updatedMetadata = metadata.builder().withTitle(newTitle).build();
@@ -446,6 +447,23 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             }
         }
         return document;
+    }
+
+    private static String transformInsToDelAndConcat(String originalXml) {
+        // Check if the string starts with <ins and ends with </ins> using regex
+        if (!originalXml.matches("^<ins.*?</ins>\\s*$")) {
+            return originalXml; // Return unchanged if condition not met
+        }
+        String inputXml = originalXml;
+        // Remove xml:id attribute using regex (assumes double quotes)
+        inputXml = inputXml.replaceAll(" xml:id=\"[^\"]*\"", "");
+        // Change opening tag using regex
+        inputXml = inputXml.replaceAll("^<ins\\s+", "<del ");
+        // Change closing tag using regex
+        inputXml = inputXml.replaceAll("</ins>\\s*$", "</del>");
+        // Replace content using regex: everything between > and </del>, trimming whitespace
+        inputXml = inputXml.replaceAll(">\\s*[^<]*?\\s*</del>", ">Annex</del>");
+        return new StringBuilder(inputXml).append(originalXml).toString();
     }
 
     @Override

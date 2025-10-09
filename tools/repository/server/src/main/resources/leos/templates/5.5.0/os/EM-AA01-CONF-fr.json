@@ -1,0 +1,36 @@
+{
+"guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//tblock[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_1__p\" class=\"guidance-green-block\"><span id=\"_explanatory__blockContainer_1__p-guidance\">[Brièvement]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//tblock[2]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_1__p\" class=\"guidance-green-block\"><span id=\"_explanatory__blockContainer_2__p-guidance\">[Partie essentielle]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//tblock[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_1__p\" class=\"guidance-green-block\"><span id=\"_explanatory__blockContainer_3__p-guidance\">[Brièvement]</span></guidance>"
+  }
+  ],
+  "structure": [
+    {
+      "name": "structure_03"
+    }
+  ]
+}

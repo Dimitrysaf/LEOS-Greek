@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.annotation;
 
-public enum AnnotationStatus {
+import java.io.Serializable;
+
+public enum AnnotationStatus implements Serializable {
     NORMAL,
     ACCEPTED,
     DELETED,

@@ -72,12 +72,10 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         
         // Add user's entity organizations to DG codes if not already present
         List<String> finalDgCodes = new ArrayList<>(dgCodes);
-        if (user.getEntities() != null) {
-            for (Entity entity : user.getEntities()) {
-                String orgName = entity.getOrganizationName();
-                if (orgName != null && !finalDgCodes.contains(orgName)) {
-                    finalDgCodes.add(orgName);
-                }
+        if (user.getDefaultEntity() != null) {
+            String orgName = user.getDefaultEntity().getOrganizationName();
+            if (orgName != null && !finalDgCodes.contains(orgName)) {
+                finalDgCodes.add(orgName);
             }
         }
         

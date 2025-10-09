@@ -27,13 +27,16 @@ import eu.europa.ec.leos.vo.structure.SubElementNumberingConfigs;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemType;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
+import eu.europa.ec.leos.vo.structure.TocItemTypes;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Provider;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -144,7 +147,7 @@ public class StructureConfigUtils {
     private static NumberingType getNumberingTypeFromSubElementNumberingConfigs(List<TocItem> tocItems,
             String subElementTagName,
             SubElementNumberingConfigs subElementNumberingConfigs, String language) {
-        if (!subElementNumberingConfigs.getSubElementNumberingConfigs().isEmpty()) {
+        if (subElementNumberingConfigs != null && !subElementNumberingConfigs.getSubElementNumberingConfigs().isEmpty()) {
             for (SubElementNumberingConfig subElementNumberingConfig : subElementNumberingConfigs.getSubElementNumberingConfigs()) {
                 if (subElementNumberingConfig.getSubElement().value().equals(subElementTagName)) {
                     return getNumberingTypeByLangConfigAndLanguage(subElementNumberingConfig.getLangNumConfigs(), language);
@@ -427,4 +430,59 @@ public class StructureConfigUtils {
         return numberingType;
     }
 
+    public static List<String> findTocItemsWithElementAsSubElement(List<TocItem> tocItems, String elementName) {
+        if (tocItems == null || elementName == null) {
+            return Collections.emptyList();
+        }
+
+        return tocItems.stream()
+                .filter(Objects::nonNull)
+                .filter(tocItem ->
+                        Optional.ofNullable(tocItem.getTocItemTypes())
+                                .map(TocItemTypes::getTocItemTypes)
+                                .orElse(Collections.emptyList()).stream()
+                                .filter(Objects::nonNull)
+                                .anyMatch(tocItemType ->
+                                        Optional.ofNullable(tocItemType.getSubElementNumberingConfigs())
+                                                .map(SubElementNumberingConfigs::getSubElementNumberingConfigs)
+                                                .orElse(Collections.emptyList()).stream()
+                                                .filter(Objects::nonNull)
+                                                .anyMatch(cfg -> elementName.equals(cfg.getSubElement().value()))
+                                )
+                )
+                .map(tocItem -> tocItem.getAknTag().value())
+                .collect(Collectors.toList());
+    }
+
+    public static List<Attribute> findAttributeValueOfElementType(List<TocItem> tocItems, String elementName) {
+        if (tocItems == null || elementName == null) {
+            return Collections.emptyList();
+        }
+        return getTocItemTypesByTagName(tocItems, elementName).stream().filter(Objects::nonNull)
+                .map(TocItemType::getAttribute)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    public static NumberingType findNumberingTypeForAttribute(
+            List<TocItem> tocItems, Attribute attribute, String elementName, String language) {
+        NumberingType defaultNumType = null;
+        for (TocItem tocItem : tocItems) {
+            if (tocItem.getTocItemTypes() != null) {
+                for (TocItemType tocItemType : tocItem.getTocItemTypes().getTocItemTypes()) {
+                    NumberingType numberingType = getNumberingTypeFromSubElementNumberingConfigs(
+                            tocItems, elementName, tocItemType.getSubElementNumberingConfigs(), language);
+                    if (attribute != null && tocItemType.getAttribute() != null
+                            && attribute.getAttributeName().equals(tocItemType.getAttribute().getAttributeName())
+                            && attribute.getAttributeValue().equals(tocItemType.getAttribute().getAttributeValue())) {
+                        return numberingType;
+                    }
+                    if (defaultNumType == null) {
+                        defaultNumType = numberingType;
+                    }
+                }
+            }
+        }
+        return defaultNumType;
+    }
 }

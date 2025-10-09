@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.numbering.config;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -10,15 +11,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Node;
 
 import javax.inject.Provider;
 import java.util.List;
+import java.util.Map;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_LIST_TYPE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.findAttributeValueOfElementType;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.findNumberingTypeForAttribute;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.findTocItemsWithElementAsSubElement;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingByName;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingTypeByDepth;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingTypeByLanguage;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemByNumValue;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemsByName;
 
@@ -41,14 +48,25 @@ public class NumberConfigFactory {
             XercesUtils.removeAttribute(firstElement.getParentNode(), LEOS_LIST_TYPE_ATTR);
         } else if (foundTocItems.size() > 1 && XercesUtils.getFirstChild(firstElement, NUM) != null) {
             String currentNum = XercesUtils.getNodeNum(firstElement);
-            TocItem tocItem = getTocItemByNumValue(numberingConfigs, foundTocItems, currentNum, depth, language);
-            if (tocItem != null) {
-                numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
+
+            List<String> listOfTocITemWithSubElement = findTocItemsWithElementAsSubElement(tocItems, elementName);
+
+            if (!CollectionUtils.isEmpty(listOfTocITemWithSubElement)) {
+                Node firstAscendant = XercesUtils.getFirstAscendant(firstElement, listOfTocITemWithSubElement);
+                List<Attribute> attributeList = findAttributeValueOfElementType(tocItems, firstAscendant.getNodeName());
+                Attribute matchingAttribute = findMatchingAttributeValue(firstAscendant, attributeList);
+                NumberingType finalNumberingType = findNumberingTypeForAttribute(tocItems, matchingAttribute, elementName, language);
+                numberingType = finalNumberingType;
             } else {
-                numberingType = StructureConfigUtils.getNumberingTypeByLanguage(foundTocItems.get(0), language);
+                TocItem tocItem = getTocItemByNumValue(numberingConfigs, foundTocItems, currentNum, depth, language);
+                if (tocItem != null) {
+                    numberingType = getNumberingTypeByLanguage(tocItem, language);
+                } else {
+                    numberingType = getNumberingTypeByLanguage(foundTocItems.get(0), language);
+                }
             }
         } else {
-            numberingType = StructureConfigUtils.getNumberingTypeByLanguage(foundTocItems.get(0), language);
+            numberingType = getNumberingTypeByLanguage(foundTocItems.get(0), language);
         }
 
         NumberingConfig numberingConfig = getNumberingByName(numberingConfigs, numberingType);
@@ -129,6 +147,17 @@ public class NumberConfigFactory {
             default:
                 throw new IllegalStateException("No configuration found for numbering: " + numberingConfig.getType());
         }
+    }
+
+    private Attribute findMatchingAttributeValue(Node node, List<Attribute> attributeList) {
+        Map<String, String> attrMap = XercesUtils.getAttributes(node);
+        for(Attribute attr : attributeList) {
+            String attrVal = attrMap.get(attr.getAttributeName());
+            if(attrVal != null && attrVal.equals(attr.getAttributeValue())) {
+                return attr;
+            }
+        }
+        return null;
     }
 
 }

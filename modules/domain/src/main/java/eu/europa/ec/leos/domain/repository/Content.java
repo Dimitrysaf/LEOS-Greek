@@ -1,8 +1,11 @@
 package eu.europa.ec.leos.domain.repository;
 
-import java.io.InputStream;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 
-public interface Content {
+import java.io.InputStream;
+import java.io.Serializable;
+
+public interface Content extends Serializable {
 
     String getFileName();
 
@@ -12,7 +15,7 @@ public interface Content {
 
     Content.Source getSource();
 
-    interface Source {
+    interface Source extends Serializable {
         InputStream getInputStream();
 
         byte[] getBytes();

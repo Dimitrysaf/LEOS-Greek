@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.domain.repository;
 
-public enum DocumentRuleType {
+import java.io.Serializable;
+
+public enum DocumentRuleType implements Serializable {
 
     STRUCTURE_VALIDATION("structureValidation"),
     ONLY_ONE_OCCURENCE_ELEMENT("onlyOneOccurenceElement"),

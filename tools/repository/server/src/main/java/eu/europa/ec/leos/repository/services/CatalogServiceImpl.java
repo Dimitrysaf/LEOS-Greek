@@ -391,8 +391,6 @@ public class CatalogServiceImpl implements CatalogService {
     private void saveTemplateArtifacts(DocumentMilestone documentMilestone, Set<String> templateKeys, List<DocumentV> latestDocuments, String packageId, String userId) throws CatalogException {
         List<ConfigurationV> configurationVList = getCategoryCodesFromTemplateKeys(templateKeys);
         List<ConfigCategory> configCategories = getConfigCategoriesByCodes(configurationVList);
-
-        markPreviousCustomTemplateVersionsAsNotLatest(packageId);
         
         saveDocumentsOfPublishedTemplates(documentMilestone, latestDocuments, configurationVList, configCategories, packageId, userId);
         saveConfigFiles(templateKeys, packageId, userId);
@@ -1073,12 +1071,13 @@ public class CatalogServiceImpl implements CatalogService {
 
             // Check if config already exists
             Optional<Config> existingConfig = configRepository.findConfigByName(customKey);
+            ConfigVersion currentVersion = null;
             Config config;
 
             if (existingConfig.isPresent()) {
                 config = existingConfig.get();
                 // Mark previous version as not latest
-                ConfigVersion currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
+                currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
                 if (currentVersion != null) {
                     currentVersion.setIsLatestVersion(false);
                     configVersionRepository.save(currentVersion);
@@ -1098,7 +1097,7 @@ public class CatalogServiceImpl implements CatalogService {
 
             ConfigVersion version = new ConfigVersion();
             version.setConfigId(config.getId());
-            version.setVersionLabel(existingConfig.isPresent() ? documentService.getNextVersionLabel(VersionType.MINOR, "1.0.0.0") : "1.0.0.0");
+            version.setVersionLabel(existingConfig.isPresent() ? documentService.getNextVersionLabel(VersionType.MINOR, currentVersion.getVersionLabel()) : "1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
             version.setVersionType(existingConfig.isPresent() ? String.valueOf(VersionType.MINOR.value()) : String.valueOf(VersionType.MAJOR.value()));
             version.setIsLatestMajorVersion(!existingConfig.isPresent());
@@ -1236,21 +1235,6 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private void markPreviousCustomTemplateVersionsAsNotLatest(String packageId) {
-        // Find all custom template configs with names ending with packageId
-        List<Config> configs = configRepository.findAll().stream()
-                .filter(config -> config.getName().endsWith(CUSTOM_TEMPLATE_SEPARATOR + packageId))
-                .collect(Collectors.toList());
-
-        for (Config config : configs) {
-            ConfigVersion currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
-            if (currentVersion != null && currentVersion.getIsLatestVersion()) {
-                currentVersion.setIsLatestVersion(false);
-                configVersionRepository.save(currentVersion);
-            }
-        }
-    }
-
     // =============================================================================
     // CONFIG FILE MANAGEMENT METHODS
     // =============================================================================
@@ -1281,11 +1265,12 @@ public class CatalogServiceImpl implements CatalogService {
             // Check if config already exists
             Optional<Config> existingConfig = configRepository.findConfigByName(customKey);
             Config config;
+            ConfigVersion currentVersion = null;
 
             if (existingConfig.isPresent()) {
                 config = existingConfig.get();
                 // Mark previous version as not latest
-                ConfigVersion currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
+                currentVersion = configVersionRepository.findLastConfigVersionByConfigId(config.getId());
                 if (currentVersion != null) {
                     currentVersion.setIsLatestVersion(false);
                     configVersionRepository.save(currentVersion);
@@ -1305,7 +1290,7 @@ public class CatalogServiceImpl implements CatalogService {
 
             ConfigVersion version = new ConfigVersion();
             version.setConfigId(config.getId());
-            version.setVersionLabel(existingConfig.isPresent() ? documentService.getNextVersionLabel(VersionType.MINOR, "1.0.0.0") : "1.0.0.0");
+            version.setVersionLabel(existingConfig.isPresent() ? documentService.getNextVersionLabel(VersionType.MINOR, currentVersion.getVersionLabel()) : "1.0.0.0");
             version.setVersionSeriesId(config.getId().toString());
             version.setVersionType(existingConfig.isPresent() ? String.valueOf(VersionType.MINOR.value()) : String.valueOf(VersionType.MAJOR.value()));
             version.setIsLatestMajorVersion(!existingConfig.isPresent());

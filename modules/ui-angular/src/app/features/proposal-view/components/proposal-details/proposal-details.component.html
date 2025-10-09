@@ -39,7 +39,7 @@
               <div class="col-sm-2 label-column">
                 <label>{{ 'page.collection.details.template' | translate }}</label>
               </div>
-              <div class="col-sm-4">{{ proposal.metadata.template }}</div>
+              <div class="col-sm-4">{{ templateId }}</div>
               <div class="col-sm-6 label-column"></div>
             </div>
 
@@ -268,18 +268,18 @@
                 </select>
               </div>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference">
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference" *ngIf="!isAutonomousAct">
               <span (click)="$event.stopPropagation()">
                 <input
                   name="checkbox-inter-institutional-ref"
                   euiInputCheckBox
-                  (change)="handleChange()"
+                  (change)="onInterInstitutionalRefChecked($event)"
                   [(ngModel)]="interInstitutionalRef"
                 />
               </span>
               <strong>{{'page.collection.details.inter.institutional.reference' | translate}}</strong>
             </div>
-            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference2">
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference2" *ngIf="!isAutonomousAct">
               <div class="adoption-info-institutional-reference">
                 <select euiSelect [(ngModel)]="interInstitutionalRefYear" (ngModelChange)="handleChange()" name="interInstitutionalRefYear"
                         id="interInstitutionalRefYear"

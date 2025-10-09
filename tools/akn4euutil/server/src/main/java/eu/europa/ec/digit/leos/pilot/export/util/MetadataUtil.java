@@ -85,6 +85,7 @@ public class MetadataUtil {
     public static final String ELEMENT_DATE="date";
     public static final String VALUE_ONE ="1";
     public static final String VALUE_ZERO ="0";
+    public static final String VALUE_TEMPLATE = "template";
     public static final String MESSAGE_LOCATION_NOT_SUPPORTED ="Location not supported";
     public static final String MESSAGE_INVALID_ISO_DATE ="Invalid iso date";
     public static final String MESSAGE_INVALID_FIELD_VALUE ="Invalid field value";
@@ -120,6 +121,8 @@ public class MetadataUtil {
     public static final String VALUE_AUTHENTIC_LANGUAGES_NAME = "authenticLang";
     public static final String VALUE_CROSS_CONFERENCE_NAME = "associatedReferences";
     public static final String ACTING_ENTITY_NAME = "actingEntity";
+    public static final String VALUE_MAIN_DOC = "mainDoc";
+    public static final String VALUE_PLACE_AND_DATE = "placeAndDate";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
     public static final String AUTONOMOUS_ACT_VALUE="ACT_AUTO_COM";
     public static final String VALUE_FINAL = "final";
@@ -130,6 +133,7 @@ public class MetadataUtil {
     public static final String AUTHENTIC_LANGUAGES_PATH = "//akn:meta/akn:references/akn:TLCReference[@name='language']";
     public static final String COVERPAGE_TYPE_PATH = "//akn:coverPage/akn:container[@name='disclaimer']";
     public static final String ACTING_ENTITY_PATH = "//akn:coverPage/akn:container[@name='actingEntity']";
+    public static final String ELEMENT_LONG_TITLE = "longTitle";
 
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",

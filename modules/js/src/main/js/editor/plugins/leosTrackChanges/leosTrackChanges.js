@@ -713,6 +713,8 @@ define(function leosTrackChangesModule(require) {
         isElementPresentInEditor(editor, element) {
             if(!!element.getAttribute(core.ID)) {
                 return !!editor.document.find('.leos-placeholder').getItem(0).find(`#${element.getAttribute(core.ID)}`).getItem(0);
+            }else if(!!element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID)) {
+                return !!editor.document.find('.leos-placeholder').getItem(0).find(`[${leosPluginUtils.DATA_AKN_MP_ID}=${element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID)}]`).getItem(0);
             }else{
                 const selector = this.findSelector(element);
                 return !!editor.document.find('.leos-placeholder').getItem(0).find(selector).getItem(0);
@@ -851,14 +853,12 @@ define(function leosTrackChangesModule(require) {
             }
 
             if (!["akomaNtoso", "bill", "documentCollection", "div", "doc", "attachments", "br" ].includes(tagName)) {
-                let idAttrValue = element.getAttribute("id");
-                if ((idAttrValue == undefined) || (idAttrValue.trim().length == 0)) {
-                    idAttrValue = identityHandler.generateId();
-                    element.setAttribute("id", idAttrValue);
-                    element.setAttribute("NEW", '');
+                let idAttrValue = element.getAttribute(core.ID);
+                if (idAttrValue == null || idAttrValue.trim().length == 0) {
+                    element.setAttribute(core.ID, identityHandler.generateId());
+                    element.setAttribute(core.NEW, '');
                     element.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
                     element.removeAttribute(leosPluginUtils.DATA_AKN_WRAPPED_CONTENT_ID);
-                    element.removeAttribute(leosPluginUtils.DATA_AKN_MP_ID);
                 }
             }
 

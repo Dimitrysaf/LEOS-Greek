@@ -64,6 +64,23 @@
               "
           (confirmDeletion)="handleDelete()"
         ></app-confirm-dialog>
+
+        <app-confirm-dialog
+          #proposalPublishedDeleteCannotConf
+          [title]="
+                'page.collection.proposal-header.actions.delete-dialog.title'
+                  | translate
+              "
+          [description]="
+                'page.collection.proposal-header.actions.delete-dialog-cannot-published.desc'
+                  | translate
+                    : {
+                        totMilestones:
+                          this.proposalDetailsService.clonedProposalCount
+                      }
+              "
+          (confirmDeletion)="handleDelete()"
+        ></app-confirm-dialog>
       </ng-container>
     </eui-dropdown-content>
   </eui-dropdown>

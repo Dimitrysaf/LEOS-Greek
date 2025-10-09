@@ -52,6 +52,9 @@ define(function aknNumberedBlockListPluginModule(require) {
                         ols[i].setAttribute("data-akn-name","NumberedBlockList");
                         var listItems = ols[i].children;
                         for (var jj = 0; jj < listItems.length; jj++) {
+                            if (!listItems[jj].innerHTML.trim()) {
+                                listItems[jj].innerHTML = '<br>';
+                            }
                             idAttrValue = listItems[jj].getAttribute("id");
                             if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
                                 idAttrValue = identityHandler.generateId();

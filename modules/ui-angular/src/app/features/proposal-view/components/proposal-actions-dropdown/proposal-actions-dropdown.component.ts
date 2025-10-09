@@ -25,11 +25,14 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   @Input() proposalLanguage!: string;
   @Input() documentCollectionName!: string;
   @Input() customTemplateAct: boolean;
+  @Input() isPublished: boolean;
 
   @ViewChild('proposalDeleteConf')
   proposalDeleteConf: ConfirmDeleteDialogComponent;
   @ViewChild('proposalDeleteCannotConf')
   proposalDeleteCannotConf: ConfirmDialogComponent;
+  @ViewChild('proposalPublishedDeleteCannotConf')
+  proposalPublishedDeleteCannotConf: ConfirmDialogComponent;
   canExportLW = false;
   canValidate = false;
   canUpdate = false;
@@ -85,6 +88,12 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   }
 
   handleConfirmationDelete() {
+
+    if (this.isPublished){
+      this.proposalPublishedDeleteCannotConf.confirmDialog.openDialog();
+      return;
+    }
+
     if (this.proposalDetailsService.clonedProposalCount === 0) {
       this.proposalDeleteConf.deleteDialog.openDialog();
     } else {
