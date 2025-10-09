@@ -302,7 +302,7 @@
                 </div>
               </div>
             </div>
-            <div *ngFor="let signature of signatures" class="eui-u-width-auto grid-adoption-info-signature">
+            <div *ngFor="let signature of signatures" class="eui-u-width-auto grid-adoption-info-signature" [hidden]="!isAutonomousAct">
               <div euiInputGroup class="eui-u-width-auto grid-adoption-info-special-mention">
                 <label
                   euiLabel
