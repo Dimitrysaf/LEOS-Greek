@@ -158,7 +158,9 @@ define(function leosTablePluginModule(require) {
         }
     }
 
-    function _tableDelete(editor) {
+    function _tableDelete(editor) {// This is a copy of ckeditor plugins/table/plugin.js 'tableDelete' exec command function and modified
+        // to avoid remove 'li' parent table element (check parent condition, 'li' element was added)
+
         var path = editor.elementPath(),
             table = path.contains('table', 1);
 
@@ -172,14 +174,12 @@ define(function leosTablePluginModule(require) {
 
         // Check if table is the only element in the editor (ignoring whitespace nodes)
         var isOnlyElement = editable.getChildCount() === 1 ||
-            (editable.getChildCount() === 2 &&
                 (
                     (editable.getFirst().is('table') &&
                         editable.getLast().type === CKEDITOR.NODE_TEXT &&
                         editable.getLast().getText().trim() === '') ||
-                    (editable.getLast().equals(parent) && parent.getChildCount() === 1)
-                )
-            );
+                    (editable.getChild(1).equals(parent) && parent.getChildCount() === 1)
+                );
 
         if (parent.getChildCount() == 1 && !parent.is('td', 'th', 'li') && !parent.equals(editable) && !isOnlyElement){
             table = parent;
