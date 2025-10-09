@@ -524,6 +524,7 @@ define(function leosAnnexIndentListPluginModule(require) {
         data.listItem.setAttribute("data-akn-num", indentData.nextNum);
         data.listItem.setAttribute(LEOS_ORIGINAL_DEPTH_ATTR, originalDepth);
         editor.fire("handleTcIndent", {data: data.listItem, previousNumber: data.currLvlNum});
+        leosPluginUtils.handleIndentAttributes(data.listItem, editor, true);
         previousDepth = levelItemVo.levelDepth;
         levelItemVo.levelDepth++;
         levelItemVo.levelNum = indentData.nextNum;
