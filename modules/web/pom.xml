@@ -37,6 +37,38 @@
     </properties>
 
     <dependencies>
+        <!-- Spring Boot Starters -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <!-- Exclude embedded Tomcat for traditional deployment -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- For traditional deployment -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Leos modules -->
         <dependency>
             <groupId>eu.europa.ec.leos.pilot</groupId>
@@ -68,6 +100,7 @@
             <artifactId>leos-ui-angular</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -85,15 +118,23 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
+
         <!-- CMIS related libraries -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
         </dependency>
+
         <!-- Apache library used by Spring CommonsMultipartResolver -->
         <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+
+        <!-- Spring Security CAS (if needed) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-cas</artifactId>
         </dependency>
     </dependencies>
 
@@ -137,7 +178,7 @@
             </dependencies>
         </profile>
     </profiles>
-    
+
     <build>
         <finalName>${project.final.name}-${leos.build.instance}</finalName>
         <resources>
@@ -219,6 +260,22 @@
                             <!-- empty overlay represents the current build -->
                         </overlay>
                     </overlays>
+                </configuration>
+            </plugin>
+
+            <!-- Spring Boot plugin for development -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>eu.europa.ec.leos.LeosApplication</mainClass>
+                    <!-- Exclude this from WAR when deploying to WebLogic/Tomcat -->
+                    <excludes>
+                        <exclude>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-tomcat</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
