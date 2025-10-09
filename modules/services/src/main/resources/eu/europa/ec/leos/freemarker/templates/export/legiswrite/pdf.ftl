@@ -31,9 +31,13 @@ ns_prefixes={}>
     <#assign memorandum = proposal.getChildResource('memorandum')>
     <#assign memorandumRef = memorandum.getResourceId()>
 </#if>
-<#assign bill = proposal.getChildResource('bill')>
-<#assign billRef = bill.getResourceId()>
-<#assign annexes = bill.getChildResources('annex')>
+<#if proposal.getChildResource('bill')??>
+    <#assign bill = proposal.getChildResource('bill')>
+    <#assign billRef = bill.getResourceId()>
+    <#if proposal.getChildResource('annex')??>
+        <#assign annexes = bill.getChildResources('annex')>
+    </#if>
+</#if>
 
 <@compress>
     <importOptions technicalKey="${proposal.getExportOptions().getTechnicalKey()}">
@@ -55,23 +59,27 @@ ns_prefixes={}>
                             </#if>
                         </resource>
                     </#if>
-                    <resource ref="${billRef}">
-                        <#if bill.getComponentId('coverPage')??>
-                            <excludes>
-                                <exclude ref="${bill.getComponentId('coverPage')}"/>
-                            </excludes>
-                        </#if>
-                    </resource>
-                    <#list annexes as annex>
-                        <#assign annexRef = annex.getResourceId()>
-                        <resource ref="${annexRef}">
-                            <#if annex.getComponentId('coverPage')??>
+                    <#if bill??>
+                        <resource ref="${billRef}">
+                            <#if bill.getComponentId('coverPage')??>
                                 <excludes>
-                                    <exclude ref="${annex.getComponentId('coverPage')}"/>
+                                    <exclude ref="${bill.getComponentId('coverPage')}"/>
                                 </excludes>
                             </#if>
                         </resource>
-                    </#list>
+                    </#if>
+                    <#if annexes??>
+                        <#list annexes as annex>
+                            <#assign annexRef = annex.getResourceId()>
+                            <resource ref="${annexRef}">
+                                <#if annex.getComponentId('coverPage')??>
+                                    <excludes>
+                                        <exclude ref="${annex.getComponentId('coverPage')}"/>
+                                    </excludes>
+                                </#if>
+                            </resource>
+                        </#list>
+                    </#if>
                 </resource>
             </leos>
             <formats>

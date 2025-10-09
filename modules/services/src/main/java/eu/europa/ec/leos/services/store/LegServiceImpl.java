@@ -56,6 +56,7 @@ import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.export.RelevantElements;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
+import eu.europa.ec.leos.services.pagecounter.PageCounter;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -106,7 +107,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.api.ApiServiceImpl.DOC_VERSION_SEPARATOR;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
@@ -159,6 +159,7 @@ public class LegServiceImpl implements LegService {
     private final XPathCatalog xPathCatalog;
     private final DocumentLanguageContext documentLanguageContext;
     private final UserService userService;
+    private final PageCounter pageCounter;
 
     private static final String MEDIA_DIR = "media/";
     private static final String ANNOT_FILE_EXT = ".json";
@@ -208,7 +209,8 @@ public class LegServiceImpl implements LegService {
                           ProposalService proposalService,
                           XPathCatalog xPathCatalog,
                           ExplanatoryService explanatoryService, FinancialStatementService financialStatementService,
-                          DocumentLanguageContext documentLanguageContext, UserService userService) {
+                          DocumentLanguageContext documentLanguageContext, UserService userService,
+                          PageCounter pageCounter) {
         this.packageRepository = packageRepository;
         this.workspaceRepository = workspaceRepository;
         this.attachmentProcessor = attachmentProcessor;
@@ -232,6 +234,7 @@ public class LegServiceImpl implements LegService {
         this.financialStatementService = financialStatementService;
         this.documentLanguageContext = documentLanguageContext;
         this.userService = userService;
+        this.pageCounter = pageCounter;
     }
 
     @Override
@@ -591,6 +594,7 @@ public class LegServiceImpl implements LegService {
         SpecificDocumentInformationDTO specificDocumentInformationForBill = null;
         SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement = null;
 
+        int totalPageCount = 0;
         for (XmlDocument xmlDocument : xmlDocuments) {
             if (xmlDocument.getCategory().equals(LeosCategory.MEMORANDUM)) {
                 specificDocumentInformationForMemorandum = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
@@ -601,9 +605,11 @@ public class LegServiceImpl implements LegService {
             if (xmlDocument.getCategory().equals(LeosCategory.STAT_DIGIT_FINANC_LEGIS)) {
                 specificDocumentInformationForFinancialStatement = xmlContentProcessor.getSpecificDocumentInformation(xmlDocument.getContent().get().getSource().getBytes());
             }
+            int pageCount = pageCounter.charCount(xmlDocument.getContent().get().getSource().getBytes());
+            totalPageCount += pageCount;
         }
 
-        final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal, specificDocumentInformationForMemorandum, specificDocumentInformationForBill, specificDocumentInformationForFinancialStatement);
+        final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal, specificDocumentInformationForMemorandum, specificDocumentInformationForBill, specificDocumentInformationForFinancialStatement, totalPageCount);
         legPackage.addContainedFile(proposal.getVersionedReference());
         String language = proposal.getMetadata().get().getLanguage();
         documentLanguageContext.setDocumentLanguage(language);
@@ -892,9 +898,12 @@ public class LegServiceImpl implements LegService {
 
     private Map<String, String> enrichZipWithProposal(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Proposal proposal,
             SpecificDocumentInformationDTO specificDocumentInformationForMemorandum, SpecificDocumentInformationDTO specificDocumentInformationForBill,
-            SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement) {
+            SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement, int totalPageCount) {
         byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToProposal(proposal, xmlContent);
+        if (totalPageCount > 0) {
+            xmlContent = XercesUtils.addTotalPageCountTag(xmlContent, pageCounter.countPages(totalPageCount));
+        }
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().get().getLanguage()), xmlContent);
 

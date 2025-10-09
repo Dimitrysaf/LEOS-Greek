@@ -168,9 +168,8 @@
         <!-- Sonar -->
         <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
         <sonar-jacoco-plugin.version>0.8.7</sonar-jacoco-plugin.version>
-        <!-- Ehcache 2.x -->
-        <ehcache.version>2.10.9.2</ehcache.version>
-        <ehcache.jgroups.version>1.7</ehcache.jgroups.version>
+        <!-- Haelcast -->
+        <hazelcast.version>5.3.6</hazelcast.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -550,22 +549,16 @@
                 <artifactId>validation-api</artifactId>
                 <version>${javax-validation.version}</version>
             </dependency>
-            <!-- Ehcache 2.x -->
+            <!-- Hazelcast -->
             <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${ehcache.version}</version>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-jgroupsreplication</artifactId>
-                <version>${ehcache.jgroups.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>ehcache-core</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast-spring</artifactId>
+                <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
