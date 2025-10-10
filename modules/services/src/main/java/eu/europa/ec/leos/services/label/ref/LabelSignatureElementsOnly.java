@@ -16,10 +16,10 @@ import static eu.europa.ec.leos.services.label.ref.NumFormatter.isUnnumbered;
 import static eu.europa.ec.leos.services.support.XmlHelper.ORGANIZATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.PERSON;
 import static eu.europa.ec.leos.services.support.XmlHelper.ROLE;
-import static sun.security.x509.X509CertImpl.SIGNATURE;
 
 @Component
 public class LabelSignatureElementsOnly extends LabelHandler {
+    public static final String SIGNATURE = "signature";
     
     private static final List<String> NODES_TO_CONSIDER = Arrays.asList(SIGNATURE, ROLE, PERSON, ORGANIZATION);
     

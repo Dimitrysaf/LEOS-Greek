@@ -170,6 +170,11 @@
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--Logging frameworks -->
         <dependency>
             <groupId>org.slf4j</groupId>
