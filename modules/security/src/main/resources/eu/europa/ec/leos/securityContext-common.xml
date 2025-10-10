@@ -35,6 +35,8 @@
         </property>
     </bean>
 
+    <bean id="restAuthenticationEntryPoint" class="eu.europa.ec.leos.api.auth.RestAuthenticationEntryPoint"/>
+
     <bean id="leosApiAuthenticationFilter" class="eu.europa.ec.leos.api.auth.LeosApiAuthenticationFilter">
         <constructor-arg value="${leos.api.filter.processor.url}" />
         <constructor-arg ref="tokenService" />
@@ -50,6 +52,9 @@
         <sec:authentication-provider ref="leosApiAuthenticationProvider"/>
     </sec:authentication-manager>
 
+    <bean id="leosApiAuthenticationProvider"
+          class="eu.europa.ec.leos.api.auth.LeosApiAuthenticationProvider">
+    </bean>
 
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass" value="org.springframework.security.core.context.SecurityContextHolder" />
