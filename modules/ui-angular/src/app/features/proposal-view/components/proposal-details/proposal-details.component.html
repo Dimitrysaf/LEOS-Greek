@@ -480,7 +480,7 @@
   </div>
 </div>
 
-<div class="row eui-u-mt-l d-flex align-items-start"  *ngIf="greffeUser && !isAutonomousAct">
+<div class="row eui-u-mt-l d-flex align-items-start"  *ngIf="greffeUser">
   <div class="col-md-11">
     <eui-card
       class="eui-u-mt-s eui-u-mb-l"
@@ -534,7 +534,7 @@
                          [(ngModel)]="proposalType"
                          (change)="handleChange()"
                          [value]="'corrigendum'"
-                         [disabled]="!showCorrigendumAddendum"/>
+                         [disabled]="!showCorrigendumAddendum || isAutonomousAct"/>
                   {{'page.collection.details.proposal.corrigendum' | translate}}
                 </label>
                 <label>
@@ -564,15 +564,16 @@
               </div>
               <div class="col-sm-3 label-column">
                 <div class="details-tab-flex">
-                  <select #targetProposalReferenceActingEntityElt euiSelect [required]="showCorrigendumAddendum" (ngModelChange)="handleChange()"
+                  <select #targetProposalReferenceActingEntityElt euiSelect [required]="showCorrigendumAddendum"
                           [(ngModel)]="targetProposalReferenceActingEntity"
+                          (ngModelChange)="handleChange()"
                           name="targetProposalReferenceActingEntity"
                           id="targetProposalReferenceEntity"  class="details-tab-first-select">
                     <option *ngFor="let targetProposalReferenceActingEntity of institutionalRefActingEntities">{{ targetProposalReferenceActingEntity }}</option>
                   </select>
                   <label style="font-size: x-large; margin-top: 5px;">(</label>
-                  <select #targetProposalReferenceYearElt euiSelect [required]="showCorrigendumAddendum" (ngModelChange)="handleChange()"
-                          [(ngModel)]="targetProposalReferenceYear"
+                  <select #targetProposalReferenceYearElt euiSelect [required]="showCorrigendumAddendum" [(ngModel)]="targetProposalReferenceYear"
+                          (ngModelChange)="handleChange()"
                           name="targetProposalReferenceYear" id="targetProposalReferenceYear"
                            class="details-tab-select">
                     <option *ngFor="let targetProposalReferenceYear of years">{{ targetProposalReferenceYear }}</option>
@@ -598,7 +599,7 @@
                 </div>
               </div>
             </div>
-            <div class="row details-gen-rows" *ngIf="isAutonomousAct">
+            <div class="row details-gen-rows" *ngIf="false">
               <div class="col-sm-2">
                 <input
                   name="checkbox-final-proposal-"
@@ -612,7 +613,7 @@
                   class="details-tab-inline">{{'page.collection.details.proposal.final.version.label' | translate}}</label>
               </div>
             </div>
-            <div class="row details-gen-rows" *ngIf="isAutonomousAct">
+            <div class="row details-gen-rows">
               <div class="col-sm-2">
                 <input
                   name="checkbox-target-proposal-lang"
