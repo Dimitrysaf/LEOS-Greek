@@ -79,7 +79,7 @@ $NUM_WIDTH: 40px;
     & > li {
       @extend %paddedText;
 
-      &:not([data-akn-action-enter='delete']):not([data-akn-action-number='delete']):not([data-akn-element='subparagraph']):before {
+      &:not([data-akn-action-enter='delete']):not([data-akn-action-number='delete']):not([data-akn-element='subparagraph'])[data-akn-num]:before {
         color: $GREY_COLOR;
         content: attr(data-akn-num);
         min-width: $NUM_WIDTH;
@@ -87,7 +87,7 @@ $NUM_WIDTH: 40px;
       }
     }
 
-    & > li[data-akn-num-id*="deleted"] {
+    & > li[data-akn-num-id*="deleted"][data-akn-num] {
       &:before {
         text-decoration: line-through;
         content: attr(data-akn-num);
