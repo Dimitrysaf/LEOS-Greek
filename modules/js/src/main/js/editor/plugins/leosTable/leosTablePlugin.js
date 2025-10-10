@@ -134,6 +134,17 @@ define(function leosTablePluginModule(require) {
                         newElement.insertAfter(parentElem);
                         setToPosition(editor, newElement, CKEDITOR.POSITION_AFTER_START);
                     }
+                } else if (leosPluginUtils.isRecitalAA(parentElem)) {
+                    if (parentElem.getName() === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                        parentElem = parentElem.getLast().getLast();
+                    }
+                    parentElem = parentElem.getAscendant(leosPluginUtils.DIV, true);
+                    var newBlock = new CKEDITOR.dom.element(leosPluginUtils.DIV);
+                    newBlock.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
+                    newBlock.setAttribute(leosPluginUtils.DATA_AKN_HCONTAINER, leosPluginUtils.HCONTAINER_TABLE);
+                    newBlock.setAttribute(leosPluginUtils.DATA_AKN_SUB_HCONTAINER, leosPluginUtils.SUB_HCONTAINER_TABLE);
+                    newBlock.insertAfter(parentElem);
+                    setToPosition(editor, newBlock, CKEDITOR.POSITION_AFTER_START);
                 }
             }
         }
@@ -147,27 +158,53 @@ define(function leosTablePluginModule(require) {
         }
     }
 
-    function _tableDelete(editor) { // This is a copy of ckeditor plugins/table/plugin.js 'tableDelete' exec command function and modified
-		var path = editor.elementPath(), // to avoid remove 'li' parent table element (check parent condition, 'li' element was added)
-		table = path.contains( 'table', 1 );
-		
-		if ( !table )
-			return;
-		
-		// If the table's parent has only one child remove it as well (unless it's a table cell, li element or the editable element)
-		//(https://dev.ckeditor.com/ticket/5416, https://dev.ckeditor.com/ticket/6289, https://dev.ckeditor.com/ticket/12110)
-		var parent = table.getParent(),
-			editable = editor.editable();
-		
-		if ( parent.getChildCount() == 1 && !parent.is( 'td', 'th' , 'li' ) && !parent.equals( editable ) )
-			table = parent;
-		
-		var range = editor.createRange();
-		range.moveToPosition( table, CKEDITOR.POSITION_BEFORE_START );
-		table.remove();
-		range.select();
-	}
-    
+    function _tableDelete(editor) {// This is a copy of ckeditor plugins/table/plugin.js 'tableDelete' exec command function and modified
+        // to avoid remove 'li' parent table element (check parent condition, 'li' element was added)
+
+        var path = editor.elementPath(),
+            table = path.contains('table', 1);
+
+        if (!table)
+            return;
+
+        // If the table's parent has only one child remove it as well (unless it's a table cell, li element or the editable element)
+        //(https://dev.ckeditor.com/ticket/5416, https://dev.ckeditor.com/ticket/6289, https://dev.ckeditor.com/ticket/12110)
+        var parent = table.getParent(),
+            editable = editor.editable();
+
+        // Check if table is the only element in the editor (ignoring whitespace nodes)
+        var isOnlyElement = editable.getChildCount() === 1 ||
+                (
+                    (editable.getFirst().is('table') &&
+                        editable.getLast().type === CKEDITOR.NODE_TEXT &&
+                        editable.getLast().getText().trim() === '') ||
+                    (editable.getChild(1).equals(parent) && parent.getChildCount() === 1)
+                );
+
+        if (parent.getChildCount() == 1 && !parent.is('td', 'th', 'li') && !parent.equals(editable) && !isOnlyElement){
+            table = parent;
+        }
+
+        var range = editor.createRange();
+
+        if (isOnlyElement) {
+            // Create paragraph before removing table to maintain cursor position
+            var newParagraph = editor.document.createElement('p');
+            newParagraph.insertBefore(table);
+            table.remove();
+
+            range.selectNodeContents(newParagraph);
+            range.collapse(true);
+            editor.getSelection().selectRanges([range]);
+            editor.focus();
+        } else {
+            // Move range before table, remove it, then select the range
+            range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
+            table.remove();
+        }
+        range.select();
+    }
+
     function _onSelectionChange(event) {
         leosCommandStateHandler.changeCommandState(event.editor, 'table', changeStateElements);
     }

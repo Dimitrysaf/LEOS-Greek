@@ -1,6 +1,6 @@
-import { And } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 import annotationBar from "../pages/annotationBar";
 
-And('annotation side bar is present', () => {
+Then('annotation side bar is present', () => {
     annotationBar.elements.annotationPane().should('be.visible');
 })

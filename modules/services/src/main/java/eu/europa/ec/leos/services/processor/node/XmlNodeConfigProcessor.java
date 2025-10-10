@@ -80,34 +80,14 @@ public interface XmlNodeConfigProcessor {
 
     String getCollectionBodyComponent(String attributeName, List<String> refersToList);
 
-    default Map<String, XmlNodeConfig> getProposalComponentsConfig(LeosCategory leosCategory, String attributeName) {
+    default Map<String, XmlNodeConfig> getProposalComponentsConfig(LeosCategory leosCategory, String attributeName, String refersToOfDocument, String showAs) {
         Validate.notNull(leosCategory);
         Validate.notNull(attributeName);
 
         Map<String, XmlNodeConfig> componentRefConfig = new HashMap<>();
-        String showAs;
         List<String> refersToList = new ArrayList<String>() {{ add("#" + leosCategory.name().toLowerCase()); add("#_" + leosCategory.name().toLowerCase()); }};
+        refersToList.add(refersToOfDocument);
 
-        //A better way to set showAs as it might be dependent of lang and docType.
-        switch (leosCategory) {
-            case BILL:
-                showAs = "Regulation of the European Parliament and of the Council";
-                refersToList.addAll(Arrays.asList("~DEC", "~REG", "~DIR"));
-                break;
-            case MEMORANDUM:
-                showAs = "Explanatory Memorandum";
-                refersToList.add("~EXPL_MEMORANDUM");
-                break;
-            case COUNCIL_EXPLANATORY:
-                showAs = "Council Explanatory";
-                break;
-            case STAT_DIGIT_FINANC_LEGIS:
-                showAs = "Legislative Financial Statement";
-                refersToList.add("~STAT_DIGIT_FINANC_LEGIS");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid configuration");
-        }
         componentRefConfig.put(leosCategory.name() + "_" + attributeName,
                 new XmlNodeConfig(getCollectionBodyComponent(attributeName, refersToList), true,
                         Arrays.asList(new XmlNodeConfig.Attribute("showAs", showAs, "documentRef"))));

@@ -8,6 +8,7 @@
     [isCompleted]="!!(selectedTemplate && selectedLanguage)"
   >
       <app-proposal-create-template-selector
+        [userRoles]="userRoles"
         #templateSelector
         (navigationClick)="onNavigation(+1)"
         (selectTemplate)="handleSelectTemplate($event)"

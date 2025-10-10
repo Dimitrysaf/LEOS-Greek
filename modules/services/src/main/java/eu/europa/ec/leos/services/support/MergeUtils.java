@@ -114,48 +114,48 @@ public class MergeUtils {
         if (LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
             XercesUtils.replaceElement(node.getFirstChild(), node);
             isNodeDeleted = true;
-        } else if (LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
-            Node parent = node.getParentNode();
-            XercesUtils.deleteElement(node);
-            List<Node> children = parent != null ? getChildren(parent) : null;
-            while (parent != null
-                    && !parent.getNodeName().equals(NUM)
-                    && (StringUtils.isBlank(parent.getTextContent())
-                    || (children.size() == 1 && children.get(0).getNodeName().equals(NUM)))) {
-                Node tmp = parent;
-                parent = parent.getParentNode();
-                if (tmp.getParentNode() != null) {
-                    XercesUtils.deleteElement(tmp);
-                }
-                children = parent != null ? getChildren(parent) : null;
-            }
-            if (parent != null && parent.getNodeName().equals(NUM) && resetNum && StringUtils.isBlank(parent.getTextContent())) {
-                parent.setTextContent("#");
-            }
-            isNodeDeleted = true;
+        } else if (isInsertOrMoveFrom(node)) {
+            isNodeDeleted = handleInsertOrMove(node, resetNum);
         } else if (hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)
                 || hasAttributeWithValue(node, LEOS_SOFT_ACTION_ATTR, MOVE_TO)) {
             removeTrackChangesAttributes(node, true);
-        } else if (hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)
-                || hasAttributeWithValue(node, LEOS_SOFT_ACTION_ATTR, MOVE_FROM)) {
-            Node parent = node.getParentNode();
-            XercesUtils.deleteElement(node);
-            List<Node> children = parent != null ? getChildren(parent) : null;
-            while (parent != null && !parent.getNodeName().equals(NUM) && (StringUtils.isBlank(parent.getTextContent())
-                    || (children.size() == 1 && children.get(0).getNodeName().equals(NUM)))) {
-                Node tmp = parent;
-                parent = parent.getParentNode();
-                if (tmp.getParentNode() != null) {
-                    XercesUtils.deleteElement(tmp);
-                }
-                children = parent != null ? getChildren(parent) : null;
-            }
-            if (parent != null && parent.getNodeName().equals(NUM) && resetNum && StringUtils.isBlank(parent.getTextContent())) {
-                parent.setTextContent("#");
-            }
-            isNodeDeleted = true;
         }
         return isNodeDeleted;
+    }
+
+    private static boolean isInsertOrMoveFrom(Node node) {
+        return LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())
+                || hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)
+                || hasAttributeWithValue(node, LEOS_SOFT_ACTION_ATTR, MOVE_FROM);
+    }
+
+    private static boolean handleInsertOrMove(Node node, boolean resetNum) {
+        Node parent = node.getParentNode();
+        XercesUtils.deleteElement(node);
+
+        while (parent != null
+                && !parent.getNodeName().equals(NUM)
+                && !XercesUtils.hasAscendantOfType(parent, "subparagraph")
+                && isParentRemovable(parent)) {
+            Node tmp = parent;
+            parent = parent.getParentNode();
+            if (tmp.getParentNode() != null) {
+                XercesUtils.deleteElement(tmp);
+            }
+        }
+
+        if (parent != null && parent.getNodeName().equals(NUM)
+                && resetNum && StringUtils.isBlank(parent.getTextContent())) {
+            parent.setTextContent("#");
+        }
+
+        return true;
+    }
+
+    private static boolean isParentRemovable(Node parent) {
+        List<Node> children = getChildren(parent);
+        return StringUtils.isBlank(parent.getTextContent())
+                || (children.size() == 1 && children.get(0).getNodeName().equals(NUM));
     }
 
     public static void removeTrackChangesAttributes(Node nodeToRestore, boolean resetNum) {

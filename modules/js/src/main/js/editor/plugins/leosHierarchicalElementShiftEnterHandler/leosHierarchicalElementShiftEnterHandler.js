@@ -127,7 +127,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         var isINP = _isINP(currentElement, context.editor);
         var enterAsShiftEnterForPoints = elementType === 'article' && isINP && isShiftEnterAllowedInThisContext(context.editor);
         if (selection.getStartElement().getName() === 'ol') {
-            selection = leosPluginUtils.selectLastEditableElement(selection);
+            selection = leosPluginUtils.selectLastEditableElement(selection, 'p, li');
         }
         if (leosPluginUtils.isInsideTable(selection.getStartElement())) {
             context.event.cancel();
@@ -527,7 +527,12 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         if (leosPluginUtils.isAnnexSubparagraphElement(selection.getStartElement())) {
             return false;
         }
-        
+
+        // If element is in autonomous act recital soft-enter has to be disabled
+        if (leosPluginUtils.isRecitalAA(currentElement)) {
+            return false;
+        }
+
         // If element is empty shift enter should be forbidden
         if (leosKeyHandler.isContentEmptyTextNode(currentElement)) {
             return false;

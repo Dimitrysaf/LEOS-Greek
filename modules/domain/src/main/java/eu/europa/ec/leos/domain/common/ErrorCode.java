@@ -14,7 +14,9 @@
 
 package eu.europa.ec.leos.domain.common;
 
-public enum ErrorCode {
+import java.io.Serializable;
+
+public enum ErrorCode implements Serializable {
     EXCEPTION, 
     DOCUMENT_NOT_FOUND, 
     DOCUMENT_SOURCE_NOT_FOUND, 

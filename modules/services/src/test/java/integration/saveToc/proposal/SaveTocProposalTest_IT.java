@@ -76,8 +76,7 @@ public abstract class SaveTocProposalTest_IT extends SaveTocTest_IT {
     @Before
     public void onSetUp() throws Exception {
         super.onSetUp();
-        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor,
-                documentLanguageContext);
+        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, documentLanguageContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
     }

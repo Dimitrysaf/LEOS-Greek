@@ -223,8 +223,24 @@ Feature: Legal Act Page Regression Features
     Then toc editing button is displayed and enabled
     And  enacting terms contains "Article 5 - Scope 1. Text..." at index 4 in navigation pane
     And  enacting terms contains "Article 6 - Entry into force This Regulation" at index 5 in navigation pane
+    When mouseover and click on article 1
+    And  click at offset 7 of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
+    And  add "point i" at current cursor position in edition mode
+    And  click at offset 0 of pTag 1 of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click backspace from keyboard in edition mode
+    And  click on soft enter icon present in ck editor panel
+    And  click on decrease indent icon present in ck editor panel
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
 
-  @indentOutdent @paragraphMode @local
+  @indentOutdent @paragraphMode @TabKeyInArticle @local
   Scenario: test indent and out-dent scenario inside article
     Given navigate to edit drafting application with "User1"
     Then user is on home page
@@ -283,6 +299,70 @@ Feature: Legal Act Page Regression Features
     And  content of subparagraph refersTo "~WRP" of list 1 of paragraph 1 of article 6 contains "wrapper subparagraph"
     And  content of point 1 of list 1 of paragraph 1 of article 6 contains "Point a"
     And  content of subparagraph 1 of paragraph 1 of article 6 contains "list sibling subparagraph"
+    When click on insert after icon of article 1
+    Then article 2 is displayed
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point a" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point i" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point 1" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point -" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph 1 of list 1 of paragraph 1 of article 2 contains "Text..."
+    And  content of subparagraph 1 of list 1 of point 1 of list 1 of paragraph 1 of article 2 contains "point a"
+    And  content of subparagraph 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 2 contains "point i"
+    And  content of subparagraph 1 of list 1 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 2 contains "point 1"
+    And  content of indent 1 of list 1 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 2 contains "point -"
+    And  content of paragraph 2 of article 2 contains "Text..."
+    When click on insert after icon of article 2
+    Then article 2 is displayed
+    When click on toc refresh icon
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    When click on three vertical dots for the element contains text "Article 3" in toc
+    When mouseover on change type category
+    When click on definition option in change type category
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    Then heading of article 3 contains "Definitions"
+    When mouseover and click on article 3
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When add "point 1" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point a" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point i" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When add "point i subparagraph" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph 1 of list 1 of paragraph 1 of article 3 contains "Text..."
+    And  content of subparagraph 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point 1"
+    And  content of subparagraph 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point a"
+    And  content of subparagraph 1 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point i"
+    And  content of subparagraph 2 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point i subparagraph"
 
   @definitionArticle @local
   Scenario: definition article should have maximum three depth

@@ -172,4 +172,10 @@ public class NumberServiceMandate implements NumberService {
 
     @Override
     public byte[] renumberHigherSubDivisions(byte[] xmlContent, String language, String elementName, List<TocItem> tocItems) { return xmlContent; }
+
+    @Override
+    public byte[] renumberRecitalSections(byte[] xmlContent) {
+        return xmlContent;
+    }
+
 }

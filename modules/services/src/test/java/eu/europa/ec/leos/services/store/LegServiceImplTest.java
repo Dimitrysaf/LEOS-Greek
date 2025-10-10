@@ -8,6 +8,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
@@ -51,6 +52,7 @@ import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
+import eu.europa.ec.leos.services.pagecounter.PageCounter;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.AttachmentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -104,14 +106,17 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class LegServiceImplTest {
 
     private final static String STORE_DIR = "/store/";
+    private final static String FILE_PREFIX = "/merge";
 
     private ApplicationContext applicationContext;
     private List<TocItem> tocItems;
@@ -165,6 +170,9 @@ public class LegServiceImplTest {
     ExternalSystemACLService externalSystemACLService;
     @Mock
     PackageService packageService;
+
+    @Mock
+    PageCounter pageCounter;
     @InjectMocks
     private TableOfContentProcessor tableOfContentProcessor = spy(new TableOfContentProcessorImpl());
 
@@ -246,6 +254,18 @@ public class LegServiceImplTest {
         User user = ModelHelper.buildUser(45L, "demo", "demo", entities);
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.getUserName()).thenReturn("demo");
+
+        List<Collaborator> collaborators = new ArrayList<>();
+        collaborators.add(new Collaborator("login", "OWNER", "SG"));
+        Bill bill = getMockedBill(collaborators);
+        Memorandum memorandum = getMockedMemorandum(collaborators);
+
+        List<LeosDocument> LeosDocuments = new ArrayList<>();
+        LeosDocuments.add(bill);
+        LeosDocuments.add(memorandum);
+
+        when(packageRepository.findDocumentsByPackageId(any(), any(), anyBoolean(), anyBoolean())).thenReturn(LeosDocuments);
+
     }
 
     @After

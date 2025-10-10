@@ -4,6 +4,7 @@ class coverPage {
         longTitle: () => this.elements.coverPage().find('longtitle'),
         docPurpose: () => this.elements.longTitle().find('docpurpose'),
         closeBtn: () => cy.contains('Close'),
+        eeaRelevanceContainer: () => this.elements.coverPage().find("container[name='eeaRelevance']")
     }
 
     clickDocPurpose(){

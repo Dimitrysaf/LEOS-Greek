@@ -149,7 +149,7 @@ public final class MetadataTestsUtil {
             checkNodeAttributeValue(xmlNodeMeta, "href",
                     configuration.getLocationTypeToTestAsFieldInfo().getHref());
             checkNodeAttributeValue(xmlNodeMeta, "showAs",
-                    configuration.languageFormatsToTest.getLocationDisplayValue(configuration.getLocationTypeToTestAsFieldInfo().getId()));
+                    configuration.getLocationTypeToTestAsFieldInfo().getDisplayValue());
         }
 
         Node xmlNodeCoverpage = xmlFile.getElementByName("coverPage");

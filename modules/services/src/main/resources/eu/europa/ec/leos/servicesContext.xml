@@ -18,14 +18,7 @@
     <import resource="classpath:eu/europa/ec/leos/xslt/xsltContext.xml"/>
     
     <cache:annotation-driven cache-manager="cacheManager" mode="proxy" proxy-target-class="false"/>
-    
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager">
-            <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
-                p:configLocation="classpath:eu/europa/ec/leos/cache/ehcache.xml" p:shared="true"/>
-        </property>
-    </bean>
-    
+
     <!-- Always use the delegatingSecurityContextAsyncTaskExecutor bean.
     Using the DelegatingSecurityContextAsyncTaskExecutor wrapping the default SimpleAsyncTaskExecutor
     to spawn a new thread executing asynchronously and to pass it the current SecurityContext.

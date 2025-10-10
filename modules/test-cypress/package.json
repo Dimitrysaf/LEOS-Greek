@@ -12,28 +12,29 @@
   "author": "Satyabrata Das",
   "license": "ISC",
   "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^23.0.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.5",
+    "@cucumber/cucumber": "^12.2.0",
     "@cypress/xpath": "^2.0.3",
     "cucumber-html-reporter": "^7.1.1",
-    "cypress": "^14.1.0",
+    "cypress": "^15.1.0",
     "cypress-cucumber-attach-screenshots-to-failed-steps": "^1.0.0",
-    "cypress-cucumber-preprocessor": "^4.3.1",
-    "cypress-real-events": "^1.14.0",
+    "cypress-real-events": "^1.15.0",
     "cypress-xpath": "^2.0.1",
-    "multiple-cucumber-html-reporter": "^3.6.2"
+    "esbuild": "^0.25.9",
+    "multiple-cucumber-html-reporter": "^3.9.3"
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": false,
-    "step_definitions": "cypress/e2e/step_definitions/",
-    "cucumberJson": {
-      "generate": true,
-      "outputFolder": "cypress/report",
-      "filePrefix": "",
-      "fileSuffix": ".cucumber",
-      "overwrite": true
+    "stepDefinitions": "cypress/e2e/step_definitions/**/*.js",
+    "json": {
+      "enabled": true,
+      "output": "cypress/report/cucumber-report.json"
     }
   },
   "dependencies": {
     "decompress": "^4.2.1",
+    "form-data": "^4.0.4",
     "fs": "^0.0.1-security"
   }
 }

@@ -121,7 +121,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                             // Don't indent if in first list item of the parent.
                             // Outdent, however, can always be done to collapse
                             // the list into a paragraph (div).
-                            if (this.isIndent && firstItemInPath(this.context, path, list))
+                            if (this.isIndent && editor.getCommand('indent').state !== CKEDITOR.TRISTATE_OFF)
                                 return;
 
                             // Exec related global indentation command. Global
@@ -524,6 +524,7 @@ define(function leosAnnexIndentListPluginModule(require) {
         data.listItem.setAttribute("data-akn-num", indentData.nextNum);
         data.listItem.setAttribute(LEOS_ORIGINAL_DEPTH_ATTR, originalDepth);
         editor.fire("handleTcIndent", {data: data.listItem, previousNumber: data.currLvlNum});
+        leosPluginUtils.handleIndentAttributes(data.listItem, editor, true);
         previousDepth = levelItemVo.levelDepth;
         levelItemVo.levelDepth++;
         levelItemVo.levelNum = indentData.nextNum;
@@ -537,6 +538,7 @@ define(function leosAnnexIndentListPluginModule(require) {
         data.listItem.setAttribute("data-akn-num", outdentData.nextNum);
         data.listItem.setAttribute(LEOS_ORIGINAL_DEPTH_ATTR, originalDepth);
         editor.fire("handleTcIndent", {data: data.listItem, previousNumber: data.currLvlNum});
+        leosPluginUtils.handleIndentAttributes(data.listItem, editor, false);
         previousDepth = levelItemVo.levelDepth;
         levelItemVo.levelDepth--;
         levelItemVo.levelNum = outdentData.nextNum;
@@ -1528,7 +1530,7 @@ define(function leosAnnexIndentListPluginModule(require) {
     function _onSelectionChange(event) {
         var selection = event.data.selection;
         if (selection.getStartElement().getName() === 'ol') {
-            event.data.selection = leosPluginUtils.selectLastEditableElement(selection);
+            event.data.selection = leosPluginUtils.selectLastEditableElement(selection, 'p, li');
         }
         leosCommandStateHandler.changeCommandState(event.editor, "indent");
         leosCommandStateHandler.changeCommandState(event.editor, "outdent");

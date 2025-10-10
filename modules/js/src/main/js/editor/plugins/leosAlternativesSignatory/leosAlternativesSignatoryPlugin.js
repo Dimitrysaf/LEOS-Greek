@@ -1,0 +1,241 @@
+/*
+ * Copyright 2024 European Union
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+; // jshint ignore:line
+define(function leosAlternativesSignatoryPluginModule(require) {
+    "use strict";
+
+    // load module dependencies
+    var pluginTools = require("plugins/pluginTools");
+    var log = require("logger");
+    var $ = require("jquery");
+    var CKEDITOR = require("promise!ckEditor");
+    var pluginName = "leosAlternativesSignatory";
+    var optionLists = "";
+    var dialogDefinition = require("./leosAlternativesSignatoryDialog");
+    var dialogCommand;
+    
+    var pluginDefinition = {
+        requires: 'richcombo',
+        lang: 'en',
+        init : function init(editor) {
+            log.debug("Initializing Alternatives plugin...");
+
+            optionLists = editor.LEOS.alternatives;
+            //_displayLabelsAltButtons();
+
+            editor.once("receiveData",_populateAlternativesToolbar);
+            
+            pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
+            dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
+        }
+    };
+
+    pluginTools.addPlugin(pluginName, pluginDefinition);
+
+    function _getCurrentAltConfigFromAttributes(editor) {
+        var currentAltConfig = {};
+        var element = editor.element.$.firstChild;
+        if (element && (element.firstChild && element.firstChild.id === 'spellchecker-contextmenu' || !element.getAttribute('leos:alternative'))
+            && editor.element.$.childNodes[1]) {
+            element = editor.element.$.childNodes[1];
+        }
+        if (element.attributes["leos:optionlist"]) {
+            currentAltConfig.optionListName = element.attributes["leos:optionlist"].value;
+            currentAltConfig.selectOptionIndex = element.attributes["leos:selectedoption"].value;
+            currentAltConfig.rootEltDeletable = element.attributes["leos:deletable"].value;
+            currentAltConfig.rootEltEditable = element.attributes["leos:editable"].value;
+            currentAltConfig.rootEltId = element.attributes["id"].value;
+        }
+        if (!currentAltConfig.optionListName) {
+            throw new Error("Could not get the alternatives configuration list name");
+        }
+        return currentAltConfig;
+    }
+
+    function _getAlternativesConfiguration(optionListName) {
+        var optionLists = JSON.parse(_getOptionLists());
+        if (!optionLists) {
+            throw new Error("Could not get the alternatives configuration list");
+        }
+        var optionList = optionLists.find(listOfOptions => listOfOptions.name == optionListName);
+        if (!optionList) {
+            throw new Error("Could not get the alternatives configuration list");
+        }
+        return optionList;
+    }
+    
+    function _populateAlternativesToolbar(event) {
+        var editor = event.editor;
+        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
+        var optionList = _getAlternativesConfiguration(currentConfig.optionListName);
+
+        editor.ui.addRichCombo('leosAlternativesCombo', {
+            label: "Alternatives",
+            title: "Alternatives",
+            voiceLabel: "Alternatives",
+            toolbar: "alternatives",
+            className: 'cke_format',
+            multiSelect: false,
+            panel: {
+                css: [editor.config.contentsCss, CKEDITOR.skin.getPath('editor')]
+            },
+
+            init: function () {
+                var that = this;
+                optionList.list.forEach(function(option) {
+                    that.add(pluginName + option.index, option.title, option.title);
+                    if (!editor.getCommand(pluginName + option.index)) {
+                        var altCommand = editor.addCommand(pluginName + option.index, {
+                            // when click over one of the Alternative tabs
+                            exec: function(editor) {
+                                dialogCommand.exec();
+                                editor.once("confirmNewAlternative", function(event){
+                                    _updateEditor(editor, option.index);
+                                });
+                            }
+                        });
+                    }
+                });
+                this._.value = pluginName + currentConfig.selectOptionIndex;
+            },
+
+            onClick: function (value) {
+                if (editor.getCommand(value)) {
+                    editor.execCommand(value);
+                }
+            },
+
+            onOpen: function () {
+                this._.value = pluginName + currentConfig.selectOptionIndex;
+                this._.list.mark(pluginName + currentConfig.selectOptionIndex);
+            },
+
+        });
+
+        if (optionList.list.length > 0) {
+            editor.fire("refreshToolbar");
+            var cmd = editor.getCommand(pluginName + currentConfig.selectOptionIndex);
+            if (cmd) {
+                cmd.setState(CKEDITOR.TRISTATE_ON);
+            }
+        }
+
+        editor.on('key', function(event) {
+            _unselectButton(event.editor);
+        });
+
+        editor.on('focus', function(event) {
+            var currentConfig = _getCurrentAltConfigFromAttributes(editor);
+            var cmd = editor.getCommand(pluginName + currentConfig.selectOptionIndex);
+            if (cmd) {
+                cmd.setState(CKEDITOR.TRISTATE_ON);
+            }
+        });
+
+        editor.on('updateAlternateToolbarState', function (event) {
+            _updateRootEltAttributes(event.editor, event.data.index)
+            _updateButtonState(event.editor, event.data.index);
+        });
+    }
+    
+    function _unselectButton(editor) {
+        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
+        var optionList = _getAlternativesConfiguration(currentConfig.optionListName);
+        
+        optionList.list.forEach(function(option) {
+            var currentCmd = editor.getCommand(pluginName + option.index);
+            if (currentCmd) {
+                currentCmd.setState(CKEDITOR.TRISTATE_OFF);
+            }
+        });
+    }
+
+    function _updateEditor(editor, index) {
+        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
+        var optionList = _getAlternativesConfiguration(currentConfig.optionListName);
+        if (optionList) {
+            _updateContent(editor, optionList, index);
+        } else {
+            throw new Error("Could not get the alternatives configuration list");
+        }
+    }
+
+    function _updateContent(editor, optionList, index) {
+        let callback = function() {
+            _updateRootEltAttributes(editor, index);
+            _updateButtonState(editor, index);
+        };
+
+        if(editor.LEOS.isTrackChangesEnabled) {
+            let options = {
+                index: index,
+                optionList: optionList,
+                callback: callback
+            };
+            editor.fire("handleTcAlternateClause", options);
+        } else {
+            let newOption = optionList.list.find(listOfOption => listOfOption.index == index);
+            editor.setData(newOption.content.replace(/\n|\r/g), callback);
+
+            editor.focus();
+            let range = editor.createRange();
+            range.moveToElementEditStart(editor.editable());
+            editor.getSelection().selectRanges([range]);
+        }
+    }
+
+    function _updateRootEltAttributes(editor, index) {
+        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
+        var rootElt = editor.element.getChild(0);
+        if (rootElt && (rootElt.getChild(0) && rootElt.getChild(0).$ && rootElt.getChild(0).$.id === 'spellchecker-contextmenu'
+                || !rootElt.getAttribute('leos:alternative'))
+            && editor.element.$.childNodes[1]) {
+            rootElt = editor.element.$.childNodes[1];
+        }
+        if (!rootElt.hasAttribute("id")) {
+            rootElt.setAttribute("id", currentConfig.rootEltId);
+        }
+        if (!rootElt.hasAttribute("leos:editable")) {
+            rootElt.setAttribute("leos:editable", currentConfig.rootEltEditable);
+        }
+        if (!rootElt.hasAttribute("leos:deletable")) {
+            rootElt.setAttribute("leos:deletable", currentConfig.rootEltDeletable);
+        }
+        rootElt.setAttribute("leos:selectedoption", index);
+        rootElt.setAttribute("leos:optionlist", currentConfig.optionListName);
+    }
+
+    function _updateButtonState(editor, index) {
+        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
+        var optionList = _getAlternativesConfiguration(currentConfig.optionListName);
+        optionList.list.forEach(function(option) {
+            var currentCmd = editor.getCommand(pluginName + option.index);
+            if (currentCmd) {
+                currentCmd.setState(CKEDITOR.TRISTATE_OFF);
+            }
+        });
+        editor.getCommand(pluginName + index).setState(CKEDITOR.TRISTATE_ON);
+    }
+
+    function _getOptionLists() {
+        return optionLists;
+    }
+    
+    // return plugin module
+    var pluginModule = {
+        name : pluginName
+    };
+
+    return pluginModule;
+});

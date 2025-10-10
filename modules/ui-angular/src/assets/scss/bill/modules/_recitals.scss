@@ -14,11 +14,22 @@
 */
 
 //------------------------------- XML Styles --------------------------------//
-recitals{
+recitals {
     display:block;
+    text-align: center;
     intro > aknP {
         @extend %paddedText;
         display: block;
+    }
+    num {
+        margin-right: 5px;
+    }
+    heading {
+        padding-top: 3px !important;
+        padding-bottom: 3px !important;
+    }
+    recital, p, intro, li {
+        text-align: left;
     }
 }
 //------------------------------- Editor Styles -----------------------------//

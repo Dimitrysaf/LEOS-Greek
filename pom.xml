@@ -20,7 +20,7 @@
 
     <groupId>eu.europa.ec.leos.pilot</groupId>
     <artifactId>leos</artifactId>
-    <version>5.2.5-SNAPSHOT</version>
+    <version>5.3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>LEOS Pilot</name>
@@ -161,14 +161,15 @@
         <junit-jupiter.version>5.0.2</junit-jupiter.version>
         <junit-platform.version>1.0.2</junit-platform.version>
         <junit-vintage.version>4.12.2</junit-vintage.version>
+        <assertj.version>3.24.2</assertj.version>
+        <byte-buddy.version>1.12.21</byte-buddy.version>
         <!-- httpclient -->
        <httpclient.version>4.5.13</httpclient.version> <!--  5.4-alpha1 4.5.3-->
         <!-- Sonar -->
         <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
         <sonar-jacoco-plugin.version>0.8.7</sonar-jacoco-plugin.version>
-        <!-- Ehcache 2.x -->
-        <ehcache.version>2.10.9.2</ehcache.version>
-        <ehcache.jgroups.version>1.7</ehcache.jgroups.version>
+        <!-- Haelcast -->
+        <hazelcast.version>5.3.6</hazelcast.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -484,6 +485,46 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-surefire-provider</artifactId>
+                <version>${junit-platform.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!--
+                bytebuddy is a transitive dep of both assertj and mockito
+                Set to the higher (assertj dep) version
+            -->
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${byte-buddy.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit-vintage.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
                 <version>${commons-text.version}</version>
@@ -508,22 +549,16 @@
                 <artifactId>validation-api</artifactId>
                 <version>${javax-validation.version}</version>
             </dependency>
-            <!-- Ehcache 2.x -->
+            <!-- Hazelcast -->
             <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${ehcache.version}</version>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-jgroupsreplication</artifactId>
-                <version>${ehcache.jgroups.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>ehcache-core</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast-spring</artifactId>
+                <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>

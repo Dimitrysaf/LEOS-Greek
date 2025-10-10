@@ -10,14 +10,15 @@ public class NumberConfigRoman extends NumberConfigAbstract implements NumberCon
 
     private boolean isUpperCase;
 
-    public NumberConfigRoman(boolean isUpperCase, String prefix, String suffix) {
+    public NumberConfigRoman(boolean isUpperCase, String prefix, String suffix, boolean suffixInEnd) {
         this.isUpperCase = isUpperCase;
         this.prefix = prefix;
         this.suffix = suffix;
+        this.suffixInEnd = suffixInEnd;
     }
 
     public NumberConfigRoman() {
-        this(false, "", "");
+        this(false, "", "", true);
     }
 
     @Override
@@ -104,6 +105,10 @@ public class NumberConfigRoman extends NumberConfigAbstract implements NumberCon
     @Override
     protected String getImplName() {
         return this.getClass().getSimpleName();
+    }
+
+    public boolean isSuffixInEnd() {
+        return this.suffixInEnd;
     }
 
 }

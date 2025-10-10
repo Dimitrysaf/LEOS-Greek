@@ -58,6 +58,6 @@ export class TocActionMenuComponent implements OnInit, OnDestroy {
 
   isDropDown() {
     const tocItem : TocItem = getTocItemByAknTag(this.tocService.getCurrentTocItems(), this.node.tagName);
-    return this.isEditMode && tocItem.draggable && !tocItem.root;
+    return this.isEditMode && tocItem.draggable && !tocItem.root && tocItem.deletable !== false && this.node.deletable !== false;
   }
 }

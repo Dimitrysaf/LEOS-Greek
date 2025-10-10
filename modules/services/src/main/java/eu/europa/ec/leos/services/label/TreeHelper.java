@@ -48,7 +48,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 public class TreeHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TreeHelper.class);
 
-    private static List<String> NOT_SIGNIFICANT_NODES = Arrays.asList(BILL, CONTENT, LIST, PREFACE, PREAMBLE, BODY, MAIN_BODY, RECITALS);
+    private static List<String> NOT_SIGNIFICANT_NODES = Arrays.asList(BILL, CONTENT, LIST, PREFACE, PREAMBLE, BODY, MAIN_BODY);
 
     private static List<String> SOLE_NUMBERED_NODES = Arrays.asList(RECITAL, ARTICLE);
 

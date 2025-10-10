@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 import org.jaxen.dom.DOMXPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -911,9 +912,7 @@ public class XercesUtils {
     public static String getFirstChildType(Node node, List<String> types) {
         String firstChildType = null;
         List<Node> children = getChildren(node, types);
-        if (children == null || children.isEmpty()) {
-            throw new IllegalArgumentException("No child of type: " + types + " was found in the node");
-        } else {
+        if (!CollectionUtils.isEmpty(children)) {
             firstChildType = children.get(0).getNodeName();
         }
         return firstChildType;
@@ -1670,4 +1669,24 @@ public class XercesUtils {
         purposeFromXml = LeosDomainUtil.unWrapXmlFragment(purposeFromXml);
         return purposeFromXml;
     }
+
+    public static byte[] addTotalPageCountTag(byte[] xmlContent, String value) {
+        if (value == null) {
+            return xmlContent;
+        } else {
+            Document document = createXercesDocument(xmlContent);
+            Node pageCountNode = XercesUtils.getFirstElementByXPath(document, XPathCatalog.getXPathProprietary() + "/leos:totalPageCount");
+            if (pageCountNode != null) {
+                pageCountNode.setTextContent(value);
+            } else {
+                NodeList nodeList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathProprietary());
+                Node node = nodeList.item(0);
+                Element pageCountTag = document.createElement("leos:totalPageCount");
+                pageCountTag.setTextContent(value);
+                node.appendChild(pageCountTag);
+            }
+            return nodeToByteArray(document);
+        }
+    }
+
 }

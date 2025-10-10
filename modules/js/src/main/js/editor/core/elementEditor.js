@@ -27,7 +27,6 @@ define(function elementEditorModule(require) {
     var pluginTools = require("../plugins/pluginTools");
     var leosPluginUtils = require("../plugins/leosPluginUtils");
 
-    var ZERO_WIDTH_SPACE = "^\u200B{7}$";
     var WHITE_SPACE = '\u00A0';
     var NUM = "num";
 
@@ -354,23 +353,8 @@ define(function elementEditorModule(require) {
 
     function _canBeSaved(connector, elementId, event) {
         var editor = event.editor;
-        _removeZeroWidthSpaces(elementId);
+        UTILS.removeZeroWidthSpaces(elementId);
         return !_isArticleWithOneNumberedParagraph(elementId, editor) && !_isEmptyElement(elementId, editor);
-    }
-
-    function _removeZeroWidthSpaces(elementId) {
-        $("#" + elementId).find("*").addBack().contents().filter(function () {
-            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
-                return this.textContent.match(ZERO_WIDTH_SPACE);
-            }
-            return false;
-        }).remove();
-        $("#" + elementId).parent().contents().filter(function () {
-            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
-                return this.textContent.match(ZERO_WIDTH_SPACE);
-            }
-            return false;
-        }).remove();
     }
 
     function _isEmptyElement(elementId, editor) {
@@ -533,7 +517,10 @@ define(function elementEditorModule(require) {
             var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
             // set read-only to prevent changes
             editor.setReadOnly(true);
-            const alternateElementId = editor.config.isAlternative ? editor.element.getFirst().getId() : null;
+            var alternateElementId = editor.config.isAlternative ? editor.element.getFirst().getId() : null;
+            if (editor.config.isAlternative && editor.element.getFirst().getAttribute('class') && editor.element.getFirst().getAttribute('class').includes('leosNonEditableEmptyWidget')) {
+                alternateElementId = editor.element.getChildren().getItem(1).$.id;
+            }
 
             // save the element being edited
             var data = {
@@ -560,7 +547,7 @@ define(function elementEditorModule(require) {
     }
 
     function _removeZeroWidthSpacesOnFocus(connector, elementId) {
-        _removeZeroWidthSpaces(elementId);
+        UTILS.removeZeroWidthSpaces(elementId);
     }
 
     function _removeNonBreakingSpaceFromElement(elementId, eventData){
@@ -588,7 +575,7 @@ define(function elementEditorModule(require) {
         if (element$.attr(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.ARTICLE) {
             var orderedList$ = element$.children(leosPluginUtils.ORDER_LIST_ELEMENT);
             if (orderedList$.length === 1) {
-                var listItem$ = orderedList$.children(leosPluginUtils.LIST_ELEMENT);
+                var listItem$ = orderedList$.children(leosPluginUtils.LIST_ITEM);
                 if ((listItem$.length === 1 && listItem$.attr(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH && listItem$.attr(leosPluginUtils.DATA_AKN_NUM))
                     || _checkForEmptyParagraphs(listItem$)) {
                     pluginTools.addDialog(leosOneParaArticleDialog.dialogName, leosOneParaArticleDialog.initializeDialog);
@@ -689,7 +676,8 @@ define(function elementEditorModule(require) {
             emptyElements.each(function(){
                 var isAknParagraph = ($(this).is("p") && $(this).attr("data-akn-name") == "aknParagraph");
                 var isSubparagraph = ($(this).is("p") && $(this).attr("data-akn-element") == "subparagraph");
-                if(!$(this).is("li,br") && !isSubparagraph && !isAknParagraph){
+                // last condition added in #2738, check if it can be removed in #2739
+                if (!$(this).is("li,br") && !isSubparagraph && !isAknParagraph && !leosPluginUtils.isDuplicatedSignatureElement(this)) {
                     isEmptyElementFound = true;
                 }
             })
@@ -742,11 +730,11 @@ define(function elementEditorModule(require) {
 
 
         var isEmptyRefersToElement = false;
-        var aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknOrderedList']");
-        if(aknOrderedList.length == 0){
-            aknOrderedList = $("#" + elementId).find("ol[data-akn-name='aknAnnexOrderedList']");
+        var aknLists = $("#" + elementId).find("ol[data-akn-name='aknOrderedList'], ul[data-akn-name='aknUnorderedList']");
+        if (aknLists.length === 0) {
+            aknLists = $("#" + elementId).find("ol[data-akn-name='aknAnnexOrderedList']");
         }
-        aknOrderedList.each(function() {
+        aknLists.each(function() {
             var refersToElement = this.firstChild, newRefersToElement = this.previousSibling;
             var containsRefersToElement = refersToElement && refersToElement.hasAttribute("refersto");
 

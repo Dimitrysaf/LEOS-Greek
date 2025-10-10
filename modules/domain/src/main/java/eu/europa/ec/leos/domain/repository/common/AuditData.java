@@ -1,9 +1,10 @@
 package eu.europa.ec.leos.domain.repository.common;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-public class AuditData implements Auditable {
+public class AuditData implements Auditable, Serializable {
 
     private final String createdBy;
     private final Instant creationInstant;

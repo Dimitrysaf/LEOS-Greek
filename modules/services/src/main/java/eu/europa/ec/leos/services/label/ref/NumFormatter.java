@@ -93,6 +93,9 @@ class NumFormatter {
         ResourceBundle bundle = ResourceBundle.getBundle(new ClassPathResource("messages/message").getPath(), locale);
         String pattern = bundle.getString("plural");
         MessageFormat msgFormat = new MessageFormat(pattern, locale);
+        if (bundle.containsKey("toc.item.type." + nodeType + ".name")) {
+            nodeType = bundle.getString("toc.item.type." + nodeType + ".name");
+        }
         return msgFormat.format(new Object[] {nodeType, number});
     }
 }

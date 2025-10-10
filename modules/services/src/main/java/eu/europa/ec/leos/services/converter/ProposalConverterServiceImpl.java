@@ -170,7 +170,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         try {
             if (docName.endsWith(XML_DOC_EXT)) {
                 byte[] xmlBytes = Files.readAllBytes(docFile.toPath());
-                LeosCategory category = xmlContentProcessor.identifyCategory(docName, xmlBytes);
+                LeosCategory category = xmlContentProcessor.identifyCategory(xmlBytes);
                 if (category != null) {
                     doc = new DocumentVO(category);
                     updateSource(doc, docFile, canModifySource);
