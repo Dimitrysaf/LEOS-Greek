@@ -55,6 +55,34 @@ public class CatalogController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(path = "/catalog/update-template",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Update custom template name and Visibility")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Template updated successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity<Object> updateCustomTemplate(
+            @RequestParam String packageId,
+            @RequestParam String templateName,
+            @RequestParam List<String> dgs,
+            @RequestParam String userId) throws CatalogException {
+        catalogService.updateCustomTemplate(packageId, templateName, dgs, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/catalog/un-publish-template",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "un-publish custom template")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Template unpublished successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity<Boolean> updateCustomTemplate(
+            @RequestParam String legFileId,
+            @RequestParam String userId) throws CatalogException {
+        Boolean isUpdated = catalogService.unpublishCustomTemplate(legFileId, userId);
+        return ResponseEntity.ok(isUpdated);
+    }
+
     @GetMapping(path = "/catalog/template/{packageId}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get template information by package ID")

@@ -13,4 +13,8 @@ public interface CustomTemplateService {
     void publishTemplate(String legFileId, String templateName, List<String> dgCodes);
 
     CustomTemplateInfoResponse getTemplateInfo(String packageId);
+
+    void updateTemplate(String packageId,String templateName, List<String> dgCodes);
+
+    Boolean unPublishTemplate(String legFileId);
 }

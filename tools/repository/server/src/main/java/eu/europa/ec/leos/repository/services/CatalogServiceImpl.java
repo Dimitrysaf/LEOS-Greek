@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -144,6 +145,89 @@ public class CatalogServiceImpl implements CatalogService {
         updateCustomTemplateEntities(pkg, dgs, userId);
         DocumentMilestone docMilestone = updateCustomTemplateMilestones(pkg, getDocumentId(legFileId), userId);
         handleCatalog(docMilestone, existingEntities, dgs, templateName, userId, pkg);
+    }
+
+    /**
+     *
+     * @param packageId
+     * @param userId
+     * @throws CatalogException
+     */
+    @Override
+    @Transactional
+     public synchronized Boolean unpublishCustomTemplate(String packageId, String userId) throws CatalogException {
+        LOG.info("un-publish Custom  Template: legFileId={}, userId={}", packageId, userId);
+
+       // Package pkg = validateAndExtractPackage(packageId);
+        Package pkg = packageRepository.findById(new BigDecimal(packageId)).orElseThrow(() -> new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "Package not found"));
+        // List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
+        CustomTemplateInfo customTemplateInfo = getTemplateInfo(new BigDecimal(packageId));
+        if (customTemplateInfo == null || CollectionUtils.isEmpty(customTemplateInfo.getTemplateVisibility())) {
+            return false;
+        }
+        List<String> dgs = customTemplateInfo.getTemplateVisibility();
+        updateCustomTemplateEntities(pkg, dgs, userId);
+        updateUnpublishstatusMilestones(pkg, userId);
+        dgs.forEach(entity->removeTemplateFromEntityCatalog(entity,packageId,userId));
+        return true;
+    }
+
+    private void updateUnpublishstatusMilestones(Package pkg, String userId) throws CatalogException {
+
+        // Get all documents in the package
+        List<Document> allDocuments = documentRepository.findAllDocumentsByPackageId(pkg);
+
+        // Find all milestones for documents in the package
+        List<DocumentMilestone> allMilestones = documentMilestoneRepository.findDocumentMilestonesByDocumentIn(allDocuments);
+
+        allMilestones.stream()
+                .filter(milestone -> CustomTemplateMilestoneStatus.PUBLISHED.getValue().equals(milestone.getStatus()) &&
+                CUSTOM_TEMPLATE_COMMENT.equals(milestone.getMilestoneComments()))
+                .forEach(milestone ->{
+                    milestone.setStatus(CustomTemplateMilestoneStatus.UNPUBLISHED.getValue());
+                    milestone.setAuditLastMBy(userId);
+                    // Comment to prevent all the Milestones to have the same modified date.
+                    // milestone.setAuditLastMDate(LocalDateTime.now());
+                    documentMilestoneRepository.save(milestone);
+                });
+    }
+
+
+    /**
+     *
+     * @param existingEntities
+     * @param newEntities
+     * @param customTemplateName
+     * @param userId
+     * @param pkg
+     * @throws CatalogException
+     */
+    private void updateExistingPublication( List<String> existingEntities, List<String> newEntities, String customTemplateName, String userId,  Package pkg)throws CatalogException {
+        String baseTemplateName = getBaseTemplateNameFromProposal(pkg);
+        String packageId = pkg.getId().toString();
+
+        List<String> removedEntities = calculateRemovedEntities(existingEntities, newEntities);
+        List<String> newlyAddedEntities = calculateNewlyAddedEntities(existingEntities, newEntities);
+        List<String> commonEntities = calculateCommonEntities(existingEntities, newEntities);
+        processEntityChanges(removedEntities, newlyAddedEntities, commonEntities, baseTemplateName, customTemplateName, userId, packageId);
+    }
+
+    @Override
+    @Transactional
+    public synchronized void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId) throws CatalogException {
+        try {
+            LOG.info("Updating custom template: name={}, description={}, categories={}", templateName, packageId, dgs);
+
+            //Package pkg = validateAndExtractPackage(packageId);
+            Package pkg = packageRepository.findById(new BigDecimal(packageId)).orElseThrow(() -> new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "Package not found"));
+            List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
+
+            updateCustomTemplateEntities(pkg, dgs, userId);
+            updateExistingPublication( existingEntities, dgs, templateName, userId, pkg);
+        } catch (CatalogException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override

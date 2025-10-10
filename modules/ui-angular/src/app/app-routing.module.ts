@@ -29,6 +29,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'admin',
+    loadChildren: () =>
+      import('./features/landing-page/landing-page.module').then(
+        (m) => m.LandingPageModule,
+      ),
+  },
+  {
     path: 'workspace',
     loadChildren: () =>
       import('./features/proposals/proposals.module').then(

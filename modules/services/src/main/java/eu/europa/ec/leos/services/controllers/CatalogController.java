@@ -58,6 +58,42 @@ public class CatalogController {
         }
     }
 
+    @RequestMapping(value = "/update-template/{packageId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateTemplate(@PathVariable("packageId") String packageId, @RequestBody PublishTemplateRequest request) {
+        try {
+            packageId = encodeParam(packageId);
+            customTemplateService.updateTemplate(
+                    packageId,
+                    request.getTemplateName(),
+                    request.getDgCodes()
+            );
+            return new ResponseEntity<>(Collections.singletonMap("message", "Template updated successfully"), HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating template - " + e.getMessage(), e);
+            return new ResponseEntity<>(
+                    Collections.singletonMap("error", "Unexpected error occurred while updating template"),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    @RequestMapping(value = "/un-publish-template/{legFileId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> unPublishTemplate(@PathVariable("legFileId") String legFileId) {
+        try {
+            legFileId = encodeParam(legFileId);
+            Boolean isUpdated = customTemplateService.unPublishTemplate(legFileId);
+            return new ResponseEntity<>(isUpdated, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while un published template - " + e.getMessage(), e);
+            return new ResponseEntity<>(
+                    Collections.singletonMap("error", "Unexpected error occurred while un published template"),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     @GetMapping(value = "/template/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getTemplateInfo(@PathVariable("proposalRef") String proposalRef) {

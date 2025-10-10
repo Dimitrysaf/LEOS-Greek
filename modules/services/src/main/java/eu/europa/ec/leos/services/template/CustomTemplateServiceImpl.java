@@ -89,6 +89,63 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         // Publish template with validated DG codes
         leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin());
     }
+    @Override
+    public void updateTemplate(String packageId,String templateName, List<String> dgCodes) {
+        // Get all valid organizations from user repository for validation
+        List<String> validOrganizations = userService.getAllOrganizations();
+        Set<String> validOrgSet = new HashSet<>(validOrganizations);
+
+        // Validate authenticated user exists
+        User user = securityContext.getUser();
+        if (user == null) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+
+        //TODO check the user Role SUPPORT
+        if (!user.getRoles().contains("TEMPLATE_MANAGER") && !user.getRoles().contains("SUPPORT")){
+            throw new IllegalStateException("This user is not allowed to update template.");
+        }
+
+        // Add user's entity organizations to DG codes if not already present
+        List<String> finalDgCodes = new ArrayList<>(dgCodes);
+        if (user.getDefaultEntity() != null) {
+            String orgName = user.getDefaultEntity().getOrganizationName();
+            if (orgName != null && !finalDgCodes.contains(orgName)) {
+                finalDgCodes.add(orgName);
+            }
+        }
+
+        // Validate all DG codes against valid organizations
+        for (String dgCode : finalDgCodes) {
+            if (!validOrgSet.contains(dgCode)) {
+                throw new IllegalArgumentException("Invalid organization: " + dgCode);
+            }
+        }
+
+        // Publish template with validated DG codes
+        leosRepository.updateCustomTemplate(packageId, templateName, finalDgCodes, user.getLogin());
+    }
+
+    @Override
+    public Boolean unPublishTemplate(String legFileId) {
+        // Get all valid organizations from user repository for validation
+        List<String> validOrganizations = userService.getAllOrganizations();
+        Set<String> validOrgSet = new HashSet<>(validOrganizations);
+
+        // Validate authenticated user exists
+        User user = securityContext.getUser();
+        if (user == null) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+
+        //TODO check the user Role SUPPORT
+        if (!user.getRoles().contains("TEMPLATE_MANAGER") && !user.getRoles().contains("SUPPORT")){
+            throw new IllegalStateException("This user is not allowed to un publish.");
+        }
+
+        // Publish template with validated DG codes
+        return leosRepository.unPublishCustomTemplate(legFileId, user.getLogin());
+    }
     
     @Override
     public CustomTemplateInfoResponse getTemplateInfo(String proposalRef) {

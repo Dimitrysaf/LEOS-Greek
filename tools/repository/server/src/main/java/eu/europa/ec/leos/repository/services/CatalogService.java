@@ -22,4 +22,6 @@ import java.util.List;
 public interface CatalogService {
     void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws CatalogException;
     CustomTemplateInfo getTemplateInfo(BigDecimal packageId) throws CatalogException;
+    void updateCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws CatalogException;
+    Boolean unpublishCustomTemplate(String legFileId, String userId) throws CatalogException;
 }

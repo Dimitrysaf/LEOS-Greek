@@ -1166,7 +1166,21 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         logger.trace("publishing custom template {}", legFileId);
         repository.publishCustomTemplate(legFileId, templateName, dgs, userId);
     }
-    
+
+    @Override
+    @PerformanceLogger
+    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId) {
+        logger.trace("Update custom template {}", packageId);
+        repository.updateCustomTemplate(packageId, templateName, dgs, userId);
+    }
+
+    @Override
+    @PerformanceLogger
+    public Boolean unPublishCustomTemplate(String legFileId, String userId) {
+        logger.trace("un publishing custom template {}", legFileId);
+        return repository.unPublishCustomTemplate(legFileId, userId);
+    }
+
     @Override
     @PerformanceLogger
     public Map<String, Object> getTemplateInfo(String packageId) {

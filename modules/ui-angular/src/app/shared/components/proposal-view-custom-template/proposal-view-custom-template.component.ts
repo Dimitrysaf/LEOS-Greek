@@ -21,6 +21,7 @@ import {
 import {ProposalViewModule} from "@/features/proposal-view/proposal-view.module";
 import {switchMap} from "rxjs/operators";
 import {MilestoneDescriptor} from "@/shared/components/proposal-milestone-view/proposal-milestone-view.component";
+import {Router} from "@angular/router";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -87,7 +88,8 @@ export class ProposalViewCustomTemplateComponent {
   private destroy$ = new Subject<void>();
   constructor(
     private proposalService: ProposalService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -319,8 +321,22 @@ export class ProposalViewCustomTemplateComponent {
     this.onSelectLanguage('');
   }
 
-  onChangeTemplate() {
+  onUpdateTemplate() {
     setTimeout(() => this.updateNameAndDgTemplateCatalog.openNameAndDgTemplateCatalog(this.documentRef), 0);
   }
 
+  unPublishTemplateCatalog(event) {
+    const key: string = event.treeContentBlock.key;
+    const delimiter: string = "_";
+
+    const result: string[] = key.split(delimiter);
+    const packageId: string = result[1];
+    setTimeout(() => this.updateNameAndDgTemplateCatalog.unPublishTemplateCatalog(packageId), 0);
+  }
+
+  viewTemplate() {
+    if (this.documentRef) {
+      this.router.navigate([`/collection/${this.documentRef}`]);
+    }
+  }
 }

@@ -74,8 +74,11 @@
       <button type="button" class="eui-u-mr-xs" euiButton euiSecondary (click)="close()">
         {{ 'global.actions.cancel' | translate }}
       </button>
-      <button [disabled]="!isFormValid" type="button" euiButton euiPrimary (click)="publishTemplate()">
+      <button *ngIf="!adminView" [disabled]="!isFormValid" type="button" euiButton euiPrimary (click)="publishTemplate()">
         {{ 'page.collection.milestones.publish-to-catalog.publish' | translate }}
+      </button>
+      <button *ngIf="adminView" [disabled]="!isFormValid" type="button" euiButton euiPrimary (click)="updateTemplate()">
+        {{ 'page.collection.milestones.update-template-visibility' | translate }}
       </button>
     </div>
   </eui-dialog-footer>

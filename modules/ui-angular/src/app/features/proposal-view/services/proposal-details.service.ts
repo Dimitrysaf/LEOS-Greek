@@ -542,6 +542,102 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
+  updateTemplate(
+    milestone: MilestoneDescriptor,
+    templateName: string,
+    dgCodes: string[],
+  ) {
+    this.loadingService.setLoading(true);
+
+    const url = `${apiBaseUrl}/secured/catalog/update-template/${milestone.legFileId}`;
+    const body = {
+      legDocumentName: milestone.legDocumentName,
+      templateName,
+      dgCodes,
+    };
+
+    return this.http
+      .post(url, body)
+      .pipe(finalize(() => this.loadingService.setLoading(false)))
+      .subscribe({
+        next: () => {
+          console.log('update SUCCESS')
+          this.growlService.growl({
+            severity: 'success',
+            summary: this.translateService.instant('global.notifications.title.success'),
+            detail: this.translateService.instant('page.collection.milestones.publish-to-catalog.success'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+        error: (err) => {
+          console.log('update ERROR')
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant('global.notifications.title.error'),
+            detail:
+              err?.error?.message ??
+              this.translateService.instant('page.collection.milestones.update-template.error'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
+  unPublishTemplate(
+    packageId: string
+  ) {
+    this.loadingService.setLoading(true);
+    const url = `${apiBaseUrl}/secured/catalog/un-publish-template/${packageId}`;
+    return this.http
+      .post(url, null, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      .pipe(finalize(() => this.loadingService.setLoading(false)))
+      .subscribe({
+        next: (success: boolean) => {
+          if (success) {
+            this.growlService.growl({
+              severity: 'success',
+              summary: this.translateService.instant('global.notifications.title.success'),
+              detail: this.translateService.instant('page.collection.milestones.un-publish-to-catalog.success'),
+              life: 3000,
+              isGrowlSticky: false,
+              position: 'bottom-right',
+            });
+          } else {
+            this.growlService.growl({
+              severity: 'danger',
+              summary: this.translateService.instant('global.notifications.title.error'),
+              detail:this.translateService.instant('page.collection.milestones.un-publish-to-catalog.failed'),
+              life: 3000,
+              isGrowlSticky: false,
+              position: 'bottom-right',
+            })
+          }
+        },
+        error: (err) => {
+          console.log('update ERROR')
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant('global.notifications.title.error'),
+            detail:
+              err?.error?.message ??
+              this.translateService.instant('page.collection.milestones.un-publish-to-catalog.error'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
   sendRevisionForMerge(milestone: MilestoneDescriptor) {
     this.loadingService.setLoading(true);
 

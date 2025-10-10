@@ -731,6 +731,15 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId) {
+
+    }
+
+    @Override
+    public Boolean unPublishCustomTemplate(String legFileId, String userId) {
+        return false;
+    }
+    @Override
     public Map<String, Object> getTemplateInfo(String packageId) {
         return Collections.emptyMap();
     }

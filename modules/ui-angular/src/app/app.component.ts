@@ -172,7 +172,7 @@ export class AppComponent implements OnInit, OnDestroy {
     switch (item.id) {
       case 1: {
        // this.router.navigate(['/home/admin'])
-        this.router.navigate(['/home/admin'], { queryParams: { from: 'adminView' } });
+        this.router.navigate(['/admin'], { queryParams: { from: 'adminView' } });
         //this.createProposalService.viewCustomTemplateDialog(this.userRoles);
         break;
       }
