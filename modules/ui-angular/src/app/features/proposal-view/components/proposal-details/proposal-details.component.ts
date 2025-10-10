@@ -131,6 +131,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       || this.isCrossReferencesChanged()
       || this.isStampChanged()
       || this.isCommissionerChanged()
+      || this.isCorrigendumChanged()
       || this.isAdoptionPlaceChanged()
       || this.isAdoptionDateChanged());
   }
@@ -141,7 +142,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       && this.isInterInstitutionalRefValid()
       && this.isTargetProposalReferenceValid()
       && this.isTargetProposalDateValid()
-      && this.isCorrectionInfoValid());
+      && this.isCorrectionInfoValid()
+      && this.isTargetLangValid());
   }
 
   isEeaRelevanceChanged() {
@@ -198,6 +200,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       || JSON.stringify(this.proposalMetadata.authenticLang.sort()) != JSON.stringify(this.authenticLang.sort()));
   }
 
+  isTargetLangChanged() : boolean {
+    if (this.isTargetLang) {
+      return this.proposal.proposalTargetLang === null
+        || JSON.stringify(this.proposal.proposalTargetLang.sort()) != JSON.stringify(this.proposalTargetLang.sort());
+    } else {
+      return this.proposal.proposalTargetLang != null && this.proposal.proposalTargetLang.length > 0;
+    }
+  }
+
   isCrossReferencesChanged(): boolean {
     return (JSON.stringify(this.crossReferenceProposalListing) != JSON.stringify(this.proposalMetadata.crossReferences));
   }
@@ -207,8 +218,21 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isAdoptionDateChanged(): boolean {
-    return !(this.adoptionDate == null && this.proposalMetadata.adoptionDate == null)
+    return ((this.adoptionDate == null && this.proposalMetadata.adoptionDate !== null) || (this.adoptionDate !== null && this.proposalMetadata.adoptionDate == null))
       || (this.adoptionDate !== null && this.proposalMetadata.adoptionDate !== null && new Date(this.proposalMetadata.adoptionDate).getTime()/1000 != this.adoptionDate.unix());
+  }
+
+  isCorrigendumChanged(): boolean {
+    if (this.showCorrigendumAddendum == this.proposal.showCorrigendumAddendum
+      && this.proposalType == this.proposal.proposalType
+      && this.correctionInformation == this.proposal.correctionInformation
+      && this.getTargetProposalReference() == this.proposal.targetProposalReference
+      && !this.isTargetLangChanged()) {
+      return ((this.targetProposalDate == null && this.proposal.targetProposalDate !== null) || (this.targetProposalDate !== null && this.proposal.targetProposalDate == null))
+        || (this.targetProposalDate !== null && this.proposal.targetProposalDate !== null && new Date(this.proposal.targetProposalDate).getTime()/1000 != this.targetProposalDate.unix());
+    } else {
+      return true;
+    }
   }
 
   isInstitutionalReferenceChanged(): boolean {
@@ -441,7 +465,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   isTargetLangValid(): boolean {
-    return !this.isTargetLang || this.isThereSelectedTargetLanguage();
+    return !this.isTargetLang || (this.isThereSelectedTargetLanguage() && this.isTargetLang);
   }
 
   initializeAdoptionInfo() {
@@ -798,12 +822,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   onToggleCorrigendumAddendum(event: Event): void {
-    this.handleChange();
+    this.showCorrigendumAddendum = (event.target as HTMLInputElement).checked;
     if (this.showCorrigendumAddendum) {
-      this.proposalType = 'corrigendum';
-    } else {
-      this.proposalType = '';
+      if (!!this.proposal.proposalType) {
+        this.proposalType = this.proposal.proposalType;
+      } else {
+        this.proposalType = !this.isAutonomousAct ? 'corrigendum' : 'addendum';
+      }
     }
+    this.handleChange();
   }
 
   formatTargetProposalDate(): string {
@@ -820,15 +847,21 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   onTargetLanguageChange() {
-    this.handleChange();
     const allTargetLangSelected = this.languages.every(lang => this.selectedTargetLanguages[lang]);
     this.allTargetLangSelected = allTargetLangSelected;
+    this.proposalTargetLang = Object.keys(this.selectedTargetLanguages)
+      .filter(lang => this.selectedTargetLanguages[lang]).map(lang => lang.toLowerCase());
+    this.handleChange();
   }
 
   toggleAllTargetLanguages() {
     this.languages.forEach(lang => {
       this.selectedTargetLanguages[lang] = this.allTargetLangSelected;
     });
+    const allTargetLangSelected = this.languages.every(lang => this.selectedTargetLanguages[lang]);
+    this.allTargetLangSelected = allTargetLangSelected;
+    this.proposalTargetLang = Object.keys(this.selectedTargetLanguages)
+      .filter(lang => this.selectedTargetLanguages[lang]).map(lang => lang.toLowerCase());
     this.handleChange();
   }
 
