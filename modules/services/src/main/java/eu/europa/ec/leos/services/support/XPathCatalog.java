@@ -23,6 +23,14 @@ public class XPathCatalog {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:refOrigin";
     }
 
+    public static String getXPathProprietary() {
+        return "/akn:akomaNtoso//akn:meta/akn:proprietary";
+    }
+
+    public static String getXPathProprietaryPageCount() {
+        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:pageCount";
+    }
+
     public String getXPathRefOriginForCloneRefAttr() {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:refOriginForClone/@ref";
     }

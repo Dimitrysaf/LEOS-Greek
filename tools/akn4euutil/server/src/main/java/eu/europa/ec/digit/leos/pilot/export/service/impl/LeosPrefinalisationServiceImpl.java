@@ -216,6 +216,10 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         for (ApplyMetadataRequest.ActionNode action : task.getActions()){
             actionResponses.add(processApplyMetadataRequestAction(action, documentXmlFiles));
         }
+        documentXmlFiles.stream().forEach((xmlFile) -> {
+            metadataService.removeTemplateClassAttributes(xmlFile);
+            metadataService.removeDateIfNeeded(xmlFile);
+        });
 
         final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
         return new ApplyMetadataResponse.TaskNode(task.getTaskId(), statusCode, actionResponses,

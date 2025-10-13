@@ -52,6 +52,7 @@ import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
+import eu.europa.ec.leos.services.pagecounter.PageCounter;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.AttachmentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -169,6 +170,9 @@ public class LegServiceImplTest {
     ExternalSystemACLService externalSystemACLService;
     @Mock
     PackageService packageService;
+
+    @Mock
+    PageCounter pageCounter;
     @InjectMocks
     private TableOfContentProcessor tableOfContentProcessor = spy(new TableOfContentProcessorImpl());
 

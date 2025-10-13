@@ -7,5 +7,6 @@ public enum IndentedItemType {
     PARAGRAPH,
     FIRST_SUBPARAGRAPH,
     OTHER_SUBPARAGRAPH,
-    RESTORED
+    RESTORED,
+    LEVEL
 }

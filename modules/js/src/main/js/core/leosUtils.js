@@ -313,17 +313,33 @@ define(function leosUtilsModule(require) {
                     "}\n";
                 tcShowStyle += "ins img { display:inline-block !important; border:" + (isTrackChangesShowed ? "2px solid rgba(0, 255, 0, 0.5)" :"none") + " !important;}";
             } else {
-                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
-                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
-                    "p[data-akn-name='aknParagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] +"'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
-                    "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                    "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                    "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                    "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                    "li[data-akn-element='paragraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before {" +
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:not([data-akn-attr-softmove_label])[data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:not([data-akn-attr-softmove_label])[data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
+                    "p[data-akn-name='aknParagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
+                    "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li[data-akn-element='paragraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before {" +
                     "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                     "float: left !important; text-decoration: none !important;" +
                     "}\n";
+
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-attr-softmove_label][data-akn-tc-original-number='NEW']:not([data-akn-num]):before " +
+                    "{  content: attr(data-akn-attr-softmove_label) !important;\n" +
+                    "   margin-right: 10px;\n" +
+                    "   background-color: #808080 !important;\n" +
+                    "   padding: 2px 5px;\n" +
+                    "   height: 18px;\n" +
+                    "   font-size: 15px;\n" +
+                    "   font-style: normal;\n" +
+                    "   line-height: 1;\n" +
+                    "   border-radius: 4px;\n" +
+                    "   display: inline-block;\n" +
+                    "   text-decoration: none !important;\n" +
+                    "   color: #FFFFFF !important;" +
+                    "}\n";
+
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
                     "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
                     "ol > li > p[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +

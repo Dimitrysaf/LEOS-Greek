@@ -17,10 +17,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class HazelcastCacheConfig {
 
-    @Value("${leos.ehcache.jgroups.multicast.addr:224.0.0.1}")
+    @Value("${leos.hazelcast.multicast.addr:224.0.0.1}")
     private String multicastAddress;
 
-    @Value("${leos.ehcache.jgroups.multicast.port:45000}")
+    @Value("${leos.hazelcast.multicast.port:45000}")
     private int multicastPort;
 
     @Value("${leos.hazelcast.instance.name:leos-hazelcast-instance}")

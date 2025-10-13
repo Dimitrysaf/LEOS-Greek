@@ -1403,7 +1403,7 @@ define(function leosPluginUtilsModule(require) {
     function _handleIndentAttributes(node, editor, isIndent, isChild) {
         if (editor.LEOS.isTrackChangesEnabled && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
             var elementName = node.getAttribute(DATA_AKN_ELEMENT).toUpperCase();
-            switch(elementName) {
+            switch (elementName) {
                 case "ALINEA":
                     elementName = "OTHER_SUBPOINT";
                     break;
@@ -1420,27 +1420,39 @@ define(function leosPluginUtilsModule(require) {
                     elementName = "POINT";
                     break;
             }
-            if (elementName == 'PARAGRAPH'
-                || elementName == 'OTHER_SUBPARAGRAPH'
-                || elementName == 'OTHER_SUBPOINT'
-                || !!node.getAttribute(DATA_AKN_NUM_ID)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_TYPE, elementName);
-                node.getAttribute(DATA_AKN_NUM) ? node.setAttribute(DATA_INDENT_ORIGIN_NUMBER, node.getAttribute(DATA_AKN_NUM)) : null;
+
+            if (node.getAttribute('refersto') === '~INP' && node.getAttribute('data-akn-name') && node.getAttribute('data-akn-name') === 'subparagraph'
+                && node.getParent().getAttribute('data-akn-name') && node.getParent().getAttribute('data-akn-name') === 'aknOrderedList'
+                && node.getParent().getParent().getAttribute('data-akn-name') && node.getParent().getParent().getAttribute('data-akn-name') === 'point') {
+                var parentPoint = node.getParent().getParent();
+                _setIndentAttrs(elementName, parentPoint, isChild, isIndent, editor);
+            } else {
+                _setIndentAttrs(elementName, node, isChild, isIndent, editor);
             }
-            if (!!node.getAttribute(DATA_AKN_NUM_ID)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ID, node.getAttribute(DATA_AKN_NUM_ID));
-            }
-            if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
-            }
-            if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
-                node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
-            }
-            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
-                node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
-            }
-            editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
         }
+    }
+
+    function _setIndentAttrs(elementName, node, isChild, isIndent, editor) {
+        if (elementName == 'PARAGRAPH'
+            || elementName == 'OTHER_SUBPARAGRAPH'
+            || elementName == 'OTHER_SUBPOINT'
+            || !!node.getAttribute(DATA_AKN_NUM_ID)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_TYPE, elementName);
+            node.getAttribute(DATA_AKN_NUM) ? node.setAttribute(DATA_INDENT_ORIGIN_NUMBER, node.getAttribute(DATA_AKN_NUM)) : null;
+        }
+        if (!!node.getAttribute(DATA_AKN_NUM_ID)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ID, node.getAttribute(DATA_AKN_NUM_ID));
+        }
+        if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
+        }
+        if (!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
+            node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
+        }
+        if (!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
+            node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
+        }
+        editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
     }
 
     function _hasPointAttribute(element) {
