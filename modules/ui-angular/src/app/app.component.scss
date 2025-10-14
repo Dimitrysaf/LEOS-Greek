@@ -1,9 +1,48 @@
+.eui-icon-button {
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .desktop-only {
     display: none !important;
   }
   .mobile-only {
     display: inline-block !important;
+  }
+
+  eui-toolbar button:not(.eui-icon-button) {
+    padding: 0.25rem !important;
+    font-size: 0.75rem !important;
+    min-width: 32px !important;
+    height: 32px !important;
+  }
+
+  eui-toolbar eui-icon-svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  eui-toolbar .eui-icon-button {
+    border: none !important;
+    background: transparent !important;
+    color: white !important;
+    cursor: pointer !important;
+    padding: 0.5rem !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  eui-toolbar .eui-icon-button eui-icon-svg {
+    width: 32px !important;
+    height: 32px !important;
+    fill: white !important;
+    color: white !important;
   }
 }
 
@@ -13,19 +52,5 @@
   }
   .desktop-only {
     display: inline-block !important;
-  }
-}
-
-@media (max-width: 768px) {
-  eui-toolbar button {
-    padding: 0.25rem !important;
-    font-size: 0.75rem !important;
-    min-width: 32px !important;
-    height: 32px !important;
-  }
-  
-  eui-toolbar eui-icon-svg {
-    width: 16px !important;
-    height: 16px !important;
   }
 }
