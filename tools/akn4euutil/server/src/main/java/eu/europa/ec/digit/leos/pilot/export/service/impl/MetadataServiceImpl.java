@@ -112,20 +112,30 @@ public class MetadataServiceImpl implements MetadataService {
     @Override
     public void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
-            addAdoptionDate(fieldInfo, xmlFile);
+            this.addAdoptionDateToLongTitle(fieldInfo, xmlFile);
+        }
+        if (MetadataUtil.isBillXmlDocument(xmlFile)) {
+            this.addAdoptionDateToConclusions(fieldInfo, xmlFile);
         }
     }
 
-    private void addAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        final Node longTitle = xmlFile.getElementByName(MetadataUtil.ELEMENT_LONG_TITLE);
-        if (longTitle == null) return;
+    private void addAdoptionDateToLongTitle(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        this.addAdoptionDate(fieldInfo, MetadataUtil.ELEMENT_LONG_TITLE, xmlFile);
+    }
 
-        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, MetadataUtil.ELEMENT_P);
+    private void addAdoptionDateToConclusions (ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        this.addAdoptionDate(fieldInfo, MetadataUtil.ELEMENT_CONCLUSIONS, xmlFile);
+    }
+
+    private void addAdoptionDate (ReferenceFieldInfo fieldInfo, String parentNodeName, XmlUtil.XmlFile xmlFile) {
+        final Node parent = xmlFile.getElementByName(parentNodeName);
+        if (parent == null) return;
+
+        final Node pNode = XmlUtil.getChildNodeWithName(parent, MetadataUtil.ELEMENT_P);
         if (pNode == null) return;
 
         final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
         if (dateNode == null) return;
-
 
         XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
         final String displayValue = this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
