@@ -144,7 +144,7 @@
         <jsoup.version>1.17.2</jsoup.version>
         <sass-maven-plugin.version>2.22</sass-maven-plugin.version>
         <jackson-databind.version>2.16.1</jackson-databind.version>
-        <cxf-maven-plugin.version>4.1.0</cxf-maven-plugin.version>
+        <cxf-maven-plugin.version>3.5.8</cxf-maven-plugin.version>
         <jaxb2-maven-plugin.version>2.3.1</jaxb2-maven-plugin.version>
         <jaxb.version>2.3.1</jaxb.version>
         <jaxb2-basics.version>0.11.1</jaxb2-basics.version>
