@@ -271,7 +271,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             LOG.debug("Process xml file '{}'", xmlFile.getName());
             switch(fieldInfo.getFieldType()){
                 case ADOPTION_DATE:
-                    metadataService.processAdoptionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    metadataService.processAdoptionDate((ReferenceFieldInfo)fieldInfo, xmlFile, isAutonomousAct);
                     break;
                 case ADOPTION_LOCATION:
                     metadataService.processAdoptionLocation((ReferenceFieldInfo)fieldInfo, xmlFile);

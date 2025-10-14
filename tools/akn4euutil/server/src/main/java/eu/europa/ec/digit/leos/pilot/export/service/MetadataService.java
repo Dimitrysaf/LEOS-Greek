@@ -137,7 +137,7 @@ public interface MetadataService {
      * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
      * @param xmlFile XML file to add the adoption date
      * */
-    void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, boolean isAutonomousAct);
 
     /**
      * Process the adoption date field and add the data to the xml
