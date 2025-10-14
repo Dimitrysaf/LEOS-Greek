@@ -326,7 +326,7 @@ define(function leosUtilsModule(require) {
                     "}\n";
 
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-attr-softmove_label][data-akn-tc-original-number='NEW']:not([data-akn-num]):before " +
-                    "{  content: attr(data-akn-attr-softmove_label);\n" +
+                    "{  content: attr(data-akn-attr-softmove_label) !important;\n" +
                     "   margin-right: 10px;\n" +
                     "   background-color: #808080 !important;\n" +
                     "   padding: 2px 5px;\n" +

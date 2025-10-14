@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.ELEMENT_DATE;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.VALUE_CROSS_CONFERENCE_NAME;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.insertElementInCoverPage;
+import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isAutonomousAct;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isBillDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isMainDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.deleteElementsByXPath;
@@ -144,29 +145,47 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
-            addAdoptionDate(fieldInfo, xmlFile);
+    public void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, boolean isAutonomousAct) {
+        if (isAutonomousAct
+                && (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile))) {
+            this.addAdoptionDateToLongTitle(fieldInfo, xmlFile);
+        }
+        if (MetadataUtil.isBillXmlDocument(xmlFile) && isAutonomousAct) {
+            this.addAdoptionDateToConclusions(fieldInfo, xmlFile);
         }
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
             addAdoptionDateToBlock(fieldInfo, xmlFile);
         }
     }
 
-    private void addAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        final Node longTitle = xmlFile.getElementByName(MetadataUtil.ELEMENT_LONG_TITLE);
-        if (longTitle == null) return;
+    private void addAdoptionDateToLongTitle(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        this.addAdoptionDate(fieldInfo, MetadataUtil.ELEMENT_LONG_TITLE, xmlFile);
+    }
 
-        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, MetadataUtil.ELEMENT_P);
+    private void addAdoptionDateToConclusions(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        this.addAdoptionDate(fieldInfo, MetadataUtil.ELEMENT_CONCLUSIONS, xmlFile);
+    }
+
+    private void addAdoptionDate(ReferenceFieldInfo fieldInfo, String parentNodeName, XmlUtil.XmlFile xmlFile) {
+        final Node parent = xmlFile.getElementByName(parentNodeName);
+        if (parent == null) return;
+
+        final Node pNode = XmlUtil.getChildNodeWithName(parent, MetadataUtil.ELEMENT_P);
         if (pNode == null) return;
 
         Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
-        if (dateNode == null) return;
+        if (dateNode == null) {
+            dateNode = xmlFile.newElement(MetadataUtil.ELEMENT_DATE);
+            XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            Node docPuposeNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DOC_PURPOSE);
+            if (docPuposeNode != null) {
+                pNode.insertBefore(dateNode, docPuposeNode);
+            } else {
+                pNode.appendChild(dateNode);
+            }
+        }
 
-        XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId().isEmpty() ? "2999-01-01" : fieldInfo.getId());
-        final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
-        MetadataUtil.removeClassAttribute(dateNode);
-        dateNode.setTextContent(displayValue);
+        setDate(dateNode, fieldInfo, xmlFile);
     }
 
     private void addAdoptionDateToBlock(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -185,12 +204,18 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        final Node dateNode = XmlUtil.getChildNodeWithName(xmlPlaceAndDate, MetadataUtil.ELEMENT_DATE);
-        if (dateNode == null) return;
+        Node dateNode = XmlUtil.getChildNodeWithName(xmlPlaceAndDate, MetadataUtil.ELEMENT_DATE);
+        if (dateNode == null) {
+            dateNode = xmlFile.newElement(MetadataUtil.ELEMENT_DATE);
+            XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            xmlPlaceAndDate.appendChild(dateNode);
+        }
+        setDate(dateNode, fieldInfo, xmlFile);
+    }
 
+    private void setDate(Node dateNode, ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId().isEmpty() ? "2999-01-01" : fieldInfo.getId());
         final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
-        MetadataUtil.removeClassAttribute(dateNode);
         dateNode.setTextContent(displayValue);
     }
 
@@ -319,8 +344,8 @@ public class MetadataServiceImpl implements MetadataService {
         }
 
         XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId().isEmpty() ? "2999-01-01" : fieldInfo.getId());
-        final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
         MetadataUtil.removeClassAttribute(xmlNodeDate);
+        final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
         xmlNodeDate.setTextContent(displayValue);
     }
 
