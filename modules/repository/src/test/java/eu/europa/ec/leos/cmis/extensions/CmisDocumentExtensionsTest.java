@@ -29,9 +29,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,10 +51,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.mockStatic;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(CmisMetadataExtensions.class)
 public class CmisDocumentExtensionsTest {
 
     private final static String DOC_ID = "DOCUMENT_ID";
@@ -148,20 +144,21 @@ public class CmisDocumentExtensionsTest {
         when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE))).thenReturn(GregorianCalendar.from(DOC_INITIAL_CREATION_INSTANT.atZone(ZoneId.of("UTC"))));
 
         Option<ProposalMetadata> proposalMetadata = Option.none();
-        mockStatic(CmisMetadataExtensions.class);
-        when(CmisMetadataExtensions.getProposalMetadataOption(cmisDocument)).thenReturn(proposalMetadata);
-
+        
         //make call
-        Proposal proposal = CmisDocumentExtensions.toLeosDocument(cmisDocument, Proposal.class, true, Collections.emptyMap());
+        try (MockedStatic<CmisMetadataExtensions> mockedStatic = mockStatic(CmisMetadataExtensions.class)) {
+            mockedStatic.when(() -> CmisMetadataExtensions.getProposalMetadataOption(cmisDocument)).thenReturn(proposalMetadata);
+            Proposal proposal = CmisDocumentExtensions.toLeosDocument(cmisDocument, Proposal.class, true, Collections.emptyMap());
 
-        //verify
-        assertThat(proposal, is(notNullValue()));
-        checkLeosDocument(proposal);
-        checkXmlDocument(proposal);
+            //verify
+            assertThat(proposal, is(notNullValue()));
+            checkLeosDocument(proposal);
+            checkXmlDocument(proposal);
 
-        assertThat(proposal.getInitialCreatedBy(), is(DOC_INITIAL_CREATED_BY));
-        assertThat(proposal.getInitialCreationInstant(), is(DOC_INITIAL_CREATION_INSTANT));
-        assertThat(proposal.getMetadata(), is(sameInstance(proposalMetadata)));
+            assertThat(proposal.getInitialCreatedBy(), is(DOC_INITIAL_CREATED_BY));
+            assertThat(proposal.getInitialCreationInstant(), is(DOC_INITIAL_CREATION_INSTANT));
+            assertThat(proposal.getMetadata(), is(sameInstance(proposalMetadata)));
+        }
     }
 
     @Test(expected = IllegalStateException.class)
@@ -179,18 +176,19 @@ public class CmisDocumentExtensionsTest {
         Document cmisDocument = setupLeosDocument(LeosCategory.MEMORANDUM);
         addXmlDocumentProperties(cmisDocument);
         Option<MemorandumMetadata> memorandumMetadata = Option.none();
-        mockStatic(CmisMetadataExtensions.class);
-        when(CmisMetadataExtensions.getMemorandumMetadataOption(cmisDocument)).thenReturn(memorandumMetadata);
-
+        
         //make call
-        Memorandum memorandum = CmisDocumentExtensions.toLeosDocument(cmisDocument, Memorandum.class, true, Collections.emptyMap());
+        try (MockedStatic<CmisMetadataExtensions> mockedStatic = mockStatic(CmisMetadataExtensions.class)) {
+            mockedStatic.when(() -> CmisMetadataExtensions.getMemorandumMetadataOption(cmisDocument)).thenReturn(memorandumMetadata);
+            Memorandum memorandum = CmisDocumentExtensions.toLeosDocument(cmisDocument, Memorandum.class, true, Collections.emptyMap());
 
-        //verify
-        assertThat(memorandum, is(notNullValue()));
-        checkLeosDocument(memorandum);
-        checkXmlDocument(memorandum);
+            //verify
+            assertThat(memorandum, is(notNullValue()));
+            checkLeosDocument(memorandum);
+            checkXmlDocument(memorandum);
 
-        assertThat(memorandum.getMetadata(), is(sameInstance(memorandumMetadata)));
+            assertThat(memorandum.getMetadata(), is(sameInstance(memorandumMetadata)));
+        }
     }
 
     @Test(expected = IllegalStateException.class)
@@ -208,18 +206,19 @@ public class CmisDocumentExtensionsTest {
         Document cmisDocument = setupLeosDocument(LeosCategory.BILL);
         addXmlDocumentProperties(cmisDocument);
         Option<BillMetadata> billMetadata = Option.none();
-        mockStatic(CmisMetadataExtensions.class);
-        when(CmisMetadataExtensions.getBillMetadataOption(cmisDocument)).thenReturn(billMetadata);
-
+        
         //make call
-        Bill bill = CmisDocumentExtensions.toLeosDocument(cmisDocument, Bill.class, true, Collections.emptyMap());
+        try (MockedStatic<CmisMetadataExtensions> mockedStatic = mockStatic(CmisMetadataExtensions.class)) {
+            mockedStatic.when(() -> CmisMetadataExtensions.getBillMetadataOption(cmisDocument)).thenReturn(billMetadata);
+            Bill bill = CmisDocumentExtensions.toLeosDocument(cmisDocument, Bill.class, true, Collections.emptyMap());
 
-        //verify
-        assertThat(bill, is(notNullValue()));
-        checkLeosDocument(bill);
-        checkXmlDocument(bill);
+            //verify
+            assertThat(bill, is(notNullValue()));
+            checkLeosDocument(bill);
+            checkXmlDocument(bill);
 
-        assertThat(bill.getMetadata(), is(sameInstance(billMetadata)));
+            assertThat(bill.getMetadata(), is(sameInstance(billMetadata)));
+        }
     }
 
     @Test(expected = IllegalStateException.class)
@@ -237,18 +236,19 @@ public class CmisDocumentExtensionsTest {
         Document cmisDocument = setupLeosDocument(LeosCategory.ANNEX);
         addXmlDocumentProperties(cmisDocument);
         Option<AnnexMetadata> annexMetadata = Option.none();
-        mockStatic(CmisMetadataExtensions.class);
-        when(CmisMetadataExtensions.getAnnexMetadataOption(cmisDocument)).thenReturn(annexMetadata);
-
+        
         //make call
-        Annex annex = CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+        try (MockedStatic<CmisMetadataExtensions> mockedStatic = mockStatic(CmisMetadataExtensions.class)) {
+            mockedStatic.when(() -> CmisMetadataExtensions.getAnnexMetadataOption(cmisDocument)).thenReturn(annexMetadata);
+            Annex annex = CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
 
-        //verify
-        assertThat(annex, is(notNullValue()));
-        checkLeosDocument(annex);
-        checkXmlDocument(annex);
+            //verify
+            assertThat(annex, is(notNullValue()));
+            checkLeosDocument(annex);
+            checkXmlDocument(annex);
 
-        assertThat(annex.getMetadata(), is(sameInstance(annexMetadata)));
+            assertThat(annex.getMetadata(), is(sameInstance(annexMetadata)));
+        }
     }
 
     @Test(expected = IllegalStateException.class)
