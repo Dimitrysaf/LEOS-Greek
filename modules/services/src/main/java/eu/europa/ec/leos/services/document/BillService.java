@@ -82,7 +82,7 @@ public interface BillService {
 
     Bill saveTableOfContent(Bill bill, List<TableOfContentItemVO> tocList, String actionMsg, User user);
 
-    List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile);
+    List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile, boolean isAutonomousAct);
 
     List<String> getAncestorsIdsForElementId(Bill bill, List<String> elementIds);
 

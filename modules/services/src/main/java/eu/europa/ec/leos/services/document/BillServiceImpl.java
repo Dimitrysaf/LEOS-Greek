@@ -41,7 +41,6 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.light.Profile;
@@ -52,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -430,7 +428,7 @@ public abstract class BillServiceImpl implements BillService {
         return tocList;
     }
 
-    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile) {
+    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile, boolean isAutonomousAct) {
         List<TocItem> tocItems = structureContext.getTocItems();
         if (profile != null) {
             if (!profile.isTocEdition()) {
@@ -452,6 +450,14 @@ public abstract class BillServiceImpl implements BillService {
                             && profiles.get(0).getElementSelector().contains(BLOCK)) {
                         tocItem.setEditable(false);
                     }
+                }
+            }
+        }
+        if (!isAutonomousAct) {
+            for (TocItem tocItem : tocItems) {
+                if (tocItem.getAknTag().value().equalsIgnoreCase(ROLE)
+                                || tocItem.getAknTag().value().equalsIgnoreCase(PERSON)) {
+                    tocItem.setDraggable(false);
                 }
             }
         }
