@@ -767,15 +767,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
         if (request.getAdoptionDate() != null) {
             if (request.getAdoptionDate().getTime() == 0) {
                 fields.add(new MetadataOptions.FieldNode("adoptionDate", ""));
-                if (proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM")) {
-                    fields.add(new MetadataOptions.FieldNode("emissionDate", ""));
-                }
             } else {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 fields.add(new MetadataOptions.FieldNode("adoptionDate", dateFormat.format(request.getAdoptionDate())));
-                if (proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM")) {
-                    fields.add(new MetadataOptions.FieldNode("emissionDate", dateFormat.format(request.getAdoptionDate())));
-                }
             }
         }
         if (request.getStamp() != null) {
