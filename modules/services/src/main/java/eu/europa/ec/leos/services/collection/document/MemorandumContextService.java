@@ -205,6 +205,7 @@ public class MemorandumContextService {
                 .withTemplate(template)
                 .withPackageRef(packageRef)
                 .withCustomTemplateAct(customTemplateAct)
+                .withRef(originRef)
                 .build();
 
         Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),

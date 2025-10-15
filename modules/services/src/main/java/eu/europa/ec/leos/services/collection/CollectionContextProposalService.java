@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.collection;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -41,6 +42,7 @@ import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,10 +82,6 @@ public class CollectionContextProposalService extends CollectionContextService {
     public Proposal executeCreateProposal() {
         LOG.trace("Executing 'Create Proposal' use case...");
 
-        this.packageService.useLanguage(this.language);
-        this.packageService.useTranslated(this.translated);
-        LeosPackage leosPackage = this.packageService.createPackage();
-
         List<CatalogItem> catalogItems;
         Map<String, String> templatePropertiesMap = new HashMap<>();
         templatePropertiesMap.put(DOCUMENT_MANDATORY_TEMPLATES, "");
@@ -101,6 +99,11 @@ public class CollectionContextProposalService extends CollectionContextService {
         loadTemplates(templatePropertiesMap, DOCUMENT_MANDATORY_TEMPLATES);
         loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
 
+        this.packageService.useLanguage(this.language);
+        this.packageService.useTranslated(this.translated);
+        this.packageService.useOriginRef(this.originRef);
+        LeosPackage leosPackage = this.packageService.createPackage();
+
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
 
@@ -116,12 +119,14 @@ public class CollectionContextProposalService extends CollectionContextService {
                 .withProcedureType(templatePropertiesMap.get(PROCEDURE_TYPE))
                 .withEeaRelevance(eeaRelevance)
                 .withCustomTemplateAct(customTemplateAct)
+                .withRef(this.originRef)
                 .build();
 
         String creationOptions = createJsonCreationOptions(templatePropertiesMap);
         metadata.setCreationOptions(creationOptions);
 
-        Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
+        useProposalContentForLinguisticVersion(proposalTemplate);
+        Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, this.proposalContent);
 
         Memorandum memorandum = cast(categoryTemplateMap.get(MEMORANDUM));
         if (memorandum != null && isToCreateDocument(categoryTemplateMap.get(MEMORANDUM).getName(), templatePropertiesMap)) {
@@ -134,6 +139,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
             memorandumContext.useCustomTemplateAct(customTemplateAct);
+            memorandumContext.useOriginRef(idsAndUrlsHolder.getMemorandumId());
 
             //Repetitive Acts
             List<XmlDocument> doc = categoryExistingDocuments.get(MEMORANDUM);
@@ -146,6 +152,8 @@ public class CollectionContextProposalService extends CollectionContextService {
             SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(memorandumCreated.getContent().get().getSource().getBytes());
 
             proposal = proposalService.addComponentRef(proposal, memorandumCreated.getName(), LeosCategory.MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
+            String memorandumRef = memorandumCreated.getMetadata().get().getRef();
+            this.idsAndUrlsHolder.setMemorandumId(memorandumRef);
         }
 
         Bill bill = cast(categoryTemplateMap.get(BILL));
@@ -158,6 +166,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             billContext.useActionMessageMap(actionMsgMap);
             billContext.useCustomTemplateAct(customTemplateAct);
             billContext.usePackageRef(proposal.getMetadata().get().getRef());
+            billContext.useOriginRef(idsAndUrlsHolder.getBillId());
 
             // Repetitive Acts
             List<XmlDocument> sourceDocuments = categoryExistingDocuments.get(BILL);
@@ -171,6 +180,8 @@ public class CollectionContextProposalService extends CollectionContextService {
             Bill billCreated = billContext.executeCreateBill();
 
             SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(billCreated.getContent().get().getSource().getBytes());
+            String billRef = billCreated.getMetadata().get().getRef();
+            this.idsAndUrlsHolder.setBillId(billRef);
 
             // Repetitive Acts - Annexes
             List<XmlDocument> annex = categoryExistingDocuments.get(ANNEX);
@@ -218,6 +229,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
             financialStatementContext.useCollaborators(proposal.getCollaborators());
             financialStatementContext.useCustomTemplateAct(customTemplateAct);
+            financialStatementContext.useOriginRef(idsAndUrlsHolder.getFinancialStatementId());
 
             // Repetitive Act
             List<XmlDocument> sourceDocuments = categoryExistingDocuments.get(STAT_DIGIT_FINANC_LEGIS);
@@ -233,8 +245,19 @@ public class CollectionContextProposalService extends CollectionContextService {
             SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(financialStatementCreated.getContent().get().getSource().getBytes());
 
             proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_DIGIT_FINANC_LEGIS, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
+            String financialStatementRef = financialStatementCreated.getMetadata().get().getRef();
+            this.idsAndUrlsHolder.setFinancialStatementId(financialStatementRef);
         }
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    private void useProposalContentForLinguisticVersion(Proposal proposalTemplate) {
+        if (StringUtils.isNotEmpty(this.languageTemplateSuffix)) {
+            Content content = proposalTemplate.getContent().getOrNull();
+            if (content != null) {
+                useProposalContent(content.getSource().getBytes());
+            }
+        }
     }
 
     private boolean isToCreateDocument(String templateName, Map<String, String> templatePropertiesMap) {

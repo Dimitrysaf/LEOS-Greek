@@ -17,6 +17,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.vo.light.Profile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +51,7 @@ public class AppConfigResponse {
     private int searchOnMinimumCharacter;
     private int maxSearchLimit;
     private boolean repetitiveActsEnabled;
+    private List<String> languages;
 
     public AppConfigResponse() {
     }
@@ -264,4 +266,12 @@ public class AppConfigResponse {
     public boolean isRepetitiveActsEnabled() { return repetitiveActsEnabled; }
 
     public void setRepetitiveActsEnabled(boolean repetitiveActsEnabled) { this.repetitiveActsEnabled = repetitiveActsEnabled; }
+
+    public List<String> getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(List<String> languages) {
+        this.languages = languages;
+    }
 }

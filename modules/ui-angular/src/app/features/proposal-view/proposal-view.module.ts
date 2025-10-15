@@ -22,6 +22,9 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/m
 import {
   ProposalMilestonePublishToCatalogDialogComponent
 } from "@/features/proposal-view/containers/proposal-milestone-publish-to-dg-template-catalog/proposal-milestone-publish-to-catalog-dialog.component";
+import {
+  ProposalLinguisticVersionsDialogComponent
+} from "@/features/proposal-view/containers/proposal-linguistic-versions-dialog/proposal-linguistic-versions-dialog.component";
 
 
 @NgModule({
@@ -39,7 +42,8 @@ import {
     AddMilestoneDialogComponent,
     ProposalMilestoneSendCopyDialogComponent,
     ProposalMilestonePublishToCatalogDialogComponent,
-    MilestoneAnnotationWarningModalComponent
+    MilestoneAnnotationWarningModalComponent,
+    ProposalLinguisticVersionsDialogComponent
   ],
   imports: [
     ProposalViewRoutingModule,
