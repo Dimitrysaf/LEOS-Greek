@@ -252,12 +252,6 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     return this.uploadEuiFile && this.uploadEuiFile.files?.length > 0;
   }
 
-  private getDataForCreate(): CreateProposalBody {
-    const { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } =
-      this.uploadForm.getRawValue();
-    return { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key };
-  }
-
   private validateLegFile() {
     const legFile = this.uploadEuiFile.files[0];
 

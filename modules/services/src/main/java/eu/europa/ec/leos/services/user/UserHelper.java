@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -126,5 +127,22 @@ public class UserHelper {
 
     public String getUserDgCustomTemplatesCatalog() {
         return templatesCatalog + "-" + securityContext.getUser().getDefaultEntity().getOrganizationName();
+    }
+
+    public User validateTemplateManagerRole(String errorMessage) throws IllegalStateException{
+        // Validate authenticated user exists
+        User user = securityContext.getUser();
+        if (user == null) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+
+        if (!hasAnyRole(user, Arrays.asList("TEMPLATE_MANAGER", "SUPPORT"))) {
+            throw new IllegalStateException(errorMessage);
+        }
+        return user;
+    }
+
+    private boolean hasAnyRole(User user, List<String> roles) {
+        return roles.stream().anyMatch(role -> user.getRoles().contains(role));
     }
 }

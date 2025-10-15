@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -70,6 +71,7 @@ public class ConfigServiceImpl implements ConfigService {
         //load language map
         languageGroupService.getLanguageMap();
 
+        List<String> languages = languageGroupService.getLanguageList();
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
         boolean implicitSaveEnabled = Boolean.parseBoolean(applicationProperties.getProperty("implicitSaveAndClose.enabled"));
         String spellCheckerName = integrationProperties.getProperty("leos.spell.checker");
@@ -124,6 +126,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setSearchOnMinimumCharacter(minSearchChar);
         appConfigResponse.setMaxSearchLimit(maxSearchLimit);
         appConfigResponse.setRepetitiveActsEnabled(repetitiveActsEnabled);
+        appConfigResponse.setLanguages(languages);
 
         return appConfigResponse;
     }

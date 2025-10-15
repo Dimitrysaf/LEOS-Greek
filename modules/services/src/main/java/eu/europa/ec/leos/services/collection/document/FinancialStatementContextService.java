@@ -241,6 +241,7 @@ public class FinancialStatementContextService {
                 .withTitle(title)
                 .withPackageRef(packageRef)
                 .withCustomTemplateAct(customTemplateAct)
+                .withRef(originRef)
                 .build();
 
         if (cloneProposal) {

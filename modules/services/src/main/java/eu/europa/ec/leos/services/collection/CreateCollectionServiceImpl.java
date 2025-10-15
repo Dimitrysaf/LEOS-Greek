@@ -110,20 +110,23 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult createCollection(DocumentVO documentVO) throws CreateCollectionException {
+    public CreateCollectionResult createCollection(DocumentVO documentVO, boolean isTranslated) throws CreateCollectionException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         LOG.debug("Handling create document request event... [category={}]", documentVO.getCategory());
-        CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
         if (LeosCategory.PROPOSAL.equals(documentVO.getCategory())) {
+            CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
+            useChildDocumentsRefs(documentVO, idsAndUrlsHolder);
             CollectionContextService context = proposalContextProvider.get();
             context.usePurpose(documentVO.getMetadata().getDocPurpose());
             context.useEeaRelevance(documentVO.getMetadata().isEeaRelevance());
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
             context.useLanguage(documentVO.getMetadata().getLanguage());
-            context.useTranslated(false);
+            context.useTranslated(isTranslated);
             context.useTemplateKey(documentVO.getMetadata().getTemplate());
             context.useCustomTemplateAct(documentVO.getMetadata().isCustomTemplateAct());
+            context.useOriginRef(documentVO.getRef());
+            context.useIdsAndUrlsHolder(idsAndUrlsHolder);
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 
@@ -138,6 +141,15 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         CreateCollectionError error = new CreateCollectionError(0,
                 messageHelper.getMessage("repository.create.proposal.error"));
         throw new CreateCollectionException(error.getMessage());
+    }
+
+    private static void useChildDocumentsRefs(DocumentVO documentVO, CollectionIdsAndUrlsHolder idsAndUrlsHolder) {
+        DocumentVO memorandum = documentVO.getChildDocument(LeosCategory.MEMORANDUM);
+        DocumentVO bill = documentVO.getChildDocument(LeosCategory.BILL);
+        DocumentVO financialStatement = documentVO.getChildDocument(LeosCategory.STAT_DIGIT_FINANC_LEGIS);
+        idsAndUrlsHolder.setMemorandumId(memorandum != null ? memorandum.getMetadata().getInternalRef() : null);
+        idsAndUrlsHolder.setBillId(bill != null ? bill.getMetadata().getInternalRef() : null);
+        idsAndUrlsHolder.setFinancialStatementId(financialStatement != null ? financialStatement.getMetadata().getInternalRef() : null);
     }
 
     @Override

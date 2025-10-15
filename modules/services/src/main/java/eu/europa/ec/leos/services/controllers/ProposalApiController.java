@@ -91,6 +91,17 @@ public class ProposalApiController {
         }
     }
 
+    @PostMapping(value = "/{proposalRef}/linguistic-versions")
+    public ResponseEntity<Object> createLinguisticVersions(@PathVariable String proposalRef, @RequestBody List<String> linguisticVersions) {
+        try {
+            List<String> notFoundLinguisticVersions = apiService.createLinguisticVersions(proposalRef, linguisticVersions);
+            return new ResponseEntity<>(notFoundLinguisticVersions, HttpStatus.OK);
+        } catch (CreateCollectionException ex) {
+            LOG.error("Error occurred while creating linguistic versions for the proposal {}", ex.getMessage());
+            return new ResponseEntity<>("Error occurred while creating linguistic versions for the proposal", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = "/{proposalRef}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<Object> updateProposalMetadata(@PathVariable String proposalRef, @RequestBody UpdateProposalRequest request) {
