@@ -409,7 +409,7 @@ public abstract class BillServiceImpl implements BillService {
         return tocList;
     }
 
-    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile) {
+    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile, boolean isAutonomousAct) {
         List<TocItem> tocItems = structureContext.getTocItems();
         if (profile != null) {
             if (!profile.isTocEdition()) {
@@ -431,6 +431,14 @@ public abstract class BillServiceImpl implements BillService {
                             && profiles.get(0).getElementSelector().contains(BLOCK)) {
                         tocItem.setEditable(false);
                     }
+                }
+            }
+        }
+        if (!isAutonomousAct) {
+            for (TocItem tocItem : tocItems) {
+                if (tocItem.getAknTag().value().equalsIgnoreCase(ROLE)
+                                || tocItem.getAknTag().value().equalsIgnoreCase(PERSON)) {
+                    tocItem.setDraggable(false);
                 }
             }
         }
