@@ -45,9 +45,9 @@
             </eui-dropdown-content>
           </eui-dropdown>
         </eui-toolbar-item>
-        <eui-toolbar-item>
+        <eui-toolbar-item >
           <eui-dropdown [appMoveToLeftSideToolbar]="'eui-toolbar__left'">
-            <button euiButton euiPrimary>
+            <button euiButton euiPrimary *ngIf="showAdminOption">
             <span euiLabel>{{
                 'page.workspace.filter.filters.roles.administration' | translate
               }}</span>

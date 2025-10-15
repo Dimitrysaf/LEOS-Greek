@@ -47,6 +47,8 @@ public class CatalogItem {
 
     private List<CatalogItem> itemList = new ArrayList<>();
 
+    private String originalDg;
+
     public ItemType getType() {
         return type;
     }
@@ -129,4 +131,12 @@ public class CatalogItem {
     public String getVisibleTo() {  return visibleTo; }
 
     public void setVisibleTo(String visibleTo) { this.visibleTo = visibleTo; }
+
+    public String getOriginalDg() {
+        return originalDg;
+    }
+
+    public void setOriginalDg(String originalDg) {
+        this.originalDg = originalDg;
+    }
 }

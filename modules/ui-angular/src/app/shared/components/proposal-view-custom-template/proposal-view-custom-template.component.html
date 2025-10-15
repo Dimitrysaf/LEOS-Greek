@@ -1,16 +1,12 @@
-<div class="cards-containers">
-<h2  class="card-container">Custom Template view Coming soon</h2>
-</div>
-<div *ngIf="treeNodes.length > 0">
-  <p>
-    {{
-      'page.workspace.create-selector.' + translationKey + '.title' | translate
-    }}
-  </p>
-  <eui-card  class="eui-u-mt-m">
+<div>
+  <eui-card class="eui-u-mt-m" *ngIf="templates.size > 0">
     <eui-card-content>
       <div class="cards-containers body-container">
         <div class="eui-u-flex eui-u-mt-m">
+          <div class="eui-u-mr-l">
+            <eui-icon-svg [icon]=icon></eui-icon-svg>
+            <span>{{ 'page.admin.my-dg-catalog' | translate }}</span>
+          </div>
           <div class="eui-u-flex-grow eui-u-mr-l">
             <div class="eui-input-group-addon">
               <div class="eui-input-group-addon-item">
@@ -51,23 +47,21 @@
           #treeComponent
         >
         </eui-tree>
-
-        <div *ngIf="treeNodes.length === 0">
-          <p>
-            {{
-              'page.workspace.create-selector.no-template' | translate
-            }}
-          </p>
-        </div>
-
       </div>
 
     </eui-card-content>
 
   </eui-card>
 
+  <div *ngIf="templates.size === 0">
+    <h2>
+      {{
+        'page.workspace.create-selector.no-template' | translate
+      }}
+    </h2>
+  </div>
 
-<ng-template let-node #nodeTemplateCustom2 let-onSelect="onSelect" let-id2="id" let-children>
+  <ng-template let-node #nodeTemplateCustom2 let-onSelect="onSelect" let-id2="id" let-children>
   <div (click)="onSelect({ target: { checked: !node.isSelected } })"
        class="eui-tree-node-wrapper__container-middle">
     <eui-icon-svg euiIconSvg [icon]="node?.treeContentBlock?.iconSvgName"></eui-icon-svg>
@@ -118,4 +112,5 @@
   #updateNameAndDgTemplateCatalog
   [milestone]="milestoneViewData"
   [document]=""
+  (closed)="reloadTemplate()"
 ></app-proposal-milestone-publish-to-catalog-dialog>

@@ -5,6 +5,7 @@ import { ForbiddenComponent } from './features/error/components/forbidden/forbid
 import { PageNotFoundComponent } from './features/error/components/page-not-found/page-not-found.component';
 import { UnathorizedComponent } from './features/error/components/unathorized/unathorized.component';
 import { DocumentUserGuard } from './shared/guards/document-user.guard';
+import {adminGuard} from "@/shared/guards/admin-guard";
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -34,6 +35,7 @@ const routes: Routes = [
       import('./features/landing-page/landing-page.module').then(
         (m) => m.LandingPageModule,
       ),
+    canActivate: [adminGuard]
   },
   {
     path: 'workspace',

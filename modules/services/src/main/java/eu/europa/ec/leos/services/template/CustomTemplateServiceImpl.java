@@ -59,13 +59,13 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         Set<String> validOrgSet = new HashSet<>(validOrganizations);
 
         User user = userHelper.validateTemplateManagerRole("This user is not allowed to publish.");
-        
+        String originalDg = "";
         // Add user's entity organizations to DG codes if not already present
         List<String> finalDgCodes = new ArrayList<>(dgCodes);
         if (user.getDefaultEntity() != null) {
-            String orgName = user.getDefaultEntity().getOrganizationName();
-            if (orgName != null && !finalDgCodes.contains(orgName)) {
-                finalDgCodes.add(orgName);
+            originalDg = user.getDefaultEntity().getOrganizationName();
+            if (originalDg != null && !finalDgCodes.contains(originalDg)) {
+                finalDgCodes.add(originalDg);
             }
         }
         
@@ -77,7 +77,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         }
         
         // Publish template with validated DG codes
-        leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin());
+        leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin(), originalDg);
     }
     @Override
     public void updateTemplate(String packageId,String templateName, List<String> dgCodes) {
@@ -95,13 +95,13 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         if (!user.getRoles().contains("TEMPLATE_MANAGER") && !user.getRoles().contains("SUPPORT")){
             throw new IllegalStateException("This user is not allowed to update template.");
         }
-
+        String originalDg = "";
         // Add user's entity organizations to DG codes if not already present
         List<String> finalDgCodes = new ArrayList<>(dgCodes);
         if (user.getDefaultEntity() != null) {
-            String orgName = user.getDefaultEntity().getOrganizationName();
-            if (orgName != null && !finalDgCodes.contains(orgName)) {
-                finalDgCodes.add(orgName);
+            originalDg = user.getDefaultEntity().getOrganizationName();
+            if (originalDg != null && !finalDgCodes.contains(originalDg)) {
+                finalDgCodes.add(originalDg);
             }
         }
 
@@ -113,30 +113,45 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         }
 
         // Publish template with validated DG codes
-        leosRepository.updateCustomTemplate(packageId, templateName, finalDgCodes, user.getLogin());
+        leosRepository.updateCustomTemplate(packageId, templateName, finalDgCodes, user.getLogin(), originalDg);
     }
 
     @Override
-    public Boolean unPublishTemplate(String legFileId) {
-        // Get all valid organizations from user repository for validation
-        List<String> validOrganizations = userService.getAllOrganizations();
-        Set<String> validOrgSet = new HashSet<>(validOrganizations);
-
+    public Boolean unPublishTemplate(String catalogKey) {
+        CatalogItem templateItem = null;
+        try {
+             templateItem = templateService.getTemplateByKey(catalogKey);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         // Validate authenticated user exists
         User user = securityContext.getUser();
         if (user == null) {
             throw new IllegalStateException("No authenticated user found");
         }
+        if (templateItem == null) {
+            throw new IllegalStateException("Unable to unpublish: template not found.");
+        }
 
-        //TODO check the user Role SUPPORT
-        if (!user.getRoles().contains("TEMPLATE_MANAGER") && !user.getRoles().contains("SUPPORT")){
+        if (!isAuthorizedToUnpublishTemplate(user, templateItem)) {
             throw new IllegalStateException("This user is not allowed to un publish.");
         }
 
+        String[] parts = catalogKey.split("_");
+        String packageId = parts[1];
         // Publish template with validated DG codes
-        return leosRepository.unPublishCustomTemplate(legFileId, user.getLogin());
+        return leosRepository.unPublishCustomTemplate(packageId, user.getLogin());
     }
-    
+
+    private boolean isAuthorizedToUnpublishTemplate(User user, CatalogItem templateItem) {
+        String defaultDg = user.getDefaultEntity().getOrganizationName();
+        boolean isSupport = user.getRoles().contains("SUPPORT");
+        boolean isTemplateManager = user.getRoles().contains("TEMPLATE_MANAGER");
+        boolean isTemplateDgOwner = defaultDg.equals(templateItem.getOriginalDg());
+
+        return isSupport || (isTemplateManager && isTemplateDgOwner);
+    }
+
     @Override
     public CustomTemplateInfoResponse getTemplateInfo(String proposalRef) {
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);

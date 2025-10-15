@@ -726,17 +726,17 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) {
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) {
 
     }
 
     @Override
-    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId) {
+    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId, String originalDg) {
 
     }
 
     @Override
-    public Boolean unPublishCustomTemplate(String legFileId, String userId) {
+    public Boolean unPublishCustomTemplate(String packageId, String userId) {
         return false;
     }
     @Override

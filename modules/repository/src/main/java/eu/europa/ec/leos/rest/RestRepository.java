@@ -682,7 +682,7 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) {
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) {
         LOGGER.trace("Publish Custom Template [{}]", legFileId);
         String url = getUrl(leosRestPublishCustomTemplateURI);
 
@@ -690,12 +690,13 @@ public class RestRepository extends AbstractRestClient {
         params.add("legFileId", legFileId);
         params.add("templateName", templateName);
         params.add("userId", userId);
+        params.add("originalDg", originalDg);
         dgs.forEach(dg -> params.add("dgs", dg));
 
         postEntity(url, params, Object.class);
     }
 
-    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId) {
+    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId, String originalDg) {
         LOGGER.trace("Update Custom Template [{}]", packageId);
         String url = getUrl(leosRestupdateCustomTemplateURI);
 
@@ -703,17 +704,18 @@ public class RestRepository extends AbstractRestClient {
         params.add("packageId", packageId);
         params.add("templateName", templateName);
         params.add("userId", userId);
+        params.add("originalDg", originalDg);
         dgs.forEach(dg -> params.add("dgs", dg));
 
         postEntity(url, params, Object.class);
     }
 
-    public Boolean unPublishCustomTemplate(String legFileId, String userId) {
-        LOGGER.trace("Un Publish Custom Template [{}]", legFileId);
+    public Boolean unPublishCustomTemplate(String packageId, String userId) {
+        LOGGER.trace("Un Publish Custom Template [{}]", packageId);
         String url = getUrl(leosRestUnPublishCustomTemplateURI);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("legFileId", legFileId);
+        params.add("packageId", packageId);
         params.add("userId", userId);
 
         return postEntity(url, params, Boolean.class);

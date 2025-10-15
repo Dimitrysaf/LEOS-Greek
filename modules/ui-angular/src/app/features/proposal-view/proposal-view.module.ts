@@ -59,5 +59,8 @@ import {
     MatSuffix,
   ],
   providers: [ProposalService],
+  exports: [
+    ProposalMilestonePublishToCatalogDialogComponent
+  ]
 })
 export class ProposalViewModule {}

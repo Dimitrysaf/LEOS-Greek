@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
+import {ActivatedRoute, NavigationEnd, ParamMap, Params, Router} from '@angular/router';
 import { UserState } from '@eui/base';
 import {
   EuiPaginationEvent,
@@ -8,7 +8,7 @@ import {
 import { Store } from '@ngrx/store';
 import {
   combineLatest,
-  distinctUntilChanged,
+  distinctUntilChanged, filter,
   map,
   Observable,
   Subject,
@@ -106,6 +106,24 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     this.route.queryParamMap.subscribe((paramsMap) =>
       this.applyQueryParams(paramsMap),
     );
+    this.isAdminView = this.router.url.startsWith('/admin');
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      if (event.url.startsWith('/admin')) {
+        // Navigation came from admin route
+        console.log('Navigated from admin');
+        this.isAdminView = true;
+        // Handle admin-specific logic
+      } else {
+        // Navigation came from home route
+        console.log('Navigated from home');
+        this.isAdminView = false;
+        // Handle home-specific logic
+      }
+    });
+
+
     if (!this.isAdminView) {
       combineLatest({
         filters: this.proposalService.filters$,
@@ -187,8 +205,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   }
 
   private applyQueryParams(paramsMap: ParamMap) {
-    const from = paramsMap.get('from') || 'home'; // default to home if missing
-    this.isAdminView = from === 'adminView';
     const { filters, limit, page } =
       LandingPageComponent.queryParamsToState(paramsMap);
 

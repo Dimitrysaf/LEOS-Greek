@@ -16,5 +16,5 @@ public interface CustomTemplateService {
 
     void updateTemplate(String packageId,String templateName, List<String> dgCodes);
 
-    Boolean unPublishTemplate(String legFileId);
+    Boolean unPublishTemplate(String catalogKey);
 }

@@ -78,12 +78,12 @@ public class CatalogController {
         }
     }
 
-    @RequestMapping(value = "/un-publish-template/{legFileId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/un-publish-template/{catalogKey}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> unPublishTemplate(@PathVariable("legFileId") String legFileId) {
+    public ResponseEntity<Object> unPublishTemplate(@PathVariable("catalogKey") String catalogKey) {
         try {
-            legFileId = encodeParam(legFileId);
-            Boolean isUpdated = customTemplateService.unPublishTemplate(legFileId);
+            catalogKey = encodeParam(catalogKey);
+            Boolean isUpdated = customTemplateService.unPublishTemplate(catalogKey);
             return new ResponseEntity<>(isUpdated, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while un published template - " + e.getMessage(), e);

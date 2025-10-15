@@ -318,12 +318,15 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
     const templateName = this.templateNameCtrl.value as string;
     const dgCodes = this.dgCtrl.value as string[];
 
-    this.detailsService.updateTemplate(this.milestone, templateName, dgCodes);
-
-    this.close();
-  }
-
-  unPublishTemplateCatalog(packageId) {
-    this.detailsService.unPublishTemplate(packageId);
+    this.detailsService.updateTemplate(this.milestone, templateName, dgCodes)
+      .subscribe({
+        next: () => {
+          // Notification is already handled by the service
+          this.close(); // safe to reload templates after update
+        },
+        error: () => {
+          // Error notification is handled by service
+        }
+      });
   }
 }

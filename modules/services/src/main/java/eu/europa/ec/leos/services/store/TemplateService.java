@@ -31,4 +31,6 @@ public interface TemplateService {
     String getTemplateName(List<CatalogItem> catalogItems, String name, String language);
 
     CatalogItem getTemplateItem(String name) throws IOException;
+
+    CatalogItem getTemplateByKey(String key) throws IOException;
 }

@@ -1162,23 +1162,23 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) {
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) {
         logger.trace("publishing custom template {}", legFileId);
-        repository.publishCustomTemplate(legFileId, templateName, dgs, userId);
+        repository.publishCustomTemplate(legFileId, templateName, dgs, userId, originalDg);
     }
 
     @Override
     @PerformanceLogger
-    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId) {
+    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId, String originalDg) {
         logger.trace("Update custom template {}", packageId);
-        repository.updateCustomTemplate(packageId, templateName, dgs, userId);
+        repository.updateCustomTemplate(packageId, templateName, dgs, userId,originalDg);
     }
 
     @Override
     @PerformanceLogger
-    public Boolean unPublishCustomTemplate(String legFileId, String userId) {
-        logger.trace("un publishing custom template {}", legFileId);
-        return repository.unPublishCustomTemplate(legFileId, userId);
+    public Boolean unPublishCustomTemplate(String packageId, String userId) {
+        logger.trace("un publishing custom template {}", packageId);
+        return repository.unPublishCustomTemplate(packageId, userId);
     }
 
     @Override

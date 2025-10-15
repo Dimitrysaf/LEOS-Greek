@@ -61,7 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
     { id: 1, label: 'app.administration.catalog' }
   ];
 
-
+  showAdminOption =true;
   notifications: Notification[];
 
   private destroy$ = new Subject<void>();
@@ -101,6 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const plainTextTitle = this.stripHtmlTags(this.headerTitleHtml);
       this.titleService.setTitle(plainTextTitle);
       this.userRoles =  config.user.roles;
+      this.showAdminOption = config.userAppPermissions.includes('CAN_CREATE_TEMPLATE');
     });
 
     this.documentService.documentConfig$
@@ -171,9 +172,7 @@ export class AppComponent implements OnInit, OnDestroy {
   onAdminListItemClicked(item) {
     switch (item.id) {
       case 1: {
-       // this.router.navigate(['/home/admin'])
-        this.router.navigate(['/admin'], { queryParams: { from: 'adminView' } });
-        //this.createProposalService.viewCustomTemplateDialog(this.userRoles);
+        this.router.navigate(['/admin']);
         break;
       }
     }

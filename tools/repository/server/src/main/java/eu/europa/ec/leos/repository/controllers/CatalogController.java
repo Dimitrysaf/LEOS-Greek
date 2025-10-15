@@ -50,8 +50,9 @@ public class CatalogController {
             @RequestParam String legFileId,
             @RequestParam String templateName,
             @RequestParam List<String> dgs,
-            @RequestParam String userId) throws CatalogException {
-        catalogService.publishCustomTemplate(legFileId, templateName, dgs, userId);
+            @RequestParam String userId,
+            @RequestParam String originalDg) throws CatalogException {
+        catalogService.publishCustomTemplate(legFileId, templateName, dgs, userId, originalDg);
         return ResponseEntity.ok().build();
     }
 
@@ -65,8 +66,9 @@ public class CatalogController {
             @RequestParam String packageId,
             @RequestParam String templateName,
             @RequestParam List<String> dgs,
-            @RequestParam String userId) throws CatalogException {
-        catalogService.updateCustomTemplate(packageId, templateName, dgs, userId);
+            @RequestParam String userId,
+            @RequestParam String originalDg) throws CatalogException {
+        catalogService.updateCustomTemplate(packageId, templateName, dgs, userId, originalDg);
         return ResponseEntity.ok().build();
     }
 
@@ -77,9 +79,9 @@ public class CatalogController {
             @ApiResponse(responseCode = "200", description = "Template unpublished successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Boolean> updateCustomTemplate(
-            @RequestParam String legFileId,
+            @RequestParam String packageId,
             @RequestParam String userId) throws CatalogException {
-        Boolean isUpdated = catalogService.unpublishCustomTemplate(legFileId, userId);
+        Boolean isUpdated = catalogService.unpublishCustomTemplate(packageId, userId);
         return ResponseEntity.ok(isUpdated);
     }
 

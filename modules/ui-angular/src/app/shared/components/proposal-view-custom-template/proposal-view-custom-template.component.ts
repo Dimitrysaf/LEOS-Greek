@@ -22,6 +22,8 @@ import {ProposalViewModule} from "@/features/proposal-view/proposal-view.module"
 import {switchMap} from "rxjs/operators";
 import {MilestoneDescriptor} from "@/shared/components/proposal-milestone-view/proposal-milestone-view.component";
 import {Router} from "@angular/router";
+import {AppConfigService} from "@/core/services/app-config.service";
+import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -43,7 +45,6 @@ const iconClassTemplate = 'document:sharp';
     NgForOf,
     NgIf,
     TranslateModule,
-    JsonPipe,
     EuiAllModule,
     ProposalViewModule
   ],
@@ -63,6 +64,8 @@ export class ProposalViewCustomTemplateComponent {
   updateNameAndDgTemplateCatalog: ProposalMilestonePublishToCatalogDialogComponent;
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
+  icon: string = "pulse:sharp";
+  defaultEntity: string;
   milestoneViewData: MilestoneDescriptor = {
     clone: undefined,
     createdBy: undefined,
@@ -81,32 +84,23 @@ export class ProposalViewCustomTemplateComponent {
   languages: Array<{ code: string; label: string }>;
 
   isExpanded: boolean;
-  private templates: Map<string, CatalogItem> = new Map();
+  templates: Map<string, CatalogItem> = new Map();
 
   private documentRef: String;
 
   private destroy$ = new Subject<void>();
   constructor(
     private proposalService: ProposalService,
+    private detailsService: ProposalDetailsService,
+    private appConfig: AppConfigService,
     private cd: ChangeDetectorRef,
     private router: Router
   ) {}
 
   ngOnInit() {
-   /* this.isCopyChangeAct = this.config.isCopyChangeAct;
-    this.isKeepAct = this.isCopyChangeAct;
-    this.isNavigationAllowed = this.isKeepAct;
-    this.nonEditablePartOfTitle =  this.config.nonEditablePartOfTitle;
-    this.editableTitle =  this.config.editableTitle;
-    this.proposalTemplate =  this.config.proposalTemplate;
-    this.proposalRef =  this.config.proposalRef;
-    this.proposalLanguage =  this.config.proposalLanguage;
-    this.documentCollectionName =  this.config.documentCollectionName;
-    this.userRoles =  this.config.userRoles;
-    this.initCreateForm();
-    if(this.isKeepAct){
-      this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
-    }*/
+    this.appConfig.config.subscribe((config) => {
+      this.defaultEntity = config.user.defaultEntity.organizationName
+    });
     this.proposalService.loadCustomTemplateCatalog();
     this.initialize();
   }
@@ -129,7 +123,8 @@ export class ProposalViewCustomTemplateComponent {
   private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
       item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
-    const templates = catalogItems.flatMap(getChildTemplates);
+    const templates = catalogItems.flatMap(getChildTemplates)
+      .filter(template => !this.defaultEntity || template.originalDg === this.defaultEntity)
     return templates.reduce(
       (map, item) => map.set(item.key, item),
       new Map<string, CatalogItem>(),
@@ -327,16 +322,18 @@ export class ProposalViewCustomTemplateComponent {
 
   unPublishTemplateCatalog(event) {
     const key: string = event.treeContentBlock.key;
-    const delimiter: string = "_";
-
-    const result: string[] = key.split(delimiter);
-    const packageId: string = result[1];
-    setTimeout(() => this.updateNameAndDgTemplateCatalog.unPublishTemplateCatalog(packageId), 0);
+    setTimeout(() => this.detailsService.unPublishTemplate(key, () => {
+      this.reloadTemplate(); // reload happens here
+    }), 0);
   }
 
   viewTemplate() {
     if (this.documentRef) {
       this.router.navigate([`/collection/${this.documentRef}`]);
     }
+  }
+
+  reloadTemplate() {
+    this.proposalService.loadCustomTemplateCatalog();
   }
 }
