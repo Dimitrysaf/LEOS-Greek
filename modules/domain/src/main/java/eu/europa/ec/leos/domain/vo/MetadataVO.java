@@ -37,6 +37,9 @@ public class MetadataVO {
 
     private String documentCollectionName;
 
+    private String docTranslationFromLanguage;
+    private String docTranslationFromHref;
+
     public MetadataVO() {
     }// added for early binding
 
@@ -205,6 +208,21 @@ public class MetadataVO {
         this.documentCollectionName = documentCollectionName;
     }
 
+    public void setDocTranslationFromLanguage(String docTranslationFromLanguage) {
+        this.docTranslationFromLanguage = docTranslationFromLanguage;
+    }
+
+    public String getDocTranslationFromLanguage() {
+        return this.docTranslationFromLanguage;
+    }
+
+    public void setDocTranslationFromHref(String docTranslationFromHref) {
+        this.docTranslationFromHref = docTranslationFromHref;
+    }
+
+    public String getDocTranslationFromHref() {
+        return this.docTranslationFromHref;
+    }
 
     public void clean() {
         this.setDocStage(null);
@@ -224,5 +242,7 @@ public class MetadataVO {
         this.setEeaRelevance(false);
         this.setCallbackAddress(null);
         this.setImported(false);
+        this.setDocTranslationFromLanguage(null);
+        this.setDocTranslationFromHref(null);
     }
 }
