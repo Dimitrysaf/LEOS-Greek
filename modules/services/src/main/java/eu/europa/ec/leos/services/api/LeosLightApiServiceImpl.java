@@ -24,7 +24,6 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.collection.CreateCollectionError;
-import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
@@ -251,10 +250,17 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
         CreateCollectionResult createCollectionResult;
         DocumentVO propDocument = validation.getDocumentToBeCreated();
+        String originalLanguageCode = propDocument.getMetadata().getDocTranslationFromLanguage();
+        if (StringUtils.isEmpty(originalLanguageCode)) {
+            LOG.error("Error occurred while importing the proposal: Original translation language not found on proposal xml file.");
+            return new Pair<>(messageHelper.getMessage("leoslight.original.translation.language.not.found"), HttpStatus.NOT_FOUND);
+        }
         String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
+        String originalDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), originalLanguageCode);
         String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
-        String docRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
-        LegDocument savedLegDocument = (LegDocument) findLeosDocument(docRef, LegDocument.class);
+        propDocument.setRef(originalDocRef);
+        String legDocRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+        LegDocument savedLegDocument = (LegDocument)findLeosDocument(legDocRef, LegDocument.class);
         if (savedLegDocument == null) {
             LeosDocument originalProposal = findLeosDocument(propDocument.getRef(), Proposal.class);
             if (originalProposal != null) {

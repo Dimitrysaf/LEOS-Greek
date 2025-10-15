@@ -51,6 +51,8 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.D
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_SPECIFIC_TEMPLATE;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_STAGE_META;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TEMPLATE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TRANSLATION_FROM_HREF;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TRANSLATION_FROM_LANGUAGE;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TYPE_META;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_VERSION;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.EXPLANATORY_TITLE_PREFACE;
@@ -197,6 +199,8 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                         DOC_STAGE_META,
                         DOC_TYPE_META,
                         DOC_LANGUAGE,
+                        DOC_TRANSLATION_FROM_LANGUAGE,
+                        DOC_TRANSLATION_FROM_HREF,
                         DOC_VERSION,
                         DOC_SPECIFIC_TEMPLATE,
                         DOC_TEMPLATE,
@@ -226,6 +230,9 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                 // For now, only check for the existence of an eeaRelevance: text-> boolean
                 String eeaRelevanceText = metadataVOMap.get(DOC_EEA_RELEVANCE_COVER);
                 metadata.setEeaRelevance(eeaRelevanceText != null && !eeaRelevanceText.isEmpty());
+
+                metadata.setDocTranslationFromLanguage(metadataVOMap.get(DOC_TRANSLATION_FROM_LANGUAGE));
+                metadata.setDocTranslationFromHref(metadataVOMap.get(DOC_TRANSLATION_FROM_HREF));
 
                 // if the template doesnt exist in the system we don't continue, we won't import it.
                 metadata.setTemplateName(templateService.getTemplateName(templatesCatalog, metadata.getDocTemplate(), metadata.getLanguage()));

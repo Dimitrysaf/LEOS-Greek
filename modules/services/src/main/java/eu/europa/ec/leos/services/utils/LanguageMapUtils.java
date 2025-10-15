@@ -39,6 +39,7 @@ public class LanguageMapUtils {
 
     public static String getTranslatedProposalReference(String originalRef, String language) {
         Validate.notNull(originalRef, "Original reference should not be null");
+        Validate.notNull(language, "Language should not be null");
         return originalRef.substring(0, originalRef.lastIndexOf("-")).concat("-").concat(language.toLowerCase());
     }
 }
