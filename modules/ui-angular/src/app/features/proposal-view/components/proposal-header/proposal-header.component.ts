@@ -36,9 +36,11 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
   @Input() editableTitle: string;
   @Input() isClonedProposal: boolean;
   @Input() originRef: string | null;
+  @Input() proposalRef: string;
   @Input() proposalState: string;
   @Input() proposalTemplate!: string;
   @Input() proposalLanguage!: string;
+  @Input() translatedLanguages!: string[];
   @Input() documentCollectionName!: string;
   @Input() customTemplateAct: boolean;
   @Input() isPublished: boolean;

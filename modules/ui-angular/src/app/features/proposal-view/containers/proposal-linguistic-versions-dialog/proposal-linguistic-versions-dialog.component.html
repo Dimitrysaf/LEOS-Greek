@@ -1,0 +1,46 @@
+<eui-dialog
+  #addLinguisticVersionsDialog
+  [title]="'page.collection.add-linguistic-version.title' | translate"
+  [isHandleCloseOnDismiss]="true"
+  [isHandleCloseOnEscape]="true"
+  [isHandleCloseOnClose]="true"
+  (clickOutside)="close()"
+  (dismiss)="close()"
+  (escape)="close()"
+  (dialogClose)="close()"
+>
+  <div class="eui-u-display-flex eui-u-flex-column">
+    <p [innerHTML]="'page.collection.add-linguistic-version.description' | translate"></p>
+    <b><p [innerHTML]="'page.collection.add-linguistic-version.header' | translate"></p></b>
+  </div>
+  <!-- Body -->
+  <div [formGroup]="linguisticVersionsForm">
+    <div class="eui-u-flex-justify-content-center">
+      <div class="language-checkbox">
+        <input class="language-size"
+               type="checkbox"
+               formControlName="allSelected"
+               (change)="toggleAllLanguages($event)"/>
+        <label class="language-size"><b> {{ 'page.collection.details.all' | translate }}</b></label>
+      </div>
+      <div class="language-checkbox"><label class="language-size">|</label></div>
+      <div class="language-checkbox" *ngFor="let lang of languages">
+        <input class="language-size" type="checkbox" [formControlName]="lang"
+               (change)="updateSelectedLanguages()"/>
+        <label class="language-size" [for]="lang">{{ lang }}</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <eui-dialog-footer>
+    <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-justify-content-end">
+      <button type="button" class="eui-u-mr-xs" euiButton euiSecondary (click)="close()">
+        {{ 'global.actions.cancel' | translate }}
+      </button>
+      <button [disabled]="!isFormValid" type="button" euiButton euiPrimary (click)="addLinguisticVersions()">
+        {{ 'global.actions.add' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>

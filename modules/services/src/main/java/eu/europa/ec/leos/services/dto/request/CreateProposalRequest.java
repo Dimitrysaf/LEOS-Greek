@@ -1,11 +1,13 @@
 package eu.europa.ec.leos.services.dto.request;
 
+import java.util.List;
 
 public class CreateProposalRequest {
 
     private String templateId;
     private String templateName;
     private String langCode;
+    private List<String> linguisticVersions;
     private String docPurpose;
     private boolean eeaRelevance;
     private boolean customTemplateAct;
@@ -33,6 +35,14 @@ public class CreateProposalRequest {
 
     public void setLangCode(String langCode) {
         this.langCode = langCode;
+    }
+
+    public List<String> getLinguisticVersions() {
+        return linguisticVersions;
+    }
+
+    public void setLinguisticVersions(List<String> linguisticVersions) {
+        this.linguisticVersions = linguisticVersions;
     }
 
     public String getDocPurpose() {

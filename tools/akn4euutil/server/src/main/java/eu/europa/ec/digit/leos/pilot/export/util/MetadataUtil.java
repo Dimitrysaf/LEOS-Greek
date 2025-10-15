@@ -83,6 +83,7 @@ public class MetadataUtil {
     public static final String ELEMENT_ACTION ="action";
     public static final String ATTRIBUTE_DATE="date";
     public static final String ELEMENT_DATE="date";
+    public static final String ELEMENT_DOC_PURPOSE="docPurpose";
     public static final String VALUE_ONE ="1";
     public static final String VALUE_ZERO ="0";
     public static final String VALUE_TEMPLATE = "template";
@@ -248,6 +249,10 @@ public class MetadataUtil {
         }
 
         final XmlFile mainXml = optMainXml.get();
+        return isAutonomousAct(mainXml);
+    }
+
+    public static boolean isAutonomousAct(final XmlFile mainXml) {
         final Node documentCollection = mainXml.getElementByName("documentCollection");
         if (documentCollection == null) {
             return false;

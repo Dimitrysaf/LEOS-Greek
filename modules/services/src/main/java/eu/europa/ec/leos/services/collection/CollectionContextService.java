@@ -49,6 +49,7 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -122,14 +123,15 @@ public abstract class CollectionContextService {
     private String propChildDocument;
     private String proposalComment;
     private VersionType versionType;
-    private CollectionIdsAndUrlsHolder idsAndUrlsHolder;
-    private String originRef;
+    protected CollectionIdsAndUrlsHolder idsAndUrlsHolder;
+    protected String originRef;
     private boolean cloneProposal = false;
     private String connectedEntity;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private String explanatoryId;
     protected LeosPackage leosPackage = null;
     protected String language;
+    protected String languageTemplateSuffix = "";
     protected boolean translated = false;
     protected String templateKey;
 
@@ -311,6 +313,11 @@ public abstract class CollectionContextService {
 
     public void useLanguage(String language) {
         this.language = language;
+        useLanguageTemplateSuffix();
+    }
+
+    private void useLanguageTemplateSuffix() {
+        this.languageTemplateSuffix = LanguageMapUtils.getLanguageTemplateSuffix(language);
     }
 
     public void useTranslated(boolean translated) {
@@ -858,7 +865,7 @@ public abstract class CollectionContextService {
                 .orElse(null);
 
         if (matchingItem != null) {
-            tp.put(TEMPLATE, matchingItem.getKey());
+            tp.put(TEMPLATE, matchingItem.getKey().concat(this.languageTemplateSuffix));
             tp = getTemplateProperties(tp, matchingItem.getItems(), templateId, true);
             return tp;
         }
@@ -891,11 +898,11 @@ public abstract class CollectionContextService {
         return tp;
     }
 
-    private static void fillTemplate(Map<String, String> tp, CatalogItem item, String documentTemplatesType) {
+    private void fillTemplate(Map<String, String> tp, CatalogItem item, String documentTemplatesType) {
         if (tp.containsKey(documentTemplatesType) && !tp.get(documentTemplatesType).isEmpty()) {
             tp.put(documentTemplatesType, tp.get(documentTemplatesType) + ";");
         }
-        tp.put(documentTemplatesType, tp.get(documentTemplatesType) + item.getId());
+        tp.put(documentTemplatesType, tp.get(documentTemplatesType) + item.getId().concat(this.languageTemplateSuffix));
     }
 
     protected void loadTemplates(Map<String, String> templatePropertiesMap, String documentTemplatesType) {

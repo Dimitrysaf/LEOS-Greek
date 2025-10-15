@@ -15,8 +15,6 @@ package eu.europa.ec.leos.services.template;
 
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -60,15 +58,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         List<String> validOrganizations = userService.getAllOrganizations();
         Set<String> validOrgSet = new HashSet<>(validOrganizations);
 
-        // Validate authenticated user exists
-        User user = securityContext.getUser();
-        if (user == null) {
-            throw new IllegalStateException("No authenticated user found");
-        }
-
-        if (!user.getRoles().contains("TEMPLATE_MANAGER") && !user.getRoles().contains("SUPPORT")){
-            throw new IllegalStateException("This user is not allowed to publish.");
-        }
+        User user = userHelper.validateTemplateManagerRole("This user is not allowed to publish.");
         
         // Add user's entity organizations to DG codes if not already present
         List<String> finalDgCodes = new ArrayList<>(dgCodes);

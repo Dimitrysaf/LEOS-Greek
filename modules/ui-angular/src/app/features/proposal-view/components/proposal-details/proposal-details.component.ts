@@ -84,7 +84,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   correctionInformation: string;
   finalVersion: boolean;
 
-  //TODO To be moved to the backend configuration
   languages = [];
 
   selectedLanguages: { [key: string]: boolean } = {};
@@ -224,10 +223,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.proposalRefTypeList = this.proposalDetails.proposalRefTypes;
     this.adoptionPlaces = this.proposalDetails.adoptionPlaces;
     this.proposalLanguage = this.proposal.metadata.language;
-    this.languages = [];
-    for (const lang of this.proposalDetails.languages) {
-      this.languages.push(lang.toUpperCase());
-    }
     this.institutionalRefActingEntities = this.proposalDetails.institionalRefsTypes;
     this.interInstitutionalRefTypes = this.proposalDetails.interInstitionalRefsTypes;
     this.specialMentions = this.proposalDetails.specialMentions;
@@ -478,6 +473,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       .subscribe((config) => {
         this.leosConfig = config;
       });
+    this.languages = this.leosConfig.languages.map(language => language.toUpperCase());
     this.greffeUser = this.leosConfig.user.greffeUser;
     this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
     this.detailsService.proposalDetailsRefreshedBS.subscribe((proposal) => {

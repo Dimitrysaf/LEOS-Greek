@@ -42,6 +42,7 @@ export class ProposalViewComponent
   milestoneTabSelected = false;
   legFileName: string = null;
   translatedDocs: Document[];
+  translatedLanguages: string[];
   tabsContext: any;
 
   protected readonly homeUrl = document.baseURI;
@@ -110,6 +111,7 @@ export class ProposalViewComponent
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;
           this.setStateDone(proposal);
           this.translatedDocs = proposal.translatedProposals;
+          this.translatedLanguages = this.translatedDocs?.map(doc => doc.language);
 
           this.setActiveTabIndex();
 

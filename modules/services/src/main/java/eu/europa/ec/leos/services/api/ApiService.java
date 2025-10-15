@@ -50,10 +50,12 @@ public interface ApiService {
 
     CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException;
 
-    CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
+    CreateCollectionResult createProposal(String templateId, String templateName, String langCode, List<String> linguisticVersions, String docPurpose,
                                           boolean eeaRelevance, boolean customTemplateAct, String template) throws CreateCollectionException;
 
     CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException;
+
+    List<String> createLinguisticVersions(String proposalRef, List<String> linguisticVersions) throws CreateCollectionException;
 
     LegFileValidation validateLegFile(File legDocument);
 

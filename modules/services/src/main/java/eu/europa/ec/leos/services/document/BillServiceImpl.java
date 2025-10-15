@@ -66,6 +66,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.PERSON;
 import static eu.europa.ec.leos.services.support.XmlHelper.ROLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
 
 public abstract class BillServiceImpl implements BillService {
 
@@ -505,7 +506,10 @@ public abstract class BillServiceImpl implements BillService {
     @Override
     public Bill createBill(String templateId, String path, BillMetadata metadata, String actionMsg, byte[] content) {
         LOG.trace("Creating Bill... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        String ref = generateBillReference(content, metadata.getLanguage());
+        final String language = metadata.getLanguage();
+        String ref = metadata.getRef() != null ?
+                getTranslatedProposalReference(metadata.getRef(), language) :
+                generateBillReference(content, language);
         metadata = metadata
                 .builder()
                 .withRef(ref)

@@ -36,7 +36,7 @@
             </identification>
             <references source="~COM">
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCReference xml:id="EXPL_MEMORANDUM" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" name="docType" showAs="Explanatory memorandum/>
+                <TLCReference xml:id="EXPL_MEMORANDUM" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" name="docType" showAs="Explanatory memorandum"/>
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/BUL" name="language" showAs="bg"/>                
             </references>
             <proprietary source="~COM">

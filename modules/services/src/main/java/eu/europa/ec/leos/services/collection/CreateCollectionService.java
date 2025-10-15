@@ -17,7 +17,7 @@ public interface CreateCollectionService {
      * @param documentVO
      * @return The collection creation result containing the proposal view url.
      */
-    CreateCollectionResult createCollection(DocumentVO documentVO)throws CreateCollectionException;
+    CreateCollectionResult createCollection(DocumentVO documentVO, boolean isTranslated) throws CreateCollectionException;
 
     /**
      * Create a collection from document vo

@@ -22,41 +22,42 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/m
 import {
   ProposalMilestonePublishToCatalogDialogComponent
 } from "@/features/proposal-view/containers/proposal-milestone-publish-to-dg-template-catalog/proposal-milestone-publish-to-catalog-dialog.component";
+import {
+  ProposalLinguisticVersionsDialogComponent
+} from "@/features/proposal-view/containers/proposal-linguistic-versions-dialog/proposal-linguistic-versions-dialog.component";
 
 
 @NgModule({
-    declarations: [
-        ProposalActionsDropdownComponent,
-        ProposalDetailsComponent,
-        ProposalDraftsComponent,
-        ProposalMilestonesComponent,
-        ProposalViewComponent,
-        ProposalCollaboratorsComponent,
-        ProposalCollaboratorsDialogComponent,
-        ProposalHeaderComponent,
-        ProposalLastUpdatedOnComponent,
-        ProposalExportsComponent,
-        AddMilestoneDialogComponent,
-        ProposalMilestoneSendCopyDialogComponent,
-        ProposalMilestonePublishToCatalogDialogComponent,
-        MilestoneAnnotationWarningModalComponent
-    ],
-    imports: [
-        ProposalViewRoutingModule,
-        SharedModule,
-        CommonModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatDatepickerToggle,
-        MatHint,
-        MatLabel,
-        MatDatepicker,
-        MatDatepickerInput,
-        MatSuffix,
-    ],
-    providers: [ProposalService],
-    exports: [
-        ProposalMilestonePublishToCatalogDialogComponent
-    ]
+  declarations: [
+    ProposalActionsDropdownComponent,
+    ProposalDetailsComponent,
+    ProposalDraftsComponent,
+    ProposalMilestonesComponent,
+    ProposalViewComponent,
+    ProposalCollaboratorsComponent,
+    ProposalCollaboratorsDialogComponent,
+    ProposalHeaderComponent,
+    ProposalLastUpdatedOnComponent,
+    ProposalExportsComponent,
+    AddMilestoneDialogComponent,
+    ProposalMilestoneSendCopyDialogComponent,
+    ProposalMilestonePublishToCatalogDialogComponent,
+    MilestoneAnnotationWarningModalComponent,
+    ProposalLinguisticVersionsDialogComponent
+  ],
+  imports: [
+    ProposalViewRoutingModule,
+    SharedModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatDatepickerToggle,
+    MatHint,
+    MatLabel,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatSuffix,
+  ],
+  providers: [ProposalService],
 })
 export class ProposalViewModule {}

@@ -56,6 +56,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX;
+import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
 
 @Service
 public class FinancialStatementServiceImpl implements FinancialStatementService {
@@ -125,14 +126,12 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     public FinancialStatement createFinancialStatement(String templateId, String path, FinancialStatementMetadata metadata,
                                                        String actionMessage, byte[] content) {
         LOG.trace("Creating FinancialStatement... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        final String FinancialStatementUid = Cuid.createCuid();
         final String language = metadata.getLanguage();
-        StringBuilder refBuilder = new StringBuilder(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX).
-                append(DOC_FILE_NAME_SEPARATOR).
-                append(FinancialStatementUid).append(DOC_FILE_NAME_SEPARATOR).
-                append(language.toLowerCase());
-        final String ref = refBuilder.toString();
-        final String fileName = refBuilder.append(XML_DOC_EXTENSION).toString();
+        final String originRef = metadata.getRef();
+        final String ref = originRef != null && !originRef.equals(this.cloneOriginRef) ?
+                getTranslatedProposalReference(metadata.getRef(), language) :
+                generateFinancialStatementReference(null, language);
+        final String fileName = ref.concat(XML_DOC_EXTENSION);
         metadata = metadata
                 .builder()
                 .withRef(ref)
@@ -148,14 +147,9 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     public FinancialStatement createClonedFinancialStatement(String templateId, String path, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO,
                                                        String actionMessage, byte[] content) {
         LOG.trace("Creating cloned FinancialStatement... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        final String FinancialStatementUid = Cuid.createCuid();
         final String language = metadata.getLanguage();
-        StringBuilder refBuilder = new StringBuilder(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX).
-                append(DOC_FILE_NAME_SEPARATOR).
-                append(FinancialStatementUid).append(DOC_FILE_NAME_SEPARATOR).
-                append(language.toLowerCase());
-        final String ref = refBuilder.toString();
-        final String fileName = refBuilder.append(XML_DOC_EXTENSION).toString();
+        final String ref = generateFinancialStatementReference(null, language);
+        final String fileName = ref.concat(XML_DOC_EXTENSION);
         metadata = metadata
                 .builder()
                 .withRef(ref)
@@ -404,6 +398,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         LOG.trace("Finding FinancialStatement by ref... [ref=" + ref + "]");
         FinancialStatement financialStatement = financialStatementRepository.findFinancialStatementByRef(ref);
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
         return financialStatement;
     }
 
@@ -479,7 +474,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
 
     @Override
     public String generateFinancialStatementReference(byte[] content, String language) {
-        String docName = xmlContentProcessor.getDocReference(content);
+        String docName = content != null ? xmlContentProcessor.getDocReference(content) : STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX;
         return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(Cuid.createCuid())
                 .concat(DOC_FILE_NAME_SEPARATOR).concat(language.toLowerCase());
     }

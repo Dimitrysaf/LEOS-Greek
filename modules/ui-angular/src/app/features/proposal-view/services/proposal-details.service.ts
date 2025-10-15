@@ -542,94 +542,59 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  updateTemplate(
-    milestone: MilestoneDescriptor,
-    templateName: string,
-    dgCodes: string[],
+  /**
+   * Create linguistic versions linked to the proposal
+   * @param proposalRef The ref of the proposal to link the new linguistic versions to
+   *                    (if this proposal is a linguistic version itself, the new linguistic versions are linked to the same main proposal as this)
+   * @param linguisticVersions The list of languages to create new linguistic versions
+   */
+  createLinguisticVersions(
+    proposalRef: string,
+    linguisticVersions: string[],
   ) {
     this.loadingService.setLoading(true);
 
-    const url = `${apiBaseUrl}/secured/catalog/update-template/${milestone.legFileId}`;
-    const body = {
-      legDocumentName: milestone.legDocumentName,
-      templateName,
-      dgCodes,
-    };
+    const url = `${apiBaseUrl}/secured/proposal/${proposalRef}/linguistic-versions`;
 
     return this.http
-      .post(url, body)
+      .post(url, linguisticVersions)
       .pipe(finalize(() => this.loadingService.setLoading(false)))
       .subscribe({
-        next: () => {
-          console.log('update SUCCESS')
-          this.growlService.growl({
-            severity: 'success',
-            summary: this.translateService.instant('global.notifications.title.success'),
-            detail: this.translateService.instant('page.collection.milestones.publish-to-catalog.success'),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-        error: (err) => {
-          console.log('update ERROR')
-          this.growlService.growl({
-            severity: 'danger',
-            summary: this.translateService.instant('global.notifications.title.error'),
-            detail:
-              err?.error?.message ??
-              this.translateService.instant('page.collection.milestones.update-template.error'),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-      });
-  }
-
-  unPublishTemplate(
-    packageId: string
-  ) {
-    this.loadingService.setLoading(true);
-    const url = `${apiBaseUrl}/secured/catalog/un-publish-template/${packageId}`;
-    return this.http
-      .post(url, null, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-      .pipe(finalize(() => this.loadingService.setLoading(false)))
-      .subscribe({
-        next: (success: boolean) => {
-          if (success) {
+        next: (notFoundLanguages: string[]) => {
+          if (notFoundLanguages.length > 0) {
+            let successMsg = '';
+            if (notFoundLanguages.length < linguisticVersions.length) {
+              successMsg = '<b>' + this.translateService.instant('page.collection.add-linguistic-version.success') + '</b><br>';
+            }
+            console.log('ADD LINGUISTIC VERSIONS WARNING');
             this.growlService.growl({
-              severity: 'success',
-              summary: this.translateService.instant('global.notifications.title.success'),
-              detail: this.translateService.instant('page.collection.milestones.un-publish-to-catalog.success'),
-              life: 3000,
-              isGrowlSticky: false,
+              severity: 'warning',
+              summary: this.translateService.instant('global.notifications.title.warning'),
+              detail: successMsg + this.translateService.instant('page.collection.add-linguistic-version.warning') + notFoundLanguages.join(', '),
+              sticky: true,
               position: 'bottom-right',
             });
           } else {
+            console.log('ADD LINGUISTIC VERSIONS SUCCESS');
             this.growlService.growl({
-              severity: 'danger',
-              summary: this.translateService.instant('global.notifications.title.error'),
-              detail:this.translateService.instant('page.collection.milestones.un-publish-to-catalog.failed'),
+              severity: 'success',
+              summary: this.translateService.instant('global.notifications.title.success'),
+              detail: this.translateService.instant('page.collection.add-linguistic-version.success'),
               life: 3000,
               isGrowlSticky: false,
-              position: 'bottom-right',
-            })
+              position: "bottom-right"
+            });
           }
+          this.setProposalRef(proposalRef);
         },
         error: (err) => {
-          console.log('update ERROR')
+          console.log('ADD LINGUISTIC VERSIONS ERROR');
           this.growlService.growl({
             severity: 'danger',
             summary: this.translateService.instant('global.notifications.title.error'),
             detail:
-              err?.error?.message ??
-              this.translateService.instant('page.collection.milestones.un-publish-to-catalog.error'),
+              err?.error ??
+              this.translateService.instant('page.collection.add-linguistic-version.error'),
             life: 3000,
             isGrowlSticky: false,
             position: 'bottom-right',
