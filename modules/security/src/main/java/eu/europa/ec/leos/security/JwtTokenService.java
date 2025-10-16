@@ -108,13 +108,9 @@ class JwtTokenService implements TokenService {
             String clientSecret = passwordConfigurator.getProperty(keyPrefix + clientName + ".secret");
 
             if (clientSecret == null){
-                LOG.debug("SECRET NOT FOUND");
                 clientSecret = env.getProperty(keyPrefix + clientName + ".secret");
-                LOG.debug("NOTSECRET IS {}", clientSecret);
             }
 
-            LOG.debug(clientId);
-            LOG.debug(clientSecret);
             if (clientId == null || clientSecret == null) {
                 LOG.error("the key 'leos.api.jwt.auth.clients' and its corresponding clientId/secret is not configured correctly for each single client");
                 // for now we do not block the deployment of the application throwing an Exception
@@ -269,11 +265,7 @@ class JwtTokenService implements TokenService {
      * @return The client who verified the token, or empty client if the token cannot be verified.
      */
     public AuthClient validateClientByJwtToken(String token) {
-        LOG.debug("TOMCAT TEST");
-        LOG.debug(token);
         for (AuthClient authClient : registeredClients) {
-            LOG.debug(authClient.getClientId());
-            LOG.debug(authClient.getName());
             boolean isValid = isTokenValid(authClient.getClientId(), authClient.getSecret(), token);
             if(isValid){
                 LOG.debug("AccessToken correctly validated for client {} ", authClient.getName());
