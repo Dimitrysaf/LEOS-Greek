@@ -55,11 +55,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     actualTargetItem: TableOfContentItemVO,
     position: string,
   ) {
-    function isSourceItemAdded() {
-      return sourceItem.softActionAttr === ADD && sourceItem.softActionRoot;
-    }
-
-    if (isAdd || isSourceItemAdded()) {
+    if (isAdd) {
       super.addOrMoveItem(
         isAdd,
         sourceItem,
