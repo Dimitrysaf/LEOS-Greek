@@ -256,7 +256,11 @@ class JwtTokenService implements TokenService {
      * @return The client who verified the token, or empty client if the token cannot be verified.
      */
     public AuthClient validateClientByJwtToken(String token) {
+        LOG.debug("TOMCAT TEST");
+        LOG.debug(token);
         for (AuthClient authClient : registeredClients) {
+            LOG.debug(authClient.getClientId());
+            LOG.debug(authClient.getName());
             boolean isValid = isTokenValid(authClient.getClientId(), authClient.getSecret(), token);
             if(isValid){
                 LOG.debug("AccessToken correctly validated for client {} ", authClient.getName());
