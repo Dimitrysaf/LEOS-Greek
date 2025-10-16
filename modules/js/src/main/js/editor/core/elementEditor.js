@@ -23,6 +23,7 @@ define(function elementEditorModule(require) {
     var UTILS = require("core/leosUtils");
 
     var dialogDefinition = require("./leosEmptyElementDialog");
+    var dialogDefinition2 = require("./leosForbiddenCharactersDialog");
     var leosOneParaArticleDialog = require("./leosOneParaArticleDialog");
     var pluginTools = require("../plugins/pluginTools");
     var leosPluginUtils = require("../plugins/leosPluginUtils");
@@ -354,7 +355,36 @@ define(function elementEditorModule(require) {
     function _canBeSaved(connector, elementId, event) {
         var editor = event.editor;
         UTILS.removeZeroWidthSpaces(elementId);
-        return !_isArticleWithOneNumberedParagraph(elementId, editor) && !_isEmptyElement(elementId, editor);
+        return !_isArticleWithOneNumberedParagraph(elementId, editor) && !_isEmptyElement(elementId, editor) && !_checkForbiddenCharacterPresence(elementId, editor);
+    }
+
+    function _checkForbiddenCharacterPresence(elementId, editor) {
+        if (_checkIfElementStartWithForbiddenChar(elementId)) {
+            pluginTools.addDialog(dialogDefinition2.dialogName, dialogDefinition2.initializeDialog);
+            var dialogCommand2 = editor.addCommand(dialogDefinition2.dialogName, new CKEDITOR.dialogCommand(dialogDefinition2.dialogName));
+            dialogCommand2.exec();
+            _selectRangeForElementId(elementId, editor);
+            return true;
+        }
+        return false;
+    }
+
+    function _checkIfElementStartWithForbiddenChar(elementId) {
+        var $el = $("#" + elementId);
+        //find all <p> in $el
+        var $p = $el.find("p");
+        //check if any <p> has forbidden char
+        for (var i = 0; i < $p.length; i++) {
+            if (_isForbiddenChar($p.eq(i).text())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function _isForbiddenChar(text) {
+        //forbidden characters are . - ,
+        return !!(text.startsWith(".") || text.startsWith("-") || text.startsWith(","));
     }
 
     function _isEmptyElement(elementId, editor) {
