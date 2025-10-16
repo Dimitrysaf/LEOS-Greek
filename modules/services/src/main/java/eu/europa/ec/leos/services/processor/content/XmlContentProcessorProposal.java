@@ -57,9 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITH_ONLY_TEXT;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.*;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.MergeUtils.removeChildren;
@@ -278,7 +276,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         if (isTrackChangesEnabled && securityContext.getUser() != null && StringUtils.isNotEmpty(tocVo.getTrackChangeAction())) {
             if (!hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_TO_ORIGIN_ACTION)) {
                 Node nodeToAddOrRemoveAttribute = node;
-                if (numNode != null && hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {
+                if (numNode != null && hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION) && !hasTocItemSoftAction(tocVo, SoftActionType.ADD)) {
                     nodeToAddOrRemoveAttribute = numNode;
                 }
                 String action = tocVo.getTrackChangeAction();
