@@ -80,8 +80,9 @@
         ></app-proposal-home-card>
       </div>
       <!--Admin View-->
-      <div *ngIf="isAdminView">
+      <div class="cards-containers-large" *ngIf="isAdminView">
         <app-proposal-view-custom-template
+          class="card-container-large"
           [documentCollectionName]="documentCollectionName"
           [proposalTemplate]="proposalTemplate"
           [isCustomTemplatesCatalog]=true

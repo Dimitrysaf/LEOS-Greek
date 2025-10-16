@@ -1,9 +1,9 @@
-<div>
-  <eui-card class="eui-u-mt-m" *ngIf="templates.size > 0">
-    <eui-card-content>
-      <div class="cards-containers body-container">
-        <div class="eui-u-flex eui-u-mt-m">
-          <div class="eui-u-mr-l">
+<ng-container >
+  <eui-card
+    class="card-container eui-u-shadow-1">
+    <eui-card-header *ngIf="templates.size > 0">
+      <eui-card-header-title class="label-icon-container">
+          <div class="eui-u-mr-l icon-text">
             <eui-icon-svg [icon]=icon></eui-icon-svg>
             <span>{{ 'page.admin.my-dg-catalog' | translate }}</span>
           </div>
@@ -22,8 +22,6 @@
               />
             </div>
           </div>
-
-
           <button
             euiButton
             euiIconButton
@@ -37,8 +35,11 @@
               size="l"
             ></eui-icon-svg>
           </button>
-        </div>
+      </eui-card-header-title>
+    </eui-card-header>
 
+    <eui-card-content>
+      <div>
         <eui-tree
           isSingleSelect
           (selectionChange)="onNodeClick($event)"
@@ -48,20 +49,19 @@
         >
         </eui-tree>
       </div>
-
+      <div *ngIf="templates.size === 0" class="no-templates">
+        <h2>
+          {{
+            'page.workspace.create-selector.no-template' | translate
+          }}
+        </h2>
+      </div>
     </eui-card-content>
-
   </eui-card>
 
-  <div *ngIf="templates.size === 0">
-    <h2>
-      {{
-        'page.workspace.create-selector.no-template' | translate
-      }}
-    </h2>
-  </div>
+</ng-container>
 
-  <ng-template let-node #nodeTemplateCustom2 let-onSelect="onSelect" let-id2="id" let-children>
+<ng-template let-node #nodeTemplateCustom2 let-onSelect="onSelect" let-id2="id" let-children>
   <div (click)="onSelect({ target: { checked: !node.isSelected } })"
        class="eui-tree-node-wrapper__container-middle">
     <eui-icon-svg euiIconSvg [icon]="node?.treeContentBlock?.iconSvgName"></eui-icon-svg>
