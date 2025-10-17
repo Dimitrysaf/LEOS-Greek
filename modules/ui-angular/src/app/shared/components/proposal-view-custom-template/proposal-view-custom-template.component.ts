@@ -322,8 +322,13 @@ export class ProposalViewCustomTemplateComponent {
 
   unPublishTemplateCatalog(event) {
     const key: string = event.treeContentBlock.key;
-    setTimeout(() => this.detailsService.unPublishTemplate(key, () => {
-      this.reloadTemplate(); // reload happens here
+    setTimeout(() => this.detailsService.unPublishTemplate(key).subscribe({
+        next:() =>{
+          this.reloadTemplate(); // reload happens here
+        },
+      error: (error) => {
+        console.log(error);
+      }
     }), 0);
   }
 
