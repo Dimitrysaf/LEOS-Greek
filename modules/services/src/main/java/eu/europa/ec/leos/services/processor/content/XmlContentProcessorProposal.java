@@ -276,8 +276,12 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         if (isTrackChangesEnabled && securityContext.getUser() != null && StringUtils.isNotEmpty(tocVo.getTrackChangeAction())) {
             if (!hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_TO_ORIGIN_ACTION)) {
                 Node nodeToAddOrRemoveAttribute = node;
-                if (numNode != null && hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION) && !hasTocItemSoftAction(tocVo, SoftActionType.ADD)) {
-                    nodeToAddOrRemoveAttribute = numNode;
+                if (numNode != null && hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {
+                    Node leosUid = node.getAttributes().getNamedItem(LEOS_UID);
+                    if (!(leosUid != null && StringUtils.equals(leosUid.getNodeValue(), securityContext.getUser().getLogin())
+                            && hasTocItemSoftAction(tocVo, SoftActionType.ADD))) {
+                        nodeToAddOrRemoveAttribute = numNode;
+                    }
                 }
                 String action = tocVo.getTrackChangeAction();
                 if (hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {

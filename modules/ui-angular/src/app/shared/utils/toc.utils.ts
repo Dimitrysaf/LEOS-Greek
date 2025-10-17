@@ -16,6 +16,7 @@ import {
   INDENT,
   LEOS_TC_DELETE_ACTION,
   LEOS_TC_INSERT_ACTION,
+  LEOS_TC_MOVE_ACTION,
   LEVEL,
   LIST,
   MAX_INDENT_LEVEL,
@@ -1116,7 +1117,8 @@ export const getItemSoftStyle = (
     ) {
       itemSoftStyle = 'leos-soft-movedfrom';
     } else if (
-      hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)
+      hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION) ||
+      hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_MOVE_ACTION) && hasTocItemSoftAction(tableOfContentItemVO, ADD)
     ) {
       itemSoftStyle = 'leos-soft-new';
     } else if (
