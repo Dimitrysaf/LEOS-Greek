@@ -44,6 +44,16 @@ public class CatalogServiceImplTest {
     @Mock private ConfigCategoryRepository customTemplateConfigCategoryRepository;
     @Mock private DocumentService documentService;
     @Mock private MilestoneDocumentService milestoneDocumentService;
+    @Mock private PackageRepository packageRepository;
+    @Mock
+    private Config config;
+
+    @Mock
+    private ConfigVersion configVersion;
+
+    @Mock
+    private ConfigContent configContent;
+
 
     @InjectMocks
     private CatalogServiceImpl catalogService;
@@ -97,6 +107,7 @@ public class CatalogServiceImplTest {
         String templateName = "Test Template";
         List<String> dgs = Arrays.asList("DG1", "DG2");
         String userId = "testUser";
+        String originalDg = "DG1";
 
         when(milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId)))
             .thenReturn(Optional.of(mockLeosDocument));
@@ -112,7 +123,7 @@ public class CatalogServiceImplTest {
             .thenReturn(mockDocumentMilestone);
 
         // Act
-        catalogService.publishCustomTemplate(legFileId, templateName, dgs, userId);
+        catalogService.publishCustomTemplate(legFileId, templateName, dgs, userId, originalDg);
 
         // Assert - Verify core operations
         verify(milestoneDocumentService, times(2)).findMilestoneById(new BigDecimal(legFileId));
@@ -135,6 +146,8 @@ public class CatalogServiceImplTest {
         String legFileId = "123";
         List<String> dgs = Arrays.asList("DG1");
         String userId = "testUser";
+        String originalDg = "DG1";
+
 
         setupBasicMocks(legFileId, userId);
         when(customTemplateEntitiesRepository.findByPackageId(mockPackage))
@@ -144,7 +157,7 @@ public class CatalogServiceImplTest {
 
 
         // Act
-        catalogService.publishCustomTemplate(legFileId, "Template", dgs, userId);
+        catalogService.publishCustomTemplate(legFileId, "Template", dgs, userId, originalDg);
 
         // Assert - Verify catalog creation
         verify(customTemplateConfigRepository).findConfigByName("catalog-DG1");
@@ -165,6 +178,7 @@ public class CatalogServiceImplTest {
         String legFileId = "123";
         List<String> emptyDgs = Collections.emptyList();
         String userId = "testUser";
+        String originalDg = "DG1";
 
         setupBasicMocks(legFileId, userId);
         when(customTemplateEntitiesRepository.findByPackageId(mockPackage))
@@ -172,7 +186,7 @@ public class CatalogServiceImplTest {
         setupCatalogCreationMocks();
 
         // Act
-        catalogService.publishCustomTemplate(legFileId, "Template", emptyDgs, userId);
+        catalogService.publishCustomTemplate(legFileId, "Template", emptyDgs, userId, originalDg);
 
         // Assert - Verify empty entities are saved
         ArgumentCaptor<CustomTemplateEntities> entitiesCaptor = ArgumentCaptor.forClass(CustomTemplateEntities.class);
@@ -198,8 +212,9 @@ public class CatalogServiceImplTest {
         when(documentMilestoneRepository.findByDocumentId(mockDocument.getId()))
             .thenReturn(publishedMilestone);
 
+        String originalDg = "DG1";
         // Act - Should throw CatalogException
-        catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "user");
+        catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "user", originalDg);
     }
 
     @Test(expected = CatalogException.class)
@@ -214,14 +229,16 @@ public class CatalogServiceImplTest {
         when(documentMilestoneRepository.findByDocumentId(mockDocument.getId()))
             .thenReturn(null);
 
+        String originalDg = "DG1";
         // Act - Should throw CatalogException
-        catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "user");
+        catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "user",originalDg);
     }
 
     @Test(expected = NumberFormatException.class)
     public void testPublishCustomTemplate_InvalidLegFileId() throws CatalogException {
+        String originalDg = "DG1";
         // Act - Should throw NumberFormatException for invalid BigDecimal
-        catalogService.publishCustomTemplate("invalid", "Template", Arrays.asList("DG1"), "user");
+        catalogService.publishCustomTemplate("invalid", "Template", Arrays.asList("DG1"), "user", originalDg);
     }
 
     @Test(expected = CatalogException.class)
@@ -231,8 +248,9 @@ public class CatalogServiceImplTest {
         when(milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId)))
             .thenReturn(Optional.empty());
 
+        String originalDg = "DG1";
         // Act
-        catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user");
+        catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user", originalDg);
     }
 
     @Test(expected = CatalogException.class)
@@ -240,12 +258,13 @@ public class CatalogServiceImplTest {
         // Arrange - Test early return when document not found
         String legFileId = "123";
         when(milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId)))
-            .thenReturn(Optional.of(mockLeosDocument));
+                .thenReturn(Optional.of(mockLeosDocument));
         when(documentRepository.findById(mockLeosDocument.getDocumentId()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
+        String originalDg = "DG1";
         // Act
-        catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user");
+        catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user", originalDg);
     }
 
     @Test
@@ -256,27 +275,28 @@ public class CatalogServiceImplTest {
         previousMilestone.setMilestoneComments("Custom Template");
         previousMilestone.setAuditLastMBy("PreviousUser");
         previousMilestone.setAuditLastMDate(LocalDateTime.now());
-        
+        String originalDg = "DG1";
+
         DocumentMilestone currentMilestone = new DocumentMilestone();
         currentMilestone.setStatus(CustomTemplateMilestoneStatus.UNPUBLISHED.getValue());
 
         setupBasicMocks("123", "testUser");
         when(customTemplateEntitiesRepository.findByPackageId(mockPackage))
-            .thenReturn(Optional.of(mockCustomTemplateEntities));
+                .thenReturn(Optional.of(mockCustomTemplateEntities));
         when(documentMilestoneRepository.findDocumentMilestonesByDocumentIn(any()))
-            .thenReturn(Arrays.asList(previousMilestone));
+                .thenReturn(Arrays.asList(previousMilestone));
         when(documentMilestoneRepository.findByDocumentId(mockDocument.getId()))
-            .thenReturn(currentMilestone);
+                .thenReturn(currentMilestone);
 
         // Act
-        catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "testUser");
+        catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "testUser", originalDg);
 
         // Assert - Verify milestone operations
         ArgumentCaptor<DocumentMilestone> captor = ArgumentCaptor.forClass(DocumentMilestone.class);
         verify(documentMilestoneRepository, times(2)).save(captor.capture());
-        
+
         List<DocumentMilestone> savedMilestones = captor.getAllValues();
-        
+
         // First save - unpublish previous
         assertEquals(CustomTemplateMilestoneStatus.UNPUBLISHED.getValue(), savedMilestones.get(0).getStatus());
         assertEquals("testUser", savedMilestones.get(0).getAuditLastMBy());
@@ -333,5 +353,139 @@ public class CatalogServiceImplTest {
         // Mock content repository
         when(customTemplateConfigContentRepository.save(any(ConfigContent.class)))
             .thenReturn(new ConfigContent());
+    }
+    @Test
+    public void testUnpublishCustomTemplate_Success() throws CatalogException {
+        // Arrange
+        String packageId = "123";
+        String userId = "testUser";
+        List<String> dgs = Arrays.asList("DG1", "DG2");
+        String VALID_XML =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                        "<catalog>" +
+                        "  <item type=\"TEMPLATE\" key=\"Custom Template_123\" custom-name=\"Test Template\"/>" +
+                        "</catalog>";
+
+        mockDocumentMilestone = new DocumentMilestone();
+        mockDocumentMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
+        mockDocumentMilestone.setMilestoneComments("Custom Template");
+        when(customTemplateConfigVersionRepository.save(any(ConfigVersion.class)))
+                .thenReturn(new ConfigVersion());
+        // Mock content repository
+        when(customTemplateConfigContentRepository.save(any(ConfigContent.class)))
+                .thenReturn(new ConfigContent());
+        when(customTemplateConfigRepository.findConfigByName(any()))
+                .thenReturn(Optional.of(config));
+        when(customTemplateConfigVersionRepository.findLastConfigVersionByConfigId(any()))
+                .thenReturn(configVersion);
+        when(customTemplateConfigContentRepository.findConfigContentByVersionId(any()))
+                .thenReturn(configContent);
+        when(configContent.getContentString())
+                .thenReturn(VALID_XML);
+        when(config.getId()).thenReturn(BigDecimal.valueOf(1));
+        when(packageRepository.findById(new BigDecimal(packageId)))
+                .thenReturn(Optional.of(mockPackage));
+        when(customTemplateEntitiesRepository.findByPackageId(mockPackage))
+                .thenReturn(Optional.of(mockCustomTemplateEntities));
+        when(documentRepository.findAllDocumentsByPackageId(mockPackage))
+                .thenReturn(Arrays.asList(mockDocument));
+        when(documentMilestoneRepository.findDocumentMilestonesByDocumentIn(any()))
+                .thenReturn(Arrays.asList(mockDocumentMilestone));
+        DocumentV documentV = new DocumentV();
+        documentV.setTemplate("Custom Template");
+        // Arrange
+        when(documentVRepository.findAllVersionsByPackageIdAndCategoryCode(eq(new BigDecimal(1)), eq("PROPOSAL")))
+                .thenReturn(Arrays.asList(documentV));
+
+        // Act
+        Boolean result = catalogService.unpublishCustomTemplate(packageId, userId);
+
+        // Assert
+        assertEquals(true, result);
+        verify(documentMilestoneRepository, times(1)).save(mockDocumentMilestone);
+        verify(customTemplateEntitiesRepository, times(1)).save(any(CustomTemplateEntities.class));
+    }
+
+    @Test(expected = CatalogException.class)
+    public void testUnpublishCustomTemplate_PackageNotFound() throws CatalogException {
+        // Arrange
+        String packageId = "999";
+        when(packageRepository.findById(new BigDecimal(packageId)))
+                .thenReturn(Optional.empty());
+
+        // Act
+        catalogService.unpublishCustomTemplate(packageId, "testUser");
+    }
+
+    @Test
+    public void testUnpublishCustomTemplate_NoEntitiesToUnpublish() throws CatalogException {
+        // Arrange
+        String packageId = "123";
+        String userId = "testUser";
+        when(packageRepository.findById(new BigDecimal(packageId)))
+                .thenReturn(Optional.of(mockPackage));
+
+        // Act
+        Boolean result = catalogService.unpublishCustomTemplate(packageId, userId);
+
+        // Assert
+        assertEquals(false, result);
+        verify(documentMilestoneRepository, never()).save(any(DocumentMilestone.class));
+        verify(customTemplateEntitiesRepository, never()).save(any(CustomTemplateEntities.class));
+    }
+
+    @Test
+    public void testUpdateCustomTemplate_EntitiesUpdatedSuccessfully() throws CatalogException {
+        // Arrange
+        String packageId = "123";
+        List<String> newEntities = Arrays.asList("DG3", "DG4");
+        String userId = "testUser";
+        String templateName = "Updated Template";
+        String originalDg = "DG3";
+
+        setupBasicMocks(packageId, userId);
+        when(packageRepository.findById(new BigDecimal(packageId)))
+                .thenReturn(Optional.of(mockPackage));
+        when(customTemplateEntitiesRepository.findByPackageId(mockPackage))
+                .thenReturn(Optional.of(mockCustomTemplateEntities));
+
+        // Act
+        catalogService.updateCustomTemplate(packageId, templateName, newEntities, userId, originalDg);
+
+        // Assert
+        ArgumentCaptor<CustomTemplateEntities> capture = ArgumentCaptor.forClass(CustomTemplateEntities.class);
+        verify(customTemplateEntitiesRepository).save(capture.capture());
+        assertEquals("DG3,DG4", capture.getValue().getEntities());
+        assertEquals(userId, capture.getValue().getAuditLastMBy());
+    }
+
+
+    @Test(expected = CatalogException.class)
+    public void testUpdateCustomTemplate_PackageNotFound() throws CatalogException {
+        // Arrange
+        when(packageRepository.findById(new BigDecimal("999")))
+                .thenReturn(Optional.empty());
+
+        // Act
+        catalogService.updateCustomTemplate("999", "Template", Arrays.asList("DG1"), "user", "DG1");
+
+        // Assert: CatalogException is thrown
+    }
+
+    @Test(expected = CatalogException.class)
+    public void testUpdateCustomTemplate_ExceptionPropagation() throws CatalogException {
+        // Arrange
+        String packageId = "123";
+        String templateName = "Fail Template";
+        List<String> dgs = Arrays.asList("DG1");
+        String userId = "testUser";
+        String originalDg = "DG1";
+
+        setupBasicMocks(packageId, userId);
+
+        // Act
+        catalogService.updateCustomTemplate(packageId, templateName, dgs, userId, originalDg);
+
+        // Assert: Exception propagates correctly
     }
 }
