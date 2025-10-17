@@ -102,12 +102,16 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         File legisWritePackage = null;
         String jobId;
         try {
+            LOG.info("ANDRE EXPORT 2");
             legisWritePackage = createCollectionPackage("job.zip", proposalId, exportOptions);
+            LOG.info("ANDRE EXPORT 3");
             String destinationEmail = securityContext.getUser().getEmail();
+            LOG.info("ANDRE EXPORT 4");
             Map<String, File> packages = new HashMap<>();
             packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
-            LOG.info("ANDRE EXPORT 2");
+            LOG.info("ANDRE EXPORT 5");
             jobId = toolBoxService.createJobWithEmail(proposalId, packages, destinationEmail);
+            LOG.info("ANDRE EXPORT 6");
         } catch (Exception ex) {
             LOG.info("ANDRE ERROR 1");
             LOG.error("Unexpected error occurred in method exportToToolboxCoDe(): {}", ex.getMessage());
@@ -119,6 +123,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
                 }
             }
         }
+        LOG.info("ANDRE EXPORT 7");
         return jobId;
     }
 
