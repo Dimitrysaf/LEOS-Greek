@@ -273,7 +273,10 @@ define(function leosUtilsModule(require) {
         for (var i = 0; usersUid.length > i; i++) {
             var userColors = _generateColors(usersUid[i].repeat(5) + proposalRef);
             if (isDocTcStyle) {
-                tcShowStyle += "paragraph:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before " +
+                tcShowStyle += "paragraph:has(> num) > subparagraph:nth-child(n+3)[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before,  " +
+                    "point:has(> num) list:nth-child(n+3) > subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before, " +
+                    "point:has(> num) > subparagraph:nth-child(n+3)[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before, " +
+                    "paragraph:has(> num) > list:nth-child(n+3) > subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before " +
                     "{" +
                     "content: '↵'; margin-left: 40px; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt; padding-top: 6pt;" +
@@ -283,13 +286,13 @@ define(function leosUtilsModule(require) {
                     "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt; padding-top: 6pt;" +
                     "}\n";
-                tcShowStyle += "paragraph:not(:has(> num > ins)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:before, " +
+                tcShowStyle += "paragraph:not(:has(> num > ins)) > subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:tc-original-number='UNNUMBERED']:not(:has(> num > ins)):before, " +
                     "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before, " +
-                    "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before, " +
+                    "paragraph:not(:has(> num)) subparagraph:nth-child(n+2)[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before, " +
+                    "paragraph:not(:has(> num)) list:nth-child(n+2) > subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before, " +
                     "level:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before " +
-
                     "{" +
                     "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt; padding-top: 6pt;" +
@@ -316,10 +319,12 @@ define(function leosUtilsModule(require) {
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:not([data-akn-attr-softmove_label])[data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:not([data-akn-attr-softmove_label])[data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                     "p[data-akn-name='aknParagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
-                    "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                    "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                    "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                    "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li > p:nth-child(n+2)[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li > p:nth-child(n+2)[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li > ol > li:nth-child(n+2)[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li > ol > li:nth-child(n+2)[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li > ol:nth-child(n+2) > li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li > ol:nth-child(n+2) > li:nth-child(n+2)[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
                     "li[data-akn-element='paragraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"']:not([data-akn-attr-softmove_label])[data-akn-action-enter='insert']:not([data-akn-num]):before {" +
                     "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                     "float: left !important; text-decoration: none !important;" +
