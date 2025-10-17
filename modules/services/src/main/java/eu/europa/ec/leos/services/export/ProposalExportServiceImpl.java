@@ -97,6 +97,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
      */
     @Override
     public String exportToToolboxCoDe(String proposalId, ExportOptions exportOptions) throws Exception {
+        LOG.info("ANDRE EXPORT 1");
         Validate.notNull(toolBoxService, "Export Service is not available!!");
         File legisWritePackage = null;
         String jobId;
@@ -105,8 +106,10 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             String destinationEmail = securityContext.getUser().getEmail();
             Map<String, File> packages = new HashMap<>();
             packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
+            LOG.info("ANDRE EXPORT 2");
             jobId = toolBoxService.createJobWithEmail(proposalId, packages, destinationEmail);
         } catch (Exception ex) {
+            LOG.info("ANDRE ERROR 1");
             LOG.error("Unexpected error occurred in method exportToToolboxCoDe(): {}", ex.getMessage());
             throw ex;
         } finally {
