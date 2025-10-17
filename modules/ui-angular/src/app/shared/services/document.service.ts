@@ -19,7 +19,7 @@ import {
   skip,
   Subject,
   switchMap,
-  take,
+  take, takeUntil,
   tap,
 } from 'rxjs';
 
@@ -49,7 +49,7 @@ import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 import {SearchAndReplaceAllResponse} from "@/features/akn-document/models/search-replace-response.model";
 import {AIService} from "@/shared/services/ai.service";
-import {AnalysisResults} from "@/shared/models/leos.ai.model";
+import {AnalysisResults, AnalysisStatus} from "@/shared/models/leos.ai.model";
 
 
 export enum RelevantElements {
@@ -247,6 +247,7 @@ export class DocumentService {
   private maxSearchLimit: number;
   private pendingSavingElements: Map<string, string> = new Map<string, string>();
   private currentCount: number;
+  analysisStatus: AnalysisStatus;
 
   constructor(
     private http: HttpClient,
@@ -260,6 +261,7 @@ export class DocumentService {
     private envService: EnvironmentService,
     private aiService: AIService,
   ) {
+    this.aiService.getAnalysisStatus(this.proposalRef);
     appConfig.config.subscribe((conf) => {
       this.minSearchChar = conf.searchOnMinimumCharacter;
     });
@@ -395,6 +397,10 @@ export class DocumentService {
     this.getElementContent$ = this.getElementContentBS.asObservable();
     this.updateElementContent$ = this.updateElementContentBS.asObservable();
     this.aiAnalysisResults$ = this.aiAnalysisResultsBS.asObservable();
+    this.aiService.analysisStatus$
+      .subscribe((status) => {
+        this.analysisStatus = status;
+      });
   }
 
   hasUpdatePermission() {
@@ -1036,11 +1042,27 @@ export class DocumentService {
     this.updatedContentToSaveAfterReplace = null;
   }
 
-  aiDisplayText() {
+  aiDisplayText(analysisType: string = null) {
     this.aiService.analysisResult$.subscribe((analysisResult) => {
       this.aiAnalysisResultsBS.next(analysisResult);
     });
-    this.aiService.prefillDigitalDimensionsLFDS(this.proposalRef);
+    this.aiService.prefillDigitalDimensionsLFDS(this.proposalRef, analysisType);
+  }
+
+  shouldDisplayAI(): boolean {
+    return this.analysisStatus && this.analysisStatus == "RESULTS_AVAILABLE";
+  }
+
+  textAnalysisStatus(): string {
+    if (this.analysisStatus) {
+      if (this.analysisStatus == "ANALYSIS_STARTED") {
+        return this.translate.instant('page.collection.drafts.analysis.status.started');
+      } else if (this.analysisStatus == "CLASSIFICATION_STARTED") {
+        return this.translate.instant('page.collection.drafts.analysis.status.classification.started');
+      } else if (this.analysisStatus == "RESULTS_AVAILABLE") {
+        return this.translate.instant('page.collection.drafts.analysis.results.available');
+      }
+    }
   }
 
   prepareAnalysis() {

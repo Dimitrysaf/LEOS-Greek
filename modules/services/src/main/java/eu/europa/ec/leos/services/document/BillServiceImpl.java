@@ -155,7 +155,6 @@ public abstract class BillServiceImpl implements BillService {
         }
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
-        prepareForAIAnalysis(bill);
         return bill;
     }
 
@@ -164,7 +163,6 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Updating Bill metadata properties... [id={}]", id);
         Bill bill = billRepository.updateBill(ref, id, properties, latest);
         updateInternalReferencesAsync(bill);
-        prepareForAIAnalysis(bill);
         return bill;
     }
 
@@ -175,7 +173,6 @@ public abstract class BillServiceImpl implements BillService {
         if (updateInternalRefs) {
             updateInternalReferencesAsync(bill);
         }
-        prepareForAIAnalysis(bill);
         return bill;
     }
 
@@ -210,7 +207,6 @@ public abstract class BillServiceImpl implements BillService {
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
         
         LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        prepareForAIAnalysis(bill);
         return bill;
     }
 
@@ -230,21 +226,11 @@ public abstract class BillServiceImpl implements BillService {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(bill.getId(),
                     bill.getMetadata().get().getRef()));
-            aiService.prepareAnalysis(bill);
             LOG.debug("updateExternalReferences processed for {}: ", bill.getMetadata().get().getRef());
         } catch (Exception e) {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
-    }
-
-    private void prepareForAIAnalysis(Bill bill) {
-        try {
-            aiService.prepareAnalysis(bill);
-            LOG.debug("Prepare AI Analysis for {}: ", bill.getMetadata().get().getRef());
-        } catch (Exception e) {
-            LOG.error("Error while preparing AI analysis", e);
-        }
     }
 
     @Override

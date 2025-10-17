@@ -447,6 +447,7 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
             }
+            context.useAiValues(proposal.getMetadata().get().getAiValues());
             String comment = messageHelper.getMessage("operation.metadata.updated");
             context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
             context.useActionComment(comment);

@@ -27,6 +27,7 @@ import {
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LeosLightService } from '@/shared/services/leos-light.service';
+import {AIService} from "@/shared/services/ai.service";
 
 @Injectable()
 export class DocumentActionsProposalService extends DocumentActionsService {
@@ -64,7 +65,7 @@ export class DocumentActionsProposalService extends DocumentActionsService {
       mergeContributionService,
       pageModeService,
       appConfigService,
-      leosLightService
+      leosLightService,
     );
   }
 

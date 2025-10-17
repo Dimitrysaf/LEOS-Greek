@@ -69,7 +69,11 @@ import {
   STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID,
   STRUCTURE_SECTION_ID,
   VIEW_SYNC_PANELS_ACTION,
-  VIEW_VERSION_SECTION_ID, AI_SECTION_ID, AI_ACTION_ID,
+  VIEW_VERSION_SECTION_ID,
+  AI_SECTION_ID,
+  AI_DROPDOWN_ID,
+  AI_ALL_SECTIONS_ID,
+  AI_FIRST_SECTION_ID, AI_SECOND_SECTION_ID, AI_THIRD_SECTION_ID, AI_FOURTH_SECTION_ID, AI_FIFTH_SECTION_ID,
 } from '@/shared/constants/document-actions.constants';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
@@ -456,19 +460,66 @@ export abstract class DocumentActionsService {
       resizeOrder: 4,
       children: [
         {
-          type: IRibbonToolbarType.BUTTON,
-          id: AI_ACTION_ID,
+          type: IRibbonToolbarType.DROPDOWN,
+          id: AI_DROPDOWN_ID,
+          euiSize: 's',
+          euiStyle: 'secondary',
           label: this.translateService.instant(
             'page.editor.ai.prefill.digital.dimensions.lfds.button',
           ),
-          euiStyle: 'secondary',
-          euiSize: 's',
-          disabled: this.documentService.isEditorOpen$,
-          // todo move search on it's own service ... requirs refactoring fro @kostas_kontos
-          actionFn: () => this.documentService.aiDisplayText(),
+          icon: 'eui-ellipsis-vertical',
+          disabled: !this.permissions?.includes('CAN_UPDATE') || !this.documentService.shouldDisplayAI(),
+          items: this.buildAIOptions(),
         },
       ],
     };
+  }
+
+  private buildAIOptions(): DropdownModel[] {
+    return [
+      {
+        id: AI_ALL_SECTIONS_ID,
+        label: this.translateService.instant(
+          'page.editor.ai.prefill.digital.dimensions.lfds.all.button',
+        ),
+        command: () => this.documentService.aiDisplayText(),
+      },
+      {
+        id: AI_FIRST_SECTION_ID,
+        label: this.translateService.instant(
+          'page.editor.ai.prefill.digital.dimensions.lfds.first.button',
+        ),
+        command: () => this.documentService.aiDisplayText('DESCRIPTION_GENERATION'),
+      },
+      {
+        id: AI_SECOND_SECTION_ID,
+        label: this.translateService.instant(
+          'page.editor.ai.prefill.digital.dimensions.lfds.second.button',
+        ),
+        command: () => this.documentService.aiDisplayText('DATA_GENERATION'),
+      },
+      {
+        id: AI_THIRD_SECTION_ID,
+        label: this.translateService.instant(
+          'page.editor.ai.prefill.digital.dimensions.lfds.third.button',
+        ),
+        command: () => this.documentService.aiDisplayText('DIGITAL_SOLUTIONS'),
+      },
+      {
+        id: AI_FOURTH_SECTION_ID,
+        label: this.translateService.instant(
+          'page.editor.ai.prefill.digital.dimensions.lfds.fourth.button',
+        ),
+        command: () => this.documentService.aiDisplayText('INTEROPERABILITY_ASSESSMENT'),
+      },
+      {
+        id: AI_FIFTH_SECTION_ID,
+        label: this.translateService.instant(
+          'page.editor.ai.prefill.digital.dimensions.lfds.fifth.button',
+        ),
+        command: () => this.documentService.aiDisplayText('DATA_FLOW_ANALYSIS'),
+      },
+    ];
   }
 
   private buildDisplaySection(): IRibbonToolbarSection {

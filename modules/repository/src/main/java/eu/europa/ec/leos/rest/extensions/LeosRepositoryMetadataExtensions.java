@@ -59,7 +59,7 @@ class LeosRepositoryMetadataExtensions {
             metadata.setCreationOptions(props.creationOptions);
             metadata.setIsAuthenticLang(LeosAuthenticLanguage.caseInsensitiveValueOf(props.authenticLanguage));
             metadata.setCoverPageType(LeosCoverPageType.caseInsensitiveValueOf(props.coverPageType));
-
+            metadata.setAiValues(getAiValues(leosDocument));
             return Option.some(metadata);
         });
     }
@@ -244,5 +244,15 @@ class LeosRepositoryMetadataExtensions {
 
     private static String getFinancialStatementTitle(LeosDocument leosDocument) {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
+    }
+
+    private static String getAiValues(LeosDocument document) {
+        try {
+            String aiValues =
+                    (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.AI_VALUES));
+            return aiValues;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

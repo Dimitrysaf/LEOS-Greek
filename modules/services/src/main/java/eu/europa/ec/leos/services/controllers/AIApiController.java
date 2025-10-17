@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.ai.AnalysisResult;
 import eu.europa.ec.leos.domain.ai.AnalysisResults;
+import eu.europa.ec.leos.domain.ai.AnalysisStatus;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.integration.rest.UserJSON;
@@ -90,13 +91,27 @@ public class AIApiController {
     @RequestMapping(value = "/{proposalRef}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<AnalysisResults> getAnalysisResult(
-            @PathVariable("proposalRef") String proposalRef) {
+            @PathVariable("proposalRef") String proposalRef, @RequestParam(value = "analysisType", required = false) String analysisType) {
         try {
             proposalRef = encodeParam(proposalRef);
-            AnalysisResults results = aiService.prefillDigitalDimensionsLFDS(proposalRef);
+            AnalysisResults results = aiService.prefillDigitalDimensionsLFDS(proposalRef, analysisType);
             return new ResponseEntity<>(results, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while trying to get analysis results", e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/status/{proposalRef}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<AnalysisStatus> getAnalysisStatus(
+            @PathVariable("proposalRef") String proposalRef) {
+        try {
+            proposalRef = encodeParam(proposalRef);
+            AnalysisStatus results = aiService.getAnalysisStatus(proposalRef);
+            return new ResponseEntity<>(results, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while trying to get analysis status", e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
