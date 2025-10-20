@@ -825,4 +825,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
     protected String generateProposalReference(String language) {
         return PROPOSAL_NAME_PREFIX + "-" + Cuid.createCuid() + "-" + language.toLowerCase();
     }
+
+    @Override
+    public String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
+        final String documentRef = proposalRepository.findDocumentRefByPackageIdAndCategory(packageId, category);
+        return documentRef;
+    }
 }

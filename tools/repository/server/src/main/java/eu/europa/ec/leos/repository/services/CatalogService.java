@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface CatalogService {
-    void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) throws CatalogException;
+    void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) throws CatalogException;
     CustomTemplateInfo getTemplateInfo(BigDecimal packageId) throws CatalogException;
+    void updateCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) throws CatalogException;
+    Boolean unpublishCustomTemplate(String packageId, String userId) throws CatalogException;
 }

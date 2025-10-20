@@ -1838,4 +1838,9 @@ public abstract class ApiServiceImpl implements ApiService {
         CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
     }
+
+    @Override
+    public String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
+        return proposalService.findDocumentRefByPackageIdAndCategory(packageId, category);
+    }
 }

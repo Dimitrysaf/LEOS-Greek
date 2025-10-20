@@ -14,6 +14,7 @@ export interface CatalogItem {
   /** langCode->languageName */
   languages: Record<string, string>;
   items: CatalogItem[];
+  originalDg: string;
 }
 
 export type CatalogItemType = 'CATEGORY' | 'TEMPLATE';

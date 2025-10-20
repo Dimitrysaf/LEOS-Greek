@@ -118,6 +118,7 @@ export class ProposalService {
   totalResults$: Observable<number>;
   templateCatalog$: Observable<CatalogItem[]>;
   customTemplateCatalog$: Observable<CatalogItem[]>;
+  documentRef$: Observable<String>;
 
   private defaultLanguage: string;
   private userLang: string;
@@ -126,6 +127,7 @@ export class ProposalService {
   private limitBS = new BehaviorSubject<number>(DEFAULT_LIMIT);
   private pageBS = new BehaviorSubject<number>(DEFAULT_PAGE);
   private customTemplateCatalogBS = new BehaviorSubject<CatalogItem[]>([]);
+  private documentRefBS = new BehaviorSubject<String>('');
   private params$: Observable<ListProposalsWithFilterBody>;
   private proposalResponse$: Observable<ListProposalsWithFilterResponse>;
 
@@ -144,6 +146,7 @@ export class ProposalService {
       .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getTemplates`)
       .pipe(shareReplay(1));
     this.customTemplateCatalog$ = this.customTemplateCatalogBS.asObservable();
+    this.documentRef$ = this.documentRefBS.asObservable();
 
     this.filters$ = this.filtersBS.pipe(
       distinctUntilChanged(ProposalService.eqFilters),
@@ -197,6 +200,19 @@ export class ProposalService {
       });
   }
 
+  getDocumentRef( packageId :string) : Observable<String> {
+    return this.http
+    .get<String>(`${apiBaseUrl}/secured/document-ref/${packageId}` ,
+      {
+        responseType: 'text' as 'json',
+      }
+    )
+    .pipe(
+        tap((documentRef) => {
+          this.documentRefBS.next(documentRef);
+        })
+      );
+  }
   setSortOrder(order: boolean) {
     this.sortOrderBS.next(order);
   }

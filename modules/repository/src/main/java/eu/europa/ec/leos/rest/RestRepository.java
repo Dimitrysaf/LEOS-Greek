@@ -113,6 +113,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestGetAllVersionsURI;
     @Value("${leos.rest.repository.count.recent.minor.versions}")
     private String leosRestGetRecentMinorVersionsCountURI;
+    @Value("${leos.rest.repository.document.ref.package.id}")
+    private String leosRestGetDocumentRefURI;
     @Value("${leos.rest.repository.find.document.first.version}")
     private String leosRestFindFirstVersionURI;
     @Value("${leos.rest.repository.find.document.by.version}")
@@ -141,6 +143,10 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestArchiveDocumentVersionURI;
     @Value("${leos.rest.repository.publish.custom.template}")
     private String leosRestPublishCustomTemplateURI;
+    @Value("${leos.rest.repository.update.custom.template}")
+    private String leosRestupdateCustomTemplateURI;
+    @Value("${leos.rest.repository.un-publish.custom.template}")
+    private String leosRestUnPublishCustomTemplateURI;
     @Value("${leos.rest.repository.info.custom.template}")
     private String leosRestInfoCustomTemplateURI;
     @Value("${leos.rest.repository.find.document.search.versions}")
@@ -503,6 +509,13 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
+    String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
+        LOGGER.trace("Get document reference by package Id and Category [packageId={}, category={} ]", packageId, category);
+        String url = getUrl(leosRestGetDocumentRefURI + "?category={category}");
+        String resp = getEntity(url, String.class, packageId, category);
+        return resp;
+    }
+
     LeosDocument findFirstVersion(final String ref) {
         LOGGER.trace("Finding document version by ref... [ref={}]", ref);
         String url = getUrl(leosRestFindFirstVersionURI);
@@ -669,7 +682,7 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId) {
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) {
         LOGGER.trace("Publish Custom Template [{}]", legFileId);
         String url = getUrl(leosRestPublishCustomTemplateURI);
 
@@ -677,11 +690,37 @@ public class RestRepository extends AbstractRestClient {
         params.add("legFileId", legFileId);
         params.add("templateName", templateName);
         params.add("userId", userId);
+        params.add("originalDg", originalDg);
         dgs.forEach(dg -> params.add("dgs", dg));
 
         postEntity(url, params, Object.class);
     }
-    
+
+    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId, String originalDg) {
+        LOGGER.trace("Update Custom Template [{}]", packageId);
+        String url = getUrl(leosRestupdateCustomTemplateURI);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("packageId", packageId);
+        params.add("templateName", templateName);
+        params.add("userId", userId);
+        params.add("originalDg", originalDg);
+        dgs.forEach(dg -> params.add("dgs", dg));
+
+        postEntity(url, params, Object.class);
+    }
+
+    public Boolean unPublishCustomTemplate(String packageId, String userId) {
+        LOGGER.trace("Un Publish Custom Template [{}]", packageId);
+        String url = getUrl(leosRestUnPublishCustomTemplateURI);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("packageId", packageId);
+        params.add("userId", userId);
+
+        return postEntity(url, params, Boolean.class);
+    }
+
     public Map<String, Object> getTemplateInfo(String packageId) {
         LOGGER.trace("Get Template Info [{}]", packageId);
         String url = getUrl(leosRestInfoCustomTemplateURI);

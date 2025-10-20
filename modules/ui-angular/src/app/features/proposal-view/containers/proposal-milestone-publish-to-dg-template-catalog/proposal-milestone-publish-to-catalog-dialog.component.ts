@@ -32,6 +32,7 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   submitted = false;
   defaultEntity: string;
   isLoadingTemplateInfo = false;
+  adminView = false
 
   /** Organizations loaded from API */
   private ALL_DGS: DGOption[] = [];
@@ -64,6 +65,7 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   ) {}
 
   ngOnInit(): void {
+    this.adminView = false;
     this.appConfig.config.subscribe((config) => {
       this.defaultEntity = config.user.defaultEntity.organizationName;
     });
@@ -127,10 +129,18 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
     this.sendMilestonePublishToDgTemplateCatalog.openDialog();
   }
 
+  openNameAndDgTemplateCatalog(documentRef) {
+    this.adminView = true;
+    this.loadTemplateInfo(documentRef);
+    this.sendMilestonePublishToDgTemplateCatalog.openDialog();
+  }
+
+
   close() {
     this.sendMilestonePublishToDgTemplateCatalog.closeDialog();
     this.resetModal();
     this.closed.emit();
+    this.adminView = false;
   }
 
   /** Reset dialog state */
@@ -296,5 +306,27 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
     this.detailsService.publishTemplateToDgCatalog(this.milestone, templateName, dgCodes);
 
     this.close();
+  }
+
+  updateTemplate(): void {
+    this.submitted = true;
+    if (this.templateNameCtrl.invalid) {
+      this.templateNameCtrl.markAsTouched();
+      return;
+    }
+
+    const templateName = this.templateNameCtrl.value as string;
+    const dgCodes = this.dgCtrl.value as string[];
+
+    this.detailsService.updateTemplate(this.milestone, templateName, dgCodes)
+      .subscribe({
+        next: () => {
+          // Notification is already handled by the service
+          this.close(); // safe to reload templates after update
+        },
+        error: () => {
+          // Error notification is handled by service
+        }
+      });
   }
 }

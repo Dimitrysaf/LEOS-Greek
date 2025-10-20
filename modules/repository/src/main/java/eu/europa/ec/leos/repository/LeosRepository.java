@@ -441,9 +441,14 @@ public interface LeosRepository {
 
     void archiveDocumentVersion(String documentRef, String version);
 
-    void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId);
-    
+    void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg);
+
+    void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId, String originalDg);
+
+    Boolean unPublishCustomTemplate(String packageId, String userId);
+
     Map<String, Object> getTemplateInfo(String packageId);
 
+    <D extends LeosDocument> String findDocumentRefByPackageIdAndCategory(Class<? extends D> type, String packageId, String category);
 
 }

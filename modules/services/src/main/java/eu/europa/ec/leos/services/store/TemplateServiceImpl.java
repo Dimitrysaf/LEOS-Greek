@@ -188,6 +188,7 @@ class TemplateServiceImpl implements TemplateService {
         xstream.useAttributeFor(CatalogItem.class, "visibleTo");
         xstream.useAttributeFor(CatalogItem.class, "mandatory");
         xstream.aliasAttribute(CatalogItem.class, "customName", "custom-name");
+        xstream.aliasAttribute(CatalogItem.class, "originalDg", "original-dg");
         xstream.aliasAttribute(CatalogItem.class, "defaultDocument", "default");
         xstream.aliasField("names", CatalogItem.class, "nameMap");
         xstream.registerLocalConverter(CatalogItem.class, "nameMap", new NameMapConverter());
@@ -240,6 +241,13 @@ class TemplateServiceImpl implements TemplateService {
                 getTemplatesCatalog();
         return getTemplateItem(templatesCatalog, name);
     }
+    @Override
+    public CatalogItem getTemplateByKey(String key) throws IOException {
+        List<CatalogItem> templatesCatalog = key.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) ?
+                getTemplatesCatalog(userHelper.getUserDgCustomTemplatesCatalog()) :
+                getTemplatesCatalog();
+        return getTemplateByKey(templatesCatalog, key);
+    }
 
     private CatalogItem getTemplateItem(List<CatalogItem> catalogItems, String name) {
         CatalogItem templateItem = null;
@@ -248,6 +256,21 @@ class TemplateServiceImpl implements TemplateService {
                 return item;
             } else {
                 templateItem = getTemplateItem(item.getItems(), name);
+                if (templateItem != null) {
+                    return templateItem;
+                }
+            }
+        }
+        return templateItem;
+    }
+
+    private CatalogItem getTemplateByKey(List<CatalogItem> catalogItems, String key) {
+        CatalogItem templateItem = null;
+        for (CatalogItem item : catalogItems) {
+            if (item.getKey() != null && item.getKey().equals(key)) {
+                return item;
+            } else {
+                templateItem = getTemplateByKey(item.getItems(), key);
                 if (templateItem != null) {
                     return templateItem;
                 }

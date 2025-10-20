@@ -1,0 +1,51 @@
+eui-input-group-addon > :not(:first-child) .eui-input-text--clearable {
+  // fix eui-input-group-addon with euiClearable
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  margin-left: -1px;
+}
+
+/*
+ * Style the search icon like the mockups
+ */
+
+.eui-input-group-addon .eui-input-text {
+  border-left: none;
+}
+
+.eui-input-group-addon-item {
+  background: none;
+}
+
+.eui-input-group-addon-item .eui-icon-svg {
+  color: var(--eui-base-color-grey-35);
+}
+
+.card-container {
+  margin-bottom: 20px;
+}
+
+.no-templates {
+  text-align: center;
+}
+
+.label-icon-container {
+  display: flex;
+}
+
+.icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-text eui-icon-svg {
+  width: 18px;
+  height: 18px;
+}
+
+.icon-text span {
+  vertical-align: middle;
+  font-size: 14px;
+}
+

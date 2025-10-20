@@ -40,6 +40,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.w3c.dom.*;
 
 import javax.persistence.EntityManager;
@@ -1206,4 +1207,16 @@ public class DocumentServiceImpl implements DocumentService {
             }
         }
     }
+
+    public String findDocumentRefByPackageIdAndCategory(final String pkgId, final String categoryCode) {
+        String docRef = "";
+        BigDecimal packageId = new BigDecimal(Long.parseLong(pkgId));
+        List<DocumentV> documentVS =  documentVRepository.findDocumentsByPackageIdAndCategory(packageId,categoryCode);
+        if (!CollectionUtils.isEmpty(documentVS)) {
+            docRef = documentVS.get(0).getRef();
+        }
+        return docRef;
+
+    }
+
 }
