@@ -278,8 +278,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 Node nodeToAddOrRemoveAttribute = node;
                 if (numNode != null && hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {
                     Node leosUid = node.getAttributes().getNamedItem(LEOS_UID);
-                    if (!(leosUid != null && StringUtils.equals(leosUid.getNodeValue(), securityContext.getUser().getLogin())
-                            && hasTocItemSoftAction(tocVo, SoftActionType.ADD))) {
+                    if (leosUid != null && !StringUtils.equals(leosUid.getNodeValue(), securityContext.getUser().getLogin())
+                            || !hasTocItemSoftAction(tocVo, SoftActionType.ADD)) {
                         nodeToAddOrRemoveAttribute = numNode;
                     }
                 }
