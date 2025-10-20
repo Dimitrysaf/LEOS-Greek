@@ -670,7 +670,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         roleNode.setTextContent(fieldInfo.getDisplayValue());
 
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
+        final ReferenceFieldInfo roleFieldInfo = this.getRoleFieldInfo(fieldInfo.getDisplayValue());
         XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
     }
 
@@ -679,10 +679,14 @@ public class MetadataServiceImpl implements MetadataService {
         boolean appendNode = false;
         if (referencesNode == null) return;
 
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
-        if (roleFieldInfo == null) return;
-
+        final ReferenceFieldInfo roleFieldInfo = this.getRoleFieldInfo(fieldInfo.getDisplayValue());
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
+
+        if (roleFieldInfo == null) {
+            XmlUtil.removeNodeFromParent(tlcRoleNode);
+            return;
+        }
+
         if (tlcRoleNode == null) {
             tlcRoleNode = xmlFile.newElement(MetadataUtil.ELEMENT_TLCROLE);
             appendNode = true;
@@ -708,6 +712,15 @@ public class MetadataServiceImpl implements MetadataService {
         }
         if (MetadataUtil.isRoleDirectorGeneral(commissionerValue)) {
             return MetadataUtil.getRoleDirectorGeneralFieldInfo();
+        }
+        if (MetadataUtil.isRoleHeadOfService(commissionerValue)) {
+            return MetadataUtil.getRoleHeadOfServiceFieldInfo();
+        }
+        if (MetadataUtil.isRoleHeadOfUnit(commissionerValue)) {
+            return MetadataUtil.getRoleHeadOfUnitFieldInfo();
+        }
+        if (MetadataUtil.isRoleDirector(commissionerValue)) {
+            return MetadataUtil.getRoleDirectoryFieldInfo();
         }
         return null;
     }
