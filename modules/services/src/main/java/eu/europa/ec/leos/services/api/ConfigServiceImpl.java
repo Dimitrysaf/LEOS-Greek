@@ -110,7 +110,9 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setSupportDocumentEnabled(supportDocumentEnabled);
         appConfigResponse.setPermissionsMap(permissionsMap);
         User user = securityContext.getUser();
-        user.setGreffeUser(remoteClientSystemID != null && remoteClientSystemID.equals(decisionClientId));
+        boolean isGreffeUser = user.getEntities().stream().filter(entity -> entity.getOrganizationName().equals("GREFFE")).findAny().isPresent();
+        user.setGreffeUser((remoteClientSystemID != null && remoteClientSystemID.equals(decisionClientId))
+                || isGreffeUser);
         appConfigResponse.setUser(user);
         appConfigResponse.setHeaderTitle(headerTitle);
         appConfigResponse.setAnnotateAuthority(annotateAuthority);
