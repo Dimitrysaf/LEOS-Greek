@@ -359,7 +359,7 @@ define(function elementEditorModule(require) {
     }
 
     function _checkForbiddenCharacterPresence(elementId, editor) {
-        if (_checkIfElementStartWithForbiddenChar(elementId)) {
+        if (/<p[^>]*>(?:\s|&nbsp;|<[^>]*>)*[\.,-]/.test(editor.getData())) {
             pluginTools.addDialog(dialogDefinition2.dialogName, dialogDefinition2.initializeDialog);
             var dialogCommand2 = editor.addCommand(dialogDefinition2.dialogName, new CKEDITOR.dialogCommand(dialogDefinition2.dialogName));
             dialogCommand2.exec();
@@ -367,24 +367,6 @@ define(function elementEditorModule(require) {
             return true;
         }
         return false;
-    }
-
-    function _checkIfElementStartWithForbiddenChar(elementId) {
-        var $el = $("#" + elementId);
-        //find all <p> in $el
-        var $p = $el.find("p");
-        //check if any <p> has forbidden char
-        for (var i = 0; i < $p.length; i++) {
-            if (_isForbiddenChar($p.eq(i).text())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function _isForbiddenChar(text) {
-        //forbidden characters are . - ,
-        return !!(text.startsWith(".") || text.startsWith("-") || text.startsWith(","));
     }
 
     function _isEmptyElement(elementId, editor) {
