@@ -457,6 +457,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                     }
                     range.startContainer.getParent().getParent().$.insertBefore(newLi.$, range.startContainer.getParent().$);
                     newLi.append(range.startContainer.getParent());
