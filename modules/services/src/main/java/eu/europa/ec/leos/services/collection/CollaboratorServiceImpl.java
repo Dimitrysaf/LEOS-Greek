@@ -67,7 +67,6 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
     private final LeosClientService leosClientService;
 
-    private final static String ENTITY_EMAIL_ADDRESS = "entity@mail.com";
     private final static String ROLE_OWNER = "OWNER";
 
     @Override
@@ -91,7 +90,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
     private Entity pickFromUserEntitiesByName(final User user, final String entityName) {
         LOG.info("COLLABORATOR => " + user.getLogin() + " " + entityName);
-        if (isEntityUser(user)) {
+        if (user.isEntityUser()) {
             return user.getEntities().stream()
                     .filter(entity -> entity.getName().equalsIgnoreCase(entityName))
                     .findFirst()
@@ -239,11 +238,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             LOG.error("User '{}' has no Entity with name '{}'", user.getLogin(), connectedDG);
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.unknownEntity", user.getLogin(), connectedDG));
         }
-        return isEntityUser(user) ? userEntity.getName() : userEntity.getOrganizationName();
-    }
-
-    private boolean isEntityUser(User user) {
-        return user.getEmail().equals(ENTITY_EMAIL_ADDRESS) && user.getId().equals(-1L);
+        return user.isEntityUser() ? userEntity.getName() : userEntity.getOrganizationName();
     }
 
     private Role getRole(String roleName) {
