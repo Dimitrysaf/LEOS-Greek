@@ -981,8 +981,14 @@ define(function leosTrackChangesModule(require) {
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION)
                     && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)
                     && this.checkIfAcceptIsProcessedInBackend(editor, element, numberModule)) {
-                    element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
-                    element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
+                    if (element && element.is('p') && element.getAttribute("data-akn-element") == "subparagraph" &&
+                        element.getParent().is('li') && element.getParent().getAttribute("data-akn-element") == "point") {
+                        element.getParent().setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
+                        element.getParent().setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
+                    } else {
+                        element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
+                        element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
+                    }
                 }
                 core.removeTrackChangesAttributes(element);
                 core.removeTrackChangesAttributesForEnter(element);
