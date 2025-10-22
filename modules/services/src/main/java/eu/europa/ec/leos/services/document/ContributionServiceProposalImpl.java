@@ -167,7 +167,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     Optional<String> fileToFind = containedDocuments.stream()
                             .filter(containedFile -> {
                                 String fileType = containedFile.substring(0, containedFile.indexOf("-"));
-                                return BILL_DOC_TYPES.contains(fileType);
+                                return BILL_DOC_TYPES.stream().anyMatch(fileType::startsWith);
                             }).findFirst();
                     if (fileToFind.isPresent()) {
                         Bill doc = (Bill) findVersionByVersionedReference(fileToFind.get(), filterType);
@@ -245,7 +245,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             Optional<String> billFile = containedDocuments.stream()
                     .filter(containedFile-> {
                         String fileType = containedFile.substring(0, containedFile.indexOf("-"));
-                        return BILL_DOC_TYPES.contains(fileType);
+                        return BILL_DOC_TYPES.stream().anyMatch(fileType::startsWith);
                     }).findFirst();
             if(billFile.isPresent()) {
                 Bill clonedBill = findVersionByVersionedReference(billFile.get(), Bill.class);
