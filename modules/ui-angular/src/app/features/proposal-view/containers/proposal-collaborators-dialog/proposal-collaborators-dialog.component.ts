@@ -192,7 +192,7 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
 
   private existingCollaborator(user: User) {
     return this.collaborators.some(
-      (c) => c.login === user.login && c.entity?.id === user.defaultEntity.id,
+      (c) => c.login === user.login
     );
   }
 

@@ -272,7 +272,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                             String pkgName = createCollectionResult.getPackageName();
                             addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false, "1.0.0");
                         }
-                        collaboratorService.synchCollaborators((Proposal) originalProposal);
+                        collaboratorService.syncCollaborators((Proposal) originalProposal);
                     } catch (Exception e) {
                         LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
                         return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
