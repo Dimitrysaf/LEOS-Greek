@@ -154,7 +154,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
         catch(Exception e){
             LOG.error("[Publishing Template] Error while publishing template", e);
-            throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, "Error while publishing template");
+            throw e;
         }
     }
 
