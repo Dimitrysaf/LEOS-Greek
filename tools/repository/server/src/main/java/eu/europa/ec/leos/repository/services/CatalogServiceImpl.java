@@ -137,14 +137,25 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     @Transactional
     public synchronized void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) throws CatalogException {
-        LOG.info("Publishing custom template: name={}, description={}, categories={}, originalDg={}", templateName, legFileId, dgs, originalDg);
+        LOG.info("[Publishing Template] Publishing custom template: name={}, description={}, categories={}, originalDg={}", templateName, legFileId, dgs, originalDg);
 
-        Package pkg = validateAndExtractPackage(legFileId);
-        List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
-        
-        updateCustomTemplateEntities(pkg, dgs, userId);
-        DocumentMilestone docMilestone = updateCustomTemplateMilestones(pkg, getDocumentId(legFileId), userId);
-        handleCatalog(docMilestone, existingEntities, dgs, templateName, userId, pkg, originalDg);
+        try {
+            Package pkg = validateAndExtractPackage(legFileId);
+            LOG.info("[Publishing Template] Validated and extracted Package");
+            List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
+            LOG.info("[Publishing Template] Getting Custom Template Entities");
+
+            updateCustomTemplateEntities(pkg, dgs, userId);
+            LOG.info("[Publishing Template] Updating Custom Template Entities");
+            DocumentMilestone docMilestone = updateCustomTemplateMilestones(pkg, getDocumentId(legFileId), userId);
+            LOG.info("[Publishing Template] Updating Milestones");
+            handleCatalog(docMilestone, existingEntities, dgs, templateName, userId, pkg, originalDg);
+            LOG.info("[Publishing Template] Updated Catalog");
+        }
+        catch(Exception e){
+            LOG.error("[Publishing Template] Error while publishing template", e);
+            throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, "Error while publishing template");
+        }
     }
 
     /**
@@ -377,10 +388,14 @@ public class CatalogServiceImpl implements CatalogService {
     private void handleCatalog(DocumentMilestone documentMilestone, List<String> existingEntities, List<String> newEntities, String customTemplateName, String userId, Package pkg, String originalDg) throws CatalogException {
         String baseTemplateName = getBaseTemplateNameFromProposal(pkg);
         String packageId = pkg.getId().toString();
-        
+
+        LOG.info("[Publishing Template] Base Name: {}, Package ID: {}", baseTemplateName, packageId);
+
         if (existingEntities.isEmpty()) {
+            LOG.info("[Publishing Template] First Time Publication");
             handleFirstTimePublication(documentMilestone, newEntities, baseTemplateName, customTemplateName, userId, pkg, packageId, originalDg);
         } else {
+            LOG.info("[Publishing Template] Existing Publication");
             handleExistingPublication(documentMilestone, existingEntities, newEntities, baseTemplateName, customTemplateName, userId, packageId, originalDg);
         }
     }
@@ -390,12 +405,16 @@ public class CatalogServiceImpl implements CatalogService {
         
         // Create catalogs for each new entity if needed
         for (String entity : newEntities) {
+            LOG.info("[Publishing Template] Ensuring Catalog exists: {}", entity);
             ensureCatalogExists(entity, userId, pkg);
         }
 
         if (baseTemplateName != null) {
+            LOG.info("[Publishing Template] Inserting Templates into Catalogs");
             Set<String> insertedTemplateKeys = insertTemplatesIntoAllCatalogs(newEntities, baseTemplateName, customTemplateName, packageId, userId, originalDg);
+            LOG.info("[Publishing Template] Saving Artifacts");
             saveTemplateArtifacts(documentMilestone, insertedTemplateKeys, latestDocuments, packageId, userId);
+            LOG.info("[Publishing Template] Finished");
         }
     }
     
