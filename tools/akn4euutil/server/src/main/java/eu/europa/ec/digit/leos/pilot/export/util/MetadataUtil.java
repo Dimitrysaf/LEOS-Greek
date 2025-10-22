@@ -227,24 +227,24 @@ public class MetadataUtil {
                 "", MetadataFieldType.COMMISSIONER);
     }
 
-    public static ReferenceFieldInfo getRoleHeadOfServiceFieldInfo() {
+    public static ReferenceFieldInfo getRoleHeadOfServiceFieldInfo(final String lang) {
         return new ReferenceFieldInfo("HEAD_SERV",
                 "http://publications.europa.eu/resource/authority/role/HEAD_SERV",
-                "Head of Service",
+                ResourcesUtil.getMessage(lang, "role.head.service"),
                 "", MetadataFieldType.COMMISSIONER);
     }
 
-    public static ReferenceFieldInfo getRoleHeadOfUnitFieldInfo() {
+    public static ReferenceFieldInfo getRoleHeadOfUnitFieldInfo(final String lang) {
         return new ReferenceFieldInfo("HEAD_UNIT",
                 "http://publications.europa.eu/resource/authority/role/HEAD_UNIT",
-                "Head of Unit",
+                ResourcesUtil.getMessage(lang, "role.head.unit"),
                 "", MetadataFieldType.COMMISSIONER);
     }
 
-    public static ReferenceFieldInfo getRoleDirectoryFieldInfo() {
+    public static ReferenceFieldInfo getRoleDirectoryFieldInfo(final String lang) {
         return new ReferenceFieldInfo("DIRECTOR",
                 "http://publications.europa.eu/resource/authority/role/DIRECTOR",
-                "Director",
+                ResourcesUtil.getMessage(lang, "role.director"),
                 "", MetadataFieldType.COMMISSIONER);
     }
 
