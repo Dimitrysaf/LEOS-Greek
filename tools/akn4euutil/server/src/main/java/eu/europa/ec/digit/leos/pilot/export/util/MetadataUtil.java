@@ -227,6 +227,27 @@ public class MetadataUtil {
                 "", MetadataFieldType.COMMISSIONER);
     }
 
+    public static ReferenceFieldInfo getRoleHeadOfServiceFieldInfo() {
+        return new ReferenceFieldInfo("HEAD_SERV",
+                "http://publications.europa.eu/resource/authority/role/HEAD_SERV",
+                "Head of Service",
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
+    public static ReferenceFieldInfo getRoleHeadOfUnitFieldInfo() {
+        return new ReferenceFieldInfo("HEAD_UNIT",
+                "http://publications.europa.eu/resource/authority/role/HEAD_UNIT",
+                "Head of Unit",
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
+    public static ReferenceFieldInfo getRoleDirectoryFieldInfo() {
+        return new ReferenceFieldInfo("DIRECTOR",
+                "http://publications.europa.eu/resource/authority/role/DIRECTOR",
+                "Director",
+                "", MetadataFieldType.COMMISSIONER);
+    }
+
     public static boolean isDocumentXmlFile(final XmlFile xmlFile) {
         Node rootNode = MetadataUtil.getAkomaNtosoNode(xmlFile);
         if (rootNode == null) {

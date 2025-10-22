@@ -939,6 +939,12 @@ public class MetadataServiceImpl implements MetadataService {
         if (roleFieldInfo == null) return;
 
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
+
+        if (roleFieldInfo == null) {
+            XmlUtil.removeNodeFromParent(tlcRoleNode);
+            return;
+        }
+
         if (tlcRoleNode == null) {
             tlcRoleNode = xmlFile.newElement(MetadataUtil.ELEMENT_TLCROLE);
             appendNode = true;
@@ -964,6 +970,15 @@ public class MetadataServiceImpl implements MetadataService {
         }
         if (MetadataUtil.isRoleDirectorGeneral(commissionerValue)) {
             return MetadataUtil.getRoleDirectorGeneralFieldInfo(lang);
+        }
+        if (MetadataUtil.isRoleHeadOfService(commissionerValue)) {
+            return MetadataUtil.getRoleHeadOfServiceFieldInfo(lang);
+        }
+        if (MetadataUtil.isRoleHeadOfUnit(commissionerValue)) {
+            return MetadataUtil.getRoleHeadOfUnitFieldInfo(lang);
+        }
+        if (MetadataUtil.isRoleDirector(commissionerValue)) {
+            return MetadataUtil.getRoleDirectoryFieldInfo(lang);
         }
         return null;
     }
