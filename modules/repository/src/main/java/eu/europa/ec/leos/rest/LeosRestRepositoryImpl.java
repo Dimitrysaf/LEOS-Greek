@@ -309,10 +309,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     private <M extends LeosMetadata> void setDocumentCollaboratorProperties(M metadata, Map<String, Object> properties) {
         properties.putAll(LeosMetadataExtensions.toLeosRepositoryProperties(metadata));
         User user = securityContext.getUser();
-        String userDefaultEntity = "";
-        if (user.getDefaultEntity() != null) {
-            userDefaultEntity = user.isEntityUser() ? user.getDefaultEntity().getName() : user.getDefaultEntity().getOrganizationName();
-        }
+        String userDefaultEntity = user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "";
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS), singletonList(new Collaborator(user.getLogin(),
                 authorityMapHelper.getRoleForDocCreation(), userDefaultEntity)));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY), securityContext.getUser().getLogin());
