@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ApplicationRole, CatalogItem} from "@/shared";
 import {EuiBadgeModule} from "@eui/components/eui-badge";
 import {EuiButtonModule} from "@eui/components/eui-button";
@@ -51,7 +51,7 @@ const iconClassTemplate = 'document:sharp';
   templateUrl: './proposal-view-custom-template.component.html',
   styleUrl: './proposal-view-custom-template.component.scss'
 })
-export class ProposalViewCustomTemplateComponent {
+export class ProposalViewCustomTemplateComponent implements OnInit{
 
   @Input() translationKey: 'document' | 'draft' = 'document';
   @Input() isCopyChangeAct!: boolean;
@@ -101,7 +101,7 @@ export class ProposalViewCustomTemplateComponent {
     this.appConfig.config.subscribe((config) => {
       this.defaultEntity = config.user.defaultEntity.organizationName
     });
-    this.proposalService.loadCustomTemplateCatalog();
+    this.proposalService.loadCustomTemplateCatalog(this.defaultEntity);
     this.initialize();
   }
   initialize() {
@@ -124,7 +124,7 @@ export class ProposalViewCustomTemplateComponent {
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
       item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
     const templates = catalogItems.flatMap(getChildTemplates)
-      .filter(template => !this.defaultEntity || template.originalDg === this.defaultEntity)
+      .filter(template => template.originalDg === this.defaultEntity)
     return templates.reduce(
       (map, item) => map.set(item.key, item),
       new Map<string, CatalogItem>(),
@@ -339,6 +339,6 @@ export class ProposalViewCustomTemplateComponent {
   }
 
   reloadTemplate() {
-    this.proposalService.loadCustomTemplateCatalog();
+    this.proposalService.loadCustomTemplateCatalog(this.defaultEntity);
   }
 }

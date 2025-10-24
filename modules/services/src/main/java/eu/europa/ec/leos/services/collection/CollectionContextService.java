@@ -100,7 +100,7 @@ public abstract class CollectionContextService {
     protected final Provider<ExplanatoryContextService> explanatoryContextProvider;
     protected final Provider<FinancialStatementContextService> financialStatementContextProvider;
     protected final Provider<AnnexContextService> annexContextProvider;
-    private SecurityContext securityContext;
+    protected SecurityContext securityContext;
     protected final XmlContentProcessor xmlContentProcessor;
     protected final Map<LeosCategory, XmlDocument> categoryTemplateMap;
     protected final Map<LeosCategory, List<XmlDocument>> categoryExistingDocuments;

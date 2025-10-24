@@ -12,7 +12,7 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { appConfig } from 'src/config';
 
-import {ApplicationRole, CatalogItem} from '@/shared';
+import {ApplicationRole, CatalogItem, UserEntity} from '@/shared';
 import { ProposalService } from '@/shared/services/proposal.service';
 import {
   EuiTreeComponent,
@@ -21,6 +21,7 @@ import {
   TreeNode,
 } from '@eui/components/eui-tree';
 import { EuiTreeSelectionChanges } from '@eui/components/eui-tree/eui-tree.model';
+import {AppConfigService} from "@/core/services/app-config.service";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -56,18 +57,36 @@ export class ProposalCreateTemplateSelectorComponent
   doubleClickTimer: any;
   filteredNodes: TreeDataModel = null;
 
+  selectedDg: string;
+  dgList: UserEntity[] = [];
+
+
   private destroy$ = new Subject<void>();
   private templates: Map<string, CatalogItem> = new Map();
 
   constructor(
     private cd: ChangeDetectorRef,
     private proposalService: ProposalService,
+    private appConfig: AppConfigService
   ) {
     this.setInitialState();
   }
 
   ngOnInit() {
     this.initialize(this.isCopyChangeAct); // if isCopyChangeAct then default true for disabling the tree selection
+    this.getDgList();
+  }
+
+  getDgList() {
+    this.appConfig.config.subscribe((config) => {
+      if (config.user.entities.length > 1) {
+        this.dgList = config.user.entities;
+        const selectedDg = this.dgList.find(dg => dg.organizationName === config.user.defaultEntity.organizationName);
+        this.selectedDg = selectedDg.organizationName ;
+      }
+
+     // this.userRoles =  config.user.roles; ["user","suppot"]
+    });
   }
 
   ngOnDestroy() {
@@ -94,6 +113,11 @@ export class ProposalCreateTemplateSelectorComponent
   onLanguageChanged(langCode: string) {
     this.selectedLanguage = langCode;
     this.selectLanguage.emit(this.selectedLanguage);
+  }
+
+  onDgChange(dg) {
+    this.selectedDg = dg;
+    this.proposalService.loadCustomTemplateCatalog(dg);
   }
 
   toggleExpanded(expand = !this.isExpanded) {
