@@ -165,6 +165,9 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
     this.userAutocompleteData = users
       .flatMap(this.expandEntities)
       .filter((user) => !this.existingCollaborator(user))
+      .filter((user1, i, users) =>
+        users.findIndex(user2 => (user1.login === user2.login) &&
+          (user1.defaultEntity.organizationName === user2.defaultEntity.organizationName)) === i)
       .map(this.userToAutoCompleteItem);
   }
 
