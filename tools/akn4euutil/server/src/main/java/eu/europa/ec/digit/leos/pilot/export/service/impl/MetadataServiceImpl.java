@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -43,16 +42,12 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.ELEMENT_DATE;
-import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.VALUE_CROSS_CONFERENCE_NAME;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.insertElementInCoverPage;
-import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isAutonomousAct;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isBillDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isMainDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.deleteElementsByXPath;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getChildNodeWithName;
-import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getXmlChildNodeWithAttributeValue;
 import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.getXmlChildNodeWithNameAttributeValue;
-import static eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.newXmlFile;
 
 @Service
 @Slf4j
@@ -870,16 +865,45 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    public void processCommissioner(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, int pos) {
         if (!MetadataUtil.isBillXmlDocument(xmlFile)) return;
         final NodeList signatureNodes = xmlFile.getElementsByName(MetadataUtil.ELEMENT_SIGNATURE);
         final List<SignatureMetadata> signatures = fetchSignaturesValue(fieldInfo.getDisplayValue());
-        for (int i = 0; i < signatureNodes.getLength(); i++) {
-            Node signatureNode = signatureNodes.item(i);
-            if (i < signatures.size()) {
-                processCommissionerRole(signatures.get(i), signatureNode, xmlFile);
-                processCommissionerPerson(signatures.get(i), signatureNode);
-                processCommissionerMention(signatures.get(i), signatureNode, xmlFile);
+        if (signatures.isEmpty()) {
+            final Node signatureNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_SIGNATURE);
+            final int roleIndex = XmlUtil.indexOfChildNode(signatureNode, MetadataUtil.ELEMENT_ROLE);
+            final int personIndex = XmlUtil.indexOfChildNode(signatureNode, MetadataUtil.ELEMENT_PERSON);
+            if (roleIndex < 0 || personIndex < 0) {
+                return;
+            }
+            // Check wether role or person is first set in xml
+            // Depending on the index, the commission values are set accordingly
+            switch(pos) {
+                case 0:
+                    if (roleIndex < personIndex) {
+                        processCommissionerRole(fieldInfo, signatureNode, xmlFile);
+                    } else {
+                        processCommissionerPerson(fieldInfo, signatureNode);
+                    }
+                    break;
+                case 1:
+                    if (roleIndex < personIndex) {
+                        processCommissionerPerson(fieldInfo, signatureNode);
+                    } else {
+                        processCommissionerRole(fieldInfo, signatureNode, xmlFile);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            for (int i = 0; i < signatureNodes.getLength(); i++) {
+                Node signatureNode = signatureNodes.item(i);
+                if (i < signatures.size()) {
+                    processCommissionerRole(signatures.get(i), signatureNode, xmlFile);
+                    processCommissionerPerson(signatures.get(i), signatureNode);
+                    processCommissionerMention(signatures.get(i), signatureNode, xmlFile);
+                }
             }
         }
     }
@@ -903,6 +927,20 @@ public class MetadataServiceImpl implements MetadataService {
         }
         String fieldValue = root.get(field).asText();
         return fieldValue;
+    }
+
+    private void processCommissionerRole(ReferenceFieldInfo fieldInfo, Node signatureNode, XmlUtil.XmlFile xmlFile) {
+        String fieldValue = fieldInfo.getDisplayValue();
+        final String language = readLanguageValue(xmlFile);
+        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldValue, language);
+        fieldValue = roleFieldInfo != null ? roleFieldInfo.getDisplayValue() : fieldValue;
+        this.addRoleToReferences(roleFieldInfo, xmlFile);
+        final Node roleNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_ROLE);
+        if (roleNode == null) return;
+
+        roleNode.setTextContent(fieldValue);
+
+        XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
     }
 
     private void processCommissionerRole(SignatureMetadata signature, Node signatureNode, XmlUtil.XmlFile xmlFile) {
@@ -939,6 +977,12 @@ public class MetadataServiceImpl implements MetadataService {
         if (roleFieldInfo == null) return;
 
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
+
+        if (roleFieldInfo == null) {
+            XmlUtil.removeNodeFromParent(tlcRoleNode);
+            return;
+        }
+
         if (tlcRoleNode == null) {
             tlcRoleNode = xmlFile.newElement(MetadataUtil.ELEMENT_TLCROLE);
             appendNode = true;
@@ -965,6 +1009,15 @@ public class MetadataServiceImpl implements MetadataService {
         if (MetadataUtil.isRoleDirectorGeneral(commissionerValue)) {
             return MetadataUtil.getRoleDirectorGeneralFieldInfo(lang);
         }
+        if (MetadataUtil.isRoleHeadOfService(commissionerValue)) {
+            return MetadataUtil.getRoleHeadOfServiceFieldInfo(lang);
+        }
+        if (MetadataUtil.isRoleHeadOfUnit(commissionerValue)) {
+            return MetadataUtil.getRoleHeadOfUnitFieldInfo(lang);
+        }
+        if (MetadataUtil.isRoleDirector(commissionerValue)) {
+            return MetadataUtil.getRoleDirectoryFieldInfo(lang);
+        }
         return null;
     }
 
@@ -979,6 +1032,14 @@ public class MetadataServiceImpl implements MetadataService {
             return MetadataUtil.getMentionEPFieldInfo(lang);
         }
         return null;
+    }
+
+    private void processCommissionerPerson(ReferenceFieldInfo fieldInfo, Node signatureNode) {
+        String signingCommissioner = fieldInfo.getDisplayValue();
+        final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
+        if (personNode == null) return;
+        personNode.setTextContent(signingCommissioner);
+        XmlUtil.setNodeAttributeValue(personNode, MetadataUtil.ATTRIBUTE_REFERSTO, "");
     }
 
     private void processCommissionerPerson(SignatureMetadata signature, Node signatureNode) {

@@ -231,13 +231,17 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     }
 
     private ApplyMetadataResponse.ActionNode processApplyMetadataRequestAction(ApplyMetadataRequest.ActionNode action, List<XmlFile> documentXmlFiles){
+        int commissionerPos = 0;
         List<ApplyMetadataResponse.FieldNode> fieldResponses = new ArrayList<>();
         for (ApplyMetadataRequest.FieldNode field : action.getFields()){
-            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles));
+            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos));
+            if (MetadataFieldType.isCommissioner(field.getKey())) {
+                commissionerPos += 1;
+            }
         }
         if (!hasLinkedDocumentsField(action)) {
             // Remove associatedReferences container if no linkedDocuments are set
-            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles);
+            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles, commissionerPos);
         }
         return new ApplyMetadataResponse.ActionNode(action.getName(), fieldResponses);
     }
@@ -246,9 +250,10 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
     }
 
-    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles) {
+    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles,
+                                                                             int commissionerPos) {
         try {
-            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles);
+            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles, commissionerPos);
             return metadataService.getFieldSuccessResult(field.getKey());
         } catch(MetadataFieldNotAvailableException | XmlUtilException | MetadataUtilsException ex) {
             LOG.debug("Lookup field info failed: {}", ex);
@@ -262,7 +267,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles) throws MetadataUtilsException,
+    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles, int commissionerPos) throws MetadataUtilsException,
             XmlUtilException {
         LOG.debug("Process field info  '{}'", fieldInfo);
 
@@ -295,7 +300,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                     metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
                 case COMMISSIONER:
-                    metadataService.processCommissioner((ReferenceFieldInfo) fieldInfo, xmlFile);
+                    metadataService.processCommissioner((ReferenceFieldInfo) fieldInfo, xmlFile, commissionerPos);
                     break;
                 case CORRIGENDUM_ADDENDUM:
                     metadataService.processCorrigendumAddendum((SimpleFieldInfo) fieldInfo, xmlFile);
