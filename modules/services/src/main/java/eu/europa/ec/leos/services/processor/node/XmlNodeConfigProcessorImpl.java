@@ -159,6 +159,9 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         metadataConfig.put(FILE_CUID_PRESERVATION, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRWork/akn:preservation/akn4eu:fileCUID/@value", false, Collections.emptyList()));
         metadataConfig.put(DOC_CUID_PRESERVATION, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRWork/akn:preservation/akn4eu:docCUID/@value", false, Collections.emptyList()));
 
+        metadataConfig.put(DOC_TRANSLATION_FROM_LANGUAGE, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRExpression/akn:FRBRtranslation/@fromLanguage", false, Collections.emptyList()));
+        metadataConfig.put(DOC_TRANSLATION_FROM_HREF, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRExpression/akn:FRBRtranslation/@href", false, Collections.emptyList()));
+
         return metadataConfig;
     }
 

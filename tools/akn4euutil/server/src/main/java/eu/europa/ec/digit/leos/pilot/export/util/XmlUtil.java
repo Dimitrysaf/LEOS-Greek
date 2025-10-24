@@ -456,6 +456,14 @@ public class XmlUtil {
         return deletedNodes;
     }
 
+    public static boolean removeNodeFromParent(final Node node) {
+        if (node == null || node.getParentNode() == null) {
+            return false;
+        }
+        node.getParentNode().removeChild(node);
+        return true;
+    }
+
     public static NodeList getElementsByXPath(Node node, String xPathExpression, boolean namespaceEnabled) {
         try {
             xPathExpression = XPathSanitizer.sanitizeXPath(xPathExpression);

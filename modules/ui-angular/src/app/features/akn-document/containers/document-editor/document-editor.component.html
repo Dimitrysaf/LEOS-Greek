@@ -37,7 +37,7 @@
       </div>
     </eui-page-column-header-collapsed-content>
 
-    <eui-page-columns>
+    <eui-page-columns style="display: flex;">
       <!-- ToC -->
       <eui-page-column
         #tocPane
@@ -372,7 +372,7 @@
       <eui-page-column
         #documentPane
         class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
-
+        style="flex-grow: 1;"
       >
         <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
         <eui-page-column-body

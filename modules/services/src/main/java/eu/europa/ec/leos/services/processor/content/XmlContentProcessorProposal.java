@@ -57,9 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITH_ONLY_TEXT;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.*;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.MergeUtils.removeChildren;
@@ -279,7 +277,11 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             if (!hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_TO_ORIGIN_ACTION)) {
                 Node nodeToAddOrRemoveAttribute = node;
                 if (numNode != null && hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {
-                    nodeToAddOrRemoveAttribute = numNode;
+                    Node leosUid = node.getAttributes().getNamedItem(LEOS_UID);
+                    if (leosUid != null && !StringUtils.equals(leosUid.getNodeValue(), securityContext.getUser().getLogin())
+                            || !hasTocItemSoftAction(tocVo, SoftActionType.ADD)) {
+                        nodeToAddOrRemoveAttribute = numNode;
+                    }
                 }
                 String action = tocVo.getTrackChangeAction();
                 if (hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {
@@ -725,11 +727,16 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 LEOS_RENUMBER_ORIGIN));
         for (int nodeIdx = 0; nodeIdx < softMovedNodesToCheckDeleted.getLength(); nodeIdx++) {
             NamedNodeMap attributesOfAcceptedNode = softMovedNodesToCheckDeleted.item(nodeIdx).getAttributes();
+            String leosIdToBeRemoved = attributesOfAcceptedNode.getNamedItem(LEOS_ID_TO_BE_REMOVED).getNodeValue();
             attributesOfAcceptedNode.removeNamedItem(LEOS_ID_TO_BE_REMOVED);
             attributesOfAcceptedNode.removeNamedItem(LEOS_RENUMBER_ORIGIN);
             String idToDelete = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + attributesOfAcceptedNode.getNamedItem(XMLID).getNodeValue();
             Document document = createXercesDocument(xmlContent);
             Node nodeToDelete = XercesUtils.getElementById(document, idToDelete);
+            if(nodeToDelete == null) {// case where p is point subparagraph
+                idToDelete = leosIdToBeRemoved;
+                nodeToDelete = XercesUtils.getElementById(document, idToDelete);
+            }
             if (nodeToDelete != null && nodeToDelete.getParentNode() != null) {
                 List<Node> children = XercesUtils.getChildren(nodeToDelete.getParentNode(), Arrays.asList(INDENT, POINT));
                 if (!CollectionUtils.isEmpty(children)) {

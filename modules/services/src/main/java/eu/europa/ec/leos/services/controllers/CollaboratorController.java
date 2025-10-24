@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 European Union
+ * Copyright 2025 European Union
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -71,40 +71,29 @@ public class CollaboratorController {
             List<CollaboratorDTO> collaborators = collaboratorService.getCollaborators(proposal);
             return new ResponseEntity<>(collaborators, HttpStatus.OK);
         } catch (CollaboratorException e) {
-            String msg = "Error occurred while getting collaborators for Proposal '" + proposalRef + "'";
-            LOG.error(msg);
+            LOG.error("Error occurred while getting collaborators for Proposal '" + proposalRef + "'");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "Error occurred while getting collaborators for Proposal '" + proposalRef + "'";
-            LOG.error(msg, e);
+            LOG.error("General error occurred while getting collaborators for Proposal '" + proposalRef + "'", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private String addCollaborator(String proposalRef, CollaboratorRequest collaboratorRequest) {
-        proposalRef = encodeParam(proposalRef);
-        final String userId = securityContext.getUser().getLogin();
-        final String collaboratorName = collaboratorRequest.getUserId();
-        final String roleName = collaboratorRequest.getRoleName();
-        final String connectedDG = collaboratorRequest.getConnectedDG();
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        return collaboratorService.addCollaborator(proposal, userId, collaboratorName, roleName, connectedDG, proposalUrl, null);
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.POST)
     public ResponseEntity<Object> addCollaboratorToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
-            addCollaborator(proposalRef, collaboratorRequest);
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
+            String userId = securityContext.getUser().getLogin();
+            collaboratorService.addCollaborator(proposal, userId, collaboratorRequest.getUserId(), collaboratorRequest.getRoleName(),
+                    collaboratorRequest.getConnectedDG(), proposalUrl, collaboratorRequest.getLeosClientId());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while adding User '" + collaboratorRequest + TO_PROPOSAL + proposalRef + "'";
-            LOG.error(msg);
+            LOG.error("Error occurred while adding collaborator '" + collaboratorRequest + TO_PROPOSAL + proposalRef + "'");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "User added successfully to document '" + proposalRef + "'";
-            LOG.error(msg, e);
+            LOG.error("General error occurred while adding collaborator '" + proposalRef + "'", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -113,44 +102,37 @@ public class CollaboratorController {
     public ResponseEntity<Object> addBulkCollaboratorsToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
+            String userId = securityContext.getUser().getLogin();
             for (CollaboratorRequest collaborator : collaboratorsRequest.getCollaborators()) {
-                addCollaborator(proposalRef, collaborator);
+                collaboratorService.addCollaborator(proposal, userId, collaborator.getUserId(), collaborator.getRoleName(),
+                        collaborator.getConnectedDG(), proposalUrl, collaborator.getLeosClientId());
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while adding BULK Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
-            LOG.error(msg);
+            LOG.error("Error occurred while adding bulk collaborators '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "General Error occurred while adding BULK Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
-            LOG.error(msg, e);
+            LOG.error("General error occurred while adding bulk collaborators '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private String editCollaborator(String proposalRef, CollaboratorRequest collaboratorRequest) {
-        proposalRef = encodeParam(proposalRef);
-        final String userId = collaboratorRequest.getUserId();
-        final String roleName = collaboratorRequest.getRoleName();
-        final String connectedDG = collaboratorRequest.getConnectedDG();
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        return collaboratorService.editCollaborator(proposal, userId, roleName, connectedDG, proposalUrl);
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> editCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
-            editCollaborator(proposalRef, collaboratorRequest);
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
+            collaboratorService.editCollaborator(proposal, collaboratorRequest.getUserId(), collaboratorRequest.getRoleName(),
+                    collaboratorRequest.getConnectedDG(), proposalUrl);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while updating new Roles '" + collaboratorRequest + TO_PROPOSAL + proposalRef + "'";
-            LOG.error(msg);
+            LOG.error("Error occurred while updating collaborator '" + collaboratorRequest + TO_PROPOSAL + proposalRef + "'");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "Generic Error occurred while updating new Roles '" + proposalRef + "'";
-            LOG.error(msg, e);
+            LOG.error("Generic error occurred while updating collaborator '" + proposalRef + "'", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -159,29 +141,19 @@ public class CollaboratorController {
     public ResponseEntity<Object> editBulkCollaboratorsFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
             for (CollaboratorRequest collaborators : collaboratorsRequest.getCollaborators()) {
-                editCollaborator(proposalRef, collaborators);
+                collaboratorService.editCollaborator(proposal, collaborators.getUserId(), collaborators.getRoleName(), collaborators.getConnectedDG(), proposalUrl);
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while updating Bulk Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
-            LOG.error(msg);
+            LOG.error("Error occurred while updating bulk collaborators '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "General Error occurred while updating Bulk Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
-            LOG.error(msg, e);
+            LOG.error("General error occurred while updating bulk collaborators '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private String removeCollaborator(String proposalRef, CollaboratorRequest collaboratorRequest) {
-        final String collaboratorName = collaboratorRequest.getUserId();
-        final String roleName = collaboratorRequest.getRoleName();
-        final String connectedDG = collaboratorRequest.getConnectedDG();
-        final String leosClientId = collaboratorRequest.getLeosClientId();
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
-        return collaboratorService.removeCollaborator(proposal, collaboratorName, roleName, connectedDG, proposalUrl, leosClientId);
     }
 
     @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -189,15 +161,16 @@ public class CollaboratorController {
     public ResponseEntity<Object> removeCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
-            removeCollaborator(proposalRef, collaboratorRequest);
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
+            collaboratorService.removeCollaborator(proposal, collaboratorRequest.getUserId(), collaboratorRequest.getRoleName(),
+                    collaboratorRequest.getConnectedDG(), proposalUrl, collaboratorRequest.getLeosClientId());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while removing Collaborator '" + collaboratorRequest + FROM_PROPOSAL + proposalRef + "'";
-            LOG.error(msg);
+            LOG.error("Error occurred while removing collaborator '" + collaboratorRequest + FROM_PROPOSAL + proposalRef + "'");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "General Error occurred while removing Collaborator '" + collaboratorRequest + FROM_PROPOSAL + proposalRef + "'";
-            LOG.error(msg, e);
+            LOG.error("General Error occurred while removing collaborator '" + collaboratorRequest + FROM_PROPOSAL + proposalRef + "'", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -207,17 +180,18 @@ public class CollaboratorController {
     public ResponseEntity<Object> removeBulkCollaboratorsFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
             for (CollaboratorRequest collaborator : collaboratorsRequest.getCollaborators()) {
-                removeCollaborator(proposalRef, collaborator);
+                collaboratorService.removeCollaborator(proposal, collaborator.getUserId(), collaborator.getRoleName(),
+                        collaborator.getConnectedDG(), proposalUrl, collaborator.getLeosClientId());
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while removing BULK Collaborators '" + collaboratorsRequest + FROM_PROPOSAL + proposalRef + "'";
-            LOG.error(msg);
+            LOG.error("Error occurred while removing bulk collaborators '" + collaboratorsRequest + FROM_PROPOSAL + proposalRef + "'");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "General Error occurred while removing BULK Collaborators '" + collaboratorsRequest + FROM_PROPOSAL + proposalRef + "'";
-            LOG.error(msg, e);
+            LOG.error("General error occurred while removing bulk collaborators '" + collaboratorsRequest + FROM_PROPOSAL + proposalRef + "'", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
