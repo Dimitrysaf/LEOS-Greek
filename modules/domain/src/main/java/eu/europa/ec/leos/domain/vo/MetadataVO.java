@@ -60,6 +60,9 @@ public class MetadataVO {
     private List<SignatureMetadata> signatures;
     private Boolean stamp;
 
+    private String docTranslationFromLanguage;
+    private String docTranslationFromHref;
+
     public MetadataVO() {
     }// added for early binding
 
@@ -106,5 +109,7 @@ public class MetadataVO {
         this.setInterInstitutionalReference(null);
         this.setSignatures(null);
         this.setStamp(null);
+        this.setDocTranslationFromLanguage(null);
+        this.setDocTranslationFromHref(null);
     }
 }

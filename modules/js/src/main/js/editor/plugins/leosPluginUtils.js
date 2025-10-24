@@ -1383,12 +1383,15 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
+    function _isNonListIntroLiOrP(el) {
+         return liOrp(el) && !_isListIntro(el);
+    }
+
     function _handleNodeOnIndent(node, editor, isIndent, isChild) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT) {
             return;
         }
-        var point = node.getAscendant(el => el.getName && (el.getName() === HTML_SUB_POINT
-                || el.getName() === HTML_POINT && el.getAttribute && el.getAttribute(DATA_AKN_ELEMENT) !== SUBPARAGRAPH), true);
+        let point = node.getAscendant(el => _isNonListIntroLiOrP(el), true);
         _handleIndentAttributes(point, editor, isIndent, isChild);
         if (!node.getAttribute(DATA_AKN_ELEMENT) || node.getAttribute(DATA_AKN_ELEMENT).toLowerCase() !== CROSSHEADING.toLowerCase()) {
             point.removeAttribute(DATA_AKN_NUM);
@@ -1449,7 +1452,7 @@ define(function leosPluginUtilsModule(require) {
         if (!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
             node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
         }
-        if (!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
+        if (!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL) && elementName !== 'PARAGRAPH') {
             node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
         }
         editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
@@ -1951,6 +1954,7 @@ define(function leosPluginUtilsModule(require) {
         isParagraph: _isParagraph,
         isSubParaAndFirst: _isSubParaAndFirst,
         isSubParaAndNextIsPorINP: _isSubParaAndNextIsPorINP,
+        isNonListIntroLiOrP: _isNonListIntroLiOrP,
         isLeaf: _isLeaf,
         isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
         isSignatureElement: _isSignatureElement,
@@ -1980,6 +1984,7 @@ define(function leosPluginUtilsModule(require) {
         LEVEL: LEVEL,
         ORDER_LIST_ELEMENT: ORDER_LIST_ELEMENT,
         UNORDERED_LIST_ELEMENT: UNORDERED_LIST_ELEMENT,
+        LIST_ELEMENTS: LIST_ELEMENTS,
         LIST_ITEM: LIST_ITEM,
         DATA_AKN_NAME: DATA_AKN_NAME,
         DATA_AKN_ELEMENT: DATA_AKN_ELEMENT,

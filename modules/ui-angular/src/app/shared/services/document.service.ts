@@ -621,7 +621,6 @@ export class DocumentService {
         },
       )
       .subscribe((resp) => this.handleDownloadResponse(resp));
-    this.notifyExportEmailSent();
   }
 
   compareDocumentsDownloadPDF(
