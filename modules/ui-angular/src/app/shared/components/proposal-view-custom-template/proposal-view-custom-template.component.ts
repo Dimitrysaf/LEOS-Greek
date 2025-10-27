@@ -24,6 +24,7 @@ import {MilestoneDescriptor} from "@/shared/components/proposal-milestone-view/p
 import {Router} from "@angular/router";
 import {AppConfigService} from "@/core/services/app-config.service";
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
+import {EuiDialogComponent} from "@eui/components/eui-dialog";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -60,6 +61,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
   @Input() proposalTemplate!: string;
   @Input() userRoles!: ApplicationRole[];
   @ViewChild('treeComponent') treeComponent: EuiTreeComponent;
+  @ViewChild('unPublishConfirmation') unPublishConfirmation: EuiDialogComponent;
   @ViewChild('updateNameAndDgTemplateCatalog')
   updateNameAndDgTemplateCatalog: ProposalMilestonePublishToCatalogDialogComponent;
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
@@ -123,12 +125,11 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
   private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
       item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
-    const templates = catalogItems.flatMap(getChildTemplates)
-      .filter(template => template.originalDg === this.defaultEntity)
-    return templates.reduce(
+    const templates = catalogItems.flatMap(getChildTemplates).reduce(
       (map, item) => map.set(item.key, item),
       new Map<string, CatalogItem>(),
     );
+    return templates;
   }
 
   private catalogToTreeNodes(catalogItems: CatalogItem[]) {
@@ -163,6 +164,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
     const isTemplate = type !== 'CATEGORY';
+    const isOriginalDg = item.originalDg === this.defaultEntity;
     const sameTemplate = (this.proposalTemplate && key === this.proposalTemplate);
     const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
     disabled = disabled || this.disabled || !isSameDocCollection || sameTemplate;
@@ -180,7 +182,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
     }
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate,
+      selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate && isOriginalDg,
       treeContentBlock: {
         id,
         key,
@@ -322,14 +324,8 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
 
   unPublishTemplateCatalog(event) {
     const key: string = event.treeContentBlock.key;
-    setTimeout(() => this.detailsService.unPublishTemplate(key).subscribe({
-        next:() =>{
-          this.reloadTemplate(); // reload happens here
-        },
-      error: (error) => {
-        console.log(error);
-      }
-    }), 0);
+    this.unPublishConfirmation.content = key;
+    this.unPublishConfirmation.openDialog();
   }
 
   viewTemplate() {
@@ -340,5 +336,23 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
 
   reloadTemplate() {
     this.proposalService.loadCustomTemplateCatalog(this.defaultEntity);
+  }
+
+  closeUnPublish() {
+    this.unPublishConfirmation.closeDialog();
+    this.unPublishConfirmation.content = null;
+  }
+
+  acceptUnPublish() {
+    const key = <string>this.unPublishConfirmation.content;
+    setTimeout(() => this.detailsService.unPublishTemplate(key).subscribe({
+      next: () => {
+        this.reloadTemplate(); // reload happens here
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }), 0);
+    this.closeUnPublish();
   }
 }
