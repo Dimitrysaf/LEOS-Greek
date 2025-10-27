@@ -49,7 +49,7 @@
         >
         </eui-tree>
       </div>
-      <div *ngIf="templates.size === 0" class="no-templates">
+      <div *ngIf="templates.size === 0 && !loading" class="no-templates">
         <h2>
           {{
             'page.workspace.create-selector.no-template' | translate

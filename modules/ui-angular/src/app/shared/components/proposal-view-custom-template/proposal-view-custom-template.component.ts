@@ -13,7 +13,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {EuiTreeSelectionChanges} from "@eui/components/eui-tree/eui-tree.model";
 import {appConfig} from "../../../../config";
 import {ProposalService} from "@/shared/services/proposal.service";
-import {Subject, takeUntil} from "rxjs";
+import {skip, Subject, takeUntil} from "rxjs";
 import {EuiAllModule} from "@eui/components";
 import {
   ProposalMilestonePublishToCatalogDialogComponent
@@ -25,6 +25,7 @@ import {Router} from "@angular/router";
 import {AppConfigService} from "@/core/services/app-config.service";
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {EuiDialogComponent} from "@eui/components/eui-dialog";
+import {LoadingService} from "@/shared/services/loading.service";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -87,6 +88,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
 
   isExpanded: boolean;
   templates: Map<string, CatalogItem> = new Map();
+  loading: boolean = true;
 
   private documentRef: String;
 
@@ -96,23 +98,26 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
     private detailsService: ProposalDetailsService,
     private appConfig: AppConfigService,
     private cd: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit() {
     this.appConfig.config.subscribe((config) => {
       this.defaultEntity = config.user.defaultEntity.organizationName
     });
+    this.loading = true;
+    this.loadingService.setLoading(true);
     this.proposalService.loadCustomTemplateCatalog(this.defaultEntity);
-    this.initialize();
-  }
-  initialize() {
-      this.proposalService.customTemplateCatalog$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((catalog) => {
-          this.loadTemplates(catalog);
-          this.cd.detectChanges(); // trigger `treeComponent` update
-        });
+    this.proposalService.customTemplateCatalog$
+      .pipe(  skip(1), // skip BehaviorSubject initial emission
+        takeUntil(this.destroy$))
+      .subscribe((catalog) => {
+        this.loadTemplates(catalog);
+        this.loadingService.setLoading(false);
+        this.loading = false;
+        this.cd.detectChanges(); // trigger `treeComponent` update
+      });
   }
 
   private loadTemplates(catalogItems: CatalogItem[] | null) {
