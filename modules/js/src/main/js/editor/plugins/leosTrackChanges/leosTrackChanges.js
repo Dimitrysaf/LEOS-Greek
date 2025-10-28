@@ -1013,7 +1013,23 @@ define(function leosTrackChangesModule(require) {
                         }
                     }
                 }
-            }else {
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.hasAttribute(core.ACTION_ATTR)) {
+                for (var elementSibling of element.getParent().$.children) {
+                    if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM) && !elementSibling.getAttribute(core.ACTION_ATTR)) {
+                        core.removeTrackChangesAttributes(elementSibling);
+                        if(elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.DELETE_ACTION) {
+                            core.removeTrackChangesAttributesForNumberingDelete(elementSibling);
+                        }
+                        core.removeTrackChangesAttributesForNumbering(elementSibling);
+                        core.removeSoftAttributes(elementSibling);
+                        elementSibling.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
+                        if (!elementSibling.getAttribute(leosPluginUtils.ID)) {
+                            elementSibling.setAttribute(leosPluginUtils.ID, "XtempXtcX" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                        }
+                    }
+                }
+
+            } else {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                     var liParentElement = element.getParent();
