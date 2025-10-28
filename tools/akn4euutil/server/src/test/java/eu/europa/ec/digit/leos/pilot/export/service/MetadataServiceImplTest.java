@@ -171,7 +171,7 @@ public class MetadataServiceImplTest {
         XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
         ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", "[{\"specialMention\":\"For the Commission\", \"commissionerTitle\":\"the President\"}]",
                 "", MetadataFieldType.COMMISSIONER);
-        metadataService.processCommissioner(fieldInfo, xmlFile);
+        metadataService.processCommissioner(fieldInfo, xmlFile, 0);
 
         Node tlcRole = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
         Assertions.assertNotNull(tlcRole);
@@ -188,13 +188,67 @@ public class MetadataServiceImplTest {
     }
 
     @Test
+    public void testAddCommissionerRole2() throws Exception {
+        String roleValue = "The President";
+        XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
+        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", "the President", "", MetadataFieldType.COMMISSIONER);
+        metadataService.processCommissioner(fieldInfo, xmlFile, 0);
+
+        Node tlcRole = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
+        Assertions.assertNotNull(tlcRole);
+
+        ReferenceFieldInfo presidentFieldInfo = MetadataUtil.getRolePresidentFieldInfo("EN");
+        Assertions.assertEquals(presidentFieldInfo.getId(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_XMLID));
+        Assertions.assertEquals(presidentFieldInfo.getHref(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_HREF));
+        Assertions.assertEquals(presidentFieldInfo.getDisplayValue(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_SHOWAS));
+
+        Node roleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_ROLE);
+        Assertions.assertNotNull(tlcRole);
+        Assertions.assertEquals(roleValue, roleNode.getTextContent());
+        Assertions.assertEquals("~" + presidentFieldInfo.getId() , XmlUtil.getNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO));
+    }
+
+    @Test
+    public void testAddCommissionerRole3() throws Exception {
+        String roleValue = "Director";
+        XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
+        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", "Director", "", MetadataFieldType.COMMISSIONER);
+        metadataService.processCommissioner(fieldInfo, xmlFile, 0);
+
+        Node tlcRole = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
+        Assertions.assertNotNull(tlcRole);
+
+        ReferenceFieldInfo directorFieldInfo = MetadataUtil.getRoleDirectoryFieldInfo("EN");
+        Assertions.assertEquals(directorFieldInfo.getId(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_XMLID));
+        Assertions.assertEquals(directorFieldInfo.getHref(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_HREF));
+        Assertions.assertEquals(directorFieldInfo.getDisplayValue(), XmlUtil.getNodeAttributeValue(tlcRole, MetadataUtil.ATTRIBUTE_SHOWAS));
+
+        Node roleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_ROLE);
+        Assertions.assertNotNull(tlcRole);
+        Assertions.assertEquals(roleValue, roleNode.getTextContent());
+        Assertions.assertEquals("~" + directorFieldInfo.getId() , XmlUtil.getNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO));
+    }
+
+    @Test
     public void testAddCommissionerPerson() throws Exception {
         String personValue = "Ursula VON DER LEYEN";
         String signatureValue = "[{\"specialMention\":\"For the Commission\", \"commissionerTitle\":\"the President\", \"signingCommissioner\":\"Ursula VON " +
                 "DER LEYEN\"}]";
         XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
         ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", signatureValue, "", MetadataFieldType.COMMISSIONER);
-        metadataService.processCommissioner(fieldInfo, xmlFile);
+        metadataService.processCommissioner(fieldInfo, xmlFile, 0);
+
+        Node personNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_PERSON);
+        Assertions.assertNotNull(personNode);
+        Assertions.assertEquals(personValue, personNode.getTextContent());
+    }
+
+    @Test
+    public void testAddCommissionerPerson2() throws Exception {
+        String personValue = "Ursula VON DER LEYEN";
+        XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
+        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", personValue, "", MetadataFieldType.COMMISSIONER);
+        metadataService.processCommissioner(fieldInfo, xmlFile, 1);
 
         Node personNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_PERSON);
         Assertions.assertNotNull(personNode);
@@ -207,7 +261,18 @@ public class MetadataServiceImplTest {
         String signatureValue = "[{\"specialMention\":\"For the Commission\", \"commissionerTitle\":\"unknown role\", \"signingCommissioner\":\"Ursula VON " +
                 "DER LEYEN\"}]";
         ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", signatureValue, "", MetadataFieldType.COMMISSIONER);
-        metadataService.processCommissioner(fieldInfo, xmlFile);
+        metadataService.processCommissioner(fieldInfo, xmlFile, 0);
+
+        Node roleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_ROLE);
+        Assertions.assertNotNull(roleNode);
+        Assertions.assertEquals("" , XmlUtil.getNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO));
+    }
+
+    @Test
+    public void testAddCommissionerUnknownRole2() throws Exception {
+        XmlUtil.XmlFile xmlFile = this.createRoleXmlFile("REG_DEL-cmbq42h13001hk816nbg46g7h-en.xml");
+        ReferenceFieldInfo fieldInfo = new ReferenceFieldInfo("", "", "unknown role", "", MetadataFieldType.COMMISSIONER);
+        metadataService.processCommissioner(fieldInfo, xmlFile, 0);
 
         Node roleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_ROLE);
         Assertions.assertNotNull(roleNode);
