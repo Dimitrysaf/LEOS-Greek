@@ -524,8 +524,8 @@ define(function elementEditorModule(require) {
     function _saveElement(connector, elementId, elementType, event) {
         log.debug("Saving element...");
         var editor = event.editor;
-        // LEOS-3418 : to save modification in the Alternatives clause.
-        if (!editor.readOnly || editor.config.isClause) {
+        // LEOS-3418 : to save modification in the Alternatives.
+        if (!editor.readOnly || !leosPluginUtils.isContentEditable(editor)) {
             var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
             // set read-only to prevent changes
             editor.setReadOnly(true);
@@ -823,8 +823,8 @@ define(function elementEditorModule(require) {
         log.debug("Refreshing element editor...");
         var editor = _getEditor();
         if (editor) {
-            // set editable to allow changes
-            editor.setReadOnly(false);
+            // set editable to allow changes if the content is editable.
+            editor.setReadOnly(!leosPluginUtils.isContentEditable(editor));
             // reload XML fragment in editor
             var options = {
                 callback: function () {
