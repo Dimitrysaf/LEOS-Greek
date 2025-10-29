@@ -181,12 +181,18 @@ export class ProposalsFiltersComponent
     const addCatalogItemToGroups = (item: CatalogItem, parent: CatalogItem = null, grandparent: CatalogItem = null) => {
       if (item.type === 'TEMPLATE') {
         groups.templates.push(item);
-        if (grandparent != null && groups.procedures.indexOf(grandparent) === -1) {
-          groups.procedures.push(grandparent);
-        }
-        if (parent != null && groups.acts.indexOf(parent) === -1) {
-          groups.acts.push(parent);
-        }
+        // if (grandparent != null && groups.procedures.indexOf(grandparent) === -1) {
+        //   groups.procedures.push(grandparent);
+        // }
+        // if (parent != null && groups.acts.indexOf(parent) === -1) {
+        //   groups.acts.push(parent);
+        // }
+      }
+      if (item.type === 'ACT') {
+        groups.acts.push(item);
+      }
+      if (item.type === 'PROCEDURE') {
+        groups.procedures.push(item);
       }
 
       if (item.type !== 'TEMPLATE' && item.enabled) {

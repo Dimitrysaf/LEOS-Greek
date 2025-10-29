@@ -881,8 +881,6 @@ public class DocumentServiceImpl implements DocumentService {
                 if (filter.nullCheck) {
                     queryBuild.append(" AND ( ");
                     queryBuild.append(columnName);
-                    queryBuild.append(" IS NULL OR ");
-                    queryBuild.append(columnName);
                     queryBuild.append(" = '-' ");
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
