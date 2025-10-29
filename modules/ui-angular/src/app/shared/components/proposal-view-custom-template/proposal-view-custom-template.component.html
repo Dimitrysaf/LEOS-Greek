@@ -49,7 +49,7 @@
         >
         </eui-tree>
       </div>
-      <div *ngIf="templates.size === 0" class="no-templates">
+      <div *ngIf="templates.size === 0 && !loading" class="no-templates">
         <h2>
           {{
             'page.workspace.create-selector.no-template' | translate
@@ -114,3 +114,20 @@
   [document]=""
   (closed)="reloadTemplate()"
 ></app-proposal-milestone-publish-to-catalog-dialog>
+
+<eui-dialog
+  #unPublishConfirmation
+  [title]="'page.collection.custom.catalog.actions.un-publish.confirmation' | translate"
+  [acceptLabel]="'page.collection.custom.catalog.actions.un-publish.yes' | translate"
+  [dismissLabel]="'page.collection.custom.catalog.actions.un-publish.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="closeUnPublish()"
+  (close)="closeUnPublish()"
+  (accept)="acceptUnPublish()"
+  (dismiss)="closeUnPublish()"
+> <p>{{ 'page.collection.custom.catalog.actions.un-publish.message' | translate }}</p>
+</eui-dialog>
+

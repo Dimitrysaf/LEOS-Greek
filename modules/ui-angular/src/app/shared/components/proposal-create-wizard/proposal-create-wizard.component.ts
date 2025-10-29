@@ -26,6 +26,7 @@ import {
 } from "@/shared/components/proposal-create-template-selector/proposal-create-template-selector.component";
 import {appConfig} from "../../../../config";
 import {EuiGrowlService} from "@eui/core";
+import {AppConfigService} from "@/core/services/app-config.service";
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
 @Component({
@@ -65,7 +66,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private growlService: EuiGrowlService,
     private renderer: Renderer2,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private appConfig: AppConfigService
   ) {}
 
   ngOnDestroy(): void {
@@ -89,8 +91,11 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
     }
     if (!this.isCopyChangeAct) {
-      this.proposalService.loadCustomTemplateCatalog();
-    }
+      this.appConfig.config.subscribe((config) => {
+          this.proposalService.loadCustomTemplateCatalog(config.user.defaultEntity.organizationName);
+      //this.proposalService.loadCustomTemplateCatalog(this.appConfig.user.defaultEntity.organizationName);
+      });
+  ``}
   }
 
   ngAfterViewInit() {

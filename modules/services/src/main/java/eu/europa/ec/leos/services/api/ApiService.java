@@ -46,7 +46,7 @@ public interface ApiService {
 
     List<CatalogItem> getTemplates() throws IOException;
 
-    List<CatalogItem> getCustomTemplates() throws IOException;
+    List<CatalogItem> getCustomTemplates(String entityName) throws IOException;
 
     CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException;
 

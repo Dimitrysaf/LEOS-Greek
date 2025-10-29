@@ -287,8 +287,8 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public List<CatalogItem> getCustomTemplates() throws IOException {
-        return customTemplateService.getCustomTemplatesCatalog();
+    public List<CatalogItem> getCustomTemplates(String entityName) throws IOException {
+        return customTemplateService.getCustomTemplatesCatalog(entityName);
     }
 
     @Override
