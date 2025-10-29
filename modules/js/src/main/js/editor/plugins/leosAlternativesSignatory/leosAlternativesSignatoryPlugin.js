@@ -35,9 +35,14 @@ define(function leosAlternativesSignatoryPluginModule(require) {
             //_displayLabelsAltButtons();
 
             editor.once("receiveData",_populateAlternativesToolbar);
+            editor.once('instanceReady', function() {
+                editor.setReadOnly(true);
+            });
             
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
-            dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
+            let cmd = new CKEDITOR.dialogCommand(dialogDefinition.dialogName);
+            cmd.readOnly = true;
+            dialogCommand = editor.addCommand(dialogDefinition.dialogName, cmd);
         }
     };
 
@@ -87,6 +92,7 @@ define(function leosAlternativesSignatoryPluginModule(require) {
             toolbar: "alternatives",
             className: 'cke_format',
             multiSelect: false,
+            readOnly: true,
             panel: {
                 css: [editor.config.contentsCss, CKEDITOR.skin.getPath('editor')]
             },
@@ -97,6 +103,7 @@ define(function leosAlternativesSignatoryPluginModule(require) {
                     that.add(pluginName + option.index, option.title, option.title);
                     if (!editor.getCommand(pluginName + option.index)) {
                         var altCommand = editor.addCommand(pluginName + option.index, {
+                            readOnly: 1,
                             // when click over one of the Alternative tabs
                             exec: function(editor) {
                                 dialogCommand.exec();

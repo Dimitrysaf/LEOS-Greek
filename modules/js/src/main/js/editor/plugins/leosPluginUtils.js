@@ -1878,6 +1878,10 @@ define(function leosPluginUtilsModule(require) {
         return $(element.parentElement).find(elementSelector).length === 1;
     }
 
+    function _isContentEditable(editor) {
+        return !editor.config.isAlternative;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1973,6 +1977,7 @@ define(function leosPluginUtilsModule(require) {
         isDuplicatedSignatureElement: _isDuplicatedSignatureElement,
         handleIndentAttributes: _handleIndentAttributes,
         copyAllAttributes: _copyAllAttributes,
+        isContentEditable: _isContentEditable,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
