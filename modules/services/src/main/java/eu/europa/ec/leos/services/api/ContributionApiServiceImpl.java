@@ -246,8 +246,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             File content = new File(legDocumentName);
             writeContentToFile(legDocument, content);
             userService.switchUser(user.getLogin());
-            createCollectionResult = createCollectionService.cloneCollection(content, cloneOriginRef, user.getLogin(),
-                    user.getDefaultEntity().getName());
+            String userDefaultEntity = user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "";
+            createCollectionResult = createCollectionService.cloneCollection(content, cloneOriginRef, user.getLogin(), userDefaultEntity);
             if (createCollectionResult != null && createCollectionResult.getError() != null) {
                 LOG.error("Error Occurred while cloning proposal from the Leg file: " + createCollectionResult.getError().getMessage());
             }

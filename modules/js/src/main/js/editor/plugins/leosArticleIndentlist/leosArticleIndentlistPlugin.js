@@ -372,7 +372,10 @@ define(function leosArticleIndentListPluginModule(require) {
                 var isNumberedParagraph = leosPluginUtils.isNumberedHtmlParagraph(range.startContainer);
                 if (!isNumberedParagraph && leosPluginUtils.calculateListLevel(range.startContainer) === 1 && this.isIndent) {
                     result = indent(nearestListBlock);
-                } else if (!isNumberedParagraph && leosPluginUtils.calculateListLevel(range.startContainer) === 2 && !this.isIndent && !(leosPluginUtils.isSubParaAndFirst(range.startContainer) && range.startContainer.$.nodeName === 'P')) {
+                } else if (!isNumberedParagraph && leosPluginUtils.calculateListLevel(range.startContainer) === 2 && !this.isIndent && !leosPluginUtils.isSubparagraph(range.startContainer)) {
+                    range.startContainer.hasAttribute('data-akn-num')
+                        ? range.startContainer.removeAttribute('data-akn-num')
+                        : range.startContainer.getParent().removeAttribute('data-akn-num');
                     result = indent(nearestListBlock);
                 } else if (!this.isIndent && leosPluginUtils.isSubParaAndFirst(range.startContainer) && range.startContainer.$.nodeName === 'P' && previousOfParent && previousOfParent.getAttribute('refersto') === '~INP') {
                     // To outdent point to subparagraph when previous is intro, for example, a) point to be outdented to be a sub of previous level
@@ -454,6 +457,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     var originalId = range.startContainer.getAttribute(leosPluginUtils.ID);
                     if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
                         newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                     }
                     range.startContainer.getParent().getParent().$.insertBefore(newLi.$, range.startContainer.getParent().$);
                     newLi.append(range.startContainer.getParent());
@@ -486,6 +490,7 @@ define(function leosArticleIndentListPluginModule(require) {
                     range.startContainer.removeAttribute(leosPluginUtils.REFERS_TO);
                     range.startContainer.getParent().getParent().$.insertBefore(newLi.$, range.startContainer.getParent().$);
                     newLi.append(range.startContainer);
+                    leosPluginUtils.copyAllAttributes(range.startContainer, newLi);
                     range.startContainer = newLi;
                     range.endContainer = range.startContainer;
                     var nextElement = parentOl.getNext();
@@ -500,6 +505,13 @@ define(function leosArticleIndentListPluginModule(require) {
                     }
                     if (originalNumber) {
                         newLi.setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, originalNumber);
+                    }
+                    if (leosPluginUtils.calculateListLevel(range.startContainer) === 1) {
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
+                    } else {
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.POINT);
+                        newLi.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     }
                 } else if (this.isIndent && leosPluginUtils.isSubparagraph(range.startContainer) && !(range.startContainer.$.nodeName === 'P' && !range.startContainer.getPrevious())) {
                     // To indent subparagraph to point, as the normal indent of paragraph would expand and indent ALL point, not only the paragraph

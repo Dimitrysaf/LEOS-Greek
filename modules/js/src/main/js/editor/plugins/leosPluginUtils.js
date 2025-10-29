@@ -1383,12 +1383,15 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
+    function _isNonListIntroLiOrP(el) {
+         return liOrp(el) && !_isListIntro(el);
+    }
+
     function _handleNodeOnIndent(node, editor, isIndent, isChild) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT) {
             return;
         }
-        var point = node.getAscendant(el => el.getName && (el.getName() === HTML_SUB_POINT
-                || el.getName() === HTML_POINT && el.getAttribute && el.getAttribute(DATA_AKN_ELEMENT) !== SUBPARAGRAPH), true);
+        let point = node.getAscendant(el => _isNonListIntroLiOrP(el), true);
         _handleIndentAttributes(point, editor, isIndent, isChild);
         if (!node.getAttribute(DATA_AKN_ELEMENT) || node.getAttribute(DATA_AKN_ELEMENT).toLowerCase() !== CROSSHEADING.toLowerCase()) {
             point.removeAttribute(DATA_AKN_NUM);
@@ -1403,7 +1406,7 @@ define(function leosPluginUtilsModule(require) {
     function _handleIndentAttributes(node, editor, isIndent, isChild) {
         if (editor.LEOS.isTrackChangesEnabled && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
             var elementName = node.getAttribute(DATA_AKN_ELEMENT).toUpperCase();
-            switch(elementName) {
+            switch (elementName) {
                 case "ALINEA":
                     elementName = "OTHER_SUBPOINT";
                     break;
@@ -1420,26 +1423,50 @@ define(function leosPluginUtilsModule(require) {
                     elementName = "POINT";
                     break;
             }
-            if (elementName == 'PARAGRAPH'
-                || elementName == 'OTHER_SUBPARAGRAPH'
-                || elementName == 'OTHER_SUBPOINT'
-                || !!node.getAttribute(DATA_AKN_NUM_ID)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_TYPE, elementName);
-                node.getAttribute(DATA_AKN_NUM) ? node.setAttribute(DATA_INDENT_ORIGIN_NUMBER, node.getAttribute(DATA_AKN_NUM)) : null;
+
+            if (node.getAttribute('refersto') === '~INP' && node.getAttribute('data-akn-name') && node.getAttribute('data-akn-name') === 'subparagraph'
+                && node.getParent().getAttribute('data-akn-name') && node.getParent().getAttribute('data-akn-name') === 'aknOrderedList'
+                && node.getParent().getParent().getAttribute('data-akn-name') && node.getParent().getParent().getAttribute('data-akn-name') === 'point') {
+                var parentPoint = node.getParent().getParent();
+                _setIndentAttrs(elementName, parentPoint, isChild, isIndent, editor);
+            } else {
+                _setIndentAttrs(elementName, node, isChild, isIndent, editor);
             }
-            if (!!node.getAttribute(DATA_AKN_NUM_ID)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ID, node.getAttribute(DATA_AKN_NUM_ID));
-            }
-            if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
-                node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
-            }
-            if(!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
-                node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
-            }
-            if(!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL && elementName !== 'PARAGRAPH')) {
-                node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
-            }
-            editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
+        }
+    }
+
+    function _setIndentAttrs(elementName, node, isChild, isIndent, editor) {
+        if (elementName == 'PARAGRAPH'
+            || elementName == 'OTHER_SUBPARAGRAPH'
+            || elementName == 'OTHER_SUBPOINT'
+            || !!node.getAttribute(DATA_AKN_NUM_ID)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_TYPE, elementName);
+            node.getAttribute(DATA_AKN_NUM) ? node.setAttribute(DATA_INDENT_ORIGIN_NUMBER, node.getAttribute(DATA_AKN_NUM)) : null;
+        }
+        if (!!node.getAttribute(DATA_AKN_NUM_ID)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ID, node.getAttribute(DATA_AKN_NUM_ID));
+        }
+        if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
+            node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
+        }
+        if (!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
+            node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
+        }
+        if (!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL)) {
+            setAttributeFromIntroSubparagraphOrCalculateDepth(node, DATA_INDENT_ORIGIN_LEVEL);
+        }
+        editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
+    }
+
+    function setAttributeFromIntroSubparagraphOrCalculateDepth(node, attrName) {
+        const firstChild = node.getFirst();
+        const firstGrandchild = firstChild?.getFirst && firstChild.getFirst();
+        let listIntro = _isListIntro(firstChild) ? firstChild : _isListIntro(firstGrandchild) ? firstGrandchild : null;
+        if (listIntro && listIntro.getAttribute(attrName)) {
+            node.setAttribute(attrName, listIntro.getAttribute(attrName));
+            listIntro.removeAttribute(attrName);
+        } else {
+            node.setAttribute(attrName, _calculateListDepthWithoutRoot(node));
         }
     }
 
@@ -1851,6 +1878,10 @@ define(function leosPluginUtilsModule(require) {
         return $(element.parentElement).find(elementSelector).length === 1;
     }
 
+    function _isContentEditable(editor) {
+        return !editor.config.isAlternative;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1939,12 +1970,14 @@ define(function leosPluginUtilsModule(require) {
         isParagraph: _isParagraph,
         isSubParaAndFirst: _isSubParaAndFirst,
         isSubParaAndNextIsPorINP: _isSubParaAndNextIsPorINP,
+        isNonListIntroLiOrP: _isNonListIntroLiOrP,
         isLeaf: _isLeaf,
         isNumberedHtmlParagraph: _isNumberedHtmlParagraph,
         isSignatureElement: _isSignatureElement,
         isDuplicatedSignatureElement: _isDuplicatedSignatureElement,
         handleIndentAttributes: _handleIndentAttributes,
         copyAllAttributes: _copyAllAttributes,
+        isContentEditable: _isContentEditable,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
@@ -1968,6 +2001,7 @@ define(function leosPluginUtilsModule(require) {
         LEVEL: LEVEL,
         ORDER_LIST_ELEMENT: ORDER_LIST_ELEMENT,
         UNORDERED_LIST_ELEMENT: UNORDERED_LIST_ELEMENT,
+        LIST_ELEMENTS: LIST_ELEMENTS,
         LIST_ITEM: LIST_ITEM,
         DATA_AKN_NAME: DATA_AKN_NAME,
         DATA_AKN_ELEMENT: DATA_AKN_ELEMENT,

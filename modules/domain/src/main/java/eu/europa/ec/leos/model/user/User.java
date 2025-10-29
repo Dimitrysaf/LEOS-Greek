@@ -19,6 +19,7 @@ import java.util.List;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 8047079864010876424L;
+    private final static String ENTITY_EMAIL_ADDRESS = "entity@mail.com";
 
     private Long id;
 
@@ -68,6 +69,10 @@ public class User implements Serializable {
             return connectedEntity;
         }
         return entities != null && !entities.isEmpty() ? entities.get(0) : null;
+    }
+
+    public boolean isEntityUser() {
+        return this.getEmail().equals(ENTITY_EMAIL_ADDRESS) && this.getId().equals(-1L);
     }
 
     public String getEmail() {

@@ -107,7 +107,8 @@ $LIST_SPACING: 40px;
                 }
             }
 
-            &[data-akn-attr-softmove_label]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before {
+            &[data-akn-attr-softmove_label]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before,
+            >  p[data-akn-attr-softmove_label]:not([data-akn-action-enter=delete]):not([data-akn-num]):before {
                 content: attr(data-akn-num) ' ' attr(data-akn-attr-softmove_label);
                 margin-right: 10px;
                 background-color: #808080 !important;

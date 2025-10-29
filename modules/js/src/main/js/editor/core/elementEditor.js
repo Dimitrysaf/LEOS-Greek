@@ -23,6 +23,7 @@ define(function elementEditorModule(require) {
     var UTILS = require("core/leosUtils");
 
     var dialogDefinition = require("./leosEmptyElementDialog");
+    var dialogDefinition2 = require("./leosForbiddenCharactersDialog");
     var leosOneParaArticleDialog = require("./leosOneParaArticleDialog");
     var pluginTools = require("../plugins/pluginTools");
     var leosPluginUtils = require("../plugins/leosPluginUtils");
@@ -354,7 +355,18 @@ define(function elementEditorModule(require) {
     function _canBeSaved(connector, elementId, event) {
         var editor = event.editor;
         UTILS.removeZeroWidthSpaces(elementId);
-        return !_isArticleWithOneNumberedParagraph(elementId, editor) && !_isEmptyElement(elementId, editor);
+        return !_isArticleWithOneNumberedParagraph(elementId, editor) && !_isEmptyElement(elementId, editor) && !_checkForbiddenCharacterPresence(elementId, editor);
+    }
+
+    function _checkForbiddenCharacterPresence(elementId, editor) {
+        if (/<p[^>]*>(?:\s|&nbsp;|<[^>]*>)*[\.,-]/.test(editor.getData())) {
+            pluginTools.addDialog(dialogDefinition2.dialogName, dialogDefinition2.initializeDialog);
+            var dialogCommand2 = editor.addCommand(dialogDefinition2.dialogName, new CKEDITOR.dialogCommand(dialogDefinition2.dialogName));
+            dialogCommand2.exec();
+            _selectRangeForElementId(elementId, editor);
+            return true;
+        }
+        return false;
     }
 
     function _isEmptyElement(elementId, editor) {
@@ -512,8 +524,8 @@ define(function elementEditorModule(require) {
     function _saveElement(connector, elementId, elementType, event) {
         log.debug("Saving element...");
         var editor = event.editor;
-        // LEOS-3418 : to save modification in the Alternatives clause.
-        if (!editor.readOnly || editor.config.isClause) {
+        // LEOS-3418 : to save modification in the Alternatives.
+        if (!editor.readOnly || !leosPluginUtils.isContentEditable(editor)) {
             var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
             // set read-only to prevent changes
             editor.setReadOnly(true);
@@ -811,8 +823,8 @@ define(function elementEditorModule(require) {
         log.debug("Refreshing element editor...");
         var editor = _getEditor();
         if (editor) {
-            // set editable to allow changes
-            editor.setReadOnly(false);
+            // set editable to allow changes if the content is editable.
+            editor.setReadOnly(!leosPluginUtils.isContentEditable(editor));
             // reload XML fragment in editor
             var options = {
                 callback: function () {

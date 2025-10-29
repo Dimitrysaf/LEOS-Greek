@@ -24,7 +24,6 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.collection.CreateCollectionError;
-import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
@@ -253,8 +252,11 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         DocumentVO propDocument = validation.getDocumentToBeCreated();
         String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
         String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
-        String docRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
-        LegDocument savedLegDocument = (LegDocument) findLeosDocument(docRef, LegDocument.class);
+        String originalLanguageCode = StringUtils.defaultIfEmpty(propDocument.getMetadata().getDocTranslationFromLanguage(), languageCode);
+        String originalDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), originalLanguageCode);
+        propDocument.setRef(originalDocRef);
+        String legDocRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+        LegDocument savedLegDocument = (LegDocument)findLeosDocument(legDocRef, LegDocument.class);
         if (savedLegDocument == null) {
             LeosDocument originalProposal = findLeosDocument(propDocument.getRef(), Proposal.class);
             if (originalProposal != null) {
@@ -266,7 +268,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                             String pkgName = createCollectionResult.getPackageName();
                             addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false, "1.0.0");
                         }
-                        collaboratorService.synchCollaborators((Proposal) originalProposal);
+                        collaboratorService.syncCollaborators((Proposal) originalProposal);
                     } catch (Exception e) {
                         LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
                         return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

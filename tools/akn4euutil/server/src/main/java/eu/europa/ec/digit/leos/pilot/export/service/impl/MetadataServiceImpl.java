@@ -14,6 +14,7 @@ import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.util.IdGenerator;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ResourcesUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -111,20 +112,30 @@ public class MetadataServiceImpl implements MetadataService {
     @Override
     public void processAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
-            addAdoptionDate(fieldInfo, xmlFile);
+            this.addAdoptionDateToLongTitle(fieldInfo, xmlFile);
+        }
+        if (MetadataUtil.isBillXmlDocument(xmlFile)) {
+            this.addAdoptionDateToConclusions(fieldInfo, xmlFile);
         }
     }
 
-    private void addAdoptionDate(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        final Node longTitle = xmlFile.getElementByName("longTitle");
-        if (longTitle == null) return;
+    private void addAdoptionDateToLongTitle(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        this.addAdoptionDate(fieldInfo, MetadataUtil.ELEMENT_LONG_TITLE, xmlFile);
+    }
 
-        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, "p");
+    private void addAdoptionDateToConclusions (ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        this.addAdoptionDate(fieldInfo, MetadataUtil.ELEMENT_CONCLUSIONS, xmlFile);
+    }
+
+    private void addAdoptionDate (ReferenceFieldInfo fieldInfo, String parentNodeName, XmlUtil.XmlFile xmlFile) {
+        final Node parent = xmlFile.getElementByName(parentNodeName);
+        if (parent == null) return;
+
+        final Node pNode = XmlUtil.getChildNodeWithName(parent, MetadataUtil.ELEMENT_P);
         if (pNode == null) return;
 
         final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
         if (dateNode == null) return;
-
 
         XmlUtil.setNodeAttributeValue(dateNode, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId());
         final String displayValue = this.readAdoptionDateDisplayValue(fieldInfo, xmlFile);
@@ -158,12 +169,12 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, MetadataUtil.VALUE_MAIN_DOC);
         if (xmlNodeMainDoc == null) {
             return;
         }
 
-        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "placeAndDate");
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, MetadataUtil.VALUE_PLACE_AND_DATE);
         if (xmlNodeBlock == null) {
             return;
         }
@@ -185,7 +196,7 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        List<Node> xmlNodesP = XmlUtil.getChildNodesWithName(xmlNodeConclusions, "p");
+        List<Node> xmlNodesP = XmlUtil.getChildNodesWithName(xmlNodeConclusions, MetadataUtil.ELEMENT_P);
         if (xmlNodesP.isEmpty()) {
             return;
         }
@@ -212,12 +223,12 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, MetadataUtil.VALUE_MAIN_DOC);
         if (xmlNodeMainDoc == null) {
             return;
         }
 
-        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "placeAndDate");
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, MetadataUtil.VALUE_PLACE_AND_DATE);
         if (xmlNodeBlock == null) {
             return;
         }
@@ -444,7 +455,7 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, MetadataUtil.VALUE_MAIN_DOC);
         if (xmlNodeMainDoc == null) {
             return;
         }
@@ -612,7 +623,7 @@ public class MetadataServiceImpl implements MetadataService {
         refElement.setTextContent(reference.getDisplayValue());
         refElement.setAttribute(MetadataUtil.ATTRIBUTE_HREF, reference.getHref());
 
-        final Element referenceElement = xmlFile.newElement("p");
+        final Element referenceElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
         XmlUtil.setNodeAttributeValue(referenceElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         referenceElement.appendChild(xmlFile.createTextNode("{"));
         referenceElement.appendChild(refElement);
@@ -659,7 +670,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         roleNode.setTextContent(fieldInfo.getDisplayValue());
 
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
+        final ReferenceFieldInfo roleFieldInfo = this.getRoleFieldInfo(fieldInfo.getDisplayValue());
         XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
     }
 
@@ -668,10 +679,14 @@ public class MetadataServiceImpl implements MetadataService {
         boolean appendNode = false;
         if (referencesNode == null) return;
 
-        final ReferenceFieldInfo roleFieldInfo = getRoleFieldInfo(fieldInfo.getDisplayValue());
-        if (roleFieldInfo == null) return;
-
+        final ReferenceFieldInfo roleFieldInfo = this.getRoleFieldInfo(fieldInfo.getDisplayValue());
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
+
+        if (roleFieldInfo == null) {
+            XmlUtil.removeNodeFromParent(tlcRoleNode);
+            return;
+        }
+
         if (tlcRoleNode == null) {
             tlcRoleNode = xmlFile.newElement(MetadataUtil.ELEMENT_TLCROLE);
             appendNode = true;
@@ -698,6 +713,15 @@ public class MetadataServiceImpl implements MetadataService {
         if (MetadataUtil.isRoleDirectorGeneral(commissionerValue)) {
             return MetadataUtil.getRoleDirectorGeneralFieldInfo();
         }
+        if (MetadataUtil.isRoleHeadOfService(commissionerValue)) {
+            return MetadataUtil.getRoleHeadOfServiceFieldInfo();
+        }
+        if (MetadataUtil.isRoleHeadOfUnit(commissionerValue)) {
+            return MetadataUtil.getRoleHeadOfUnitFieldInfo();
+        }
+        if (MetadataUtil.isRoleDirector(commissionerValue)) {
+            return MetadataUtil.getRoleDirectoryFieldInfo();
+        }
         return null;
     }
 
@@ -705,5 +729,71 @@ public class MetadataServiceImpl implements MetadataService {
         final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
         if (personNode == null) return;
         personNode.setTextContent(fieldInfo.getDisplayValue());
+    }
+
+    @Override
+    public void removeTemplateClassAttributes(XmlUtil.XmlFile xmlFile) {
+        final NodeList nodeList = xmlFile.getElementsWithAttributeValue(MetadataUtil.ATTRIBUTE_CLASS, MetadataUtil.VALUE_TEMPLATE);
+        for(int i=0; i<nodeList.getLength(); i++) {
+            XmlUtil.removeNodeAttributeValue(nodeList.item(i), MetadataUtil.ATTRIBUTE_CLASS);
+        }
+    }
+
+    public void removeDateIfNeeded(XmlUtil.XmlFile xmlFile) {
+        this.removeConclusionsDateIfNeeded(xmlFile);
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            this.removeCoverPageDateIfNeeded(xmlFile);
+        }
+        if (MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillXmlDocument(xmlFile)) {
+            this.removeLongTitleDateIfNeeded(xmlFile);
+        }
+    }
+
+    private void removeConclusionsDateIfNeeded(XmlUtil.XmlFile xmlFile) {
+        final Node conclusions = xmlFile.getElementByName(MetadataUtil.ELEMENT_CONCLUSIONS);
+        if (conclusions == null) return;
+
+        final Node pNode = XmlUtil.getChildNodeWithName(conclusions, MetadataUtil.ELEMENT_P);
+        if (pNode == null) return;
+
+        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
+        if (dateNode == null) return;
+
+        if (StringUtil.isEmpty(dateNode.getTextContent())) {
+            pNode.removeChild(dateNode);
+        }
+    }
+
+    private void removeCoverPageDateIfNeeded(XmlUtil.XmlFile xmlFile) {
+        final Node coverPage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+        if (coverPage == null) return;
+
+        final Node containerMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(coverPage, MetadataUtil.VALUE_MAIN_DOC);
+        if (containerMainDoc == null) return;
+
+        final Node blockPlaceAndDate = XmlUtil.getXmlChildNodeWithNameAttributeValue(containerMainDoc, MetadataUtil.VALUE_PLACE_AND_DATE);
+        if (blockPlaceAndDate == null) return;
+
+        final Node dateNode = XmlUtil.getChildNodeWithName(blockPlaceAndDate, MetadataUtil.ELEMENT_DATE);
+        if (dateNode == null) return;
+
+        if (StringUtil.isEmpty(dateNode.getTextContent())) {
+            blockPlaceAndDate.removeChild(dateNode);
+        }
+    }
+
+    private void removeLongTitleDateIfNeeded(XmlUtil.XmlFile xmlFile) {
+        final Node longTitle = xmlFile.getElementByName(MetadataUtil.ELEMENT_LONG_TITLE);
+        if (longTitle == null) return;
+
+        final Node pNode = XmlUtil.getChildNodeWithName(longTitle, MetadataUtil.ELEMENT_P);
+        if (pNode == null) return;
+
+        final Node dateNode = XmlUtil.getChildNodeWithName(pNode, MetadataUtil.ELEMENT_DATE);
+        if (dateNode == null) return;
+
+        if (StringUtil.isEmpty(dateNode.getTextContent())) {
+            pNode.removeChild(dateNode);
+        }
     }
 }

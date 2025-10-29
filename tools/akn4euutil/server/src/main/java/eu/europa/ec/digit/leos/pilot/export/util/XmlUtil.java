@@ -163,6 +163,19 @@ public class XmlUtil {
             return this.xmlDocument.getElementsByTagName(name);
         }
 
+        public NodeList getElementsWithAttributeValue(final String attributeName, final String attributeValue) {
+            final XPathFactory xPathFactory = XPathFactory.newInstance();
+            final XPath xPath = xPathFactory.newXPath();
+
+            try {
+                final String compileString = "//*[@" + attributeName + "='" + attributeValue + "']";
+                final XPathExpression xPathExpr = xPath.compile(compileString);
+                return (NodeList)xPathExpr.evaluate(this.xmlDocument, XPathConstants.NODESET);
+            } catch(XPathExpressionException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
         public Document getXmlDocument() {
             return this.xmlDocument;
         }
@@ -441,6 +454,14 @@ public class XmlUtil {
             }
         }
         return deletedNodes;
+    }
+
+    public static boolean removeNodeFromParent(final Node node) {
+        if (node == null || node.getParentNode() == null) {
+            return false;
+        }
+        node.getParentNode().removeChild(node);
+        return true;
     }
 
     public static NodeList getElementsByXPath(Node node, String xPathExpression, boolean namespaceEnabled) {

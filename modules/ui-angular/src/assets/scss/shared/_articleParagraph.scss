@@ -14,6 +14,7 @@
 */
 
 $NUM_WIDTH: 40px;
+$UNNUMBERED_NUM_WIDTH: 20px;
 
 //------------------------------- XML Styles --------------------------------//
 %xmlArticleParagraph {
@@ -28,6 +29,10 @@ $NUM_WIDTH: 40px;
       float: left;
       padding-top: 6pt;
       padding-left: 3px;
+    }
+
+    num:has(> del):not(:has(> ins)) {
+      min-width: $UNNUMBERED_NUM_WIDTH !important;
     }
 
     num[leos\:softaction="del"],
@@ -79,7 +84,7 @@ $NUM_WIDTH: 40px;
     & > li {
       @extend %paddedText;
 
-      &:not([data-akn-action-enter='delete']):not([data-akn-action-number='delete']):not([data-akn-element='subparagraph']):before {
+      &:not([data-akn-action-enter='delete']):not([data-akn-action-number='delete']):not([data-akn-element='subparagraph'])[data-akn-num]:before {
         color: $GREY_COLOR;
         content: attr(data-akn-num);
         min-width: $NUM_WIDTH;
@@ -87,7 +92,7 @@ $NUM_WIDTH: 40px;
       }
     }
 
-    & > li[data-akn-num-id*="deleted"] {
+    & > li[data-akn-num-id*="deleted"][data-akn-num] {
       &:before {
         text-decoration: line-through;
         content: attr(data-akn-num);

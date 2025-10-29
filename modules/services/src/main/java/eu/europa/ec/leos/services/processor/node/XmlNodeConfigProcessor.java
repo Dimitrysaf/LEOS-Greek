@@ -56,6 +56,9 @@ public interface XmlNodeConfigProcessor {
     String FILE_CUID_PRESERVATION = "fileCUID";
     String DOC_CUID_PRESERVATION = "docCUID";
 
+    String DOC_TRANSLATION_FROM_LANGUAGE = "docTranslationFromLanguage";
+    String DOC_TRANSLATION_FROM_HREF = "docTranslationFromHref";
+
     String DOC_VERSION = "docVersion";
     String DOC_REF_COVER = "coverPage";
 
