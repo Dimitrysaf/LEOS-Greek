@@ -47,11 +47,11 @@ define(function leosTableTransformer(require) {
         });
     }
 
-    // Checks if an element is a text element or an inline element
-    function _isTextOrInlineElement(element) {
+    // Checks if an element is a text element, an internal reference or an inline element
+    function _isTextOrInternalRefOrInlineElement(element) {
         var that = this;
         var elementName = that._getElementName(element);
-        return ((elementName === 'text') || CKEDITOR.dtd.$inline.hasOwnProperty(elementName));
+        return ((elementName === 'text') || (elementName === 'mref') || CKEDITOR.dtd.$inline.hasOwnProperty(elementName));
     }
 
     // Parse all the children of a cell (td,th or caption) and map it directly to the Akn cell if these are NOT inline elements
@@ -63,9 +63,9 @@ define(function leosTableTransformer(require) {
         if(childMp) {
             toChild='/mp';
         }
-        // If they are text or inline elements, they should be included in an Akn p element, except it chilMp is false
+        // If they are text, internal reference or inline elements, they should be included in an Akn p element, except it childMp is false
         // This p element should be added only once
-        if (childMp && children.some(_isTextOrInlineElement, that)) {
+        if (childMp && children.some(_isTextOrInternalRefOrInlineElement, that)) {
             that.mapToChildProducts(element, {
                 toPath : rootPath,
                 toChild : 'mp'
