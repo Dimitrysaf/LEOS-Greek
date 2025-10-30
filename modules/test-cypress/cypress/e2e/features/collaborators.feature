@@ -6,7 +6,7 @@ Feature: collaborator section regression features
 
   @reviewerRoleAccess @local
   Scenario: User with reviewer role should not edit TOC or action menu
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -46,7 +46,7 @@ Feature: collaborator section regression features
     Then  total number of row is 1 in collaborators tab
     And   "DEMO Demo" is displayed in row 1 of column name of collaborators tab
     And   "Reviewer" is displayed in row 1 of column role of collaborators tab
-    Given navigate to edit drafting application with "User3"
+    Given navigate to leos application with "User3"
     Then  user is on home page
     When  click on view all acts button
     Then  user is on repository browser page
@@ -69,7 +69,7 @@ Feature: collaborator section regression features
 
   @editRole @local
   Scenario: author can edit the role in collaborator section
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -96,7 +96,7 @@ Feature: collaborator section regression features
 
   @deleteRole @local
   Scenario: author can delete the role in collaborator section
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window

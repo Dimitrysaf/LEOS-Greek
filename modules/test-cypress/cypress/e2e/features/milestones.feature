@@ -4,12 +4,10 @@
 @milestoneSectionScenarios
 Feature: milestone section regression features
 
-    Background:
-        Given navigate to edit drafting application with "User1"
-        Then user is on home page
-
     @validateMilestoneExplorer @local
     Scenario: validate milestone explorer
+        Given navigate to leos application with "User1"
+        Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
@@ -67,6 +65,8 @@ Feature: milestone section regression features
 
     @exportBtnInMilestoneExplorer @nonlocal
     Scenario: navigate to legal act page
+        Given navigate to edit application with "User1"
+        Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window

@@ -6,7 +6,7 @@ Feature: repository browser page Regression Features
 
     @uploadFileNotVisibleNonSupportUser @local
     Scenario: upload button is not present for non support user
-        Given navigate to edit drafting application with "User3"
+        Given navigate to leos application with "User3"
         Then user is on home page
         Then upload act button is not present
         When click on support button
@@ -27,7 +27,7 @@ Feature: repository browser page Regression Features
         
     @uploadNotificationAndLanguageIconSupportUser @local
     Scenario: upload notification button is present for support user
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on notification icon
         Then notification container is displayed

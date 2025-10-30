@@ -7,7 +7,7 @@ Feature: Track Changes Feature
   @trackChanges_on_num_text @local
   Scenario: Basic test to check num's track changes on newly added element
     # Login
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     # Upload file for test
     When click on upload button
@@ -82,7 +82,7 @@ Feature: Track Changes Feature
   # Ticket LEOS#2073
   @toggleTrackChangesAndAddText @local
   Scenario: Toggle track changes and add text in an article in Legal Act
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -119,7 +119,7 @@ Feature: Track Changes Feature
   #https://code.europa.eu/leos/core/-/issues/2913
   @addTrackChangesText @indentWithTrackChanges @local
   Scenario: Basic tests for add track changes text in an article in Legal Act
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -203,7 +203,7 @@ Feature: Track Changes Feature
   # This test will cover: track changes scenarios 1 to 10
   Scenario: Track changes for rules in confluence
     # Login
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     # Upload file for test
     When click on upload button
@@ -338,7 +338,7 @@ Feature: Track Changes Feature
     #   | text | "graph with"        |
     #   | del  | " some more tex"    |
     #   | text | "t to test."        |
-    Given navigate to edit drafting application with "User3"
+    Given navigate to leos application with "User3"
     Then user is on home page
     When click on view all acts button
     Then user is on repository browser page
@@ -410,7 +410,7 @@ Feature: Track Changes Feature
 
   @renumberingRecitalTrackChanges @local
   Scenario: test renumbering of recital when added and edited
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -451,7 +451,7 @@ Feature: Track Changes Feature
 
   @renumberingTrackChanges @local
   Scenario: test renumbering of paragraphs when we add or delete paragraph
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -705,7 +705,7 @@ Feature: Track Changes Feature
 
   @numberedToUnnumberedViceVersaTrackChanges @local
   Scenario: test paragraph mode plugin inside ck editor for numbered and unnumbered paragraph with track changes enabled (cases 1 to 7 of https://code.europa.eu/leos/core/-/issues/1319)
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -956,7 +956,7 @@ Feature: Track Changes Feature
 
   @Cases8To10FromStory1319 @local
   Scenario: Cases 8 to 10 of https://code.europa.eu/leos/core/-/issues/1319
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -1111,9 +1111,9 @@ Feature: Track Changes Feature
     And paragraph 3 of article 4 doesn't contain attribute "leos:action-enter"
     And paragraph 3 of article 4 doesn't contain attribute "leos:action"
 
-#  @Cases11To16FromStory1319 @local @focus
+#  @Cases11To16FromStory1319 @local
 #  Scenario: Cases 11 to 16 of https://code.europa.eu/leos/core/-/issues/1319
-#    Given navigate to edit drafting application with "User1"
+#    Given navigate to leos application with "User1"
 #    Then user is on home page
 #    When click on upload button
 #    Then active upload window label contains "Upload a legislative document"
@@ -1300,7 +1300,7 @@ Feature: Track Changes Feature
 
   @Cases17To20FromStory1319 @local
   Scenario: Cases 17 to 20 of https://code.europa.eu/leos/core/-/issues/1319 and another case from story https://code.europa.eu/leos/core/-/issues/2208 (in comments)
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -1500,7 +1500,7 @@ Feature: Track Changes Feature
 
   @rejectingTrackChanges @local
   Scenario: to test rejecting track changes for different scenarios
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -1584,7 +1584,7 @@ Feature: Track Changes Feature
 
   @movePointInAnnexTrackChanges @local
   Scenario: move of point inside annex using 3 dots and drag and drop
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -1660,7 +1660,7 @@ Feature: Track Changes Feature
 
   @softEnterInLevelAnnexTrackChanges @local
   Scenario: move of point inside annex using 3 dots and drag and drop
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -1690,7 +1690,7 @@ Feature: Track Changes Feature
 
   @importOJTrackChanges @local
   Scenario: import from office journal
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -1734,7 +1734,7 @@ Feature: Track Changes Feature
   # Ticket LEOS#2191 : Track changes- Moving an existing Article inside the Chapter is putting all the text inside article in Track changes
   @deleteElementThoughTOC @moveOldArticleToNewChapter @local
   Scenario: deletion of element through TOC with track changes and move an existing article to a new chapter with track changes
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -1796,7 +1796,7 @@ Feature: Track Changes Feature
 
   @soleRecital @local
   Scenario: Verify numbering remains correct when last recital is deleted
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -1872,7 +1872,7 @@ Feature: Track Changes Feature
 
   @soleArticle @local
   Scenario: Verify numbering remains correct when last article is deleted
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
