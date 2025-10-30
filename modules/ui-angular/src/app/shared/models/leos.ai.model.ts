@@ -83,3 +83,11 @@ export type AnalysisResults = {
   interGenerationResults: AnalysisResultInteroperabilityGeneration[];
   dataFlowsGenerationResults: AnalysisResultDataFlowsGeneration[];
 };
+
+export type AnalysisStatus = 'NOT_YET_IMPORTED' | 'CLASSIFICATION_STARTED' | 'ANALYSIS_STARTED' | 'RESULTS_AVAILABLE';
+
+export type AnalysisType = 'DESCRIPTION_GENERATION'
+  | 'DATA_GENERATION'
+  | 'DIGITAL_SOLUTIONS'
+  | 'INTEROPERABILITY_ASSESSMENT'
+  | 'DATA_FLOW_ANALYSIS';

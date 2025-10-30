@@ -42,6 +42,7 @@ import { LeosLightService } from '@/shared/services/leos-light.service';
 
 import { ViewVersionService } from './view-version.service';
 import { DropdownModel } from '@/shared/dropdown.model';
+import {AIService} from "@/shared/services/ai.service";
 
 @Injectable()
 export class DocumentActionsMandateService extends DocumentActionsService {

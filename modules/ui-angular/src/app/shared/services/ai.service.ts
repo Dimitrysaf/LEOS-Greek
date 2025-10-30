@@ -8,14 +8,16 @@ import {
   Subject,
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
-import {AnalysisResults} from "@/shared/models/leos.ai.model";
+import {AnalysisResults, AnalysisStatus} from "@/shared/models/leos.ai.model";
 
 @Injectable({ providedIn: 'root' })
 export class AIService implements OnDestroy {
   public analysisResult$ : Observable<AnalysisResults>;
+  public analysisStatus$ : Observable<AnalysisStatus>;
 
   private destroy$ = new Subject<void>();
   private analysisResultsBS = new BehaviorSubject<AnalysisResults>(null);
+  private analysisStatusBS = new BehaviorSubject<AnalysisStatus>(null);
 
   constructor(
     private http: HttpClient,
@@ -23,6 +25,7 @@ export class AIService implements OnDestroy {
     private translateService: TranslateService,
   ) {
     this.analysisResult$ = this.analysisResultsBS.asObservable();
+    this.analysisStatus$ = this.analysisStatusBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -31,6 +34,9 @@ export class AIService implements OnDestroy {
   }
 
   prepareAnalysis(proposalRef: string) {
+    if (!proposalRef) {
+      return;
+    }
     this.http
       .put<any>(
         `${apiBaseUrl}/secured/ai/${proposalRef}`,
@@ -41,10 +47,39 @@ export class AIService implements OnDestroy {
       });
   }
 
-  prefillDigitalDimensionsLFDS(proposalRef: string) {
+  getAnalysisStatus(proposalRef: string) {
+    if (!proposalRef) {
+      return;
+    }
     this.http
       .get<any>(
-        `${apiBaseUrl}/secured/ai/${proposalRef}`,
+        `${apiBaseUrl}/secured/ai/status/${proposalRef}`,
+        {},
+      )
+      .subscribe({
+        next: (res: AnalysisStatus) => this.analysisStatusBS.next(res),
+        error: (res) => {
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.editor.ai.prefill.digital.dimensions.lfds.error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
+  prefillDigitalDimensionsLFDS(proposalRef: string, analysisType: string = null) {
+    if (!proposalRef) {
+      return;
+    }
+    this.http
+      .get<any>(
+        analysisType ? `${apiBaseUrl}/secured/ai/${proposalRef}?analysisType=${analysisType}` : `${apiBaseUrl}/secured/ai/${proposalRef}`,
         {},
       )
       .subscribe({

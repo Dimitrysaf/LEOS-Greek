@@ -1,5 +1,10 @@
 package eu.europa.ec.leos.domain.ai;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class AnalysisResult {
     public int id;
     public String legal_resource_celex;

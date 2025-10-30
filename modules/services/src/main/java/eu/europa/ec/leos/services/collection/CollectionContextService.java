@@ -76,6 +76,7 @@ public abstract class CollectionContextService {
     private static final String PROPOSAL_PURPOSE_IS_REQUIRED = "Proposal purpose is required!";
     private static final String PROPOSAL_PROCEDURE_TYPE_IS_REQUIRED = "Proposal procedure type is required!";
     private static final String PROPOSAL_ACT_TYPE_IS_REQUIRED = "Proposal act type is required!";
+    private static final String PROPOSAL_AI_VALUES_IS_REQUIRED = "Proposal ai values is required!";
     private static final String PROPOSAL_METADATA_IS_REQUIRED = "Proposal metadata is required!";
     protected static final String TEMPLATE = "template";
     protected static final String ACT_TYPE = "actType";
@@ -119,6 +120,7 @@ public abstract class CollectionContextService {
     protected List<String> authenticLang;
     protected LeosAuthenticLanguage isAuthenticLang;
     protected LeosCoverPageType coverPageType;
+    private String aiValues;
     private DocumentVO propDocument;
     private String propChildDocument;
     private String proposalComment;
@@ -233,7 +235,12 @@ public abstract class CollectionContextService {
         this.actType = actType;
     }
 
-    public void useEeaRelevance(Boolean eeaRelevance) {
+    public void useAiValues(String aiValues) {
+        LOG.trace("Using Proposal aiValues... [aiValues={}]", aiValues);
+        this.aiValues = aiValues;
+    }
+
+    public void useEeaRelevance(boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
     }
@@ -664,6 +671,7 @@ public abstract class CollectionContextService {
                 .withEeaRelevance(eeaRelevance)
                 .withIsAuthenticLang(isAuthenticLang)
                 .withCoverPageType(coverPageType)
+                .withAiValues(aiValues)
                 .build();
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);
