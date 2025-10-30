@@ -193,7 +193,7 @@ export class ProposalCreateTemplateSelectorComponent
 
   private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
-      item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? item.items.flatMap(getChildTemplates) : [item];
     const templates = catalogItems.flatMap(getChildTemplates);
     return templates.reduce(
       (map, item) => map.set(item.key, item),
@@ -231,10 +231,10 @@ export class ProposalCreateTemplateSelectorComponent
     let tooltipLabel = this.proposalService.getTranslation(names);
     const label = customName ? (key.substring(0, key.lastIndexOf('_')) + ' - ' + customName) : tooltipLabel;
     const iconClass =
-      type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
-    let disabled = !enabled;
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? iconClassCategory : iconClassTemplate;
+    const disabled = !enabled;
     const children =
-      type === 'CATEGORY' && !hidden && enabled
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !hidden && enabled
         ? items
             .filter((child) => !child.hidden &&
               (!child.visibleTo || child.visibleTo.trim() === '' ||
@@ -242,33 +242,23 @@ export class ProposalCreateTemplateSelectorComponent
                   child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))))
             .map((child) => this.catalogItemToTreeItem(child))
         : [];
-    const isEmptyCategory = type === 'CATEGORY' && !children.length;
-    const isTemplate = type !== 'CATEGORY';
-    const sameTemplate = (this.proposalTemplate && key === this.proposalTemplate);
-    const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
-    disabled = disabled || this.disabled || !isSameDocCollection || sameTemplate;
+    const isEmptyCategory = (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !children.length;
+    const isTemplate = type === 'TEMPLATE';
 
-    if(isEmptyCategory){
-      tooltipLabel = 'empty-category';
-    }else if(isTemplate){
-      if(this.disabled){
-        tooltipLabel = 'Invalid selection';
-      }else if(!isSameDocCollection) {
-        tooltipLabel = 'Invalid selection. Different category type';
-      }else if(sameTemplate){
-        tooltipLabel = 'Invalid selection. Cannot choose same template type';
-      }
-    }
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate,
+      selectable: isTemplate,
       treeContentBlock: {
         id,
         key,
         label,
         disabled,
         iconSvgName: iconClass,
-        tooltipLabel: tooltipLabel, // Adjust tooltipLabel based on conditions
+        tooltipLabel: isEmptyCategory
+          ? 'empty-category'
+          : isTemplate
+            ? 'template'
+            : '', // Adjust tooltipLabel based on conditions
         // Add other properties as needed
       },
     };

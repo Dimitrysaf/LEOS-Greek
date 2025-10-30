@@ -70,7 +70,8 @@ import java.util.stream.Collectors;
             String[] collaboratorRootEntity = collaborator.getEntity().split("\\.", 2);
             for (Entity entity : authenticatedUser.getEntities()) {
                 String[] userRootEntity = entity.getName().split("\\.", 2);
-                if (userRootEntity[0].equals(collaboratorRootEntity[0])) {
+                if (entity.getOrganizationName().equalsIgnoreCase(collaborator.getEntity()) ||
+                        userRootEntity[0].equalsIgnoreCase(collaboratorRootEntity[0])) {
                     return collaborator.getRole();
                 }
             }

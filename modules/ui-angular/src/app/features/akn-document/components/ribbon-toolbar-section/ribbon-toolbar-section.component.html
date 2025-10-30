@@ -4,7 +4,14 @@
   [mainContainerId]="mainContainerId"
 >
 </app-zoom-scrollbar>
-<div class="section-container" [ngClass]="item.sectionContainerCssClasses">
+<!-- Special rendering for track changes to bypass resize logic -->
+<div class="section-container" [ngClass]="item.sectionContainerCssClasses" *ngIf="item.id === 'SEE-TRACK_CHANGES-ID'">
+  <div [id]="item.id" class="section-content" [ngClass]="item.cssClasses">
+    <ng-template *ngTemplateOutlet="sectionItems; context: { items: item.children }"></ng-template>
+  </div>
+  <div euiLabel euiSizeS class="align-self-center eui-u-text-center">{{ itemLabelValue }}</div>
+</div>
+<div class="section-container" [ngClass]="item.sectionContainerCssClasses" *ngIf="item.id !== 'SEE-TRACK_CHANGES-ID'">
     <!-- Normal rendering for items not resized or sections with one children in this case children = section -->
     <div
             [id]="item.id"

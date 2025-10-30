@@ -243,13 +243,13 @@ public class GenericDocumentApiService {
         List<TocItem> tocItems = structure.getTocItems();
         List<AlternateConfig> alternateConfigs = structure.getAlternateConfigs();
         List<RefConfig> refConfigs = structure.getRefConfigs();
+        languageGroupService.getLanguageMap();
         Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray = StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, documentMetadata.getLanguage());
         Map<String, Attribute> articleTypesConfig = getArticleTypesAttributes(tocItems);
         Proposal proposal = this.getDocProposal(document);
         // Note: proposal can be null in cases of leos light scenarios
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null && proposal.isClonedProposal();
-        languageGroupService.getLanguageMap();
         String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), documentMetadata.getLanguage());
         String contextRole = null;
         Profile profile = null;

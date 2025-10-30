@@ -202,63 +202,46 @@ export class ProposalsFiltersComponent
   }
 
   private groupFilterCatalogItems(catalog: CatalogItem[]) {
-    const { proceduresDepth, actsDepth, templatesDepth } =
-      this.getCatalogItemTypeDepths(catalog) ?? {};
     const groups = {
       procedures: [] as CatalogItem[],
       acts: [] as CatalogItem[],
       templates: [] as CatalogItem[],
     };
 
-    if (!templatesDepth) {
-      return groups;
-    }
-
-    const addCatalogItemToGroups = (item: CatalogItem, depth = 0) => {
-      // i am commenting out this line of code since it seems that hidden isn't used for the groupping of the filters
-      // instead for the filtering of the selection in the template tree
-      // TODO : Confirm the remove of this code
-      // if (item.hidden) {
-      //   return;
-      // }
-
-      if (depth === proceduresDepth) {
-        groups.procedures.push(item);
-      } else if (depth === actsDepth) {
-        groups.acts.push(item);
-      } else if (depth === templatesDepth) {
+    const addCatalogItemToGroups = (item: CatalogItem, parent: CatalogItem = null, grandparent: CatalogItem = null) => {
+      if (item.type === 'TEMPLATE') {
         groups.templates.push(item);
+        // if (grandparent != null && groups.procedures.indexOf(grandparent) === -1) {
+        //   groups.procedures.push(grandparent);
+        // }
+        // if (parent != null && groups.acts.indexOf(parent) === -1) {
+        //   groups.acts.push(parent);
+        // }
+      }
+      if (item.type === 'ACT') {
+        groups.acts.push(item);
+      }
+      if (item.type === 'PROCEDURE') {
+        groups.procedures.push(item);
       }
 
-      if (item.type === 'CATEGORY' && item.enabled) {
-        item.items.forEach((child) => addCatalogItemToGroups(child, depth + 1));
+      if (item.type !== 'TEMPLATE' && item.enabled) {
+        grandparent = parent;
+        parent = item;
+        item.items.forEach((child) => addCatalogItemToGroups(child, parent, grandparent));
       }
     };
 
     catalog.forEach((item) => addCatalogItemToGroups(item));
 
+    let self = this;
+    groups.templates.sort(function(a, b) {
+      let textA = self.proposalService.getTranslation(a.names).toUpperCase();
+      let textB = self.proposalService.getTranslation(b.names).toUpperCase();
+      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    });
+
     return groups;
-  }
-
-  private getCatalogItemTypeDepths(catalog: CatalogItem[]) {
-    let templatesDepth: number;
-    const findTemplateDepth = (item: CatalogItem, depth = 0) => {
-      if (item.type === 'TEMPLATE') {
-        templatesDepth = depth;
-        return true;
-      }
-      return item.items.some((child) => findTemplateDepth(child, depth + 1));
-    };
-    catalog.some(findTemplateDepth);
-
-    if (templatesDepth === undefined) {
-      return;
-    }
-    return {
-      proceduresDepth: templatesDepth - 2,
-      actsDepth: templatesDepth - 1,
-      templatesDepth,
-    };
   }
 
   private buildForm() {

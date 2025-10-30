@@ -16,6 +16,19 @@
   overflow: hidden;
   position: relative;
 
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 0.25rem;
+    height: 60px;
+    
+    app-ribbon-toolbar-section {
+      flex-shrink: 0;
+      min-width: auto;
+    }
+  }
+
   .scroll-button {
     position: fixed;
     top: 40%;
@@ -31,5 +44,13 @@
     @extend .scroll-button;
 
     right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Always show labels for track changes buttons on mobile */
+  button[id*="TRACK_CHANGES"] div[euiLabel],
+  button[id*="track_changes"] div[euiLabel] {
+    display: block !important;
   }
 }

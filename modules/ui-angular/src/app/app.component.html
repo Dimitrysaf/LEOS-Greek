@@ -19,14 +19,16 @@
 
       <eui-toolbar-items [euiPositionRight]="false">
         <eui-toolbar-item>
-          <a euiButton euiPrimary [href]="headerLogoUrl" [appMoveToLeftSideToolbar]="'eui-toolbar__left'">
-            {{ 'app.breadcrumb.home' | translate }}
+          <a euiButton euiPrimary [href]="headerLogoUrl" [appMoveToLeftSideToolbar]="'eui-toolbar__left'" class="toolbar-home-btn">
+            <eui-icon-svg icon="eui-home" class="mobile-only"></eui-icon-svg>
+            <span class="desktop-only">{{ 'app.breadcrumb.home' | translate }}</span>
           </a>
         </eui-toolbar-item>
         <eui-toolbar-item>
           <eui-dropdown [appMoveToLeftSideToolbar]="'eui-toolbar__left'">
-            <button euiButton euiPrimary>
-            <span euiLabel>{{
+            <button euiButton euiPrimary class="toolbar-support-btn">
+            <eui-icon-svg icon="eui-question-circle" class="mobile-only"></eui-icon-svg>
+            <span euiLabel class="desktop-only">{{
                 'page.workspace.filter.filters.roles.support' | translate
               }}</span>
               <eui-icon-svg icon="eui-chevron-down"></eui-icon-svg>

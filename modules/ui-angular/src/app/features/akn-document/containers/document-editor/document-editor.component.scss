@@ -281,6 +281,12 @@ app-document {
   width: 10px;
 }
 
+@media (max-width: 768px) {
+  eui-page-columns {
+    flex-direction: column !important;
+  }
+}
+
 .eui-page-content--blocked {
   > * {
     pointer-events: none;

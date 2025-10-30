@@ -17,4 +17,4 @@ export interface CatalogItem {
   originalDg: string;
 }
 
-export type CatalogItemType = 'CATEGORY' | 'TEMPLATE';
+export type CatalogItemType = 'CATEGORY' | 'TEMPLATE' | 'ACT' | 'PROCEDURE';

@@ -52,3 +52,7 @@ Then(/^contribution view container is displayed$/, function () {
 Then(/^contribution view container is not displayed$/, function () {
     contributionPage.elements.contributionViewContainer().should('not.exist');
 });
+
+Then(`wrapper is not present for element {string} {int}`, (eltName, eltNumber) => {
+    contributionPage.getElementInContribution(eltName, eltNumber).nextAll().should('have.length', 0);
+});

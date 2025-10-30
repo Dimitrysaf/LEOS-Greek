@@ -1160,7 +1160,8 @@ define(function leosArticleListPluginModule(require) {
                             }
 
                             var pathElement = path.lastElement;
-                            if (pathElement.getName() === 'p' && (pathElement.getChildCount() == 0 || (pathElement.getChildCount() == 1 && pathElement.getBogus()))) {
+                            if (!path.contains('table') && pathElement.getName() === 'p'
+                                    && (pathElement.getChildCount() == 0 || (pathElement.getChildCount() == 1 && pathElement.getBogus()))) {
                                 pathElement.remove();
                                 evt.cancel();
                             } else if ( isAtEnd && next ) {

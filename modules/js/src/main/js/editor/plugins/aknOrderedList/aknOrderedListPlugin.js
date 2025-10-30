@@ -290,12 +290,18 @@ define(function aknOrderedListPluginModule(require) {
         selection.selectRanges(savedRanges);
     }
 
-    function _handleNode(node, editor, isIndent) {
+    function _handleNode(node, editor, isIndent, isChild) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT){
             return;
         }
-        leosPluginUtils.handleIndentAttributes(node, editor, isIndent);
-        node.getChildren().toArray().forEach(_handleNode.bind(this, editor, isIndent));
+        let point = node.getAscendant(el => leosPluginUtils.isNonListIntroLiOrP(el), true);
+        leosPluginUtils.handleIndentAttributes(point, editor, isIndent, isChild);
+
+        point.findOne(leosPluginUtils.LIST_ELEMENTS)?.getChildren().toArray().forEach((child) => {
+            if (leosPluginUtils.getElementName(child) === leosPluginUtils.HTML_POINT && !leosPluginUtils.isListIntro(child)) {
+                _handleNode(child, editor, isIndent, true);
+            }
+        });
     }
 
     /*

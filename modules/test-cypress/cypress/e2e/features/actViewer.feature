@@ -5,7 +5,7 @@
 Feature: act viewer page Regression Features
 
   Background:
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -17,7 +17,7 @@ Feature: act viewer page Regression Features
 
   @createMilestone @local
   Scenario: verify that user is able to create milestone
-    Given click on details tab in act view page
+    When click on details tab in act view page
     Then active tab name is "Details"
     And  template name is "SJ-023" in details tab
     And  confidentiality level is "STANDARD" in details tab
@@ -43,8 +43,13 @@ Feature: act viewer page Regression Features
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 2
     When click on actions button
-    Then export as pdf button is present
-    Then  export as legiswrite button is present
+    Then below buttons are present under actions dropdown
+      | buttonName           |
+      | Download             |
+      | Export as PDF        |
+      | Export as Legiswrite |
+      | Validate             |
+      | Delete               |
     When click on download button
     When  extract recent "zip" file present in download folder
     When  extract recent "leg" file present in download folder

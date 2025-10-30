@@ -97,11 +97,17 @@ module.exports = defineConfig({
     },
     experimentalStudio: true,
     specPattern: "cypress/e2e/**/*.feature",
-    watchForFileChanges: false
+    watchForFileChanges: false,
+    chromeWebSecurity: false,
+    experimentalSessionAndOrigin: true
   },
   env: {
     "localDraftingUrl": "localhost:8080/leos-pilot/ui",
-    "devDraftingUrl": "intragate.development.ec.europa.eu/decide-drafting/ui/",
+    "eCasAcceptanceUrl": "https://intragate.acceptance.ec.europa.eu/cas/login",
+    "eCasProductionUrl": "https://intragate.ec.europa.eu/cas/login",
+    "featureDraftingUrl": "https://intragate.development.ec.europa.eu/decide-features/ui/",
+    "devDraftingUrl": "https://intragate.development.ec.europa.eu/decide-drafting/ui/",
+    "testDraftingUrl": "https://intragate.test.ec.europa.eu/decide-drafting/ui/",
     "localImportProposalApiUrl": "http://localhost:8080/leos-pilot/api/secured/editlight/importProposal",
     "localImportDocumentApiUrl": "http://localhost:8080/leos-pilot/api/secured/leos-light/import-document",
     "localContextTokenApiUrl": "http://localhost:8080/leos-pilot/api/leos-light/context-token",
