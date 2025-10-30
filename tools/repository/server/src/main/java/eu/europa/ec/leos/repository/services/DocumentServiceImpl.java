@@ -881,8 +881,6 @@ public class DocumentServiceImpl implements DocumentService {
                 if (filter.nullCheck) {
                     queryBuild.append(" AND ( ");
                     queryBuild.append(columnName);
-                    queryBuild.append(" IS NULL OR ");
-                    queryBuild.append(columnName);
                     queryBuild.append(" = '-' ");
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
@@ -1066,6 +1064,9 @@ public class DocumentServiceImpl implements DocumentService {
         if (metadata.get(PropertiesMetadata.DOC_TYPE.getLeosName()) != null) {
             content.setDocType((String) metadata.get(PropertiesMetadata.DOC_TYPE.getLeosName()));
         }
+        if (metadata.get(PropertiesMetadata.ACT_TYPE.getLeosName()) != null) {
+            content.setActType((String) metadata.get(PropertiesMetadata.ACT_TYPE.getLeosName()));
+        }
         if (metadata.get(PropertiesMetadata.TITLE.getLeosName()) != null) {
             content.setTitle((String) metadata.get(PropertiesMetadata.TITLE.getLeosName()));
         }
@@ -1142,6 +1143,7 @@ public class DocumentServiceImpl implements DocumentService {
         content.setLastModifiedBy(userId);
         content.setLastModificationDate(LocalDateTime.now());
 
+
         Boolean eeaRelevance = ConversionUtils.convertBoolean(metadata.get(PropertiesMetadata.EEA_RELEVANCE.getLeosName()));
         if (eeaRelevance != null) {
             content.setEeaRelevance(eeaRelevance);
@@ -1166,6 +1168,11 @@ public class DocumentServiceImpl implements DocumentService {
             content.setDocType(prevVersion.getDocType());
         } else {
             content.setDocType("-");
+        }
+        if (metadata.get(PropertiesMetadata.ACT_TYPE.getLeosName()) != null) {
+            content.setActType((String) metadata.get(PropertiesMetadata.ACT_TYPE.getLeosName()));
+        } else if (prevVersion != null) {
+            content.setActType(prevVersion.getActType());
         }
         content.setVersion(docVersion);
         if (metadata.get(PropertiesMetadata.TITLE.getLeosName()) != null) {

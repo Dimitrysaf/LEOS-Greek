@@ -146,7 +146,7 @@ export class ProposalCreateTemplateSelectorComponent
 
   private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
-      item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? item.items.flatMap(getChildTemplates) : [item];
     const templates = catalogItems.flatMap(getChildTemplates);
     return templates.reduce(
       (map, item) => map.set(item.key, item),
@@ -183,10 +183,10 @@ export class ProposalCreateTemplateSelectorComponent
     const { id, key, names, type, enabled, items, hidden, visibleTo } = item;
     const label = this.proposalService.getTranslation(names);
     const iconClass =
-      type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? iconClassCategory : iconClassTemplate;
     const disabled = !enabled;
     const children =
-      type === 'CATEGORY' && !hidden && enabled
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !hidden && enabled
         ? items
             .filter((child) => !child.hidden &&
               (!child.visibleTo || child.visibleTo.trim() === '' ||
@@ -194,8 +194,8 @@ export class ProposalCreateTemplateSelectorComponent
                   child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))))
             .map((child) => this.catalogItemToTreeItem(child))
         : [];
-    const isEmptyCategory = type === 'CATEGORY' && !children.length;
-    const isTemplate = type !== 'CATEGORY';
+    const isEmptyCategory = (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !children.length;
+    const isTemplate = type === 'TEMPLATE';
 
     const node: TreeNode = {
       isExpanded: this.isExpanded,

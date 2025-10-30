@@ -10,7 +10,7 @@ public abstract class LeosMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
     private final LeosCategory category;
     protected final String stage;
-    protected final String type;
+    protected String type;
     protected final String purpose;
     protected final String template;
     protected final String language;
@@ -65,6 +65,10 @@ public abstract class LeosMetadata implements Serializable {
 
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getPurpose() {

@@ -13,7 +13,8 @@ export type ListProposalsWithFilterBodyFilter =
   | { type: 'procedureType'; value: ProcedureType[] }
   | { type: 'template'; value: string[] }
   | { type: 'role'; value: Role[] }
-  | { type: 'docType'; value: string[] }
+  | { type: 'actType'; value: string[] }
+  | { type: 'customTemplates'; value: string[] }
   | { type: 'title'; value: string[] };
 
 export interface ListProposalsWithFilterResponse {

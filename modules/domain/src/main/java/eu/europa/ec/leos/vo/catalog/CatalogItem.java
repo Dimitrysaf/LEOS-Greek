@@ -23,7 +23,9 @@ public class CatalogItem {
     public enum ItemType {
         CATEGORY,
         TEMPLATE,
-        DOCUMENT
+        DOCUMENT,
+        ACT,
+        PROCEDURE
     }
 
     private ItemType type;

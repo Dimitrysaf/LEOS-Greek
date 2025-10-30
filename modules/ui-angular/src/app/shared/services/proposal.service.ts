@@ -61,7 +61,7 @@ export class ProposalService {
     }
     if (formFilters.acts?.length) {
       reqFilters.push({
-        type: 'docType',
+        type: 'actType',
         value: [...formFilters.acts].sort(),
       });
     }
