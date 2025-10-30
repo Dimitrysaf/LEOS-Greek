@@ -89,7 +89,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         templatePropertiesMap.put(DOCUMENT_DEFAULT_FALSE_TEMPLATES, "");
         try {
             catalogItems = templateKey.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) ?
-                    customTemplateService.getCustomTemplatesCatalog() :
+                    customTemplateService.getCustomTemplatesCatalog(securityContext.getUser().getDefaultEntity().getOrganizationName()) :
                     templateService.getTemplatesCatalog();
             getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
         } catch (IOException e) {

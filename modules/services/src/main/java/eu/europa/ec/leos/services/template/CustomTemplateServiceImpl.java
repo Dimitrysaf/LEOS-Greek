@@ -47,8 +47,8 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
 
 
     @Override
-    public List<CatalogItem> getCustomTemplatesCatalog() throws IOException {
-        String customTemplatesCatalog = userHelper.getUserDgCustomTemplatesCatalog();
+    public List<CatalogItem> getCustomTemplatesCatalog(String entityName) throws IOException {
+        String customTemplatesCatalog = userHelper.getUserDgCustomTemplatesCatalog(entityName);
         return templateService.getTemplatesCatalog(customTemplatesCatalog);
     }
 

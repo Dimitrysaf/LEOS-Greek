@@ -37,19 +37,36 @@
             </select>
         </div>
 
-        <button
-                euiButton
-                euiIconButton
-                [title]="isExpanded ? 'Collapse All' : 'Expand All'"
-                (click)="toggleExpanded()"
-                [attr.aria-label]="isExpanded ? 'Collapse All' : 'Expand All'"
-        >
+        <div class="eui-u-mr-l">
+          <button
+            euiButton
+            euiIconButton
+            [title]="isExpanded ? 'Collapse All' : 'Expand All'"
+            (click)="toggleExpanded()"
+            [attr.aria-label]="isExpanded ? 'Collapse All' : 'Expand All'"
+          >
             <eui-icon-svg
-                    [icon]="isExpanded ? 'contract' : 'expand'"
-                    set="outline"
-                    size="l"
+              [icon]="isExpanded ? 'contract' : 'expand'"
+              set="outline"
+              size="l"
             ></eui-icon-svg>
-        </button>
+          </button>
+        </div>
+
+      <div class="eui-u-mr-l" style="width: 244px" *ngIf="isCustomTemplatesCatalog && dgList.length > 1">
+        <select
+          euiSelect
+          name="dg"
+          [(ngModel)]="selectedDg"
+          (ngModelChange)="onDgChange($event)"
+          title="DG"
+          aria-label="DG"
+        >
+          <option *ngFor="let dg of dgList" [value]="dg.organizationName">
+            {{ dg.organizationName }}
+          </option>
+        </select>
+      </div>
     </div>
 
     <eui-tree

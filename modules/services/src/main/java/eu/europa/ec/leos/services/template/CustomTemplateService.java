@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CustomTemplateService {
 
-    List<CatalogItem> getCustomTemplatesCatalog() throws IOException;
+    List<CatalogItem> getCustomTemplatesCatalog(String entityName) throws IOException;
 
     void publishTemplate(String legFileId, String templateName, List<String> dgCodes);
 

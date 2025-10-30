@@ -129,6 +129,10 @@ public class UserHelper {
         return templatesCatalog + "-" + securityContext.getUser().getDefaultEntity().getOrganizationName();
     }
 
+    public String getUserDgCustomTemplatesCatalog(String entityName) {
+        return templatesCatalog + "-" + entityName;
+    }
+
     public User validateTemplateManagerRole(String errorMessage) throws IllegalStateException{
         // Validate authenticated user exists
         User user = securityContext.getUser();

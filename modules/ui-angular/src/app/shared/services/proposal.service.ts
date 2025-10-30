@@ -192,9 +192,9 @@ export class ProposalService {
     this.proposals$ = this.proposalResponse$.pipe(pluck('proposals'));
   }
 
-  loadCustomTemplateCatalog() {
+  loadCustomTemplateCatalog(dg) {
     this.http
-      .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getCustomTemplates`)
+      .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getCustomTemplates/${dg}`)
       .subscribe((customTemplatesCatalog) => {
         this.customTemplateCatalogBS.next(customTemplatesCatalog);
       });

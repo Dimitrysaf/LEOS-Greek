@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ApplicationRole, CatalogItem} from "@/shared";
 import {EuiBadgeModule} from "@eui/components/eui-badge";
 import {EuiButtonModule} from "@eui/components/eui-button";
@@ -13,7 +13,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {EuiTreeSelectionChanges} from "@eui/components/eui-tree/eui-tree.model";
 import {appConfig} from "../../../../config";
 import {ProposalService} from "@/shared/services/proposal.service";
-import {Subject, takeUntil} from "rxjs";
+import {skip, Subject, takeUntil} from "rxjs";
 import {EuiAllModule} from "@eui/components";
 import {
   ProposalMilestonePublishToCatalogDialogComponent
@@ -24,6 +24,8 @@ import {MilestoneDescriptor} from "@/shared/components/proposal-milestone-view/p
 import {Router} from "@angular/router";
 import {AppConfigService} from "@/core/services/app-config.service";
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
+import {EuiDialogComponent} from "@eui/components/eui-dialog";
+import {LoadingService} from "@/shared/services/loading.service";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -51,7 +53,7 @@ const iconClassTemplate = 'document:sharp';
   templateUrl: './proposal-view-custom-template.component.html',
   styleUrl: './proposal-view-custom-template.component.scss'
 })
-export class ProposalViewCustomTemplateComponent {
+export class ProposalViewCustomTemplateComponent implements OnInit{
 
   @Input() translationKey: 'document' | 'draft' = 'document';
   @Input() isCopyChangeAct!: boolean;
@@ -60,6 +62,7 @@ export class ProposalViewCustomTemplateComponent {
   @Input() proposalTemplate!: string;
   @Input() userRoles!: ApplicationRole[];
   @ViewChild('treeComponent') treeComponent: EuiTreeComponent;
+  @ViewChild('unPublishConfirmation') unPublishConfirmation: EuiDialogComponent;
   @ViewChild('updateNameAndDgTemplateCatalog')
   updateNameAndDgTemplateCatalog: ProposalMilestonePublishToCatalogDialogComponent;
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
@@ -85,6 +88,7 @@ export class ProposalViewCustomTemplateComponent {
 
   isExpanded: boolean;
   templates: Map<string, CatalogItem> = new Map();
+  loading: boolean = true;
 
   private documentRef: String;
 
@@ -94,23 +98,26 @@ export class ProposalViewCustomTemplateComponent {
     private detailsService: ProposalDetailsService,
     private appConfig: AppConfigService,
     private cd: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit() {
     this.appConfig.config.subscribe((config) => {
       this.defaultEntity = config.user.defaultEntity.organizationName
     });
-    this.proposalService.loadCustomTemplateCatalog();
-    this.initialize();
-  }
-  initialize() {
-      this.proposalService.customTemplateCatalog$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((catalog) => {
-          this.loadTemplates(catalog);
-          this.cd.detectChanges(); // trigger `treeComponent` update
-        });
+    this.loading = true;
+    this.loadingService.setLoading(true);
+    this.proposalService.loadCustomTemplateCatalog(this.defaultEntity);
+    this.proposalService.customTemplateCatalog$
+      .pipe(  skip(1), // skip BehaviorSubject initial emission
+        takeUntil(this.destroy$))
+      .subscribe((catalog) => {
+        this.loadTemplates(catalog);
+        this.loadingService.setLoading(false);
+        this.loading = false;
+        this.cd.detectChanges(); // trigger `treeComponent` update
+      });
   }
 
   private loadTemplates(catalogItems: CatalogItem[] | null) {
@@ -123,12 +130,11 @@ export class ProposalViewCustomTemplateComponent {
   private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
       item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
-    const templates = catalogItems.flatMap(getChildTemplates)
-      .filter(template => !this.defaultEntity || template.originalDg === this.defaultEntity)
-    return templates.reduce(
+    const templates = catalogItems.flatMap(getChildTemplates).reduce(
       (map, item) => map.set(item.key, item),
       new Map<string, CatalogItem>(),
     );
+    return templates;
   }
 
   private catalogToTreeNodes(catalogItems: CatalogItem[]) {
@@ -163,6 +169,7 @@ export class ProposalViewCustomTemplateComponent {
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
     const isTemplate = type !== 'CATEGORY';
+    const isOriginalDg = item.originalDg === this.defaultEntity;
     const sameTemplate = (this.proposalTemplate && key === this.proposalTemplate);
     const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
     disabled = disabled || this.disabled || !isSameDocCollection || sameTemplate;
@@ -180,7 +187,7 @@ export class ProposalViewCustomTemplateComponent {
     }
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate,
+      selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate && isOriginalDg,
       treeContentBlock: {
         id,
         key,
@@ -322,14 +329,8 @@ export class ProposalViewCustomTemplateComponent {
 
   unPublishTemplateCatalog(event) {
     const key: string = event.treeContentBlock.key;
-    setTimeout(() => this.detailsService.unPublishTemplate(key).subscribe({
-        next:() =>{
-          this.reloadTemplate(); // reload happens here
-        },
-      error: (error) => {
-        console.log(error);
-      }
-    }), 0);
+    this.unPublishConfirmation.content = key;
+    this.unPublishConfirmation.openDialog();
   }
 
   viewTemplate() {
@@ -339,6 +340,24 @@ export class ProposalViewCustomTemplateComponent {
   }
 
   reloadTemplate() {
-    this.proposalService.loadCustomTemplateCatalog();
+    this.proposalService.loadCustomTemplateCatalog(this.defaultEntity);
+  }
+
+  closeUnPublish() {
+    this.unPublishConfirmation.closeDialog();
+    this.unPublishConfirmation.content = null;
+  }
+
+  acceptUnPublish() {
+    const key = <string>this.unPublishConfirmation.content;
+    setTimeout(() => this.detailsService.unPublishTemplate(key).subscribe({
+      next: () => {
+        this.reloadTemplate(); // reload happens here
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }), 0);
+    this.closeUnPublish();
   }
 }

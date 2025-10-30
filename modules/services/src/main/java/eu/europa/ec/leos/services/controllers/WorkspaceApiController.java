@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Collections;
 import java.util.List;
@@ -99,11 +100,11 @@ public class WorkspaceApiController {
         }
     }
 
-    @RequestMapping(value = "/getCustomTemplates", method = RequestMethod.GET)
+    @RequestMapping(value = "/getCustomTemplates/{entityName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> getCustomTemplates() {
+    public ResponseEntity<Object> getCustomTemplates(@PathVariable String entityName) {
         try {
-            List<CatalogItem> catalogItems = apiService.getCustomTemplates();
+            List<CatalogItem> catalogItems = apiService.getCustomTemplates(entityName);
             return new ResponseEntity<>(catalogItems, HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             if (StringUtils.startsWith(ex.getMessage(), "404 NOT_FOUND")) {
