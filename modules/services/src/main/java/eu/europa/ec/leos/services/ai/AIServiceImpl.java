@@ -2,11 +2,6 @@ package eu.europa.ec.leos.services.ai;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.europa.ec.leos.domain.ai.AnalysisResultDataFlowsGeneration;
-import eu.europa.ec.leos.domain.ai.AnalysisResultDataGeneration;
-import eu.europa.ec.leos.domain.ai.AnalysisResultDescriptionGeneration;
-import eu.europa.ec.leos.domain.ai.AnalysisResultInteroperabilityGeneration;
-import eu.europa.ec.leos.domain.ai.AnalysisResultSolutionsGeneration;
 import eu.europa.ec.leos.domain.ai.AnalysisResults;
 import eu.europa.ec.leos.domain.ai.AnalysisStatus;
 import eu.europa.ec.leos.domain.ai.LFDSSections;
@@ -17,13 +12,12 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.integration.AIProvider;
 import eu.europa.ec.leos.repository.document.BillRepository;
-import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
-import eu.europa.ec.leos.services.label.ReferenceLabelService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.store.PackageService;
-import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.utils.AIUtils;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
@@ -32,16 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-
-import static eu.europa.ec.leos.services.support.XmlHelper.ID;
-import static eu.europa.ec.leos.services.support.XmlHelper.MREF;
-import static eu.europa.ec.leos.services.support.XmlHelper.REF;
 
 @Service
 public class AIServiceImpl implements AIService {
@@ -51,19 +39,19 @@ public class AIServiceImpl implements AIService {
     private final PackageService packageService;
     private final ProposalService proposalService;
     private final BillRepository billRepository;
-    private final ReferenceLabelService referenceLabelService;
     private final FinancialStatementService financialStatementService;
     private final Properties applicationProperties;
+    private final AIUtils aiUtils;
 
     @Autowired
-    AIServiceImpl(Optional<AIProvider> provider, PackageService packageService, BillRepository billRepository, ReferenceLabelService referenceLabelService,
-                  FinancialStatementService financialStatementService, Properties applicationProperties, ProposalService proposalService) {
+    AIServiceImpl(Optional<AIProvider> provider, PackageService packageService, BillRepository billRepository,
+                  FinancialStatementService financialStatementService, Properties applicationProperties, ProposalService proposalService, AIUtils aiUtils) {
         this.applicationProperties = applicationProperties;
+        this.aiUtils = aiUtils;
         provider.ifPresent(p -> this.provider = p);
         this.packageService = packageService;
         this.proposalService = proposalService;
         this.billRepository = billRepository;
-        this.referenceLabelService = referenceLabelService;
         this.financialStatementService = financialStatementService;
     }
 
@@ -121,12 +109,8 @@ public class AIServiceImpl implements AIService {
     }
 
     @Override
-    public AnalysisResults prefillDigitalDimensionsLFDS(final String proposalRef, final String analysisType) throws Exception {
+    public FinancialStatement prefillDigitalDimensionsLFDS(final String proposalRef, final String analysisType) throws Exception {
         Validate.notNull(proposalRef, "proposalRef must not be null");
-        Boolean isFeatureEnabled = applicationProperties.getProperty("leos.ai.enabled", "false").equals("true");
-        if (provider == null || !isFeatureEnabled) {
-            return new AnalysisResults();
-        }
 
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -138,6 +122,11 @@ public class AIServiceImpl implements AIService {
         Validate.notNull(bill, "bill must not be null");
         List<FinancialStatement> financialStatements = financialStatementService.findFinancialStatementByPackagePath(leosPackage.getPath());
         Validate.notEmpty(financialStatements, "financialStatements must not be empty");
+        FinancialStatement financialStatement = financialStatements.get(0);
+        Boolean isFeatureEnabled = applicationProperties.getProperty("leos.ai.enabled", "false").equals("true");
+        if (provider == null || !isFeatureEnabled) {
+            return financialStatement;
+        }
         AnalysisResults analysisResults;
         if (analysisType != null) {
             LFDSSections section = LFDSSections.valueOf(analysisType);
@@ -146,63 +135,9 @@ public class AIServiceImpl implements AIService {
             analysisResults = provider.prefillAllDigitalDimensionsLFDS(bill.getMetadata().get().getRef(), aiMetadata);
         }
 
-        return generateReferences(analysisResults, bill, financialStatements.get(0).getMetadata().get().getRef());
-    }
-
-    private AnalysisResults generateReferences(AnalysisResults analysisResults, Bill bill, String ref) {
-        for (AnalysisResultDataFlowsGeneration result : analysisResults.getDataFlowsGenerationResults()) {
-            List<String> eIds = new ArrayList<>();
-            for (String id :result.getEId()) {
-                final String updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(id),
-                        bill.getMetadata().get().getRef(), bill.getContent().get().getSource().getBytes()).get();
-                eIds.add(generateMref(bill.getMetadata().get().getRef(), id, updatedLabel));
-            }
-            result.setEId(eIds);
-        }
-        for (AnalysisResultDescriptionGeneration result : analysisResults.getDescGenerationResults()) {
-            List<String> eIds = new ArrayList<>();
-            for (String id : result.getEId()) {
-                final String updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(id),
-                        bill.getMetadata().get().getRef(), bill.getContent().get().getSource().getBytes()).get();
-                eIds.add(generateMref(bill.getMetadata().get().getRef(), id, updatedLabel));
-            }
-            result.setEId(eIds);
-        }
-        for (AnalysisResultDataGeneration result : analysisResults.getDataGenerationResults()) {
-            List<String> eIds = new ArrayList<>();
-            for (String id : result.getEId()) {
-                final String updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(id),
-                        bill.getMetadata().get().getRef(), bill.getContent().get().getSource().getBytes()).get();
-                eIds.add(generateMref(bill.getMetadata().get().getRef(), id, updatedLabel));
-            }
-            result.setEId(eIds);
-        }
-        for (AnalysisResultSolutionsGeneration result : analysisResults.getSolutionsGenerationResults()) {
-            List<String> eIds = new ArrayList<>();
-            for (String id :result.getEId()) {
-                final String updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(id),
-                        bill.getMetadata().get().getRef(), bill.getContent().get().getSource().getBytes()).get();
-                eIds.add(generateMref(bill.getMetadata().get().getRef(), id, updatedLabel));
-            }
-            result.setEId(eIds);
-        }
-        for (AnalysisResultInteroperabilityGeneration result : analysisResults.getInterGenerationResults()) {
-            List<String> eIds = new ArrayList<>();
-            for (String id :result.getEId()) {
-                final String updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(id),
-                        bill.getMetadata().get().getRef(), bill.getContent().get().getSource().getBytes()).get();
-                eIds.add(generateMref(bill.getMetadata().get().getRef(), id, updatedLabel));
-            }
-            result.setEId(eIds);
-        }
-        return analysisResults;
-    }
-
-    private String generateMref(String billRef, String id, String label) {
-        String mref =
-                "<" + MREF + " " + ID + "=\"" + IdGenerator.generateId() + "\"><" + REF + " " + ID + "=\"" + IdGenerator.generateId() + "\" href=\"/document" +
-                        "/" + billRef
-                        + ".xml/~" + id + "\">" + label + "</" + REF + "></" + MREF + ">";
-        return mref;
+        byte[] newContent = this.aiUtils.insertPrefillElementsInXml(analysisResults, financialStatement.getContent().get().getSource().getBytes(), bill,
+                financialStatement.getMetadata().get().getRef());
+        financialStatement = this.financialStatementService.updateFinancialStatement(financialStatement.getId(), newContent);
+        return financialStatement;
     }
 }

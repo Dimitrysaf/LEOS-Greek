@@ -32,6 +32,8 @@ import {MOVE_PREFIX, REVISION_PREFIX} from "@/shared/constants/fork-merge.consta
 import {LoadingService} from "@/shared/services/loading.service";
 import {CoEditionUpdate} from "@/shared/models/coEditionVO.model";
 import {AnalysisResults} from "@/shared/models/leos.ai.model";
+import {TableOfContentItemVO} from "@/shared/models/toc.model";
+import {scrollInParent} from "@/shared/utils";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -145,13 +147,18 @@ export class DocumentComponent
   }
 
   ngOnInit(): void {
-    this.documentService.aiAnalysisResults$.subscribe((analysisResults) => this.insertPrefillElementsInDom(analysisResults))
+    this.documentService.aiAnalysisResults$.subscribe((docView) => {
+      this.documentService.refreshView(docView, true);
+    });
     if (!this.readonly) {
       this.documentService.refreshView$
         .pipe(takeUntil(this.destroy$))
         .subscribe((documentView) => {
-          if (documentView && !this.contributionView) {
-            this.loadDocument(documentView.editableXml);
+          if (documentView && documentView.data && !this.contributionView) {
+            this.loadDocument(documentView.data.editableXml);
+          }
+          if (documentView.scroll) {
+            this.scrollToTable('4.2.');
           }
         });
 
@@ -670,228 +677,42 @@ export class DocumentComponent
     });
   }
 
-  private createElementFromHTML(htmlString) {
-    let div = document.createElement('div');
-    div.innerHTML = htmlString.trim();
-    return div.firstChild;
+  private findElementByXPath(doc: Document, xpath: string): Element {
+    return <Element>new XPathEvaluator()
+      .createExpression(xpath)
+      .evaluate(doc, XPathResult.FIRST_ORDERED_NODE_TYPE)
+      .singleNodeValue;
   }
 
-  private insertPrefillElementsInDom(data: AnalysisResults) {
-    if (!data) {
-      return;
+  private findNthTableInElement(levelNode: Element, n: number) {
+    const tables = levelNode.querySelectorAll('table');
+    if (n<tables.length) {
+      return tables.item(n);
+    } else {
+      return null;
     }
-    if (data.descGenerationResults && data.descGenerationResults.length > 0) {
-      let nodesSnapshot = document.evaluate("//guidance[@id='guidance-desc_generation_guidance']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
-      for ( let i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
-        nodesSnapshot.snapshotItem(i).parentNode.removeChild(nodesSnapshot.snapshotItem(i));
-      }
-      let str = "<guidance id='guidance-desc_generation_guidance' class='guidance-green-block'>" +
-        "<table id='desc_generation_guidance'><tbody>";
-      str += "<tr>";
-      str += "<td><b>Reference to the requirement</b></td>";
-      str += "<td><b>Requirement description</b></td>";
-      str += "<td><b>Actors affected or concerned by the requirement</b></td>";
-      str += "<td><b>High-level Processes</b></td>";
-      str += "<td><b>Categories</b></td>";
-      str += "</tr>";
-      for (const result of data.descGenerationResults) {
-        str += "<tr>";
-        str += "<td>" + result.eId + "</td>";
-        str += "<td>" + result.description + "</td>";
-        str += "<td>" + result.actors.join(', ') + "</td>";
-        str += "<td>" + result.high_level_process + "</td>";
-        str += "<td></td>";
-        str += "</tr>";
-      }
-      str += "</tbody></table></guidance>";
-      const iaGuidance = this.createElementFromHTML(str);
-      let level = new XPathEvaluator()
-        .createExpression("(//level)[45]")
-        .evaluate(document, XPathResult.FIRST_ORDERED_NODE_TYPE)
-        .singleNodeValue;
-      if (level) {
-        level.parentNode.insertBefore(iaGuidance, level.nextSibling);
-      }
+  }
+
+  private findNthTableInLevel(doc: Document, levelNumber: string, n: number) {
+    let xpath : string = "//num[text()='" + levelNumber + "']";
+    let level = this.findElementByXPath(doc, xpath);
+    if (level) {
+      return this.findNthTableInElement(level.parentElement, n);
     }
-    if (data.dataGenerationResults && data.dataGenerationResults.length > 0) {
-      let nodesSnapshot = document.evaluate("//guidance[@id='guidance-data_generation_guidance']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
-      for ( let i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
-        nodesSnapshot.snapshotItem(i).parentNode.removeChild(nodesSnapshot.snapshotItem(i));
-      }
-      let str = "<guidance id='guidance-data_generation_guidance' class='guidance-green-block'>" +
-        "<table id='data_generation_guidance'><tbody>";
-      str += "<tr>";
-      str += "<td><b>Type of data</b></td>";
-      str += "<td><b>Reference to the requirement(s)</b></td>";
-      str += "<td><b>Standard and/or specification (if applicable)</b></td>";
-      str += "</tr>";
-      for (const result of data.dataGenerationResults) {
-        str += "<tr>";
-        str += "<td>" + result.type_of_data + "</td>";
-        str += "<td>" + result.eId.join(', ') + "</td>";
-        str += "<td>" + result.standard.join(', ') + "</td>";
-        str += "</tr>";
-      }
-      str += "</tbody></table></guidance>";
-      const iaGuidance = this.createElementFromHTML(str);
-      let level = new XPathEvaluator()
-        .createExpression("(//level)[46]/subparagraph[2]")
-        .evaluate(document, XPathResult.FIRST_ORDERED_NODE_TYPE)
-        .singleNodeValue;
-      if (level) {
-        level.parentNode.insertBefore(iaGuidance, level.nextSibling);
-      }
-    }
-    if (data.solutionsGenerationResults && data.solutionsGenerationResults.length > 0) {
-      let nodesSnapshot = document.evaluate("//guidance[@id='guidance-solutions_generation_guidance']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
-      for ( let i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
-        nodesSnapshot.snapshotItem(i).parentNode.removeChild(nodesSnapshot.snapshotItem(i));
-      }
-      let str = "<guidance id='guidance-solutions_generation_guidance' class='guidance-green-block'>" +
-        "<table id='solutions_generation_guidance'><tbody>";
-      str += "<tr>";
-      str += "<td><b>Digital solution</b></td>";
-      str += "<td><b>Reference(s) to the requirement(s)</b></td>";
-      str += "<td><b>Main mandated functionalities</b></td>";
-      str += "<td><b>Responsible body</b></td>";
-      str += "<td><b>How is accessibility catered for?</b></td>";
-      str += "<td><b>How is reusability considered?</b></td>";
-      str += "<td><b>Use of AI technologies (if applicable)</b></td>";
-      str += "</tr>";
-      for (const result of data.solutionsGenerationResults) {
-        str += "<tr>";
-        str += "<td>" + result.digital_solution + "</td>";
-        str += "<td>" + result.eId.join(', ') + "</td>";
-        str += "<td>" + result.functionalities.join(', ') + "</td>";
-        str += "<td>" + result.responsible_actor + "</td>";
-        str += "<td></td>";
-        str += "<td></td>";
-        str += "<td></td>";
-        str += "</tr>";
-      }
-      str += "</tbody></table></guidance>";
-      const iaGuidance = this.createElementFromHTML(str);
-      let level = new XPathEvaluator()
-        .createExpression("(//level)[47]/subparagraph[2]")
-        .evaluate(this.document, XPathResult.FIRST_ORDERED_NODE_TYPE)
-        .singleNodeValue;
-      if (level) {
-        level.parentNode.insertBefore(iaGuidance, level.nextSibling);
-      }
-    }
-    if (data.interGenerationResults && data.interGenerationResults.length > 0) {
-      let nodesSnapshot = document.evaluate("//guidance[@id='guidance-inter_generation_guidance']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
-      for ( let i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
-        nodesSnapshot.snapshotItem(i).parentNode.removeChild(nodesSnapshot.snapshotItem(i));
-      }
-      nodesSnapshot = document.evaluate("//guidance[@id='guidance-inter_generation_guidance1']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
-      for ( let i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
-        nodesSnapshot.snapshotItem(i).parentNode.removeChild(nodesSnapshot.snapshotItem(i));
-      }
-      let str = "<guidance id='guidance-inter_generation_guidance' class='guidance-green-block'>";
-      str += "<table id='inter_generation_guidance'><tbody>";
-      str += "<tr>";
-      str += "<td><b>Digital public service or category of digital public services</b></td>";
-      str += "<td><b>Description</b></td>";
-      str += "<td><b>Reference(s) to the requirement(s)</b></td>";
-      str += "<td><b>Interoperable Europe Solution(s)</b></td>";
-      str += "<td><b>Other interoperability solution(s)</b></td>";
-      str += "</tr>";
-      for (const result of data.interGenerationResults) {
-        str += "<tr>";
-        str += "<td>" + result.digital_public_service + "</td>";
-        str += "<td>" + result.description + "</td>";
-        str += "<td>" + result.eId?.join(', ') + "</td>";
-        str += "<td>" + result.interoperable_europe_solutions + "</td>";
-        str += "<td>" + result.other_interoperability_solutions + "</td>";
-        str += "</tr>";
-      }
-      str += "</tbody></table>";
-      str += "</guidance>";
-      const iaGuidance = this.createElementFromHTML(str);
-      let level = new XPathEvaluator()
-        .createExpression("(//level)[48]/subparagraph[2]")
-        .evaluate(this.document, XPathResult.FIRST_ORDERED_NODE_TYPE)
-        .singleNodeValue;
-      if (level) {
-        level.parentNode.insertBefore(iaGuidance, level.nextSibling);
-      }
-      if (data.interGenerationResults.length > 0) {
-        const result = data.interGenerationResults[0];
-        let str1 = "<guidance id='guidance-inter_generation_guidance1' class='guidance-green-block'>";
-        str1 += "<table id='inter_generation_guidance'" + result.id + "><tbody>";
-        str1 += "<tr>";
-        str1 += "<td><b>Assessment</b></td>";
-        str1 += "<td><b>Measure(s)</b></td>";
-        str1 += "<td><b>Potential remaining barriers</b></td>";
-        str1 += "</tr>";
-        str1 += "<tr>";
-        str1 += "<td><b>Alignment with existing digital and sectorial policies.</b></td>";
-        str1 += "<td>" + result.legal_interoperability_measures.policies.join(', ') + "</td>";
-        str1 += "<td>" + result.legal_interoperability_measures.legal_barriers.join(', ') + "</td>";
-        str1 += "</tr>";
-        str1 += "<tr>";
-        str1 += "<td><b>Organisational measures for a smooth cross-border digital public</b></td>";
-        str1 += "<td>" + result.organisational_interoperability_measures.measures.join(', ') + "</td>";
-        str1 += "<td>" + result.organisational_interoperability_measures.organisational_barriers.join(', ') + "</td>";
-        str1 += "</tr>";
-        str1 += "<tr>";
-        str1 += "<td><b>Measures taken to ensure a shared understanding of the data.</b></td>";
-        str1 += "<td>" + result.semantic_interoperability_measures.measures.join(', ') + "</td>";
-        str1 += "<td>" + result.semantic_interoperability_measures.semantic_barriers.join(', ') + "</td>";
-        str1 += "</tr>";
-        str1 += "<tr>";
-        str1 += "<td><b>Use of commonly agreed open technical specifications and standards.</b></td>";
-        str1 += "<td>" + result.technical_interoperability_measures.measures.join(', ') + "</td>";
-        str1 += "<td>" + result.technical_interoperability_measures.technical_barriers.join(', ') + "</td>";
-        str1 += "</tr>";
-        str1 += "</tbody></table>";
-        str1 += "</guidance>";
-        const iaGuidance1 = this.createElementFromHTML(str1);
-        let level1 = new XPathEvaluator()
-          .createExpression("(//level)[48]/subparagraph[5]")
-          .evaluate(this.document, XPathResult.FIRST_ORDERED_NODE_TYPE)
-          .singleNodeValue;
-        if (level1) {
-          level1.parentNode.insertBefore(iaGuidance1, level1.nextSibling);
-        }
-      }
-    }
-    if (data.dataFlowsGenerationResults && data.dataFlowsGenerationResults.length > 0) {
-      let nodesSnapshot = document.evaluate("//guidance[@id='guidance-flows_generation_guidance']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
-      for ( let i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
-        nodesSnapshot.snapshotItem(i).parentNode.removeChild(nodesSnapshot.snapshotItem(i));
-      }
-      let str = "<guidance id='guidance-flows_generation_guidance' class='guidance-green-block'>";
-      str += "<table id='flows_generation_guidance'><tbody>";
-      str += "<tr>";
-      str += "<td><b>Type of data</b></td>";
-      str += "<td><b>Reference(s) to the requirement(s)</b></td>";
-      str += "<td><b>Actors who provide the data</b></td>";
-      str += "<td><b>Actors who receive the data</b></td>";
-      str += "<td><b>Trigger for the data exchange</b></td>";
-      str += "<td><b>Frequency</b></td>";
-      str += "</tr>";
-      for (const result of data.dataFlowsGenerationResults) {
-        str += "<tr>";
-        str += "<td></td>";
-        str += "<td>" + result.eId.join(', ') + "</td>";
-        str += "<td>" + result.addresser + "</td>";
-        str += "<td>" + result.addressee + "</td>";
-        str += "<td>" + result.action_result + "</td>";
-        str += "<td></td>";
-        str += "</tr>";
-      }
-      str += "</tbody></table>";
-      str += "</guidance>";
-      const iaGuidance = this.createElementFromHTML(str);
-      let level = new XPathEvaluator()
-        .createExpression("(//level)[46]/subparagraph[13]")
-        .evaluate(this.document, XPathResult.FIRST_ORDERED_NODE_TYPE)
-        .singleNodeValue;
-      if (level) {
-        level.parentNode.insertBefore(iaGuidance, level.nextSibling);
-      }
+    return null;
+  }
+
+  private scrollToTable(
+    levelNumber: string
+  ) {
+    const el = this.findNthTableInLevel(document, levelNumber, 0);
+    if (el instanceof HTMLElement) {
+      el.style.background = 'cornsilk';
+      setTimeout(() => {
+        el.style.background = '';
+      }, 1000);
+
+      scrollInParent(el, { topOffset: 100, behavior: 'smooth', left: null });
     }
   }
 

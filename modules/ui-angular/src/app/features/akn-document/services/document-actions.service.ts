@@ -73,7 +73,7 @@ import {
   AI_SECTION_ID,
   AI_DROPDOWN_ID,
   AI_ALL_SECTIONS_ID,
-  AI_FIRST_SECTION_ID, AI_SECOND_SECTION_ID, AI_THIRD_SECTION_ID, AI_FOURTH_SECTION_ID, AI_FIFTH_SECTION_ID,
+  AI_FIRST_SECTION_ID, AI_SECOND_SECTION_ID, AI_THIRD_SECTION_ID, AI_FOURTH_SECTION_ID, AI_FIFTH_SECTION_ID, AI_BUTTON_ID,
 } from '@/shared/constants/document-actions.constants';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
@@ -260,7 +260,7 @@ export abstract class DocumentActionsService {
   private buildCommonItems(): IRibbonToolbarSection[] {
     const saveSection = !this.isMandateMemorandum() && this.hasUpdatePermission && this.buildSaveSection();
     const searchSection = this.buildSearchSection();
-    const aiSection = this.isDocumentTypeTheSame(this.documentService.documentType, 'STAT_DIGIT_FINANC_LEGIS') && this.buildAISection();
+    const aiResultsSection = this.isDocumentTypeTheSame(this.documentService.documentType, 'STAT_DIGIT_FINANC_LEGIS') && this.hasUpdatePermission && this.buildAISection();
     const importOJSection =
       (!this.profile || this.profile.importOJ) &&
       this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') &&
@@ -289,7 +289,7 @@ export abstract class DocumentActionsService {
       saveSection,
       importOJSection,
       searchSection,
-      aiSection,
+      aiResultsSection,
       exportSection,
       displaySection,
       trackChangesSection,
@@ -459,6 +459,18 @@ export abstract class DocumentActionsService {
       order: 5,
       resizeOrder: 4,
       children: [
+        {
+          type: IRibbonToolbarType.BUTTON,
+          id: AI_BUTTON_ID,
+          actionFn: () => this.documentService.prepareAnalysis(),
+          euiSize: 's',
+          euiStyle: 'secondary',
+          label: this.translateService.instant(
+            'page.editor.ai.prefill.digital.dimensions.lfds.start.analysis',
+          ),
+          icon: 'analytics',
+          disabled: !this.permissions?.includes('CAN_UPDATE'),
+        },
         {
           type: IRibbonToolbarType.DROPDOWN,
           id: AI_DROPDOWN_ID,
