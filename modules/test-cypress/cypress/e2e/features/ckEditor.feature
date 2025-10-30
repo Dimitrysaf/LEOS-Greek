@@ -7,7 +7,7 @@ Feature: CK Editor Regression Features
     #issues/2887 : Tab key not working fine after change in indent/outdent
     @ckEditorPlugin @local
     Scenario: testing of different ck editor plugin in citation, recital and articles
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
@@ -200,7 +200,7 @@ Feature: CK Editor Regression Features
 
     @ckEditorPluginInAnnex @local
     Scenario: testing of different ck editor plugin in annexes
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
@@ -269,7 +269,7 @@ Feature: CK Editor Regression Features
 
     @ckEditorTablePlugin @local
     Scenario: Basic test to create a table inside another table
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
@@ -361,7 +361,7 @@ Feature: CK Editor Regression Features
 
     @ckEditorOpen @local
     Scenario: preventing actions when ckEditor is open
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
@@ -572,7 +572,7 @@ Feature: CK Editor Regression Features
 
     @saveAddNext @local
     Scenario: create a new element with same type after the current element using shortcut control and enter key together when ck editor is open
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
@@ -636,7 +636,7 @@ Feature: CK Editor Regression Features
 
     @trackChangesPlugin @tabKeyInParagraph @local
     Scenario: Verify the TC plugin
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
@@ -811,6 +811,7 @@ Feature: CK Editor Regression Features
         And  add "second paragraph" at current cursor position in edition mode
         And  append "First Paragraph" at offset 7 in numbered paragraph 1 of article in edition mode
         And  append "last Paragraph" at offset 7 in numbered paragraph 3 of article in edition mode
+
 #        And  user clicks on the track changes action plugin
 #        And  click on reject all changes dropdown button
 #        Then article should not contain a span tag in edition mode
@@ -819,38 +820,47 @@ Feature: CK Editor Regression Features
 #        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
 #        And  click enter from keyboard in edition mode
 #        And  click on increase indent icon present in ck editor panel
+#        And  click on increase indent icon present in ck editor panel
 #        And  add "point a sub point a" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
 #        And  add "point b sub point b" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
 #        And  click on increase indent icon present in ck editor panel
 #        And  add "point i sub point i" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
 #        And  add "point ii sub point ii" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
 #        And  click on increase indent icon present in ck editor panel
+#        And  click on increase indent icon present in ck editor panel
 #        And  add "point 1 sub point 1" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
 #        And  add "point 2 sub point 2" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
+#        And  click on increase indent icon present in ck editor panel
 #        And  click on increase indent icon present in ck editor panel
 #        And  add "point - sub point -" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
 #        And  add "point -- sub point --" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
 #        And  click on decrease indent icon present in ck editor panel
+#        And  click on decrease indent icon present in ck editor panel
 #        And  add "point 3 sub point 3" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
 #        And  click on decrease indent icon present in ck editor panel
 #        And  add "point iii sub point iii" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
 #        And  click on decrease indent icon present in ck editor panel
+#        And  click on decrease indent icon present in ck editor panel
 #        And  add "point c sub point c" at current cursor position in edition mode
 #        And  click enter from keyboard in edition mode
+#        And  click on decrease indent icon present in ck editor panel
 #        And  click on decrease indent icon present in ck editor panel
 #        And  add "second paragraph" at current cursor position in edition mode
 #        And  append "First Paragraph" at offset 7 in numbered paragraph 1 of article in edition mode
 #        And  append "last Paragraph" at offset 7 in numbered paragraph 3 of article in edition mode
+
         And  user clicks on the track changes action plugin
         And  click on accept all changes dropdown button
         Then article should not contain a span tag in edition mode
@@ -1166,7 +1176,7 @@ Feature: CK Editor Regression Features
 
     @ckEditorPluginInLFDS @local
     Scenario: testing of different ck editor plugin in Legislative Financial and Digital Statement
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
@@ -1192,7 +1202,7 @@ Feature: CK Editor Regression Features
 
     @acceptAllRejectAllPluginInLFDS @local
     Scenario: Accept all and reject all functionality in Legislative Financial and Digital Statement
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window
@@ -1288,7 +1298,7 @@ Feature: CK Editor Regression Features
 
     @ckEditorPluginRecital @autonomousAct @local
     Scenario: testing of different ck editor plugin in Autonomous act -recital
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window

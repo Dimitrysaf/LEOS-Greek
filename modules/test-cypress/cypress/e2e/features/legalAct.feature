@@ -6,7 +6,7 @@ Feature: Legal Act Page Regression Features
 
   @citation_recital_editing @local
   Scenario: Add and removal of text in citation and recital element in legal Act
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -68,7 +68,7 @@ Feature: Legal Act Page Regression Features
 
   @splittingParagraphInArticle @local
   Scenario: append text in existing paragraph and make same paragraph into two inside article
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -104,7 +104,7 @@ Feature: Legal Act Page Regression Features
 
   @articleWithSingleNumberedParagraph @local
   Scenario: Article with single paragraph cannot be numbered
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -149,7 +149,7 @@ Feature: Legal Act Page Regression Features
 
   @articleEditing @local
   Scenario: Addition of text and removal of text from article
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -242,7 +242,7 @@ Feature: Legal Act Page Regression Features
 
   @indentOutdent @paragraphMode @TabKeyInArticle @local
   Scenario: test indent and out-dent scenario inside article
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -366,7 +366,7 @@ Feature: Legal Act Page Regression Features
 
   @definitionArticle @local
   Scenario: definition article should have maximum three depth
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -619,7 +619,7 @@ Feature: Legal Act Page Regression Features
 
   @internalReference @local
   Scenario: test internal reference by uploading existing leg file
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -718,7 +718,7 @@ Feature: Legal Act Page Regression Features
 
   @importOfficeJournal @local
   Scenario: import from office journal
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -828,7 +828,7 @@ Feature: Legal Act Page Regression Features
 
   @numberedToUnnumbered @local
   Scenario: changing article from numbered to unnumbered with List creates an empty paragraph
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -885,7 +885,7 @@ Feature: Legal Act Page Regression Features
 
   @checksForStory1703And2060And2208 @local
   Scenario: Checks related to specific stories: 1703, 2060 and 2208. Tests for alternatives and some track changes related to paragraph mode
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -948,7 +948,7 @@ Feature: Legal Act Page Regression Features
 
   @versionPane @archiveFunctionality @local
   Scenario: VersionPane Archive functionality
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -991,7 +991,7 @@ Feature: Legal Act Page Regression Features
   # Ticket LEOS#2446 : Error with functionality 'Add Subparagraph' in article edition
   @addSubParagraph @local
   Scenario: test add subparagraph functionality for first subparagraph inside article
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -1024,7 +1024,7 @@ Feature: Legal Act Page Regression Features
 
   @searchAndReplaceLimitNumbers @local
   Scenario: search and limit numbers and replace search word
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -1070,7 +1070,7 @@ Feature: Legal Act Page Regression Features
 
   @multiDragAndDrop @higherDivisionValidation @local
   Scenario: user is able to drag and drop multiple element with same type
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -1170,7 +1170,7 @@ Feature: Legal Act Page Regression Features
 
   @switchingAlternativeArticle @local
   Scenario: user is able to switch alternative article
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
