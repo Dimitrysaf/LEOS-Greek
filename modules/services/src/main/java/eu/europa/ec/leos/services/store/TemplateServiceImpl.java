@@ -67,6 +67,25 @@ class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<CatalogItem> getTemplatesCatalog() throws IOException {
+        return getCatalog(templatesCatalog);
+    }
+
+    @Override
+    public String getDocTypeFromCatalog(List<CatalogItem> catalogItems, String templateName) {
+        CatalogItem actItem = getActTemplateItem(catalogItems, templateName, null);
+        if (actItem != null) {
+            return actItem.getKey();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<CatalogItem> getTemplatesCatalog(String customTemplatesCatalog) throws IOException {
+        return getCatalog(customTemplatesCatalog);
+    }
+
+    private List<CatalogItem> getCatalog(String templatesCatalog) throws IOException {
         List<CatalogItem> catalogList = getCatalogItems(templatesCatalog);
         removeNotAllowedProposals(catalogList);
         return catalogList;
@@ -236,5 +255,22 @@ class TemplateServiceImpl implements TemplateService {
             }
         }
         return templateItem;
+    }
+
+    private CatalogItem getActTemplateItem(List<CatalogItem> catalogItems, String name, CatalogItem actItem) {
+        for (CatalogItem item : catalogItems) {
+            if (item.getId() != null && item.getId().contains(name)) {
+                return actItem;
+            } else {
+                CatalogItem newActItem = !item.getType().equals(CatalogItem.ItemType.TEMPLATE)
+                        && !item.getType().equals(CatalogItem.ItemType.DOCUMENT) ? item :
+                        actItem;
+                actItem = getActTemplateItem(item.getItems(), name, newActItem);
+                if (actItem != null) {
+                    return actItem;
+                }
+            }
+        }
+        return null;
     }
 }

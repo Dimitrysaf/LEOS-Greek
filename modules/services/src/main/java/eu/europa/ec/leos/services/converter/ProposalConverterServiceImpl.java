@@ -200,7 +200,6 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                 Map<String, String> metadataVOMap = xmlNodeProcessor.getValuesFromXml(document.getSource(), new String[]{
                         DOC_PURPOSE_META,
                         DOC_STAGE_META,
-                        DOC_TYPE_META,
                         DOC_LANGUAGE,
                         DOC_TRANSLATION_FROM_LANGUAGE,
                         DOC_TRANSLATION_FROM_HREF,
@@ -216,11 +215,12 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                         PROPOSAL_DOC_COLLECTION,
                         PROPOSAL_PACKAGE_TITLE
                 }, xmlNodeConfigProcessor.getConfig(document.getCategory()));
+                String docType = templateService.getDocTypeFromCatalog(templatesCatalog, metadataVOMap.get(DOC_TEMPLATE));
 
                 metadata.setDocVersion(metadataVOMap.get(DOC_VERSION));
                 metadata.setDocPurpose(metadataVOMap.get(DOC_PURPOSE_META));
                 metadata.setDocStage(metadataVOMap.get(DOC_STAGE_META));
-                metadata.setDocType(metadataVOMap.get(DOC_TYPE_META));
+                metadata.setDocType(docType);
                 metadata.setLanguage(metadataVOMap.get(DOC_LANGUAGE));
                 metadata.setDocTemplate(metadataVOMap.get(DOC_SPECIFIC_TEMPLATE));
                 metadata.setTemplate(metadataVOMap.get(DOC_TEMPLATE));

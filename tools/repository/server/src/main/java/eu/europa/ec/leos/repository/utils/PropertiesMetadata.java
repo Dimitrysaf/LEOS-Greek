@@ -9,6 +9,7 @@ public enum PropertiesMetadata {
     DOC_TEMPLATE("docTemplate", false),
     TEMPLATE("template", false),
     DOC_TYPE("docType", false),
+    ACT_TYPE("actType", false),
     EEA_RELEVANCE("eeaRelevance", false),
     AUTHENTIC_LANGUAGE("authenticLanguage", false),
     COVERPAGE_TYPE("coverPageType", false),

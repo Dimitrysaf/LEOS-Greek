@@ -6,7 +6,7 @@ Feature: create act regression features
 
     @createProposalByUploadingAndDownloadingLegFile @ValidateAct @local
     Scenario Outline: user is able to create the act using different templates successfully
-        Given navigate to edit drafting application with "User1"
+        Given navigate to leos application with "User1"
         Then user is on home page
         When click on Create act button
         Then user is on create new legislative document window

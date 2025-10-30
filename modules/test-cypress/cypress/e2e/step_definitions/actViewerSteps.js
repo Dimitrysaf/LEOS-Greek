@@ -79,14 +79,6 @@ When(`click on download button`, () => {
     headerPage.getLoadingIcon().should('not.exist');
 });
 
-Then(`export as pdf button is present`, () => {
-    actViewerPage.elements.exportPdfBtn().should('not.be.disabled');
-});
-
-Then(`export as legiswrite button is present`, () => {
-    actViewerPage.elements.exportLegBtn().should('not.be.disabled');
-});
-
 When(`click on milestones tab in act view page`, () => {
     actViewerPage.clickMilestonesTab();
 });
@@ -173,4 +165,19 @@ Then(/^favourite icon is selected$/, function () {
 
 When (/^user clicks on the reorder button$/,()=>{
     actViewerPage.clickReorderButton();
+});
+
+Then(/^below buttons are present under actions dropdown$/, function (datatable) {
+    const actualElementList = [];
+    datatable.hashes().forEach((element) => {
+        actualElementList.push(element.buttonName);
+    });
+    actViewerPage.elements.euiDropDownItemContentText()
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    .map((el) => el.innerText.trim())
+            )
+        })
+        .should('deep.equal', actualElementList);
 });

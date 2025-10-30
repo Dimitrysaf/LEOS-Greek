@@ -6,7 +6,7 @@ Feature: fork and merge features
 
   @nonSupportUserAccessToCloneProposal @local
   Scenario: test fork and merge of a act
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
@@ -46,7 +46,7 @@ Feature: fork and merge features
     Then successful message contains "Copy sent for contribution"
     Then "Sent for contribution to DEMO Demo" is showing under title column of row 2 of milestones table
     And  "Sent for contribution" is showing under status column of row 2 of milestones table
-    Given navigate to edit drafting application with "User3"
+    Given navigate to leos application with "User3"
     Then  user is on home page
     When  click on view all acts button
     Then  user is on repository browser page
@@ -77,7 +77,7 @@ Feature: fork and merge features
 
   @moveLabelWithTrackChanges @local
   Scenario: Basic test to move element inside legal act when track changes is on
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -448,7 +448,7 @@ Feature: fork and merge features
 
   @forkMerge @contributionPane @local
   Scenario: merge updated and moved elements from contribution
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
@@ -597,6 +597,7 @@ Feature: fork and merge features
     And  annotation side bar is present
     When click on contributions pane accordion
     And  click on contribution card 1
+    Then wrapper is not present for element "docpurpose" 1
     Then check that "chapter" with id "ectasxzT07u6ev8zH" is at position 1
     Then check that "chapter" with id "ecRdsDU6hHPKTgg5F" is at position 2
     When click on merge actions menu of "chapter" 1

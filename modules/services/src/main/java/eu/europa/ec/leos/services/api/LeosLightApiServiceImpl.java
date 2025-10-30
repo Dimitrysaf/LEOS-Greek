@@ -250,14 +250,10 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
         CreateCollectionResult createCollectionResult;
         DocumentVO propDocument = validation.getDocumentToBeCreated();
-        String originalLanguageCode = propDocument.getMetadata().getDocTranslationFromLanguage();
-        if (StringUtils.isEmpty(originalLanguageCode)) {
-            LOG.error("Error occurred while importing the proposal: Original translation language not found on proposal xml file.");
-            return new Pair<>(messageHelper.getMessage("leoslight.original.translation.language.not.found"), HttpStatus.NOT_FOUND);
-        }
         String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
-        String originalDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), originalLanguageCode);
         String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
+        String originalLanguageCode = StringUtils.defaultIfEmpty(propDocument.getMetadata().getDocTranslationFromLanguage(), languageCode);
+        String originalDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), originalLanguageCode);
         propDocument.setRef(originalDocRef);
         String legDocRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
         LegDocument savedLegDocument = (LegDocument)findLeosDocument(legDocRef, LegDocument.class);

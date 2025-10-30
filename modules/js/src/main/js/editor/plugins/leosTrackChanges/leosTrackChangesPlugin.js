@@ -163,6 +163,7 @@ define(function leosTrackChangesPluginModule(require) {
                     group: "trackChangesGroup"
                 });
                 editor.addCommand("acceptOneChange", {
+                    readOnly: 1,
                     canUndo: true,
                     editorFocus: false,
                     exec: function(editor) {
@@ -170,6 +171,7 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 });
                 editor.addCommand("rejectOneChange", {
+                    readOnly: 1,
                     canUndo: true,
                     editorFocus: false,
                     exec: function(editor) {
@@ -177,6 +179,7 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 });
                 editor.addCommand("acceptSelectedChanges", {
+                    readOnly: 1,
                     canUndo: true,
                     exec: function(editor) {
                         var tcElements = core.findElementsInSelection(editor.getSelection());
@@ -186,6 +189,7 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 });
                 editor.addCommand("rejectSelectedChanges", {
+                    readOnly: 1,
                     canUndo: true,
                     exec: function(editor) {
                         var tcElements = core.findElementsInSelection(editor.getSelection());
@@ -534,7 +538,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Used for CTRL-X, to get the content BEFORE been deleted
                 editable.attachListener(editor.document, "keydown", function(e) {
-                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!editor.readOnly && !CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
                         if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_X) {
                             editor.execCommand("copy");
@@ -562,7 +566,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
-                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!editor.readOnly && !CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
 
                         // On delete functionality(prevents/backup of text)
@@ -648,7 +652,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "keypress", function(e) {
                     var event = new EventWrapper(e);
                     var character = event.getChar();
-                    if (!CKEDITOR.dialog?.getCurrent() && character && !e.data.$.ctrlKey && !e.data.$.metaKey
+                    if (!editor.readOnly && !CKEDITOR.dialog?.getCurrent() && character && !e.data.$.ctrlKey && !e.data.$.metaKey
                         && (event.getKeyCode() != UTILS.KEYS.KEY_DELETE) && (event.getKeyCode() != UTILS.KEYS.KEY_BACKSPACE) && (event.getKeyCode() != 29)) { // Do not capture CTRL hotkeys & escape
                         if (core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) { // Modifications inside a tracked element(no span) is not allowed
                             event.getInstance().data.preventDefault();

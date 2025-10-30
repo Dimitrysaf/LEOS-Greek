@@ -1,22 +1,34 @@
 import {Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import loginPage from "../pages/loginPage";
 
-Given("navigate to edit drafting application with {string}", (user) => {
+Given("navigate to leos application with {string}", (user) => {
     if(Cypress.env('CE_ENV').includes('@local')) {
         loginPage.visitUrl('localDraftingUrl', 'http' + '://' + Cypress.env('local' + user) + ':' + Cypress.env('localPassword') + '@');
     }
-    if(Cypress.env('CE_ENV').includes("@nonlocal")) {
-        loginPage.visitUrl('devDraftingUrl', 'https://');
-        loginPage.elements.username().should('be.visible');
-        loginPage.enterUserName(Cypress.env("remote" + user));
-        loginPage.clickNextBtn();
-        loginPage.elements.password().should('be.visible');
-        loginPage.enterPassword(Cypress.env("remotePassword" + user));
-        loginPage.clickVerificationDropDown();
-        loginPage.selectPasswordVerificationMethod();
-        loginPage.clickSignInBtn();
-    }
 });
+
+Given("navigate to edit application with {string}", (user) => {
+    if(Cypress.env('CE_ENV').includes('feature')) {
+        cy.visit(Cypress.env('eCasProductionUrl'));
+    }
+    else{
+        cy.visit(Cypress.env('eCasAcceptanceUrl'));
+    }
+    loginPage.elements.username().should('be.visible');
+    loginPage.enterUserName(Cypress.env("remote" + user));
+    loginPage.clickNextBtn();
+    loginPage.elements.password().should('be.visible');
+    loginPage.enterPassword(Cypress.env("remotePassword" + user));
+    loginPage.clickVerificationDropDown();
+    loginPage.selectPasswordVerificationMethod();
+    loginPage.clickSignInBtn();
+    loginPage.getInformationMessage().should('eq','You are now logged in to EU Login.');
+    cy.visit(Cypress.env(Cypress.env('CE_ENV') + 'DraftingUrl'));
+    cy.wait(5000);
+});
+
+
+
 
 Then('user is on EU login page', () => {
     loginPage.elements.username().should('be.visible');

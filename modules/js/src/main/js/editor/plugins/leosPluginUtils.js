@@ -1452,10 +1452,22 @@ define(function leosPluginUtilsModule(require) {
         if (!node.getAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION) && !isChild) {
             node.setAttribute(DATA_AKN_TC_ORIGINAL_INDENT_ACTION, isIndent ? 'indent' : 'outdent');
         }
-        if (!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL) && elementName !== 'PARAGRAPH') {
-            node.setAttribute(DATA_INDENT_ORIGIN_LEVEL, _calculateListDepthWithoutRoot(node));
+        if (!node.getAttribute(DATA_INDENT_ORIGIN_LEVEL)) {
+            setAttributeFromIntroSubparagraphOrCalculateDepth(node, DATA_INDENT_ORIGIN_LEVEL);
         }
         editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
+    }
+
+    function setAttributeFromIntroSubparagraphOrCalculateDepth(node, attrName) {
+        const firstChild = node.getFirst();
+        const firstGrandchild = firstChild?.getFirst && firstChild.getFirst();
+        let listIntro = _isListIntro(firstChild) ? firstChild : _isListIntro(firstGrandchild) ? firstGrandchild : null;
+        if (listIntro && listIntro.getAttribute(attrName)) {
+            node.setAttribute(attrName, listIntro.getAttribute(attrName));
+            listIntro.removeAttribute(attrName);
+        } else {
+            node.setAttribute(attrName, _calculateListDepthWithoutRoot(node));
+        }
     }
 
     function _hasPointAttribute(element) {
@@ -1866,6 +1878,10 @@ define(function leosPluginUtilsModule(require) {
         return $(element.parentElement).find(elementSelector).length === 1;
     }
 
+    function _isContentEditable(editor) {
+        return !editor.config.isAlternative;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1961,6 +1977,7 @@ define(function leosPluginUtilsModule(require) {
         isDuplicatedSignatureElement: _isDuplicatedSignatureElement,
         handleIndentAttributes: _handleIndentAttributes,
         copyAllAttributes: _copyAllAttributes,
+        isContentEditable: _isContentEditable,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,

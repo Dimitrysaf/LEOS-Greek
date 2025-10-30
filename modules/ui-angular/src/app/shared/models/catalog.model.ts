@@ -14,4 +14,4 @@ export interface CatalogItem {
   items: CatalogItem[];
 }
 
-export type CatalogItemType = 'CATEGORY' | 'TEMPLATE';
+export type CatalogItemType = 'CATEGORY' | 'TEMPLATE' | 'ACT' | 'PROCEDURE';

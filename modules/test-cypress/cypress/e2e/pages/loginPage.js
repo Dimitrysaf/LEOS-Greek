@@ -5,7 +5,8 @@ class loginPage {
         password: () => cy.get('#password'),
         signInBtn: () => cy.get('.btn-primary'),
         verificationDropDown: () => cy.get('.verif-method-dd-placeholder__icon-container'),
-        passwordVerificationMethod: () => cy.get('.verif-method-dd-options #verif-method-dd-PASSWORD')
+        passwordVerificationMethod: () => cy.get('.verif-method-dd-options #verif-method-dd-PASSWORD'),
+        informationMessage: () => cy.get('.informationMessage')
     }
 
     enterUserName(userName) {
@@ -39,6 +40,10 @@ class loginPage {
 
     selectPasswordVerificationMethod() {
         this.elements.passwordVerificationMethod().click();
+    }
+
+    getInformationMessage() {
+        return this.elements.informationMessage().invoke('text');
     }
 }
 export default new loginPage();

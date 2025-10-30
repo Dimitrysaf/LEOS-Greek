@@ -5,7 +5,7 @@
 Feature: explanatory memorandum page regression features
 
   Background:
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
 
   @basicExpMemoScenario @local

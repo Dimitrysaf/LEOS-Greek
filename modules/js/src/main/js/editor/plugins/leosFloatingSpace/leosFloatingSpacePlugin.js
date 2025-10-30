@@ -24,6 +24,7 @@ define(function floatingSpacePluginModule(require) {
     var CKEDITOR = require("promise!ckEditor");
     var LOG = require("logger");
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
 
     var pluginName = "leosFloatingSpace";
 
@@ -441,8 +442,8 @@ define(function floatingSpacePluginModule(require) {
 
             editor.on('focus', function(evt) {
                 layout(evt);
-                //on focus set the editor toolbar to edit mode.
-                editor.setReadOnly(false);
+                //on focus set the editor toolbar to edit mode if the content is editable.
+                editor.setReadOnly(!leosPluginUtils.isContentEditable(editor));
                 editor.on('change', changeBuffer.input);
                 win.on('scroll', uiBuffer.input);
                 win.on('resize', uiBuffer.input);

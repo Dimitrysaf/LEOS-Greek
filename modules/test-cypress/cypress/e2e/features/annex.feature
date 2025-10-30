@@ -5,7 +5,7 @@
 Feature: Annex Page Regression Features
 
   Background:
-    Given navigate to edit drafting application with "User1"
+    Given navigate to leos application with "User1"
     Then user is on home page
 
   @annexOperations @tabKeyInLevel @local
@@ -292,8 +292,6 @@ Feature: Annex Page Regression Features
 
   @CasesForStory2303 @local
   Scenario: Cases for story 2303
-    Given navigate to edit drafting application with "User1"
-    Then user is on home page
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode7.leg"
@@ -543,8 +541,6 @@ Feature: Annex Page Regression Features
 
   @InternalReferenceForFullAnnex @local
   Scenario: Verify Internal reference for full annex
-    Given navigate to edit drafting application with "User1"
-    Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
