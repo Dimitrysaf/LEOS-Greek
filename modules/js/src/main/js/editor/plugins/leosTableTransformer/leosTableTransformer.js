@@ -75,15 +75,15 @@ define(function leosTableTransformer(require) {
         children.forEach(function(childElement) {
             var childElementName = that._getElementName(childElement);
 
-            // If there are text elements, they should be included in an Akn p element, except it chilMp is false
+            // If there are text elements, they should be included in an Akn p element, except it childMp is false
             if (childElementName === 'text') {
                 that.mapToChildProducts(element, {
                     toPath: rootPath + toChild,
                     toChild: 'text',
                     toChildTextValue: childElement.value
                 });
-            // If they are inline elements, they should be included in an Akn p element, except it chilMp is false
-            } else if (CKEDITOR.dtd.$inline.hasOwnProperty(childElementName)) {
+            // If they are inline elements or internal reference, they should be included in an Akn p element, except it childMp is false
+            } else if (childElementName === 'mref' || CKEDITOR.dtd.$inline.hasOwnProperty(childElementName)) {
                 that.mapToNestedChildProduct(childElement, {
                     toPath: rootPath + toChild
                 });
