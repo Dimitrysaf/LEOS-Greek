@@ -378,7 +378,11 @@ public abstract class ApiServiceImpl implements ApiService {
             if (request.getCrossReferences() == null) {
                 request.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
             }
-            context.useEeaRelevance(request.getEeaRelevance());
+            if (request.getEeaRelevance() == null) {
+                context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+            } else {
+                context.useEeaRelevance(request.getEeaRelevance());
+            }
             if (request.getPackageTitle() != null) {
                 context.usePackageTitle(request.getPackageTitle());
             } else {
