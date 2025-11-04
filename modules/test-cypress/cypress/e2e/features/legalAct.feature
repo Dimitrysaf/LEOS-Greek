@@ -883,7 +883,7 @@ Feature: Legal Act Page Regression Features
     When click close button of ck editor
     Then ck editor window is not displayed
 
-  @checksForStory1703And2060And2208 @local @focus
+  @checksForStory1703And2060And2208 @local
   Scenario: Checks related to specific stories: 1703, 2060 and 2208. Tests for alternatives and some track changes related to paragraph mode
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -946,7 +946,7 @@ Feature: Legal Act Page Regression Features
     And num tag of paragraph 1 of article 6 should not exist
     And num tag of paragraph 2 of article 6 should not exist
 
-  @versionPane @archiveFunctionality @local @focus
+  @versionPane @archiveFunctionality @local
   Scenario: VersionPane Archive functionality
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -989,7 +989,7 @@ Feature: Legal Act Page Regression Features
     Then subversion of recent changes version card doesn't contain "Article 1 updated"
 
   # Ticket LEOS#2446 : Error with functionality 'Add Subparagraph' in article edition
-  @addSubParagraph @local @focus
+  @addSubParagraph @local
   Scenario: test add subparagraph functionality for first subparagraph inside article
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -1022,7 +1022,7 @@ Feature: Legal Act Page Regression Features
     And  content of subparagraph 2 of paragraph 1 of article 1 contains "subparagraph 2"
     And  content of subparagraph 3 of paragraph 1 of article 1 contains "subparagraph 1"
 
-  @searchAndReplaceLimitNumbers @local @focus
+  @searchAndReplaceLimitNumbers @local
   Scenario: search and limit numbers and replace search word
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -1068,7 +1068,7 @@ Feature: Legal Act Page Regression Features
     When click on cancel button in document search bar
     Then document search bar is not present
 
-  @multiDragAndDrop @higherDivisionValidation @local @focus
+  @multiDragAndDrop @higherDivisionValidation @local
   Scenario: user is able to drag and drop multiple element with same type
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -1168,7 +1168,7 @@ Feature: Legal Act Page Regression Features
     And  node label "Section 1 - Section heading..." contains node label "Article 1 -"
     And  node label "Section 1 - Section heading..." contains node label "Article 2 -"
 
-  @switchingAlternativeArticle @local @focus
+  @switchingAlternativeArticle @local
   Scenario: user is able to switch alternative article
     Given navigate to leos application with "User1"
     Then user is on home page
