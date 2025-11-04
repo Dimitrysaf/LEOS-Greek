@@ -136,7 +136,22 @@ define(function refToLinkExtensionModule(require) {
 
 
     function _renderLinks(el) {
+        // Check 1: R2L library loaded
+        if (!window['R2L'] || typeof window['R2L'].parse !== 'function') {
+            console.warn('R2L not ready, retrying...');
+            setTimeout(_renderLinks, 500, el);
+            return;
+        }
+
         const $clone = $(el).clone();
+
+        // Check 2: jQuery extension loaded
+        if (typeof $clone.parseDeferred !== 'function') {
+            console.warn('parseDeferred not available, retrying...');
+            setTimeout(_renderLinks, 500, el);
+            return;
+        }
+
         let editor = _getEditor();
 
         $clone.parseDeferred()[0].then(() => {
