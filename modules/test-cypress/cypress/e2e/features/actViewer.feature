@@ -49,7 +49,7 @@ Feature: act viewer page Regression Features
       | Export as PDF        |
       | Export as Legiswrite |
       | Validate             |
-      | Copy/Change Act      |
+      | Copy/Change act      |
       | Delete               |
     When click on download button
     When  extract recent "zip" file present in download folder
