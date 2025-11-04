@@ -95,8 +95,6 @@ define(function refToLinkExtensionModule(require) {
         const observer = new IntersectionObserver(function (entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting === true) {
-                    console.log('ENTRY')
-                    console.log(entry);
                     observer.unobserve(entry.target);
                     setTimeout(_renderLinks, 1000, entry.target);
                 }
