@@ -26,12 +26,14 @@ define(function refToLinkExtensionModule(require) {
     var refLinkExecuted = false;
 
     function _initRefToLink(connector) {
+        console.log('[REF2LINK] Initializing refToLink extension...');
         log.debug("Initializing refToLink extension...");
 
         target = UTILS.getParentElement(connector);
         otherTargets = connector.otherTargets;
 
         let R2L = window['R2L'];
+        console.log('[REF2LINK] R2L library status:', !!R2L, typeof R2L);
         // configure ref2Link
         // See https://webgate.ec.europa.eu/fpfis/wikis/spaces/Ref2Link/pages/800752769/Ref2Link+Javascript+API+advanced+v1.3 for available options
         R2L.setOptions({
@@ -49,7 +51,9 @@ define(function refToLinkExtensionModule(require) {
 
         if (Array.isArray(elementsMetadata) && elementsMetadata.length > 0 && elementsMetadata[0]?.language) {
             let lang = elementsMetadata[0].language.toUpperCase();
+            console.log('[REF2LINK] Loading rules for language:', lang);
             require(['text!lib/ref2Link_1.3.30/data/rules.' + lang + '.json'], function (rulesJson) {
+                console.log('[REF2LINK] Rules loaded successfully for', lang);
                 const rules = JSON.parse(rulesJson);
                 R2L.importRules(rules);
                 R2L.bindTooltips();
@@ -61,9 +65,12 @@ define(function refToLinkExtensionModule(require) {
                 connector.onStateChange = _connectorStateChangeListener;
 
                 if (!refLinkExecuted){
+                    console.log('[REF2LINK] Triggering initial state change');
                     _connectorStateChangeListener();
                 }
 
+            }, function(error) {
+                console.error('[REF2LINK] Failed to load rules for', lang, ':', error);
             });
         } else {
             console.warn('No valid document or language found.');
@@ -84,6 +91,7 @@ define(function refToLinkExtensionModule(require) {
 
     // handle connector state change on client-side
     function _connectorStateChangeListener() {
+        console.log('[REF2LINK] State change triggered, refLinkExecuted:', refLinkExecuted);
         log.debug("refToLink extension state changed...");
         refLinkExecuted = true;
         // KLUGE delay execution due to sync issues with target update
@@ -91,10 +99,13 @@ define(function refToLinkExtensionModule(require) {
     }
 
     function _registerObservers() {
+        console.log('[REF2LINK] Registering observers for target:', target?.id);
         log.debug("Registering observers for elements...");
         const observer = new IntersectionObserver(function (entries) {
+            console.log('[REF2LINK] Observer triggered for', entries.length, 'entries');
             entries.forEach(entry => {
                 if (entry.isIntersecting === true) {
+                    console.log('[REF2LINK] Element intersecting, scheduling render for:', entry.target.tagName);
                     observer.unobserve(entry.target);
                     setTimeout(_renderLinks, 1000, entry.target);
                 }
@@ -106,6 +117,7 @@ define(function refToLinkExtensionModule(require) {
         function _addToObserver(selectors) {
             selectors.forEach(selector => {
                 const elementsToObserve = document.querySelectorAll("#" + target.id + " " + selector);
+                console.log('[REF2LINK] Found', elementsToObserve.length, 'elements for selector:', selector);
                 elementsToObserve.forEach(elementToObserve => observer.observe(elementToObserve));
 
                 if (!!otherTargets && otherTargets.length > 0) {
@@ -136,9 +148,11 @@ define(function refToLinkExtensionModule(require) {
 
 
     function _renderLinks(el) {
+        console.log('[REF2LINK] _renderLinks called for element:', el.tagName, el.id);
+        
         // Check 1: R2L library loaded
         if (!window['R2L'] || typeof window['R2L'].parse !== 'function') {
-            console.warn('R2L not ready, retrying...');
+            console.warn('[REF2LINK] R2L not ready, retrying... Available methods:', Object.keys(window['R2L'] || {}));
             setTimeout(_renderLinks, 500, el);
             return;
         }
@@ -147,26 +161,30 @@ define(function refToLinkExtensionModule(require) {
 
         // Check 2: jQuery extension loaded
         if (typeof $clone.parseDeferred !== 'function') {
-            console.warn('parseDeferred not available, retrying...');
+            console.warn('[REF2LINK] parseDeferred not available, retrying... Available jQuery methods:', Object.keys($.fn).filter(k => k.includes('parse')));
             setTimeout(_renderLinks, 500, el);
             return;
         }
+        
+        console.log('[REF2LINK] All dependencies ready, proceeding with parseDeferred');
 
         let editor = _getEditor();
 
         $clone.parseDeferred()[0].then(() => {
             const $links = $clone.find('.ref2link-generated');
+            console.log('[REF2LINK] parseDeferred completed, found', $links.length, 'generated links');
 
             $links.each(function () {
                 const $clonedLink = $(this);
                 const refText = $clonedLink.text();
+                console.log('[REF2LINK] Processing link with text:', refText);
 
                 safeInsertRef2Link(el, refText, $clonedLink, editor);
             });
 
-            console.log('Ref2Link rendering completed.');
+            console.log('[REF2LINK] Ref2Link rendering completed for', $links.length, 'links');
         }).catch(err => {
-            console.error('Ref2Link parseDeferred failed:', err);
+            console.error('[REF2LINK] parseDeferred failed:', err);
         });
     }
 
