@@ -12,15 +12,10 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 ; // jshint ignore:line
-define(function refToLinkExtensionModule(require) {
+define(["logger", "jquery", "refToLink", "core/leosUtils", "promise!ckEditor"], function refToLinkExtensionModule(log, $, refToLink, UTILS, CKEDITOR) {
     "use strict";
 
-    // load module dependencies
-    var log = require("logger");
-    var $ = require("jquery");
-    var refToLink = require("refToLink");
-    var UTILS = require("core/leosUtils");
-    var CKEDITOR = require("promise!ckEditor");
+    // module dependencies are now properly loaded
     var target;
     var otherTargets;
     var refLinkExecuted = false;
@@ -157,16 +152,19 @@ define(function refToLinkExtensionModule(require) {
             return;
         }
 
-        const $clone = $(el).clone();
-
-        // Check 2: jQuery extension loaded
-        if (typeof $clone.parseDeferred !== 'function') {
+        // Check 2: jQuery extension loaded (from ref2link bundle)
+        if (typeof $.fn.parseDeferred !== 'function') {
             console.warn('[REF2LINK] parseDeferred not available, retrying... Available jQuery methods:', Object.keys($.fn).filter(k => k.includes('parse')));
+            // Force load ref2link bundle if not loaded
+            if (!document.querySelector('script[src*="ref2link.bundle.js"]')) {
+                console.log('[REF2LINK] ref2link bundle not found, may need manual loading');
+            }
             setTimeout(_renderLinks, 500, el);
             return;
         }
         
         console.log('[REF2LINK] All dependencies ready, proceeding with parseDeferred');
+        const $clone = $(el).clone();
 
         let editor = _getEditor();
 
