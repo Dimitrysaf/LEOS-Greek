@@ -523,6 +523,11 @@ Then('content of subparagraph {int} of paragraph {int} of article {int} contains
     legalActPage.getColumnFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', columnNumber);
 });
 
+Then('content of paragraph {int} of article {int} contains a table with {int} row and {int} column', function (paragraphNumber, articleNumber, rowNumber, columnNumber) {
+    legalActPage.getRowFromTableOfParagraphFromArticle(paragraphNumber, articleNumber).should('have.length', rowNumber);
+    legalActPage.getColumnFromTableOfParagraphFromArticle(paragraphNumber, articleNumber).should('have.length', columnNumber);
+});
+
 Then('show all action menu is not present for citation {int}', function (citationNumber) {
     legalActPage.getLeosActionsIconOfCitation(citationNumber).should('not.exist');
 });

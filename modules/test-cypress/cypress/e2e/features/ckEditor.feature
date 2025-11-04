@@ -185,7 +185,7 @@ Feature: CK Editor Regression Features
         When click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then ck editor window is not displayed
-        And  content of subparagraph 1 of paragraph 3 of article 1 contains a table with 3 row and 2 column
+        And  content of paragraph 3 of article 1 contains a table with 3 row and 2 column
         When mouseover and click on article 1
         Then ck editor window is displayed
         When select content from offset 0 till offset 7 in numbered paragraph 2 of article in edition mode
