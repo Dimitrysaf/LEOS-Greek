@@ -11,11 +11,14 @@ if (environment.production) {
 
 if ('serviceWorker' in navigator) {
   const baseHref = document.getElementsByTagName('base')[0]?.href || '/';
-  const swPath = new URL('sw.js', baseHref).pathname;
-  navigator.serviceWorker.register(swPath).then(() => {
+  const swPath = new URL('ecasSw.js', baseHref).pathname;
+  navigator.serviceWorker.register(swPath).then((registration) => {
     console.log('Service Worker registered');
+    // Check for updates every time
+    registration.update();
   });
 }
+
 
 
 preInitApp(environment).then(() =>

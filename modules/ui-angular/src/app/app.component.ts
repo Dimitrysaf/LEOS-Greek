@@ -22,6 +22,7 @@ import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service'
 import {NotificationsService} from './shared/services/notifications.service';
 import {DocumentService} from "@/shared/services/document.service";
 import {DomSanitizer, Title} from '@angular/platform-browser';
+import {AuthService} from "@/core/services/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -68,7 +69,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private documentService: DocumentService,
     private titleService: Title,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private authService: AuthService
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
     this.i18nState = this.store.select(getI18nState);
@@ -84,10 +86,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    console.log('serviceWorker' in navigator);
     if ('serviceWorker' in navigator) {
+      console.log('ADDED SERVICE WORKER EVENT');
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data.type === 'ECAS_SESSION_EXPIRED') {
           console.log('ECAS_SESSION_EXPIRED');
+          this.authService.markTokenAsExpired(this.authService.loadTokenData().accessToken);
         }
       });
     }
