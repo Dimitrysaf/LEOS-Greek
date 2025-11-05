@@ -21,7 +21,7 @@ import {
   TreeNode,
 } from '@eui/components/eui-tree';
 import { EuiTreeSelectionChanges } from '@eui/components/eui-tree/eui-tree.model';
-import {AppConfigService} from "@/core/services/app-config.service";
+
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -44,6 +44,8 @@ export class ProposalCreateTemplateSelectorComponent
   @Input() documentCollectionName!: string;
   @Input() proposalTemplate!: string;
   @Input() userRoles!: ApplicationRole[];
+  @Input() dgList: string[];
+  @Input() selectedDg: string;
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
@@ -57,8 +59,7 @@ export class ProposalCreateTemplateSelectorComponent
   doubleClickTimer: any;
   filteredNodes: TreeDataModel = null;
 
-  selectedDg: string;
-  dgList: UserEntity[] = [];
+
 
 
   private destroy$ = new Subject<void>();
@@ -66,28 +67,15 @@ export class ProposalCreateTemplateSelectorComponent
 
   constructor(
     private cd: ChangeDetectorRef,
-    private proposalService: ProposalService,
-    private appConfig: AppConfigService
+    private proposalService: ProposalService
   ) {
     this.setInitialState();
   }
 
   ngOnInit() {
     this.initialize(this.isCopyChangeAct); // if isCopyChangeAct then default true for disabling the tree selection
-    this.getDgList();
   }
 
-  getDgList() {
-    this.appConfig.config.subscribe((config) => {
-      if (config.user.entities.length > 1) {
-        this.dgList = config.user.entities;
-        const selectedDg = this.dgList.find(dg => dg.organizationName === config.user.defaultEntity.organizationName);
-        this.selectedDg = selectedDg.organizationName ;
-      }
-
-     // this.userRoles =  config.user.roles; ["user","suppot"]
-    });
-  }
 
   ngOnDestroy() {
     this.destroy$.next();

@@ -1,4 +1,4 @@
-<div class="eui-u-flex-column" *ngIf="treeNodes.length > 0">
+<div class="eui-u-flex-column">
     <p>
         {{
         'page.workspace.create-selector.' + translationKey + '.title' | translate
@@ -53,7 +53,7 @@
           </button>
         </div>
 
-      <div class="eui-u-mr-l" style="width: 244px" *ngIf="isCustomTemplatesCatalog && dgList.length > 1">
+      <div class="eui-u-mr-l" style="width: 244px" *ngIf="isCustomTemplatesCatalog">
         <select
           euiSelect
           name="dg"
@@ -61,15 +61,16 @@
           (ngModelChange)="onDgChange($event)"
           title="DG"
           aria-label="DG"
+          [disabled]="dgList?.length === 1"
         >
-          <option *ngFor="let dg of dgList" [value]="dg.organizationName">
-            {{ dg.organizationName }}
+          <option *ngFor="let dg of dgList" [value]="dg">
+            {{ dg }}
           </option>
         </select>
       </div>
     </div>
 
-    <eui-tree
+    <eui-tree  *ngIf="treeNodes.length > 0"
             isSingleSelect
             (selectionChange)="onNodeClick($event)"
             [nodeTemplateRef]="nodeTemplateCustom2"
@@ -79,10 +80,18 @@
     </eui-tree>
 </div>
 
-<div *ngIf="treeNodes.length === 0">
+<div *ngIf="treeNodes.length === 0 && !isCustomTemplatesCatalog">
   <p>
     {{
       'page.workspace.create-selector.no-template' | translate
+    }}
+  </p>
+</div>
+
+<div *ngIf="treeNodes.length === 0 && isCustomTemplatesCatalog">
+  <p>
+    {{
+      'page.workspace.create-selector.no-custom-template' | translate
     }}
   </p>
 </div>
