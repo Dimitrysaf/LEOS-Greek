@@ -8,7 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import {Subject, takeUntil} from 'rxjs';
 
 import {
   ApplicationRole,
@@ -27,6 +27,7 @@ import {
 import {appConfig} from "../../../../config";
 import {EuiGrowlService} from "@eui/core";
 import {AppConfigService} from "@/core/services/app-config.service";
+import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
 @Component({
@@ -55,6 +56,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   private proposalLanguage: string;
   documentCollectionName: string;
   private destroy$ = new Subject();
+  dgList: string[] = [];
+  selectedDg: string;
 
   public activeTabIndex = 0;
 
@@ -67,7 +70,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     private growlService: EuiGrowlService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
-    private appConfig: AppConfigService
+    private appConfig: AppConfigService,
+    private detailsService: ProposalDetailsService
   ) {}
 
   ngOnDestroy(): void {
@@ -93,9 +97,25 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     if (!this.isCopyChangeAct) {
       this.appConfig.config.subscribe((config) => {
           this.proposalService.loadCustomTemplateCatalog(config.user.defaultEntity.organizationName);
+          this.getDgList(config);
       //this.proposalService.loadCustomTemplateCatalog(this.appConfig.user.defaultEntity.organizationName);
       });
   ``}
+  }
+
+  getDgList(config) {
+    let isSupportRole :boolean =config.user.roles?.includes('SUPPORT');
+    if (isSupportRole) {
+      this.detailsService.getAllOrganizations()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(organizations => {
+          this.dgList = organizations;
+          this.selectedDg = this.dgList.find(dg => dg === config.user.defaultEntity.organizationName);
+        });
+    } else {
+      this.dgList = config.user.entities.map(entity => entity.organizationName);
+      this.selectedDg = this.dgList.find(dg => dg === config.user.defaultEntity.organizationName);
+    }
   }
 
   ngAfterViewInit() {
