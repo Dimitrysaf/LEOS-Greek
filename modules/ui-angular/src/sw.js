@@ -3,6 +3,7 @@ self.addEventListener('fetch', (event) => {
     fetch(event.request)
       .then((response) => {
         const contentType = response.headers.get('content-type');
+        console.log("RESPONSE: CHECKING");
         if (contentType?.includes('text/html')) {
           return response.text().then((body) => {
             if ((body.indexOf('<meta name="Keywords" content="EU Login, ECAS, Authentication, Security" />') >= 0 &&
