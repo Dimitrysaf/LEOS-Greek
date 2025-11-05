@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
@@ -115,6 +116,7 @@ public class LeosApiController {
     private final TokenService tokenService;
     private final TransformationService transformationService;
     private final ContentComparatorService comparatorService;
+    private final DocumentContentService documentContentService;
     private final EventBus leosApplicationEventBus;
     private final ExportService exportService;
     private final CreateCollectionService createCollectionService;
@@ -144,7 +146,8 @@ public class LeosApiController {
                              EventBus leosApplicationEventBus, ExportService exportService,
                              CreateCollectionService createCollectionService, Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
-                             SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler) {
+                             SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
+                             DocumentContentService documentContentService) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -160,6 +163,7 @@ public class LeosApiController {
         this.securityContext = securityContext;
         this.userService = userService;
         this.coEditionInfoHandler = coEditionInfoHandler;
+        this.documentContentService = documentContentService;
     }
 
     @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -239,11 +243,12 @@ public class LeosApiController {
         try {
             String contextPath = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request)).build().toUriString();
             String baseContextPath = contextPath.substring(0, StringUtils.ordinalIndexOf(contextPath, "/", 4));
+            boolean isCoverPage = documentContentService.isCoverPageExists(firstContent.getBytes());
             String firstContentHtml = transformationService
-                    .formatToHtml(new ByteArrayInputStream(firstContent.getBytes()), baseContextPath, null)
+                    .formatToHtml(new ByteArrayInputStream(firstContent.getBytes()), baseContextPath, null, isCoverPage ? new ByteArrayInputStream(documentContentService.getCoverPageContent(firstContent.getBytes())) : null)
                     .replaceAll("(?i)(href|onClick)=\".*?\"", "");
             String secondContentHtml = transformationService
-                    .formatToHtml(new ByteArrayInputStream(secondContent.getBytes()), baseContextPath, null)
+                    .formatToHtml(new ByteArrayInputStream(secondContent.getBytes()), baseContextPath, null, isCoverPage ? new ByteArrayInputStream(documentContentService.getCoverPageContent(firstContent.getBytes())) : null)
                     .replaceAll("(?i)(href|onClick)=\".*?\"", "");
             if (mode == SINGLE_COLUMN_MODE) {
                 String comparedContent = comparatorService.compareContents(new ContentComparatorContext.Builder(firstContentHtml, secondContentHtml)
