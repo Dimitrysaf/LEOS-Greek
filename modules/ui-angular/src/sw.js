@@ -12,7 +12,11 @@ self.addEventListener('fetch', (event) => {
               body.indexOf('<title>Mock Login Form</title>') >= 0 ||
               body.indexOf('<title>Redirecting To ECAS</title>') >= 0) {
               console.log("ECAS EXPIRED");
-              return Response.redirect(self.location.origin + event.request.url.split(self.location.origin)[1], 302);
+              self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                  client.postMessage({ type: 'ECAS_SESSION_EXPIRED' });
+                });
+              });
             }
             return new Response(body, response);
           });
