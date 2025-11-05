@@ -85,8 +85,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
-    console.log('serviceWorker' in navigator);
     if ('serviceWorker' in navigator) {
       console.log('ADDED SERVICE WORKER EVENT');
       navigator.serviceWorker.addEventListener('message', (event) => {
