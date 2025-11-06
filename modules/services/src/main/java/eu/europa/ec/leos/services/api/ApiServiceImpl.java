@@ -111,6 +111,7 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -183,6 +184,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private final MilestoneService milestoneService;
     private final CloneContext cloneContext;
     private final UserHelper userHelper;
+    private final GenericDocumentApiService genericDocumentApiService;
     protected final GenericDocumentTocApiService genericDocumentTocApiService;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private ProposalConverterService proposalConverterService;
@@ -230,7 +232,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           ExplanatoryService explanatoryService,
                           ExportPackageService exportPackageService, NotificationService notificationService,
                           LegService legService, UserHelper userHelper, LeosRepository leosRepository,
-                          TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
+                          TrackChangesContext trackChangesContext, DocumentViewService documentViewService, GenericDocumentApiService genericDocumentApiService,
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
                           TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper) {
@@ -265,6 +267,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.leosRepository = leosRepository;
         this.trackChangesContext = trackChangesContext;
         this.documentViewService = documentViewService;
+        this.genericDocumentApiService = genericDocumentApiService;
         this.genericDocumentTocApiService = genericDocumentTocApiService;
         this.coverPageApiService = coverPageApiService;
         this.proposalDetailsService = proposalDetailsService;
@@ -334,31 +337,50 @@ public abstract class ApiServiceImpl implements ApiService {
         documentVO.getMetadata().setTemplate(templateKey);
         documentVO.getMetadata().setCustomTemplateAct(customTemplateAct);
         CreateCollectionResult createCollectionResult = createCollectionService.createCollection(documentVO, false);
-        createCollectionResult.setNotFoundLanguages(createLinguisticVersions(linguisticVersions, documentVO, createCollectionResult));
+        if (CollectionUtils.isNotEmpty(linguisticVersions)) {
+            createCollectionResult.setNotFoundLanguages(createLinguisticVersions(linguisticVersions, documentVO, createCollectionResult));
+        }
         return createCollectionResult;
     }
 
     private List<String> createLinguisticVersions(List<String> linguisticVersions, DocumentVO documentVO, CreateCollectionResult createCollectionResult)
             throws CreateCollectionException {
         List<String> notFoundLinguisticVersions = new ArrayList<>();
+        List<String> createdProposalRefs = new ArrayList<>();
         if (documentVO.getMetadata().isCustomTemplateAct()) {
             if (createCollectionResult != null) {
                 setOriginalRefs(documentVO, createCollectionResult);
             }
             for (String language : linguisticVersions) {
-                createLinguisticVersion(documentVO, StringUtils.upperCase(language), notFoundLinguisticVersions);
+                String newLinguisticProposalRef = createLinguisticVersion(documentVO, StringUtils.upperCase(language), notFoundLinguisticVersions);
+                if (newLinguisticProposalRef != null) {
+                    createdProposalRefs.add(newLinguisticProposalRef);
+                }
             }
+            alignIds(documentVO.getRef(), createdProposalRefs);
         }
         return notFoundLinguisticVersions;
     }
 
-    private void createLinguisticVersion(DocumentVO documentVO, String language, List<String> notFoundLinguisticVersions) throws CreateCollectionException {
+    private String createLinguisticVersion(DocumentVO documentVO, String language, List<String> notFoundLinguisticVersions) throws CreateCollectionException {
         documentVO.getMetadata().setLanguage(language);
         try {
-            createCollectionService.createCollection(documentVO, true);
+            CreateCollectionResult createCollectionResult = createCollectionService.createCollection(documentVO, true);
+            return createCollectionResult.getProposalId();
         } catch (IllegalArgumentException e) {
             if (StringUtils.startsWith(e.getMessage(), "404 NOT_FOUND")) {
                 notFoundLinguisticVersions.add(language);
+            }
+        }
+        return null;
+    }
+
+    private void alignIds(String originalRef, List<String> linguisticRefs) {
+        if (CollectionUtils.isNotEmpty(linguisticRefs)) {
+            List<XmlDocument> originalXmlDocs = getAllDocuments(originalRef);
+            for (String linguisticRef : linguisticRefs) {
+                List<XmlDocument> linguisticXmlDocs = getAllDocuments(linguisticRef);
+                this.genericDocumentApiService.alignIdsInAllDocuments(originalXmlDocs, linguisticXmlDocs, linguisticRef);
             }
         }
     }

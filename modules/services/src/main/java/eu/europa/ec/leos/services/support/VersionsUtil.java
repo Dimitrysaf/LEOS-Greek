@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VersionsUtil {
+    public static final String BASE_VERSION = "0.1.0.0";
 
     public static String buildLabel(CheckinCommentVO checkinComment, MessageHelper messageHelper) {
         final String label;

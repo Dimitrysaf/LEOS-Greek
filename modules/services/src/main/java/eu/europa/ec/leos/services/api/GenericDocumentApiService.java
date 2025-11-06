@@ -738,4 +738,27 @@ public class GenericDocumentApiService {
         }
         return ancestorIds;
     }
+
+    public void alignIdsInAllDocuments(List<XmlDocument> sourceXmlDocs, List<XmlDocument> targetXmlDocs, String ref) {
+        for (XmlDocument sourceXmlDoc : sourceXmlDocs) {
+            if (VersionsUtil.BASE_VERSION.equals(sourceXmlDoc.getVersionLabel())) {
+                try {
+                    XmlDocument targetXmlDoc = targetXmlDocs.stream().filter(doc -> doc.getCategory().equals(sourceXmlDoc.getCategory()))
+                            .findAny().orElseThrow(() -> new IllegalArgumentException(sourceXmlDoc.getCategory().toString() + " document not found"));
+                    byte[] alignedTargetXmlContent = xmlContentProcessor.alignDocumentIds(sourceXmlDoc, targetXmlDoc);
+                    this.leosRepository.updateDocument(
+                            targetXmlDoc.getId(),
+                            alignedTargetXmlContent,
+                            VersionType.TECHNICAL,
+                            this.messageHelper.getMessage("operation.document.aligned"),
+                            XmlDocument.class
+                    );
+                } catch (IllegalArgumentException e) {
+                    LOG.error("{} in {} version", e.getMessage(), ref.substring(ref.lastIndexOf("-") + 1).toUpperCase());
+                }
+            } else {
+                LOG.error("{} can't be aligned. Document in original language has been modified from the base version", sourceXmlDoc.getCategory().toString());
+            }
+        }
+    }
 }

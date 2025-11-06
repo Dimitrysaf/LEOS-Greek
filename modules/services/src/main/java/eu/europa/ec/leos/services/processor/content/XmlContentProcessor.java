@@ -418,4 +418,6 @@ public interface XmlContentProcessor {
     public SpecificDocumentInformationDTO getSpecificDocumentInformation(byte xmlContent[]);
 
     List<String> extractElementIdsFromXml(byte[] xmlContent);
+
+    byte[] alignDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException;
 }
