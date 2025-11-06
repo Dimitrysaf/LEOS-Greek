@@ -14,7 +14,7 @@ const USE_SERVICE_WORKER = true; // Set to false when you want to remove it
 if ('serviceWorker' in navigator && !window.location.hostname.includes('localhost')) {
   if (USE_SERVICE_WORKER) {
     const baseHref = document.getElementsByTagName('base')[0]?.href || '/';
-    const swPath = new URL('ecasSw.js', baseHref).pathname;
+    const swPath = new URL('ecasSwV2.js', baseHref).pathname;
     navigator.serviceWorker.register(swPath).then((registration) => {
       registration.update();
     });

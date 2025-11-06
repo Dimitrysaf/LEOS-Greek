@@ -39,7 +39,7 @@
             "assets": [
               "src/favicon.ico",
               "src/index.js",
-              "src/ecasSw.js",
+              "src/ecasSwV2.js",
               "src/assets",
               {
                 "glob": "**/*",

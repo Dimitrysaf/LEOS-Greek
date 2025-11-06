@@ -32,11 +32,16 @@ public class ForwardSlashFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        LOG.debug("ForwardSlashFilter filter doFilter...");
+        LOG.info("ForwardSlashFilter filter doFilter...");
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
-        String uri = httpServletRequest.getRequestURI();
+        String uri = httpServletRequest.getHeader("X-Forwarded-Path");
+        LOG.info("PAAS: X-Forwarded-Path filter doFilter...{}", uri);
+        if (uri == null) {
+            uri = httpServletRequest.getRequestURI();
+        }
+        LOG.info("PAAS: URI filter doFilter...{}", uri);
         if (!uri.endsWith("/")) {
             httpServletResponse.sendRedirect(uri + "/");
         } else {
