@@ -10,11 +10,13 @@ self.addEventListener('fetch', (event) => {
               body.indexOf('<meta name="Description" content="European Commission Authentication Service" />') >= 0 ||
               body.indexOf('<title>Mock Login Form</title>') >= 0 ||
               body.indexOf('<title>Redirecting To ECAS</title>') >= 0) {
-              self.clients.matchAll().then(clients => {
-                clients.forEach(client => {
-                  client.postMessage({ type: 'ECAS_SESSION_EXPIRED' });
+              if (event.clientId) {
+                self.clients.get(event.clientId).then(client => {
+                  if (client) {
+                    client.postMessage({ type: 'ECAS_SESSION_EXPIRED' });
+                  }
                 });
-              });
+              }
             }
             return new Response(body, response);
           });

@@ -13,9 +13,16 @@ const USE_SERVICE_WORKER = true; // Set to false when you want to remove it
 
 if ('serviceWorker' in navigator) {
   if (USE_SERVICE_WORKER) {
-    const baseHref = document.getElementsByTagName('base')[0]?.href || '/';
-    const swPath = new URL('sw.js', baseHref).pathname;
-    navigator.serviceWorker.register(swPath).then((registration) => {
+    // Unregister all existing service workers first
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      const unregisterPromises = registrations.map(registration => registration.unregister());
+      return Promise.all(unregisterPromises);
+    }).then(() => {
+      // Register the new service worker
+      const baseHref = document.getElementsByTagName('base')[0]?.href || '/';
+      const swPath = new URL('ecasSw.js', baseHref).pathname;
+      return navigator.serviceWorker.register(swPath);
+    }).then((registration) => {
       registration.update();
     });
   } else {
