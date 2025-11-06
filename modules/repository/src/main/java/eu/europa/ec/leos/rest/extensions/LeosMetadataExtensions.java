@@ -63,13 +63,14 @@ public class LeosMetadataExtensions {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private static Map<String, ? extends Object> toLeosRepositoryProperties(ProposalMetadata proposalMetadata) {
+    private static Map<String, Object> toLeosRepositoryProperties(ProposalMetadata proposalMetadata) {
 
         String title = Stream.of(proposalMetadata.getStage(), proposalMetadata.getType(), proposalMetadata.getPurpose())
                 .filter(s -> s != null && !s.isEmpty())
                 .collect(Collectors.joining(" "));
-
-        return buildCommonProperties(proposalMetadata, title);
+        Map<String, Object> leosProperties =  buildCommonProperties(proposalMetadata, title);
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VALIDATION_STATUS), proposalMetadata.getValidationStatus());
+        return leosProperties;
     }
 
     private static Map<String, ? extends Object> toLeosRepositoryProperties(ExplanatoryMetadata explanatoryMetadata) {
@@ -119,7 +120,7 @@ public class LeosMetadataExtensions {
         return buildCommonProperties(financialStatementMetadata, title);
     }
 
-    private static Map<String, ? extends Object> buildCommonProperties(LeosMetadata leosMetadata, String title) {
+    private static Map<String, Object> buildCommonProperties(LeosMetadata leosMetadata, String title) {
         Map<String, Object> leosProperties = new HashMap<>();
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE), leosMetadata.getStage());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE), leosMetadata.getType());

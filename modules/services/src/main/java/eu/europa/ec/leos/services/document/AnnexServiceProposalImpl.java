@@ -44,10 +44,10 @@ public class AnnexServiceProposalImpl extends AnnexServiceImpl {
                              NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                              ValidationService validationService, DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
                              MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext,
-            DocumentLanguageContext documentLanguageContext) {
+            DocumentLanguageContext documentLanguageContext, ProposalService proposalService) {
         super(annexRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, numberService, xmlNodeConfigProcessor,
                 validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext,
-                documentLanguageContext);
+                proposalService, documentLanguageContext);
     }
 
     @Override

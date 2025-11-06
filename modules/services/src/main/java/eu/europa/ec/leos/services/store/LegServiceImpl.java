@@ -692,6 +692,55 @@ public class LegServiceImpl implements LegService {
         return legPackage;
     }
 
+
+    /**
+     * Creates the LegPackage, which is the logical representation of the leg file, for the given proposalId.
+     *
+     * @param proposalId       proposalId for which we need to create the LegPackage
+     * @return LegPackage used to be sent to ConVal validation
+     */
+    @Override
+    public LegPackage createLegPackage(String proposalId) throws IOException {
+        LOG.trace("Creating Leg Package... [documentId={}]", proposalId);
+        final LegPackage legPackage = new LegPackage();
+        final LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposalId);
+        final Map<String, Object> contentToZip = new HashMap<>();
+
+
+        final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
+
+
+        List<XmlDocument> xmlDocuments = packageRepository.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, true);
+
+
+        legPackage.addContainedFile(proposal.getVersionedReference());
+        String language = proposal.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
+        ExportResource exportProposalResource = new ExportResource(LeosCategory.PROPOSAL);
+        final Map<String, String> proposalRefsMap = enrichZipWithProposal(contentToZip, exportProposalResource, proposal, null, null, null, 0);
+        ExportOptions exportOptions =  new ExportOptions() {
+            @Override
+            protected String getWordPrefix() {
+                return "";
+            }
+
+            @Override
+            public String getExportOutputDescription() {
+                return "";
+            }
+        };
+
+        addMemorandumToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
+        addExplanatoryToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, legPackage, proposal);
+        addBillToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, proposalRefsMap, legPackage, proposal);
+        addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
+        String legPackageName = proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION).concat(LEG_FILE_EXTENSION);
+        legPackage.setFile(ZipPackageUtil.zipFiles(legPackageName, contentToZip, language));
+        legPackage.setExportResource(exportProposalResource);
+        return legPackage;
+    }
+
+
     private void enrichZipWithFinancialStatement(final Map<String, Object> contentToZip, ExportResource exportProposalResource,
                                          Map<String, String> proposalRefsMap, FinancialStatement financialStatement,
                                          String proposalRef) {

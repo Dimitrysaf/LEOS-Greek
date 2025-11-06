@@ -15,10 +15,13 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.document.ProposalRepository;
+import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -58,6 +61,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 @Service
@@ -66,28 +70,29 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(MandateApiServiceImpl.class);
 
     public MandateApiServiceImpl(TemplateService templateService,
-            WorkspaceService workspaceService,
-            UserService userService, CreateCollectionService createCollectionService,
-            ProposalService proposalService, SecurityContext securityContext,
-            LeosPermissionAuthorityMap authorityMap, ExportService exportService,
-            Provider<CollectionContextService> collectionContextProvider,
-            DocumentContentService documentContentService, MessageHelper messageHelper,
-            Provider<BillContextService> billContextProvider, PackageService packageService,
-            BillService billService, XmlContentProcessor xmlContentProcessor,
-            ArchiveService archiveService, AnnexService annexService,
-            CloneContext cloneContext, MilestoneService milestoneService,
-            ProposalConverterService proposalConverterService,
-            PostProcessingDocumentService postProcessingDocumentService,
-            ValidationService validationService, Properties applicationProperties,
-            ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
-            NotificationService notificationService, LegService legService, UserHelper userHelper,
-            LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-            DocumentViewService documentViewService, GenericDocumentTocApiService genericDocumentTocApiService) {
+                                 WorkspaceService workspaceService,
+                                 UserService userService, CreateCollectionService createCollectionService,
+                                 ProposalService proposalService, SecurityContext securityContext,
+                                 LeosPermissionAuthorityMap authorityMap, ExportService exportService,
+                                 Provider<CollectionContextService> collectionContextProvider,
+                                 DocumentContentService documentContentService, MessageHelper messageHelper,
+                                 Provider<BillContextService> billContextProvider, PackageService packageService,
+                                 BillService billService, XmlContentProcessor xmlContentProcessor,
+                                 ArchiveService archiveService, AnnexService annexService,
+                                 CloneContext cloneContext, MilestoneService milestoneService,
+                                 ProposalConverterService proposalConverterService,
+                                 PostProcessingDocumentService postProcessingDocumentService,
+                                 ValidationService validationService, Properties applicationProperties,
+                                 ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
+                                 NotificationService notificationService, LegService legService, UserHelper userHelper,
+                                 LeosRepository leosRepository, TrackChangesContext trackChangesContext,
+                                 DocumentViewService documentViewService, GenericDocumentTocApiService genericDocumentTocApiService,
+                                 PackageRepository packageRepository, ProposalRepository proposalRepository) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService, genericDocumentTocApiService);
+                documentViewService, genericDocumentTocApiService, packageRepository, proposalRepository);
     }
 
     @Override
@@ -107,6 +112,16 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
     @Override
     public void validateProposal(String proposalRef) {
         throw new IllegalStateException("Feature not implemented for the running instance");
+    }
+
+    @Override
+    public void validateProposal(String proposalRef, String email, String username) {
+        throw new IllegalStateException("Feature not implemented for the running instance");
+    }
+
+    @Override
+    public <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus) {
+        return null;
     }
 
     @Override

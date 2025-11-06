@@ -53,5 +53,6 @@ public enum RepositoryProperties {
     TRACK_CHANGES_ENABLED,
     IS_VERSION_ARCHIVED,
     CALLBACK_ADDRESS,
-    IMPORTED;
+    IMPORTED,
+    VALIDATION_STATUS;
 }

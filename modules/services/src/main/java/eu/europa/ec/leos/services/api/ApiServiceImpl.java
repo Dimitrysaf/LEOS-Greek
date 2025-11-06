@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
+import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -49,6 +50,8 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.document.ProposalRepository;
+import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.api.exception.CreateMilestoneException;
@@ -90,7 +93,6 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
-import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
@@ -136,7 +138,6 @@ import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneH
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 
@@ -187,8 +188,10 @@ public abstract class ApiServiceImpl implements ApiService {
     private ExportPackageService exportPackageService;
     protected NotificationService notificationService;
     protected LegService legService;
-    private LeosRepository leosRepository;
+    protected LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
+    protected PackageRepository packageRepository;
+    protected ProposalRepository proposalRepository;
 
     private DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
@@ -221,7 +224,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           ExportPackageService exportPackageService, NotificationService notificationService,
                           LegService legService, UserHelper userHelper, LeosRepository leosRepository,
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
-                          GenericDocumentTocApiService genericDocumentTocApiService) {
+                          GenericDocumentTocApiService genericDocumentTocApiService, PackageRepository packageRepository, ProposalRepository proposalRepository) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -253,6 +256,8 @@ public abstract class ApiServiceImpl implements ApiService {
         this.trackChangesContext = trackChangesContext;
         this.documentViewService = documentViewService;
         this.genericDocumentTocApiService = genericDocumentTocApiService;
+        this.packageRepository = packageRepository;
+        this.proposalRepository = proposalRepository;
     }
 
     private static String readFileToString(File file) throws IOException {
@@ -845,6 +850,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex();
                 billService.updateExternalReferencesAsync(leosPackage);
+                proposalService.setProposalValidationStatus(proposal.getId(), ProposalValidationStatus.NOT_VALIDATED);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;

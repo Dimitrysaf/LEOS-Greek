@@ -17,6 +17,7 @@ import com.google.common.base.Strings;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -627,6 +628,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             if(!document.getCategory().equals(LeosCategoryClass.PROPOSAL)) {
                 updateProposalAsync(document, message);
             }
+         updateDocumentValidationStatus(document.getId());
         } catch (Exception e) {
             LOG.error("Error while updating internal references", e);
         }
@@ -659,6 +661,10 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         context.useActionMessage(ContextActionService.METADATA_UPDATED, message);
         context.useActionComment(message);
         context.executeUpdateDocumentsAssociatedToProposal();
+    }
+
+    private void updateDocumentValidationStatus(String id) {
+        proposalService.setProposalValidationStatus(id,  ProposalValidationStatus.NOT_VALIDATED);
     }
 
     public void updateProposalAsync(XmlDocument document, String message) {
