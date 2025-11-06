@@ -33,15 +33,8 @@ export class AuthInterceptor implements HttpInterceptor {
     // Make addTokenToRequest asynchronous and return an Observable
     return from(this.addTokenToRequest(request)).pipe(
       switchMap((authRequest:HttpRequest<any>) =>
+        // Pass on the cloned request instead of the original request
         next.handle(authRequest).pipe(
-          tap(event => {
-            if (event instanceof HttpResponse &&
-              event.headers.get('content-type')?.includes('text/html') &&
-              typeof event.body === 'string' &&
-              event.body.includes('ecas')) {
-              this.authService.markTokenAsExpired(this.authService.loadTokenData().accessToken);
-            }
-          }),
           catchError((e) => this.errorHandler(e, this.authService.loadTokenData().accessToken))
         )
       )
