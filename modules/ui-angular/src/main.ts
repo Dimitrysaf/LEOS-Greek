@@ -9,15 +9,23 @@ if (environment.production) {
   enableProdMode();
 }
 
+const USE_SERVICE_WORKER = true; // Set to false when you want to remove it
+
 if ('serviceWorker' in navigator) {
-  const baseHref = document.getElementsByTagName('base')[0]?.href || '/';
-  const swPath = new URL('ecasSw.js', baseHref).pathname;
-  navigator.serviceWorker.register(swPath).then((registration) => {
-    console.log('Service Worker registered');
-    // Check for updates every time
-    registration.update();
-  });
+  if (USE_SERVICE_WORKER) {
+    const baseHref = document.getElementsByTagName('base')[0]?.href || '/';
+    const swPath = new URL('sw.js', baseHref).pathname;
+    navigator.serviceWorker.register(swPath).then((registration) => {
+      registration.update();
+    });
+  } else {
+    // Unregister all service workers
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => registration.unregister());
+    });
+  }
 }
+
 
 
 
