@@ -282,6 +282,9 @@ define(function leosTablePluginModule(require) {
                 akn : "leos:deletable",
                 html : "leos:deletable"
             }, {
+                akn : "leos:predefinedtable",
+                html : "leos:predefinedtable"
+            }, {
                 html : 'data-akn-name=leosTable'
             }],
             sub : {
