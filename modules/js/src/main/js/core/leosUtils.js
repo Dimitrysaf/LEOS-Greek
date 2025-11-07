@@ -114,7 +114,7 @@ define(function leosUtilsModule(require) {
             if (element.childNodes.length > 0) {
                 for (var j = 0; j < element.childNodes.length; j++) {
                     if (element.childNodes[j].nodeType === Node.TEXT_NODE) {
-                        if (element.childNodes[0].textContent.trim() !== '') {
+                        if (element.childNodes[j].textContent.trim() !== '') {
                             return false;
                         }
                     } else if (element.childNodes[j].tagName !== LINE_BREAK_TAG) {
