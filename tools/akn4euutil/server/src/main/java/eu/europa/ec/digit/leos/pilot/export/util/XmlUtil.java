@@ -204,6 +204,11 @@ public class XmlUtil {
             }
         }
 
+        public Node getNodeOrCreateIfNotExists(Node parentNode, String name) {
+            Node node = getChildNodeWithName(parentNode, name);
+            return node != null ? node : this.newElement(name);
+        }
+
         private static Transformer getTransformer() throws TransformerConfigurationException {
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
             // Secure the factory to prevent XXE attacks
@@ -486,4 +491,5 @@ public class XmlUtil {
         nsc.bindNamespaceUri(NAMESPACE_AKN_NAME, NAMESPACE_AKN_URI); //fake to trick the parser for the default ns
         return nsc;
     }
+
 }
