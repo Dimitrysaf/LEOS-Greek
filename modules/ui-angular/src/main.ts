@@ -21,7 +21,7 @@ if ('serviceWorker' in navigator && !window.location.hostname.includes('localhos
       // Register the new service worker
       const baseHref = document.getElementsByTagName('base')[0]?.href || '/';
       const swPath = new URL('ecasSwV3.js', baseHref).pathname;
-      return navigator.serviceWorker.register(swPath, { scope: '/decide-drafting/' });
+      return navigator.serviceWorker.register(swPath, { scope: '/decide-drafting/ui/' });
     }).then((registration) => {
       registration.update();
     });
