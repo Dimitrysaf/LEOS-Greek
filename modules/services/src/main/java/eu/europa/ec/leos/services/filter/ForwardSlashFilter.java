@@ -37,24 +37,20 @@ public class ForwardSlashFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         String uri = httpServletRequest.getHeader("X-Forwarded-Path");
-        LOG.info("PAAS: X-Forwarded-Path filter doFilter...{}", uri);
+        
         if (uri == null) {
             uri = httpServletRequest.getHeader("X-Original-URI");
-            LOG.info("PAAS: X-Original-URI filter doFilter...{}", uri);
         }
         if (uri == null) {
             uri = httpServletRequest.getHeader("X-Forwarded-URI");
-            LOG.info("PAAS: X-Forwarded-URI filter doFilter...{}", uri);
         }
         if (uri == null) {
             uri = httpServletRequest.getHeader("Referer");
-            LOG.info("PAAS: Referer filter doFilter...{}", uri);
         }
         if (uri == null) {
             uri = httpServletRequest.getRequestURI();
         }
-        LOG.info("PAAS: URI filter doFilter...{}", uri);
-        LOG.info("PAAS: X-Forwarded-URI filter doFilter...{}", httpServletRequest.getContextPath() + httpServletRequest.getServletPath());
+
         if (!uri.endsWith("/")) {
             httpServletResponse.sendRedirect(uri + "/");
         } else {
