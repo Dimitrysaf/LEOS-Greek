@@ -9,7 +9,7 @@ if (environment.production) {
   enableProdMode();
 }
 
-const USE_SERVICE_WORKER = true; // Set to false when you want to remove it
+const USE_SERVICE_WORKER = false; // Set to false when you want to remove it
 
 if ('serviceWorker' in navigator && !window.location.hostname.includes('localhost')) {
   if (USE_SERVICE_WORKER) {
