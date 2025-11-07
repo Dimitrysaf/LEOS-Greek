@@ -1281,18 +1281,28 @@ define(function leosTrackChangesModule(require) {
                     this.removeEnterInsert(element, editor, numberModule);
                 } else if ((element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)
                     || element.getAttribute(core.DATA_INDENT_ORIGIN_LEVEL)) && element.hasAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
-                    if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION).toLowerCase() === 'indent') {
+                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION).toLowerCase() === 'indent') {
                         this.indentList(element, editor, false);
+                        var newElement = editor.document.getById(element.getId());
+                        this.indentList(newElement, editor, false);
                     } else {
                         this.indentList(element, editor, true);
                     }
+                    var newElement = editor.document.getById(element.getId());
+                    var tcAttributes = ["data-indent-origin-num", "data-indent-origin-num-id",
+                        "data-indent-origin-num-origin", "data-indent-origin-type",
+                        "data-akn-attr-softdate", "data-akn-attr-softuser",
+                        "data-indent-origin-type", "data-akn-tc-original-number", "data-akn-tc-original-indent-action"];
+                    for (var attrName of tcAttributes) {
+                        newElement.removeAttribute(attrName);
+                    }
                 } else { // case of reject action when is newly inserted
-                    var blockContainer = element.getAscendant(function(elem) {
+                    var blockContainer = element.getAscendant(function (elem) {
                         return elem && typeof elem['is'] === 'function' && elem.is('div') &&
                             elem.getAttribute('data-akn-name') === 'blockContainer' &&
                             elem.getAttribute('leos:editable') === 'true';
                     }, true); // block container context Explanatory Memorandum
-                    var articleAscendant = element.getAscendant(function(elem) {
+                    var articleAscendant = element.getAscendant(function (elem) {
                         return elem && typeof elem['is'] === 'function' && elem.is('article') &&
                             elem.getAttribute('data-akn-name') === 'article';
                     }, true); // block container context Explanatory Memorandum
