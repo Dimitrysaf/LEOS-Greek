@@ -407,7 +407,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
                     }
                 }).count() > 0;
 
-                Proposal clonedProposal = findProposalByRef(clonedProposalRef);
+                Proposal clonedProposal = getProposalByRef(clonedProposalRef);
                 String creationDate = XercesUtils.getChildContent(cloned, CLONED_CREATION_DATE);
                 String status = isContributionDone ?
                         messageHelper.getMessage("clone.proposal.status.contribution.done") :
