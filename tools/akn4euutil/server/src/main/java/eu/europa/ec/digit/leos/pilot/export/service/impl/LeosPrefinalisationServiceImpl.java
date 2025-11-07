@@ -14,23 +14,26 @@
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.LeosPrefinalisationException;
-import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
-import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
-import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
+import eu.europa.ec.digit.leos.pilot.export.exception.MetadataUtilsException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldInvalidValueException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotAvailableException;
+import eu.europa.ec.digit.leos.pilot.export.exception.metadata.MetadataFieldNotSupportedException;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataFieldType;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ListFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.SimpleFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
-import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
+import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.metadata.ApplyMetadataRequestConverter;
 import eu.europa.ec.digit.leos.pilot.export.util.metadata.ApplyMetadataResponseConverter;
 import org.slf4j.Logger;
@@ -247,11 +250,12 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
     }
 
-    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles, int commissionerPos) {
+    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles,
+                                                                             int commissionerPos) {
         try {
             processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles, commissionerPos);
             return metadataService.getFieldSuccessResult(field.getKey());
-        } catch(MetadataFieldNotAvailableException ex) {
+        } catch(MetadataFieldNotAvailableException | XmlUtilException | MetadataUtilsException ex) {
             LOG.debug("Lookup field info failed: {}", ex);
             return metadataService.getFieldNotAvailableResult(field.getKey());
         } catch(MetadataFieldNotSupportedException ex) {
@@ -263,7 +267,8 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles, int commissionerPos){
+    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles, int commissionerPos) throws MetadataUtilsException,
+            XmlUtilException {
         LOG.debug("Process field info  '{}'", fieldInfo);
 
         final boolean isAutonomousAct = MetadataUtil.isAutonomousAct(documentXmlFiles);
@@ -271,7 +276,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             LOG.debug("Process xml file '{}'", xmlFile.getName());
             switch(fieldInfo.getFieldType()){
                 case ADOPTION_DATE:
-                    metadataService.processAdoptionDate((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    metadataService.processAdoptionDate((ReferenceFieldInfo)fieldInfo, xmlFile, isAutonomousAct);
                     break;
                 case ADOPTION_LOCATION:
                     metadataService.processAdoptionLocation((ReferenceFieldInfo)fieldInfo, xmlFile);
@@ -292,15 +297,28 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                     metadataService.processFinalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
                 case STAMP:
-                    if(isAutonomousAct) {
-                        metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    }
+                    metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
                 case COMMISSIONER:
-                    if(isAutonomousAct) {
-                        metadataService.processCommissioner((ReferenceFieldInfo) fieldInfo, xmlFile, commissionerPos);
-                    }
+                    metadataService.processCommissioner((ReferenceFieldInfo) fieldInfo, xmlFile, commissionerPos);
                     break;
+                case CORRIGENDUM_ADDENDUM:
+                    metadataService.processCorrigendumAddendum((SimpleFieldInfo) fieldInfo, xmlFile);
+                    break;
+                case PACKAGE_TITLE:
+                    metadataService.processPackageTitle((SimpleFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case INTERNAL_REF:
+                    metadataService.processInternalRef((SimpleFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case AUTHENTIC_LANG:
+                    metadataService.processAuthenticLanguages((ListFieldInfo)fieldInfo, xmlFile);
+                    break;
+                case COVERPAGE_TYPE:
+                    metadataService.processCoverPageType((SimpleFieldInfo)fieldInfo, xmlFile);
+                    break;
+                default:
+                    throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
             }
         }
     }
