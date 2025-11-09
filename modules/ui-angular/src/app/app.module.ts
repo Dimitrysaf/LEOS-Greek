@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxEnvModule } from '@ngx-env/core';
@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppStarterService } from './app-starter.service';
 import { CoreModule } from './core/core.module';
 import { DocumentUserGuard } from './shared/guards/document-user.guard';
+import { GlobalErrorHandler } from './core/services/global-error-handler.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,6 +22,10 @@ import { DocumentUserGuard } from './shared/guards/document-user.guard';
   providers: [
     DocumentUserGuard,
     AppStarterService,
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandler,
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: (appStarterService) => () =>
