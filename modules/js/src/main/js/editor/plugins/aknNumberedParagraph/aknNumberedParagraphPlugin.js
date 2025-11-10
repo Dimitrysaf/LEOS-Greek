@@ -418,7 +418,8 @@ define(function aknNumberedParagraphPluginModule(require) {
             var ols = jqEditor.find("ol");
             for (var i = 0; i < ols.length; i++) {
                 var idAttrValue = ols[i].getAttribute("id");
-                if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
+                var isAlternativeArticle = hasSameIdAsParentAlternativeArticle(ols[i]);
+                if (idAttrValue && !isAlternativeArticle && $('[id="' + idAttrValue + '"]').length > 1) {
                     idAttrValue = identityHandler.generateId();
                     ols[i].setAttribute("id", idAttrValue);
                 }
@@ -440,6 +441,21 @@ define(function aknNumberedParagraphPluginModule(require) {
             event.editor.fire( 'unlockSnapshot' );
         }
     }
+
+    function hasSameIdAsParentAlternativeArticle($ol) {
+        // Ensure we have a jQuery object
+        if (!($ol instanceof jQuery)) {
+            $ol = $($ol);
+        }
+        const $parent = $ol.parent('article');
+        // Check: parent exists, has leos:alternative="true", and same id
+        return (
+            $parent.length &&
+            $parent.attr('leos:alternative') === 'true' &&
+            $ol.attr('id') === $parent.attr('id')
+        );
+    }
+
     // This method transforms subparagraphs into paragraphs when included in unnumbered paragraphs: ol/li/p to ol/li
     var transformSubparagraphs = function transformSubparagraphs(editor) {
         // transforms subparagraphs to paragraphs
