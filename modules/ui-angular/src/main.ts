@@ -8,34 +8,6 @@ import { environment } from './environments/environment';
 if (environment.production) {
   enableProdMode();
 }
-
-const USE_SERVICE_WORKER = false; // Set to false when you want to remove it
-
-if ('serviceWorker' in navigator && !window.location.hostname.includes('localhost')) {
-  if (USE_SERVICE_WORKER) {
-    // Unregister all existing service workers first
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      const unregisterPromises = registrations.map(registration => registration.unregister());
-      return Promise.all(unregisterPromises);
-    }).then(() => {
-      // Register the new service worker
-      const baseHref = document.getElementsByTagName('base')[0]?.href || '/';
-      const swPath = new URL('ecasSwV3.js', baseHref).pathname;
-      return navigator.serviceWorker.register(swPath, { scope: '/decide-drafting/ui/' });
-    }).then((registration) => {
-      registration.update();
-    });
-  } else {
-    // Unregister all service workers
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      registrations.forEach((registration) => registration.unregister());
-    });
-  }
-}
-
-
-
-
 preInitApp(environment).then(() =>
   platformBrowserDynamic()
     .bootstrapModule(AppModule)

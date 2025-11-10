@@ -85,16 +85,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if ('serviceWorker' in navigator) {
-      console.log('ADDED SERVICE WORKER EVENT');
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data.type === 'ECAS_SESSION_EXPIRED') {
-          console.log('ECAS_SESSION_EXPIRED');
-          this.authService.markTokenAsExpired(this.authService.loadTokenData().accessToken);
-        }
-      });
-    }
-
     const lang = this.storage.get('lang') ?? 'en';
     this.store.dispatch(new UpdateUserPreferencesAction({ lang }));
 
