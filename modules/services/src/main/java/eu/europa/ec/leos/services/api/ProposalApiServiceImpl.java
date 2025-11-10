@@ -103,14 +103,14 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
                                   NotificationService notificationService, LegService legService, UserHelper userHelper,
                                   LeosRepository leosRepository, TrackChangesContext trackChangesContext,
                                   DocumentViewService documentViewService, ConValidatorService conValidatorService,
-                                  GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
-                                  ProposalDetailsService proposalDetailsService,
+                                  GenericDocumentApiService genericDocumentApiService, GenericDocumentTocApiService genericDocumentTocApiService,
+                                  CoverPageApiService coverPageApiService, ProposalDetailsService proposalDetailsService,
                                   TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper) {
         super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap,
                 exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
                 xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
                 validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
-                trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
+                trackChangesContext, documentViewService, genericDocumentApiService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
                 templateConfigurationService,languageHelper);
         this.conValidatorService = conValidatorService;
     }

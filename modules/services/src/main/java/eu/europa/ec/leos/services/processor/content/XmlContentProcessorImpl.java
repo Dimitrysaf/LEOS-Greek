@@ -62,9 +62,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,34 +83,7 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftAdded;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftDeletedOrMovedTo;
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.addSibling;
-import static eu.europa.ec.leos.services.support.XercesUtils.cleanTrackChangesForElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFragment;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.getChildContent;
-import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
-import static eu.europa.ec.leos.services.support.XercesUtils.getContentByTagName;
-import static eu.europa.ec.leos.services.support.XercesUtils.getDescendantsWithAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstElementByName;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNextSibling;
-import static eu.europa.ec.leos.services.support.XercesUtils.getParentId;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.importNodeInDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateStylingAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.is;
-import static eu.europa.ec.leos.services.support.XercesUtils.isFirstSubParagraph;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
-import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.removeXmlNSAttributes;
-import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
+import static eu.europa.ec.leos.services.support.XercesUtils.*;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
@@ -3230,4 +3200,46 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return new SpecificDocumentInformationDTO(refersToOfDocument, showAs);
     }
 
+    @Override
+    public byte[] alignDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException {
+        NodeList sourceNodes = getAllNodesWithId(sourceXmlDoc);
+
+        Document targetDoc = getXercesDocument(targetXmlDoc);
+        NodeList targetNodes = getAllNodesWithId(targetDoc);
+
+        if (sourceNodes.getLength() == targetNodes.getLength()) {
+            for (int i = 0; i < sourceNodes.getLength(); i++) {
+                Node sourceNode = sourceNodes.item(i);
+                Node targetNode = targetNodes.item(i);
+                validateNodeAlignment(sourceXmlDoc, sourceNode, targetNode);
+                String sourceNodeId = getId(sourceNode);
+                setId(targetNode, sourceNodeId);
+            }
+        } else {
+            throw new IllegalArgumentException(sourceXmlDoc.getCategory().toString() + " document not structurally aligned");
+        }
+        return nodeToByteArray(targetDoc);
+    }
+
+    private static NodeList getAllNodesWithId(XmlDocument xmlDoc) {
+        Document doc = getXercesDocument(xmlDoc);
+        return getAllNodesWithId(doc);
+    }
+
+    private static NodeList getAllNodesWithId(Node node) {
+        return getElementsByXPath(node, String.format("//*[@%s]", XMLID));
+    }
+
+    private static Document getXercesDocument(XmlDocument xmlDoc) {
+        byte[] xmlContent = xmlDoc.getContent().get().getSource().getBytes();
+        return createXercesDocument(xmlContent);
+    }
+
+    private void validateNodeAlignment(XmlDocument sourceXmlDoc, Node sourceNode, Node targetNode) throws IllegalArgumentException {
+        if (!sourceNode.getNodeName().equals(targetNode.getNodeName())
+                || !getFirstAscendantId(sourceNode).equals(getFirstAscendantId(targetNode))
+                || !getPreviousSiblingId(sourceNode).equals(getPreviousSiblingId(targetNode))) {
+            throw new IllegalArgumentException(sourceXmlDoc.getCategory().toString() + " document not structurally aligned");
+        }
+    }
 }

@@ -1199,6 +1199,30 @@ public class XercesUtils {
         return addAttribute(node, XMLID, id);
     }
 
+    public static String getFirstAscendantId(Node node) {
+        Node parentNode = node.getParentNode();
+        while (parentNode != null) {
+            String parentId = getId(parentNode);
+            if (parentId != null) {
+                return parentId;
+            }
+            parentNode = parentNode.getParentNode();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    public static String getPreviousSiblingId(Node node) {
+        Node previousSibling = node.getPreviousSibling();
+        while (previousSibling != null) {
+            String previousSiblingId = getId(previousSibling);
+            if (previousSiblingId != null) {
+                return previousSiblingId;
+            }
+            previousSibling = previousSibling.getPreviousSibling();
+        }
+        return StringUtils.EMPTY;
+    }
+
     public static String getContentByTagName(Node node, String tagName) {
         Node element = getFirstElementByName(node, tagName);
         String content = null;
