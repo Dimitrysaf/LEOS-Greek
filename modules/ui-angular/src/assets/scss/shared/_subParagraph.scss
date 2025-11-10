@@ -101,8 +101,8 @@ $LIST_SPACING: 40px;
     & > p:not(:first-of-type):not([data-akn-element=crossHeading]):not([data-akn-element="subparagraph"])::before {
       @extend %padRight;
     }
-    & > p[data-akn-element="subparagraph"]:not(:first-of-type):not([data-akn-element=crossHeading])::before {
-      @extend %padRightForSubparagraphWithNewEnter;
+    & > p[data-akn-element="subparagraph"]:not(:first-of-type):not([data-akn-element=crossHeading]):not([data-akn-action-number])::before {
+        @extend %padRightForSubparagraphWithNewEnter;
     }
   }
 }

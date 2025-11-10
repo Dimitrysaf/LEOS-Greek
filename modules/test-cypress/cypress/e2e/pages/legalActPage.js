@@ -302,6 +302,14 @@ class legalActPage {
         return this.getSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).find('table tbody tr').eq(0).find('td');
     }
 
+    getRowFromTableOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber) {
+        return this.getParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).find('table tbody tr');
+    }
+
+    getColumnFromTableOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber) {
+        return this.getParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).find('table tbody tr').eq(0).find('td');
+    }
+
     clickInsertAfterIconOfCitation(citationNumber) {
         this.getCitation(citationNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }));
     }

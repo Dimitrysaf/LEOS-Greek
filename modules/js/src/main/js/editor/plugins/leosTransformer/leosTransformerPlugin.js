@@ -96,15 +96,10 @@ define(function leosTransformerPluginModule(require) {
     function _checkEmptyAndRemove(index, elem){
         // do not delete if it is the last editable element in the CKEditor
         // if LI and it has attribute 'refersto', do not delete it
-        var isPBeforeTable = $(elem).is('p') && $(elem).prev().is('table');
-        var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
-        var isParentBlockContainer = $(elem).parent().attr('data-akn-name')==="blockContainer";
-        isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList && !isParentBlockContainer;
         // first condition added in #2738, check if it can be removed in #2739
         if ((leosPluginUtils.isDuplicatedSignatureElement(elem) ||
                 ($(elem).parents('table').length === 0)
-                && (!$(elem).attr("refersto") || $(elem).attr("refersto") === '~WRP')
-                && !isPBeforeTable)
+                && (!$(elem).attr("refersto") || $(elem).attr("refersto") === '~WRP'))
             && UTILS.isEmptyElement(elem) && ($.trim($(elem).text()) === '')) {
             var parent = $(elem).parent();
             $(elem).remove();
