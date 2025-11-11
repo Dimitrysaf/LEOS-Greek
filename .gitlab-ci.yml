@@ -28,6 +28,8 @@ java-build:
     - mvn clean install
     - cd $CI_PROJECT_DIR
     - mvn clean install -DskipKarmaTests
+    - echo "=== sizes for debugging ==="
+    - du -sh $CI_PROJECT_DIR/**/target || true
   artifacts:
     expire_in: 1 hour
     when: always
