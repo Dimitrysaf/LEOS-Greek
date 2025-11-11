@@ -10,6 +10,10 @@
 
     <!-- Routing all requests to spring -->
     <sec:http use-expressions="true" entry-point-ref="http403EntryPoint">
+        <sec:intercept-url pattern="/ui/api/**" access="permitAll" />
+        <sec:intercept-url pattern="/ui/**" access="hasRole('**')" />
+        <sec:intercept-url pattern="/api/secured/**" access="isAuthenticated()" />
+        <sec:intercept-url pattern="/**" access="permitAll" />
         <sec:custom-filter after="PRE_AUTH_FILTER" ref="jeePreAuthenticatedFilter"/>
         <sec:session-management session-fixation-protection="none"/>
         <sec:csrf disabled="true"/> <!--Already handled by vaadin -->

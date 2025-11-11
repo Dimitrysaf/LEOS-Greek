@@ -61,6 +61,7 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import jakarta.inject.Provider;
@@ -93,7 +94,7 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             CloneContext cloneContext, MilestoneService milestoneService,
             ProposalConverterService proposalConverterService,
             PostProcessingDocumentService postProcessingDocumentService,
-            ValidationService validationService, Properties applicationProperties,
+            ValidationService validationService, @Qualifier("applicationProperties") Properties applicationProperties,
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
             NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext,

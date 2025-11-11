@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -113,8 +114,8 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     @Autowired
     public LeosLightXmlDocumentServiceImpl(XPathCatalog xPathCatalog,
                                            HtmlRenditionProcessor htmlRenditionProcessor, GenericDocumentTocApiService genericDocumentTocApiService,
-                                           MessageHelper messageHelper, RestTemplate restTemplate, AnnotateService annotateService,
-                                            DocumentLanguageContext documentLanguageContext, ExportHelper exportHelper) {
+                                           MessageHelper messageHelper, @Qualifier("restTemplate") RestTemplate restTemplate, AnnotateService annotateService,
+                                           DocumentLanguageContext documentLanguageContext, ExportHelper exportHelper) {
         this.xPathCatalog = xPathCatalog;
         this.htmlRenditionProcessor = htmlRenditionProcessor;
         this.messageHelper = messageHelper;

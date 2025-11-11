@@ -54,6 +54,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -123,7 +124,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     public LeosLightApiServiceImpl(ValidationService validationService, ProposalConverterService proposalConverterService, LeosRepository leosRepository,
                                    PackageService packageService, MessageHelper messageHelper, SecurityContext securityContext,
                                    LeosLightXmlDocumentService leosLightXmlDocumentService,
-                                   Properties applicationProperties, ApiService apiService,
+                                   @Qualifier("applicationProperties") Properties applicationProperties, ApiService apiService,
                                    CreateCollectionService createCollectionService,
                                    TokenService tokenService,
                                    CollaboratorService collaboratorService, Provider<StructureContext> structureContextProvider,

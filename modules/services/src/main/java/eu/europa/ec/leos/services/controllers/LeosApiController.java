@@ -60,6 +60,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -143,8 +144,8 @@ public class LeosApiController {
     @Autowired
     public LeosApiController(LegService legService, WorkspaceService workspaceService, TokenService tokenService,
                              TransformationService transformationService, ContentComparatorService comparatorService,
-                             EventBus leosApplicationEventBus, ExportService exportService,
-                             CreateCollectionService createCollectionService, Properties applicationProperties,
+                             @Qualifier("leosApplicationEventBus") EventBus leosApplicationEventBus, ExportService exportService,
+                             CreateCollectionService createCollectionService, @Qualifier("applicationProperties") Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
                              SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
                              DocumentContentService documentContentService) {

@@ -9,6 +9,7 @@
 
     <!-- Secured Leos API services -->
     <sec:http pattern="${leos.api.filter.processor.url}" entry-point-ref="restAuthenticationEntryPoint" create-session="stateless">
+        <sec:intercept-url pattern="/**" access="isAuthenticated()" />
         <sec:csrf disabled="true"/>
         <sec:headers>
             <sec:xss-protection disabled="true"/><!-- Info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection -->
