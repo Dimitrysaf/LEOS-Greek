@@ -35,9 +35,11 @@ java-build:
     when: always
     paths:
       - pom.xml
-      - "tools/repository/config/target/generated-config/**"
-      - "tools/akn4euutil/config/target/generated-config/**"
-      - "modules/web/target/*.war"
+      - "**/target/generated-config/**"
+      - "**/target/generated-config/**"
+      - "**/target/*.jar"
+      - "**/target/*.war"
+      - "**/target/classes"
     exclude:
       - "**/target/surefire-reports/**"
       - "**/target/site/**"
