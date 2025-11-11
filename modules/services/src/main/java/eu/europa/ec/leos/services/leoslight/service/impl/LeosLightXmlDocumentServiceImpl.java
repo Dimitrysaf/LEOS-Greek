@@ -60,7 +60,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;

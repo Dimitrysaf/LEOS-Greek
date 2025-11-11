@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.security;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.List;
 import java.util.Map;
 

@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import eu.europa.ec.leos.services.coedition.cache.CoEditionCacheEntryListener;
 import org.slf4j.Logger;

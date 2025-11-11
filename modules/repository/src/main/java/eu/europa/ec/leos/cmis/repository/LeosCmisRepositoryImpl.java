@@ -56,7 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;

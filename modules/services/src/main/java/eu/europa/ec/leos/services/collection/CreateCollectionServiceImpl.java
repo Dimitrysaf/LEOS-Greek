@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;

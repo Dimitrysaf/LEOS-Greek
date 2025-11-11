@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Node;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.List;
 import java.util.Map;
 

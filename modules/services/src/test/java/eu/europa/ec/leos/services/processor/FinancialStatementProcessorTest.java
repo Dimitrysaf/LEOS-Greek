@@ -30,7 +30,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
 import java.util.ArrayList;

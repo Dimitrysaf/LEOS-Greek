@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;

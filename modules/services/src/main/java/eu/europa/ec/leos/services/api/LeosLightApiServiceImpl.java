@@ -59,7 +59,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -30,7 +30,7 @@ import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import eu.europa.ec.leos.vo.structure.TocItemTypes;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;

@@ -38,7 +38,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -33,7 +33,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

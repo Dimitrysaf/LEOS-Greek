@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class SearchServiceImpl implements SearchService {
 
     SearchServiceImpl(XmlContentProcessor xmlContentProcessor,
                       ObjectProvider<SearchEngine> searchEngineProvider,
-                      SecurityContext securityContext, Properties applicationProperties){
+                      SecurityContext securityContext, @Qualifier("applicationProperties") Properties applicationProperties){
         this.xmlContentProcessor = xmlContentProcessor;
         this.searchEngineProvider =searchEngineProvider;
         this.securityContext = securityContext;
