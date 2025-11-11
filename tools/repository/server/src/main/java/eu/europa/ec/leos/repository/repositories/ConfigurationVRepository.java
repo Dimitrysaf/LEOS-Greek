@@ -21,6 +21,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface ConfigurationVRepository extends JpaRepository<ConfigurationV, BigDecimal> {
-    @Query(value = "SELECT * FROM CONFIGURATION_V c WHERE c.NAME = ?1 AND c.IS_LATEST_VERSION = 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM CONFIGURATION_V c WHERE c.NAME = ?1 AND c.IS_LATEST_VERSION = TRUE", nativeQuery = true)
     Optional<ConfigurationV> findConfigurationByName(String name);
 }

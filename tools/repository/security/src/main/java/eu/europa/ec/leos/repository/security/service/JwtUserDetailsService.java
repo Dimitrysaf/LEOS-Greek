@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,6 +30,7 @@ import org.springframework.web.client.RestOperations;
 import eu.europa.ec.leos.repository.security.model.AuthenticatedUser;
 
 @Service
+@Primary
 public class JwtUserDetailsService implements UserDetailsService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JwtUserDetailsService.class);

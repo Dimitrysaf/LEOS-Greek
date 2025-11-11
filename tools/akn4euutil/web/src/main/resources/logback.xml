@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration debug="false" scan="true" scanPeriod="5 minutes">
 
-    <property resource="application.properties" />
+    <property name="leos.log.contextName" value="${leos.log.contextName:-akn4euutils}"/>
+    <property name="leos.log.path" value="${leos.log.path:-./logs}"/>
+    <property name="leos.log.filePrefix" value="${leos.log.filePrefix:-akn4euutils}"/>
+    <property name="leos.log.level" value="${leos.log.level:-INFO}"/>
+
     <!-- Ignore or print logback internal status messages on the console -->
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
     <!--<statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>-->

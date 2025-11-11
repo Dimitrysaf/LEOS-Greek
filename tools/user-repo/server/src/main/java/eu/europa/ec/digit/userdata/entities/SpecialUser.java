@@ -14,21 +14,23 @@
 package eu.europa.ec.digit.userdata.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@javax.persistence.Entity
+@jakarta.persistence.Entity
 @Table(name = "LEOS_SPECIAL_USER")
+@Getter
+@Setter
+@NoArgsConstructor
 public class SpecialUser implements Serializable {
 
     private static final long serialVersionUID = -242509624358432413L;
@@ -60,9 +62,6 @@ public class SpecialUser implements Serializable {
     @JoinTable(name = "LEOS_SPECIAL_USER_ENTITY", joinColumns = @JoinColumn(name = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ENTITY_ID"))
     private List<Entity> entities;
 
-    public SpecialUser() {
-    }
-
     public SpecialUser(String login, Long perId, String lastName, String firstName,String email) {
         this.login = login;
         this.perId = perId;
@@ -73,25 +72,6 @@ public class SpecialUser implements Serializable {
         this.entities = entities;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public Long getPerId() {
-        return perId;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
 
     public List<Role> getRoleEntities() {
         roleEntities.add(new Role("USER","Default USER role"));
@@ -102,9 +82,5 @@ public class SpecialUser implements Serializable {
         roleEntities.add(new Role("USER","Default USER role"));
         return roleEntities.stream().map(r -> r.getRole())
                 .collect(Collectors.toList());
-    }
-
-    public List<Entity> getEntities() {
-        return entities;
     }
 }

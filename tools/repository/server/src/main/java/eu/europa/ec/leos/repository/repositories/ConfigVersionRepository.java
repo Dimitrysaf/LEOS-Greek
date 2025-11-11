@@ -20,7 +20,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.math.BigDecimal;
 
 public interface ConfigVersionRepository extends JpaRepository<ConfigVersion, BigDecimal> {
-    @Query(value = "SELECT * FROM CONFIG_VERSION c WHERE c.CONFIG_ID = ?1 AND c.IS_LATEST_VERSION = 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM CONFIG_VERSION c WHERE c.CONFIG_ID = ?1 AND c.IS_LATEST_VERSION = TRUE", nativeQuery = true)
     ConfigVersion findLastConfigVersionByConfigId(BigDecimal configId);
 
     @Query(value = "SELECT * FROM CONFIG_VERSION c WHERE c.ID = ?1", nativeQuery = true)

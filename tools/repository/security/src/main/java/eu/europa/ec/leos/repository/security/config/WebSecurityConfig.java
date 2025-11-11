@@ -1,16 +1,3 @@
-/*
- * Copyright 2024 European Union
- *
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- *
- *     https://joinup.ec.europa.eu/software/page/eupl
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and limitations under the Licence.
- */
 package eu.europa.ec.leos.repository.security.config;
 
 import java.util.concurrent.TimeUnit;
@@ -22,16 +9,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.CachingUserDetailsService;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.cache.SpringCacheBasedUserCache;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.client.RestTemplate;
@@ -43,9 +31,9 @@ import eu.europa.ec.leos.repository.security.service.JwtUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @ImportResource("classpath:eu/europa/ec/leos/repository/configContext.xml")
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
 	@Value("${repository.jwt.auth.enabled}")
 	private boolean jwtAuthEnabled;
@@ -58,23 +46,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new JwtAuthenticationEntryPoint();
 	}
 
-	@Bean
-	public UserDetailsService JwtUserDetailsService() {
-		return new JwtUserDetailsService();
-	}
+//	@Bean
+//	public UserDetailsService JwtUserDetailsService() {
+//		return new JwtUserDetailsService();
+//	}
 
 	@Bean
 	UserCache JwtUserCache() {
 		Cache<Object, Object> userCache = Caffeine.newBuilder()
-			.expireAfterWrite(userDetailsCacheExpirationInMin, TimeUnit.MINUTES)
-			.maximumSize(100)
-			.build();
+				.expireAfterWrite(userDetailsCacheExpirationInMin, TimeUnit.MINUTES)
+				.maximumSize(100)
+				.build();
 		return new SpringCacheBasedUserCache(new CaffeineCache("userCache", userCache));
 	}
 
 	@Bean
-	public UserDetailsService CachingUserDetailsService() {
-		CachingUserDetailsService cachingUserDetailsService = new CachingUserDetailsService(JwtUserDetailsService());
+	public UserDetailsService CachingUserDetailsService(JwtUserDetailsService userDetailsService) {
+		CachingUserDetailsService cachingUserDetailsService = new CachingUserDetailsService(userDetailsService);
 		cachingUserDetailsService.setUserCache(JwtUserCache());
 		return cachingUserDetailsService;
 	}
@@ -84,12 +72,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new RestTemplate();
 	}
 
-	@Override
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(CachingUserDetailsService()).passwordEncoder(getPasswordEncoder());
-	}
-
-	private PasswordEncoder getPasswordEncoder() {
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		// Replace with a real encoder for production!
 		return new PasswordEncoder() {
 			@Override
 			public String encode(CharSequence charSequence) {
@@ -104,40 +89,51 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public StrictHttpFirewall httpFirewall() {
-		StrictHttpFirewall firewall = new StrictHttpFirewall();
-		return firewall;
+		return new StrictHttpFirewall();
 	}
 
+	// AuthenticationManager bean for use elsewhere (if needed)
+//	@Bean
+//	public AuthenticationManager authenticationManager(HttpSecurity http, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder)
+//			throws Exception {
+//		return http
+//				.getSharedObject(AuthenticationManager.class);
+//	}
 	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+		return authConfig.getAuthenticationManager();
 	}
 
-	@Override
-	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		// Not needed CSRF
-		httpSecurity.csrf().disable();
-		httpSecurity.headers().frameOptions().deny().
-				xssProtection().disable(). // Info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
-				contentSecurityPolicy("default-src 'none';");
+	// New way: Use SecurityFilterChain bean
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.disable());
+		http.headers(headers -> headers
+				.frameOptions(frame -> frame.deny())
+				.xssProtection(xss -> xss.disable())
+				.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'none';"))
+		);
 
 		if (jwtAuthEnabled) {
-			// Not authenticate this particular request
-			httpSecurity.authorizeRequests().antMatchers("/token").permitAll().
-				// All other requests need to be authenticated
-				anyRequest().authenticated();
+			http.authorizeHttpRequests(authz -> authz
+					.requestMatchers("/token").permitAll()
+					.anyRequest().authenticated()
+			);
 		} else {
-			// Disable anonymous and not authenticate requests if auth disabled
-			httpSecurity.anonymous().disable().authorizeRequests().antMatchers("*").permitAll();
+			http.anonymous(anon -> anon.disable())
+					.authorizeHttpRequests(authz -> authz
+							.requestMatchers("/**").permitAll()
+					);
 		}
 
-		// Make sure we use stateless session; session won't be used to store user's state
-		httpSecurity.exceptionHandling().authenticationEntryPoint(JwtAuthenticationEntryPoint()).and().
-				sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
-				// Add a filter to validate the tokens with every request
-		        addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class).
-				// Add a filter for preventing XSS attacks
-		        addFilterAfter(new XSSFilter(), UsernamePasswordAuthenticationFilter.class);
+		http
+				.exceptionHandling(exception -> exception
+						.authenticationEntryPoint(JwtAuthenticationEntryPoint()))
+				.sessionManagement(session -> session
+						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterAfter(new XSSFilter(), UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
 	}
 }
