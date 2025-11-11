@@ -687,6 +687,7 @@
                         <source>${project.java.version}</source>
                         <target>${project.java.version}</target>
                         <debug>${project.java.debug}</debug>
+                        <parameters>true</parameters>
                         <optimize>${project.java.optimize}</optimize>
                         <showWarnings>${project.java.showWarnings}</showWarnings>
                         <showDeprecation>${project.java.showDeprecation}</showDeprecation>
