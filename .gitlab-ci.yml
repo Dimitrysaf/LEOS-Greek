@@ -35,9 +35,9 @@ java-build:
     when: always
     paths:
       - pom.xml
-      - "**/target"
-      - "**/package-lock.json"
-      - "**/yarn.lock"
+      - "tools/repository/config/target/generated-config/**"
+      - "tools/akn4euutil/config/target/generated-config/**"
+      - "modules/web/target/*.war"
     exclude:
       - "**/target/surefire-reports/**"
       - "**/target/site/**"
