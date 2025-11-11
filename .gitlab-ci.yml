@@ -33,9 +33,16 @@ java-build:
     when: always
     paths:
       - pom.xml
-      - "**/target"
+      - "**/target/*.jar"
+      - "**/target/*.war"
+      - "**/target/classes"
       - "**/package-lock.json"
       - "**/yarn.lock"
+    exclude:
+      - "**/target/surefire-reports/**"
+      - "**/target/site/**"
+      - "**/target/maven-archiver/**"
+      - "**/node_modules/**"
   rules:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       - if: $CI_PIPELINE_SOURCE == "web"
