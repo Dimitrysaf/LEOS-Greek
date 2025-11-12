@@ -57,6 +57,12 @@
                 <configuration>
                     <mainClass>eu.europa.ec.digit.userdata.Application</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>repackage</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
