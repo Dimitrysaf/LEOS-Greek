@@ -29,22 +29,15 @@ java-build:
     - cd $CI_PROJECT_DIR
     - mvn clean install -DskipKarmaTests
     - echo "=== sizes for debugging ==="
-    - du -sh $CI_PROJECT_DIR/**/target || true
+    - find $CI_PROJECT_DIR -name "target" -type d -exec du -sh {} \; || true
   artifacts:
     expire_in: 1 hour
     when: always
     paths:
       - pom.xml
-      - "**/target/generated-config/**"
-      - "**/target/generated-config/**"
-      - "**/target/*.jar"
-      - "**/target/*.war"
-      - "**/target/classes"
-    exclude:
-      - "**/target/surefire-reports/**"
-      - "**/target/site/**"
-      - "**/target/maven-archiver/**"
-      - "**/node_modules/**"
+      - "**/target"
+      - "**/package-lock.json"
+      - "**/yarn.lock"
   rules:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       - if: $CI_PIPELINE_SOURCE == "web"
