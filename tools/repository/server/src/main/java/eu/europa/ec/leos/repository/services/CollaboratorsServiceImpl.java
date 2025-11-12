@@ -189,6 +189,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         return packageIdsList;
     }
 
+    @Transactional
     public void updateCollaborators(String pkgId, List<Collaborator> collaboratorList, String userId) {
         Optional<Package> pkg = packageRepository.findById(BigDecimal.valueOf(Long.parseLong(pkgId)));
         if (pkg.isPresent()) {
@@ -196,6 +197,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         }
     }
 
+    @Transactional
     public void addCollaborators(BigDecimal pkgId, List<Collaborator> collaboratorList, String userId) {
         Optional<Package> pkg = packageRepository.findById(pkgId);
         if (pkg.isPresent()) {
@@ -203,6 +205,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         }
     }
 
+    @Transactional
     public void deleteCollaborators(BigDecimal pkgId, List<Collaborator> collaboratorList) {
         Optional<Package> pkg = packageRepository.findById(pkgId);
         if (pkg.isPresent()) {

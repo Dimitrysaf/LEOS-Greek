@@ -25,11 +25,6 @@ import eu.europa.ec.leos.repository.model.Package;
 import eu.europa.ec.leos.repository.services.CollaboratorsService;
 import eu.europa.ec.leos.repository.services.PackageService;
 import eu.europa.ec.leos.repository.utils.RestPreconditions;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +43,6 @@ import java.util.List;
 
 
 @RestController
-@Tag(name = "Package API", description = "Package API")
 @Validated
 public class PackageController {
     private static final Logger LOG = LoggerFactory.getLogger(PackageController.class);
@@ -62,10 +56,6 @@ public class PackageController {
     @PostMapping(path = "/package/create/{name}",
     consumes = {MediaType.APPLICATION_JSON_VALUE},
     produces = {MediaType.APPLICATION_JSON_VALUE} )
-    @Operation(summary = "create a Package by name")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Created", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Package> createPackage(@PathVariable("name") String name,
                                                  @Valid @RequestBody CreatePackageRequest createPackageRequest) throws Exception
     {
@@ -88,10 +78,6 @@ public class PackageController {
     }
 
     @DeleteMapping(path = "/package/delete/{name}")
-    @Operation(summary = "Delete a Package by name")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Deleted", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity deletePackage(@PathVariable("name") String packageName) throws Exception {
         packageName = URLDecoder.decode(packageName, StandardCharsets.UTF_8);
         packageService.deletePackage(packageName);
@@ -99,10 +85,6 @@ public class PackageController {
     }
 
     @GetMapping(path = "/package/find-by-name/{name}")
-    @Operation(summary = "Get a Package by name")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getPackageByName(@PathVariable("name") String name) throws MalformedURLException, RepositoryException{
         name = URLDecoder.decode(name, StandardCharsets.UTF_8);
         Package pkg = packageService.getPackageByName(name);
@@ -111,10 +93,6 @@ public class PackageController {
     }
 
     @GetMapping(path = "/package/find-by-pkg-id/{pkgId}")
-    @Operation(summary = "Get a Linked Package by package id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getLinkedPackagesByPkgId(@PathVariable("pkgId") String pkgId) throws MalformedURLException, RepositoryException{
         pkgId = URLDecoder.decode(pkgId, StandardCharsets.UTF_8);
         List<LinkedPackage> linkedPackages = packageService.getLinkedPackagesByPkgId(pkgId);
@@ -122,10 +100,6 @@ public class PackageController {
     }
 
     @GetMapping(path = "/package/find-by-linked-pkg-id/{linkedPkgId}")
-    @Operation(summary = "Get a Linked Package by package id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getLinkedPackagesByLinkedPkgId(@PathVariable("linkedPkgId") String linkedPkgId) throws MalformedURLException, RepositoryException{
         linkedPkgId = URLDecoder.decode(linkedPkgId, StandardCharsets.UTF_8);
         List<LinkedPackage> linkedPackages = packageService.getLinkedPackagesByLinkedPkgId(linkedPkgId);
@@ -133,10 +107,6 @@ public class PackageController {
     }
 
     @GetMapping(path = "/package/find-by-document-id/{id}")
-    @Operation(summary = "Get a Package by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getPackageByDocumentId(@PathVariable("id") String id) throws RepositoryException{
         Package pkg = packageService.findPackageByDocumentVersionId(id);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
@@ -145,10 +115,6 @@ public class PackageController {
 
 
     @GetMapping(path = "/package/find-by-id/{id}")
-    @Operation(summary = "Get a Package by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getPackageById(@PathVariable("id") String id) throws RepositoryException{
         Package pkg = packageService.getPackageById(id);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
@@ -158,10 +124,6 @@ public class PackageController {
     @PostMapping(path = "/package/find-by-name/documents",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE} )
-    @Operation(summary = "Find documents by package name")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<LeosDocumentList> findDocumentsByPackageName(@RequestParam(value="name", required=false, defaultValue="%25") String name,
                                                                    @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
                                                                        @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
@@ -176,10 +138,6 @@ public class PackageController {
     @PostMapping(path = "/package/find-by-id/{id}/documents",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE} )
-    @Operation(summary = "Find documents by package id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") BigDecimal id,
                                                            @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
                                                                      @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
@@ -191,10 +149,6 @@ public class PackageController {
     }
 
     @GetMapping(path = "/package/find-by-id/{id}/documents")
-    @Operation(summary = "Find documents by package id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") BigDecimal id, @RequestParam(value = "fetchContent", required = false,
             defaultValue = "false") Boolean fetchContent) {
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, null,  false, fetchContent));
@@ -203,10 +157,6 @@ public class PackageController {
     }
 
     @GetMapping(path = "/package/find-by-document-ref/{docRef}")
-    @Operation(summary = "Get a Package by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Package> findPackageByDocumentRef(@PathVariable("docRef") String docRef) throws RepositoryException{
         Package pkg = packageService.findPackageByDocumentRef(docRef);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"No packages found");
@@ -214,55 +164,31 @@ public class PackageController {
     }
 
     @GetMapping(path = "/package/find-recent-packages-by-user/{userName}/{numberOfRecentPackages}")
-    @Operation(summary = "Find recent number of packages for username")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<List<PackagesRecentlyChanged>> findRecentPackagesForUser(@PathVariable("userName") String userName, @PathVariable("numberOfRecentPackages") BigDecimal numberOfRecentPackages) throws RepositoryException{
         return new ResponseEntity<>(packageService.findRecentPackagesForUser(userName, numberOfRecentPackages), HttpStatus.OK);
     }
 
     @GetMapping(path = "/package/find-favourite-packages/{userName}")
-    @Operation(summary = "Find favorite packages for username")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<List<PackagesFavorites>> findFavouritePackagesForUser(@PathVariable("userName") String userName) throws RepositoryException{
         return new ResponseEntity<>(packageService.findFavouritePackagesForUser(userName), HttpStatus.OK);
     }
 
     @GetMapping(path = "/package/{ref}/get-favourite-package/{userName}")
-    @Operation(summary = "Get favourite package")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<PackagesFavorites> getFavouritePackage(@PathVariable("userName") String userName, @PathVariable("ref") String ref) throws RepositoryException{
         return new ResponseEntity<>(packageService.getFavouritePackage(userName, ref), HttpStatus.OK);
     }
 
     @PutMapping(path = "/package/{ref}/toggle-favourite-package/{userName}")
-    @Operation(summary = "Toggle favourite package")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<PackagesFavorites> toggleFavouritePackage(@PathVariable("userName") String userName, @PathVariable("ref") String ref) throws RepositoryException{
         return new ResponseEntity<>(packageService.toggleFavouritePackage(userName, ref), HttpStatus.OK);
     }
 
     @GetMapping(path = "/package/package-collaborators/{packageId}")
-    @Operation(summary = "Get package collaborators")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Collaborators sent", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getPackageCollaborators(@PathVariable("packageId") BigDecimal packageId) throws RepositoryException{
         return new ResponseEntity<>(collaboratorsService.getCollaborators(packageId), HttpStatus.OK);
     }
 
     @PostMapping(path = "/package/package-collaborators/{packageId}/{userName}")
-    @Operation(summary = "Add package collaborators")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Collaborators added", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> addPackageCollaborators(@PathVariable("packageId") BigDecimal packageId,
                                                           @PathVariable("userName") String userName,
                                                           @Valid @RequestBody List<Collaborator> collaborators) throws RepositoryException{
@@ -271,10 +197,6 @@ public class PackageController {
     }
 
     @PostMapping(path = "/package/package-collaborators/{packageId}")
-    @Operation(summary = "Remove package collaborators")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Collaborators deleted", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> deletePackageCollaborators(@PathVariable("packageId") BigDecimal packageId,
                                                              @Valid @RequestBody List<Collaborator> collaborators) throws RepositoryException{
         collaboratorsService.deleteCollaborators(packageId, collaborators);
