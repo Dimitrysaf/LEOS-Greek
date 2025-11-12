@@ -19,7 +19,7 @@ import eu.europa.ec.digit.leos.pilot.export.util.ConstantsTestsUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataTestsUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataTestsUtil.MetadataTestConfiguration;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLocationType;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -63,7 +63,7 @@ class AKN4EUUtilApplicationTests {
         return mvc.perform(builder);
     }
 
-    @Ignore
+    @Disabled
     public void convertLegToLw() throws Exception {
         MvcResult mvcResult = createConvertRequest("{ \"format\" : [\"LW\"], \"mode\" : \"individual\", \"convertAnnotations\" : \"yes\", \"documents\" : [\"bill_xxxxx.xml\"] }")
                 .andExpect(status().isOk())
@@ -73,7 +73,7 @@ class AKN4EUUtilApplicationTests {
         Assert.notNull(content, "Content is null");
     }
 
-    @Ignore
+    @Disabled
     public void convertLegToPdf() throws Exception {
         MvcResult mvcResult = createConvertRequest("{ \"format\" : [\"PDF\"], \"mode\" : \"individual\", \"convertAnnotations\" : \"yes\", \"documents\" : [\"bill_xxxxx.xml\"] }")
                 .andExpect(status().isOk())
