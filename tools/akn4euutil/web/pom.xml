@@ -55,7 +55,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>eu.europa.ec.digit.userdata.Application</mainClass>
+                    <mainClass>eu.europa.ec.digit.leos.pilot.export.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>
