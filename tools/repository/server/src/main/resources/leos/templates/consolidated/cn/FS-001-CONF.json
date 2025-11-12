@@ -229,7 +229,43 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[44]/heading[1]",
+          "destinationPath": "(//level)[num='3.2.8.']/heading[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-8-1__p\" class=\"guidance-green-block\"><span id=\"_32-8-1__p-guidance\"><p>[Optional: section to be completed if the proposal requires human or financial resources in a decentralised agency. If not, please delete the whole section.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[num='3.2.8.']/subparagraph[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-8-2__p\" class=\"guidance-green-block\"><span id=\"_32-8-2__p-guidance\"><p>[Staff expenditure to be adapted to the planned recruitment month (if recruitment occurs in July, only 50 % of the average cost is taken into account).]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[num='3.2.8.']/subparagraph[5]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-8-3__p\" class=\"guidance-green-block\"><span id=\"_32-8-3__p-guidance\"><p>[You may delete this table if fee financing is not applicable.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[num='3.2.8.']/subparagraph[7]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_32-8-4__p\" class=\"guidance-green-block\"><span id=\"_32-8-4__p-guidance\"><p>[You may delete this table if co-financing is not applicable.]</p></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//level)[num='4.']/heading[1]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -238,7 +274,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[44]/heading[1]",
+          "destinationPath": "(//level)[num='4.']/heading[1]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -247,7 +283,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[45]/heading[1]",
+          "destinationPath": "(//level)[num='4.1.']/heading[1]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -256,7 +292,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[45]",
+          "destinationPath": "(//level)[num='4.1.']",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -265,7 +301,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[46]",
+          "destinationPath": "(//level)[num='4.2.']",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -274,7 +310,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[47]",
+          "destinationPath": "(//level)[num='4.3.']",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -283,7 +319,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[48]",
+          "destinationPath": "(//level)[num='4.4.']",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -292,7 +328,7 @@
     {
       "targets": [
         {
-          "destinationPath": "(//level)[49]",
+          "destinationPath": "(//level)[num='4.5.']",
           "position": "AFTER-WRAPPER"
         }
       ],
