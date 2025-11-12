@@ -49,8 +49,9 @@ cypress-test-for-local:
     TAGS_TO_RUN: "@local"
     GIT_CLEAN_FLAGS: none
   stage: test
-  dependencies:
-    - java-build
+  needs:
+    - job: java-build
+      artifacts: true
   #  resource_group: cypress
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
