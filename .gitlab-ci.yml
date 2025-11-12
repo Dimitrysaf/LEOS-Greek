@@ -35,9 +35,12 @@ java-build:
     when: always
     paths:
       - pom.xml
-      - "**/target"
-      - "**/package-lock.json"
-      - "**/yarn.lock"
+      - "tools/user-repo/**/target"
+      - "tools/repository/**/target"
+      - "tools/akn4euutil/**/target"
+      - "modules/web/target/*.war"
+      - "modules/*/target/*.jar"
+      - "modules/config/target/generated-config"
   rules:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       - if: $CI_PIPELINE_SOURCE == "web"
