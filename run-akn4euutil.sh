@@ -32,5 +32,5 @@ cd ./web || {
 }
 
 echo "---------------------AKN4EUUtil STARTING...-----------------------------------"
-mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config
+mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config
 echo "---------------------AKN4EUUtil STOPPED....-----------------------------------"

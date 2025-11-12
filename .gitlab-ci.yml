@@ -61,9 +61,9 @@ cypress-test-for-local:
     - cd $CI_PROJECT_DIR/tools/user-repo/web
     - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
     - cd $CI_PROJECT_DIR/tools/repository/web
-    - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
+    - mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config &
     - cd $CI_PROJECT_DIR/tools/akn4euutil/web
-    - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
+    - mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config &
     - cd $CI_PROJECT_DIR/modules/web
     - mvn -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -Djetty.jvmArgs="-Xms512m -Xmx2g" jetty:run-war &
     - sleep 40
