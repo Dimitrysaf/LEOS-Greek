@@ -570,7 +570,7 @@ Feature: CK Editor Regression Features
         When click on confirm button in dialog box window
         Then user is on act viewer page
 
-    @saveAddNext @local
+    @saveAddNext @local @focus
     Scenario: create a new element with same type after the current element using shortcut control and enter key together when ck editor is open
         Given navigate to edit drafting application with "User1"
         Then user is on home page

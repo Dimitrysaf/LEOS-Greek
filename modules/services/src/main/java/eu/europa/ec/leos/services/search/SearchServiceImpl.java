@@ -21,14 +21,17 @@ public class SearchServiceImpl implements SearchService {
     private static final String XML_CONTENT_IS_REQUIRED = "xml content is required";
 
     SearchServiceImpl(XmlContentProcessor xmlContentProcessor,
-                      ObjectProvider<SearchEngine> searchEngineProvider,
+                      @Qualifier("searchEngineCache") ObjectProvider<SearchEngine> searchEngineProvider,
+                      @Qualifier("searchEngineCacheHighlight") ObjectProvider<SearchEngine> searchEngineHighlightProvider,
                       SecurityContext securityContext, @Qualifier("applicationProperties") Properties applicationProperties){
         this.xmlContentProcessor = xmlContentProcessor;
         this.searchEngineProvider =searchEngineProvider;
+        this.searchEngineHighlightProvider =searchEngineHighlightProvider;
         this.securityContext = securityContext;
         this.applicationProperties = applicationProperties;
     }
     protected final ObjectProvider<SearchEngine> searchEngineProvider;
+    protected final ObjectProvider<SearchEngine> searchEngineHighlightProvider;
     protected final XmlContentProcessor xmlContentProcessor;
     private final SecurityContext securityContext;
     private static final Logger LOG = LoggerFactory.getLogger(SearchServiceImpl.class);
@@ -62,7 +65,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<SearchMatchVO> searchTextForHighlight(byte[] xmlContent, String searchText, boolean caseSensitive, boolean completeWords){
         Validate.notNull(xmlContent, XML_CONTENT_IS_REQUIRED);
-        SearchEngine se = searchEngineProvider.getObject(xmlContent, Boolean.TRUE);
+        SearchEngine se = searchEngineHighlightProvider.getObject(xmlContent, Boolean.TRUE);
         Integer maxSearchLimit = Integer.parseInt(applicationProperties.getProperty("leos.maximum.search.limit"));
         return se.searchTextAndHighlight(searchText, caseSensitive, completeWords, maxSearchLimit);
     }

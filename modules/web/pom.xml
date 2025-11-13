@@ -224,16 +224,16 @@
 
             <!-- JETTY -->
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-maven-plugin</artifactId>
                 <configuration>
 <!--                    <jvmArgs>&#45;&#45;add-opens java.base/java.lang=ALL-UNNAMED &#45;&#45;add-opens java.base/java.lang.reflect=ALL-UNNAMED</jvmArgs>-->
                     <httpConnector>
                         <port>8080</port>
                     </httpConnector>
-                    <jettyXmls>
-                        <jettyXml>src/etc/jetty/jetty.xml</jettyXml>
-                    </jettyXmls>
+<!--                    <jettyXmls>-->
+<!--                        <jettyXml>src/etc/jetty/jetty.xml</jettyXml>-->
+<!--                    </jettyXmls>-->
                     <contextXml>src/etc/jetty/jetty-context.xml</contextXml>
                     <webApp>
                         <contextPath>/${leos.web.context.path}</contextPath>
@@ -243,6 +243,46 @@
                     </webApp>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven3-plugin</artifactId>
+                <configuration>
+                    <container>
+                        <containerId>tomcat10x</containerId>
+                        <type>embedded</type>
+                        <dependencies>
+                            <dependency>
+                                <location>${project.basedir}/../config/target/generated-config</location>
+                            </dependency>
+                        </dependencies>
+                    </container>
+                    <configuration>
+                        <properties>
+                            <cargo.servlet.port>8080</cargo.servlet.port>
+                        </properties>
+                        <configfiles>
+                            <configfile>
+                                <file>src/etc/tomcat/context.xml</file>
+                                <todir>conf/Catalina/localhost</todir>
+                                <tofile>${leos.web.context.path}.xml</tofile>
+                            </configfile>
+                            <configfile>
+                                <file>src/etc/tomcat/tomcat-users.xml</file>
+                                <todir>conf</todir>
+                            </configfile>
+                        </configfiles>
+                    </configuration>
+                    <deployables>
+                        <deployable>
+                            <properties>
+                                <context>${leos.web.context.path}</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
+                </configuration>
+            </plugin>
+
 
             <!-- TOMCAT -->
             <plugin>
