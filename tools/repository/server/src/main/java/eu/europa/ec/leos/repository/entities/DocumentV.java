@@ -13,6 +13,8 @@
  */
 package eu.europa.ec.leos.repository.entities;
 
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -99,6 +101,10 @@ public class DocumentV implements Serializable {
     private String revisionStatus;
     @Column(name = "CONTRIBUTION_STATUS", updatable = false)
     private String contributionStatus;
+    @Setter
+    @lombok.Getter
+    @Column(name = "VALIDATION_STATUS", updatable = false)
+    private String validationStatus;
     @Column(name = "ORIGIN_REF", updatable = false)
     private String originRef;
     @Column(name = "BASE_REVISION_ID", updatable = false)

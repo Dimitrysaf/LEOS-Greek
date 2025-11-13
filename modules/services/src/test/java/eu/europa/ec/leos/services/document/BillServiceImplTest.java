@@ -94,6 +94,8 @@ public class BillServiceImplTest {
     private DocumentLanguageContext documentLanguageContext;
     @Mock
     private XPathCatalog xPathCatalog;
+    @Mock
+    private ProposalService proposalService;
 
     @InjectMocks
     private StructureServiceImpl structureServiceImpl = Mockito.spy(new StructureServiceImpl());
@@ -109,7 +111,7 @@ public class BillServiceImplTest {
         billRepository =  new BillRepositoryImpl(leosRepository);
         billService = new BillServiceProposalImpl(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService,
                 xmlNodeConfigProcessor, attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper,
-                tableOfContentProcessor, xPathCatalog, trackChangesContext, documentLanguageContext);
+                tableOfContentProcessor, xPathCatalog, trackChangesContext, documentLanguageContext, proposalService);
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");

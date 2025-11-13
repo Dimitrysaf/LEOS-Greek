@@ -158,7 +158,8 @@ public class CmisDocumentExtensions {
                 getRevisionStatus(d),
                 getClonedMilestoneId(d),
                 getContributionStatus(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d),
+                getValidationStatus(d));
     }
 
     private static Explanatory toCouncilExplanatory(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -474,5 +475,10 @@ public class CmisDocumentExtensions {
     private static boolean isTrackChangesEnabled(Document document) {
         Boolean trackChangesEnabled = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED));
         return trackChangesEnabled != null ? trackChangesEnabled : false;
+    }
+
+    private static String getValidationStatus(Document document) {
+        String validationStatus = (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS));
+        return validationStatus != null ? validationStatus : "";
     }
 }

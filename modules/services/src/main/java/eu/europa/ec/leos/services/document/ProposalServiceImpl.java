@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -38,6 +39,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
+import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -58,9 +60,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -72,7 +72,6 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_CREATION_DATE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_PROPOSAL_REF;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_STATUS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_TARGET_USER;
 import static eu.europa.ec.leos.services.support.XmlHelper.COVERPAGE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
@@ -200,6 +199,23 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 proposalRepository.updateProposal(proposal.getId(), metadata, getContent(proposal), VersionType.MINOR, comment);
             }
         }
+    }
+
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void setProposalValidationStatus(String proposalId, ProposalValidationStatus status) {
+        LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposalId);
+        Proposal proposal = this.findProposalByPackagePath(leosPackage.getPath());
+        if (!status.name().equals(proposal.getValidationStatus())) {
+            updateProposalValidationStatus(proposal, status);
+        }
+    }
+
+    private void updateProposalValidationStatus(Proposal proposal, ProposalValidationStatus status) {
+        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
+        ProposalMetadata metadata = metadataOption.get();
+        metadata.setValidationStatus(status);
+        proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata);
     }
 
     @Override

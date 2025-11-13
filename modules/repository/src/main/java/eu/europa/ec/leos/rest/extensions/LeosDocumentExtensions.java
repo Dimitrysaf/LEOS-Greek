@@ -175,7 +175,8 @@ public class LeosDocumentExtensions {
                 getRevisionStatus(d),
                 getClonedMilestoneId(d),
                 getContributionStatus(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d),
+                getValidationStatus(d));
     }
 
     private static Explanatory toCouncilExplanatory(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -535,5 +536,9 @@ public class LeosDocumentExtensions {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private static String getValidationStatus(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
+        return document.getValidationStatus();
     }
 }

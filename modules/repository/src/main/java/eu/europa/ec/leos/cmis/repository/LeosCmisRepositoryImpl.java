@@ -732,6 +732,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus) {
+        return emptyList();
+    }
+
+    @Override
     public Map<String, Object> findDocumentMetadataByRef(String ref, Class type) {
         return null;
     }

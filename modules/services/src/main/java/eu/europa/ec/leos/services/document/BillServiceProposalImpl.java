@@ -51,10 +51,10 @@ public class BillServiceProposalImpl extends BillServiceImpl {
                             AttachmentProcessor attachmentProcessor, ValidationService validationService,
                             DocumentVOProvider documentVOProvider, NumberService numberService,
                             MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
-                            XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
+                            XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext, ProposalService proposalService) {
         super(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, xmlNodeConfigProcessor,
                 attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper, tableOfContentProcessor,
-                xPathCatalog, trackChangesContext, documentLanguageContext);
+                xPathCatalog, trackChangesContext, documentLanguageContext, proposalService);
     }
 
     @Override

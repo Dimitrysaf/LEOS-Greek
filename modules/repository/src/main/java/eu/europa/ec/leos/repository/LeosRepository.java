@@ -441,5 +441,6 @@ public interface LeosRepository {
 
     void  archiveDocumentVersion(String documentRef, String version);
 
+    <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus);
 
 }
