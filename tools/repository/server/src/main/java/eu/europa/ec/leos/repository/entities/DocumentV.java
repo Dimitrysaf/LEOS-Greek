@@ -159,6 +159,12 @@ public class DocumentV implements Serializable {
     @Column(name = "CUSTOM_TEMPLATE_ACT", updatable = false)
     private Boolean customTemplateAct;
 
+    @Column(name = "AVAILABLE_LANGS", updatable = false)
+    private String availableLangs;
+
+    @Column(name = " IS_PUBLISHED", updatable = false)
+    private Boolean  isPublished;
+
     public DocumentV() {
     }
 
@@ -500,5 +506,21 @@ public class DocumentV implements Serializable {
 
     public void setCustomTemplateAct(Boolean customTemplateAct) {
         this.customTemplateAct = customTemplateAct;
+    }
+
+    public String getAvailableLangs() {
+        return availableLangs;
+    }
+
+    public void setAvailableLangs(String availableLangs) {
+        this.availableLangs = availableLangs;
+    }
+
+    public Boolean getPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(Boolean published) {
+        isPublished = published;
     }
 }

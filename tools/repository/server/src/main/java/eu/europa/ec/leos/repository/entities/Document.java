@@ -114,6 +114,9 @@ public class Document implements Serializable {
     @Column(name = "CUSTOM_TEMPLATE_ACT")
     private Boolean customTemplateAct;
 
+    @Column(name = " IS_PUBLISHED")
+    private Boolean  isPublished;
+
     public Document() {
     }
 
@@ -323,6 +326,14 @@ public class Document implements Serializable {
 
     public void setCustomTemplateAct(Boolean customTemplateAct) {
         this.customTemplateAct = customTemplateAct;
+    }
+
+    public Boolean getPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(Boolean published) {
+        isPublished = published;
     }
 
     @Override
