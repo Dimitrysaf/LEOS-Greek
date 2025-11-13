@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -32,5 +33,17 @@ public class AnalysisResultDataFlowsGeneration extends AnalysisResult {
     @JsonGetter("eId")
     public List<String> getEId() {
         return this.eId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AnalysisResultDataFlowsGeneration)) return false;
+        AnalysisResultDataFlowsGeneration that = (AnalysisResultDataFlowsGeneration) o;
+        return provision_count == that.provision_count && Objects.equals(digital_solution, that.digital_solution) && Objects.equals(eId, that.eId) && Objects.equals(addresser, that.addresser) && Objects.equals(action, that.action) && Objects.equals(action_result, that.action_result) && Objects.equals(addressee, that.addressee);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(digital_solution, eId, addresser, action, action_result, addressee, provision_count);
     }
 }

@@ -203,6 +203,9 @@ public class AIUtils {
     // Method to remove already present descriptions' results
     private List<AnalysisResultDescriptionGeneration> filterDescriptionGenerations(Element table, List<AnalysisResultDescriptionGeneration> newResults,
                                                                                    Bill bill) {
+        newResults = newResults.stream()
+                .distinct()
+                .collect(Collectors.toList());
         NodeList rows = XercesUtils.getElementsByName(table, XmlHelper.TR);
         for (int i = 1; i < rows.getLength(); i++) {
             Node row = rows.item(i);
@@ -256,6 +259,9 @@ public class AIUtils {
 
     // Method to remove already present data' results
     private List<AnalysisResultDataGeneration> filterDataGenerations(Element table, List<AnalysisResultDataGeneration> newResults, Bill bill) {
+        newResults = newResults.stream()
+                .distinct()
+                .collect(Collectors.toList());
         NodeList rows = XercesUtils.getElementsByName(table,XmlHelper.TR);
         for (int i=1; i<rows.getLength(); i++) { // Skipping header
             Node row = rows.item(i);
@@ -306,6 +312,9 @@ public class AIUtils {
 
     // Method to remove already present solutions' results
     private List<AnalysisResultSolutionsGeneration> filterSolutionsGenerations(Element table, List<AnalysisResultSolutionsGeneration> newResults, Bill bill) {
+        newResults = newResults.stream()
+                .distinct()
+                .collect(Collectors.toList());
         NodeList rows = XercesUtils.getElementsByName(table,XmlHelper.TR);
         for (int i=1; i<rows.getLength(); i++) { // Skipping header
             Node row = rows.item(i);
@@ -366,6 +375,9 @@ public class AIUtils {
     // Method to remove already present generations' results
     private List<AnalysisResultInteroperabilityGeneration> filterInterGenerations(Node table, List<AnalysisResultInteroperabilityGeneration> newResults,
                                                                                   Bill bill) {
+        newResults = newResults.stream()
+                .distinct()
+                .collect(Collectors.toList());
         NodeList rows = XercesUtils.getElementsByName(table,XmlHelper.TR);
         for (int i=1; i<rows.getLength(); i++) { // Skipping header
             Node row = rows.item(i);
@@ -519,6 +531,9 @@ public class AIUtils {
 
     // Method to remove already present data flows' results
     private List<AnalysisResultDataFlowsGeneration> filterFlowsGenerations(Node table, List<AnalysisResultDataFlowsGeneration> newResults, Bill bill) {
+        newResults = newResults.stream()
+                .distinct()
+                .collect(Collectors.toList());
         NodeList rows = XercesUtils.getElementsByName(table,XmlHelper.TR);
         for (int i=1; i<rows.getLength(); i++) { // Skipping header
             Node row = rows.item(i);

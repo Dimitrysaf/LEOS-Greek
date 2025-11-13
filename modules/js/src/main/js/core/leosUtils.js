@@ -399,14 +399,10 @@ define(function leosUtilsModule(require) {
             tcShowStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
         }
         var tcHiddenStyle = "";
-        tcHiddenStyle = (isDocTcStyle ? "ins, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration:" +
-            " none" +
-            " !important;" +
-            " }\n";
+        tcHiddenStyle = (isDocTcStyle ? "ins, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
         tcHiddenStyle += (isDocTcStyle ? "del, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
         tcHiddenStyle += "tr[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { box-shadow: none !important; }\n";
-        tcHiddenStyle += (isDocTcStyle ? "ins mref, ins authorialnote, ins" +
-                " span.MathJax_CHTML " :
+        tcHiddenStyle += (isDocTcStyle ? "ins mref, ins authorialnote, ins span.MathJax_CHTML " :
                 "[" + actionAttr + "='insert'] mref, [" + actionAttr + "='insert'] span.authorialnote, [" + actionAttr + "='insert'] span.cke_widget_mathjax ") +
             "{ box-shadow: none !important; }\n";
         tcHiddenStyle += isDocTcStyle ?
