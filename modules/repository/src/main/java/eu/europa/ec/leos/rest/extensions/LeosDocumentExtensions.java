@@ -539,7 +539,6 @@ public class LeosDocumentExtensions {
     }
 
     private static String getValidationStatus(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        String validationStatus = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS));
-        return validationStatus != null ? validationStatus : "";
+        return document.getValidationStatus();
     }
 }

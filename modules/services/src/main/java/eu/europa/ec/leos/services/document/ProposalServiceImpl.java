@@ -206,7 +206,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public void setProposalValidationStatus(String proposalId, ProposalValidationStatus status) {
         LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposalId);
         Proposal proposal = this.findProposalByPackagePath(leosPackage.getPath());
-        updateProposalValidationStatus(proposal, status);
+        if (!status.name().equals(proposal.getValidationStatus())) {
+            updateProposalValidationStatus(proposal, status);
+        }
     }
 
     private void updateProposalValidationStatus(Proposal proposal, ProposalValidationStatus status) {

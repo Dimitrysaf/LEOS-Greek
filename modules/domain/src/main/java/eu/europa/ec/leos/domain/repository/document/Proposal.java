@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.model.user.Collaborator;
 import io.atlassian.fugue.Option;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public final class Proposal extends XmlDocument {
     private final List<String> clonedMilestoneIds;
 
     private final String contributionStatus;
+
+    @Getter
     private final String validationStatus;
 
     public Proposal(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy, Instant lastModificationInstant,
