@@ -125,6 +125,9 @@ export class ProposalMilestoneSendCopyDialogComponent
     this.userAutocompleteData = users
       .flatMap(this.expandEntities)
       .filter((user) => !this.existingCollaborator(user))
+      .filter((user1, i, users) =>
+        users.findIndex(user2 => (user1.login === user2.login) &&
+          (user1.defaultEntity.organizationName === user2.defaultEntity.organizationName)) === i)
       .map(this.userToAutoCompleteItem);
   }
 
@@ -152,7 +155,7 @@ export class ProposalMilestoneSendCopyDialogComponent
 
   private existingCollaborator(user: User) {
     return this.collaborators.some(
-      (c) => c.login === user.login && c.entity.id === user.defaultEntity.id,
+      (c) => c.login === user.login
     );
   }
 }

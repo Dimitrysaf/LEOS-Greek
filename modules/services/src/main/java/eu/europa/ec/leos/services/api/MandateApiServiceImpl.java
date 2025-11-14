@@ -15,11 +15,14 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.document.ProposalRepository;
+import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -62,6 +65,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 @Service
@@ -92,13 +96,13 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
                                  CoverPageApiService coverPageApiService,
                                  ProposalDetailsService proposalDetailsService,
                                  TemplateConfigurationService templateConfigurationService,
-                                 LanguageHelper languageHelper) {
+                                 LanguageHelper languageHelper, PackageRepository packageRepository, ProposalRepository proposalRepository) {
         super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap,
                 exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
                 xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
                 validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
                 trackChangesContext, documentViewService, genericDocumentApiService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
-                templateConfigurationService, languageHelper);
+                templateConfigurationService, languageHelper, packageRepository, proposalRepository);
     }
 
     @Override
@@ -118,6 +122,16 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
     @Override
     public void validateProposal(String proposalRef) {
         throw new IllegalStateException("Feature not implemented for the running instance");
+    }
+
+    @Override
+    public void validateProposal(String proposalRef, String email, String username) {
+        throw new IllegalStateException("Feature not implemented for the running instance");
+    }
+
+    @Override
+    public <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus) {
+        return null;
     }
 
     @Override

@@ -68,6 +68,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getFirstAncestorWit
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
+import static eu.europa.ec.leos.services.support.XercesUtils.getLastChildOfType;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.getStartTagNodeAsXmlFragment;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAscendantOfType;
@@ -2396,10 +2397,17 @@ public class MergeContributionService {
         if (xmlPreviousSibling == null && contributionPreviousSibling != null) {
             xmlPreviousSibling = getElementById(xmlContent, removesPrefixFromElementId(getId(contributionPreviousSibling)));
         }
+        //deep search to find if xmlPreviousSibling is still null
+        xmlPreviousSibling = getSibling(xmlPreviousSibling, refNode, true, xmlContent);
+
+
         Node xmlNextSibling = contributionNextSibling != null ? getElementById(xmlContent, getId(contributionNextSibling)) : null;
         if (xmlNextSibling == null && contributionNextSibling != null) {
             xmlNextSibling = getElementById(xmlContent, removesPrefixFromElementId(getId(contributionNextSibling)));
         }
+
+        //deep search to find if xmlNextiousSibling is still null
+        xmlNextSibling = getSibling(xmlNextSibling, refNode, false, xmlContent);
 
         // Chooses best one if both are available
         boolean bestChoiceIsPrev = true;
@@ -2535,7 +2543,10 @@ public class MergeContributionService {
                     getId(xmlNextSibling),true, false);
         } else if (xmlParentSibling != null) {
             // Checks that last child is not a "content"
-            Node lastChild = getLastChild(xmlParentSibling);
+            Node lastChild = getLastChildOfType(xmlParentSibling, contributionNode.getNodeName());
+            if (lastChild == null) {
+                lastChild = getLastChild(xmlParentSibling);
+            }
             if (lastChild != null && lastChild.getNodeName().equals(CONTENT)) {
                 Node mainElementInContribution = getElementById(contributionNode, getId(xmlParentSibling));
                 if (mainElementInContribution != null) {
@@ -2587,6 +2598,19 @@ public class MergeContributionService {
         }
 
         return xmlContent;
+    }
+
+    private static Node getSibling(Node xmlPreviousSibling, Node refNode, boolean before, byte[] xmlContent) {
+        if (xmlPreviousSibling == null) {
+            List<Node> siblings = XercesUtils.getSiblings(refNode, before);
+            for (Node sibling : siblings) {
+                if (getElementById(xmlContent, getId(sibling)) != null) {
+                    xmlPreviousSibling = sibling;
+                    break;
+                }
+            }
+        }
+        return xmlPreviousSibling;
     }
 
     private void setActionAttribute(Node doc, String elementId, String action, List<TocItem> tocItemsList) {

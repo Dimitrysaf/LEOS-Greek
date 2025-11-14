@@ -35,7 +35,7 @@ define(function aknBlockContainerPluginModule(require) {
                         // Nothing to do if no selection or track changes enabled
                         return;
                     }
-                    var root = editor.editable().getNative();
+                    var root = editor.getSelection().getNative();
                     var startContainer = range.startContainer.$;
                     var endContainer = range.endContainer.$;
 
@@ -45,7 +45,7 @@ define(function aknBlockContainerPluginModule(require) {
                             : 0;
                     var isAtEnd = (range.endOffset === endLength);
 
-                    var isWholeSelected = (startContainer === root && endContainer === root && isAtStart && isAtEnd);
+                    var isWholeSelected = (startContainer === root.focusNode && endContainer === root.focusNode && isAtStart && isAtEnd);
 
                     if (isWholeSelected) {
 
@@ -57,10 +57,13 @@ define(function aknBlockContainerPluginModule(require) {
                     var toRemove = [];
 
                     var node;
-
                     while ((node = iterator.getNextParagraph())) {
                         if (node.type === CKEDITOR.NODE_ELEMENT) {
                             const tag = node.getName();
+                            const tableNode = node.getAscendant('table');
+                            if (tableNode && !toRemove.some(obj => obj.getId() === tableNode.getId())) {
+                                toRemove.push(tableNode);
+                            }
                             if (tag === 'p') {
                                 if (!firstP) {
                                     firstP = node;
@@ -99,7 +102,15 @@ define(function aknBlockContainerPluginModule(require) {
                             newRange.moveToPosition(focusNode, CKEDITOR.POSITION_AFTER_START);
                             newRange.select();
                         }
-
+                        const firstEditable = editor.editable().findOne("[leos\\:editable='true']");
+                        if (firstEditable && firstEditable.getChildCount() === 0) {
+                            const newParagraph = new CKEDITOR.dom.element('p');
+                            newParagraph.appendBogus();
+                            firstEditable.append(newParagraph);
+                            const newRange= editor.createRange();
+                            newRange.moveToElementEditStart(newParagraph);
+                            editor.getSelection().selectRanges([newRange]);
+                        }
                         editor.fire('saveSnapshot');
                         setTimeout(function () {
                             editor.selectionChange(1);

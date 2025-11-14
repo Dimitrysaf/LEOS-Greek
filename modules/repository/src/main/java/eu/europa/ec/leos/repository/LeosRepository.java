@@ -451,4 +451,6 @@ public interface LeosRepository {
 
     <D extends LeosDocument> String findDocumentRefByPackageIdAndCategory(Class<? extends D> type, String packageId, String category);
 
+    <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus);
+
 }

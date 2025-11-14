@@ -77,7 +77,7 @@
     }
   }
 
-  del, [leos\:action="delete"], [leos\:action="delete"] num {
+  del, [leos\:action="delete"], [leos\:action="delete"] num, [leos\:action="delete"] heading {
     text-decoration: line-through;
     white-space: break-spaces;
     mref, authorialnote, span.MathJax_CHTML {

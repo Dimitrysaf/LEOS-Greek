@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.model.user.Collaborator;
 import io.atlassian.fugue.Option;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -23,12 +24,15 @@ public final class Proposal extends XmlDocument {
 
     private final String contributionStatus;
 
+    @Getter
+    private final String validationStatus;
+
     public Proposal(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy, Instant lastModificationInstant,
                     String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType,
                     boolean isLatestVersion, String title, List<Collaborator> collaborators, List<String> milestoneComments,
                     String initialCreatedBy, Instant initialCreationInstant, Option<Content> content, Option<ProposalMetadata> metadata,
                     boolean clonedProposal, String originRef, String clonedFrom, String revisionStatus,
-                    List<String> clonedMilestoneIds, String contributionStatus, boolean trackChangesEnabled) {
+                    List<String> clonedMilestoneIds, String contributionStatus, boolean trackChangesEnabled, String validationStatus) {
         super(LeosCategory.PROPOSAL, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
                 collaborators, milestoneComments, content, trackChangesEnabled, false);
@@ -41,6 +45,7 @@ public final class Proposal extends XmlDocument {
         this.revisionStatus = revisionStatus;
         this.clonedMilestoneIds = clonedMilestoneIds;
         this.contributionStatus = contributionStatus;
+        this.validationStatus = validationStatus;
     }
 
     public final String getInitialCreatedBy() {
@@ -78,4 +83,6 @@ public final class Proposal extends XmlDocument {
     public String getContributionStatus() {
         return contributionStatus;
     }
+
+
 }

@@ -59,7 +59,7 @@ public class DataInitializationService extends DataUploadService {
             if (sqlScriptResource.exists() && sqlScriptResource.isReadable()) {
                 // Read the content of the SQL script into a string
                 try (InputStream inputStream = sqlScriptResource.getInputStream();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                     StringBuilder fileContent = new StringBuilder();
                     String line;
                     while ((line = reader.readLine()) != null) {
@@ -84,16 +84,16 @@ public class DataInitializationService extends DataUploadService {
                     String fileContent = getFileContent(fileResource);
                     String fileName = fileResource.getFilename();
                     String category = null, template = null;
-                    if(fileName.startsWith("annex")) {
+                    if (fileName.startsWith("annex")) {
                         category = "ANNEX";
                         template = "SG-017";
-                    } else if(fileName.startsWith("bill")) {
+                    } else if (fileName.startsWith("bill")) {
                         category = "BILL";
                         template = "SJ-019";
-                    } else if(fileName.startsWith("proposal")) {
+                    } else if (fileName.startsWith("proposal")) {
                         category = "PROPOSAL";
                         template = "SJ-019";
-                    } else if(fileName.startsWith("memorandum")) {
+                    } else if (fileName.startsWith("memorandum")) {
                         category = "MEMORANDUM";
                         template = "SJ-019";
                     }

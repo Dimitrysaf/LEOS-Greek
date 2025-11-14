@@ -85,19 +85,24 @@ abstract class DataUploadService {
             if (fileResource.exists() && fileResource.isReadable()) {
                 String fileContent = getFileContent(fileResource);
                 String fileName = fileResource.getFilename();
-                String categoryCode = "CONFIG";  //TODO this we need to find a way to dynamically detect from directory structure the config type
-
+                String categoryCode = getCategoryCode(fileName);
                 //check if this config exists
                 String checkConfigQuery = "SELECT COUNT(*) FROM config WHERE name = ?";
                 int countConfig = jdbcTemplate.queryForObject(checkConfigQuery, new Object[]{fileName.substring(0, fileName.lastIndexOf("."))}, Integer.class);
+                String fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf("."));
+                int lastDash = fileNameWithoutExt.lastIndexOf('-');
+                String language = "EN";
 
+                if (lastDash != -1 && fileNameWithoutExt.length() - lastDash > 2) {
+                    language = fileNameWithoutExt.substring(fileNameWithoutExt.length() - 2);
+                }
                 if (countConfig == 0) {
                     String insertQuery = "INSERT INTO CONFIG" +
-                            "(NAME, CATEGORY_ID, OBJECT_ID, AUDIT_C_BY, AUDIT_C_DATE)\n" +
+                            "(NAME, CATEGORY_ID, OBJECT_ID, AUDIT_C_BY, AUDIT_C_DATE, LANGUAGE)\n" +
                             "VALUES(?, (select id from CONFIG_CATEGORIES where CATEGORY_CODE = ?), ?, " + ("oracle".equals(dbProfile) ? "USER" : "'admin'") +
-                            ", current_timestamp)";
+                            ", current_timestamp, ?)";
 
-                    jdbcTemplate.update(insertQuery, fileName.substring(0, fileName.lastIndexOf(".")), categoryCode, 0);
+                    jdbcTemplate.update(insertQuery, fileNameWithoutExt, categoryCode, 0, language.toUpperCase());
                 }
 
                 // Check if this version exists for this config
@@ -150,5 +155,27 @@ abstract class DataUploadService {
             LOG.error("Error reading file content: {}", resource, e);
         }
         return content.toString();
+    }
+
+    private String getCategoryCode(String fileName) {
+        String categoryCode;
+        if (fileName.contains("-CONF")) {
+            categoryCode = "CONFIG";
+        } else if (fileName.startsWith("BL")) {
+            categoryCode = "TEMPLATE_BILL";
+        } else if (fileName.startsWith("EM")) {
+            categoryCode = "TEMPLATE_MEMORANDUM";
+        } else if (fileName.startsWith("PR")) {
+            categoryCode = "TEMPLATE_PROPOSAL";
+        } else if (fileName.startsWith("SG")) {
+            categoryCode = "TEMPLATE_ANNEX";
+        } else if (fileName.startsWith("FS")) {
+            categoryCode = "TEMPLATE_STAT_DIGIT_FINANC_LEGIS";
+        } else if (fileName.startsWith("CE")) {
+            categoryCode = "TEMPLATE_COUNCIL_EXPLANATORY";
+        } else {
+            categoryCode = "CONFIG";
+        }
+        return categoryCode;
     }
 }

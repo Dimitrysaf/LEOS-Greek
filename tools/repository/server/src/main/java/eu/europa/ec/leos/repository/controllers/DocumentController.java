@@ -14,7 +14,13 @@
 package eu.europa.ec.leos.repository.controllers;
 
 import eu.europa.ec.leos.repository.common.VersionType;
-import eu.europa.ec.leos.repository.controllers.requests.*;
+import eu.europa.ec.leos.repository.controllers.requests.CreateDocumentRequest;
+import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
+import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromContent;
+import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromSource;
+import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithContent;
+import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithoutContent;
+import eu.europa.ec.leos.repository.controllers.requests.UpdateDocumentRequest;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.LeosDocumentList;
@@ -422,7 +428,6 @@ public class DocumentController {
         return ResponseEntity.ok(RestPreconditions.checkFound(count, HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting"));
     }
 
-
     @GetMapping(path = "/documents/find-by-packageId/{packageId}",
             consumes = {},
             produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -434,6 +439,19 @@ public class DocumentController {
                                                        @RequestParam(value="category", required=false, defaultValue="%25") String categoryCode) {
         String documentRef = documentService.findDocumentRefByPackageIdAndCategory(packageId, categoryCode);
         return ResponseEntity.ok(documentRef);
+    }
+
+    @GetMapping(path = "/documents/find-by-validationStatus",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Find documents using validationStatus")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity<Object> findDocumentsUsingFilter(@RequestParam(value="validationStatus", required=true) String validationStatus)
+            throws MalformedURLException {
+        validationStatus = decode(validationStatus);
+        List<LeosDocument> documents = documentService.findDocumentsByValidationStatusNot(validationStatus);
+        return ResponseEntity.ok(new LeosDocumentList(documents));
     }
 
 }

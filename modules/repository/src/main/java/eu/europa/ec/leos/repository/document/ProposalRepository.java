@@ -126,7 +126,7 @@ public interface ProposalRepository {
      * @param ref the reference metadata of the proposal document to retrieve.
      * @return the found proposal document.
      */
-    @PostAuthorize("hasPermission(returnObject, 'CAN_READ')")
+    //@PostAuthorize("hasPermission(returnObject, 'CAN_READ')")
     Proposal findProposalByRef(String ref);
 
     /**

@@ -24,6 +24,7 @@ import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -1214,6 +1215,14 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public String configNotificationsFetch() {
         logger.trace("Fetch config notifications");
         return repository.configNotificationsFetch();
+    }
+
+    @Override
+    @PerformanceLogger
+    public <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus) {
+        logger.trace("Finding document by validation status... [validationStatus=" + validationStatus);
+        LeosDocumentList docs = repository.findDocumentsByValidationStatus(validationStatus);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
     }
 
 }

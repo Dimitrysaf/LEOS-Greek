@@ -89,7 +89,6 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     private Entity pickFromUserEntitiesByName(final User user, final String entityName) {
-        LOG.info("COLLABORATOR => " + user.getLogin() + " " + entityName);
         if (user.isEntityUser()) {
             return user.getEntities().stream()
                     .filter(entity -> entity.getName().equalsIgnoreCase(entityName))

@@ -74,6 +74,7 @@ public class LeosMetadataExtensions {
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_AUTHENTIC_LANGUAGE), proposalMetadata.getIsAuthenticLang());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_COVERPAGE_TYPE), proposalMetadata.getCoverPageType());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.AI_VALUES), proposalMetadata.getAiValues());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VALIDATION_STATUS), proposalMetadata.getValidationStatus());
         return leosProperties;
     }
 
@@ -124,7 +125,7 @@ public class LeosMetadataExtensions {
         return buildCommonProperties(financialStatementMetadata, title);
     }
 
-    private static Map<String, ? extends Object> buildCommonProperties(LeosMetadata leosMetadata, String title) {
+    private static Map<String, Object> buildCommonProperties(LeosMetadata leosMetadata, String title) {
         Map<String, Object> leosProperties = new HashMap<>();
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE), leosMetadata.getStage());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE), leosMetadata.getType());

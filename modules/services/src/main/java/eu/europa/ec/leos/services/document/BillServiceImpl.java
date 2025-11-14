@@ -18,6 +18,7 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -86,6 +87,7 @@ public abstract class BillServiceImpl implements BillService {
     protected final TrackChangesContext trackChangesContext;
     private final DocumentLanguageContext documentLanguageContext;
     protected final AIService aiService;
+    private final ProposalService proposalService;
 
     @Autowired
     BillServiceImpl(BillRepository billRepository, PackageRepository packageRepository,
@@ -95,7 +97,7 @@ public abstract class BillServiceImpl implements BillService {
                     ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                     MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
                     XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext,
-                    DocumentLanguageContext documentLanguageContext, AIService aiService) {
+                    DocumentLanguageContext documentLanguageContext, AIService aiService, ProposalService proposalService) {
         this.billRepository = billRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -112,6 +114,7 @@ public abstract class BillServiceImpl implements BillService {
         this.trackChangesContext = trackChangesContext;
         this.documentLanguageContext = documentLanguageContext;
         this.aiService = aiService;
+        this.proposalService = proposalService;
     }
 
     @Override
@@ -155,6 +158,7 @@ public abstract class BillServiceImpl implements BillService {
         }
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
+        updateDocumentValidationStatus(bill.getId());
         return bill;
     }
 
@@ -163,6 +167,7 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Updating Bill metadata properties... [id={}]", id);
         Bill bill = billRepository.updateBill(ref, id, properties, latest);
         updateInternalReferencesAsync(bill);
+        updateDocumentValidationStatus(id);
         return bill;
     }
 
@@ -173,6 +178,7 @@ public abstract class BillServiceImpl implements BillService {
         if (updateInternalRefs) {
             updateInternalReferencesAsync(bill);
         }
+        updateDocumentValidationStatus(id);
         return bill;
     }
 
@@ -205,7 +211,7 @@ public abstract class BillServiceImpl implements BillService {
         }
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
-        
+        updateDocumentValidationStatus(bill.getId());
         LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return bill;
     }
@@ -231,6 +237,10 @@ public abstract class BillServiceImpl implements BillService {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
+    }
+
+    private void updateDocumentValidationStatus(String id) {
+        proposalService.setProposalValidationStatus(id,  ProposalValidationStatus.NOT_VALIDATED);
     }
 
     @Override

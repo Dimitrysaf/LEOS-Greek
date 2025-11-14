@@ -82,6 +82,13 @@ public class ZipPackageUtil {
         return zipFile;
     }
 
+    public static File renameZipFile(String filename, File zipFile) throws IOException {
+        Path path = Paths.get(zipFile.getAbsolutePath());
+        path = Files.move(path, path.resolveSibling(filename), REPLACE_EXISTING);
+        zipFile = path.toFile();
+        return zipFile;
+    }
+
     public static byte[] zipByteArray(Map<String, Object> contentToZip) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ZipOutputStream zos = new ZipOutputStream(bos)) {
@@ -91,7 +98,7 @@ public class ZipPackageUtil {
         }
     }
 
-    private static void addContentToOutputStream(ZipOutputStream zipOutputStream, Map<String, Object> contentToZip) throws IOException {
+    public static void addContentToOutputStream(ZipOutputStream zipOutputStream, Map<String, Object> contentToZip) throws IOException {
         for (Map.Entry<String, Object> entry : contentToZip.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();

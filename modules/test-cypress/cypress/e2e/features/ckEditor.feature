@@ -185,7 +185,7 @@ Feature: CK Editor Regression Features
         When click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then ck editor window is not displayed
-        And  content of subparagraph 1 of paragraph 3 of article 1 contains a table with 3 row and 2 column
+        And  content of paragraph 3 of article 1 contains a table with 3 row and 2 column
         When mouseover and click on article 1
         Then ck editor window is displayed
         When select content from offset 0 till offset 7 in numbered paragraph 2 of article in edition mode
@@ -310,10 +310,16 @@ Feature: CK Editor Regression Features
         Then user is on financial statement page
         And  doctype is "LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT"
         And  annotation side bar is present
-        And  content of subparagraph 3 of level 26 contains a table with 5 row and 4 column in financial statement document
-        When click on edit icon of subparagraph 3 of landscape level 2 in financial statement page
+        When click on edit icon of level 2 in financial statement page
         Then ck editor window is displayed
-        And  table icon is disabled in ck editor
+        When click at offset 5 in pTag 1 with data-akn-element "subparagraph" of li with data-akn-element "level" of ol with data-akn-element "level" in edition mode
+        Then table icon is enabled in ck editor
+        When click on table icon present in ck editor panel
+        Then cke dialog window is displayed with title "Table Properties"
+        When click on ok button in cke dialog window
+        Then table icon is disabled in ck editor
+        When click at offset 5 in pTag 1 with data-akn-element "subparagraph" of li with data-akn-element "level" of ol with data-akn-element "level" in edition mode
+        Then table icon is enabled in ck editor
 
         ######  Annex inlineParagraph ######
         When click on act view link in breadcrumb item
@@ -897,33 +903,33 @@ Feature: CK Editor Regression Features
         When enable track changes
         When mouseover and click on level 1
         Then ck editor window is displayed
-#        When click enter from keyboard in edition mode
-#        And  add "new paragraph" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  add "point a sub point a" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add "point b sub point b" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  add "point i sub point i" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add "point ii sub point ii" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  add "point 1 sub point 1" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add "point 2 sub point 2" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  add "point - sub point -" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add "point -- sub point --" at current cursor position in edition mode
-#        And  user clicks on the track changes action plugin
-#        And  click on reject all changes dropdown button
-#        Then level should not contain a span tag in edition mode
-#        Then pTag 1 of level contains "Text..." in edition mode
-#        When click at offset 7 of pTag 1 of level in edition mode
+        When click enter from keyboard in edition mode
+        And  add "new paragraph" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
+        And  user clicks on the track changes action plugin
+        And  click on reject all changes dropdown button
+        Then level should not contain a span tag in edition mode
+        Then pTag 1 of level contains "Text..." in edition mode
+        When click at offset 7 of pTag 1 of level in edition mode
         When click enter from keyboard in edition mode
         And  add "new paragraph" at current cursor position in edition mode
         And  click enter from keyboard in edition mode
@@ -1025,51 +1031,51 @@ Feature: CK Editor Regression Features
 #        And  content of subparagraph 2 of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of level 1 is "sub point --"
         When mouseover and click on paragraph 1
         Then ck editor window is displayed
-#        When click enter from keyboard in edition mode
-#        And  add "second paragraph" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  add "point a sub point a" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add "point b sub point b" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  add "point i sub point i" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add "point ii sub point ii" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  add "point 1 sub point 1" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add "point 2 sub point 2" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  add "point - sub point -" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add "point -- sub point --" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on decrease indent icon present in ck editor panel
-#        And  add "point 3 sub point 3" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on decrease indent icon present in ck editor panel
-#        And  add "point iii sub point iii" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on decrease indent icon present in ck editor panel
-#        And  add "point c sub point c" at current cursor position in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  click on decrease indent icon present in ck editor panel
-#        And  add "wrapper paragraph" at current cursor position in edition mode
-#        And  user clicks on the track changes action plugin
-#        And  click on reject all changes dropdown button
-#        And  user clicks on the track changes action plugin
-#        And  click on reject all changes dropdown button
-#        Then paragraph should not contain a span tag in edition mode
-#        When click save and close button of ck editor
-#        Then ck editor window is not displayed
-#        When mouseover and click on paragraph 1
-#        Then ck editor window is displayed
-#        Then paragraph contains "Text..." in edition mode
-#        When click at offset 7 of paragraph in edition mode
+        When click enter from keyboard in edition mode
+        And  add "second paragraph" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point a sub point a" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point b sub point b" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point i sub point i" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point ii sub point ii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point 1 sub point 1" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point 2 sub point 2" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  add "point - sub point -" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  add "point -- sub point --" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point 3 sub point 3" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point iii sub point iii" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "point c sub point c" at current cursor position in edition mode
+        And  click enter from keyboard in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        And  add "wrapper paragraph" at current cursor position in edition mode
+        And  user clicks on the track changes action plugin
+        And  click on reject all changes dropdown button
+        And  user clicks on the track changes action plugin
+        And  click on reject all changes dropdown button
+        Then paragraph should not contain a span tag in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        When mouseover and click on paragraph 1
+        Then ck editor window is displayed
+        Then paragraph contains "Text..." in edition mode
+        When click at offset 7 of paragraph in edition mode
         And  click enter from keyboard in edition mode
         And  click on increase indent icon present in ck editor panel
         And  click on increase indent icon present in ck editor panel
@@ -1108,8 +1114,6 @@ Feature: CK Editor Regression Features
         And  add "wrapper paragraph" at current cursor position in edition mode
         And click save and close button of ck editor
         Then ck editor window is not displayed
-#        When refresh the browser
-#        Then user is on annex page
         When click on edit icon of paragraph 1
         Then ck editor window is displayed
         When user clicks on the track changes action plugin
@@ -1155,8 +1159,6 @@ Feature: CK Editor Regression Features
         Then paragraph should not contain a span tag in edition mode
         When click save and close button of ck editor
         Then ck editor window is not displayed
-#        When refresh the browser
-#        Then user is on annex page
         And  total number of paragraph is 2
         And  content of paragraph 1 is "Text..."
         And  content of subparagraph with attribute name "refersto" and value "~INP" of paragraph 2 is "intro subparagraph"

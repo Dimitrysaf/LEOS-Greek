@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.domain.repository.metadata;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 
 import java.util.List;
 import java.io.Serializable;
@@ -31,6 +32,7 @@ public abstract class LeosMetadata implements Serializable {
     protected String documentCollectionName;
 
     protected String creationOptions;
+    protected ProposalValidationStatus validationStatus;
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion,
@@ -174,6 +176,14 @@ public abstract class LeosMetadata implements Serializable {
 
     public boolean isCustomTemplateAct() {
         return customTemplateAct;
+    }
+
+    public ProposalValidationStatus getValidationStatus() {
+        return validationStatus;
+    }
+
+    public void setValidationStatus(ProposalValidationStatus validationStatus) {
+        this.validationStatus = validationStatus;
     }
 
     @Override

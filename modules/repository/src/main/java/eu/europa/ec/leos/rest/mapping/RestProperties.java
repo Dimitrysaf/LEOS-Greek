@@ -72,6 +72,7 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(CALLBACK_ADDRESS, "callbackAddress");
         ids.put(IMPORTED, "imported");
         ids.put(AI_VALUES, "aiValues");
+        ids.put(VALIDATION_STATUS, "validationStatus");
     }
 
     @Override

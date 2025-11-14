@@ -72,6 +72,8 @@ public class AnnexServiceImplTest extends LeosTest {
     @Mock
     private ValidationService validationService;
     @Mock
+    private ProposalService proposalService;
+    @Mock
     private DocumentVOProvider documentVOProvider;
     @Mock
     private TableOfContentProcessor tableOfContentProcessor;
@@ -97,7 +99,7 @@ public class AnnexServiceImplTest extends LeosTest {
         message = new UpdateInternalReferencesMessage(objectId, "annex");
         annexService = new AnnexServiceMandateImpl(annexRepository, xmlNodeProcessor,
                 xmlContentProcessor, xmlDocumentService, numberService, xmlNodeConfigProcessor, validationService,
-                documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext, documentLanguageContext);
+                documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext, documentLanguageContext, proposalService);
 
     }
 
