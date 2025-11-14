@@ -32,12 +32,15 @@ public class SecurityContext {
 
     private LeosPermissionEvaluator leosPermissionEvaluator;
     private TokenService tokenService;
+    private SecurityUserProvider securityUserProvider;
 
     @Autowired
     public SecurityContext(LeosPermissionEvaluator leosPermissionEvaluator,
-                           TokenService tokenService){
+                           TokenService tokenService,
+                           SecurityUserProvider securityUserProvider){
         this.leosPermissionEvaluator = leosPermissionEvaluator;
         this.tokenService = tokenService;
+        this.securityUserProvider = securityUserProvider;
     }
 
     public boolean hasAuthenticationInContext() {
@@ -45,7 +48,12 @@ public class SecurityContext {
     }
 
     public User getUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof String) {
+            return securityUserProvider.getUserByLogin(principal.toString());
+        } else {
+            return (User) principal;
+        }
     }
 
     public String getUserName() {
