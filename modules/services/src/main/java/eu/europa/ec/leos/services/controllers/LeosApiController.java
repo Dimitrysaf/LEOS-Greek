@@ -249,7 +249,7 @@ public class LeosApiController {
                     .formatToHtml(new ByteArrayInputStream(firstContent.getBytes()), baseContextPath, null, isCoverPage ? new ByteArrayInputStream(documentContentService.getCoverPageContent(firstContent.getBytes())) : null)
                     .replaceAll("(?i)(href|onClick)=\".*?\"", "");
             String secondContentHtml = transformationService
-                    .formatToHtml(new ByteArrayInputStream(secondContent.getBytes()), baseContextPath, null, isCoverPage ? new ByteArrayInputStream(documentContentService.getCoverPageContent(firstContent.getBytes())) : null)
+                    .formatToHtml(new ByteArrayInputStream(secondContent.getBytes()), baseContextPath, null, isCoverPage ? new ByteArrayInputStream(documentContentService.getCoverPageContent(secondContent.getBytes())) : null)
                     .replaceAll("(?i)(href|onClick)=\".*?\"", "");
             if (mode == SINGLE_COLUMN_MODE) {
                 String comparedContent = comparatorService.compareContents(new ContentComparatorContext.Builder(firstContentHtml, secondContentHtml)

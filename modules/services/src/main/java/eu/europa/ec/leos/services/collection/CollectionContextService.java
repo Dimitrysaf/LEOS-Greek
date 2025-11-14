@@ -13,7 +13,6 @@
  */
 package eu.europa.ec.leos.services.collection;
 
-import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -41,6 +40,7 @@ import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
+import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
@@ -48,10 +48,10 @@ import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
 
 import jakarta.inject.Provider;
 import java.io.IOException;
@@ -65,6 +65,7 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.COUNCIL_EXPLANATO
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
+
 public abstract class CollectionContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextService.class);
@@ -319,12 +320,11 @@ public abstract class CollectionContextService {
         if (cloneProposal) {
             setConnectedEntity();
             proposal = proposalService.createClonedProposalFromContent(leosPckg.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());
-            idsAndUrlsHolder.setPackageName(leosPckg.getName());
         } else {
             Validate.notNull(propDocument.getSource(), "Proposal xml is required!");
             proposal = proposalService.createProposalFromContent(leosPckg.getPath(), metadata, propDocument, translated);
-            idsAndUrlsHolder.setPackageName(leosPckg.getName());
         }
+        idsAndUrlsHolder.setPackageName(leosPckg.getName());
 
         HashMap<String, XmlDocument> refsMatching = new HashMap<>();
         // create child element
@@ -481,9 +481,21 @@ public abstract class CollectionContextService {
     }
 
     private void setConnectedEntity() {
-        Entity entity = new Entity(Cuid.createCuid(), connectedEntity, connectedEntity);
         User user = securityContext.getUser();
-        user.setConnectedEntity(entity);
+        if ((user.getEntities() == null) || user.getEntities().isEmpty()) {
+            LOG.error("User '{}' has no Entity associated", user.getLogin());
+            throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.noEntity", user.getLogin()));
+        }
+        Entity userEntity = user.getEntities().stream()
+                .filter(entity -> entity.getOrganizationName().equalsIgnoreCase(StringUtils.defaultIfEmpty(connectedEntity, entity.getOrganizationName())) ||
+                        entity.getName().equalsIgnoreCase(StringUtils.defaultIfEmpty(connectedEntity, entity.getName())))
+                .findFirst()
+                .orElse(null);
+        if (userEntity == null) {
+            LOG.error("User '{}' has no Entity with name '{}'", user.getLogin(), connectedEntity);
+            throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.unknownEntity", user.getLogin(), connectedEntity));
+        }
+        user.setConnectedEntity(userEntity);
     }
 
     public void executeCreateFinancialStatement() {
