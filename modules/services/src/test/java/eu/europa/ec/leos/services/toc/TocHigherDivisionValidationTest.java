@@ -33,8 +33,8 @@ import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -95,7 +95,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
     @InjectMocks
     private ProposalTocApiServiceImpl proposalTocApiServiceImpl;
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
         xmlContent = TestUtils.getFileContent(STORE_DIR, "billForTocHigherDivisionValidation.xml");

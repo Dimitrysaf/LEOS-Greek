@@ -23,7 +23,7 @@ import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -98,7 +98,7 @@ public abstract class XmlContentProcessorTest extends LeosTest {
     protected Map<String, List<String>> languageMap = new HashMap<>();
     protected final static String FILE_PREFIX = "/contentProcessor";
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         getStructureFile();

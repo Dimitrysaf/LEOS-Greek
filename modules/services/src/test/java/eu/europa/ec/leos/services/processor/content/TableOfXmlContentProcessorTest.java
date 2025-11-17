@@ -15,7 +15,7 @@ import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,8 +34,8 @@ import java.util.Map;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_TO_HIDE_CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeTag;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public abstract class TableOfXmlContentProcessorTest extends LeosTest {
@@ -79,7 +79,7 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
 
     protected final static String FILE_PREFIX = "/xml-files";
     
-    @Before
+    @BeforeEach
     public void onSetUp() {
         super.setup();
         getStructureFile();

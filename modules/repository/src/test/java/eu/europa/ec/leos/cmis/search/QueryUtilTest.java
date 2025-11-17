@@ -4,21 +4,17 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.filter.QueryFilter.Filter;
 import eu.europa.ec.leos.model.filter.QueryFilter.FilterType;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QueryUtilTest {
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
     public void createQueryMultiTest() {
         String expected = "metadata:docType = 'REGULATION' AND leos:language IN ('FR', 'NL')";
         QueryFilter createFilter = createMultiFilter();
-        Assert.assertEquals(expected, QueryUtil.formFilterClause(createFilter));
+        assertEquals(expected, QueryUtil.formFilterClause(createFilter));
     }
 
     @Test
@@ -29,7 +25,7 @@ public class QueryUtilTest {
         Filter f1 = new Filter("docType", "=", false, "REGULATION");
         filter.addFilter(f1);
 
-        Assert.assertEquals(expected, QueryUtil.formFilterClause(filter));
+        assertEquals(expected, QueryUtil.formFilterClause(filter));
     }
 
     @Test
@@ -39,7 +35,7 @@ public class QueryUtilTest {
         Filter f2 = new Filter("language", "IN", false, "FR", "NL");
         filter.addFilter(f2);
 
-        Assert.assertEquals(expected, QueryUtil.formFilterClause(filter));
+        assertEquals(expected, QueryUtil.formFilterClause(filter));
     }
 
     @Test
@@ -49,21 +45,21 @@ public class QueryUtilTest {
         Filter f2 = new Filter("role", "IN", false, "jane::AUTHOR", "jane::REVIEWER");
         filter.addFilter(f2);
 
-        Assert.assertEquals(expected, QueryUtil.formFilterClause(filter));
+        assertEquals(expected, QueryUtil.formFilterClause(filter));
     }
 
     @Test
     public void createQueryWithThreeConditionsTest() {
         String expected = "metadata:docType = 'REGULATION' AND leos:language IN ('FR', 'NL', 'EN') AND leos:category = 'PROPOSAL'";
         QueryFilter createFilter = createFilterWith3Conditions();
-        Assert.assertEquals(expected, QueryUtil.formFilterClause(createFilter));
+        assertEquals(expected, QueryUtil.formFilterClause(createFilter));
     }
 
     @Test
     public void createQueryWithNullCheckAndThreeConditionsTest() {
         String expected = "(metadata:docType IS NULL OR metadata:docType = 'REGULATION') AND (leos:language IS NULL OR leos:language IN ('FR', 'NL', 'EN')) AND (leos:category IS NULL OR leos:category = 'PROPOSAL')";
         QueryFilter createFilter = createFilterWithNullCheckAnd3Conditions();
-        Assert.assertEquals(expected, QueryUtil.formFilterClause(createFilter));
+        assertEquals(expected, QueryUtil.formFilterClause(createFilter));
     }
 
     private QueryFilter createMultiFilter() {
@@ -79,34 +75,37 @@ public class QueryUtilTest {
     public void createQueryForMinorVersionTest() {
         String expected = "metadata:ref = 'bill_test' AND leos:versionLabel LIKE '10.1.%' AND leos:versionLabel <> '10.1.0'";
         QueryFilter filter = createMinorVersionQueryFilter();
-        Assert.assertEquals(expected, QueryUtil.formFilterClause(filter));
+        assertEquals(expected, QueryUtil.formFilterClause(filter));
     }
 
     @Test
     public void createQueryForMinorVersionTest_NotMajorVersion() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("CMIS Version number should be in the format of a major version x...0");
-        QueryUtil.getMinorVersionsQueryFilter("bill_test", "1.2");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            QueryUtil.getMinorVersionsQueryFilter("bill_test", "1.2");
+        });
+        assertEquals("CMIS Version number should be in the format of a major version x...0", exception.getMessage());
     }
 
     @Test
     public void createQueryForMinorVersionTest_MalformedVersion() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("CMIS Version number should be in the format x...0");
-        QueryUtil.getMinorVersionsQueryFilter("bill_test", "10");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            QueryUtil.getMinorVersionsQueryFilter("bill_test", "10");
+        });
+        assertEquals("CMIS Version number should be in the format x...0", exception.getMessage());
     }
 
     @Test
     public void createQueryForMinorVersionTest_NonNumericVersion() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("CMIS Version number should be in the format x...0");
-        QueryUtil.getMinorVersionsQueryFilter("bill_test", "1a0.a1");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            QueryUtil.getMinorVersionsQueryFilter("bill_test", "1a0.a1");
+        });
+        assertEquals("CMIS Version number should be in the format x...0", exception.getMessage());
     }
 
     @Test
     public void createQueryForMinorVersionTest_NoPreviousVersions() {
         String expected = "";
-        Assert.assertEquals(expected, QueryUtil.buildMinorVersionsLowerThanMajorRegularExp("0.0.0", true));
+        assertEquals(expected, QueryUtil.buildMinorVersionsLowerThanMajorRegularExp("0.0.0", true));
     }
 
     @Test
@@ -114,7 +113,7 @@ public class QueryUtilTest {
         String expected = "metadata:ref = 'bill_test' AND leos:versionType IN ('1', '2')";
         QueryFilter filter = createMajorVersionQueryFilter();
         String query = QueryUtil.formFilterClause(filter);
-        Assert.assertEquals(expected, query);
+        assertEquals(expected, query);
     }
     
     @Test
@@ -122,7 +121,7 @@ public class QueryUtilTest {
         String expected = "metadata:ref = 'bill_test' AND leos:versionLabel LIKE '11.2.%' AND leos:versionLabel <> '11.2.0'";
         QueryFilter filter = createRecentVersionsQueryFilter();
         String query = QueryUtil.formFilterClause(filter);
-        Assert.assertEquals(expected, query);
+        assertEquals(expected, query);
     }
     
     @Test
@@ -130,7 +129,7 @@ public class QueryUtilTest {
         String expected = "metadata:ref = 'bill_test' AND cmis:versionLabel LIKE '21.%' AND cmis:versionLabel <> '21.0'";
         QueryFilter filter = createRecentVersionsCmisVersionQueryFilter();
         String query = QueryUtil.formFilterClause(filter);
-        Assert.assertEquals(expected, query);
+        assertEquals(expected, query);
     }
 
     private QueryFilter createFilterWith3Conditions() {

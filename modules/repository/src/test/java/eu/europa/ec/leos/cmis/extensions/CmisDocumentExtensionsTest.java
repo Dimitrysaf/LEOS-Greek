@@ -28,7 +28,7 @@ import io.atlassian.fugue.Option;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.io.ByteArrayInputStream;
@@ -43,11 +43,7 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -87,18 +83,20 @@ public class CmisDocumentExtensionsTest {
         List<Collaborator> resultUsers = CmisDocumentExtensions.getCollaborators(cmisDocument);
 
         //verify
-        assertThat(resultUsers.size(), is(3));
-        assertThat(resultUsers.get(0).getLogin(), equalTo("testUser1"));
-        assertThat(resultUsers.get(0).getRole(), equalTo("OWNER"));
-        assertThat(resultUsers.get(0).getEntity(), equalTo("SG"));
+        assertEquals(3, resultUsers.size());
 
-        assertThat(resultUsers.get(1).getLogin(), equalTo("testUser2"));
-        assertThat(resultUsers.get(1).getRole(), equalTo("OWNER"));
-        assertThat(resultUsers.get(1).getEntity(), equalTo("SJ"));
+        assertEquals("testUser1", resultUsers.get(0).getLogin());
+        assertEquals("OWNER", resultUsers.get(0).getRole());
+        assertEquals("SG", resultUsers.get(0).getEntity());
 
-        assertThat(resultUsers.get(2).getLogin(), equalTo("testUser3"));
-        assertThat(resultUsers.get(2).getRole(), equalTo("CONTRIBUTOR"));
-        assertThat(resultUsers.get(2).getEntity(), equalTo("AGRI"));
+        assertEquals("testUser2", resultUsers.get(1).getLogin());
+        assertEquals("OWNER", resultUsers.get(1).getRole());
+        assertEquals("SJ", resultUsers.get(1).getEntity());
+
+        assertEquals("testUser3", resultUsers.get(2).getLogin());
+        assertEquals("CONTRIBUTOR", resultUsers.get(2).getRole());
+        assertEquals("AGRI", resultUsers.get(2).getEntity());
+
     }
 
     @Test
@@ -113,8 +111,7 @@ public class CmisDocumentExtensionsTest {
         List<Collaborator> resultUsers = CmisDocumentExtensions.getCollaborators(cmisDocument);
 
         //verify
-        assertThat(resultUsers.size(), is(2));
-        //ssertThat(resultUsers.get("testUser1"), equalTo("OWNER"));
+        assertEquals(2, resultUsers.size());
     }
 
     @Test
@@ -129,10 +126,11 @@ public class CmisDocumentExtensionsTest {
         List<Collaborator> resultUsers = CmisDocumentExtensions.getCollaborators(cmisDocument);
 
         //verify
-        assertThat(resultUsers.size(), is(1));
-        assertThat(resultUsers.get(0).getLogin(), equalTo("testUser1"));
-        assertThat(resultUsers.get(0).getRole(), equalTo("OWNER"));
-        assertThat(resultUsers.get(0).getEntity(), equalTo("SG"));
+        assertEquals(1, resultUsers.size());
+        assertEquals("testUser1", resultUsers.get(0).getLogin());
+        assertEquals("OWNER", resultUsers.get(0).getRole());
+        assertEquals("SG", resultUsers.get(0).getEntity());
+
     }
 
     @Test
@@ -151,23 +149,29 @@ public class CmisDocumentExtensionsTest {
             Proposal proposal = CmisDocumentExtensions.toLeosDocument(cmisDocument, Proposal.class, true, Collections.emptyMap());
 
             //verify
-            assertThat(proposal, is(notNullValue()));
+            assertNotNull(proposal);
+
             checkLeosDocument(proposal);
             checkXmlDocument(proposal);
 
-            assertThat(proposal.getInitialCreatedBy(), is(DOC_INITIAL_CREATED_BY));
-            assertThat(proposal.getInitialCreationInstant(), is(DOC_INITIAL_CREATION_INSTANT));
-            assertThat(proposal.getMetadata(), is(sameInstance(proposalMetadata)));
+            assertEquals(DOC_INITIAL_CREATED_BY, proposal.getInitialCreatedBy());
+            assertEquals(DOC_INITIAL_CREATION_INSTANT, proposal.getInitialCreationInstant());
+
+            assertSame(proposalMetadata, proposal.getMetadata());
+
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test_toLeosDocument_IfProposalType_when_IncompatibleTypes() {
-        //setup
-        Document cmisDocument = setupLeosDocument(LeosCategory.PROPOSAL);
+        assertThrows(IllegalStateException.class, () -> {
+            //setup
+            Document cmisDocument = setupLeosDocument(LeosCategory.PROPOSAL);
 
-        //make call
-        CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+            //make call
+            CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+        });
+
     }
 
     @Test
@@ -183,21 +187,23 @@ public class CmisDocumentExtensionsTest {
             Memorandum memorandum = CmisDocumentExtensions.toLeosDocument(cmisDocument, Memorandum.class, true, Collections.emptyMap());
 
             //verify
-            assertThat(memorandum, is(notNullValue()));
+            assertNotNull(memorandum);
             checkLeosDocument(memorandum);
             checkXmlDocument(memorandum);
 
-            assertThat(memorandum.getMetadata(), is(sameInstance(memorandumMetadata)));
+            assertSame(memorandumMetadata, memorandum.getMetadata());
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test_toLeosDocument_IfMemorandum_when_IncompatibleTypes() {
-        //setup
-        Document cmisDocument = setupLeosDocument(LeosCategory.MEMORANDUM);
+        assertThrows(IllegalStateException.class, () -> {
+            //setup
+            Document cmisDocument = setupLeosDocument(LeosCategory.MEMORANDUM);
 
-        //make call
-        CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+            //make call
+            CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+        });
     }
 
     @Test
@@ -213,21 +219,23 @@ public class CmisDocumentExtensionsTest {
             Bill bill = CmisDocumentExtensions.toLeosDocument(cmisDocument, Bill.class, true, Collections.emptyMap());
 
             //verify
-            assertThat(bill, is(notNullValue()));
+            assertNotNull(bill);
             checkLeosDocument(bill);
             checkXmlDocument(bill);
 
-            assertThat(bill.getMetadata(), is(sameInstance(billMetadata)));
+            assertSame(billMetadata, bill.getMetadata());
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test_toLeosDocument_IfBill_when_IncompatibleTypes() {
-        //setup
-        Document cmisDocument = setupLeosDocument(LeosCategory.BILL);
+        assertThrows(IllegalStateException.class, () -> {
+            //setup
+            Document cmisDocument = setupLeosDocument(LeosCategory.BILL);
 
-        //make call
-        CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+            //make call
+            CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+        });
     }
 
     @Test
@@ -243,21 +251,23 @@ public class CmisDocumentExtensionsTest {
             Annex annex = CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
 
             //verify
-            assertThat(annex, is(notNullValue()));
+            assertNotNull(annex);
             checkLeosDocument(annex);
             checkXmlDocument(annex);
 
-            assertThat(annex.getMetadata(), is(sameInstance(annexMetadata)));
+            assertSame(annexMetadata, annex.getMetadata());
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test_toLeosDocument_IfAnnex_when_IncompatibleTypes() {
-        //setup
-        Document cmisDocument = setupLeosDocument(LeosCategory.ANNEX);
+        assertThrows(IllegalStateException.class, () -> {
+            //setup
+            Document cmisDocument = setupLeosDocument(LeosCategory.ANNEX);
 
-        //make call
-        CmisDocumentExtensions.toLeosDocument(cmisDocument, Memorandum.class, true, Collections.emptyMap());
+            //make call
+            CmisDocumentExtensions.toLeosDocument(cmisDocument, Memorandum.class, true, Collections.emptyMap());
+        });
     }
 
     @Test
@@ -269,17 +279,19 @@ public class CmisDocumentExtensionsTest {
         MediaDocument mediaDocument = CmisDocumentExtensions.toLeosDocument(cmisDocument, MediaDocument.class, true, Collections.emptyMap());
 
         //verify
-        assertThat(mediaDocument, is(notNullValue()));
+        assertNotNull(mediaDocument);
         checkLeosDocument(mediaDocument);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test_toLeosDocument_IfMediaDocument_when_IncompatibleTypes() {
-        //setup
-        Document cmisDocument = setupLeosDocument(LeosCategory.MEDIA);
+        assertThrows(IllegalStateException.class, () -> {
+            //setup
+            Document cmisDocument = setupLeosDocument(LeosCategory.MEDIA);
 
-        //make call
-        CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+            //make call
+            CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+        });
     }
 
     @Test
@@ -291,17 +303,19 @@ public class CmisDocumentExtensionsTest {
         ConfigDocument configDocument = CmisDocumentExtensions.toLeosDocument(cmisDocument, ConfigDocument.class, true, Collections.emptyMap());
 
         //verify
-        assertThat(configDocument, is(notNullValue()));
+        assertNotNull(configDocument);
         checkLeosDocument(configDocument);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test_toLeosDocument_IfConfigDocument_when_IncompatibleTypes() {
-        //setup
-        Document cmisDocument = setupLeosDocument(LeosCategory.CONFIG);
+        assertThrows(IllegalStateException.class, () -> {
+            //setup
+            Document cmisDocument = setupLeosDocument(LeosCategory.CONFIG);
 
-        //make call
-        CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+            //make call
+            CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+        });
     }
 
     @Test
@@ -328,22 +342,24 @@ public class CmisDocumentExtensionsTest {
         LegDocument legDocument = CmisDocumentExtensions.toLeosDocument(cmisDocument, LegDocument.class, true, Collections.emptyMap());
 
         //verify
-        assertThat(legDocument, is(notNullValue()));
+        assertNotNull(legDocument);
         checkLeosDocument(legDocument);
-        assertThat(legDocument.getJobId(), is(jobId));
-        assertThat(legDocument.getJobDate(), is(jobDate));
-        assertThat(legDocument.getStatus(), is(LeosLegStatus.IN_CONSULTATION));
-        assertThat(legDocument.getMilestoneComments(), is(DOC_MILESTONE_COMMENTS));
-        assertThat(legDocument.getContainedDocuments(), is(DOC_CONTAINED_DOCUMENTS));
+        assertEquals(jobId, legDocument.getJobId());
+        assertEquals(jobDate, legDocument.getJobDate());
+        assertEquals(LeosLegStatus.IN_CONSULTATION, legDocument.getStatus());
+        assertEquals(DOC_MILESTONE_COMMENTS, legDocument.getMilestoneComments());
+        assertEquals(DOC_CONTAINED_DOCUMENTS, legDocument.getContainedDocuments());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test_toLeosDocument_IfLegDocument_when_IncompatibleTypes() {
-        //setup
-        Document cmisDocument = setupLeosDocument(LeosCategory.LEG);
+        assertThrows(IllegalStateException.class, () -> {
+            //setup
+            Document cmisDocument = setupLeosDocument(LeosCategory.LEG);
 
-        //make call
-        CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+            //make call
+            CmisDocumentExtensions.toLeosDocument(cmisDocument, Annex.class, true, Collections.emptyMap());
+        });
     }
 
     @Test
@@ -354,7 +370,7 @@ public class CmisDocumentExtensionsTest {
         //make call
         Instant instant = CmisDocumentExtensions.getCreationInstant(cmisDocument);
 
-        assertThat(instant, is(Instant.MIN));
+        assertEquals(Instant.MIN, instant);
     }
 
     @Test
@@ -365,7 +381,7 @@ public class CmisDocumentExtensionsTest {
         //make call
         Instant instant = CmisDocumentExtensions.getLastModificationInstant(cmisDocument);
 
-        assertThat(instant, is(Instant.MIN));
+        assertEquals(Instant.MIN, instant);
     }
 
     @Test
@@ -376,7 +392,7 @@ public class CmisDocumentExtensionsTest {
         //make call
         Instant instant = CmisDocumentExtensions.getInitialCreationInstant(cmisDocument);
 
-        assertThat(instant, is(Instant.MIN));
+        assertEquals(Instant.MIN, instant);
     }
 
     @Test
@@ -389,7 +405,7 @@ public class CmisDocumentExtensionsTest {
         //make call
         String initialCReatedBy = CmisDocumentExtensions.getInitialCreatedBy(cmisDocument);
 
-        assertThat(initialCReatedBy, is(DOC_INITIAL_CREATED_BY));
+        assertEquals(DOC_INITIAL_CREATED_BY, initialCReatedBy);
     }
 
     @Test
@@ -402,32 +418,32 @@ public class CmisDocumentExtensionsTest {
         //make call
         String initialCReatedBy = CmisDocumentExtensions.getInitialCreatedBy(cmisDocument);
 
-        assertThat(initialCReatedBy, is(DOC_CREATED_BY));
+        assertEquals(DOC_CREATED_BY, initialCReatedBy);
     }
 
     private void checkLeosDocument(LeosDocument leosDocument) throws IOException {
-        assertThat(leosDocument.getId(), is(DOC_ID));
-        assertThat(leosDocument.getName(), is(DOC_NAME));
-        assertThat(leosDocument.getCreatedBy(), is(DOC_CREATED_BY));
-        assertThat(leosDocument.getCreationInstant(), is(DOC_CREATION_INSTANT));
-        assertThat(leosDocument.getLastModifiedBy(), is(DOC_LAST_MODIFIED_BY));
-        assertThat(leosDocument.getLastModificationInstant(), is(DOC_LAST_MODIFICATION_INSTANT));
-        assertThat(leosDocument.getVersionSeriesId(), is(DOC_VERSION_SERIES_ID));
-        assertThat(leosDocument.getVersionLabel(), is(DOC_VERSION_LABEL));
-        assertThat(leosDocument.getVersionComment(), is(DOC_VERSION_COMMENT));
-        assertThat(leosDocument.getVersionType(), is(DOC_VERSION_TYPE));
-        assertThat(leosDocument.isLatestVersion(), is(DOC_IS_LATEST_VERSION));
+        assertEquals(DOC_ID, leosDocument.getId());
+        assertEquals(DOC_NAME, leosDocument.getName());
+        assertEquals(DOC_CREATED_BY, leosDocument.getCreatedBy());
+        assertEquals(DOC_CREATION_INSTANT, leosDocument.getCreationInstant());
+        assertEquals(DOC_LAST_MODIFIED_BY, leosDocument.getLastModifiedBy());
+        assertEquals(DOC_LAST_MODIFICATION_INSTANT, leosDocument.getLastModificationInstant());
+        assertEquals(DOC_VERSION_SERIES_ID, leosDocument.getVersionSeriesId());
+        assertEquals(DOC_VERSION_LABEL, leosDocument.getVersionLabel());
+        assertEquals(DOC_VERSION_COMMENT, leosDocument.getVersionComment());
+        assertEquals(DOC_VERSION_TYPE, leosDocument.getVersionType());
+        assertEquals(DOC_IS_LATEST_VERSION, leosDocument.isLatestVersion());
 
-        assertThat(leosDocument.getContent().get().getFileName(), is(DOC_CONTENT.get().getFileName()));
-        assertThat(leosDocument.getContent().get().getMimeType(), is(DOC_CONTENT.get().getMimeType()));
-        assertThat(leosDocument.getContent().get().getLength(), is(DOC_CONTENT.get().getLength()));
-        assertThat(leosDocument.getContent().get().getSource().getInputStream().available(), is(DOC_CONTENT.get().getSource().getInputStream().available()));
+        assertEquals(DOC_CONTENT.get().getFileName(), leosDocument.getContent().get().getFileName());
+        assertEquals(DOC_CONTENT.get().getMimeType(), leosDocument.getContent().get().getMimeType());
+        assertEquals(DOC_CONTENT.get().getLength(), leosDocument.getContent().get().getLength());
+        assertEquals(DOC_CONTENT.get().getSource().getInputStream().available(), leosDocument.getContent().get().getSource().getInputStream().available());
     }
 
     private void checkXmlDocument(XmlDocument xmlDocument) {
-        assertThat(xmlDocument.getTitle(), is(DOC_TITLE));
-        assertThat(xmlDocument.getCollaborators(), is(DOC_COLLABORATORS));
-        assertThat(xmlDocument.getMilestoneComments(), is(DOC_MILESTONE_COMMENTS));
+        assertEquals(DOC_TITLE, xmlDocument.getTitle());
+        assertEquals(DOC_COLLABORATORS, xmlDocument.getCollaborators());
+        assertEquals(DOC_MILESTONE_COMMENTS, xmlDocument.getMilestoneComments());
     }
 
     private Document setupLeosDocument(LeosCategory leosCategory) {

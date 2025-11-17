@@ -81,8 +81,8 @@ import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -104,7 +104,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -227,7 +227,7 @@ public class LegServiceImplTest {
 
     protected Map<String, List<String>> languageMap = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         String docTemplate = "CE-001";

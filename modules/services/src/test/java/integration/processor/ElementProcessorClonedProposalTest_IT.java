@@ -43,8 +43,8 @@ import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -66,7 +66,7 @@ import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJaneTestUser;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class ElementProcessorClonedProposalTest_IT extends LeosTest {
@@ -146,7 +146,7 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
     protected Map<TocItem, List<TocItem>> tocRules;
     protected final static String PREFIX_SAVE_TOC_BILL_CN = "/saveToc/bill/ls/";
 
-    @Before
+    @BeforeEach
     public void onSetUp() throws Exception {
         getStructureFile();
 

@@ -15,8 +15,8 @@ import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -47,7 +47,7 @@ public class ReferenceLabelServiceTest extends LeosTest {
     @Mock
     private WorkspaceService workspaceService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
 

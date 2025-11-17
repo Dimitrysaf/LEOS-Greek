@@ -20,8 +20,8 @@ import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -52,8 +52,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public class TableOfContentHelperTest extends LeosTest {
@@ -140,7 +140,7 @@ public class TableOfContentHelperTest extends LeosTest {
         SecurityContextHolder.setContext(securityContext);
     }
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         super.setup();
         setTemplateAndStructureFile("BL-017", "/structure-test-bill-CN.xml");

@@ -4,8 +4,8 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
 
@@ -23,7 +23,7 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
 
     private NumberServiceProposal numberService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, documentLanguageContext);

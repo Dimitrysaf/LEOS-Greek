@@ -29,8 +29,8 @@ public class LoggingAspect {
             return joinPoint.proceed();
         } finally {
             long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(DURATION_OF_EXECUTION, time, className, methodName, Arrays.toString(joinPoint.getArgs()));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(DURATION_OF_EXECUTION, time, className, methodName, Arrays.toString(joinPoint.getArgs()));
             }
         }
     }

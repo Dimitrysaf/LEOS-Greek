@@ -2,13 +2,12 @@ package eu.europa.ec.leos.services.label;
 
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest {
     
@@ -176,7 +175,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
     }
 
     @Test
-    @Ignore
+    @Disabled
     //This case across levels is not handled
     public void generateLabelString_Article_withMultiplePointReferenceAtLevel2andLevel3() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",art_1_OrhWbv", ",art_1_Uxo4c1", ",art_1_Orvvv", ",art_1_CY6Nsa"), "bill", "", xmlDocument.getContent().get().getSource().getBytes());
@@ -454,7 +453,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
         assertEquals(expectedResults, result.get());
     }
 
-    @Ignore //same behaviour is actually happening. Waiting to discuss with business how to treat sub-points(alinea)
+    @Disabled //same behaviour is actually happening. Waiting to discuss with business how to treat sub-points(alinea)
     @Test
     public void generateLabelString_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD3SubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",a6_6CT2lS"), "bill", "a6_vFs1j9", xmlDocument.getContent().get().getSource().getBytes());
@@ -472,7 +471,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
         assertEquals(expectedResults, result.get());
     }
 
-    @Ignore //same behaviour is actually happening. Waiting to discuss with business how to treat sub-points(alinea)
+    @Disabled //same behaviour is actually happening. Waiting to discuss with business how to treat sub-points(alinea)
     @Test
     public void generateLabelString_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointDSubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",a6_MM9gYx"), "bill", "a6_vFs1j9", xmlDocument.getContent().get().getSource().getBytes());
@@ -610,7 +609,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
         assertEquals(expectedResults, result.get());
     }
 
-    @Ignore //adapt the test for the new solution
+    @Disabled //adapt the test for the new solution
     @Test
     public void generateLabelString_differentArticle_targetParagraph1PointDSubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",a6_MM9gYx"), "bill", "art_1_A42pW6", xmlDocument.getContent().get().getSource().getBytes());
@@ -664,7 +663,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
                 + ", <ref href=\"bill.xml/~a6_ed2l3M\" xml:id=\"\">second</ref>"
                 + " and <ref href=\"bill.xml/~a6_H9BTwE\" xml:id=\"\">third</ref>"
                 + " indents";
-        Assert.assertEquals(expectedResults, result.get());
+        assertEquals(expectedResults, result.get());
     }
 
     @Test
@@ -674,7 +673,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
                 + ", point (d)(3)(iv)"
                 + ", <ref href=\"bill.xml/~a6_H9BTwE\" xml:id=\"\">third</ref>"
                 + " indent";
-        Assert.assertEquals(expectedResults, result.get());
+        assertEquals(expectedResults, result.get());
     }
 
 }

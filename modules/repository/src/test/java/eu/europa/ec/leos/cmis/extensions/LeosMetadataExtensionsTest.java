@@ -7,13 +7,13 @@ import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LeosMetadataExtensionsTest {
 
@@ -124,9 +124,15 @@ public class LeosMetadataExtensionsTest {
 
         //verify
         verifyCommonCmisProperties(metadata, METADATA_TYPE_VALUE, METADATA_REF_VALUE, METADATA_TYPE_VALUE, METADATA_EEA_RELEVANCE_VALUE);
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)), is(annexIndex));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER)), is(annexNumber));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE)), is(annexTitle));
+        assertEquals(annexIndex,
+                metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)));
+
+        assertEquals(annexNumber,
+                metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER)));
+
+        assertEquals(annexTitle,
+                metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE)));
+
     }
 
     @Test
@@ -144,23 +150,26 @@ public class LeosMetadataExtensionsTest {
 
         //verify
         verifyCommonCmisProperties(metadata, null, null, null, METADATA_EEA_RELEVANCE_VALUE);
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)), is(annexIndex));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER)), is(annexNumber));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE)), is(annexTitle));
+        assertEquals(annexIndex, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)));
+        assertEquals(annexNumber, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER)));
+        assertEquals(annexTitle, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE)));
+
     }
 
     
     private void verifyCommonCmisProperties(Map<String, ?> metadata, String expectedType, String expectedRefValue, String expectedTitleValue, boolean eeaRelevance) {
-        assertThat(metadata, notNullValue());
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE)), is(METADATA_STAGE_VALUE));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE)), is(expectedType));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE)), is(METADATA_PURPOSE_VALUE));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE)), is(DOCUMENT_TEMPLATE_VALUE));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE)), is(DOCUMENT_LANGUAGE_VALUE));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE)), is(METADATA_DOCTEMPLATE_VALUE));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE)), is(eeaRelevance));
+        assertNotNull(metadata);
 
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF)), is(expectedRefValue));
-        assertThat(metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE)), is(expectedTitleValue));
+        assertEquals(METADATA_STAGE_VALUE, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE)));
+        assertEquals(expectedType, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE)));
+        assertEquals(METADATA_PURPOSE_VALUE, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE)));
+        assertEquals(DOCUMENT_TEMPLATE_VALUE, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE)));
+        assertEquals(DOCUMENT_LANGUAGE_VALUE, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE)));
+        assertEquals(METADATA_DOCTEMPLATE_VALUE, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE)));
+        assertEquals(eeaRelevance, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE)));
+
+        assertEquals(expectedRefValue, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF)));
+        assertEquals(expectedTitleValue, metadata.get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE)));
+
     }
 }

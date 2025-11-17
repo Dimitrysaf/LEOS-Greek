@@ -23,21 +23,21 @@ import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
-import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.StructureServiceImpl;
+import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import jakarta.inject.Provider;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import jakarta.inject.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
@@ -45,17 +45,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.CITATIONS;
-import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 public class ElementProcessorImplTest extends LeosTest {
@@ -93,7 +87,7 @@ public class ElementProcessorImplTest extends LeosTest {
 
     private List<TocItem> tocItems;
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         String docTemplate = "BL-023";

@@ -7,13 +7,11 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import io.atlassian.fugue.Option;
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,10 +35,10 @@ public class CmisMetadataExtensionsTest {
         Option<ProposalMetadata> proposalMetadataOption = CmisMetadataExtensions.getProposalMetadataOption(cmisDocument);
 
         //verify
-        assertThat(proposalMetadataOption.isEmpty(), is(false));
+        assertFalse(proposalMetadataOption.isEmpty());
         ProposalMetadata proposalMetadata = proposalMetadataOption.get();
-        assertThat(proposalMetadata, is(notNullValue()));
-        assertThat(proposalMetadata.getCategory(), is(LeosCategory.PROPOSAL));
+        assertNotNull(proposalMetadata);
+        assertEquals(LeosCategory.PROPOSAL, proposalMetadata.getCategory());
         verifyCommonMetadata(proposalMetadata);
     }
 
@@ -53,7 +51,7 @@ public class CmisMetadataExtensionsTest {
         Option<ProposalMetadata> proposalMetadataOption = CmisMetadataExtensions.getProposalMetadataOption(cmisDocument);
 
         //verify
-        assertThat(proposalMetadataOption.isEmpty(), is(true));
+        assertTrue(proposalMetadataOption.isEmpty());
     }
 
     @Test
@@ -65,10 +63,10 @@ public class CmisMetadataExtensionsTest {
         Option<MemorandumMetadata> memorandumMetadataOption = CmisMetadataExtensions.getMemorandumMetadataOption(cmisDocument);
 
         //verify
-        assertThat(memorandumMetadataOption.isEmpty(), is(false));
+        assertFalse(memorandumMetadataOption.isEmpty());
         MemorandumMetadata memorandumMetadata = memorandumMetadataOption.get();
-        assertThat(memorandumMetadata, is(notNullValue()));
-        assertThat(memorandumMetadata.getCategory(), is(LeosCategory.MEMORANDUM));
+        assertNotNull(memorandumMetadata);
+        assertEquals(LeosCategory.MEMORANDUM, memorandumMetadata.getCategory());
         verifyCommonMetadata(memorandumMetadata);
     }
 
@@ -81,7 +79,7 @@ public class CmisMetadataExtensionsTest {
         Option<MemorandumMetadata> memorandumMetadataOption = CmisMetadataExtensions.getMemorandumMetadataOption(cmisDocument);
 
         //verify
-        assertThat(memorandumMetadataOption.isEmpty(), is(true));
+        assertTrue(memorandumMetadataOption.isEmpty());
     }
 
     @Test
@@ -93,10 +91,10 @@ public class CmisMetadataExtensionsTest {
         Option<BillMetadata> billMetadataOption = CmisMetadataExtensions.getBillMetadataOption(cmisDocument);
 
         //verify
-        assertThat(billMetadataOption.isEmpty(), is(false));
+        assertFalse(billMetadataOption.isEmpty());
         BillMetadata billMetadata = billMetadataOption.get();
-        assertThat(billMetadata, is(notNullValue()));
-        assertThat(billMetadata.getCategory(), is(LeosCategory.BILL));
+        assertNotNull(billMetadata);
+        assertEquals(LeosCategory.BILL, billMetadata.getCategory());
         verifyCommonMetadata(billMetadata);
     }
 
@@ -109,7 +107,7 @@ public class CmisMetadataExtensionsTest {
         Option<BillMetadata> billMetadataOption = CmisMetadataExtensions.getBillMetadataOption(cmisDocument);
 
         //verify
-        assertThat(billMetadataOption.isEmpty(), is(true));
+        assertTrue(billMetadataOption.isEmpty());
     }
 
     @Test
@@ -127,15 +125,15 @@ public class CmisMetadataExtensionsTest {
         Option<AnnexMetadata> annexMetadataOption = CmisMetadataExtensions.getAnnexMetadataOption(cmisDocument);
 
         //verify
-        assertThat(annexMetadataOption.isEmpty(), is(false));
+        assertFalse(annexMetadataOption.isEmpty());
         AnnexMetadata annexMetadata = annexMetadataOption.get();
-        assertThat(annexMetadata, is(notNullValue()));
-        assertThat(annexMetadata.getCategory(), is(LeosCategory.ANNEX));
+        assertNotNull(annexMetadata);
+        assertEquals(LeosCategory.ANNEX, annexMetadata.getCategory());
         verifyCommonMetadata(annexMetadata);
 
-        assertThat(annexMetadata.getIndex(), is(ANNEX_INDEX.intValue()));
-        assertThat(annexMetadata.getNumber(), is(ANNEX_NUMBER));
-        assertThat(annexMetadata.getTitle(), is(ANNEX_TITLE));
+        assertEquals(ANNEX_INDEX.intValue(), annexMetadata.getIndex());
+        assertEquals(ANNEX_NUMBER, annexMetadata.getNumber());
+        assertEquals(ANNEX_TITLE, annexMetadata.getTitle());
     }
 
     @Test
@@ -147,17 +145,17 @@ public class CmisMetadataExtensionsTest {
         Option<AnnexMetadata> annexMetadataOption = CmisMetadataExtensions.getAnnexMetadataOption(cmisDocument);
 
         //verify
-        assertThat(annexMetadataOption.isEmpty(), is(true));
+        assertTrue(annexMetadataOption.isEmpty());
     }
 
     private void verifyCommonMetadata(LeosMetadata leosMetadata) {
-        assertThat(leosMetadata.getStage(), is(METADATA_STAGE));
-        assertThat(leosMetadata.getType(), is(METADATA_TYPE));
-        assertThat(leosMetadata.getPurpose(), is(METADATA_PURPOSE));
-        assertThat(leosMetadata.getDocTemplate(), is(METADATA_DOCTEMPLATE));
-        assertThat(leosMetadata.getRef(), is(METADATA_REF));
-        assertThat(leosMetadata.getTemplate(), is(DOCUMENT_TEMPLATE));
-        assertThat(leosMetadata.getLanguage(), is(DOCUMENT_LANGUAGE));
+        assertEquals(METADATA_STAGE, leosMetadata.getStage());
+        assertEquals(METADATA_TYPE, leosMetadata.getType());
+        assertEquals(METADATA_PURPOSE, leosMetadata.getPurpose());
+        assertEquals(METADATA_DOCTEMPLATE, leosMetadata.getDocTemplate());
+        assertEquals(METADATA_REF, leosMetadata.getRef());
+        assertEquals(DOCUMENT_TEMPLATE, leosMetadata.getTemplate());
+        assertEquals(DOCUMENT_LANGUAGE, leosMetadata.getLanguage());
     }
 
     private Document setupCommonDocument() {

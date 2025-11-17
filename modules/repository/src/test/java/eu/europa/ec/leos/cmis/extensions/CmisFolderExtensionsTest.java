@@ -2,7 +2,7 @@ package eu.europa.ec.leos.cmis.extensions;
 
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

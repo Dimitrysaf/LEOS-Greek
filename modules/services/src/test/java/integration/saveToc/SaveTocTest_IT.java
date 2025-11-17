@@ -34,7 +34,7 @@ import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -120,7 +120,7 @@ public abstract class SaveTocTest_IT extends LeosTest {
     protected Map<TocItem, List<TocItem>> tocRules;
     protected Map<String, List<String>> languageMap = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void onSetUp() throws Exception {
         languageMap.put("greek", Arrays.asList("el"));
         languageMap.put("latin", Arrays.asList("cs", "da", "de", "en", "es", "et", "fi", "fr", "ga", "hr", "hu", "it", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "sk", "sl", "sv"));

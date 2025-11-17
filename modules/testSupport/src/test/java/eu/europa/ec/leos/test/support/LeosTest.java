@@ -13,21 +13,17 @@
  */
 package eu.europa.ec.leos.test.support;
 
-import org.junit.Before;
-import org.junit.rules.Timeout;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 
 import java.nio.charset.Charset;
-import java.util.concurrent.TimeUnit;
 
 public class LeosTest {
 
     protected static final Charset UTF_8 = Charset.forName("UTF-8");
 
-//    @Rule
-    public Timeout timeout = new Timeout(60, TimeUnit.SECONDS);
-
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
     }
