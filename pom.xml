@@ -159,9 +159,8 @@
         <xml-apis.version>1.4.01</xml-apis.version>
         <bouncycastle-bcprov.version>1.55</bouncycastle-bcprov.version>
         <!-- JUnit 5 -->
-        <junit-jupiter.version>5.10.1</junit-jupiter.version>
-<!--        <junit-platform.version>1.10.1</junit-platform.version>-->
-        <junit-vintage.version>5.10.1</junit-vintage.version>
+        <junit-jupiter.version>5.12.2</junit-jupiter.version>
+        <junit-vintage.version>5.12.2</junit-vintage.version>
         <assertj.version>3.24.2</assertj.version>
         <byte-buddy.version>1.14.9</byte-buddy.version>
         <!-- httpclient -->
@@ -588,7 +587,7 @@
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-engine</artifactId>
-                <version>1.10.1</version>
+                <version>1.12.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
