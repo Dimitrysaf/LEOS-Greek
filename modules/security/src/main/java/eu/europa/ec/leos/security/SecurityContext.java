@@ -14,6 +14,8 @@
 package eu.europa.ec.leos.security;
 
 import eu.europa.ec.leos.model.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
    SecurityContextHolder manages context for different threads. So it would return respective user for the thread*/
 @Component
 public class SecurityContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SecurityContext.class);
 
     private LeosPermissionEvaluator leosPermissionEvaluator;
     private TokenService tokenService;
@@ -49,6 +53,8 @@ public class SecurityContext {
 
     public User getUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LOG.info("LOGGING ANDRE: ");
+        LOG.info((String) principal);
         if (principal instanceof String) {
             return securityUserProvider.getUserByLogin(principal.toString());
         } else {
