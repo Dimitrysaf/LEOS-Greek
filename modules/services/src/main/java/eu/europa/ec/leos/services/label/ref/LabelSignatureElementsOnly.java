@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.label.ref;
 
 import eu.europa.ec.leos.services.support.XercesUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 

@@ -251,7 +251,7 @@ public class JwtTokenService implements TokenService {
 
             token = builder.sign(algorithm);
 
-        } catch (UnsupportedEncodingException | JWTCreationException e) {
+        } catch (JWTCreationException e) {
             //UTF-8 encoding not supported
             //Invalid Signing configuration / Couldn't convert Claims.
             LOG.error(VALIDATION_ERROR, e.getMessage());

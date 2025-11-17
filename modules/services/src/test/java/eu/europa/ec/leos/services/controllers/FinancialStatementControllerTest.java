@@ -59,8 +59,6 @@ public class FinancialStatementControllerTest {
         assertEquals(TEST_PROPOSAL_REF, response.getProposalRef());
         assertEquals(TEST_XML, response.getEditableXml());
         assertEquals(TEST_VERSION_INFO, response.getVersionInfoVO());
-
-        Mockito.spy(this.genericDocumentApiService).getDocumentByRef(Mockito.eq(TEST_DOC_REF));
     }
 
     @Test
@@ -75,8 +73,6 @@ public class FinancialStatementControllerTest {
 
         assertNotNull(response);
         assertTrue(response.isEmpty());
-
-        Mockito.spy(this.genericDocumentTocApiService).getTableOfContent(Mockito.eq(TEST_DOC_REF), Mockito.eq(TEST_TOC_MODE));
     }
 
     @Test
@@ -90,8 +86,6 @@ public class FinancialStatementControllerTest {
 
         assertNotNull(response);
         assertTrue(response.isEmpty());
-
-        Mockito.spy(this.genericDocumentApiService).getTocItems(Mockito.eq(TEST_DOC_REF));
     }
 
     @Test
@@ -105,8 +99,6 @@ public class FinancialStatementControllerTest {
 
         assertNotNull(response);
         assertTrue(response.isEmpty());
-
-        Mockito.spy(this.genericDocumentApiService).getMajorVersionsData(Mockito.eq(TEST_DOC_REF), Mockito.eq(0), Mockito.eq(9999));
     }
 
     @Test
@@ -137,8 +129,6 @@ public class FinancialStatementControllerTest {
 
         assertNotNull(response);
         assertEquals(TEST_RESPONSE, response);
-
-        Mockito.spy(this.genericDocumentApiService).getTocItems(Mockito.eq(TEST_DOC_REF));
     }
 
     @Test
@@ -152,7 +142,5 @@ public class FinancialStatementControllerTest {
 
         assertNotNull(response);
         assertTrue(response.isEmpty());
-
-        Mockito.spy(this.genericDocumentApiService).getRecentMinorVersions(Mockito.eq(TEST_DOC_REF), Mockito.eq(0), Mockito.eq(Integer.MAX_VALUE));
     }
 }

@@ -98,7 +98,6 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     @Mock
     private SecurityContext securityContext;
 
-    @InjectMocks
     protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
 
     @Mock
@@ -107,40 +106,32 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     @Mock
     private ProfileContext profileContext;
 
-    @InjectMocks
     protected XPathCatalog xPathCatalog = spy(new XPathCatalog());
 
-    @InjectMocks
     protected XmlContentProcessorProposal xmlContentProcessor = spy(new XmlContentProcessorProposal());
 
     protected ParentChildConverter parentChildConverter = new ParentChildConverter();
 
-    @InjectMocks
     protected NumberConfigFactory numberConfigFactory = Mockito.spy(new NumberConfigFactory());
 
-    @InjectMocks
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerProposal();
 
     private TrackChangesContext trackChangesContext = new TrackChangesContext();
-    @InjectMocks
     private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, securityContext, trackChangesContext, profileContext);
     private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     private NumberProcessorDepthBased numberProcessorLevel = new eu.europa.ec.leos.services.numbering.processor.NumberProcessorLevel(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
 
-    @InjectMocks
     protected List<NumberProcessor> numberProcessors = Mockito.spy(Stream.of(numberProcessorArticle,
             numberProcessorPoint,
             numberProcessorDefault).collect(Collectors.toList()));
-    @InjectMocks
     protected List<NumberProcessorDepthBased> numberProcessorsDepthBased = Mockito.spy(Stream.of(numberProcessorDepthBasedDefault, numberProcessorLevel)
             .collect(Collectors.toList()));
 
     @InjectMocks
     NumberServiceProposal numberService;
 
-    @InjectMocks
     eu.europa.ec.leos.services.document.ContributionService contributionService = new ContributionServiceProposalImpl<Bill>(
             leosRepository, messageHelper,
             proposalService, packageService,
@@ -212,6 +203,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     public void setup() {
         super.setup();
 
+        ReflectionTestUtils.setField(contributionService, "packageService", packageService);
         when(cloneContext.isClonedProposal()).thenReturn(false);
         docContent = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml");
         docContent2 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest2.xml");
@@ -333,10 +325,17 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         this.contribution8.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
         this.contribution8.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
 
+        ReflectionTestUtils.setField(xmlContentProcessor, "xPathCatalog", xPathCatalog);
+        ReflectionTestUtils.setField(xmlContentProcessor, "structureContextProvider", structureContextProvider);
+        ReflectionTestUtils.setField(xmlContentProcessor, "documentLanguageContext", documentLanguageContext);
+        ReflectionTestUtils.setField(numberConfigFactory, "structureContextProvider", structureContextProvider);
+        ReflectionTestUtils.setField(messageHelper, "languageHelper", languageHelper);
+        ReflectionTestUtils.setField(numberProcessorHandler, "numberConfigFactory", numberConfigFactory);
         numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, documentLanguageContext);
         mergeContributionService = Mockito.spy(new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext,
                 numberService));
         ReflectionTestUtils.setField(numberProcessorArticle, "securityContext", securityContext);
+        ReflectionTestUtils.setField(numberProcessorArticle, "profileContext", profileContext);
         ReflectionTestUtils.setField(numberProcessorPoint, "securityContext", securityContext);
         ReflectionTestUtils.setField(numberProcessorDefault, "securityContext", securityContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);

@@ -15,6 +15,7 @@ import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,7 +34,6 @@ import java.util.Map;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_TO_HIDE_CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeTag;
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -145,7 +145,7 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
         assertEquals(expectedElement.getOriginHeadingAttr(), actualElement.getOriginHeadingAttr());
         if (compare) {
             if (!ELEMENTS_TO_HIDE_CONTENT.contains(expectedElement.getTagName())) {
-                assertEquals(escapeHtml(removeTag(expectedElement.getContent())), escapeHtml(actualElement.getContent()));
+                assertEquals(StringEscapeUtils.escapeHtml4(removeTag(expectedElement.getContent())), StringEscapeUtils.escapeHtml4(actualElement.getContent()));
             }
         } else {
             assertEquals(expectedElement.getContent(), actualElement.getContent());

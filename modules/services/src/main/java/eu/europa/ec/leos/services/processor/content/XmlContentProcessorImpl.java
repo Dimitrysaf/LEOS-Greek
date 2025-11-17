@@ -2031,7 +2031,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
         insertOrUpdateAttributeValue(nodeToSetAttributes, LEOS_INDENT_LEVEL_ATTR, indentLevelStr);
         insertOrUpdateStylingAttribute(nodeToSetAttributes, INDENT_LEVEL_PROPERTY, indentLevelStr);
-        insertOrUpdateStylingAttribute(nodeToSetAttributes, INLINE_NUM_PROPERTY, org.apache.commons.lang.StringUtils.isNotEmpty(inlinePropertyStr) ? inlinePropertyStr : null);
+        insertOrUpdateStylingAttribute(nodeToSetAttributes, INLINE_NUM_PROPERTY, org.apache.commons.lang3.StringUtils.isNotEmpty(inlinePropertyStr) ? inlinePropertyStr : null);
         return nodeToByteArray(document);
     }
 

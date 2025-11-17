@@ -53,7 +53,6 @@ public class SecurityContext {
 
     public User getUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        LOG.info("USER LOGGING: " + principal.toString());
         if (principal instanceof String) {
             return securityUserProvider.getUserByLogin(principal.toString());
         } else {

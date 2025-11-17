@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.test.support;
 
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 
@@ -22,9 +23,17 @@ import java.nio.charset.Charset;
 public class LeosTest {
 
     protected static final Charset UTF_8 = Charset.forName("UTF-8");
+    private AutoCloseable closeable;
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    public void releaseMocks() throws Exception {
+        if (closeable != null) {
+            closeable.close();
+        }
     }
 }

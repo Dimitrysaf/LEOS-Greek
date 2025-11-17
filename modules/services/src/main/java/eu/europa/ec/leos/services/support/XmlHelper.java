@@ -20,7 +20,7 @@ import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
