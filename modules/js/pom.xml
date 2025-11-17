@@ -44,7 +44,6 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>MathJax</artifactId>
-            <version>${mathjax.version}</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -122,23 +121,6 @@
                     <directories>
                         <directory>src/main/js</directory>
                     </directories>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!-- JETTY -->
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-maven-plugin</artifactId>
-                <configuration>
-                    <scanIntervalSeconds>5</scanIntervalSeconds>
-                    <webAppSourceDirectory>src/main</webAppSourceDirectory>
-                    <webApp>
-                        <contextPath>/dev</contextPath>
-                        <resourceBases>
-                            <resourceBase>src/main</resourceBase>
-                            <resourceBase>src/test</resourceBase>
-                        </resourceBases>
-                        <overrideDescriptor>src/etc/jetty/web.xml</overrideDescriptor>
-                    </webApp>
                 </configuration>
             </plugin>
             <plugin>

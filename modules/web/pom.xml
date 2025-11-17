@@ -222,28 +222,6 @@
                 </configuration>
             </plugin>
 
-            <!-- JETTY -->
-            <plugin>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-maven-plugin</artifactId>
-                <configuration>
-<!--                    <jvmArgs>&#45;&#45;add-opens java.base/java.lang=ALL-UNNAMED &#45;&#45;add-opens java.base/java.lang.reflect=ALL-UNNAMED</jvmArgs>-->
-                    <httpConnector>
-                        <port>8080</port>
-                    </httpConnector>
-<!--                    <jettyXmls>-->
-<!--                        <jettyXml>src/etc/jetty/jetty.xml</jettyXml>-->
-<!--                    </jettyXmls>-->
-                    <contextXml>src/etc/jetty/jetty-context.xml</contextXml>
-                    <webApp>
-                        <contextPath>/${leos.web.context.path}</contextPath>
-                        <extraClasspath>../config/target/generated-config</extraClasspath>
-                        <descriptor>target/${project.build.finalName}/WEB-INF/web.xml</descriptor>
-                        <war>target/${project.build.finalName}</war>
-                    </webApp>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven3-plugin</artifactId>
@@ -280,20 +258,6 @@
                             </properties>
                         </deployable>
                     </deployables>
-                </configuration>
-            </plugin>
-
-
-            <!-- TOMCAT -->
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <configuration>
-                    <path>/${leos.web.context.path}</path>
-                    <server>leosServer</server>
-                    <contextFile>src/etc/tomcat/context.xml</contextFile>
-                    <tomcatUsers>src/etc/tomcat/tomcat-users.xml</tomcatUsers>
-                    <additionalClasspathDirs>../config/target/generated-config</additionalClasspathDirs>
                 </configuration>
             </plugin>
         </plugins>
