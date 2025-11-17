@@ -17,6 +17,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class HazelcastCacheConfig {
 
+    @Value("${leos.hazelcast.multicast.enabled:true}")
+    private Boolean multicastEnabled;
+
     @Value("${leos.hazelcast.multicast.addr:224.0.0.1}")
     private String multicastAddress;
 
@@ -41,10 +44,17 @@ public class HazelcastCacheConfig {
 
         // Join configuration using the same multicast settings as JGroups
         JoinConfig joinConfig = networkConfig.getJoin();
-        joinConfig.getMulticastConfig()
-                .setEnabled(true)
-                .setMulticastGroup(multicastAddress)
-                .setMulticastPort(multicastPort);
+
+        if (Boolean.TRUE.equals(multicastEnabled)) {
+            joinConfig.getMulticastConfig()
+                    .setEnabled(true)
+                    .setMulticastGroup(multicastAddress)
+                    .setMulticastPort(multicastPort);
+        }
+        else{
+            joinConfig.getMulticastConfig()
+                    .setEnabled(false);
+        }
 
         // Disable other join methods
         joinConfig.getTcpIpConfig().setEnabled(false);
