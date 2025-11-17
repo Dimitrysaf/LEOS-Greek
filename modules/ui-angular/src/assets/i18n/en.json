@@ -87,6 +87,7 @@
   "page.workspace.create-selector.document.title": "Select the document type and language",
   "page.workspace.create-selector.draft.title": "Select the draft type, language and name",
   "page.workspace.proposal-item.custom-template": "Custom Template",
+  "page.workspace.proposal-item.custom-template.published": "Published",
   "page.workspace.proposal-item.contribution-status": "Contribution status",
   "page.workspace.proposal-item.ready-status": "Ready to merge",
   "page.workspace.proposal-item.sent-status": "Sent for contribution",
