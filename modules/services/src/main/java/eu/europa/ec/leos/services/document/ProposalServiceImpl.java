@@ -289,7 +289,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
         while(matcher.find())
         {
-            return Float.parseFloat(matcher.group().replaceAll("cm", ""));
+            float verticalShift = Float.parseFloat(matcher.group().replaceAll("cm", ""));
+            return verticalShift - 7.0f;
         }
         return null;
     }

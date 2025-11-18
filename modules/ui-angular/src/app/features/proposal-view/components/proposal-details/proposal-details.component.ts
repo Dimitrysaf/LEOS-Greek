@@ -309,7 +309,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.proposalMetadata.coverPageType = 'STANDARD';
     }
     this.isVerticalShift = this.coverPageType != 'STANDARD';
-    this.verticalShift = this.proposal.metadata.verticalShift != null ? toNumber(this.proposal.metadata.verticalShift) : 6.0;
+    this.verticalShift = this.proposal.metadata.verticalShift != null ? toNumber(this.proposal.metadata.verticalShift) : 2.0;
   }
 
   getInstitutionalReference(): string {
@@ -807,12 +807,15 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   increase() {
-    this.verticalShift = Math.round((this.verticalShift + 0.1) * 10) / 10;
+    if (this.verticalShift < 2.0) {
+      this.verticalShift = Math.round((this.verticalShift + 0.1) * 10) / 10;
+    }
+
     this.handleChange();
   }
 
   decrease() {
-    if (this.verticalShift > 0) {
+    if (this.verticalShift > 2.0) {
       this.verticalShift = Math.round((this.verticalShift - 0.1) * 10) / 10;
       this.handleChange();
     }
