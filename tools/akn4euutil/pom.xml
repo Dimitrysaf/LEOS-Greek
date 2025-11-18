@@ -37,7 +37,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
-        <wagon-ftp-extension.version>2.2</wagon-ftp-extension.version>
+        <wagon-ftp-extension.version>3.5.3</wagon-ftp-extension.version>
         <commons-io.version>2.21.0</commons-io.version>
         <lombok.version>1.18.38</lombok.version>
         <cuid.version>0.1.1</cuid.version>
