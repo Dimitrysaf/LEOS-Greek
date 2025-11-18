@@ -7,13 +7,13 @@ import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.repositories.CollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.util.AssertionErrors.fail;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class CollaboratorServiceTests {
+class CollaboratorServiceTests {
     @Autowired
     private CollaboratorsService collaboratorsService;
     @Autowired
@@ -40,8 +40,8 @@ public class CollaboratorServiceTests {
     private Collaborators linkedCollaborators;
     private eu.europa.ec.leos.repository.entities.Package linkedPackage;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         existingCollaborator.setRole("OWNER");
         existingCollaborator.setEntity("TEST");
         existingCollaborator.setLogin("test");
@@ -59,7 +59,7 @@ public class CollaboratorServiceTests {
     }
 
     @Test
-    public void test_removeCollaborators() {
+    void test_removeCollaborators() {
         try {
             Optional<PackageCollaborators> pkgCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(linkedPackage.getId(),
                     linkedCollaborators.getId());

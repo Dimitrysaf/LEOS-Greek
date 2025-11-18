@@ -4,34 +4,34 @@ import eu.europa.ec.leos.repository.TestConstants;
 import eu.europa.ec.leos.repository.controllers.requests.WorkflowCollaboratorConfigRequest;
 import eu.europa.ec.leos.repository.entities.WorkflowCollaboratorConfig;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class WorkflowCollaboratorConfigTests {
+class WorkflowCollaboratorConfigTests {
 
     @Autowired
     private WorkflowCollaboratorConfigService workflowCollaboratorConfigService;
 
     @Test
     @Transactional
-    public void test_saveConfig() {
+    void test_saveConfig() {
         WorkflowCollaboratorConfigRequest request = TestConstants.getMockWorkflowCollaboratoRequestrConfig();
         final BigDecimal id = workflowCollaboratorConfigService.save(request);
         final Optional<WorkflowCollaboratorConfig> wcc = workflowCollaboratorConfigService.getWorkflowCollaboratorConfigById(id);
@@ -39,13 +39,13 @@ public class WorkflowCollaboratorConfigTests {
     }
 
     @Test
-    public void test_mutipleSavings() {
+    void test_mutipleSavings() {
         WorkflowCollaboratorConfigRequest request = TestConstants.getMockWorkflowCollaboratoRequestrConfig();
         workflowCollaboratorConfigService.save(request);
         workflowCollaboratorConfigService.save(request);
 
         final Optional<WorkflowCollaboratorConfig> workflowCollaboratorConfig = workflowCollaboratorConfigService.getWorkflowCollaboratorConfig(TestConstants.PACKAGE_LEOS, TestConstants.ISCCLIENTID);
-        assertTrue("workflow collaborator config exists", workflowCollaboratorConfig.isPresent());
+        assertTrue(workflowCollaboratorConfig.isPresent(), "workflow collaborator config exists");
 
         final List<WorkflowCollaboratorConfig> workflowCollaboratorConfigs = workflowCollaboratorConfigService.getWorkflowCollaboratorConfigs(TestConstants.PACKAGE_LEOS);
         assertThat(workflowCollaboratorConfigs, hasSize(1));
@@ -54,7 +54,7 @@ public class WorkflowCollaboratorConfigTests {
 
     @Test
     @Transactional
-    public void test_saveConfigTwice() {
+    void test_saveConfigTwice() {
         WorkflowCollaboratorConfigRequest request = TestConstants.getMockWorkflowCollaboratoRequestrConfig();
         final BigDecimal id = workflowCollaboratorConfigService.save(request);
         final Optional<WorkflowCollaboratorConfig> wcc = workflowCollaboratorConfigService.getWorkflowCollaboratorConfigById(id);

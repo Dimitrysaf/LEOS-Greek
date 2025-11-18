@@ -11,9 +11,9 @@ import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.services.CollaboratorsService;
 import eu.europa.ec.leos.repository.services.PackageService;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -50,10 +50,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.web.util.UriUtils.encodeQueryParam;
 import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(PackageController.class)
 @ActiveProfiles("test")
-public class PackageIntegrationTests {
+class PackageIntegrationTests {
     private static Logger LOG = LoggerFactory.getLogger(PackageIntegrationTests.class);
 
     @Autowired
@@ -181,8 +181,8 @@ public class PackageIntegrationTests {
             "    </bill>\n" +
             "</akomaNtoso>";
 
-    @Before
-    public void instantiatePackages() {
+    @BeforeEach
+    void instantiatePackages() {
         eu.europa.ec.leos.repository.entities.Package pkgEntity = new eu.europa.ec.leos.repository.entities.Package();
         pkgEntity.setId(PKG_ID);
         pkgEntity.setName(PKG_NAME);
@@ -216,7 +216,7 @@ public class PackageIntegrationTests {
 
     @WithMockUser
     @Test
-    public void createPackage() throws Exception {
+    void createPackage() throws Exception {
         CreatePackageRequest createPackageRequest = new CreatePackageRequest();
         createPackageRequest.setUserId(USER);
         String json = mapper.writeValueAsString(createPackageRequest);
@@ -241,7 +241,7 @@ public class PackageIntegrationTests {
 
     @WithMockUser
     @Test
-    public void deletePackage() throws Exception {
+    void deletePackage() throws Exception {
         Mockito.doThrow(new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                 "Package Not Found")).when(packageService).deletePackage( PKG_NAME);
 
@@ -252,7 +252,7 @@ public class PackageIntegrationTests {
 
     @WithMockUser
     @Test
-    public void findDocumentsByPackageName() throws Exception {
+    void findDocumentsByPackageName() throws Exception {
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
         findDocumentsRequest.setCategories(Stream.of("BILL")
                 .collect(Collectors.toSet()));
@@ -276,7 +276,7 @@ public class PackageIntegrationTests {
 
     @WithMockUser
     @Test
-    public void findDocumentsByPackageId() throws Exception {
+    void findDocumentsByPackageId() throws Exception {
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
         findDocumentsRequest.setCategories(Stream.of("BILL")
                 .collect(Collectors.toSet()));

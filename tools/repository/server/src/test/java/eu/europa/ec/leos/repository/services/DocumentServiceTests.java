@@ -35,18 +35,18 @@ import eu.europa.ec.leos.repository.repositories.DocumentVersionRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.assertj.core.util.Sets;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -59,16 +59,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class DocumentServiceTests {
+class DocumentServiceTests {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceTests.class);
 
@@ -94,13 +94,13 @@ public class DocumentServiceTests {
     private final String USER_ID = "jane";
     private eu.europa.ec.leos.repository.model.Package pkg;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         pkg = packageService.createPackage("test", false, null, "EN", false, "demo");
     }
 
-    @After
-    public void clean() throws RepositoryException {
+    @AfterEach
+    void clean() throws RepositoryException {
         packageService.deletePackage(pkg.getName());
     }
 
@@ -125,8 +125,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
-    public void test_createDocumentFromContent() throws RepositoryException {
+    void test_createDocumentFromContent() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
             put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"))));
@@ -255,7 +254,7 @@ public class DocumentServiceTests {
 
     @Test
     @Transactional
-    public void test_createDocumentMilestoneFromContent() throws RepositoryException {
+    void test_createDocumentMilestoneFromContent() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("status", "IN_PREPARATION");
             put("containedDocuments", Arrays.asList("ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z-en.xml",
@@ -282,7 +281,7 @@ public class DocumentServiceTests {
 
     @Test
     @Transactional
-    public void test_createDocumentFromSource() throws RepositoryException {
+    void test_createDocumentFromSource() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
             put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"),
@@ -328,8 +327,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
-    public void test_searchDocument() throws RepositoryException {
+    void test_searchDocument() throws RepositoryException {
         LeosDocument doc = docCreation();
         Optional<LeosDocument> docOpt = documentService.findDocumentByName(doc.getName());
         assertNotNull(docOpt);
@@ -343,7 +341,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_searchDocumentWithFilter() throws RepositoryException {
+    void test_searchDocumentWithFilter() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
@@ -358,7 +356,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_searchDocumentWithFilterInPackage() throws RepositoryException {
+    void test_searchDocumentWithFilterInPackage() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
@@ -373,7 +371,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_countDocumentWithFilter() throws RepositoryException {
+    void test_countDocumentWithFilter() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
@@ -386,7 +384,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_countDocumentWithFilterInPackage() throws RepositoryException {
+    void test_countDocumentWithFilterInPackage() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
@@ -400,7 +398,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_searchDocumentWithFilterRole() throws RepositoryException {
+    void test_searchDocumentWithFilterRole() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
@@ -420,7 +418,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_updateDocument() throws Exception {
+    void test_updateDocument() throws Exception {
         String newTitle = "New Title";
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap();
@@ -528,7 +526,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_updateDocumentMajor() throws Exception {
+    void test_updateDocumentMajor() throws Exception {
         String newTitle = "New Title";
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap();
@@ -636,7 +634,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_updateDocumentMetadata() throws Exception {
+    void test_updateDocumentMetadata() throws Exception {
         String newTitle = "New Title";
         LeosDocument doc = docCreation();
         LeosDocument docBeforeUpdate = documentService.findDocumentById(doc.getVersionId(), "BILL", true);
@@ -663,7 +661,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_deleteDocument() throws Exception {
+    void test_deleteDocument() throws Exception {
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
             put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"),
@@ -700,7 +698,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_findDocumentById() throws Exception {
+    void test_findDocumentById() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
@@ -717,9 +715,9 @@ public class DocumentServiceTests {
         assertFalse(doc.getVersionId().equals(lastVersion.getVersionId()));
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void test_findDocumentsByRef() throws Exception {
+    void test_findDocumentsByRef() throws Exception {
         LeosDocument doc = docCreation();
         BigDecimal firstVersionId = doc.getVersionId();
         Map<String, Object> properties = new HashMap<>();
@@ -737,7 +735,7 @@ public class DocumentServiceTests {
 
     @Test
     @Transactional
-    public void test_findDocumentByUserId_1() throws RepositoryException {
+    void test_findDocumentByUserId_1() throws RepositoryException {
         List<LeosDocument> docs = documentService.findDocumentsByUserId("demo", "OWNER", null);
         assertEquals(docs.size(), 0);
         docs = documentService.findDocumentsByUserId("demo", "REVIEWER", null);
@@ -748,7 +746,7 @@ public class DocumentServiceTests {
 
     @Test
     @Transactional
-    public void test_findLatestMajorVersionById() throws RepositoryException {
+    void test_findLatestMajorVersionById() throws RepositoryException {
         LeosDocument doc = documentService.findLatestMajorVersionByRef("annex_1");
         assertEquals(doc.getVersionLabel(), "1.0.0");
         assertNotNull(doc);
@@ -758,7 +756,7 @@ public class DocumentServiceTests {
 
     @Test
     @Transactional
-    public void test_findFirstVersion() throws RepositoryException {
+    void test_findFirstVersion() throws RepositoryException {
         LeosDocument doc = documentService.findFirstVersion("annex_1");
         assertEquals(doc.getVersionLabel(), "1.0.0");
         assertNotNull(doc);
@@ -766,7 +764,7 @@ public class DocumentServiceTests {
 
     @Test
     @Transactional
-    public void test_findDocumentByVersion() throws RepositoryException {
+    void test_findDocumentByVersion() throws RepositoryException {
         LeosDocument doc = documentService.findDocumentByVersion("annex_1","1.0.0");
         assertNotNull(doc);
         doc = documentService.findDocumentByVersion("annex_1","1.2.0");
@@ -774,8 +772,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
-    public void test_getNextVersionLabel() throws RepositoryException {
+    void test_getNextVersionLabel() throws RepositoryException {
         String version = documentService.getNextVersionLabel(VersionType.MINOR,"1.0.0.0");
         assertEquals(version, "1.0.1.0");
         version = documentService.getNextVersionLabel(VersionType.MAJOR,"1.0.0.0");
@@ -783,7 +780,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_findAllMinorsForIntermediate() throws Exception {
+    void test_findAllMinorsForIntermediate() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
@@ -801,9 +798,9 @@ public class DocumentServiceTests {
         assertEquals(docs.get(1).getVersionLabel(), "0.1.1.0");
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void test_findAllMinorsForIntermediate_2() throws Exception {
+    void test_findAllMinorsForIntermediate_2() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
@@ -859,7 +856,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_getAllMinorsCountForIntermediate() throws Exception {
+    void test_getAllMinorsCountForIntermediate() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
@@ -876,13 +873,13 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_getAllMajorsCount() throws RepositoryException {
+    void test_getAllMajorsCount() throws RepositoryException {
         long majorsCount = documentService.getAllMajorsCount("annex_1");
         assertEquals(majorsCount, 1);
     }
 
     @Test
-    public void test_findRecentMinorVersions() throws Exception {
+    void test_findRecentMinorVersions() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
@@ -904,7 +901,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_getRecentMinorVersionsCount() throws Exception {
+    void test_getRecentMinorVersionsCount() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
@@ -920,13 +917,13 @@ public class DocumentServiceTests {
 
     @Test
     @Transactional
-    public void test_findAllMajors() throws RepositoryException {
+    void test_findAllMajors() throws RepositoryException {
         List<LeosDocument> docs = documentService.findAllMajors("annex_1",0,10);
         assertEquals(docs.size(), 1);
     }
 
     @Test
-    public void findDocumentsWithFilter() {
+    void findDocumentsWithFilter() {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
                 , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
@@ -948,7 +945,7 @@ public class DocumentServiceTests {
    }
 
     @Test
-    public void countDocumentsWithFilter() {
+    void countDocumentsWithFilter() {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
                 , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
@@ -967,13 +964,13 @@ public class DocumentServiceTests {
     }
 
     @Test
-    public void test_findAllVersionsOfDocument() {
+    void test_findAllVersionsOfDocument() {
         List<DocumentV> docs = documentVRepository.findAllVersionsByDocumentId(new BigDecimal(1));
         assertEquals(docs.size(), 1);
     }
 
     @Test
-    public void test_findProposalByDocumentId() {
+    void test_findProposalByDocumentId() {
         List<DocumentV> docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "PROPOSAL");
         assertEquals(docs.size(), 1);
         docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "BILL");

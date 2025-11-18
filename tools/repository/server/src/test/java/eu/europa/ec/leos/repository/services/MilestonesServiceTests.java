@@ -23,25 +23,25 @@ import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.assertj.core.util.Sets;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class MilestonesServiceTests {
+class MilestonesServiceTests {
     @Autowired
     PackageService packageService;
     @Autowired
@@ -58,8 +58,8 @@ public class MilestonesServiceTests {
     private eu.europa.ec.leos.repository.model.Package pkg;
     private byte[] content;
 
-    @Before
-    public void setup() throws RepositoryException {
+    @BeforeEach
+    void setup() throws RepositoryException {
         pkg = packageService.createPackage(PKG_NAME, null,null, "EN", false, "demo");
         Map<String, ?> properties = new HashMap() {{
             put("status", "IN_PREPARATION");
@@ -86,14 +86,14 @@ public class MilestonesServiceTests {
         assertEquals(milestonesDocuments.size(), 5);
     }
 
-    @After
-    public void after() throws RepositoryException {
+    @AfterEach
+    void after() throws RepositoryException {
         packageService.deletePackage(PKG_NAME);
     }
 
     @Test
     @Transactional
-    public void test_searchMilestone() throws RepositoryException {
+    void test_searchMilestone() throws RepositoryException {
         Optional<LeosDocument> milestoneOpt = documentService.findDocumentByName(MILESTONE_NAME);
         assertNotNull(milestoneOpt);
         assertTrue(milestoneOpt.isPresent());
@@ -110,7 +110,7 @@ public class MilestonesServiceTests {
 
     @Test
     @Transactional
-    public void test_findMilestoneByStatus() throws RepositoryException {
+    void test_findMilestoneByStatus() throws RepositoryException {
         List<LeosDocument> milestones = documentService.findDocumentsByStatus("IN_PREPARATION");
         assertEquals(milestones.size(), 1);
         assertEquals(milestones.get(0).getName(), MILESTONE_NAME);
@@ -123,7 +123,7 @@ public class MilestonesServiceTests {
     }
 
     @Test
-    public void test_updateMilestone() throws Exception {
+    void test_updateMilestone() throws Exception {
         Map<String, ?> properties = new HashMap() {
             {
                 put("status", "FILE_READY");
@@ -141,7 +141,7 @@ public class MilestonesServiceTests {
 
     @Test
     @Transactional(readOnly = true)
-    public void test_searchMilestonesWithFilter() {
+    void test_searchMilestonesWithFilter() {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
                 "-en.xml"));
@@ -153,7 +153,7 @@ public class MilestonesServiceTests {
 
     @Test
     @Transactional(readOnly = true)
-    public void test_searchMilestonesWithFilterInPackage() {
+    void test_searchMilestonesWithFilterInPackage() {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
                 "-en.xml"));
@@ -164,7 +164,7 @@ public class MilestonesServiceTests {
 
     @Test
     @Transactional(readOnly = true)
-    public void test_countMilestonesWithFilterInPackage() {
+    void test_countMilestonesWithFilterInPackage() {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
                 "-en.xml"));
@@ -175,7 +175,7 @@ public class MilestonesServiceTests {
 
     @Test
     @Transactional(readOnly = true)
-    public void test_countMilestonesWithFilter() {
+    void test_countMilestonesWithFilter() {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
                 "-en.xml"));
@@ -186,7 +186,7 @@ public class MilestonesServiceTests {
 
     @Test
     @Transactional(readOnly = true)
-    public void test_documentsByPackageName() throws RepositoryException {
+    void test_documentsByPackageName() throws RepositoryException {
         List<LeosDocument> docs = packageService.findDocumentsByPackageName( "%",
                 Sets.set("LEG"), true, false);
         assertEquals(1, docs.size());
