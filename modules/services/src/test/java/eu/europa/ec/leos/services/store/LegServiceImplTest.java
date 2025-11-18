@@ -80,7 +80,7 @@ import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -113,7 +113,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-public class LegServiceImplTest {
+class LegServiceImplTest {
 
     private final static String STORE_DIR = "/store/";
     private final static String FILE_PREFIX = "/merge";
@@ -228,7 +228,7 @@ public class LegServiceImplTest {
     protected Map<String, List<String>> languageMap = new HashMap<>();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         String docTemplate = "CE-001";
         languageMap.put("greek", Arrays.asList("el"));
@@ -268,14 +268,14 @@ public class LegServiceImplTest {
 
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         if (applicationContext != null)
             ((ConfigurableApplicationContext) applicationContext).close();
     }
 
     @Test
-    public void test_createLegPackage_withMemorandumActualVersion() throws IOException {
+    void test_createLegPackage_withMemorandumActualVersion() throws IOException {
         String proposalId = "555";
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
@@ -304,7 +304,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withMemorandumCleanVersion() throws IOException {
+    void test_createLegPackage_withMemorandumCleanVersion() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -340,7 +340,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withExplanatoryActualVersion() throws IOException {
+    void test_createLegPackage_withExplanatoryActualVersion() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -369,7 +369,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withExplanatoryCleanVersion() throws IOException {
+    void test_createLegPackage_withExplanatoryCleanVersion() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -404,7 +404,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withBillActualVersion() throws IOException {
+    void test_createLegPackage_withBillActualVersion() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -434,7 +434,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withBillCleanVersion() throws IOException {
+    void test_createLegPackage_withBillCleanVersion() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -470,7 +470,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withAnnexActualVersion() throws IOException {
+    void test_createLegPackage_withAnnexActualVersion() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -502,7 +502,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withAnnexCleanVersion() throws IOException {
+    void test_createLegPackage_withAnnexCleanVersion() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -540,7 +540,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withoutDocs() throws IOException {
+    void test_createLegPackage_withoutDocs() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -576,7 +576,7 @@ public class LegServiceImplTest {
     }
 
     @Test
-    public void test_createLegPackage_withAllDocs() throws IOException {
+    void test_createLegPackage_withAllDocs() throws IOException {
         String proposalId = "555";
 
         List<Collaborator> collaborators = new ArrayList<>();

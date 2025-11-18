@@ -162,7 +162,6 @@
         <bouncycastle-bcprov.version>1.82</bouncycastle-bcprov.version>
         <!-- JUnit 5 -->
         <junit-jupiter.version>5.12.2</junit-jupiter.version>
-        <junit-vintage.version>5.12.2</junit-vintage.version>
         <assertj.version>3.24.2</assertj.version>
         <byte-buddy.version>1.14.9</byte-buddy.version>
         <!-- httpclient -->
@@ -526,12 +525,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit-vintage.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
                 <version>${commons-text.version}</version>
@@ -780,20 +773,10 @@
                         </systemPropertyVariables>
                     </configuration>
                     <dependencies>
-<!--                        <dependency>-->
-<!--                            <groupId>org.junit.platform</groupId>-->
-<!--                            <artifactId>junit-platform-surefire-provider</artifactId>-->
-<!--                            <version>${junit-platform.version}</version>-->
-<!--                        </dependency>-->
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>
                             <artifactId>junit-jupiter-engine</artifactId>
                             <version>${junit-jupiter.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.junit.vintage</groupId>
-                            <artifactId>junit-vintage-engine</artifactId>
-                            <version>${junit-vintage.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
