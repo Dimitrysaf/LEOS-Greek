@@ -19,7 +19,7 @@ import {
   skip,
   Subject,
   switchMap,
-  take, takeUntil,
+  take,
   tap,
 } from 'rxjs';
 
@@ -49,7 +49,7 @@ import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 import {SearchAndReplaceAllResponse} from "@/features/akn-document/models/search-replace-response.model";
 import {AIService} from "@/shared/services/ai.service";
-import {AnalysisResults, AnalysisStatus} from "@/shared/models/leos.ai.model";
+import {AnalysisStatus} from "@/shared/models/leos.ai.model";
 
 
 export enum RelevantElements {
@@ -122,7 +122,7 @@ export class DocumentService {
     isClosing: boolean;
     isSaved: boolean;
   }>;
-  refreshView$: Observable<DocumentViewResponse>;
+  refreshView$: Observable<{data: DocumentViewResponse, scroll: boolean}>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
   currentIndex: number;
@@ -155,7 +155,7 @@ export class DocumentService {
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
   }>;
-  public aiAnalysisResults$: Observable<AnalysisResults>;
+  public aiAnalysisResults$: Observable<DocumentViewResponse>;
 
   public annexDocNumber = 0;
 
@@ -203,7 +203,7 @@ export class DocumentService {
     isClosing: false,
     isSaved: false,
   });
-  private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
+  private refreshViewBS = new BehaviorSubject<{data: DocumentViewResponse, scroll: boolean}>(null);
   private documentRefAndCategoryBS = new BehaviorSubject<DocumentRefAndCategory | null>(null);
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
@@ -237,7 +237,7 @@ export class DocumentService {
     isTrackChangesShowed: boolean;
   }>({ isTrackChangesEnabled: false, isTrackChangesShowed: false });
 
-  private aiAnalysisResultsBS = new BehaviorSubject<AnalysisResults>(null);
+  private aiAnalysisResultsBS = new BehaviorSubject<DocumentViewResponse>(null);
 
   private getAnnotations?: () => Promise<string>;
   private refreshAnnotateCall?: () => void;
@@ -401,6 +401,9 @@ export class DocumentService {
       .subscribe((status) => {
         this.analysisStatus = status;
       });
+    this.aiService.analysisResult$.subscribe((documentViewResponse) => {
+      this.aiAnalysisResultsBS.next(documentViewResponse);
+    });
   }
 
   hasUpdatePermission() {
@@ -703,8 +706,8 @@ export class DocumentService {
     });
   }
 
-  refreshView(data: DocumentViewResponse) {
-    this.refreshViewBS.next(data);
+  refreshView(data: DocumentViewResponse, scroll: boolean = false) {
+    this.refreshViewBS.next({data, scroll});
   }
 
   saveVersion(requestBody: any) {
@@ -1043,26 +1046,11 @@ export class DocumentService {
   }
 
   aiDisplayText(analysisType: string = null) {
-    this.aiService.analysisResult$.subscribe((analysisResult) => {
-      this.aiAnalysisResultsBS.next(analysisResult);
-    });
     this.aiService.prefillDigitalDimensionsLFDS(this.proposalRef, analysisType);
   }
 
   shouldDisplayAI(): boolean {
     return this.analysisStatus && this.analysisStatus == "RESULTS_AVAILABLE";
-  }
-
-  textAnalysisStatus(): string {
-    if (this.analysisStatus) {
-      if (this.analysisStatus == "ANALYSIS_STARTED") {
-        return this.translate.instant('page.collection.drafts.analysis.status.started');
-      } else if (this.analysisStatus == "CLASSIFICATION_STARTED") {
-        return this.translate.instant('page.collection.drafts.analysis.status.classification.started');
-      } else if (this.analysisStatus == "RESULTS_AVAILABLE") {
-        return this.translate.instant('page.collection.drafts.analysis.results.available');
-      }
-    }
   }
 
   prepareAnalysis() {

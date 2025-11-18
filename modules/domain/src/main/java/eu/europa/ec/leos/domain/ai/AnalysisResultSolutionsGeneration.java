@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -40,5 +41,17 @@ public class AnalysisResultSolutionsGeneration extends AnalysisResult {
         } else {
             this.functionalities = (List)functionalities;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AnalysisResultSolutionsGeneration)) return false;
+        AnalysisResultSolutionsGeneration that = (AnalysisResultSolutionsGeneration) o;
+        return provision_count == that.provision_count && Objects.equals(explanation, that.explanation) && Objects.equals(digital_solution, that.digital_solution) && Objects.equals(eId, that.eId) && Objects.equals(functionalities, that.functionalities) && Objects.equals(responsible_actor, that.responsible_actor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(explanation, digital_solution, eId, functionalities, responsible_actor, provision_count);
     }
 }

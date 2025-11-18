@@ -234,7 +234,7 @@ export class DocumentTocComponent
     this.documentService.refreshView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
-        if (documentView) {
+        if (documentView && documentView.data) {
           this.tocService.reloadToc();
         }
       });

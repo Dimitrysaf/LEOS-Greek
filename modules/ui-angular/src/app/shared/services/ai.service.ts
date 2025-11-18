@@ -8,15 +8,19 @@ import {
   Subject,
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
-import {AnalysisResults, AnalysisStatus} from "@/shared/models/leos.ai.model";
+import {
+  AnalysisResults,
+  AnalysisStatus
+} from "@/shared/models/leos.ai.model";
+import {DocumentViewResponse} from "@/shared/models/document-view-response.model";
 
 @Injectable({ providedIn: 'root' })
 export class AIService implements OnDestroy {
-  public analysisResult$ : Observable<AnalysisResults>;
+  public analysisResult$ : Observable<DocumentViewResponse>;
   public analysisStatus$ : Observable<AnalysisStatus>;
 
   private destroy$ = new Subject<void>();
-  private analysisResultsBS = new BehaviorSubject<AnalysisResults>(null);
+  private analysisResultsBS = new BehaviorSubject<DocumentViewResponse>(null);
   private analysisStatusBS = new BehaviorSubject<AnalysisStatus>(null);
 
   constructor(
@@ -43,7 +47,30 @@ export class AIService implements OnDestroy {
         {},
         {},
       )
-      .subscribe((val) => {
+      .subscribe({
+        next: (val) => {
+          this.growlService.growl({
+            severity: 'success',
+            summary: this.translateService.instant(
+              'page.editor.ai.prefill.digital.dimensions.lfds.start.success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+        error: (err) => {
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.editor.ai.prefill.digital.dimensions.lfds.start.error',
+            ),
+            detail: err,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        }
       });
   }
 
@@ -79,11 +106,11 @@ export class AIService implements OnDestroy {
     }
     this.http
       .get<any>(
-        analysisType ? `${apiBaseUrl}/secured/ai/${proposalRef}?analysisType=${analysisType}` : `${apiBaseUrl}/secured/ai/${proposalRef}`,
+        analysisType ? `${apiBaseUrl}/secured/stat_digit_financ_legis/ai/${proposalRef}?analysisType=${analysisType}` : `${apiBaseUrl}/secured/stat_digit_financ_legis/ai/${proposalRef}`,
         {},
       )
       .subscribe({
-        next: (res: AnalysisResults) => this.analysisResultsBS.next(res),
+        next: (res: DocumentViewResponse) => this.analysisResultsBS.next(res),
         error: (res) => {
           this.growlService.growl({
             severity: 'danger',

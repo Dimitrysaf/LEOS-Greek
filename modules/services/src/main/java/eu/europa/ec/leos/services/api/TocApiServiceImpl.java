@@ -19,12 +19,14 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
+import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.request.NodeDropValidationRequest;
 import eu.europa.ec.leos.services.dto.request.TocValidationRequest;
@@ -86,6 +88,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private AnnexService annexService;
     private MessageHelper messageHelper;
     private ExplanatoryService explanatoryService;
+    private FinancialStatementService financialStatementService;
     private DocumentLanguageContext documentLanguageContext;
     private final XPathCatalog xPathCatalog;
     private final XmlContentProcessor xmlContentProcessor;
@@ -93,7 +96,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
     @Autowired
     protected TocApiServiceImpl(Provider<StructureContext> structureContextProvider, ProposalService proposalService,
                                 BillService billService, AnnexService annexService, MessageHelper messageHelper,
-                                ExplanatoryService explanatoryService, DocumentLanguageContext documentLanguageContext,
+                                ExplanatoryService explanatoryService, FinancialStatementService financialStatementService, DocumentLanguageContext documentLanguageContext,
                                 XPathCatalog xPathCatalog, XmlContentProcessor xmlContentProcessor) {
         this.structureContextProvider = structureContextProvider;
         this.proposalService = proposalService;
@@ -101,6 +104,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         this.annexService = annexService;
         this.messageHelper = messageHelper;
         this.explanatoryService = explanatoryService;
+        this.financialStatementService = financialStatementService;
         this.documentLanguageContext = documentLanguageContext;
         this.xPathCatalog = xPathCatalog;
         this.xmlContentProcessor = xmlContentProcessor;
@@ -157,6 +161,12 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 xmlContent = explanatory.getContent().getOrError(() -> DOCUMENT_CONTENT_IS_REQUIRED).getSource().getBytes();
                 this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
                 language = explanatory.getMetadata().get().getLanguage();
+                break;
+            case STAT_DIGIT_FINANC_LEGIS:
+                FinancialStatement financialStatement = financialStatementService.findFinancialStatementByRef(documentRef);
+                xmlContent = financialStatement.getContent().getOrError(() -> DOCUMENT_CONTENT_IS_REQUIRED).getSource().getBytes();
+                this.setStructureContext(financialStatement.getMetadata().getOrError(() -> "Financial statement metadata is required!").getDocTemplate());
+                language = financialStatement.getMetadata().get().getLanguage();
                 break;
             default:
                 LOG.error("Invalid document type");
