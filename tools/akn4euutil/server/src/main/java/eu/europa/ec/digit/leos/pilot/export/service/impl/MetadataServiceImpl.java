@@ -1094,7 +1094,7 @@ public class MetadataServiceImpl implements MetadataService {
             if (disclaimer) {
                 Element coverPageTypeElement = insertElementInCoverPage(xmlFile, MetadataUtil.ELEMENT_DISCLAIMER);
                 if (verticalShift != null) {
-                    XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("margin-top: %scm", verticalShift));
+                    XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("bottom: %scm", 7.0f + verticalShift));
                 }
                 Element coverPageTypePElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
                 XmlUtil.setNodeAttributeValue(coverPageTypePElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
