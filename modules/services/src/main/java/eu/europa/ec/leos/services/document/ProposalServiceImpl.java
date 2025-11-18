@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -69,7 +70,6 @@ import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -85,7 +85,6 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_CREATION_DATE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_PROPOSAL_REF;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_STATUS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_TARGET_USER;
 import static eu.europa.ec.leos.services.support.XmlHelper.COVERPAGE;
 import static eu.europa.ec.leos.services.support.XmlHelper.DEC_FILE_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIR_FILE_PREFIX;
@@ -223,6 +222,23 @@ public abstract class ProposalServiceImpl implements ProposalService {
     protected byte[] updateDataInXml(final byte[] content, ProposalMetadata dataObject) {
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
         return xmlContentProcessor.doXMLPostProcessingWithInternalRefs(updatedBytes);
+    }
+
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void setProposalValidationStatus(String proposalId, ProposalValidationStatus status) {
+        LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposalId);
+        Proposal proposal = this.findProposalByPackagePath(leosPackage.getPath());
+        if (!status.name().equals(proposal.getValidationStatus())) {
+            updateProposalValidationStatus(proposal, status);
+        }
+    }
+
+    private void updateProposalValidationStatus(Proposal proposal, ProposalValidationStatus status) {
+        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
+        ProposalMetadata metadata = metadataOption.get();
+        metadata.setValidationStatus(status);
+        proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata);
     }
 
     @Override
@@ -545,7 +561,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
                     }
                 }).count() > 0;
 
-                Proposal clonedProposal = findProposalByRef(clonedProposalRef);
+                Proposal clonedProposal = getProposalByRef(clonedProposalRef);
                 String creationDate = XercesUtils.getChildContent(cloned, CLONED_CREATION_DATE);
                 String status = isContributionDone ?
                         messageHelper.getMessage("clone.proposal.status.contribution.done") :

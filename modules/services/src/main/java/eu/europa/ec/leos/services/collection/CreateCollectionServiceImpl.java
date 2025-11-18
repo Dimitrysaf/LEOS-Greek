@@ -30,6 +30,7 @@ import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
+import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
@@ -207,7 +208,14 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             return new CreateCollectionResult(idsAndUrlsHolder, false, error);
         }
 
-        Proposal proposal = context.executeImportProposal();
+        Proposal proposal;
+        try {
+            proposal = context.executeImportProposal();
+        } catch (CollaboratorException ex) {
+            CreateCollectionError error = new CreateCollectionError(ErrorCode.EXCEPTION.ordinal(), ex.getMessage());
+            return new CreateCollectionResult(idsAndUrlsHolder, false, error);
+        }
+
         String proposalId = proposal.getMetadata().get().getRef();
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalId);
         idsAndUrlsHolder.setProposalId(proposalId);

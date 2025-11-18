@@ -119,5 +119,9 @@ public interface ApiService {
 
     void validateProposal(String proposalRef) throws Exception;
 
+    void validateProposal(String proposalRef, String email, String username) throws Exception;
+
+    <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus);
+
     LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) throws IOException;
 }

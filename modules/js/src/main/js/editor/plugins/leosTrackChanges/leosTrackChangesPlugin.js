@@ -822,6 +822,8 @@ define(function leosTrackChangesPluginModule(require) {
             // Implementation for tracking special characters
             // Handle element added by authorial note, references, mathjax and table
             CKEDITOR.on("dialogDefinition", function(event) {
+                var theEditor = event.editor;
+                isTrackChangesEnabled = theEditor.LEOS.isTrackChangesEnabled;
                 if (isTrackChangesEnabled) {
                     switch (event.data.name) {
                         case "specialchar":
@@ -837,17 +839,17 @@ define(function leosTrackChangesPluginModule(require) {
                                     dialog.hide();
 
                                     // We must use "insertText" here to keep text styled.
-                                    var span = editor.document.createElement("span");
+                                    var span = theEditor.document.createElement("span");
                                     span.setHtml(value);
 
                                     // Special character tracking
-                                    if (!editor.getSelection().isCollapsed()) {
-                                        style.apply(editor, deleteTcStyle);
-                                        var endContainer = editor.getSelection().getRanges()[0].endContainer;
-                                        core.setToEditablePosition(editor, endContainer, core.CARET_END);
+                                    if (!theEditor.getSelection().isCollapsed()) {
+                                        style.apply(theEditor, deleteTcStyle);
+                                        var endContainer = theEditor.getSelection().getRanges()[0].endContainer;
+                                        core.setToEditablePosition(theEditor, endContainer, core.CARET_END);
                                     }
-                                    if (!actions.insertNewData(editor, span.getText())) {
-                                        editor.insertText(span.getText());
+                                    if (!actions.insertNewData(theEditor, span.getText())) {
+                                        theEditor.insertText(span.getText());
                                     }
                                 }
                             };

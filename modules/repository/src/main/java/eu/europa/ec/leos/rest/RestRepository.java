@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
@@ -168,6 +169,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestpackageAddCollaborators;
     @Value("${leos.rest.repository.package.collaborators.delete}")
     private String leosRestpackageDeleteCollaborators;
+    @Value("${leos.rest.repository.find.documents.validation.status}")
+    private String  leosRestFindDocumentsByValidationStatusURI;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -660,6 +663,19 @@ public class RestRepository extends AbstractRestClient {
         LOGGER.trace("Archive document {} version {}]", docRef, version);
         String url = getUrl(leosRestArchiveDocumentVersionURI);
         LeosDocument resp = putEntity(url, null, LeosDocument.class, docRef, version);
+        return resp;
+    }
+
+    LeosDocumentList findDocumentsByValidationStatus(final String validationStatus) {
+        LOGGER.trace("Finding documents by validation status... [validationStatus=" + validationStatus);
+        LeosDocumentList resp;
+        try {
+            String url = getUrl(leosRestFindDocumentsByValidationStatusURI)+ "?validationStatus={validationStatus}";
+            resp = getEntity(url, LeosDocumentList.class, validationStatus);
+        } catch (Exception e) {
+            LOGGER.error("Error while finding documents by validation status", e);
+            return new LeosDocumentList();
+        }
         return resp;
     }
 }

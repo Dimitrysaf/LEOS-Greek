@@ -49,10 +49,10 @@ public class MemorandumServiceProposalImpl extends MemorandumServiceImpl {
                                   XmlNodeConfigProcessor xmlNodeConfigProcessor, ValidationService validationService,
                                   DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
                                   MessageHelper messageHelper, XPathCatalog xPathCatalog,
-                                  TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
+                                  TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext, ProposalService proposalService) {
 
         super(memorandumRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor,
-                validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext, documentLanguageContext);
+                validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext, documentLanguageContext, proposalService);
     }
 
     @Override

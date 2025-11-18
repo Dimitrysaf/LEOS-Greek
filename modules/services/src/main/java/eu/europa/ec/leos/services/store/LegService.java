@@ -27,6 +27,8 @@ public interface LegService {
 
     LegPackage createLegPackage(String proposalId, ExportOptions exportOptions) throws IOException;
 
+    LegPackage createLegPackage(String proposalId) throws IOException;
+
     LegPackage createLegPackageForClone(String proposalId, ExportOptions exportOptions) throws IOException;
 
     LegPackage createLegPackage(File legFile, ExportOptions exportOptions) throws IOException, XmlValidationException;

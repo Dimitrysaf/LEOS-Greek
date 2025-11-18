@@ -30,7 +30,7 @@ define(function aknArticleHeadingWidgetModule(require) {
 
         editables: {
             heading: {
-                selector: ".akn-article-heading",
+                selector: ".akn-article-heading:not([contenteditable=false])",
                 allowedContent: {
                     "sup": {},
                     "sub": {},

@@ -631,6 +631,9 @@ define(function elementEditorModule(require) {
     function hasNoValidLiContent(el) {
         var parent = $(el).parent()[0];
         if($(el).is("li") && el.hasAttribute('data-akn-num') && (($(parent).attr("data-akn-name") == "NumberedBlockList") || ($(parent).attr("data-akn-name") == "UnNumberedBlockList"))){
+            if (el.childNodes.length == 0) {
+                return true;
+            }
             for (const node of el.childNodes) {
                 if (node && node.nodeType === Node.TEXT_NODE) {
                     if (node.textContent.trim() !== '') {
@@ -683,6 +686,8 @@ define(function elementEditorModule(require) {
             }
         }
 
+
+
         if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
             || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
             emptyElements.each(function(){
@@ -708,11 +713,13 @@ define(function elementEditorModule(require) {
                     hasOnlyEmptyLines = true;
                     break;
                 }
+
+
             }
         }
 
         var isEmptyList = false;
-        $("#" + elementId).find("li br").each(function(){
+        $("#" + elementId).find("li > br").each(function(){
 
         //verify if parent contains empty siblings besides the br
             var prevSibling = this.previousSibling;
@@ -730,8 +737,18 @@ define(function elementEditorModule(require) {
 
             var sibling = this.nextSibling;
             var isSiblingOL = (sibling && sibling.nodeType === Node.ELEMENT_NODE && sibling.tagName.toLowerCase() == 'ol');
+            var isEmptyNextSibling = !sibling;
             var isLastEditable = isLastEditableElement($(this).parent());
-            if ((isLastEditable && isEmptyPrevSibling) || (isEmpty($(this).parent().get(0)) && ($(this).parent().attr("refersto") || (isEmptyPrevSibling && isSiblingOL)))) {
+            if (
+                (isLastEditable && isEmptyPrevSibling) ||
+                (
+                    isEmpty($(this).parent().get(0)) &&
+                    (
+                        $(this).parent().attr("refersto") ||
+                        (isEmptyPrevSibling && (isSiblingOL|| isEmptyNextSibling))
+                    )
+                )
+            ) {
                 isEmptyList = true;
             }
         });

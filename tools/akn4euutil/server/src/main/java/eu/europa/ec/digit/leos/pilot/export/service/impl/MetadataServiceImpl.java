@@ -376,18 +376,13 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addFinalToIdentification(XmlUtil.XmlFile xmlFile) {
-        final Node frbrExpression = xmlFile.getElementByName("FRBRExpression");
+        final Node frbrExpression = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBREXPRESSION);
         if (frbrExpression == null) {
             return;
         }
-
-        final Node frbrVersionNumberNode = getChildNodeWithName(frbrExpression, "FRBRversionNumber");
-        if (frbrVersionNumberNode != null) {
-            frbrVersionNumberNode.getParentNode().removeChild(frbrVersionNumberNode);
-        }
-        final Element frbrVersionNumber = xmlFile.newElement("FRBRversionNumber");
+        final Node frbrVersionNumber = xmlFile.getNodeOrCreateIfNotExists(frbrExpression, MetadataUtil.ELEMENT_FRBRVERSIONNUMBER);
         XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.ATTRIBUTE_VALUE, MetadataUtil.VALUE_FINAL);
-        frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression,"FRBRlanguage"));
+        frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression, MetadataUtil.ELEMENT_FRBRLANGUAGE));
     }
 
     private void removeFinalToIdentification(XmlUtil.XmlFile xmlFile) {
@@ -414,7 +409,7 @@ public class MetadataServiceImpl implements MetadataService {
         }
         MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
         xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
-        final Element inline = xmlFile.newElement("inline");
+        final Node inline = xmlFile.getNodeOrCreateIfNotExists(xmlNodeDocNumber, "inline");
         XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, "version");
         inline.setTextContent(MetadataUtil.VALUE_FINAL);
@@ -517,16 +512,11 @@ public class MetadataServiceImpl implements MetadataService {
         final Node frbrWorkNode = XmlUtil.getChildNodeWithName(identificationNode, MetadataUtil.ELEMENT_FRBRWORK);
         if (frbrWorkNode == null) return;
 
-        final Node prescriptiveNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRprescriptive");
-        if(prescriptiveNode == null) {
+        final Node prescriptiveNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.ELEMENT_FRBRPRESCRIPTIVE);
+        if (prescriptiveNode == null) {
             return;
         }
-
-        final Node frbrNumberNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRnumber");
-        if (frbrNumberNode != null) {
-            frbrNumberNode.getParentNode().removeChild(frbrNumberNode);
-        }
-        final Element frbrNumber = xmlFile.newElement("FRBRnumber");
+        final Node frbrNumber = xmlFile.getNodeOrCreateIfNotExists(frbrWorkNode, MetadataUtil.ELEMENT_FRBRNUMBER);
         XmlUtil.setNodeAttributeValue(frbrNumber, MetadataUtil.ATTRIBUTE_VALUE, fieldInfo.getDisplayValue());
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
             MetadataUtil.addRefersToAttribute(frbrNumber, fieldInfo.getId());
@@ -1104,7 +1094,7 @@ public class MetadataServiceImpl implements MetadataService {
             if (disclaimer) {
                 Element coverPageTypeElement = insertElementInCoverPage(xmlFile, MetadataUtil.ELEMENT_DISCLAIMER);
                 if (verticalShift != null) {
-                    XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("margin-top: %scm", verticalShift));
+                    XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("bottom: %scm", 2.0 + verticalShift));
                 }
                 Element coverPageTypePElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
                 XmlUtil.setNodeAttributeValue(coverPageTypePElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());

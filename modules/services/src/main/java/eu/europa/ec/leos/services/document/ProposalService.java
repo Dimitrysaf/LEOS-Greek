@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -64,6 +65,8 @@ public interface ProposalService {
     Proposal removeComponentRef(Proposal proposal, String href);
 
     void updateProposalAsync(String id, String comment);
+
+    void setProposalValidationStatus(String proposalId, ProposalValidationStatus status);
 
     Proposal findProposalByPackagePath(String path);
 

@@ -637,6 +637,19 @@ public class XercesUtils {
         return node;
     }
 
+    public static List<Node> getSiblings(Node node, boolean before) {
+        List<Node> siblings = new ArrayList<>();
+        String nodeName = node.getNodeName();
+        Node sibling = before ? node.getPreviousSibling() : node.getNextSibling();
+        while (sibling != null) {
+            if (sibling.getNodeType() == Node.ELEMENT_NODE && nodeName.equals(sibling.getNodeName())) {
+                siblings.add(sibling);
+            }
+            sibling = before ? sibling.getPreviousSibling() : sibling.getNextSibling();
+        }
+        return siblings;
+    }
+
     public static Node getPrevSibling(Node node, String elementName) {
         while ((node = node.getPreviousSibling()) != null) {
             if (node.getNodeType() == Node.ELEMENT_NODE && elementName.equals(node.getNodeName())) {
@@ -880,6 +893,19 @@ public class XercesUtils {
         for (int i = nodeList.getLength()-1; i >= 0; i--) {
             node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
+                lastChild = node;
+                break;
+            }
+        }
+        return lastChild;
+    }
+
+    public static Node getLastChildOfType(Node node, String name) {
+        Node lastChild = null;
+        NodeList nodeList = node.getChildNodes();
+        for (int i = nodeList.getLength()-1; i >= 0; i--) {
+            node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals(name) ) {
                 lastChild = node;
                 break;
             }

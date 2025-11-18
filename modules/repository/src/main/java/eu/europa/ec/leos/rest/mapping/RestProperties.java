@@ -70,6 +70,7 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(TRACK_CHANGES_ENABLED, "trackChangesEnabled");
         ids.put(CALLBACK_ADDRESS, "callbackAddress");
         ids.put(IMPORTED, "imported");
+        ids.put(VALIDATION_STATUS, "validationStatus");
     }
 
     @Override

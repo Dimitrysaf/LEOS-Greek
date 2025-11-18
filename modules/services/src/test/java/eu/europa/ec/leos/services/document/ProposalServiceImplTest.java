@@ -153,7 +153,7 @@ public class ProposalServiceImplTest {
         Proposal leosProposal = new Proposal(proposalId, "Proposal", "login", Instant.now(), "login", Instant.now(), "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", collaborators,
                 Arrays.asList(""), "login", Instant.now(), Option.some(proposalContent), Option.some(proposalMetadata), true, "", "", "", null,
-                ContributionVO.ContributionStatus.CONTRIBUTION_DONE.name(), false);
+                ContributionVO.ContributionStatus.CONTRIBUTION_DONE.name(), false, null);
 
         UpdateProposalRequest updateProposalRequest = new UpdateProposalRequest();
         updateProposalRequest.setAuthenticLang(Arrays.asList("en", "fr"));
