@@ -29,6 +29,8 @@ import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.utils.DateDesSerializer;
 import eu.europa.ec.leos.repository.utils.DateSerializer;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +73,10 @@ public class LeosDocument {
 
     private Boolean isVersionArchived = false;
 
+    @Setter
+    @Getter
+    private String validationStatus;
+
     private Map<String, Object> metadata = new HashMap<>();
 
     public LeosDocument() {}
@@ -89,6 +95,7 @@ public class LeosDocument {
         this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
         this.comments = doc.getComments();
         this.isVersionArchived = doc.isVersionArchived();
+        this.validationStatus = doc.getValidationStatus();
 
         this.packageId = doc.getPackageId().toString();
 
@@ -116,6 +123,7 @@ public class LeosDocument {
         this.versionLabel = doc.getVersionLabel();
         this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
         this.comments = doc.getComments();
+        this.validationStatus = doc.getValidationStatus();
 
         this.packageId = doc.getPackageId().toString();
 

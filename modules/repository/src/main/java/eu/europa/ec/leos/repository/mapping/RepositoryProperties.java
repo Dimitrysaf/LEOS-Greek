@@ -59,5 +59,6 @@ public enum RepositoryProperties {
     IS_VERSION_ARCHIVED,
     CALLBACK_ADDRESS,
     IMPORTED,
-    AI_VALUES;
+    AI_VALUES,
+    VALIDATION_STATUS;
 }

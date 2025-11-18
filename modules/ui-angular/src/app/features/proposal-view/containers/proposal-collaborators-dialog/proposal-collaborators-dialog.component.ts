@@ -248,7 +248,7 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
     const entityId = getEntityId(control.value.item);
 
     const isExisting = this.collaborators.some(
-      (c) => c?.login === login && c.entity?.id === entityId,
+      (c) => c?.login === login //&& c.entity?.id === entityId,
     );
     if (isExisting) {
       errors.push('existing');
@@ -258,7 +258,7 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
       (c) => c.value.item as User,
     );
     const isDuplicate = formCollaborators.some(
-      (c) => c !== user && c?.login === login && getEntityId(c) === entityId,
+      (c) => c !== user && c?.login === login //&& getEntityId(c) === entityId,
     );
     if (isDuplicate) {
       errors.push('duplicate');

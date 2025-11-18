@@ -16,6 +16,8 @@ package eu.europa.ec.leos.rest.support.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +50,10 @@ public class LeosDocument {
     private Map<String, Object> metadata = new HashMap<>();
 
     private Boolean versionArchived = false;
+
+    @Setter
+    @Getter
+    private String validationStatus;
 
     public LeosDocument() {}
 

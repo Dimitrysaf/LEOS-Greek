@@ -28,7 +28,8 @@ public enum PropertiesMetadata {
     CONTRIBUTION_STATUS("contributionStatus", false),
     BASE_REVISION_ID("baseRevisionId", false),
     LIVE_DIFFING_REQUIRED("liveDiffingRequired", false),
-    TRACK_CHANGES_ENABLED("trackChangesEnabled", false);
+    TRACK_CHANGES_ENABLED("trackChangesEnabled", false),
+    VALIDATION_STATUS("validationStatus",false) ;
 
     private Boolean isMandatory = false;
     private String leosName;

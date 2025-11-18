@@ -56,6 +56,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>eu.europa.ec.digit.userdata.Application</mainClass>
+                    <jvmArguments>-Dfile.encoding=UTF8</jvmArguments>
                 </configuration>
             </plugin>
         </plugins>

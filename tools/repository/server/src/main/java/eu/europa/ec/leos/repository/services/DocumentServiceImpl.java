@@ -529,6 +529,17 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
+    public List<LeosDocument> findDocumentsByValidationStatusNot(final String validationStatus) {
+
+        List<LeosDocument> listDocs = new ArrayList<>();
+        List<DocumentV> docs = documentVRepository.findDocumentsByValidationStatus(validationStatus);
+
+        listDocs.addAll(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
+                Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
+                docs.get(0).getPackageId()), documentContentRepository, docs, false));
+        return listDocs;
+    }
+
     public String getNextVersionLabel(String docRef, VersionType versionType, String oldVersion) {
         if (StringUtils.isEmpty(oldVersion)) {
             if (versionType.equals(VersionType.MAJOR)) {
@@ -611,6 +622,8 @@ public class DocumentServiceImpl implements DocumentService {
                 (String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()) : doc.getRevisionStatus());
         doc.setContributionStatus(metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) != null ?
                 (String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) : doc.getContributionStatus());
+        doc.setValidationStatus(metadata.get(PropertiesMetadata.VALIDATION_STATUS.getLeosName()) != null ?
+                (String) metadata.get(PropertiesMetadata.VALIDATION_STATUS.getLeosName()) : doc.getValidationStatus());
         updateDocumentProperties(doc, docVersion, metadata, userId);
         return documentRepository.save(doc);
     }

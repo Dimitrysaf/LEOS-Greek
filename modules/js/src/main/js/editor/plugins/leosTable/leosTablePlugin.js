@@ -147,6 +147,14 @@ define(function leosTablePluginModule(require) {
                     setToPosition(editor, newBlock, CKEDITOR.POSITION_AFTER_START);
                 }
             }
+            setTimeout(function() {
+                var el = event.data;
+                var next = el.getNext();
+                if (next && next.is('p') && !next.getText().replace(/&nbsp;|\s|<br\s*\/?>/gi, '').length) {
+                    next.remove();
+                }
+            }, 0);
+
         }
     }
 
@@ -273,6 +281,9 @@ define(function leosTablePluginModule(require) {
             }, {
                 akn : "leos:deletable",
                 html : "leos:deletable"
+            }, {
+                akn : "leos:predefinedtable",
+                html : "leos:predefinedtable"
             }, {
                 html : 'data-akn-name=leosTable'
             }],

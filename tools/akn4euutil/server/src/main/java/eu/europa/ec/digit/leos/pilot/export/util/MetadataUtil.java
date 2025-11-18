@@ -122,10 +122,14 @@ public class MetadataUtil {
     public static final String VALUE_AUTHENTIC_LANGUAGES_NAME = "authenticLang";
     public static final String VALUE_CROSS_CONFERENCE_NAME = "associatedReferences";
     public static final String ACTING_ENTITY_NAME = "actingEntity";
+    public static final String ELEMENT_FRBRPRESCRIPTIVE = "FRBRprescriptive";
+    public static final String ELEMENT_FRBRNUMBER = "FRBRnumber";
+    public static final String ELEMENT_FRBREXPRESSION = "FRBRExpression";
+    public static final String ELEMENT_FRBRVERSIONNUMBER = "FRBRversionNumber";
     public static final String VALUE_MAIN_DOC = "mainDoc";
     public static final String VALUE_PLACE_AND_DATE = "placeAndDate";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";
-    public static final String AUTONOMOUS_ACT_VALUE="ACT_AUTO_COM";
+    public static final String AUTONOMOUS_ACT_VALUE = "ACT_AUTO_COM";
     public static final String VALUE_FINAL = "final";
     public static final String ELEMENT_TLCROLE = "TLCRole";
     public static final String ELEMENT_ROLE = "role";

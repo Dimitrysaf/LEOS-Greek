@@ -900,7 +900,7 @@ Feature: Legal Act Page Regression Features
     Then ck editor window is displayed
     When click on alternative2 icon present in ck editor panel
     And  click dialog ok button
-    Then check content inside ckeditor is of size 3037
+    Then check content inside ckeditor is of size 2925
     When mouseover and click on article 3
     Then ck editor window is displayed
     When append "Text" at offset 7 in numbered paragraph 1 of article in edition mode
