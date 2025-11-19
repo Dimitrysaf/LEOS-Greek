@@ -43,6 +43,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 
 import static java.util.Arrays.asList;
 
@@ -234,7 +235,10 @@ public abstract class NumberProcessorHandler {
                 NumberConfig soleNumConf = checkForSoleNumbering(elementName, language, nodeList);
                 String numLabel = soleNumConf != null ? messageHelper.getMessage(soleNumConf.getSoleNumberLabel()) : null;
 
-                if(soleNumConf != null && StringUtils.isEmpty(numLabel) && nodeList.size() == 1 && numNode != null) {
+                if ((soleNumConf != null && StringUtils.isEmpty(numLabel) && nodeList.size() == 1 && numNode != null)
+                        //check if numNode is empty, if so, remove it
+                        || (numNode != null && !numNode.hasChildNodes() && !node.getNodeName().equalsIgnoreCase(ARTICLE)
+                            && !node.getNodeName().equalsIgnoreCase(RECITAL))) {
                     node.removeChild(numNode);
                 } else if (skipAutoRenumbering(node)) {
                     if (hasAttributeWithValue(node, "leos:action", "delete")) {
