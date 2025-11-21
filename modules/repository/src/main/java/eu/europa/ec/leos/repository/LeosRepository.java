@@ -209,6 +209,22 @@ public interface LeosRepository {
     <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type);
 
     /**
+     * Updates a document with the given metadata and content.
+     *
+     * @param id       the ID of the document to update.
+     * @param metadata the metadata of the document.
+     * @param content  the content of the document.
+     * @param versionType  the version type to be created
+     * @param comment  the comment of the update, optional.
+     * @param type     the type class of the document.
+     * @param binaryContent     the binary content of the document.
+     * @param originalFilename the binary content type of the document.
+     * @param binaryContentSize the size of the binary content in KB.
+     * @return the updated document.
+     */
+    <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
+    /**
      * Updates a document with the given collaborators.
      *
      *

@@ -12,7 +12,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User
+  User, LegFileValidationResponse
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -139,6 +139,22 @@ export class ProposalDetailsService implements OnDestroy {
       )
       .subscribe((val) => {
         this.setProposalRef(this.proposalRef);
+      });
+  }
+
+  createForeignAnnex(data: File) {
+    const formData: FormData = new FormData();
+    this.loadingService.setLoading(true);
+    formData.append('foreignAnnexFile', data);
+    this.http
+      .post<any>(
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/createForeignAnnex`,
+        formData,
+        {},
+      )
+      .subscribe((val) => {
+        this.setProposalRef(this.proposalRef);
+        this.loadingService.setLoading(false);
       });
   }
 

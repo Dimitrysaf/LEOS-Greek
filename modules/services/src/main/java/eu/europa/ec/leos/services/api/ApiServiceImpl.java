@@ -70,6 +70,7 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
@@ -781,6 +782,8 @@ public abstract class ApiServiceImpl implements ApiService {
                         annex.getLastModifiedBy(),
                         Date.from(annex.getLastModificationInstant()), annex.isTrackChangesEnabled());
 
+        annexVO.setOriginalFilename(annex.getOriginalFilename());
+        annexVO.setBinaryFileSize(annex.getBinaryContentSize());
         if (annex.getMetadata().isDefined()) {
             AnnexMetadata metadata = annex.getMetadata().get();
             annexVO.setDocNumber(metadata.getIndex());
@@ -823,8 +826,42 @@ public abstract class ApiServiceImpl implements ApiService {
         return packageService.findDocumentsByPackagePath(leosPackage.getPath(), FinancialStatement.class, false);
     }
 
+//    @Override
+//    public void createProposalForeignAnnex(String proposalRef) throws IOException {
+//        LOG.trace("Creating annex...");
+//        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+//        if (proposal != null) {
+//            boolean isClonedProposal = proposal.isClonedProposal();
+//            try {
+//                populateTrackChangesContext(proposal);
+//                LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+//                Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+//                BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
+//                BillContextService billContext = billContextProvider.get();
+//                billContext.usePackage(leosPackage);
+//                billContext.useTemplate(bill);
+//                billContext.usePurpose(metadata.getPurpose());
+//                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
+//                billContext.useActionMessage(ContextActionService.ANNEX_ADDED, messageHelper.getMessage("collection.block.annex.added"));
+//                billContext.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
+//
+//                CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
+//                String annexTemplate = templateItem.getItems().get(1).getId();
+//                billContext.useAnnexTemplate(annexTemplate);
+//                billContext.useCloneProposal(isClonedProposal);
+//                billContext.useOriginRef(cloneOriginRef);
+//                billContext.usePackageRef(proposalRef);
+//                billContext.executeCreateBillAnnex();
+//                billService.updateExternalReferencesAsync(leosPackage);
+//            } catch (Exception e) {
+//                LOG.error("Unexpected error occurred while creating new annex", e);
+//                throw e;
+//            }
+//        }
+//    }
+
     @Override
-    public void createProposalAnnex(String proposalRef) throws IOException {
+    public void createProposalAnnex(String proposalRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws IOException {
         LOG.trace("Creating annex...");
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
@@ -843,12 +880,12 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
 
                 CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
-                String annexTemplate = templateItem.getItems().get(0).getId();
+                String annexTemplate = templateItem.getItems().get(annexType.ordinal()).getId();
                 billContext.useAnnexTemplate(annexTemplate);
                 billContext.useCloneProposal(isClonedProposal);
                 billContext.useOriginRef(cloneOriginRef);
                 billContext.usePackageRef(proposalRef);
-                billContext.executeCreateBillAnnex();
+                billContext.executeCreateBillAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
                 billService.updateExternalReferencesAsync(leosPackage);
                 proposalService.setProposalValidationStatus(proposal.getId(), ProposalValidationStatus.NOT_VALIDATED);
             } catch (Exception e) {

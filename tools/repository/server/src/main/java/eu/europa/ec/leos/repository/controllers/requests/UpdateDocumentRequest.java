@@ -35,6 +35,9 @@ public class UpdateDocumentRequest implements Serializable {
     private byte[] content;
     @NotBlank(message = "Document comments' version cannot be blank")
     private String comments;
+    private byte[] binaryContent;
+    private String originalFilename;
+    private String binaryContentSize;
 
     public String getUserId() {
         return userId;
@@ -83,4 +86,29 @@ public class UpdateDocumentRequest implements Serializable {
     public void setComments(String comments) {
         this.comments = comments;
     }
+
+    public byte[] getBinaryContent() {
+        return binaryContent;
+    }
+
+    public void setBinaryContent(byte[] binaryContent) {
+        this.binaryContent = binaryContent;
+    }
+
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    public void setOriginalFilename(String originalFilename) {
+        this.originalFilename = originalFilename;
+    }
+
+    public String getBinaryContentSize() {
+        return binaryContentSize;
+    }
+
+    public void setBinaryContentSize(String binaryContentSize) {
+        this.binaryContentSize = binaryContentSize;
+    }
+
 }

@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -83,7 +84,9 @@ public interface ApiService {
 
     byte[] downloadProposal(String proposalRef) throws Exception;
 
-    void createProposalAnnex(String proposalRef) throws Exception;
+    void createProposalAnnex(String proposalRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws Exception;
+
+    //void createProposalForeignAnnex(String proposalRef) throws IOException;
 
     List<MilestonesVO> getProposalMilestones(String proposalRef) throws Exception;
 

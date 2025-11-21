@@ -17,6 +17,9 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
     private final List<String> milestoneComments;
     private SecurityData securityData;
     private final boolean trackChangesEnabled;
+    private byte[] binaryContent;
+    private String originalFilename;
+    private String binaryContentSize;
 
     protected XmlDocument(LeosCategory category, String id, String name, String createdBy,
                           Instant creationInstant, String lastModifiedBy, Instant lastModificationInstant,
@@ -30,6 +33,23 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
         this.title = title;
         this.milestoneComments = milestoneComments;
         this.trackChangesEnabled = trackChangesEnabled;
+    }
+
+    protected XmlDocument(LeosCategory category, String id, String name, String createdBy,
+            Instant creationInstant, String lastModifiedBy, Instant lastModificationInstant,
+            String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
+            VersionType versionType, boolean isLatestVersion, String title,
+            List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
+            boolean trackChangesEnabled, boolean isVersionArchived, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        super(category, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant, versionSeriesId,
+                cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, isVersionArchived, content);
+        this.securityData = new SecurityData(collaborators);
+        this.title = title;
+        this.milestoneComments = milestoneComments;
+        this.trackChangesEnabled = trackChangesEnabled;
+        this.binaryContent = binaryContent;
+        this.originalFilename = originalFilename;
+        this.binaryContentSize = binaryContentSize;
     }
 
     protected XmlDocument(LeosCategory category, String id, String name, String createdBy,
@@ -65,4 +85,17 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
     }
 
     public abstract String getContributionStatus();
+
+    public byte[] getBinaryContent() {
+        return binaryContent;
+    }
+
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    public String getBinaryContentSize() {
+        return binaryContentSize;
+    }
+
 }

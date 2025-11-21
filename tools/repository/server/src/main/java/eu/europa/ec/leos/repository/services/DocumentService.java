@@ -33,7 +33,11 @@ public interface DocumentService {
                                         final String labelVersion, int versionType, String comments, String userId) throws RepositoryException;
 
     LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> properties,
-                                VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception;
+            VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception;
+
+    LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> properties,
+                                VersionType versionType, String category, byte[] contentBytes, String comments, String userId,
+                                byte[] binaryContent, String originalFilename, String binaryContentSize) throws Exception;
 
     LeosDocument updateDocument(String ref, final BigDecimal versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception;
 
