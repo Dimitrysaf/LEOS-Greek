@@ -19,7 +19,6 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -39,7 +38,6 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
-import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -199,23 +197,6 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 proposalRepository.updateProposal(proposal.getId(), metadata, getContent(proposal), VersionType.MINOR, comment);
             }
         }
-    }
-
-    @Override
-    @Async("delegatingSecurityContextAsyncTaskExecutor")
-    public void setProposalValidationStatus(String proposalId, ProposalValidationStatus status) {
-        LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposalId);
-        Proposal proposal = this.findProposalByPackagePath(leosPackage.getPath());
-        if (!status.name().equals(proposal.getValidationStatus())) {
-            updateProposalValidationStatus(proposal, status);
-        }
-    }
-
-    private void updateProposalValidationStatus(Proposal proposal, ProposalValidationStatus status) {
-        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
-        ProposalMetadata metadata = metadataOption.get();
-        metadata.setValidationStatus(status);
-        proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata);
     }
 
     @Override
