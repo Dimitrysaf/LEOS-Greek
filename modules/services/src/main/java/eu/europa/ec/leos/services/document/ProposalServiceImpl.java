@@ -20,7 +20,6 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -225,23 +224,6 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    @Async("delegatingSecurityContextAsyncTaskExecutor")
-    public void setProposalValidationStatus(String proposalId, ProposalValidationStatus status) {
-        LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposalId);
-        Proposal proposal = this.findProposalByPackagePath(leosPackage.getPath());
-        if (!status.name().equals(proposal.getValidationStatus())) {
-            updateProposalValidationStatus(proposal, status);
-        }
-    }
-
-    private void updateProposalValidationStatus(Proposal proposal, ProposalValidationStatus status) {
-        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
-        ProposalMetadata metadata = metadataOption.get();
-        metadata.setValidationStatus(status);
-        proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata);
-    }
-
-    @Override
     public Proposal populateProposalMetadataFromXml(Proposal proposal) {
         Map<String, String> detailsMetadata = xmlNodeProcessor.getValuesFromXml(proposal.getContent().get().getSource().getBytes(),
                 new String[]{XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE,
@@ -289,7 +271,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
         while(matcher.find())
         {
-            return Float.parseFloat(matcher.group().replaceAll("cm", ""));
+            float verticalShift = Float.parseFloat(matcher.group().replaceAll("cm", ""));
+            return verticalShift - 7.0f;
         }
         return null;
     }

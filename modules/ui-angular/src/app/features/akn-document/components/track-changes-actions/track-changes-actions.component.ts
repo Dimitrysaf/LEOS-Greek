@@ -17,6 +17,7 @@ import { DocumentConfig, LeosConfig, Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
 import {EuiDialogConfig, EuiDialogService} from "@eui/components/eui-dialog";
 import {TranslateService} from "@ngx-translate/core";
+import {AI_USER} from "@/shared/models/leos.ai.model";
 
 @Component({
   selector: 'app-track-changes-actions',
@@ -45,7 +46,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
 
   private mouseLocation: { left: number; top: number } = { left: 0, top: 0 };
   private ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR: string =
-    'article, citation, recitals, recital, :not(article) > paragraph, level, chapter, akntitle, part, section, subparagraph';
+    'article, citation, recitals, recital, :not(article) > paragraph, level, chapter, akntitle, part, section, subparagraph, [leos\\:uid="ai"]';
 
   constructor(
     private http: HttpClient,
@@ -131,7 +132,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
     const action = elt.getAttribute('leos:action');
     this.movedToId = elt.getAttribute('leos:softmove_to');
     this.movedFromId = elt.getAttribute('leos:softmove_from');
-    if (action === 'insert') {
+    if (action === 'insert' || elt.tagName.toLowerCase() == 'ins') {
       this.trackChangeAction = TrackChangeAction.ADD;
     } else if (action === 'delete') {
       this.trackChangeAction = TrackChangeAction.DEL;
@@ -150,6 +151,10 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
 
   canUserRejectChanges() {
     return this.canRejectTrackChanges;
+  }
+
+  isAI(): boolean {
+    return this.currentElement && this.currentElement.getAttribute("leos:uid") && this.currentElement.getAttribute("leos:uid") === AI_USER;
   }
 
   onAccept() {

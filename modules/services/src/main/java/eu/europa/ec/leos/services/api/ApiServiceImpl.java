@@ -24,7 +24,6 @@ import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -202,9 +201,8 @@ public abstract class ApiServiceImpl implements ApiService {
     private final TemplateConfigurationService templateConfigurationService;
     private final LanguageHelper languageHelper;
     protected PackageRepository packageRepository;
-    protected ProposalRepository proposalRepository;
 
-    private DocumentViewService documentViewService;
+    protected DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
@@ -277,7 +275,6 @@ public abstract class ApiServiceImpl implements ApiService {
         this.templateConfigurationService = templateConfigurationService;
         this.languageHelper = languageHelper;
         this.packageRepository = packageRepository;
-        this.proposalRepository = proposalRepository;
     }
 
     private static String readFileToString(File file) throws IOException {
@@ -1164,7 +1161,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex();
                 billService.updateExternalReferencesAsync(leosPackage);
-                proposalService.setProposalValidationStatus(proposal.getId(), ProposalValidationStatus.NOT_VALIDATED);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;

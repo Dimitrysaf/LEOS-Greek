@@ -1,3 +1,5 @@
+export const AI_USER = "ai";
+
 export type AnalysisResult = {
   id: number;
   legal_resource_celex: string;

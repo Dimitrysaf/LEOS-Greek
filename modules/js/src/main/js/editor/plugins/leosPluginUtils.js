@@ -17,6 +17,8 @@ define(function leosPluginUtilsModule(require) {
 
     var CKEDITOR = require("promise!ckEditor");
 
+    var AI_USER = "ai";
+
     var TEXT = "text";
     var BOGUS = "br";
     var TD = "td";
@@ -2049,6 +2051,7 @@ define(function leosPluginUtilsModule(require) {
         SUB_HCONTAINER_TABLE: SUB_HCONTAINER_TABLE,
         HCONTAINER_IMAGE: HCONTAINER_IMAGE,
         SUB_HCONTAINER_IMAGE: SUB_HCONTAINER_IMAGE,
-        AKN_ORDERED_LIST: AKN_ORDERED_LIST
+        AKN_ORDERED_LIST: AKN_ORDERED_LIST,
+        AI_USER: AI_USER,
     };
 });

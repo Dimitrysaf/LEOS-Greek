@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -226,6 +227,28 @@ public class FinancialStatementController {
         List<VersionVO> versions = this.genericDocumentApiService.saveDocument(documentRef, request.getVersionType(),
                 request.getCheckinComment());
         return versions;
+    }
+
+    @GetMapping(value = "/{documentRef}/accept-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> acceptChange(@PathVariable("documentRef") String documentRef,
+                                               @PathVariable("elementId") String elementId,
+                                               @PathVariable("elementTagName") String elementTagName,
+                                               @RequestParam("trackChangeAction") String trackChangeAction,
+                                               @RequestHeader("presenterId") String presenterId) {
+        try {
+            documentRef = encodeParam(documentRef);
+            elementId = encodeParam(elementId);
+            elementTagName = encodeParam(elementTagName);
+            trackChangeAction = encodeParam(trackChangeAction);
+            presenterId = encodeParam(presenterId);
+            TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
+            DocumentViewResponse response = this.financialStatementApiService.acceptChange(documentRef, elementId, elementTagName, trackChangeActionType, presenterId);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while accepting change - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error while accepting change ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // TODO when refactor: This API call is redundant. Its the same as getVersion. Then the FE should only parse the XML.
@@ -511,6 +534,20 @@ public class FinancialStatementController {
             return ResponseEntity.ok().body(ImmutableMap.of("result", "Document successfully finalised!"));
         } catch (Exception e) {
             return new ResponseEntity<>("Unexpected error while finalising document", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/ai/{proposalRef}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<DocumentViewResponse> getAnalysisResult(
+            @PathVariable("proposalRef") String proposalRef, @RequestParam(value = "analysisType", required = false) String analysisType) {
+        try {
+            proposalRef = encodeParam(proposalRef);
+            DocumentViewResponse response = financialStatementApiService.prefillDigitalDimensionsLFDS(proposalRef, analysisType);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while trying to get analysis results", e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

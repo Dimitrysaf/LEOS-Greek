@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -66,5 +67,17 @@ public class AnalysisResultInteroperabilityGeneration extends AnalysisResult {
     @JsonGetter("eId")
     public List<String> getEId() {
         return this.eId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AnalysisResultInteroperabilityGeneration)) return false;
+        AnalysisResultInteroperabilityGeneration that = (AnalysisResultInteroperabilityGeneration) o;
+        return provision_count == that.provision_count && Objects.equals(digital_public_service, that.digital_public_service) && Objects.equals(description, that.description) && Objects.equals(eId, that.eId) && Objects.equals(cross_border_interaction, that.cross_border_interaction) && Objects.equals(interoperable_europe_solutions, that.interoperable_europe_solutions) && Objects.equals(other_interoperability_solutions, that.other_interoperability_solutions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(digital_public_service, description, eId, cross_border_interaction, interoperable_europe_solutions, other_interoperability_solutions, provision_count);
     }
 }

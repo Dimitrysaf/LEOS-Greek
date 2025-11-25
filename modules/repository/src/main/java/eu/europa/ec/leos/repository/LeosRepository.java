@@ -29,6 +29,7 @@ import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
@@ -451,6 +452,10 @@ public interface LeosRepository {
 
     <D extends LeosDocument> String findDocumentRefByPackageIdAndCategory(Class<? extends D> type, String packageId, String category);
 
-    <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus);
+    void  setDocumentsValidationStatus(List<String> versionIDs);
+
+    List<String> findPackagesForValidation();
+
+    Package findPackageByName(String packageName);
 
 }

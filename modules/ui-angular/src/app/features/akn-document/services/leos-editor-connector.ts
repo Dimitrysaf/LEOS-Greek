@@ -373,9 +373,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
             localStorage.setItem(elemData.elementId, response.elementFragment);
           }
           this.handleActionsAfterSave(response, elemData, String(milliseconds));
-          if (elemData.elementType.toLowerCase() == 'article' && this.documentService.documentType == 'bill') {
-            this.documentService.prepareAnalysis();
-          }
           resolve(response);
         },
         error: (error) => {

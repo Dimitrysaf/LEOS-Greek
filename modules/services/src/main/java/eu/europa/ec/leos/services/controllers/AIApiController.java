@@ -28,6 +28,7 @@ import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.dto.request.CreateExplanatoryDocumentRequest;
 import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import org.apache.commons.io.FilenameUtils;
@@ -85,20 +86,6 @@ public class AIApiController {
         } catch (Exception e) {
             LOG.error("Error occurred while preparing analysis - " + e.getMessage());
             return new ResponseEntity<>("Error occurred while preparing proposal analysis: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @RequestMapping(value = "/{proposalRef}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<AnalysisResults> getAnalysisResult(
-            @PathVariable("proposalRef") String proposalRef, @RequestParam(value = "analysisType", required = false) String analysisType) {
-        try {
-            proposalRef = encodeParam(proposalRef);
-            AnalysisResults results = aiService.prefillDigitalDimensionsLFDS(proposalRef, analysisType);
-            return new ResponseEntity<>(results, HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while trying to get analysis results", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
