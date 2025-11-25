@@ -201,6 +201,7 @@ public class CatalogServiceImpl implements CatalogService {
                     // milestone.setAuditLastMDate(LocalDateTime.now());
                     documentMilestoneRepository.save(milestone);
                 });
+        updateDocumentPublishedStatus(allDocuments, Boolean.FALSE);
     }
 
 
@@ -373,12 +374,18 @@ public class CatalogServiceImpl implements CatalogService {
             }
         }
 
+        updateDocumentPublishedStatus(allDocuments, Boolean.TRUE);
         // Update current milestone
         currentMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
         currentMilestone.setMilestoneComments(CUSTOM_TEMPLATE_COMMENT);
         currentMilestone.setAuditLastMBy(userId);
         currentMilestone.setAuditLastMDate(LocalDateTime.now());
         return documentMilestoneRepository.save(currentMilestone);
+    }
+    private void updateDocumentPublishedStatus(List<Document> allDocuments, Boolean isPublished) {
+        //update Published status to custom Template document
+        allDocuments.forEach(document -> {document.setPublished(isPublished);});
+        documentRepository.saveAll(allDocuments);
     }
 
     // =============================================================================

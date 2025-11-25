@@ -63,6 +63,8 @@ public class MetadataVO {
 
     private String docTranslationFromLanguage;
     private String docTranslationFromHref;
+    private String availableLangs;
+    private Boolean isPublished;
 
     public MetadataVO() {
     }// added for early binding
@@ -114,5 +116,7 @@ public class MetadataVO {
         this.setStamp(null);
         this.setDocTranslationFromLanguage(null);
         this.setDocTranslationFromHref(null);
+        this.setAvailableLangs(null);
+        this.setIsPublished(null);
     }
 }

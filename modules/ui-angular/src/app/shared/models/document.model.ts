@@ -93,6 +93,8 @@ export interface Metadata {
   signatures: SignatureMetadata[] | null;
   stamp: boolean | null;
   customTemplateAct: boolean;
+  availableLangs: string;
+  isPublished: boolean;
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {

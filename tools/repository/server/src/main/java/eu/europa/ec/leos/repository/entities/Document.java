@@ -116,6 +116,8 @@ public class Document implements Serializable {
     private Boolean customTemplateAct;
     @Column(name = "VALIDATION_STATUS", length = 30)
     private String validationStatus;
+    @Column(name = " IS_PUBLISHED")
+    private Boolean  isPublished;
 
     public Document() {
     }
@@ -336,6 +338,9 @@ public class Document implements Serializable {
         this.validationStatus = validationStatus;
     }
 
+    public Boolean getPublished() { return isPublished; }
+
+    public void setPublished(Boolean published) { isPublished = published; }
     @Override
     public int hashCode() {
         int hash = 0;

@@ -22,10 +22,15 @@ export class ProposalItemComponent implements OnInit {
   customTemplateAct = false;
   title: string;
 
+  langArray: string[] = [];
+  isPublished: boolean = false;
+
   constructor(private translateService: TranslateService, private domSanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.setItemTitle(this.proposal.title);
+    this.langArray = this.proposal.metadata.availableLangs ? this.proposal.metadata.availableLangs.split(',') : [];
+    this.isPublished = this.proposal.metadata.isPublished;
     this.customTemplateAct = this.proposal.metadata.customTemplateAct;
   }
 
