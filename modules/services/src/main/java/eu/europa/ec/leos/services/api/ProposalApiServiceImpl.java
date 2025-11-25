@@ -24,6 +24,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.security.LeosPermission;
