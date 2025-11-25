@@ -3,6 +3,7 @@ import legalActPage from "../pages/legalActPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
 
+
 Then('user is on legal act page', () => {
     headerPage.getCurrentPageName().should("have.text", "Legal Act");
     cy.wait(7000);
@@ -713,4 +714,12 @@ Then('content of subflow {int} of recital {int} does not contain a {string}', fu
 
 Then('recital {int} doest not contain subflow', function (recitalNumber) {
     legalActPage.getSubflow(recitalNumber).should('not.exist');
+});
+
+Then('recital section count is {int}', (recitalSectionCount) => {
+    legalActPage.elements.recitalSection().should('have.length', recitalSectionCount);
+});
+
+Then ('recital section {int} contains {string} tag with value {string}', (recitalSectionNumber, tagName, tagValue) => {
+  legalActPage.elements.recitalSection().eq(recitalSectionNumber - 1).children(tagName).should('have.text', tagValue);
 });

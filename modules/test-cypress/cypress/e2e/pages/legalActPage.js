@@ -18,7 +18,9 @@ class legalActPage {
         sectionFromImportOj: () => cy.get("section[id^='impX']"),
         articleFromImportOj: () => cy.get("article[id^='impXart']"),
         aknBody: () => cy.get('aknbody'),
-        leosSoftMoveLabel: () => this.elements.aknBody().find('span.leos-soft-move-label')
+        leosSoftMoveLabel: () => this.elements.aknBody().find('span.leos-soft-move-label'),
+        recitals: () => cy.xpath('//recitals'),
+        recitalSection: () => this.elements.recitals().children('recitals')
     }
 
     clickCloseBtn() {
@@ -373,5 +375,6 @@ class legalActPage {
     getColumnFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber) {
         return this.getRowFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber).eq(0).find('td');
     }
+
 }
 export default new legalActPage();
