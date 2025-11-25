@@ -1153,6 +1153,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public void setDocumentsValidationStatus(List<String> versionIDs) {
+        logger.trace("Validation status of documents will be set as sent for validation ");
+        repository.setDocumentValidationStatus(versionIDs);
+    }
+
+    @Override
     @PerformanceLogger
     public FavouritePackageResponse getFavouritePackage(String ref, String userId) {
         logger.trace("Finding package for document... [ref=" + ref + ']');
@@ -1182,10 +1188,17 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    public <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus) {
-        logger.trace("Finding document by validation status... [validationStatus=" + validationStatus);
-        LeosDocumentList docs = repository.findDocumentsByValidationStatus(validationStatus);
-        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
+    public List<String> findPackagesForValidation() {
+        logger.trace("Finding packages for validation");
+        return repository.findPackagesForValidation();
+    }
+
+    @Override
+    @PerformanceLogger
+    public Package findPackageByName(String packageName) {
+        logger.trace("Finding proposals for validation");
+        Package package1 = repository.findPackageByName(packageName);
+        return package1;
     }
 
 }

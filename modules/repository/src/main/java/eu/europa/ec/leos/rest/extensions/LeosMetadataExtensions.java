@@ -69,7 +69,6 @@ public class LeosMetadataExtensions {
                 .filter(s -> s != null && !s.isEmpty())
                 .collect(Collectors.joining(" "));
         Map<String, Object> leosProperties =  buildCommonProperties(proposalMetadata, title);
-        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VALIDATION_STATUS), proposalMetadata.getValidationStatus());
         return leosProperties;
     }
 
