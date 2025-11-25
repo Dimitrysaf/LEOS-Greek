@@ -159,7 +159,8 @@ CREATE TABLE DOCUMENT_VERSION
      AUDIT_LAST_M_DATE TIMESTAMP (9),
      IS_IMMUTABLE NUMBER,
      DOCUMENT_ID NUMBER(22,0),
-     IS_VERSION_ARCHIVED NUMBER(1,0) DEFAULT 0
+     IS_VERSION_ARCHIVED NUMBER(1,0) DEFAULT 0,
+     VALIDATION_STATUS VARCHAR2(30 BYTE)
 );
 
 CREATE TABLE CONFIG_CATEGORIES
@@ -216,7 +217,6 @@ CREATE TABLE DOCUMENT
      AUDIT_LAST_M_DATE TIMESTAMP (6),
      AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
      CUSTOM_TEMPLATE_ACT NUMBER(1,0),
-     VALIDATION_STATUS VARCHAR2(30 BYTE),
      IS_PUBLISHED NUMBER(1,0)
 );
 
@@ -330,7 +330,7 @@ SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
      , doc.id document_id,doc.object_id doc_object_id,doc.category_id
      , doc.package_id, pkg.name package_name, docxml.version_id
      , doccat.category_code, doccat.category_desc, doccat.config_category_id
-     , doc.name, doc.cloned_from,doc.revision_status,doc.contribution_status, doc.validation_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
+     , doc.name, doc.cloned_from,doc.revision_status,doc.contribution_status, docver.validation_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
      , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
      , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived, doc.custom_template_act, docver.is_version_archived, (SELECT

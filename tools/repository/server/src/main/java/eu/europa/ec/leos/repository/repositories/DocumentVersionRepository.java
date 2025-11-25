@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.repositories;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,4 +33,7 @@ public interface DocumentVersionRepository extends JpaRepository<DocumentVersion
     @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_VERSION d WHERE d.IS_LATEST_MAJOR_VERSION = 1 and d.DOCUMENT_ID = ?1 ORDER BY d.AUDIT_C_DATE DESC) " +
             "WHERE ROWNUM <= 1", nativeQuery = true)
     Optional<DocumentVersion> findLastMajorVersionByDocumentId(BigDecimal documentId);
+
+    @Query(value = "SELECT * FROM DOCUMENT_VERSION d WHERE d.IS_LATEST_VERSION = 1 and d.ID IN (:versionIDs) ORDER BY d.AUDIT_C_DATE DESC", nativeQuery = true)
+    List<DocumentVersion> findAllDocumentsByDocumentId( @Param("versionIDs") List<String> versionIDs);
 }

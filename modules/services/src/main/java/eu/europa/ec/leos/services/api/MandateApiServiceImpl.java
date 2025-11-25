@@ -15,7 +15,6 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -23,6 +22,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -65,7 +65,6 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 @Service
@@ -125,18 +124,18 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
     }
 
     @Override
-    public void validateProposal(String proposalRef, String email, String username) {
+    public void validateProposals(String email, String username) {
         throw new IllegalStateException("Feature not implemented for the running instance");
-    }
-
-    @Override
-    public <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus) {
-        return null;
     }
 
     @Override
     public LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) {
         return new LeosRenditionOutputResponseList(Collections.emptyList());
+    }
+
+    @Override
+    public Package findPackageByName(String packageName) {
+        return null;
     }
 
 }

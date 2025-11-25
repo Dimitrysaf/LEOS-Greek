@@ -79,6 +79,7 @@ public class DocumentServiceImpl implements DocumentService {
     private static final int MAX_RESULT_DEFAULT = 100;
     private static final String XML_DOC_EXT = ".xml";
     private static final String CUSTOM_TEMPLATE_COMMENT = "Custom Template";
+    private static final String SENT_FOR_VALIDATION = "SENT_FOR_VALIDATION";
 
     private final DocumentRepository documentRepository;
     private final DocumentVRepository documentVRepository;
@@ -529,15 +530,8 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    public List<LeosDocument> findDocumentsByValidationStatusNot(final String validationStatus) {
-
-        List<LeosDocument> listDocs = new ArrayList<>();
-        List<DocumentV> docs = documentVRepository.findDocumentsByValidationStatus(validationStatus);
-
-        listDocs.addAll(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
-                Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
-                docs.get(0).getPackageId()), documentContentRepository, docs, false));
-        return listDocs;
+    public List<String> findPackagesForValidation() {
+        return documentVRepository.findDocumentsForValidation();
     }
 
     public String getNextVersionLabel(String docRef, VersionType versionType, String oldVersion) {
@@ -622,8 +616,8 @@ public class DocumentServiceImpl implements DocumentService {
                 (String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()) : doc.getRevisionStatus());
         doc.setContributionStatus(metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) != null ?
                 (String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) : doc.getContributionStatus());
-        doc.setValidationStatus(metadata.get(PropertiesMetadata.VALIDATION_STATUS.getLeosName()) != null ?
-                (String) metadata.get(PropertiesMetadata.VALIDATION_STATUS.getLeosName()) : doc.getValidationStatus());
+        docVersion.setValidationStatus(metadata.get(PropertiesMetadata.VALIDATION_STATUS.getLeosName()) != null ?
+                (String) metadata.get(PropertiesMetadata.VALIDATION_STATUS.getLeosName()) : docVersion.getValidationStatus());
         updateDocumentProperties(doc, docVersion, metadata, userId);
         return documentRepository.save(doc);
     }
@@ -1049,6 +1043,21 @@ public class DocumentServiceImpl implements DocumentService {
         } else {
             return docs.get(0);
         }
+    }
+
+    public boolean setDocumentValidationStatus(List<String> versionIDs) {
+        if (versionIDs == null || versionIDs.isEmpty()) {
+            return false;
+        }
+        List<DocumentVersion> documentVersions = documentVersionRepository.findAllDocumentsByDocumentId(versionIDs);
+        documentVersions.forEach(documentVersion -> {
+            String status  = documentVersion.getValidationStatus();
+            if (!(status != null && status.equals(SENT_FOR_VALIDATION))) {
+                documentVersion.setValidationStatus(SENT_FOR_VALIDATION);
+            }
+        });
+        documentVersionRepository.saveAll(documentVersions);
+        return true;
     }
 
     private Map<DocumentContent, DocumentVersion> createDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
