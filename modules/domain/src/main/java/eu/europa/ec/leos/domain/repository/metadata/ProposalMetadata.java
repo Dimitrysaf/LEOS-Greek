@@ -16,6 +16,8 @@ public final class ProposalMetadata extends LeosMetadata {
     private Float verticalShift;
     private List<String> crossReferences;
 
+    private String availableLangs;
+    private Boolean isPublished;
     private String adoptionPlace;
     private Date adoptionDate;
     private String institutionalReference;
@@ -56,6 +58,8 @@ public final class ProposalMetadata extends LeosMetadata {
         private Float verticalShift;
         private List<String> crossReferences;
         private String adoptionPlace;
+        private String availableLangs;
+        private Boolean isPublished;
         private Date adoptionDate;
         private String institutionalReference;
         private Boolean institutionalReferenceFinalVersion;
@@ -90,6 +94,8 @@ public final class ProposalMetadata extends LeosMetadata {
             this.interInstitutionalReference = metadata.getInterInstitutionalReference();
             this.signatures = metadata.getSignatures();
             this.adoptionPlace = metadata.getAdoptionPlace();
+            this.availableLangs = metadata.getAvailableLangs();
+            this.isPublished = metadata.getIsPublished();
             this.adoptionDate = metadata.getAdoptionDate();
             this.stamp = metadata.getStamp();
             this.aiValues = metadata.aiValues;
@@ -189,6 +195,8 @@ public final class ProposalMetadata extends LeosMetadata {
             metadata.setVerticalShift(verticalShift);
             metadata.setCrossReferences(crossReferences);
             metadata.setAdoptionPlace(adoptionPlace);
+            metadata.setAvailableLangs(availableLangs);
+            metadata.setIsPublished(isPublished);
             metadata.setAdoptionDate(adoptionDate);
             metadata.setInstitutionalReference(institutionalReference);
             metadata.setInstitutionalReferenceFinalVersion(institutionalReferenceFinalVersion);

@@ -87,6 +87,7 @@
   "page.workspace.create-selector.document.title": "Sélectionner le type de document et la langue",
   "page.workspace.create-selector.draft.title": "Sélectionnez le type de brouillon, la langue et le nom",
   "page.workspace.proposal-item.custom-template": "Modèle personnalisé",
+  "page.workspace.proposal-item.custom-template.published": "Publié",
   "page.workspace.proposal-item.contribution-status": "Statut de la contribution",
   "page.workspace.proposal-item.ready-status": "Prêt à fusionner",
   "page.workspace.proposal-item.sent-status": "Envoyée pour contribution",

@@ -36,8 +36,8 @@ class LeosRepositoryMetadataExtensions {
     private static RepositoryPropertiesMapper repositoryPropertiesMapper = new RestProperties();
 
     private static class CommonMetadataProperties {
-        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress, creationOptions, authenticLanguage, coverPageType, actType, docType, procedureType;
-        Boolean eeaRelevance, imported, customTemplateAct;
+        String stage, type, purpose, template, language, availableLangs, docTemplate, ref, callbackAddress, creationOptions, authenticLanguage, coverPageType, actType, docType, procedureType;
+        Boolean eeaRelevance, imported, customTemplateAct, isPublished;
     }
 
     static Option<ProfileMetaData> getProfileMetaDataOption(eu.europa.ec.leos.rest.support.model.LeosDocument leosDocument) {
@@ -62,7 +62,8 @@ class LeosRepositoryMetadataExtensions {
             metadata.setAiValues(getAiValues(leosDocument));
             metadata.setActType(props.actType);
             metadata.setProcedureType(props.procedureType);
-
+            metadata.setAvailableLangs(props.availableLangs);
+            metadata.setIsPublished(props.isPublished);
             return Option.some(metadata);
         });
     }
@@ -142,6 +143,8 @@ class LeosRepositoryMetadataExtensions {
         props.purpose = getMetadataPurpose(doc);
         props.template = getTemplate(doc);
         props.language = getLanguage(doc);
+        props.availableLangs = getAvailableLangs(doc);
+        props.isPublished = getPublished(doc);
         props.docTemplate = getMetadataDocTemplate(doc);
         props.docType = getMetadataDocType(doc);
         props.actType = getMetadataActType(doc);
@@ -260,6 +263,14 @@ class LeosRepositoryMetadataExtensions {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE));
     }
 
+    private static String getAvailableLangs(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_AVAILABLE_LANGUAGES));
+    }
+
+    private static boolean getPublished(LeosDocument leosDocument) {
+        Boolean isPublished = (Boolean) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_IS_PUBLISHED));
+        return isPublished != null ? isPublished : false;
+    }
     private static String getFinancialStatementTitle(LeosDocument leosDocument) {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
     }

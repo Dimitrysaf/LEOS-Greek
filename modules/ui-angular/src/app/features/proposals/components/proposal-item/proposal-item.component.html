@@ -19,6 +19,12 @@
           }
       }}
     </eui-card-header-subtitle>
+    <eui-card-header-subtitle *ngIf="langArray && langArray.length > 0">
+      <div class="eui-u-flex">
+        <eui-badge euiVariant >{{ proposal.language }}</eui-badge>
+        <eui-badge euiSecondaryLight *ngFor="let lang of langArray">{{lang}}</eui-badge>
+      </div>
+    </eui-card-header-subtitle>
     <eui-card-header-right-content
       class="eui-u-flex-column col-2 eui-u-flex-align-items-start"
     >
@@ -31,6 +37,8 @@
       <div *ngIf="customTemplateAct">
         <div class="eui-u-font-l eui-u-font-bold eui-u-color-grey-100">
           {{ 'page.workspace.proposal-item.custom-template' | translate }}
+        </div>
+        <div *ngIf="isPublished" class="eui-u-font-m eui-u-font-bold eui-u-color-primary-100 eui-u-mb-2xs h-25">   {{ 'page.workspace.proposal-item.custom-template.published' | translate }}
         </div>
       </div>
       <div *ngIf="status">
