@@ -14,11 +14,11 @@ import { EuiBreadcrumbService } from '@eui/components/layout';
 import {ApplicationRole, ProcedureType} from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest,
+  combineLatest, debounceTime,
   distinctUntilChanged,
   map,
-  Observable,
-  take,
+  Observable, Subject,
+  take, takeUntil,
 } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
@@ -62,7 +62,11 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
   canCreateMandate = false;
   canCreateProposal = false;
   canUpload = false;
+  canCreateTemplate = false;
   userRoles: ApplicationRole[];
+  filterParams : any;
+  searchTerm$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
@@ -87,8 +91,16 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
     this.limit$ = this.proposalService.limit$;
     this.proposals$ = this.proposalService.proposals$;
     this.totalResults$ = this.proposalService.totalResults$;
+    this.setInitialState();
   }
 
+  private setInitialState() {
+    this.filterParams = {
+      searchTitle: '',
+      isCustomTemplate: false,
+      templates: []
+    };
+  }
   ngAfterViewInit(): void {
     // Sync service.page$ -> paginator
     this.proposalService.proposals$.pipe(take(1)).subscribe(() => {
@@ -123,6 +135,19 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
         this.setQueryParams(params);
       });
     this.setPermissions();
+    this.searchTerm$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(val => {
+        this.handleSearchTitle(val);
+      });
+    this.proposalService.templates$.subscribe(templates => {
+      this.filterParams.templates = templates;
+      this.triggerProposalFilter();
+    });
   }
 
   onToggleTOCColumnCollapsed() {
@@ -130,6 +155,8 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
   }
 
   resetFilter() {
+    this.setInitialState();
+    //this.triggerProposalFilter()
     this.filtersComponent.resetFilters();
   }
 
@@ -223,6 +250,7 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
       this.canUpload = CAN_UPLOAD;
       this.userRoles =  config.user.roles;
       console.log(this.userRoles);
+      this.canCreateTemplate = config.userAppPermissions.includes('CAN_CREATE_TEMPLATE');
     });
 
   }
@@ -245,4 +273,32 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
   handleCreate() {
     this.createProposalService.openProposalCreateDialog(this.userRoles);
   }
+
+  handleSearchTitle(searchString: string) {
+    this.triggerProposalFilter();
+  }
+
+  onSearchInput(value: string) {
+    this.searchTerm$.next(value);
+  }
+
+  checkedCustomTemplate() {
+    this.triggerProposalFilter();
+
+  }
+
+  triggerProposalFilter() {
+    const proposalFilter = ProposalsFiltersComponent.emptyFilterParams;
+    proposalFilter.searchTerm = this.filterParams.searchTitle;
+    proposalFilter.customTemplates = this.filterParams.isCustomTemplate ? "true" : "";
+    proposalFilter.templates = this.filterParams.templates;
+    this.proposalService.setFilters(proposalFilter);
+  }
+
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
 }

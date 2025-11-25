@@ -138,7 +138,7 @@
   "page.workspace.upload.button.tooltip": "Charger un ficher .leg",
   "page.workspace.results.title": "Résultats",
   "page.workspace.results.proposals-found": "acte trouvés",
-  "page.workspace.results.sort": "Trier",
+  "page.workspace.results.sort": "Trier par date",
   "page.collection.breadcrumb-title": "Acte",
   "page.collection.permision-error": "Vous n’avez pas l’autorisation d’accéder à l’acte recherché",
   "page.collection.404": "L’acte recherché n’existe pas",

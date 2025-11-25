@@ -1,68 +1,41 @@
-<div class="filters-container eui-u-ph-m" #filtersContainer>
-  <form class="filters-form" [formGroup]="form" *ngIf="form">
-    <!-- Search Title Row -->
+<div>
+  <div euiInputGroup class="eui-u-flex eui-u-mt-m">
+    <div class="eui-input-group-addon">
+      <input
+        euiInputText
+        [(ngModel)]="filterText"
 
-    <div class="filters-search-input eui-u-shadow-z-depth-0 eui-u-pb-xs">
-      <div euiInputGroup class="eui-u-mv-none row">
-        <div class="col-md-3">
-          <label
-            euiLabel
-            for="with_action-button_disabled"
-            class="eui-u-mt-s eui-u-mb-xs eui-u-font-m eui-u-font-bold"
-            [euiTooltip]="'page.workspace.filter.search-tooltip' | translate"
-          >
-            {{ 'page.workspace.filter.search' | translate }}
-          </label>
-        </div>
-        <div class="col-md-9">
-          <div class="eui-input-group-addon">
-            <input
-              (keydown.enter)="handleSubmit($event)"
-              euiInputText
-              id="with_action-button_disabled"
-              placeholder="Search for an act"
-              formControlName="searchTerm"
-            />
-            <button euiButton euiSecondary euiIconButton>
-              <eui-icon-svg icon="eui-search"></eui-icon-svg>
-            </button>
-          </div>
-        </div>
+        (ngModelChange)="onDocumentTypeFilter($event)"
+        placeholder="Search by document type"
+        aria-label="Search by document type"
+      />
+      <div class="eui-input-group-addon-item">
+        <eui-icon-svg icon="eui-search"></eui-icon-svg>
       </div>
     </div>
+  </div>
 
-    <!-- Checkbox Filters Row -->
-
-    <div class="filters-checkboxes">
-      <div
-        class="filters-checkboxes-section eui-u-shadow-z-depth-0 eui-u-pb-xs"
-        *ngFor="let filter of filterGroups"
-      >
-        <h5 class="eui-u-m-2xs eui-u-pv-2xs eui-u-font-m eui-u-font-bold">
-          {{ filter.title }}
-        </h5>
-        <div
-          euiInputGroup
-          class="eui-u-mb-none"
-          *ngFor="let filterOption of filter.filterOptions"
-        >
-          <input
-            euiInputCheckBox
-            [id]="filterOption.id"
-            [name]="filterOption.fieldName"
-            [formControlName]="filterOption.fieldName"
-          />
-          <label
-            class="eui-u-pr-m eui-u-mv-none align-items-start"
-            [for]="filterOption.id"
-            [euiTooltip]="filterOption.tooltip"
-            [position]="
-              isLabelTextMoreThanOneLine(filterOption.label) ? 'right' : 'above'
-            "
-            >{{ filterOption.label }}</label
-          >
-        </div>
-      </div>
-    </div>
-  </form>
+  <div class="eui-u-flex tree-margin">
+    <eui-tree
+              isSingleSelect="false"
+              (selectionChange)="onNodeClick($event)"
+              [nodeTemplateRef]="nodeTemplateCustom2"
+              [nodes]="treeNodes"
+              #treeComponent
+    >
+    </eui-tree>
+  </div>
 </div>
+
+<ng-template let-node #nodeTemplateCustom2 let-onSelect="onSelect">
+  <div (click)="onSelectNode({ target: { checked: !node.isSelected } }, node.treeContentBlock.key)"
+       class="eui-tree-node-wrapper__container-middle">
+    <eui-icon-svg [icon]="node?.treeContentBlock?.iconSvgName"></eui-icon-svg>
+    <label
+      [class.eui-label--selected]="node?.isSelected && node.selectable"
+      class="eui-u-text-truncate eui-u-p-2xs">
+      {{ node?.treeContentBlock?.label }}
+    </label>
+  </div>
+</ng-template>
+

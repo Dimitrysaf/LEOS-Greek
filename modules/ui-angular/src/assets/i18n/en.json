@@ -138,7 +138,7 @@
   "page.workspace.upload.button.tooltip": "Upload a .leg file",
   "page.workspace.results.title": "Results",
   "page.workspace.results.proposals-found": "act found",
-  "page.workspace.results.sort": "Sort",
+  "page.workspace.results.sort": "Sort by date",
   "page.collection.breadcrumb-title": "Act Viewer",
   "page.collection.permision-error": "You do not have permission to access the requested act.",
   "page.collection.404": "The requested act does not exist.",

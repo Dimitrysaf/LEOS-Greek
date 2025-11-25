@@ -126,6 +126,8 @@ export class ProposalService {
   private sortOrderBS = new BehaviorSubject(DEFAULT_SORT_ORDER);
   private limitBS = new BehaviorSubject<number>(DEFAULT_LIMIT);
   private pageBS = new BehaviorSubject<number>(DEFAULT_PAGE);
+  private templatesBs = new BehaviorSubject<string[]>([]);
+  templates$ = this.templatesBs.asObservable();
   private customTemplateCatalogBS = new BehaviorSubject<CatalogItem[]>([]);
   private documentRefBS = new BehaviorSubject<String>('');
   private params$: Observable<ListProposalsWithFilterBody>;
@@ -303,5 +305,9 @@ export class ProposalService {
       `${apiBaseUrl}/secured/proposal/updateDocPurpose/${proposalRef}`,
       requestData,
     );
+  }
+
+  updateTemplates(list: string[]) {
+    this.templatesBs.next(list);
   }
 }
