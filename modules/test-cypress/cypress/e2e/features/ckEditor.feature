@@ -1379,7 +1379,7 @@ Feature: CK Editor Regression Features
 
 
         # Ticket LEOS#3158 : insert special characters in any document using the plugin
-    @insertspecialchar @legalAct
+    @insertspecialchar @legalAct @focus
     Scenario: insert special characters using the plugin
         Given navigate to leos application with "User1"
         Then user is on home page
