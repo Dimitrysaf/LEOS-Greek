@@ -1376,3 +1376,62 @@ Feature: CK Editor Regression Features
         And  click backspace from keyboard in edition mode
         When click save and close button of ck editor
         Then recital 3 doest not contain subflow
+
+
+        # Ticket LEOS#3158 : insert special characters in any document using the plugin
+    @insertspecialchar @legalAct @focus
+    Scenario: insert special characters using the plugin
+        Given navigate to leos application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        And  collapse all button is displayed in create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "insert special character using the plugin" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        Then enable track changes toggle bar is off in ribbon toolbar
+        When mouseover and click on recital 1
+        And  click on insert special character icon present in ck editor panel
+        Then cke dialog window is displayed with title "Select Special Character"
+        When click on cell 1 of row 1 of special character table in cke dialog window
+        Then recital contains text "!" in edition mode
+        When click save and close button of ck editor
+        When mouseover and click on recital 2
+        And  click on insert special character icon present in ck editor panel
+        Then cke dialog window is displayed with title "Select Special Character"
+        When click on cell 3 of row 1 of special character table in cke dialog window
+        Then recital contains text "#" in edition mode
+        When click save and close button of ck editor
+        Then user is on legal act page
+        Then enable track changes
+        When mouseover and click on recital 1
+        And  click on insert special character icon present in ck editor panel
+        Then cke dialog window is displayed with title "Select Special Character"
+        When click on cell 4 of row 1 of special character table in cke dialog window
+        Then recital contains text "$" in edition mode
+        When click save and close button of ck editor
+        When mouseover and click on recital 2
+        And  click on insert special character icon present in ck editor panel
+        Then cke dialog window is displayed with title "Select Special Character"
+        When click on cell 5 of row 1 of special character table in cke dialog window
+        Then recital contains text "%" in edition mode
+        When click save and close button of ck editor
+        Then user is on legal act page
+        Then disable track changes
+        When mouseover and click on recital 1
+        And  click on insert special character icon present in ck editor panel
+        Then cke dialog window is displayed with title "Select Special Character"
+        When click on cell 6 of row 1 of special character table in cke dialog window
+        Then recital contains text "&" in edition mode
+        When click save and close button of ck editor
+        When mouseover and click on recital 2
+        And  click on insert special character icon present in ck editor panel
+        Then cke dialog window is displayed with title "Select Special Character"
+        When click on cell 7 of row 1 of special character table in cke dialog window
+        Then recital contains text "'" in edition mode
+        When click save and close button of ck editor
+
