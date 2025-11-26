@@ -2,7 +2,7 @@ import {Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import loginPage from "../pages/loginPage";
 
 Given("navigate to leos application with {string}", (user) => {
-    if(Cypress.env('CE_ENV').includes('@focus')) {
+    if(Cypress.env('CE_ENV').includes('@local')) {
         loginPage.visitUrl('localDraftingUrl', 'http' + '://' + Cypress.env('local' + user) + ':' + Cypress.env('localPassword') + '@');
     }
 });
