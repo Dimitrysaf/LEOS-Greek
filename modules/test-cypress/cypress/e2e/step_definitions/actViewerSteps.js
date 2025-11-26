@@ -152,7 +152,6 @@ Then(/^eea Relevance is ticked in details tab$/, function () {
 });
 
 Then(/^EEA Relevance is unticked in details tab$/, function () {
-    cy.wait(2000);
     actViewerPage.elements.eeARelevanceCheckBoxValue().should('not.be.checked');
 });
 
