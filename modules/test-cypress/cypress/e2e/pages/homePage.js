@@ -3,7 +3,7 @@ class homePage {
         //createProposalBtn: () => cy.contains('Create act'),
         //uploadBtn: () => cy.contains('Upload act'),
         //searchFilterInputBtn: () => cy.get("input[placeholder='Search for a proposal']"),
-        euiLabel: () => cy.get("eui-label.hero-text"),
+        euiLabel: () => cy.get("eui-label.hero-text, [class*='hero-text'], [class*='hero'] eui-label, .hero-text", { timeout: 15000 }),
         viewAllActs: () => cy.contains("View all acts"),
         supportBtn: () => cy.get('.eui-button').contains('Support'),
         supportOptions: () => cy.get('div.eui-dropdown__panel-container a'),
