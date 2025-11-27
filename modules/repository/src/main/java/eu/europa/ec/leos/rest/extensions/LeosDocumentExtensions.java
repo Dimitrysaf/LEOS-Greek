@@ -40,7 +40,6 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.rest.mapping.RestProperties;
 import io.atlassian.fugue.Option;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -340,9 +339,6 @@ public class LeosDocumentExtensions {
 
     private static LeosCategory getCategory(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
         String leosCategory = document.getCategory();
-        if (StringUtils.isEmpty(leosCategory)) {
-            logger.info("LEOS cat empty");
-        }
         leosCategory = (leosCategory.startsWith("TEMPLATE_")) ? leosCategory.substring("TEMPLATE_".length()) : leosCategory;
         return LeosCategory.valueOf(leosCategory);
     }
