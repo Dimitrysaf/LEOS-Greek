@@ -44,8 +44,8 @@
             <proprietary source="~COM">
                 <leos:templateVersion>4.1.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SG-017-F</leos:template>
-                <leos:docTemplate>SG-017-F</leos:docTemplate>
+                <leos:template>CP-038</leos:template>
+                <leos:docTemplate>CP-038</leos:docTemplate>
             </proprietary>
         </meta>
         <mainBody>
