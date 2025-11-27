@@ -16,7 +16,6 @@ package eu.europa.ec.leos.services.document;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
@@ -138,7 +137,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, versionType, comment);
         updateInternalReferencesAsync(annex);
-        updateDocumentValidationStatus(annex.getId());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedAnnexContent));
 
@@ -168,7 +166,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }
-        updateDocumentValidationStatus(annex.getId());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedBytes));
 
@@ -182,7 +179,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, VersionType.MINOR, comment);
         updateInternalReferencesAsync(annex);
-        updateDocumentValidationStatus(annex.getId());
         LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return annex;
     }
@@ -194,7 +190,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }
-        updateDocumentValidationStatus(annex.getId());
         return annex;
     }
 
@@ -203,7 +198,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex metadata properties... [id={}]", id);
         Annex annex = annexRepository.updateAnnex(ref, id, properties, latest);
         updateInternalReferencesAsync(annex);
-        updateDocumentValidationStatus(annex.getId());
         return annex;
     }
 
@@ -291,10 +285,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
             updatedBytes = xmlContentProcessor.doXMLPostProcessing(updatedBytes);
         }
         return updatedBytes;
-    }
-
-    private void updateDocumentValidationStatus(String id) {
-        proposalService.setProposalValidationStatus(id,  ProposalValidationStatus.NOT_VALIDATED);
     }
 
     @Override

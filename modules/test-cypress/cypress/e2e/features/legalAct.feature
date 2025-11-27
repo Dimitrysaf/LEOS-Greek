@@ -1208,3 +1208,62 @@ Feature: Legal Act Page Regression Features
     And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in all Member States."
     When click on close button present in legal act page
     Then user is on act viewer page
+
+
+  @validationOfRecitalSectionInAutonomousAct @local 
+  Scenario: Recital section in autonomous act
+    Given navigate to leos application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-003" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing for recital Section in Autonomous act" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    Then below element lists are displayed in Elements menu
+      | ElementList     |
+      | Citation        |
+      | Recital section |
+      | Recital         |
+      | Part            |
+      | Title           |
+      | Chapter         |
+      | Section         |
+      | Article         |
+    When click on right angle icon of preamble link
+    And drag element "Recital section" from element tree list and drop before node label "(1) Recital..." in navigation pane
+    And  click on save button in navigation pane
+    And  below warning message is displayed in navigation pane
+      | warning                                                                                                |
+      | A recital section must contain at least one recital element |
+
+    #second scenerio Add recital inside recital section
+    When click on cancel button in navigation pane
+    And  click on toc edit button
+    And click on three vertical dots for the element contains text "(1) Recital..." in toc
+    And click on move option from dropdown content
+    And  click on three vertical dots for the element contains text "Recitals 1. RECITAL SECTION HEADING" in toc
+    And click on place as child option from dropdown content
+    And  click on save and close button in navigation pane
+    Then no warning symbol should be displayed in the navigation pane
+
+    #Third scenerio # Delete Recital Section with recitals inside
+    Then total recital count is 2
+    And recital section count is 1
+    And recital section 1 contains "num" tag with value "1."
+    And  recital section 1 contains "heading" tag with value "RECITAL SECTION HEADING"
+    When click on toc edit button
+    And click on three vertical dots for the element contains text "Recitals 1. RECITAL SECTION HEADING" in toc
+    And click on delete option from eui dropdown content
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then "Delete item confirmation" dialog confirm box window is displayed
+    When click on delete button in dialog box window
+    And click on save and close button in navigation pane
+    Then total recital count is 1
+    And recital section count is 0

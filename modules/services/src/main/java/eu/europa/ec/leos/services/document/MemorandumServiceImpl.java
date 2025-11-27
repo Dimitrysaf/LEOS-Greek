@@ -15,7 +15,6 @@ package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -132,7 +131,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(memorandum, updatedMemorandumContent));
 
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
-        updateDocumentValidationStatus(memorandum.getId());
         return memorandum;
     }
 
@@ -141,7 +139,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         LOG.trace("Updating Memorandum Xml Content... [id={}]", memorandumId);
         Memorandum memorandum = memorandumRepository.updateMemorandum(ref, memorandumId, updatedMetadata);
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
-        updateDocumentValidationStatus(memorandum.getId());
         return memorandum;
     }
 
@@ -150,7 +147,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         LOG.trace("Updating Memorandum metadata properties...");
         Memorandum memorandum = memorandumRepository.updateMemorandum(ref, memorandumId, properties, latest);
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
-        updateDocumentValidationStatus(memorandum.getId());
         return memorandum;
     }
 
@@ -159,7 +155,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         LOG.trace("Updating Memorandum Xml Content... [id={}]", memorandum.getId());
         memorandum = memorandumRepository.updateMemorandum(memorandum.getId(), updatedMemorandumContent, VersionType.MINOR, comment);
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
-        updateDocumentValidationStatus(memorandum.getId());
         return memorandum;
     }
 
@@ -168,7 +163,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         LOG.trace("Updating Memorandum Xml Content... [id={}]", id);
         Memorandum memorandum = memorandumRepository.updateMemorandum(id, updatedMemorandumContent, VersionType.MINOR, "Content updated");
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
-        updateDocumentValidationStatus(memorandum.getId());
         return memorandum;
     }
 
@@ -185,7 +179,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         
         LOG.trace("Updated Memorandum ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
-        updateDocumentValidationStatus(memorandum.getId());
         return memorandum;
     }
 
@@ -242,10 +235,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     protected byte[] getContent(Memorandum memorandum) {
         final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
         return content.getSource().getBytes();
-    }
-
-    private void updateDocumentValidationStatus(String id) {
-        proposalService.setProposalValidationStatus(id,  ProposalValidationStatus.NOT_VALIDATED);
     }
 
     @Override

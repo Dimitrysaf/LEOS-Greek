@@ -24,7 +24,6 @@ import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -204,9 +203,8 @@ public abstract class ApiServiceImpl implements ApiService {
     private final ProposalDetailsService proposalDetailsService;
     protected LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
-    private final TemplateConfigurationService templateConfigurationService;
+    protected final TemplateConfigurationService templateConfigurationService;
     protected PackageRepository packageRepository;
-    protected ProposalRepository proposalRepository;
 
     private DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
@@ -234,14 +232,15 @@ public abstract class ApiServiceImpl implements ApiService {
                           MilestoneService milestoneService,
                           ProposalConverterService proposalConverterService,
                           PostProcessingDocumentService postProcessingDocumentService,
-                          ValidationService validationService, Properties applicationProperties,
+                          ValidationService validationService,
+                          Properties applicationProperties,
                           ExplanatoryService explanatoryService,
                           ExportPackageService exportPackageService, NotificationService notificationService,
                           LegService legService, UserHelper userHelper, LeosRepository leosRepository,
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
-                          TemplateConfigurationService templateConfigurationService, PackageRepository packageRepository, ProposalRepository proposalRepository) {
+                          TemplateConfigurationService templateConfigurationService, PackageRepository packageRepository) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -277,7 +276,6 @@ public abstract class ApiServiceImpl implements ApiService {
         this.proposalDetailsService = proposalDetailsService;
         this.templateConfigurationService = templateConfigurationService;
         this.packageRepository = packageRepository;
-        this.proposalRepository = proposalRepository;
     }
 
     private static String readFileToString(File file) throws IOException {
@@ -1033,7 +1031,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex();
                 billService.updateExternalReferencesAsync(leosPackage);
-                proposalService.setProposalValidationStatus(proposal.getId(), ProposalValidationStatus.NOT_VALIDATED);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;

@@ -499,6 +499,8 @@ define(function aknNumberedParagraphPluginModule(require) {
                                     if (paragraphNode.getAttribute('title-number')) {
                                         currentNode.setAttribute('title-number', paragraphNode.getAttribute('title-number'));
                                     }
+                                    paragraphNode.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                                    paragraphNode.removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
                                 }
 
                                 currentNode.setAttribute(DATA_AKN_ATTR_SOFTACTION, TRANSFORMED);

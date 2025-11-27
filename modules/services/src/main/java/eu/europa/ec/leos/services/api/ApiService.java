@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
@@ -119,9 +120,9 @@ public interface ApiService {
 
     void validateProposal(String proposalRef) throws Exception;
 
-    void validateProposal(String proposalRef, String email, String username) throws Exception;
-
-    <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus);
+    void validateProposals(String email, String username) throws Exception;
 
     LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) throws IOException;
+
+    Package findPackageByName(String packageName);
 }

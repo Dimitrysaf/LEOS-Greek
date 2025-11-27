@@ -52,8 +52,7 @@ import javax.persistence.Table;
         @NamedQuery(name = "Document.findByAuditCDate", query = "SELECT d FROM Document d WHERE d.auditCDate = :auditCDate"),
         @NamedQuery(name = "Document.findByAuditLastMDate", query = "SELECT d FROM Document d WHERE d.auditLastMDate = :auditLastMDate"),
         @NamedQuery(name = "Document.findByAuditLastMBy", query = "SELECT d FROM Document d WHERE d.auditLastMBy = :auditLastMBy"),
-        @NamedQuery(name = "Document.findByCategoryCode", query = "SELECT d FROM Document d WHERE d.categoryCode = :categoryCode"),
-        @NamedQuery(name = "Document.findByValidationStatus", query = "SELECT d FROM Document d WHERE d.validationStatus = :validationStatus")})
+        @NamedQuery(name = "Document.findByCategoryCode", query = "SELECT d FROM Document d WHERE d.categoryCode = :categoryCode")})
 public class Document implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -109,11 +108,8 @@ public class Document implements Serializable {
     @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private DocumentCategories categoryId;
-
     @Column(name = "CATEGORY_CODE", nullable = false, length = 20)
     private String categoryCode;
-    @Column(name = "VALIDATION_STATUS", length = 30)
-    private String validationStatus;
 
     public Document() {
     }
@@ -316,14 +312,6 @@ public class Document implements Serializable {
 
     public void setCategoryCode(String categoryCode) {
         this.categoryCode = categoryCode;
-    }
-
-    public String getValidationStatus() {
-        return validationStatus;
-    }
-
-    public void setValidationStatus(String validationStatus) {
-        this.validationStatus = validationStatus;
     }
 
     @Override

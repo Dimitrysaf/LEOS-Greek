@@ -169,8 +169,12 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestpackageAddCollaborators;
     @Value("${leos.rest.repository.package.collaborators.delete}")
     private String leosRestpackageDeleteCollaborators;
-    @Value("${leos.rest.repository.find.documents.validation.status}")
+
+    @Value("${leos.rest.repository.find.packages.for.validation}")
     private String  leosRestFindDocumentsByValidationStatusURI;
+
+    @Value("${leos.rest.repository.documents.set.validation.status}")
+    private String leosRestSetDocumentsValidationStatus;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -359,7 +363,7 @@ public class RestRepository extends AbstractRestClient {
         return findPackageByName(name).getId();
     }
 
-    Package findPackageByName(String name) {
+    public Package findPackageByName(String name) {
         String url = getUrl(leosRestFindPackageByNameURI);
         Package resp = getEntity(url, Package.class, encodeUriVariables(name)[0]);
         return resp;
@@ -666,16 +670,23 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    LeosDocumentList findDocumentsByValidationStatus(final String validationStatus) {
-        LOGGER.trace("Finding documents by validation status... [validationStatus=" + validationStatus);
-        LeosDocumentList resp;
+    public List<String> findPackagesForValidation() {
+        LOGGER.trace("Finding documents for validation");
+        List<String> resp;
         try {
-            String url = getUrl(leosRestFindDocumentsByValidationStatusURI)+ "?validationStatus={validationStatus}";
-            resp = getEntity(url, LeosDocumentList.class, validationStatus);
+            String url = getUrl(leosRestFindDocumentsByValidationStatusURI);
+            String[] arr = getEntity(url, String[].class);
+            resp = Arrays.asList(arr);
         } catch (Exception e) {
             LOGGER.error("Error while finding documents by validation status", e);
-            return new LeosDocumentList();
+            return Collections.emptyList();
         }
         return resp;
+    }
+
+    public void setDocumentValidationStatus(List<String> documentsIDs) {
+        LOGGER.trace("Set validation status for documents");
+        String url = getUrl(leosRestSetDocumentsValidationStatus);
+        putEntity(url, documentsIDs, Boolean.class);
     }
 }

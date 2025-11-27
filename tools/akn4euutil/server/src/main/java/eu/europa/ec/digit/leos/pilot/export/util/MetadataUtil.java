@@ -158,8 +158,8 @@ public class MetadataUtil {
     public static final List<String> orderInCoverPage =
             Arrays.asList("akn:container[@name='logo']"
             , "akn:container[@name='actingEntity']", "akn:container[@name='mainDoc']", "akn:container[@name='procedureIdentifier']"
-            , "akn:container[@name='corrigendum']", "akn:longTitle", "akn:container[@name='authenticLang']"
-            , "akn:container[@name='associatedReferences']", "akn:container[@name='eeaRelevance']", "akn:container[@name='mainDocLanguage']");
+            , "akn:container[@name='corrigendum']", "akn:longTitle", "akn:container[@name='eeaRelevance']", "akn:container[@name='authenticLang']"
+            , "akn:container[@name='associatedReferences']", "akn:container[@name='mainDocLanguage']");
 
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
         return new ReferenceFieldInfo("BEL_BRU",

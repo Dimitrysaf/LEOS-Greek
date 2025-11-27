@@ -25,8 +25,8 @@ import java.util.Optional;
 
 public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
 
-    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.CATEGORY_CODE = 'PROPOSAL' AND (d.VALIDATION_STATUS NOT IN (?1) OR d.VALIDATION_STATUS IS NULL) AND d.IS_LATEST_VERSION = 1", nativeQuery = true)
-    List<DocumentV> findDocumentsByValidationStatus(String validationStatus);
+    @Query(value = "SELECT DISTINCT(PACKAGE_NAME) FROM DOCUMENT_V d WHERE d.CATEGORY_CODE NOT IN ('LEG', 'EXPORT') AND d.VALIDATION_STATUS IS NULL AND d.IS_LATEST_VERSION = 1", nativeQuery = true)
+    List<String> findDocumentsForValidation();
 
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.document_id = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findAllVersionsByDocumentId(BigDecimal documentId);

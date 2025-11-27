@@ -16,9 +16,6 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
-import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
-import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -26,8 +23,8 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
 import eu.europa.ec.leos.repository.LeosRepository;
-import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -70,10 +67,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,6 +83,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipOutputStream;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
 public class ProposalApiServiceImpl extends ApiServiceImpl {
@@ -92,32 +93,32 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
     private ConValidatorService conValidatorService;
 
     public ProposalApiServiceImpl(TemplateService templateService,
-                                  WorkspaceService workspaceService,
-                                  UserService userService, CreateCollectionService createCollectionService,
-                                  ProposalService proposalService, SecurityContext securityContext,
-                                  LeosPermissionAuthorityMap authorityMap, ExportService exportService,
-                                  Provider<CollectionContextService> collectionContextProvider,
-                                  DocumentContentService documentContentService, MessageHelper messageHelper,
-                                  Provider<BillContextService> billContextProvider, PackageService packageService,
-                                  BillService billService, XmlContentProcessor xmlContentProcessor,
-                                  ArchiveService archiveService, AnnexService annexService,
-                                  CloneContext cloneContext, MilestoneService milestoneService,
-                                  ProposalConverterService proposalConverterService,
-                                  PostProcessingDocumentService postProcessingDocumentService,
-                                  ValidationService validationService, Properties applicationProperties,
-                                  ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
-                                  NotificationService notificationService, LegService legService, UserHelper userHelper,
-                                  LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-                                  DocumentViewService documentViewService, ConValidatorService conValidatorService,
-                                  GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
-                                  ProposalDetailsService proposalDetailsService,
-                                  TemplateConfigurationService templateConfigurationService, PackageRepository packageRepository,
-                                  ProposalRepository proposalRepository) {
+            WorkspaceService workspaceService,
+            UserService userService, CreateCollectionService createCollectionService,
+            ProposalService proposalService, SecurityContext securityContext,
+            LeosPermissionAuthorityMap authorityMap, ExportService exportService,
+            Provider<CollectionContextService> collectionContextProvider,
+            DocumentContentService documentContentService, MessageHelper messageHelper,
+            Provider<BillContextService> billContextProvider, PackageService packageService,
+            BillService billService, XmlContentProcessor xmlContentProcessor,
+            ArchiveService archiveService, AnnexService annexService,
+            CloneContext cloneContext, MilestoneService milestoneService,
+            ProposalConverterService proposalConverterService,
+            PostProcessingDocumentService postProcessingDocumentService,
+            ValidationService validationService, Properties applicationProperties,
+            ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
+            NotificationService notificationService, LegService legService, UserHelper userHelper,
+            LeosRepository leosRepository, TrackChangesContext trackChangesContext,
+            DocumentViewService documentViewService, ConValidatorService conValidatorService,
+            GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
+            ProposalDetailsService proposalDetailsService, TemplateConfigurationService templateConfigurationService,
+            PackageRepository packageRepository) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService, templateConfigurationService, packageRepository, proposalRepository);
+                documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService, templateConfigurationService,
+                packageRepository);
         this.conValidatorService = conValidatorService;
     }
 
@@ -167,41 +168,57 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
     }
 
     @Override
-    public void validateProposal(String proposalRef, String email, String userName) throws Exception {
-        File validationFile = File.createTempFile(proposalRef, ".zip");
-        try {
-            if (StringUtils.isNotEmpty(proposalRef)) {
-                Proposal proposal = proposalRepository.findProposalByRef(proposalRef);
-                final LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposal.getId());
-                List<XmlDocument> xmlDocuments = packageRepository.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, true);
-                Map<String, Object> contentToZip = new HashMap<>();
-                for (XmlDocument xmlDocument : xmlDocuments) {
-                    contentToZip.put(xmlDocument.getName(), xmlDocument.getContent().get().getSource().getBytes());
-                }
-                ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(validationFile));
-                try {
-                    ZipPackageUtil.addContentToOutputStream(zipOutputStream, contentToZip);
-                } finally {
-                    zipOutputStream.close();
-                }
-                String legFileName = proposalRef + ".leg";
-                validationFile = ZipPackageUtil.renameZipFile(legFileName, validationFile);
-                String validationResult = conValidatorService.validate(validationFile);
+    public void validateProposals(String email, String userName) {
+        List<String> packageNames = leosRepository.findPackagesForValidation();
+        if (packageNames != null && !packageNames.isEmpty()) {
+            packageNames.forEach(packageName -> {
+                Package leosPackage = findPackageByName(packageName);
+                if (leosPackage != null) {
+                    File validationFile = null;
+                    try {
+                        List<XmlDocument> xmlDocuments = packageRepository.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, true);
+                        validationFile = File.createTempFile("temp", ".zip");
+                        Map<String, Object> contentToZip = new HashMap<>();
+                        for (XmlDocument xmlDocument : xmlDocuments) {
+                            contentToZip.put(xmlDocument.getName(), xmlDocument.getContent().get().getSource().getBytes());
+                        }
+                        ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(validationFile));
+                        try {
+                            ZipPackageUtil.addContentToOutputStream(zipOutputStream, contentToZip);
+                        } finally {
+                            zipOutputStream.close();
+                        }
+                        String proposalRef = xmlDocuments.stream().filter(xmlDocument -> xmlDocument.getCategory().name().equals("PROPOSAL")).findFirst().get().getName().replace(".xml","");
+                        String legFileName = proposalRef + ".leg";
+                        validationFile = ZipPackageUtil.renameZipFile(legFileName, validationFile);
+                        String validationResult = conValidatorService.validate(validationFile);
 
-                if(StringUtils.isNotEmpty(validationResult)) {
-                    Map<String, Object> validationResultContent = new HashMap<>();
-                    validationResultContent.put("result.xml", validationResult);
-                    validationResultContent.put(legFileName, validationFile);
-                    File resultZipFile = ZipPackageUtil.zipFiles("validation.zip", validationResultContent, "");
-                    sendNotification(proposalRef, email, userName, FileUtils.readFileToByteArray(resultZipFile));
-                    proposalService.setProposalValidationStatus(proposal.getId(), ProposalValidationStatus.SENT_FOR_VALIDATION);
+                        if(StringUtils.isNotEmpty(validationResult)) {
+                            Map<String, Object> validationResultContent = new HashMap<>();
+                            validationResultContent.put("result.xml", validationResult);
+                            validationResultContent.put(legFileName, validationFile);
+                            File resultZipFile = ZipPackageUtil.zipFiles("validation.zip", validationResultContent, "");
+                            sendNotification(proposalRef, email, userName, FileUtils.readFileToByteArray(resultZipFile));
+                            setDocumentsValidationStatus(xmlDocuments);
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        if (validationFile != null && validationFile.exists() && validationFile.delete()) {
+                            LOG.info("File deleted {}", validationFile.toPath());
+                        }
+                    }
                 }
-            }
-        } finally {
-            if (validationFile != null && validationFile.exists() && validationFile.delete()) {
-                LOG.info("File deleted {}", validationFile.toPath());
-            }
+            });
         }
+    }
+
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    void setDocumentsValidationStatus( List<XmlDocument> xmlDocuments) {
+        leosRepository.setDocumentsValidationStatus(xmlDocuments.stream().map(XmlDocument::getId).collect(toList()));
     }
 
     private void sendNotification(String proposalRef, String email, String userName, byte[] validationResult) {
@@ -210,8 +227,8 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
     }
 
     @Override
-    public <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus) {
-        return leosRepository.findDocumentsByValidationStatus(type, validationStatus);
+    public Package findPackageByName(String packageName) {
+        return leosRepository.findPackageByName(packageName);
     }
 
     @Override

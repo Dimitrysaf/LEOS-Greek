@@ -47,6 +47,7 @@ cypress-test-for-local:
     TAGS_TO_RUN: "@local"
     GIT_CLEAN_FLAGS: none
   stage: test
+  needs: [java-build]
   dependencies:
     - java-build
   #  resource_group: cypress
