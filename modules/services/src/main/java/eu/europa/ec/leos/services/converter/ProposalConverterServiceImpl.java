@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.converter;
 
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -28,15 +29,10 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +49,6 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.D
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TEMPLATE;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TRANSLATION_FROM_HREF;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TRANSLATION_FROM_LANGUAGE;
-import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TYPE_META;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_VERSION;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.EXPLANATORY_TITLE_PREFACE;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION;
@@ -61,7 +56,6 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.P
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
-import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 
 public abstract class ProposalConverterServiceImpl implements ProposalConverterService {
 
@@ -105,16 +99,14 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
      * @param canModifySource true to exclude some xml tags into byte array source, false if you need to keep the original integrity of the document
      * @return the enriched DocumentVO representing the proposal inside the leg file.
      */
-    public DocumentVO createProposalFromLegFile(File file, boolean canModifySource) throws XmlValidationException {
+    public DocumentVO createProposalFromLegFile(LeosFile file, boolean canModifySource) throws XmlValidationException {
         DocumentVO proposal = new DocumentVO(LeosCategory.PROPOSAL);
-        // unzip file
-        String unzipPath = "/unzip/";
-        Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, unzipPath);
+        Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file);
         try {
             String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE) && x.endsWith(XML_DOC_EXT)).findFirst().orElse("");
             if (unzippedFiles.containsKey(proposalFileKey)) {
                 List<DocumentVO> propChildDocs = new ArrayList<>();
-                File proposalFile = (File) unzippedFiles.get(proposalFileKey);
+                LeosFile proposalFile = (LeosFile) unzippedFiles.get(proposalFileKey);
                 updateSource(proposal, proposalFile, canModifySource);
                 updateDocIdFromXml(proposal, LeosCategory.PROPOSAL, proposalFileKey);
                 updateMetadataVO(proposal);
@@ -125,7 +117,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                     if(docName.startsWith(PROPOSAL_FILE)) {
                         continue;
                     }
-                    File docFile = (File) unzippedFiles.get(docName);
+                    LeosFile docFile = (LeosFile) unzippedFiles.get(docName);
                     DocumentVO doc = createDocument(docName, docFile, canModifySource);
                     if (doc != null) {
                         if (doc.getCategory() == LeosCategory.ANNEX) {
@@ -152,8 +144,6 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
             }
         } catch (Exception e) {
             LOG.error("Error generating the map of the document: {}", e);
-        } finally {
-            deleteFiles(file, unzippedFiles, unzipPath);
         }
         return proposal;
     }
@@ -170,27 +160,23 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
     }
 
     @Override
-    public DocumentVO createDocument(String docName, File docFile, boolean canModifySource) {
+    public DocumentVO createDocument(String docName, LeosFile docFile, boolean canModifySource) {
         DocumentVO doc = null;
-        try {
-            if (docName.endsWith(XML_DOC_EXT)) {
-                byte[] xmlBytes = Files.readAllBytes(docFile.toPath());
-                LeosCategory category = xmlContentProcessor.identifyCategory(xmlBytes);
-                if (category != null) {
-                    doc = new DocumentVO(category);
-                    updateSource(doc, docFile, canModifySource);
-                    updateDocIdFromXml(doc, category, docName);
-                    updateMetadataVO(doc);
-                }
+        if (docName.endsWith(XML_DOC_EXT)) {
+            byte[] xmlBytes = docFile.getBytes();
+            LeosCategory category = xmlContentProcessor.identifyCategory(xmlBytes);
+            if (category != null) {
+                doc = new DocumentVO(category);
+                updateSource(doc, docFile, canModifySource);
+                updateDocIdFromXml(doc, category, docName);
+                updateMetadataVO(doc);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Unexpected error occurred while reading doc file", e);
         }
         return doc;
     }
 
 
-    protected abstract void updateSource(final DocumentVO document, File documentFile, boolean canModifySource);
+    protected abstract void updateSource(final DocumentVO document, LeosFile documentFile, boolean canModifySource);
 
     private void updateMetadataVO(final DocumentVO document) {
         if (document.getSource() != null) {
@@ -252,39 +238,6 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
             } catch (Exception e) {
                 LOG.error("Error parsing metadata {}", e);
             }
-        }
-    }
-
-    /**
-     * Will delete form the temporary folder the files uploaded and the unzipped files + parent folder.
-     *  @param mainFile
-     * @param unzippedFiles
-     * @param unzipPath
-     */
-    private void deleteFiles(File mainFile, Map<String, Object> unzippedFiles, String unzipPath) {
-        if (!mainFile.delete()) {
-            LOG.info("File not deleted {}", mainFile.getPath());
-        }
-        List<String> parentFolders = new ArrayList<>();
-        for (String docName : unzippedFiles.keySet()) {
-            File unzippedFile = (File) unzippedFiles.get(docName);
-            String parent = unzippedFile.getParent();
-            if (!parentFolders.contains(parent)) {
-                parentFolders.add(parent);
-            }
-            if (!unzippedFile.delete()) {
-                LOG.info("File not deleted {}", unzippedFile.getPath());
-            }
-        }
-        try {
-            // we must clean also the folder.
-            for (String parent : parentFolders) {
-                final String basePath = System.getProperty("java.io.tmpdir") + unzipPath;
-                validateBasePath(FilenameUtils.normalize(parent), basePath);
-                FileUtils.deleteDirectory(new File(parent));
-            }
-        } catch (IOException e) {
-            LOG.error("Error deleting the folder {}", e);
         }
     }
 }

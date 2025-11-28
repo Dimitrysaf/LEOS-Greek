@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -94,8 +95,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import javax.inject.Provider;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -243,7 +242,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             if (legDocumentName == null || legDocumentName.contains("..")) {
                 throw new IllegalArgumentException("Invalid upload directory path: " + legDocumentName);
             }
-            File content = new File(legDocumentName);
+            LeosFile content = new LeosFile(legDocumentName);
             writeContentToFile(legDocument, content);
             userService.switchUser(user.getLogin());
             String userDefaultEntity = user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "";
@@ -260,12 +259,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         return createCollectionResult;
     }
 
-    private static void writeContentToFile(LegDocument legDocument, File content) {
-        try (FileOutputStream fos = new FileOutputStream(content)) {
-            fos.write(legDocument.getContent().get().getSource().getBytes());
-        } catch (IOException ioe) {
-            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-        }
+    private static void writeContentToFile(LegDocument legDocument, LeosFile content) {
+        content.setBytes(legDocument.getContent().get().getSource().getBytes());
     }
 
     @Override
@@ -384,14 +379,6 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
             mergeResult = mergeContributionService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
             byte[] xmlContent = mergeResult.getMergedContent();
-            if (!document.getMetadata().get().getCategory().equals(LeosCategory.MEMORANDUM) && !document.getMetadata().get().getCategory().equals(STAT_DIGIT_FINANC_LEGIS)) {
-                xmlContent = this.numberService.renumberArticles(xmlContent, false);
-                xmlContent = this.numberService.renumberRecitals(xmlContent);
-                xmlContent = this.numberService.renumberLevel(xmlContent);
-                xmlContent = this.numberService.renumberParagraph(xmlContent);
-                xmlContent = this.numberService.renumberDivisions(xmlContent);
-            }
-            xmlContent = this.xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
             if (document.getCategory().equals(LeosCategory.PROPOSAL)) {
                 document = proposalService.updateProposal(
                         (Proposal) document,
@@ -639,14 +626,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         return financialDocumentVO;
     }
 
-    public File createFileFromXmlSource(byte[] xmlSource, String docName) throws IOException {
-        File file = new File(docName);
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(xmlSource);
-            fos.flush();
-        } catch (IOException e) {
-            throw new IOException("Failed to create file from xmlSource", e);
-        }
+    public LeosFile createFileFromXmlSource(byte[] xmlSource, String docName) throws IOException {
+        LeosFile file = new LeosFile(docName);
+        file.setBytes(xmlSource);
         return file;
     }
 
@@ -726,7 +708,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         if (docName.indexOf(XML_DOC_EXT) == -1) {
             docName = docName.concat(XML_DOC_EXT);
         }
-        File docFile = null;
+        LeosFile docFile = null;
         if (isAdded) {
             byte[] xmlSource = (byte[]) legContent.get(docName);
             try {

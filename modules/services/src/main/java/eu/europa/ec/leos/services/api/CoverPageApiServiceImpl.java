@@ -215,7 +215,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             byte[] newXmlContent =
                     !docPurposeElements.isEmpty() ? xmlContentProcessor.replaceElementById(proposalContent,
                             elementFragment,
-                            docPurposeElements.get(0).getElementId()) : null;
+                            docPurposeElements.get(0).getElementId(), true) : null;
 
             if (newXmlContent == null) {
                 return null;

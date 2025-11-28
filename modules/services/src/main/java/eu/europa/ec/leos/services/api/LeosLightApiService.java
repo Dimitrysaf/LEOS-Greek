@@ -1,19 +1,19 @@
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.services.dto.request.ExportDocumentRequest;
 import eu.europa.ec.leos.services.exception.InvalidInputException;
 import io.atlassian.fugue.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 
 public interface LeosLightApiService {
 
     Pair<String, String> importDocument(byte[] docContent, String locale, String callbackAddress) throws InvalidInputException;
 
-    Pair<Boolean, File> exportDocument(ExportDocumentRequest request, String clientContextToken);
+    Pair<Boolean, LeosFile> exportDocument(ExportDocumentRequest request, String clientContextToken);
 
     Pair<Object, HttpStatus> importProposal(MultipartFile file) throws IOException;
 }

@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.store;
 
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.LegDocumentVO;
@@ -8,7 +9,6 @@ import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.LegPackage;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +31,8 @@ public interface LegService {
 
     LegPackage createLegPackageForClone(String proposalId, ExportOptions exportOptions) throws IOException;
 
-    LegPackage createLegPackage(File legFile, ExportOptions exportOptions) throws IOException, XmlValidationException;
-    
+    LegPackage createLegPackage(LeosFile legFile, ExportOptions exportOptions) throws IOException, XmlValidationException;
+
     List<LegDocumentVO> getLegDocumentDetailsByUserId(String userId, String proposalId, String legStatus);
     
     LegDocument createLegDocument(String proposalId, String jobId, LegPackage legPackage, LeosLegStatus status) throws IOException;

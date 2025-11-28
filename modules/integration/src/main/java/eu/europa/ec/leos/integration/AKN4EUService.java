@@ -1,12 +1,11 @@
 package eu.europa.ec.leos.integration;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.model.user.User;
-
-import java.io.File;
 
 public interface AKN4EUService {
 
-    void convert(File legFile, User user, String outputDescriptor) throws Exception;
+    void convert(LeosFile legFile, User user, String outputDescriptor) throws Exception;
 
-    byte[] applyMetadata(File legFile) throws Exception;
+    byte[] applyMetadata(LeosFile legFile) throws Exception;
 }

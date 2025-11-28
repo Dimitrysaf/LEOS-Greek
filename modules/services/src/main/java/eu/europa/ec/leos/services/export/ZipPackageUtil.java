@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.export;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,70 +24,41 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ZipPackageUtil {
-    private static Logger LOG = LoggerFactory.getLogger(ZipPackageUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZipPackageUtil.class);
 
-    public static File zipFiles(String zipFileName, Map<String, Object> contentToZip, String language) throws IOException {
+    public static LeosFile zipLeosFiles(String zipFileName, Map<String, Object> contentToZip, String language) throws IOException {
         String fileExtension = "." + FilenameUtils.getExtension(zipFileName);
         String fileName = FilenameUtils.getBaseName(zipFileName);
-        File zipFile = null;
-        ZipOutputStream zipOutputStream = null;
+        LeosFile leosFile = new LeosFile();
+        leosFile.generateFileName(fileName.concat(DOC_FILE_NAME_SEPARATOR), fileExtension);
+        leosFile.setName(renameZipFile(language, fileExtension, leosFile.getName()));
+        leosFile.setOriginalFileName(leosFile.getName());
         try {
-            zipFile = File.createTempFile(fileName.concat(DOC_FILE_NAME_SEPARATOR), fileExtension);
-            zipFile = renameZipFile(language, fileExtension, zipFile);
-            zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile));
-            addContentToOutputStream(zipOutputStream, contentToZip);
-            return zipFile;
+            leosFile.setBytes(convertContentToByteArray(contentToZip));
         } catch (IOException e) {
             LOG.error("Error creating zip package: {}", e.getMessage());
-            if (zipFile != null && zipFile.exists()) {
-                if(!zipFile.delete()){
-                    LOG.info("File not deleted {}", zipFile.toPath());
-                }
-            }
             throw new IOException(e.getMessage());
-        } finally {
-            if (zipOutputStream != null) {
-                zipOutputStream.close();
-            }
         }
+        return leosFile;
     }
 
-    private static File renameZipFile(String language, String fileExtension, File zipFile) throws IOException {
-        String zipName = zipFile.getName();
-        zipName = zipName.substring(0, zipName.lastIndexOf("."));
+    public static String renameZipFile(String language, String fileExtension, String zipName) {
+        zipName = zipName.lastIndexOf(".") != -1 ? zipName.substring(0, zipName.lastIndexOf(".")) : zipName;
         zipName = StringUtils.isNotEmpty(language) ? zipName.concat(DOC_FILE_NAME_SEPARATOR).concat(language).
                 concat(fileExtension) : zipName.concat(fileExtension);
-        Path path = Paths.get(zipFile.getAbsolutePath());
-        path = Files.move(path, path.resolveSibling(zipName), REPLACE_EXISTING);
-        zipFile = path.toFile();
-        return zipFile;
-    }
-
-    public static File renameZipFile(String filename, File zipFile) throws IOException {
-        Path path = Paths.get(zipFile.getAbsolutePath());
-        path = Files.move(path, path.resolveSibling(filename), REPLACE_EXISTING);
-        zipFile = path.toFile();
-        return zipFile;
+        return zipName;
     }
 
     public static byte[] zipByteArray(Map<String, Object> contentToZip) throws IOException {
@@ -134,6 +106,52 @@ public class ZipPackageUtil {
         }
     }
 
+    public static byte[] convertContentToByteArray(Map<String, Object> contentToZip) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
+        for (Map.Entry<String, Object> entry : contentToZip.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof File) {
+                File fileValue = (File) value;
+                validatePath(fileValue.getAbsolutePath());
+                ZipEntry ze = new ZipEntry(key);
+                zipOutputStream.putNextEntry(ze);
+                try(FileInputStream fileInputStream = new FileInputStream(FilenameUtils.normalize(fileValue.getAbsolutePath()))){
+                    IOUtils.copy(fileInputStream, zipOutputStream);
+                }
+                zipOutputStream.closeEntry();
+            } else if (value instanceof ByteArrayOutputStream) {
+                ByteArrayOutputStream byteArrayOutputStreamValue = (ByteArrayOutputStream) value;
+                ZipEntry ze = new ZipEntry(key);
+                zipOutputStream.putNextEntry(ze);
+                zipOutputStream.write(byteArrayOutputStreamValue.toByteArray());
+                zipOutputStream.closeEntry();
+                byteArrayOutputStreamValue.close();
+            } else if (value instanceof String) {
+                String stringValue = (String) value;
+                ZipEntry ze = new ZipEntry(key);
+                zipOutputStream.putNextEntry(ze);
+                zipOutputStream.write(stringValue.getBytes(UTF_8));
+                zipOutputStream.closeEntry();
+            } else if (value instanceof byte[]) {
+                byte[] byteArrayValue = (byte[]) value;
+                ZipEntry ze = new ZipEntry(key);
+                zipOutputStream.putNextEntry(ze);
+                zipOutputStream.write(byteArrayValue);
+                zipOutputStream.closeEntry();
+            } else if (value instanceof LeosFile) {
+                byte[] byteArrayValue = ((LeosFile) value).getBytes();
+                ZipEntry ze = new ZipEntry(key);
+                zipOutputStream.putNextEntry(ze);
+                zipOutputStream.write(byteArrayValue);
+                zipOutputStream.closeEntry();
+            }
+        }
+        zipOutputStream.close();
+        return byteArrayOutputStream.toByteArray();
+    }
+
     public static Map<String, Object> unzipByteArray(byte[] zipppedData) throws IOException {
         Map<String, Object> unzippedFiles = new HashMap<>();
         try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipppedData))) {
@@ -149,35 +167,31 @@ public class ZipPackageUtil {
         return unzippedFiles;
     }
 
-    public static Map<String, Object> unzipFiles(File file, String unzipPath) {
+    public static Map<String, Object> unzipFiles(LeosFile file) {
+        return unzipFilesFromByteArray(file.getBytes());
+    }
+
+    public static Map<String, Object> unzipFilesFromByteArray(byte[] byteArray) {
         Map<String, Object> unzippedFiles = new HashMap<>();
-        final File destDir = new File(System.getProperty("java.io.tmpdir") + unzipPath +
-                file.getName() + "_" + System.currentTimeMillis());
         // get the zip file content with try-with-resources
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(file))) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArray);
+        try (ZipInputStream zis = new ZipInputStream(byteArrayInputStream)) {
             // get the zipped file list entry
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
-                final File newFile = newFile(destDir, ze);
+                final LeosFile newFile = newLeosFile(ze, zis);
                 if (ze.isDirectory()) {
-                    if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                    if (!newFile.isDirectory()) {
                         throw new IOException("Failed to create directory " + newFile);
                     }
                 } else {
-                    final File parent = newFile.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
-                        throw new IOException("Failed to create directory " + parent);
-                    }
-                    try(FileOutputStream fos = new FileOutputStream(newFile)) {
-                        IOUtils.copy(zis, fos);
-                    }
                     unzippedFiles.put(newFile.getName(), newFile);
                 }
             }
             // closeEntry should not be required. In the next step the stream will be closed.
             // close will be done by the try-with-resources block
         } catch (IOException ex) {
-            LOG.error("Error unzipping the file {} : {}", file.getName(), ex.getMessage());
+            LOG.error("Error unzipping : {}", ex.getMessage());
         }
         return unzippedFiles;
     }
@@ -185,59 +199,46 @@ public class ZipPackageUtil {
     /**
      * @see <a href="https://snyk.io/research/zip-slip-vulnerability">...</a>
      */
-    private static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
-        File destFile = new File(destinationDir, zipEntry.getName());
-        String destDirPath = destinationDir.getCanonicalPath();
-        String destFilePath = destFile.getCanonicalPath();
-        if (!destFilePath.startsWith(destDirPath + File.separator)) {
-            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
-        }
-        return destFile;
+    private static LeosFile newLeosFile(ZipEntry zipEntry, ZipInputStream zis) throws IOException {
+        LeosFile leosFile = new LeosFile(zipEntry.getName(), zipEntry.isDirectory());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        IOUtils.copy(zis, byteArrayOutputStream);
+        leosFile.setBytes(byteArrayOutputStream.toByteArray());
+        return leosFile;
     }
 
-    public static File unzipFile(File singleZipInput, String singleZipEntryName) throws Exception {
-        ByteArrayOutputStream baos = unzipFileToStream(singleZipInput, singleZipEntryName);
+    public static LeosFile unzipFile(LeosFile singleZipInput, String singleZipEntryName) throws Exception {
+        byte [] entryContent = unzipFileToByteArray(singleZipInput, singleZipEntryName);
         String fileExtension = "." + FilenameUtils.getExtension(singleZipEntryName);
         String fileName = FilenameUtils.getBaseName(singleZipEntryName);
-        File unzippedFile = File.createTempFile(fileName + "_", fileExtension);
-        validatePath(unzippedFile.getAbsolutePath());
-        FileOutputStream fos = new FileOutputStream(unzippedFile);
-        baos.writeTo(fos);
+        LeosFile unzippedFile = new LeosFile();
+        unzippedFile.generateFileName(fileName + "_", fileExtension);
+        unzippedFile.setBytes(entryContent);
         return unzippedFile;
     }
 
-    public static ByteArrayOutputStream unzipFileToStream(File singleZipInput, String singleZipEntryName) throws Exception {
-
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ZipFile zf = new ZipFile(singleZipInput)) {
-            ZipEntry zipEntry = zf.getEntry(singleZipEntryName);
-            try (InputStream in = zf.getInputStream(zipEntry)) {
-                IOUtils.copy(in, baos);
-            }
-        }
-        return baos;
+    public static byte[] unzipFileToByteArray(LeosFile singleZipInput, String singleZipEntryName) throws Exception {
+        Map<String, Object> entries = unzipByteArray(singleZipInput.getBytes());
+        return (byte[]) entries.get(singleZipEntryName);
     }
 
     /*
         Bills are always named Bill.docx, but Annexes are multiple and could be Annex_1, Annex_2, depending on which Annex was downloaded
         Looks for the matching *Annex_* filename in the zip file and returns that filename
      */
-    public static String obtainRealDocName(File singleZipInput, String singleZipEntryName) throws Exception {
+    public static String obtainRealDocName(LeosFile singleZipInput, String singleZipEntryName) throws Exception {
 
         if(!"Annex".equalsIgnoreCase(singleZipEntryName) && !"Explanatory".equalsIgnoreCase(singleZipEntryName)) {
             return singleZipEntryName + ".docx";
         }
 
-        try (ZipFile zipFile = new ZipFile(singleZipInput)) {
-            Enumeration zipEntries = zipFile.entries();
-            while (zipEntries.hasMoreElements()) {
-                String fileName = ((ZipEntry) zipEntries.nextElement()).getName();
-                if(fileName.startsWith("Annex_") || fileName.startsWith("Council_explanatory_")) {
-                    return fileName;
-                }
+        Map<String, Object> entries = unzipByteArray(singleZipInput.getBytes());
+        for (Map.Entry<String, Object> entry : entries.entrySet()) {
+            String fileName = entry.getKey();
+            if(fileName.startsWith("Annex_") || fileName.startsWith("Council_explanatory_")) {
+                return fileName;
             }
         }
-        throw new RuntimeException(String.format("Could not find a matching file inside .zip - Looking for entry [%s]", singleZipEntryName));
+        return singleZipEntryName;
     }
 }

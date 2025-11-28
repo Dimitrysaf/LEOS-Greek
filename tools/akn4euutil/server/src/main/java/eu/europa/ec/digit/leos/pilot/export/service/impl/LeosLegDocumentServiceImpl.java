@@ -182,9 +182,9 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
         try (ByteArrayOutputStream contentFileContent = xmlDocumentService.createContentFile(exportOptions,
                 legPackage.getExportResource())) {
             Map<String, Object> contentToZip = new HashMap<>();
-            contentToZip.put("content.xml", contentFileContent);
+            contentToZip.put("content.xml", contentFileContent.toByteArray());
             String propActFileName = legPackage.getExportResource().getName() + ".leg";
-            contentToZip.put(propActFileName, legPackage.getFile());
+            contentToZip.put(propActFileName, legPackage.getFile().getBytes());
             return ZipUtil.zipFiles(jobFileName, contentToZip);
         }
     }

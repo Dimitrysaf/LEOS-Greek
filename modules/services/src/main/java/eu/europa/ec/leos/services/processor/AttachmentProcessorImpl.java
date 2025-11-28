@@ -139,7 +139,7 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
                     throw new AssertionError("Didn't found a node in xpath: " + xPath + ", namespace: true");
                 }
                 String updatedElement = createDocumentRefTag(elementId, elementRef, attachmentsElements.get(elementRef));
-                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, updatedElement, elementId);
+                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, updatedElement, elementId, true);
             } catch (Exception e) {
                 LOG.debug("Updating attachments: didn't find this attachment");
             }

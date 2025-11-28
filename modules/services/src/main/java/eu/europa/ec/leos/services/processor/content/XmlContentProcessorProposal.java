@@ -28,7 +28,6 @@ import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
-import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.LangNumConfig;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -345,9 +344,9 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         }
         final String replace = fragment.replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
 
-        byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId());
+        byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId(), true);
 
-        updatedXmlContent = replaceElementById(updatedXmlContent, content, idAttributeValue);
+        updatedXmlContent = replaceElementById(updatedXmlContent, content, idAttributeValue, true);
         updatedXmlContent = deleteElementById(updatedXmlContent, idAttributeValue);
         Element parentElement = getParentElement(updatedXmlContent, mergeOnElement.getElementId());
         if (parentElement != null && Arrays.asList(LEVEL, POINT, INDENT).contains(parentElement.getElementTagName()) &&
@@ -359,7 +358,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             mergedElementFragment = XmlHelper.removeAllNameSpaces(mergedElementFragment);
             mergedContentFragment = XmlHelper.removeAllNameSpaces(mergedContentFragment);
             String parentElementFragment = parentElement.getElementFragment().replace(mergedElementFragment, mergedContentFragment);
-            updatedXmlContent = replaceElementById(updatedXmlContent, parentElementFragment, parentElement.getElementId());
+            updatedXmlContent = replaceElementById(updatedXmlContent, parentElementFragment, parentElement.getElementId(), true);
         }
 
         return updatedXmlContent;
