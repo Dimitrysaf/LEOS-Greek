@@ -1379,13 +1379,12 @@ Feature: CK Editor Regression Features
 
 
         # Ticket LEOS#3158 : insert special characters in any document using the plugin
-  @insertspecialchar
+  @insertspecialchar @local
   Scenario: insert special characters using the plugin
     Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
-    And  collapse all button is displayed in create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
     And  provide document title "insert special character using the plugin" in create document page
@@ -1404,6 +1403,7 @@ Feature: CK Editor Regression Features
     And  recital 1 contains "Recital...!"
     Then enable track changes
     When mouseover and click on recital 1
+    Then ck editor window is displayed
     And  click on insert special character icon present in ck editor panel
     Then cke dialog window is displayed with title "Select Special Character"
     When click on cell 3 of row 1 of special character table in cke dialog window
@@ -1411,5 +1411,3 @@ Feature: CK Editor Regression Features
     When click save and close button of ck editor
     Then ck editor window is not displayed
     And  recital 1 contains "Recital...!#"
-
-
