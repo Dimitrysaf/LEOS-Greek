@@ -56,6 +56,8 @@ public interface BillService {
 
     Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest);
 
+    Bill updateBill(Bill bill, BillMetadata updatedMetadata, byte[] updatedContent, VersionType versionType, String comment, boolean updateInternalRefs);
+
     Bill updateBillWithMilestoneComments(Bill bill, List<String> milestoneComments, VersionType versionType, String comment);
 
     Bill updateBillWithMilestoneComments(String ref, String billId, List<String> milestoneComments);
@@ -80,7 +82,7 @@ public interface BillService {
 
     Bill saveTableOfContent(Bill bill, List<TableOfContentItemVO> tocList, String actionMsg, User user);
 
-    List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile);
+    List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile, boolean isAutonomousAct);
 
     List<String> getAncestorsIdsForElementId(Bill bill, List<String> elementIds);
 

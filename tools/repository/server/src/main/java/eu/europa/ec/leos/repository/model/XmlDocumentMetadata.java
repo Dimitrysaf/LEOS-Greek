@@ -39,9 +39,11 @@ public class XmlDocumentMetadata {
     private String procedureType;
     private String packageTitle;
     private String internalRef;
+    private String coverPageType;
     private String language;
     private String ref;
     private Boolean eeaRelevance;
+    private String authenticLanguage;
     private String templateName;
     private String template;
     private String docTemplate;
@@ -369,5 +371,21 @@ public class XmlDocumentMetadata {
 
     public void setProcedureType(String procedureType) {
         this.procedureType = procedureType;
+    }
+
+    public String getAuthenticLanguage() {
+        return authenticLanguage;
+    }
+
+    public void setAuthenticLanguage(String authenticLanguage) {
+        this.authenticLanguage = authenticLanguage;
+    }
+
+    public String getCoverPageType() {
+        return coverPageType;
+    }
+
+    public void setCoverPageType(String coverPageType) {
+        this.coverPageType = coverPageType;
     }
 }

@@ -146,6 +146,12 @@ public class XPathCatalog {
         return "/akn:akomaNtoso//../akn:coverPage";
     }
 
+    public String getXPathLongTitle() { return "/akn:akomaNtoso//../akn:coverPage/akn:longTitle"; }
+
+    public String getXPathCorrigendum() { return "/akn:akomaNtoso/akn:documentCollection/akn:coverPage/akn:container[@name=\"corrigendum\"]"; }
+
+    public String getXPathAddendum() { return "/akn:akomaNtoso/akn:documentCollection/akn:coverPage/akn:container[@name=\"addendum\"]"; }
+
     public String getXPathMeta() {
         return "/akn:akomaNtoso//akn:meta";
     }

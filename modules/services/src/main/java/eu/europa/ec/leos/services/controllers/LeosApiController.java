@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.AuthClient;
@@ -545,7 +546,7 @@ public class LeosApiController {
     public ResponseEntity<Object> getProposalDetails(@PathVariable String proposalRef) {
         proposalRef = encodeParam(proposalRef);
         String userId = securityContext.getUser().getLogin();
-        Optional<DocumentVO> requestedProposal = apiService.getProposalDetails(proposalRef, userId);
+        Optional<ProposalDetailsVO> requestedProposal = apiService.getProposalDetails(proposalRef, userId);
         if (requestedProposal.isPresent()) {
             return ResponseEntity.ok(requestedProposal.get());
         } else {
@@ -745,8 +746,7 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> getConfig(HttpServletRequest request) {
         try {
-            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
-            AppConfigResponse appConfigResponse = configService.getApplicationConfig(clientContextToken);
+            AppConfigResponse appConfigResponse = configService.getApplicationConfig(request.getHeader(AUTHORIZATION));
             return new ResponseEntity<>(appConfigResponse, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());

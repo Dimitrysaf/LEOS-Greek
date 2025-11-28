@@ -676,7 +676,7 @@ public class XmlContentProcessorHelper {
 
         return node;
     }
-    
+
     public static List<Node> extractLevelNonTocItems(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node) {
         List<Node> childrenToAppend = new ArrayList<>();
         List<Node> children = getChildren(node);

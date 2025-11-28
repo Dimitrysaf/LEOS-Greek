@@ -175,6 +175,23 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     @Override
+    public Bill updateBill(Bill bill, BillMetadata updatedMetadata, byte[] updatedContent, VersionType versionType, String comment, boolean updateInternalRefs) {
+        LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        byte[] updatedBytes = updateDataInXml(updatedContent, updatedMetadata);
+
+        bill = billRepository.updateBill(bill.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(bill);
+        }
+        //call validation on document with updated content
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
+
+        LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        return bill;
+    }
+
+    @Override
     public Bill updateBill(Bill bill, BillMetadata updatedMetadata, VersionType versionType, String comment, boolean updateInternalRefs) {
         LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -393,7 +410,7 @@ public abstract class BillServiceImpl implements BillService {
         return tocList;
     }
 
-    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile) {
+    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile, boolean isAutonomousAct) {
         List<TocItem> tocItems = structureContext.getTocItems();
         if (profile != null) {
             if (!profile.isTocEdition()) {
@@ -415,6 +432,14 @@ public abstract class BillServiceImpl implements BillService {
                             && profiles.get(0).getElementSelector().contains(BLOCK)) {
                         tocItem.setEditable(false);
                     }
+                }
+            }
+        }
+        if (!isAutonomousAct) {
+            for (TocItem tocItem : tocItems) {
+                if (tocItem.getAknTag().value().equalsIgnoreCase(ROLE)
+                                || tocItem.getAknTag().value().equalsIgnoreCase(PERSON)) {
+                    tocItem.setDraggable(false);
                 }
             }
         }

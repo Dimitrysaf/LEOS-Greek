@@ -195,7 +195,7 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
                 parentNode.appendChild(node);
             });
             xmlContent = xercesUtils.nodeToByteArray(document);
-            xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
+            xmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
         }
         return xmlContent;
     }

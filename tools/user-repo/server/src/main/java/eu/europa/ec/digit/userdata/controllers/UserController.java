@@ -76,6 +76,13 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
+
+    @RequestMapping(method = RequestMethod.GET, path = "/users/jobTitle/{jobTitle}")
+    @Transactional(readOnly = true)
+    public Collection<User> getUsersForJobTitle(@PathVariable(value = "jobTitle") String jobTitle) {
+        return userRepository.findByJobTitle(jobTitle).collect(Collectors.toList());
+    }
+
     @RequestMapping(method = RequestMethod.GET, path = "/entities/{org}/users")
     @Transactional(readOnly = true)
     public Collection<User> searchUsersByOrganizationAndKey(

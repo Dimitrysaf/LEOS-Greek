@@ -57,6 +57,8 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
@@ -108,13 +110,15 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext,
             DocumentViewService documentViewService, ConValidatorService conValidatorService,
-                                  GenericDocumentTocApiService genericDocumentTocApiService,
-                                  PackageRepository packageRepository) {
+            GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
+            ProposalDetailsService proposalDetailsService, TemplateConfigurationService templateConfigurationService,
+            PackageRepository packageRepository) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService, genericDocumentTocApiService, packageRepository);
+                documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService, templateConfigurationService,
+                packageRepository);
         this.conValidatorService = conValidatorService;
     }
 

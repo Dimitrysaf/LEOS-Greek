@@ -57,6 +57,36 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();
         proposalConfigMap.putAll(otherConfig);
 
+        proposalConfigMap.put(PROPOSAL_PACKAGE_TITLE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='packageTitle']/akn:p", false,
+                Collections.emptyList()));
+        proposalConfigMap.put(PROPOSAL_INTERNAL_REFERENCE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='internalRef']/akn:p", false,
+                Collections.emptyList()));
+        proposalConfigMap.put(PROPOSAL_AUTHENTIC_LANGUAGES, new XmlNodeConfig("//akn:meta/akn:references/akn:TLCReference[@name='language']/@showAs", false,
+                Collections.emptyList()));
+        proposalConfigMap.put(PROPOSAL_VERTICAL_SHIFT, new XmlNodeConfig("//akn:coverPage/akn:container[@name='disclaimer']/@style", false,
+                Collections.emptyList()));
+        proposalConfigMap.put(PROPOSAL_CROSS_REFERENCES, new XmlNodeConfig("//akn:coverPage/akn:container[@name='associatedReferences']/akn:p/akn:ref", false,
+                Collections.emptyList()));
+        proposalConfigMap.put(ADOPTION_PLACE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='placeAndDate']/akn:location",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(ADOPTION_DATE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='placeAndDate']/akn:date/@date",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(ADOPTION_DATE_VALUE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='placeAndDate']/akn:date",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(COTE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='reference']/akn:docNumber",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(FINAL_COTE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='mainDoc']/akn:block[@name='reference']/akn:docNumber/akn" +
+                ":inline[@name='version']",
+                false,
+                Collections.emptyList()));
+        proposalConfigMap.put(INTERINSTITUTIONAL_COTE, new XmlNodeConfig("//akn:coverPage/akn:container[@name='procedureIdentifier']/akn:p/akn:docketNumber",
+                false,
+                Collections.emptyList()));
+
         return proposalConfigMap;
     }
 
@@ -76,6 +106,18 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
 
         final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();
         billConfigMap.putAll(otherConfig);
+        billConfigMap.put(STAMP, new XmlNodeConfig("//akn:conclusions/akn:block[@name='stamp']/akn:img/@src",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_ORG, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:organization/@refersTo",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_ROLE, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:role/@refersTo",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_PERSON, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:person",
+                false,
+                Collections.emptyList()));
 
         return billConfigMap;
     }

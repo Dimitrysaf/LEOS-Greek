@@ -48,6 +48,8 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(METADATA_PURPOSE, "docPurpose");
         ids.put(METADATA_DOCTEMPLATE, "docTemplate");
         ids.put(METADATA_EEA_RELEVANCE, "eeaRelevance");
+        ids.put(METADATA_AUTHENTIC_LANGUAGE, "authenticLanguage");
+        ids.put(METADATA_COVERPAGE_TYPE, "coverPageType");
         ids.put(ANNEX_INDEX, "docIndex");
         ids.put(ANNEX_NUMBER, "docNumber");
         ids.put(ANNEX_TITLE, "docTitle");

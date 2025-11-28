@@ -406,6 +406,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 String comment = messageHelper.getMessage("operation.docpurpose.updated");
                 context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
                 context.useActionComment(comment);
+                context.useVersionType(VersionType.MINOR);
                 context.executeUpdateDocumentsAssociatedToProposal();
             } else {
                 document = this.leosRepository.updateDocument(

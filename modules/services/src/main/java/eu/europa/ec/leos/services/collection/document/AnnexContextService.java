@@ -59,6 +59,7 @@ public class AnnexContextService {
     private final PostProcessingDocumentService postProcessingDocumentService;
 
     private LeosPackage leosPackage;
+    private VersionType versionType = VersionType.MINOR;
     private Annex annex = null;
     private int index;
     private String purpose = null;
@@ -116,6 +117,12 @@ public class AnnexContextService {
         Validate.notNull(leosPackage, ANNEX_PACKAGE_IS_REQUIRED);
         LOG.trace("Using Annex package... [id={}, path={}]", leosPackage.getId(), leosPackage.getPath());
         this.leosPackage = leosPackage;
+    }
+
+    public void useVersionType(VersionType versionType) {
+        Validate.notNull(leosPackage, "Version Type is required!");
+        LOG.trace("Using Version Type... {}", versionType.value());
+        this.versionType = versionType;
     }
 
     public void usePurpose(String purpose) {
@@ -271,6 +278,7 @@ public class AnnexContextService {
         LOG.trace("Executing 'Update annex metadata' use case...");
         Validate.notNull(purpose, ANNEX_PURPOSE_IS_REQUIRED);
         Validate.notNull(annexId, "Annex id is required!");
+        Validate.notNull(versionType, "Version type is required!");
 
         annex = annexService.findAnnex(annexId, true);
         Option<AnnexMetadata> metadataOption = annex.getMetadata();
@@ -282,7 +290,7 @@ public class AnnexContextService {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .build();
-        annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+        annexService.updateAnnex(annex, annexMetadata, this.versionType, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
     }
 
     public void executeUpdateAnnexIndex() {

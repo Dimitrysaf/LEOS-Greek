@@ -81,8 +81,22 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> updateProposalMetadata(@PathVariable String proposalRef, @RequestBody UpdateProposalRequest request) {
         try {
+            LOG.info("Updating proposal metadata for proposal ref {} and request {}", proposalRef, request);
             proposalRef = encodeParam(proposalRef);
             return new ResponseEntity<>(apiService.updateProposalMetadata(proposalRef, request), HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while updating proposal metadata - " + e.getMessage());
+            return new ResponseEntity<>("Error occurred while updating proposal metadata: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/updateDocPurpose/{proposalRef}", method = RequestMethod.PUT)
+    @ResponseBody
+    public ResponseEntity<Object> updateProposalDocPurpose(@PathVariable String proposalRef, @RequestBody UpdateProposalRequest request) {
+        try {
+            LOG.info("Updating proposal doc purpose for proposal ref {} and request {}", proposalRef, request);
+            proposalRef = encodeParam(proposalRef);
+            return new ResponseEntity<>(apiService.updateProposalTitleAndEEaRelevance(proposalRef, request.getDocPurpose(), request.getEeaRelevance()), HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while updating proposal title - " + e.getMessage());
             return new ResponseEntity<>("Error occurred while updating proposal title: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -112,6 +126,19 @@ public class ProposalApiController {
         } catch (Exception e) {
             LOG.error("Error occurred while searching for users in repository - " + e.getMessage());
             return new ResponseEntity<>("Error occurred while searching for users for repository: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/searchUsersByJobTitle", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Object> searchUsersByJobTitle(@RequestParam("jobTitle") String jobTitle) {
+        try {
+            List<String> users = apiService.searchUserByJobTitle(jobTitle);
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while searching for users in repository for job title: "+ e.getMessage());
+            return new ResponseEntity<>("Error occurred while searching for users in repository for job title " + jobTitle,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
