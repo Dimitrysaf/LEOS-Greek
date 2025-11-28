@@ -31,6 +31,7 @@ import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
@@ -520,7 +521,7 @@ public class BillContextService {
         billService.updateAttachments(billByPackagePath, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
     }
 
-    public void executeCreateBillAnnex() {
+    public void executeCreateBillAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         LOG.trace("Executing 'Create Bill Annex' use case...");
 
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
@@ -546,7 +547,7 @@ public class BillContextService {
         annexContext.useCloneProposal(cloneProposal);
         annexContext.useOriginRef(originRef);
         annexContext.usePackageRef(packageRef);
-        Annex annex = annexContext.executeCreateAnnex();
+        Annex annex = annexContext.executeCreateAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
 
         String href = annex.getName();
         String showAs = annexNumber; //createdAnnex.getMetadata().get().getNumber(); //ShowAs attribute is not used so it is kept as blank as of now.

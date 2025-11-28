@@ -40,6 +40,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -53,6 +54,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.tika.Tika;
+import org.apache.tika.io.TikaInputStream;
 
 public class XmlHelper {
     protected static final Logger LOG = LoggerFactory.getLogger(XmlHelper.class);
@@ -843,6 +846,56 @@ public class XmlHelper {
             return false;
         }
         return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidFileNameForBinaryFile(String fileName) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_]+\\.(pdf|docx|xlsx|PDF|DOCX|XLSX)$");
+        if (fileName.length() > 255) {
+            return false;
+        }
+        return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidMimeTypeForBinaryFile(byte[] binaryContent) throws IOException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(TikaInputStream.get(binaryContent));
+        List<String> allowedTypes = Arrays.asList(
+                "application/pdf",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return allowedTypes.contains(mimeType);
+    }
+
+    public static String getMimeType(String extension) {
+        String mimeType = "";
+        switch (extension) {
+            case "DOCX":
+                mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                break;
+            case "XLSX":
+                mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                break;
+            case "PDF":
+                mimeType = "application/pdf";
+                break;
+        }
+        return mimeType;
+    }
+
+    public static boolean isValidSizeFileForBinaryFile(long sizeofBinaryFile) {
+        // Max 50 MB
+        if (sizeofBinaryFile > (50 * 1024 * 1024)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isValidContentForBinaryFile(long sizeofBinaryFile) {
+        // Max 50 MB
+        if (sizeofBinaryFile > (50 * 1024 * 1024)) {
+            return false;
+        }
+        return true;
     }
 
     public static boolean isValidDocumentRef(String documentRef) {

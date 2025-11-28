@@ -38,6 +38,9 @@ public class DocumentVO {
     private String template;
     private int docNumber;// optional
     private byte[] source;
+    private byte[] binaryFile;
+    private String originalFilename;
+    private String binaryFileSize;
     private boolean uploaded;
     private String versionSeriesId;
     private String ref;
@@ -479,6 +482,30 @@ public class DocumentVO {
 
     public void setCreationOptions(String creationOptions) {
         this.creationOptions = creationOptions;
+    }
+
+    public byte[] getBinaryFile() {
+        return binaryFile;
+    }
+
+    public void setBinaryFile(byte[] binaryFile) {
+        this.binaryFile = binaryFile;
+    }
+
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    public void setOriginalFilename(String originalFilename) {
+        this.originalFilename = originalFilename;
+    }
+
+    public String getBinaryFileSize() {
+        return binaryFileSize;
+    }
+
+    public void setBinaryFileSize(String binaryFileSize) {
+        this.binaryFileSize = binaryFileSize;
     }
 
 }

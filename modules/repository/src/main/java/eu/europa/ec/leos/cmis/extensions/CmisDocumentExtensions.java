@@ -226,7 +226,7 @@ public class CmisDocumentExtensions {
                 getClonedFrom(d),
                 contentOption(d, fetchContent),
                 getAnnexMetadataOption(d),
-                isTrackChangesEnabled(d), false);
+                isTrackChangesEnabled(d), false, null, null, null);
     }
 
     private static FinancialStatement toFinancialStatement(Document d, boolean fetchContent, Map<String, String> oldVersions) {

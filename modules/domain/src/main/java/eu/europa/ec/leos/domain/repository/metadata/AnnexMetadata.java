@@ -10,21 +10,38 @@ public final class AnnexMetadata extends LeosMetadata {
     private final String number;
     private final String title;
     private final String clonedRef; //Optional only required when adding new annex in clone proposal to original
+    private final String fileFormatRefersTo;
+    private final String fileFormatValue;
+    private final String tlcReferenceNameFormatHref;
+    private final String tlcReferenceNameFormatShowAs;
+    private final String tlcReferenceNameFormatId;
+    private final String foreignAnnexNumber;
+    private final String foreignAnnexSource;
 
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, int index, String number, String title, String objectId, String docVersion,
                          boolean eeaRelevance, String clonedRef) {
-        this(stage, type, purpose, template, language, docTemplate, ref, null, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
+        this(stage, type, purpose, template, language, docTemplate, ref, null, index, number, title, objectId, docVersion,
+                eeaRelevance, clonedRef, null, null, null, null, null, null, null);
     }
 
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, String packageRef, int index, String number, String title, String objectId, String docVersion,
-                         boolean eeaRelevance, String clonedRef) {
+                         boolean eeaRelevance, String clonedRef, String fileFormatRefersTo, String fileFormatValue,
+                         String tlcReferenceNameFormatHref, String tlcReferenceNameFormatShowAs, String tlcReferenceNameFormatId,
+                         String foreignAnnexNumber, String foreignAnnexSource) {
         super(LeosCategory.ANNEX, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance);
         this.index = index;
         this.number = number;
         this.title = title;
         this.clonedRef = clonedRef;
+        this.fileFormatRefersTo = fileFormatRefersTo;
+        this.fileFormatValue = fileFormatValue;
+        this.tlcReferenceNameFormatHref = tlcReferenceNameFormatHref;
+        this.tlcReferenceNameFormatShowAs = tlcReferenceNameFormatShowAs;
+        this.tlcReferenceNameFormatId = tlcReferenceNameFormatId;
+        this.foreignAnnexNumber = foreignAnnexNumber;
+        this.foreignAnnexSource = foreignAnnexSource;
     }
 
     public int getIndex() {
@@ -41,6 +58,34 @@ public final class AnnexMetadata extends LeosMetadata {
 
     public String getClonedRef() {
         return clonedRef;
+    }
+
+    public String getFileFormatRefersTo() {
+        return fileFormatRefersTo;
+    }
+
+    public String getFileFormatValue() {
+        return fileFormatValue;
+    }
+
+    public String getTlcReferenceNameFormatHref() {
+        return tlcReferenceNameFormatHref;
+    }
+
+    public String getTlcReferenceNameFormatShowAs() {
+        return tlcReferenceNameFormatShowAs;
+    }
+
+    public String getTlcReferenceNameFormatId() {
+        return tlcReferenceNameFormatId;
+    }
+
+    public String getForeignAnnexNumber() {
+        return foreignAnnexNumber;
+    }
+
+    public String getForeignAnnexSource() {
+        return foreignAnnexSource;
     }
 
     @Override
@@ -96,6 +141,13 @@ public final class AnnexMetadata extends LeosMetadata {
         private String title;
         private String clonedRef;
         private String packageRef;
+        private String fileFormatRefersTo;
+        private String fileFormatValue;
+        private String tlcReferenceNameFormatHref;
+        private String tlcReferenceNameFormatShowAs;
+        private String tlcReferenceNameFormatId;
+        private String foreignAnnexNumber;
+        private String foreignAnnexSource;
         private AnnexMetadataBuilder() {
         }
         private AnnexMetadataBuilder(AnnexMetadata metadata) {
@@ -114,6 +166,13 @@ public final class AnnexMetadata extends LeosMetadata {
             this.docVersion = metadata.docVersion;
             this.eeaRelevance = metadata.eeaRelevance;
             this.packageRef = metadata.packageRef;
+            this.fileFormatRefersTo = metadata.fileFormatRefersTo;
+            this.fileFormatValue = metadata.fileFormatValue;
+            this.tlcReferenceNameFormatHref = metadata.tlcReferenceNameFormatHref;
+            this.tlcReferenceNameFormatShowAs = metadata.tlcReferenceNameFormatShowAs;
+            this.tlcReferenceNameFormatId = metadata.tlcReferenceNameFormatId;
+            this.foreignAnnexNumber = metadata.foreignAnnexNumber;
+            this.foreignAnnexSource = metadata.foreignAnnexSource;
         }
         public AnnexMetadataBuilder withStage(String stage) {
             this.stage = stage;
@@ -175,10 +234,40 @@ public final class AnnexMetadata extends LeosMetadata {
             this.packageRef = packageRef;
             return this;
         }
+        public AnnexMetadataBuilder withFileFormatRefersTo(String fileFormatRefersTo) {
+            this.fileFormatRefersTo = fileFormatRefersTo;
+            return this;
+        }
+        public AnnexMetadataBuilder withFileFormatValue(String fileFormatValue) {
+            this.fileFormatValue = fileFormatValue;
+            return this;
+        }
+        public AnnexMetadataBuilder withTlcReferenceNameFormatHref(String tlcReferenceNameFormatHref) {
+            this.tlcReferenceNameFormatHref = tlcReferenceNameFormatHref;
+            return this;
+        }
+        public AnnexMetadataBuilder withTlcReferenceNameFormatShowAs(String tlcReferenceNameFormatShowAs) {
+            this.tlcReferenceNameFormatShowAs = tlcReferenceNameFormatShowAs;
+            return this;
+        }
+        public AnnexMetadataBuilder withTlcReferenceNameFormatId(String tlcReferenceNameFormatId) {
+            this.tlcReferenceNameFormatId = tlcReferenceNameFormatId;
+            return this;
+        }
+        public AnnexMetadataBuilder withForeignAnnexNumber(String foreignAnnexNumber) {
+            this.foreignAnnexNumber = foreignAnnexNumber;
+            return this;
+        }
+        public AnnexMetadataBuilder withForeignAnnexSource(String foreignAnnexSource) {
+            this.foreignAnnexSource = foreignAnnexSource;
+            return this;
+        }
         public AnnexMetadata build() {
             return new AnnexMetadata(this.stage, this.type, this.purpose, this.template, this.language,
                     this.docTemplate, this.ref, this.packageRef, this.index, this.number, this.title, this.objectId, this.docVersion,
-                    this.eeaRelevance, this.clonedRef);
+                    this.eeaRelevance, this.clonedRef, this.fileFormatRefersTo, this.fileFormatValue,
+                    this.tlcReferenceNameFormatHref, this.tlcReferenceNameFormatShowAs, this.tlcReferenceNameFormatId,
+                    this.foreignAnnexNumber, this.foreignAnnexSource);
         }
     }
 

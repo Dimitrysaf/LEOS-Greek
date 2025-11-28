@@ -28,8 +28,11 @@ import { CreateProposalService } from '@/shared/services/create-proposal.service
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 import { LoadingService } from "@/shared/services/loading.service";
 import { EuiGrowlService } from "@eui/core";
-import { HttpStatusCode } from "@angular/common/http";
+import {HttpClient, HttpStatusCode} from "@angular/common/http";
 import { cleanDelInsert } from '@/shared/utils/string.utils';
+import {AUTONOMOUS_ACT_DOC_COLLECTION} from "@/shared/constants";
+import {apiBaseUrl} from "../../../../../config";
+import {downloadBlob} from "@/shared/utils";
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -70,6 +73,7 @@ export class ProposalDraftsComponent
 
   title: string;
   activeAnnexId: string;
+  AUTONOMOUS_ACT_DOC_COLLECTION: string = AUTONOMOUS_ACT_DOC_COLLECTION;
 
   private destroy$: Subject<void> = new Subject();
 
@@ -83,6 +87,7 @@ export class ProposalDraftsComponent
     private loadingService: LoadingService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
+    private http: HttpClient,
   ) {}
 
   ngOnDestroy(): void {
@@ -121,6 +126,22 @@ export class ProposalDraftsComponent
       this.proposalStateChange.emit('active');
       this.proposalDetailsService.createAnnex();
     }
+  }
+
+  handleAnnexUploadPopup() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.docx, .xlsx, .pdf';
+    input.onchange = (event: any) => {
+      if (this.proposalState !== 'loading' && this.proposalState !== 'active') {
+        this.proposalStateChange.emit('active');
+      }
+      const file = event.target.files[0];
+      if (file) {
+        this.proposalDetailsService.createForeignAnnex(file);
+      }
+    };
+    input.click();
   }
 
   handleAnnexReorder() {
@@ -238,6 +259,23 @@ export class ProposalDraftsComponent
         );
         this.explToDelete = null;
       });
+  }
+
+  downloadForeginAnnex(ref: string, originalFilename: string) {
+    this.loadingService.setLoading(true);
+    this.http
+      .get(`${apiBaseUrl}/secured/annex/${ref}`, {
+        responseType: 'blob',
+      })
+      .subscribe({
+        next: (blob) => downloadBlob(blob, `${originalFilename}`),
+        complete: () => this.loadingService.setLoading(false),
+      });
+  }
+
+  getFileExtension(filename: string): string {
+    if (!filename) return '';
+    return filename.slice((filename.lastIndexOf('.') + 1)).toLowerCase();
   }
 
   onFinancialStatementCreate() {

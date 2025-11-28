@@ -61,6 +61,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.getMimeType;
 
 @RestController
 @RequestMapping("/secured/annex/")
@@ -358,19 +359,27 @@ public class AnnexController {
     }
 
 
-    @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{documentRef}")
     @ResponseBody
     public ResponseEntity<Object> getAnnex(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
-            return ResponseEntity.ok().body(annex);
+            if (annex.getBinaryFile() != null) {
+                String extension = annex.getOriginalFilename().substring(annex.getOriginalFilename().indexOf(".") + 1).toUpperCase();
+                String mimeType = getMimeType(extension);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(mimeType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + annex.getOriginalFilename() + "\"")
+                        .body(annex.getBinaryFile());
+            } else {
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(annex);
+            }
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex document - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting annex document",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)

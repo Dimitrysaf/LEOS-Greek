@@ -356,6 +356,20 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
+
+        long startTimeNanos = System.nanoTime();
+
+        Document doc = repository.updateDocument(id, updateDocumentProperties(metadata), content, versionType, comment);
+        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
+        logger.trace("CMIS Repository document update took " + time + " milliseconds.");
+
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
+    }
+
+    @Override
     public <D extends LeosDocument> D updateDocument(String id, byte[] content, VersionType versionType, String comment,
                                                      Class<? extends D> type) {
         logger.trace("Updating document content... [id=" + id + ", comment=" + comment + ']');

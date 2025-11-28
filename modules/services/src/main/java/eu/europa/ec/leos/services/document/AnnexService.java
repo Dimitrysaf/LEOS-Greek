@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.Map;
 
 public interface AnnexService {
 
-    Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content);
+    Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     Annex createClonedAnnex(String templateId, String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content);
 
@@ -39,7 +40,9 @@ public interface AnnexService {
     void deleteAnnex(Annex annex);
 
     Annex updateAnnex(Annex annex, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs);
-    
+
+    Annex updateAnnex(Annex annex, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, VersionType versionType, String comment);
     
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs);
@@ -61,7 +64,9 @@ public interface AnnexService {
     List<Annex> findVersions(String id);
 
     Annex createVersion(String id, VersionType versionType, String comment);
-    
+
+    Annex createVersion(String id, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
     List<TableOfContentItemVO> getTableOfContent(Annex document, TocMode mode);
     
     Annex saveTableOfContent(Annex annex, List<TableOfContentItemVO> tocList, AnnexStructureType structureType, String actionMsg, User user);

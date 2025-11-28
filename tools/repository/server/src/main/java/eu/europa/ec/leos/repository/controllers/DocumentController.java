@@ -120,7 +120,8 @@ public class DocumentController {
                                                  @Validated(OnUpdateWithContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest)
             throws Exception {
         LeosDocument xmlDoc = documentService.updateDocument(versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(),
-                updateDocumentRequest.getCategory(), updateDocumentRequest.getContent(), updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
+                updateDocumentRequest.getCategory(), updateDocumentRequest.getContent(), updateDocumentRequest.getComments(), updateDocumentRequest.getUserId(),
+                updateDocumentRequest.getBinaryContent(), updateDocumentRequest.getOriginalFilename(), updateDocumentRequest.getBinaryContentSize());
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 

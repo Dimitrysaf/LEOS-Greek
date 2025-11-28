@@ -342,7 +342,7 @@ public class DocumentIntegrationTests {
                 anyMap(),
                 ArgumentMatchers.eq(updateDocumentRequest.getVersionType()),
                 ArgumentMatchers.eq(updateDocumentRequest.getCategory()), ArgumentMatchers.eq(updateDocumentRequest.getContent()),
-                ArgumentMatchers.eq(updateDocumentRequest.getComments()), ArgumentMatchers.eq(updateDocumentRequest.getUserId()))).thenReturn(xmlDoc);
+                ArgumentMatchers.eq(updateDocumentRequest.getComments()), ArgumentMatchers.eq(updateDocumentRequest.getUserId()), any(), any(), any())).thenReturn(xmlDoc);
 
         mockMvc.perform(put("/document/update-content/{versionId}", xmlDoc.getVersionId()).contentType(MediaType.APPLICATION_JSON)
                 .content(json)

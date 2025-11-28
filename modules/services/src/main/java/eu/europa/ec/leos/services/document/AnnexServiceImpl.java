@@ -27,6 +27,7 @@ import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.AnnexRepository;
+import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -156,6 +157,15 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
+    public Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, VersionType versionType, String comment, boolean updateInternalRefs,
+            byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), updatedMetadata, versionType, comment);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        byte[] updatedBytes = updateDataInXml(getContent(annex), updatedMetadata, updateInternalRefs);
+        return updateAnnex(annex, updatedMetadata, updatedBytes, versionType, comment, stopwatch, false, binaryContent, originalFilename, binaryContentSize);
+    }
+
+    @Override
     public Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs) {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), metadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -165,6 +175,20 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
     private Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, byte[] updatedBytes, VersionType versionType, String comment, Stopwatch stopwatch, boolean updateInternalRefs) {
         annex = annexRepository.updateAnnex(annex.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(annex);
+        }
+        updateDocumentValidationStatus(annex.getId());
+        //call validation on document with updated content
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedBytes));
+
+        LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        return annex;
+    }
+
+    private Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, byte[] updatedBytes, VersionType versionType, String comment, Stopwatch stopwatch, boolean updateInternalRefs,
+            byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        annex = annexRepository.updateAnnex(annex.getId(), updatedMetadata, updatedBytes, versionType, comment, binaryContent, originalFilename, binaryContentSize);
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }
@@ -239,6 +263,19 @@ public abstract class AnnexServiceImpl implements AnnexService {
         final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
         byte[] contentBytes = content.getSource().getBytes();
         annex = annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
+        return annex;
+    }
+
+    @Override
+    public Annex createVersion(String id, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        LOG.trace("Creating Annex version... [id={}, versionType={}, comment={}]", id, versionType, comment);
+        Annex annex = findAnnex(id, true);
+        final AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata is required!");
+        final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
+        byte[] contentBytes = content.getSource().getBytes();
+        annex = annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment, binaryContent, originalFilename, binaryContentSize);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
@@ -373,7 +410,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content) {
+    public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         LOG.trace("Creating Annex... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         String ref = generateAnnexReference(content, metadata.getLanguage());
         metadata = metadata
@@ -383,7 +420,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Annex annex = annexRepository.createAnnex(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Annex with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata, false);
-        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage, binaryContent, originalFilename, binaryContentSize);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;

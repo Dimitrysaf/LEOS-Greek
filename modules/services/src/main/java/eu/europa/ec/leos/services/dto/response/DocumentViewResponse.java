@@ -4,6 +4,8 @@ public class DocumentViewResponse {
 
     private String proposalRef;
     private String editableXml;
+    private byte[] binaryFile;
+    private String originalFilename;
     private VersionInfoVO versionInfoVO;
     private String temporaryAnnotationsId;
     private String temporaryDataDocument;
@@ -15,6 +17,17 @@ public class DocumentViewResponse {
         this.versionInfoVO = versionInfoVO;
         this.temporaryAnnotationsId = temporaryAnnotationsId;
         this.temporaryDataDocument = temporaryDataDocument;
+    }
+
+    public DocumentViewResponse(String proposalRef, String editableXml, VersionInfoVO versionInfoVO,
+            String temporaryAnnotationsId, String temporaryDataDocument, byte[] binaryFile, String originalFilename) {
+        this.proposalRef = proposalRef;
+        this.editableXml = editableXml;
+        this.versionInfoVO = versionInfoVO;
+        this.temporaryAnnotationsId = temporaryAnnotationsId;
+        this.temporaryDataDocument = temporaryDataDocument;
+        this.binaryFile = binaryFile;
+        this.originalFilename = originalFilename;
     }
 
     public DocumentViewResponse(String editableXml, VersionInfoVO versionInfoVO) {
@@ -61,4 +74,21 @@ public class DocumentViewResponse {
     public void setTemporaryDataDocument(String temporaryDataDocument) {
         this.temporaryDataDocument = temporaryDataDocument;
     }
+
+    public byte[] getBinaryFile() {
+        return binaryFile;
+    }
+
+    public void setBinaryFile(byte[] binaryFile) {
+        this.binaryFile = binaryFile;
+    }
+
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    public void setOriginalFilename(String originalFilename) {
+        this.originalFilename = originalFilename;
+    }
+
 }

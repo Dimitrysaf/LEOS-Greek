@@ -246,7 +246,7 @@ public class LeosDocumentExtensions {
                 contentOption(d, fetchContent),
                 LeosRepositoryMetadataExtensions.getAnnexMetadataOption(d),
                 isTrackChangesEnabled(d),
-                isVersionArchived(d));
+                isVersionArchived(d), d.getBinarySource(), d.getOriginalFilename(), d.getBinarySourceSize());
     }
 
     private static FinancialStatement toFinancialStatement(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {

@@ -34,7 +34,9 @@ public class LeosDocument {
     private String updatedBy;
     private Date updatedOn;
     private byte[] source;
-
+    private byte[] binarySource;
+    private String originalFilename;
+    private String binarySourceSize;
     private VersionType versionType;
     private Boolean isLatestVersion = false;
     private String versionLabel;
@@ -221,6 +223,30 @@ public class LeosDocument {
 
     public String getName() {
         return name;
+    }
+
+    public byte[] getBinarySource() {
+        return binarySource;
+    }
+
+    public void setBinarySource(byte[] binarySource) {
+        this.binarySource = binarySource;
+    }
+
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    public void setOriginalFilename(String originalFilename) {
+        this.originalFilename = originalFilename;
+    }
+
+    public String getBinarySourceSize() {
+        return binarySourceSize;
+    }
+
+    public void setBinarySourceSize(String binarySourceSize) {
+        this.binarySourceSize = binarySourceSize;
     }
 
 }
