@@ -26,6 +26,7 @@ import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ExportLW;
 import eu.europa.ec.digit.leos.pilot.export.util.ExportOptions;
+import eu.europa.ec.digit.leos.pilot.export.util.LeosFile;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import lombok.Data;
@@ -131,10 +132,10 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
             ExportLW exportOptionsPDF = new ExportLW(ExportOptions.Output.PDF);
             ExportLW exportOptionsWord = new ExportLW(ExportOptions.Output.WORD);
             LegPackage legPackage = legService.createLegPackage(contentToZip, exportOptionsWord);
-            File pdfPackage = createZipFile(legPackage, "job1.zip", exportOptionsPDF);
-            File legisWritePackage = createZipFile(legPackage, "job2.zip", exportOptionsWord);
+            LeosFile pdfPackage = createZipFile(legPackage, "job1.zip", exportOptionsPDF);
+            LeosFile legisWritePackage = createZipFile(legPackage, "job2.zip", exportOptionsWord);
 
-            Map<String, File> packages = new HashMap<>();
+            Map<String, LeosFile> packages = new HashMap<>();
             packages.put(exportOptionsPDF.getFilePrefix() + ZIP_PACKAGE_NAME, pdfPackage);
             packages.put(exportOptionsWord.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
 
@@ -178,14 +179,14 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
         }
     }
 
-    protected File createZipFile(LegPackage legPackage, String jobFileName, ExportOptions exportOptions) throws Exception {
+    protected LeosFile createZipFile(LegPackage legPackage, String jobFileName, ExportOptions exportOptions) throws Exception {
         try (ByteArrayOutputStream contentFileContent = xmlDocumentService.createContentFile(exportOptions,
                 legPackage.getExportResource())) {
             Map<String, Object> contentToZip = new HashMap<>();
             contentToZip.put("content.xml", contentFileContent.toByteArray());
             String propActFileName = legPackage.getExportResource().getName() + ".leg";
             contentToZip.put(propActFileName, legPackage.getFile().getBytes());
-            return ZipUtil.zipFiles(jobFileName, contentToZip);
+            return ZipUtil.zipLeosFiles(jobFileName, contentToZip);
         }
     }
 

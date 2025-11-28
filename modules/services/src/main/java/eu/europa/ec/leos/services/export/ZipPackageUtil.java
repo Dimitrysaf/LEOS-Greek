@@ -102,6 +102,12 @@ public class ZipPackageUtil {
                 zipOutputStream.putNextEntry(ze);
                 zipOutputStream.write(byteArrayValue);
                 zipOutputStream.closeEntry();
+            } else if (value instanceof LeosFile) {
+                byte[] byteArrayValue = ((LeosFile) value).getBytes();
+                ZipEntry ze = new ZipEntry(key);
+                zipOutputStream.putNextEntry(ze);
+                zipOutputStream.write(byteArrayValue);
+                zipOutputStream.closeEntry();
             }
         }
     }

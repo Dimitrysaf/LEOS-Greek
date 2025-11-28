@@ -1,12 +1,12 @@
-package eu.europa.ec.leos.domain.repository.common;
+package eu.europa.ec.digit.leos.pilot.export.util;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.io.ByteArrayResource;
 
 import java.io.Serializable;
-
-import static org.apache.jena.atlas.lib.RandomLib.random;
+import java.security.SecureRandom;
+import java.util.Random;
 
 @Getter
 @Setter
@@ -15,6 +15,7 @@ public class LeosFile implements Serializable {
     private String name;
     private String originalFileName;
     private boolean directory = false;
+    private static final Random random = new SecureRandom();
 
     public LeosFile() {
         this.bytes = null;
