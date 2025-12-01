@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.aspect.aspect;
 
+import eu.europa.ec.leos.security.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -8,6 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -21,8 +23,11 @@ import static eu.europa.ec.leos.services.utils.LogMarkers.SECURITY;
 public class SecurityAuditTrailAspect {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityAuditTrailAspect.class);
-    private static final String LOG_SUCCESS_FORMAT = "Completed {} ms - {}.{}({})";
-    private static final String LOG_ERROR_FORMAT   = "ERROR after {} ms - {}.{}({}) - Exception: {}";
+    private static final String LOG_SUCCESS_FORMAT = "Completed {} ms - {}.{}({}) for user {}";
+    private static final String LOG_ERROR_FORMAT   = "ERROR after {} ms - {}.{}({}) - Exception: {}, failed for user {}";
+
+    @Autowired
+    private SecurityContext securityContext;
 
     @Pointcut("execution(* eu.europa.ec.leos.services.collection.CollaboratorServiceImpl.addCollaborator(..)) || " +
             "execution(* eu.europa.ec.leos.services.collection.CollaboratorServiceImpl.removeCollaborator(..)) ||" +
@@ -82,7 +87,8 @@ public class SecurityAuditTrailAspect {
                     durationMs,
                     className,
                     methodName,
-                    Arrays.toString(args)
+                    Arrays.toString(args),
+                    securityContext.getUser().getLogin()
             );
             return result;
         } catch (Exception ex) {
@@ -94,6 +100,7 @@ public class SecurityAuditTrailAspect {
                     methodName,
                     Arrays.toString(args),
                     ex.getMessage(),
+                    securityContext.getUser().getLogin(),
                     ex
             );
             throw ex;
