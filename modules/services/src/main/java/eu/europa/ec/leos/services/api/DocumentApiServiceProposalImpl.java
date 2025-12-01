@@ -72,7 +72,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
     }
 
     @Override
-    protected DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions) {
+    public DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions) {
         try {
             final String jobFileName;
             byte[] byteArray = new byte[0];

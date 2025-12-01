@@ -25,6 +25,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.rest.aop.annotation.PerformanceLogger;
 import eu.europa.ec.leos.security.AuthClient;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -104,6 +105,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @RestController
 @RequestMapping
+@PerformanceLogger
 public class LeosApiController {
     private static final Logger LOG = LoggerFactory.getLogger(LeosApiController.class);
     private static final String ERROR_OCCURRED_WHILE_GETTING_DOCUMENT = "Error occurred while getting document ";
@@ -215,7 +217,7 @@ public class LeosApiController {
             String accessToken = tokenService.getAccessToken(user, authClient); //TODO provide systemName
             JsonTokenReponse jsonToken = new JsonTokenReponse(accessToken, "jwt", expiresInMilliSec, null, null);
             tokenService.setAccessTokenMap(accessToken, jSessionId != null ? jSessionId.getValue() : null);
-            LOG.debug("Created accessToken for the Client '{}", authClient.getName());
+            LOG.debug("Created accessToken for the client {}", authClient.getName());
             return new ResponseEntity<>(jsonToken, HttpStatus.OK);
         } else {
             LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
@@ -548,6 +550,7 @@ public class LeosApiController {
         String userId = securityContext.getUser().getLogin();
         Optional<ProposalDetailsVO> requestedProposal = apiService.getProposalDetails(proposalRef, userId);
         if (requestedProposal.isPresent()) {
+            LOG.info("Proposal with ref {} is opened by the user {}", proposalRef, securityContext.getUser().getLogin());
             return ResponseEntity.ok(requestedProposal.get());
         } else {
             return new ResponseEntity<>("No result found", HttpStatus.NOT_FOUND);
@@ -560,7 +563,9 @@ public class LeosApiController {
     public ResponseEntity<Object> downloadProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
-            return new ResponseEntity<>(apiService.downloadProposal(proposalRef), HttpStatus.OK);
+            byte[] proposal = apiService.downloadProposal(proposalRef);
+            LOG.info("Proposal with ref {} is downloaded by user {}", proposalRef, securityContext.getUser().getLogin());
+            return new ResponseEntity<>(proposal, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while downloading proposal", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -645,6 +650,7 @@ public class LeosApiController {
             proposalRef = encodeParam(proposalRef);
             annexRef = encodeParam(annexRef);
             apiService.deleteAnnex(proposalRef, annexRef);
+            LOG.info("Annex document with ref {} is deleted by user {}", annexRef, securityContext.getUser().getLogin());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error("Error occured while deleting proposal annex - " + e.getMessage());
@@ -733,6 +739,7 @@ public class LeosApiController {
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
             if (document != null) {
                 DocumentVO vo = new DocumentVO(document);
+                LOG.info("Document with doc ref {} is retrieved by the user {}: ", documentRef, securityContext.getUser().getLogin());
                 return new ResponseEntity<>(vo, HttpStatus.OK);
             }
         } catch (Exception e) {
