@@ -107,7 +107,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
             jobId = toolBoxService.createJobWithEmail(proposalId, packages, destinationEmail);
         } catch (Exception ex) {
-            LOG.error("Unexpected error occurred in method exportToToolboxCoDe(): {}", ex.getMessage());
+            LOG.error("Unexpected error occurred in method exportToToolboxCoDe() for proposal id {} with error {}", proposalId, ex.getMessage());
             throw ex;
         } finally {
             if (legisWritePackage != null && legisWritePackage.exists()) {
