@@ -18,7 +18,7 @@ public enum MetadataFieldType {
     STAMP("stamp"),
     COMMISSIONER("commissioner"),
     CORRIGENDUM_ADDENDUM("corrigendumAddendum"),
-
+    DIFFUSION_VERSION("diffusionVersion"),
     // Following keys will be ignored at the moment
     STATUS("status"),
     DELETE_INTERNAL_REFERENCE("deleteInternalReference"),

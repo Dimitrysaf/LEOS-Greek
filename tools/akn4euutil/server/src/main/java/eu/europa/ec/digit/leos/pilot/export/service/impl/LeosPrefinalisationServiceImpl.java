@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -231,10 +232,11 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     }
 
     private ApplyMetadataResponse.ActionNode processApplyMetadataRequestAction(ApplyMetadataRequest.ActionNode action, List<XmlFile> documentXmlFiles){
+        final String diffusionVersion = MetadataUtil.getDiffusionVersion(action);
         int commissionerPos = 0;
         List<ApplyMetadataResponse.FieldNode> fieldResponses = new ArrayList<>();
         for (ApplyMetadataRequest.FieldNode field : action.getFields()){
-            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos));
+            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos, diffusionVersion));
             if (MetadataFieldType.isCommissioner(field.getKey())) {
                 commissionerPos += 1;
             }
@@ -250,10 +252,18 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
     }
 
-    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field, List<XmlFile> documentXmlFiles,
+    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field,
+                                                                             List<XmlFile> documentXmlFiles,
                                                                              int commissionerPos) {
+        return this.processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos, null);
+    }
+
+    private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field,
+                                                                             List<XmlFile> documentXmlFiles,
+                                                                             int commissionerPos,
+                                                                             String diffusionVersion) {
         try {
-            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles, commissionerPos);
+            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles, commissionerPos, diffusionVersion);
             return metadataService.getFieldSuccessResult(field.getKey());
         } catch(MetadataFieldNotAvailableException | XmlUtilException | MetadataUtilsException ex) {
             LOG.debug("Lookup field info failed: {}", ex);
@@ -267,7 +277,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles, int commissionerPos) throws MetadataUtilsException,
+    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles, int commissionerPos, String diffusionVersion) throws MetadataUtilsException,
             XmlUtilException {
         LOG.debug("Process field info  '{}'", fieldInfo);
 
@@ -287,14 +297,14 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                 case INTERINSTITUTIONAL_COTE:
                     metadataService.processInterinstitutionalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
                     break;
-                case COTE:
-                    metadataService.processCote((ReferenceFieldInfo)fieldInfo, xmlFile);
-                    break;
                 case LINKED_DOCUMENTS:
                     metadataService.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);
                     break;
+                case COTE:
+                    metadataService.processCote((ReferenceFieldInfo)fieldInfo, diffusionVersion, xmlFile);
+                    break;
                 case FINAL_COTE:
-                    metadataService.processFinalCote((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    metadataService.processFinalCote((ReferenceFieldInfo)fieldInfo, diffusionVersion, xmlFile);
                     break;
                 case STAMP:
                     metadataService.processStamp((ReferenceFieldInfo)fieldInfo, xmlFile);

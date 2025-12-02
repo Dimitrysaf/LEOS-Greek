@@ -359,61 +359,41 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void processFinalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        processCote(fieldInfo, xmlFile);
-        addFinalToCoverPage(xmlFile);
-        addFinalToIdentification(xmlFile);
-        addFinalToFilename(xmlFile);
-    }
+    public void processFinalCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, XmlUtil.XmlFile xmlFile) {
+        processCote(fieldInfo, diffusionVersion, true, xmlFile);
 
-    private void addFinalToFilename(XmlUtil.XmlFile xmlFile) {
-        final String fileName = xmlFile.getName();
+        addFinalVersionNumberToIdentification(diffusionVersion, xmlFile);
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
-            final String[] splitFileName = fileName.split("-");
-            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + MetadataUtil.VALUE_FINAL + "-" + b : a + b + "-");
-            xmlFile.setName(newFileName);
+            addFinalToCoverPage(diffusionVersion, xmlFile);
+            addFinalVersionNumberToFilename(diffusionVersion, xmlFile);
         }
     }
 
-    private void addFinalToIdentification(XmlUtil.XmlFile xmlFile) {
+    private void addFinalVersionNumberToFilename(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
+        final String versionNumber = MetadataUtil.VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "_" + diffusionVersion);
+        addVersionNumberToFilename(versionNumber, xmlFile);
+    }
+
+    private void addFinalVersionNumberToIdentification(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
+        final String versionNumber = MetadataUtil.VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "/" + diffusionVersion);
+        addVersionNumberToIdentification(versionNumber, xmlFile);
+    }
+
+    private void removeFinalToIdentification(XmlUtil.XmlFile xmlFile) {
         final Node frbrExpression = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBREXPRESSION);
         if (frbrExpression == null) {
             return;
         }
-        final Node frbrVersionNumber = xmlFile.getNodeOrCreateIfNotExists(frbrExpression, MetadataUtil.ELEMENT_FRBRVERSIONNUMBER);
-        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.ATTRIBUTE_VALUE, MetadataUtil.VALUE_FINAL);
-        frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression, MetadataUtil.ELEMENT_FRBRLANGUAGE));
-    }
 
-    private void removeFinalToIdentification(XmlUtil.XmlFile xmlFile) {
-        final Node frbrExpression = xmlFile.getElementByName("FRBRExpression");
-        if (frbrExpression == null) {
-            return;
-        }
-
-        final Node frbrVersionNumberNode = getChildNodeWithName(frbrExpression, "FRBRversionNumber");
+        final Node frbrVersionNumberNode = getChildNodeWithName(frbrExpression, MetadataUtil.ELEMENT_FRBRVERSIONNUMBER);
         if (frbrVersionNumberNode != null) {
             frbrVersionNumberNode.getParentNode().removeChild(frbrVersionNumberNode);
         }
     }
 
-    private void addFinalToCoverPage(XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
-        if (xmlNodeCoverpage == null) {
-            return;
-        }
-
-        Node xmlNodeDocNumber = MetadataUtil.getXmlNodeDocNumber(xmlFile);
-        if (xmlNodeDocNumber == null) {
-            return;
-        }
-        MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
-        xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
-        final Node inline = xmlFile.getNodeOrCreateIfNotExists(xmlNodeDocNumber, "inline");
-        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
-        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, "version");
-        inline.setTextContent(MetadataUtil.VALUE_FINAL);
-        xmlNodeDocNumber.appendChild(inline);
+    private void addFinalToCoverPage(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
+        final String versionNumber = MetadataUtil.VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "/" + diffusionVersion);
+        addVersionNumberToCoverPage(versionNumber, xmlFile);
     }
 
     private void removeFinalToCoverPage(XmlUtil.XmlFile xmlFile) {
@@ -427,39 +407,98 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        final Node inline = getChildNodeWithName(xmlNodeDocNumber, "inline");
+        final Node inline = getChildNodeWithName(xmlNodeDocNumber, MetadataUtil.ELEMENT_INLINE);
         if (inline != null) {
             inline.getParentNode().removeChild(inline);
         }
     }
 
     @Override
-    public void processCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    public void processCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, XmlUtil.XmlFile xmlFile) {
         if (StringUtil.isEmpty(fieldInfo.getDisplayValue())) {
-            removeFinalToCoverPage(xmlFile);
-            removeFinalToIdentification(xmlFile);
-            removeCoteToMetaIdentification(fieldInfo, xmlFile);
-            removeCoteToMetaReference(fieldInfo, xmlFile);
-            removeCoteToCoverPage(fieldInfo, xmlFile);
+            this.removeCote(fieldInfo, xmlFile);
+            return;
+        }
+        this.addCote(fieldInfo, diffusionVersion, false, xmlFile);
+    }
 
-            if (MetadataUtil.isMainDocumentFile(xmlFile)) {
-                removeMetaPreservation(xmlFile);
-            } else {
-                removeDocCuid(xmlFile);
+    private void processCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, boolean isFinal, XmlUtil.XmlFile xmlFile) {
+        if (StringUtil.isEmpty(fieldInfo.getDisplayValue())) {
+            this.removeCote(fieldInfo, xmlFile);
+            return;
+        }
+        this.addCote(fieldInfo, diffusionVersion, isFinal, xmlFile);
+    }
+
+    private void removeCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+        removeFinalToCoverPage(xmlFile);
+        removeFinalToIdentification(xmlFile);
+        removeCoteToMetaIdentification(fieldInfo, xmlFile);
+        removeCoteToMetaReference(fieldInfo, xmlFile);
+        removeCoteToCoverPage(fieldInfo, xmlFile);
+
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            removeMetaPreservation(xmlFile);
+        } else {
+            removeDocCuid(xmlFile);
+        }
+    }
+
+    private void addCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, boolean isFinal, XmlUtil.XmlFile xmlFile) {
+        addCoteToMetaIdentification(fieldInfo, xmlFile);
+        addCoteToMetaReference(fieldInfo, xmlFile);
+        addCoteToCoverPage(fieldInfo, xmlFile);
+        addCoteToDocumentFilename(fieldInfo, xmlFile);
+
+        if (!StringUtil.isEmpty(diffusionVersion)) {
+            addVersionNumberToIdentification("/" + diffusionVersion, xmlFile);
+        }
+        if (MetadataUtil.isMainDocumentFile(xmlFile)) {
+            removeMetaPreservation(xmlFile);
+            if (!isFinal && !StringUtil.isEmpty(diffusionVersion)) {
+                addVersionNumberToCoverPage("/" + diffusionVersion, xmlFile);
+                addVersionNumberToFilename("_" + diffusionVersion, xmlFile);
             }
         } else {
-            addCoteToMetaIdentification(fieldInfo, xmlFile);
-            addCoteToMetaReference(fieldInfo, xmlFile);
-            addCoteToCoverPage(fieldInfo, xmlFile);
-            addCoteToDocumentFilename(fieldInfo, xmlFile);
-
-            if (MetadataUtil.isMainDocumentFile(xmlFile)) {
-                removeMetaPreservation(xmlFile);
-            } else {
-                removeDocCuid(xmlFile);
-                addCoteToCuid(fieldInfo, xmlFile);
-            }
+            removeDocCuid(xmlFile);
+            addCoteToCuid(fieldInfo, xmlFile);
         }
+    }
+
+    private void addVersionNumberToFilename(String versionNumber, XmlUtil.XmlFile xmlFile) {
+        final String fileName = xmlFile.getName();
+        final String[] splitFileName = fileName.split("-");
+        final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + versionNumber + "-" + b : a + b + "-");
+        xmlFile.setName(newFileName);
+    }
+
+    private void addVersionNumberToIdentification(String versionNumber, XmlUtil.XmlFile xmlFile) {
+        final Node frbrExpression = xmlFile.getElementByName(MetadataUtil.ELEMENT_FRBREXPRESSION);
+        if (frbrExpression == null) {
+            return;
+        }
+        final Node frbrVersionNumber = xmlFile.getNodeOrCreateIfNotExists(frbrExpression, MetadataUtil.ELEMENT_FRBRVERSIONNUMBER);
+        XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.ATTRIBUTE_VALUE, versionNumber);
+        frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression, MetadataUtil.ELEMENT_FRBRLANGUAGE));
+    }
+
+    private void addVersionNumberToCoverPage(String versionNumber, XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeDocNumber = MetadataUtil.getXmlNodeDocNumber(xmlFile);
+        if (xmlNodeDocNumber == null) {
+            return;
+        }
+        MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
+        xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
+        final Node inline = xmlFile.getNodeOrCreateIfNotExists(xmlNodeDocNumber, MetadataUtil.ELEMENT_INLINE);
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_VERSION);
+        inline.setTextContent(versionNumber);
+        xmlNodeDocNumber.appendChild(inline);
     }
 
     /**
@@ -506,7 +545,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     public void addCoteToMetaIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        final Node identificationNode = xmlFile.getElementByName("identification");
+        final Node identificationNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_IDENTIFICATION);
         if (identificationNode == null) return;
 
         final Node frbrWorkNode = XmlUtil.getChildNodeWithName(identificationNode, MetadataUtil.ELEMENT_FRBRWORK);
@@ -525,7 +564,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     public void removeCoteToMetaIdentification(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        final Node identificationNode = xmlFile.getElementByName("identification");
+        final Node identificationNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_IDENTIFICATION);
         if (identificationNode == null) return;
 
         final Node frbrWorkNode = XmlUtil.getChildNodeWithName(identificationNode, MetadataUtil.ELEMENT_FRBRWORK);
@@ -536,7 +575,7 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        final Node frbrNumberNode = XmlUtil.getChildNodeWithName(frbrWorkNode, "FRBRnumber");
+        final Node frbrNumberNode = XmlUtil.getChildNodeWithName(frbrWorkNode, MetadataUtil.ELEMENT_FRBRNUMBER);
         if (frbrNumberNode != null) {
             frbrNumberNode.getParentNode().removeChild(frbrNumberNode);
         }
@@ -544,13 +583,13 @@ public class MetadataServiceImpl implements MetadataService {
 
     public void addCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if(MetadataUtil.isMainDocumentFile(xmlFile)) {
-            addTLCReference(fieldInfo, xmlFile, "identifier");
+            addTLCReference(fieldInfo, xmlFile, MetadataUtil.ELEMENT_IDENTIFIER);
         }
     }
 
     public void removeCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if(MetadataUtil.isMainDocumentFile(xmlFile)) {
-            removeTLCReference(xmlFile, "identifier");
+            removeTLCReference(xmlFile, MetadataUtil.ELEMENT_IDENTIFIER);
         }
     }
 
@@ -596,12 +635,12 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "reference");
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, MetadataUtil.VALUE_REFERENCE);
         if (xmlNodeBlock == null) {
             return;
         }
 
-        Node xmlNodeDocNumber = XmlUtil.getChildNodeWithName(xmlNodeBlock, "docNumber");
+        Node xmlNodeDocNumber = XmlUtil.getChildNodeWithName(xmlNodeBlock, MetadataUtil.ELEMENT_DOC_NUMBER);
         if (xmlNodeDocNumber == null) {
             return;
         }
@@ -617,17 +656,17 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
 
-        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
+        Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, MetadataUtil.VALUE_MAIN_DOC);
         if (xmlNodeMainDoc == null) {
             return;
         }
 
-        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "reference");
+        Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, MetadataUtil.VALUE_REFERENCE);
         if (xmlNodeBlock == null) {
             return;
         }
 
-        Node xmlNodeDocNumber = XmlUtil.getChildNodeWithName(xmlNodeBlock, "docNumber");
+        Node xmlNodeDocNumber = XmlUtil.getChildNodeWithName(xmlNodeBlock, MetadataUtil.ELEMENT_DOC_NUMBER);
         if (xmlNodeDocNumber == null) {
             return;
         }
@@ -654,18 +693,18 @@ public class MetadataServiceImpl implements MetadataService {
 
     private void addInterinstitutionalCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if(MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillDocumentFile(xmlFile)) {
-            addTLCReference(fieldInfo, xmlFile, "procedureReference");
+            addTLCReference(fieldInfo, xmlFile, MetadataUtil.ELEMENT_PROCEDURE_REFERENCE);
         }
     }
 
     private void removeInterinstitutionalCoteToMetaReference(XmlUtil.XmlFile xmlFile) {
         if(MetadataUtil.isMainDocumentFile(xmlFile) || MetadataUtil.isBillDocumentFile(xmlFile)) {
-            removeTLCReference(xmlFile, "procedureReference");
+            removeTLCReference(xmlFile, MetadataUtil.ELEMENT_PROCEDURE_REFERENCE);
         }
     }
 
     private void addTLCReference(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, String name) {
-        final Node references = xmlFile.getElementByName("references");
+        final Node references = xmlFile.getElementByName(MetadataUtil.ELEMENT_REFERENCES);
         if (references == null)
             return;
 
@@ -687,7 +726,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void removeTLCReference(XmlUtil.XmlFile xmlFile, String name) {
-        final Node references = xmlFile.getElementByName("references");
+        final Node references = xmlFile.getElementByName(MetadataUtil.ELEMENT_REFERENCES);
         if (references == null)
             return;
 
@@ -715,7 +754,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addInterinstitutionalCoteToPreface(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodePreface = xmlFile.getElementByName("preface");
+        Node xmlNodePreface = xmlFile.getElementByName(MetadataUtil.ELEMENT_PREFACE);
         if (xmlNodePreface == null) {
             return;
         }
@@ -723,7 +762,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void removeInterinstitutionalCoteToPreface(XmlUtil.XmlFile xmlFile) {
-        Node xmlNodePreface = xmlFile.getElementByName("preface");
+        Node xmlNodePreface = xmlFile.getElementByName(MetadataUtil.ELEMENT_PREFACE);
         if (xmlNodePreface == null) {
             return;
         }
@@ -731,7 +770,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     public void addInterinstitutionalCoteToDocketNumber(ReferenceFieldInfo fieldInfo, Node xmlParentNode) {
-        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlParentNode, "procedureIdentifier");
+        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlParentNode, MetadataUtil.VALUE_PROCEDURE_IDENTIFIER);
         if (xmlNodeContainer == null) {
             return;
         }
@@ -747,7 +786,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     public void removeInterinstitutionalCoteToDocketNumber(Node xmlParentNode) {
-        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlParentNode, "procedureIdentifier");
+        Node xmlNodeContainer = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlParentNode, MetadataUtil.VALUE_PROCEDURE_IDENTIFIER);
         if (xmlNodeContainer == null) {
             return;
         }
@@ -1332,13 +1371,13 @@ public class MetadataServiceImpl implements MetadataService {
         XmlUtil.setNodeAttributeValue(affectedDocNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         // TODO fill href
         XmlUtil.setNodeAttributeValue(affectedDocNode, MetadataUtil.ATTRIBUTE_HREF, "");
-        Element docNumber = xmlFile.newElement("docNumber");
+        Element docNumber = xmlFile.newElement(MetadataUtil.ELEMENT_DOC_NUMBER);
         XmlUtil.setNodeAttributeValue(docNumber, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
         docNumber.setTextContent(" " + corrigendumAddendumMetadata.getTargetProposalReference() + " ");
         if (checkIfFinalVersion(corrigendumAddendumMetadata.getFinalVersion())) {
-            Element inline = xmlFile.newElement("inline");
+            Element inline = xmlFile.newElement(MetadataUtil.ELEMENT_INLINE);
             XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
-            XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, "version");
+            XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_VERSION);
             inline.setTextContent(" " + ResourcesUtil.getMessage(language, "coverpage.corrigendum.addendum.affected.document.final"));
             docNumber.appendChild(inline);
         }
