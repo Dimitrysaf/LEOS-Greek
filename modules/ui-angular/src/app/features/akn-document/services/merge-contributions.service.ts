@@ -6,7 +6,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {EuiDialogConfig, EuiDialogService} from "@eui/components/eui-dialog";
 import { EuiAppShellService, EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
-import {BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, Subject, take, tap} from 'rxjs';
+import {BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, Subject, tap} from 'rxjs';
 
 import {
   PageMode,
@@ -136,8 +136,6 @@ export class MergeContributionsService {
       }),
     );
 
-    this.documentService.documentConfig$.subscribe(() => this.getContributions());
-
     combineLatest(
       [this.documentService.documentConfig$,
       this.documentService.documentRefAndCategory$]
@@ -151,6 +149,7 @@ export class MergeContributionsService {
             config.documentsMetadata
               .filter((d) => d.category === 'ANNEX')
               .findIndex((d) => d.ref === this.documentRef) + 1;
+          this.getContributions();
           this.loadingService.setLoading(false);
         }),
       )
