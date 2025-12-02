@@ -1,9 +1,11 @@
 package eu.europa.ec.leos.services.utils;
 
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,6 +15,23 @@ public class LegUtils {
     public static String fetchMilestoneVersion(final LegDocument legDocument) {
         return Objects.nonNull(legDocument) && Objects.nonNull(legDocument.getContainedDocuments())?
                 fetchMilestoneVersion(legDocument.getContainedDocuments())
+                :getMilestoneVersion(1);
+    }
+
+    private static List<String> buildListDocumentsFromVO(final DocumentVO documentVO) {
+        List<String> containedDocuments = new ArrayList<>();
+        if (Objects.nonNull(documentVO)) {
+            containedDocuments.add(documentVO.getRef() + "_" + documentVO.getMetadata().getDocVersion());
+            for (DocumentVO docVO : documentVO.getChildDocuments()) {
+                containedDocuments.addAll(buildListDocumentsFromVO(docVO));
+            }
+        }
+        return containedDocuments;
+    }
+
+    public static String fetchMilestoneVersion(final DocumentVO documentVO) {
+        return Objects.nonNull(documentVO) ?
+                fetchMilestoneVersion(buildListDocumentsFromVO(documentVO))
                 :getMilestoneVersion(1);
     }
 
