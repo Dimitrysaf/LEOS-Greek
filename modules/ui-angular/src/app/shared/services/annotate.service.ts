@@ -41,8 +41,7 @@ export class AnnotateService {
       .post(
         `${apiBaseUrl}/secured/annotation/requestMergeSuggestion/${this.documentTypeEnum}/${this.documentRef}`,
         mergeRequest,
-      )
-      .pipe(finalize(() => this.reloadDocument()));
+      );
   }
 
   requestMergeSuggestions(mergeRequests: MergeSuggestionRequest[]) {
@@ -50,20 +49,12 @@ export class AnnotateService {
       .post<MergeSuggestionResponse[]>(
         `${apiBaseUrl}/secured/annotation/requestMergeSuggestions/${this.documentTypeEnum}/${this.documentRef}`,
         { mergeSuggestionRequests: mergeRequests },
-      )
-      .pipe(finalize(() => this.reloadDocument()));
+      );
   }
 
   fetchSearchMetadata() {
     return this.httpClient.get<AnnotateMetadata[]>(
       `${apiBaseUrl}/secured/annotation/requestSearchMetadata`,
-    );
-  }
-
-  private reloadDocument() {
-    this.documentService.setDocumentRefAndCategory(
-      this.documentService.documentRef,
-      this.documentService.documentType,
     );
   }
 
@@ -74,4 +65,5 @@ export class AnnotateService {
   private get documentRef() {
     return this.documentService.documentRef;
   }
+
 }
