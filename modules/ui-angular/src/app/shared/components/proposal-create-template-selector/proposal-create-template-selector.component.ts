@@ -21,7 +21,7 @@ import {
   TreeNode,
 } from '@eui/components/eui-tree';
 import { EuiTreeSelectionChanges } from '@eui/components/eui-tree/eui-tree.model';
-
+import {AppConfigService} from "@/core/services/app-config.service";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -44,8 +44,6 @@ export class ProposalCreateTemplateSelectorComponent
   @Input() documentCollectionName!: string;
   @Input() proposalTemplate!: string;
   @Input() userRoles!: ApplicationRole[];
-  @Input() dgList: string[];
-  @Input() selectedDg: string;
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
@@ -59,7 +57,8 @@ export class ProposalCreateTemplateSelectorComponent
   doubleClickTimer: any;
   filteredNodes: TreeDataModel = null;
 
-
+  selectedDg: string;
+  dgList: UserEntity[] = [];
 
 
   private destroy$ = new Subject<void>();
@@ -67,15 +66,26 @@ export class ProposalCreateTemplateSelectorComponent
 
   constructor(
     private cd: ChangeDetectorRef,
-    private proposalService: ProposalService
+    private proposalService: ProposalService,
+    private appConfig: AppConfigService
   ) {
     this.setInitialState();
   }
 
   ngOnInit() {
     this.initialize(this.isCopyChangeAct); // if isCopyChangeAct then default true for disabling the tree selection
+    this.getDgList();
   }
 
+  getDgList() {
+    this.appConfig.config.subscribe((config) => {
+      if (config.user.entities.length > 1) {
+        this.dgList = config.user.entities;
+        const selectedDg = this.dgList.find(dg => dg.organizationName === config.user.defaultEntity.organizationName);
+        this.selectedDg = selectedDg.organizationName ;
+      }
+    });
+  }
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -220,7 +230,7 @@ export class ProposalCreateTemplateSelectorComponent
     const label = customName ? (key.substring(0, key.lastIndexOf('_')) + ' - ' + customName) : tooltipLabel;
     const iconClass =
       (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? iconClassCategory : iconClassTemplate;
-    const disabled = !enabled;
+    let disabled = !enabled;
     const children =
       (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !hidden && enabled
         ? items
@@ -232,21 +242,31 @@ export class ProposalCreateTemplateSelectorComponent
         : [];
     const isEmptyCategory = (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !children.length;
     const isTemplate = type === 'TEMPLATE';
+    const sameTemplate = (this.proposalTemplate && key === this.proposalTemplate);
+    const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
+    disabled = disabled || this.disabled || !isSameDocCollection || sameTemplate;
 
+    if(isEmptyCategory){
+      tooltipLabel = 'empty-category';
+    }else if(isTemplate){
+      if(this.disabled){
+        tooltipLabel = 'Invalid selection';
+      }else if(!isSameDocCollection) {
+        tooltipLabel = 'Invalid selection. Different category type';
+      }else if(sameTemplate){
+        tooltipLabel = 'Invalid selection. Cannot choose same template type';
+      }
+    }
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate,
+      selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate,
       treeContentBlock: {
         id,
         key,
         label,
         disabled,
         iconSvgName: iconClass,
-        tooltipLabel: isEmptyCategory
-          ? 'empty-category'
-          : isTemplate
-            ? 'template'
-            : '', // Adjust tooltipLabel based on conditions
+        tooltipLabel: tooltipLabel, // Adjust tooltipLabel based on conditions
         // Add other properties as needed
       },
     };
