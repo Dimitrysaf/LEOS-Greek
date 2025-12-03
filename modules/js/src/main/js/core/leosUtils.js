@@ -394,7 +394,7 @@ define(function leosUtilsModule(require) {
                 " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover):not([id*=revision]) { background-color: white;  }"+
                 " &:not(:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover)):not(&:hover):not([id*=revision]) { background-color: white;  }" +
                 "}\n";
-            tcShowStyle += ":is(" + ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR + "):not([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'])" +
+            tcShowStyle += ":is(" + ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR + "):not([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']):not([id*=revision])" +
                 " { background-color: white; }\n";
             tcShowStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
         }
