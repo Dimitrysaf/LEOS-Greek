@@ -1715,11 +1715,13 @@ define(function hierarchicalElementTransformer(require) {
                                                 toChildTextValue: "↰"
                                             });
                                         }
+                                        var dataAknTcOriginalExists = false;
                                         if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
                                             && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW
                                             && !element.attributes[DATA_AKN_ACTION_ENTER]
                                             && (element.attributes[DATA_AKN_NUM] !== element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]
                                                 || element.attributes[DATA_INDENT_ORIGIN_LEVEL])) {
+                                            dataAknTcOriginalExists = true;
                                             this.mapToChildProducts(element, {
                                                 toPath: contentPath,
                                                 toChild: "del",
@@ -1785,7 +1787,7 @@ define(function hierarchicalElementTransformer(require) {
                                                 toChildTextValue: element.attributes[DATA_AKN_NUM]
                                             });
                                         }
-                                        if (element.attributes[DATA_AKN_NUM] && element.attributes[DATA_AKN_ACTION_NUMBER] === 'delete') {
+                                        if (element.attributes[DATA_AKN_NUM] && element.attributes[DATA_AKN_ACTION_NUMBER] === 'delete' && !dataAknTcOriginalExists) {
                                             this.mapToChildProducts(element, {
                                                 toPath: contentPath,
                                                 toChild: "del",
