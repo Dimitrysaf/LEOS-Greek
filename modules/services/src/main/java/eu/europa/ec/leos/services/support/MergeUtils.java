@@ -90,6 +90,25 @@ public class MergeUtils {
         return false;
     }
 
+    public static boolean undoAllTrackChangesForElementKeepingStructure(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            Node childNode = nodeList.item(index);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                boolean isNodeDeleted = undoCleanTrackChangesKeepingStructure(childNode);
+                if(isNodeDeleted) {
+                    index--;
+                } else {
+                    isNodeDeleted = undoAllTrackChangesForElementKeepingStructure(childNode);
+                    if(isNodeDeleted) {
+                        index--;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean undoAllTrackChangesForElement(Node node, boolean resetNum) {
         NodeList nodeList = node.getChildNodes();
         for (int index = 0; index < nodeList.getLength(); index++) {
@@ -107,6 +126,21 @@ public class MergeUtils {
             }
         }
         return false;
+    }
+
+    private static boolean undoCleanTrackChangesKeepingStructure(Node node) {
+        boolean isNodeDeleted = false;
+        if (LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
+            XercesUtils.replaceElement(node.getFirstChild(), node);
+            isNodeDeleted = true;
+        } else if (isInsertOrMoveFrom(node)) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if (hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)
+                || hasAttributeWithValue(node, LEOS_SOFT_ACTION_ATTR, MOVE_TO)) {
+            removeTrackChangesAttributes(node, true);
+        }
+        return isNodeDeleted;
     }
 
     private static boolean undoCleanTrackChanges(Node node, boolean resetNum) {
@@ -133,7 +167,7 @@ public class MergeUtils {
         Node parent = node.getParentNode();
         XercesUtils.deleteElement(node);
 
-        while (parent != null
+       while (parent != null
                 && !parent.getNodeName().equals(NUM)
                 && !XercesUtils.hasAscendantOfType(parent, "subparagraph")
                 && isParentRemovable(parent)) {

@@ -121,6 +121,7 @@ public class XmlHelper {
     public static final String POINT = "point";
     public static final String INDENT = "indent";
     public static final String SUBPOINT = "alinea";
+    public static final String TABLE = "table";
     public static final String SUBPOINT_LABEL = "subparagraph";
     public static final String CLAUSE = "clause";
     public static final String CONCLUSIONS = "conclusions";
