@@ -18,6 +18,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.services.utils.LegUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,10 +158,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                 Proposal originalProposal = proposalService.findProposal(documentVO.getId());
                 byte[] xmlContent = originalProposal.getContent().getOrThrow(() ->
                         new IllegalArgumentException("Proposal not found")).getSource().getBytes();
-                String docVersion = "";
-                if (documentVO != null && documentVO.getMetadata() != null && documentVO.getMetadata().getDocVersion() != null) {
-                    docVersion = documentVO.getMetadata().getDocVersion();
-                }
+                String docVersion = LegUtils.fetchMilestoneVersion(documentVO);
                 byte[] updatedProposalContent = preserveClonedDocumentProperties(xmlContent,
                         idsAndUrlsHolder.getProposalId(), cloneProposalMetadataVO, docVersion);
                 documentVO.setSource(updatedProposalContent);

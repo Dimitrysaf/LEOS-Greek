@@ -380,7 +380,6 @@ public class MetadataServiceImpl implements MetadataService {
         if (frbrExpression == null) {
             return;
         }
-
         final Node frbrVersionNumber = xmlFile.getNodeOrCreateIfNotExists(frbrExpression, MetadataUtil.ELEMENT_FRBRVERSIONNUMBER);
         XmlUtil.setNodeAttributeValue(frbrVersionNumber, MetadataUtil.ATTRIBUTE_VALUE, MetadataUtil.VALUE_FINAL);
         frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression, MetadataUtil.ELEMENT_FRBRLANGUAGE));
@@ -517,7 +516,6 @@ public class MetadataServiceImpl implements MetadataService {
         if (prescriptiveNode == null) {
             return;
         }
-
         final Node frbrNumber = xmlFile.getNodeOrCreateIfNotExists(frbrWorkNode, MetadataUtil.ELEMENT_FRBRNUMBER);
         XmlUtil.setNodeAttributeValue(frbrNumber, MetadataUtil.ATTRIBUTE_VALUE, fieldInfo.getDisplayValue());
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {

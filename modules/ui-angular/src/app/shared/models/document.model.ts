@@ -46,6 +46,7 @@ export interface ProposalDetailsLists {
   interInstitionalRefsTypes: string[] | null;
   adoptionPlaces: string[] | null;
   specialMentions: string[] | null;
+  languages: string[] | null;
   commissionerTitles: string[] | null;
   templateSignatures: SignatureMetadata[] | null;
 }

@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.services.collection;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -8,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Provider;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public DocumentVO createDocumentVOFromLegfile(File legDocument) throws XmlValidationException {
+    public DocumentVO createDocumentVOFromLegfile(LeosFile legDocument) throws XmlValidationException {
         Validate.notNull(legDocument, "Leg document is required");
         DocumentVO propDocument = proposalConverterService.createProposalFromLegFile(legDocument, true);
 
@@ -89,7 +89,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public DocumentVO getProposalDocumentFromLeg(File legDocument) throws CreateCollectionException {
+    public DocumentVO getProposalDocumentFromLeg(LeosFile legDocument) throws CreateCollectionException {
         DocumentVO propDocument;
         try {
             propDocument = createDocumentVOFromLegfile(legDocument);
@@ -187,7 +187,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult createCollectionFromLeg(File legDocument, DocumentVO propDocument, String language, boolean isTranslated) {
+    public CreateCollectionResult createCollectionFromLeg(LeosFile legDocument, DocumentVO propDocument, String language, boolean isTranslated) {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
 
         CollectionContextService context = proposalContextProvider.get();
@@ -213,7 +213,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult cloneCollection(File legDocument, String originRef, String targetUser, String connectedEntity) {
+    public CreateCollectionResult cloneCollection(LeosFile legDocument, String originRef, String targetUser, String connectedEntity) {
         Validate.notNull(originRef, "originRef reference is required!");
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
         DocumentVO propDocument = null;

@@ -15,13 +15,13 @@
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import eu.europa.ec.digit.leos.pilot.export.model.DocumentVO;
+import eu.europa.ec.digit.leos.pilot.export.util.LeosFile;
 
-import java.io.File;
 import java.util.Map;
 
 public interface ProposalConverterService {
 
-    DocumentVO createDocument(String docName, File docFile, boolean canModifySource);
+    DocumentVO createDocument(String docName, LeosFile docFile, boolean canModifySource);
 
     DocumentVO createProposalFromLegFile(Map<String, Object> contentToZip, boolean canUpdateSource);
 }

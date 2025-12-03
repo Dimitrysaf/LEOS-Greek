@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.locks.StampedLock;
@@ -55,29 +54,12 @@ public abstract class AbstractMilestoneService implements MilestoneService{
     @Override
     public LegDocument createMilestone(String proposalId, String milestoneComment) throws Exception {
         LOG.trace("Creating Milestone for Proposal... [proposalId={}]", proposalId);
-        File legFileAsZip = null;
-        try{
-            LegPackage legPackage;
+        LegPackage legPackage = createLegPackage(proposalId);
 
-            if (milestoneComment.equals(CUSTOM_TEMPLATE)){
-                legPackage = createLegPackage(proposalId, false);
-            }
-            else{
-                legPackage = createLegPackage(proposalId);
-            }
-
-            legPackage.addMilestoneComment(milestoneComment);
-            legFileAsZip = legPackage.getFile();
-            LegDocument legDocument = createLegDocument(proposalId, legPackage);
-            LOG.trace("Created LegDocument... [legDocumentId={}]", legDocument.getId());
-            return legDocument;
-        } finally {
-            if (legFileAsZip != null && legFileAsZip.exists()) {
-                if (!legFileAsZip.delete()) {
-                    LOG.warn("Couldn't delete the leg file {} for proposal {}", legFileAsZip.getName(), proposalId);
-                }
-            }
-        }
+        legPackage.addMilestoneComment(milestoneComment);
+        LegDocument legDocument = createLegDocument(proposalId, legPackage);
+        LOG.trace("Created LegDocument... [legDocumentId={}]", legDocument.getId());
+        return legDocument;
     }
 
     @Override

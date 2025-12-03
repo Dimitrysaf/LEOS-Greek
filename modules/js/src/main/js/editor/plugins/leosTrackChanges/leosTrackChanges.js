@@ -633,7 +633,7 @@ define(function leosTrackChangesModule(require) {
             editor.getSelection().getRanges()[0].optimize();
             var tcElement = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
             if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor))
-                && !tcElement[0].getId()) {
+                    && !tcElement[0].getId()) {
                 if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
                     return false;
                 } else if (tcElement[1] === core.CARET_START) {
@@ -668,7 +668,7 @@ define(function leosTrackChangesModule(require) {
                     selectedNode = deleteKey ? selectedNode.getNext() : selectedNode.getPrevious();
                 }
                 if (selectedNode && (selectedNode.$.textContent.replace(/\u200B/g,'') === '') && ((selectedNode.type !== CKEDITOR.NODE_ELEMENT) ||
-                    ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
+                        ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
                     selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextEditableNode() :
                         editor.getSelection().getRanges()[0].getPreviousEditableNode();
                 }

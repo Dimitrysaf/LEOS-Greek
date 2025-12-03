@@ -54,7 +54,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
@@ -156,7 +155,7 @@ public class ElementProcessorImplTest extends LeosTest {
         final String articleId = "486";
         final String newArticleText = "new article text";
 
-        when(xmlContentProcessor.replaceElementById(originalByteContent, newArticleText, articleId)).thenReturn(updatedByteContent);
+        when(xmlContentProcessor.replaceElementById(originalByteContent, newArticleText, articleId, true)).thenReturn(updatedByteContent);
         when(xmlContentProcessor.removeEmptyHeading(newArticleText)).thenReturn(newArticleText);
 
         final byte[] result = elementServiceImpl.updateElement(originalDocument, newArticleText, articleTag, articleId, false);
@@ -186,7 +185,7 @@ public class ElementProcessorImplTest extends LeosTest {
         final String articleTag = ARTICLE;
         final String articleId = "486";
 
-        when(xmlContentProcessor.replaceElementById(originalByteContent, null, articleId)).thenReturn(updatedByteContent);
+        when(xmlContentProcessor.replaceElementById(originalByteContent, null, articleId, true)).thenReturn(updatedByteContent);
 
         final byte[] result = elementServiceImpl.updateElement(originalDocument, null, articleTag, articleId, false);
 
@@ -247,13 +246,13 @@ public class ElementProcessorImplTest extends LeosTest {
         final String tagId = "cits";
         final String updtedCitations = "Updated citations content";
 
-        when(xmlContentProcessor.replaceElementById(originalByteContent, updtedCitations, tagId)).thenReturn(updatedByteContent);
+        when(xmlContentProcessor.replaceElementById(originalByteContent, updtedCitations, tagId, true)).thenReturn(updatedByteContent);
 
         // DO THE ACTUAL CALL
         final byte[] result = elementServiceImpl.updateElement(originalDocument, updtedCitations, tagName, tagId, false);
 
         assertThat(result, is(updatedByteContent));
-        verify(xmlContentProcessor).replaceElementById(originalByteContent, updtedCitations, tagId);
+        verify(xmlContentProcessor).replaceElementById(originalByteContent, updtedCitations, tagId, true);
         verifyNoMoreInteractions(xmlContentProcessor);
 
     }
@@ -311,13 +310,13 @@ public class ElementProcessorImplTest extends LeosTest {
         final String tagId = "recs";
         final String updtedRecitals = "Updated recitals content";
 
-        when(xmlContentProcessor.replaceElementById(originalByteContent, updtedRecitals, tagId)).thenReturn(updatedByteContent);
+        when(xmlContentProcessor.replaceElementById(originalByteContent, updtedRecitals, tagId, true)).thenReturn(updatedByteContent);
 
         // DO THE ACTUAL CALL
         byte[] result = elementServiceImpl.updateElement(originalDocument, updtedRecitals, tagName, tagId, false);
 
         assertThat(result, is(updatedByteContent));
-        verify(xmlContentProcessor).replaceElementById(originalByteContent, updtedRecitals, tagId);
+        verify(xmlContentProcessor).replaceElementById(originalByteContent, updtedRecitals, tagId, true);
         verifyNoMoreInteractions(xmlContentProcessor);
 
     }

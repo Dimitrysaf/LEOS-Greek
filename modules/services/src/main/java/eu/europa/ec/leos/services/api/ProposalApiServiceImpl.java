@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -66,7 +67,6 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,9 +74,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,9 +81,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.zip.ZipOutputStream;
 
 import static java.util.stream.Collectors.toList;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
@@ -130,10 +127,10 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
     public byte[] downloadProposal(String proposalRef) throws Exception {
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         String jobFileName = getJobFileName(proposalRef);
-        File packageFile;
+        LeosFile packageFile;
         try {
             packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId(), new ExportLW(ExportOptions.Output.WORD));
-            return FileUtils.readFileToByteArray(packageFile);
+            return packageFile.getBytes();
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
             throw e;
@@ -143,32 +140,22 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
     @Override
     public void validateProposal(String proposalRef) throws Exception {
         LegPackage legPackage = null;
-        File resultZipFile = null;
-        try {
-            Proposal proposal = proposalService.findProposalByRef(proposalRef);
-            if (!securityContext.hasPermission(proposal, LeosPermission.CAN_VALIDATE)) {
-                LOG.info("User does not have permission to perform the operation");
-                throw new IllegalStateException("User does not have permission to perform the operation");
-            }
-            legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
-            String validationResult = conValidatorService.validate(legPackage.getFile());
-
-            Map<String, Object> contentToZip = new HashMap<>();
-            contentToZip.put("result.xml", validationResult);
-            contentToZip.put(legPackage.getFile().getName(), legPackage.getFile());
-            resultZipFile = ZipPackageUtil.zipFiles("validation.zip", contentToZip, "");
-
-            notificationService.sendNotification(new DocumentExternalValidationNotification(securityContext.getUser().getEmail(),
-                    securityContext.getUserName(), new Date(), proposalRef, FileUtils.readFileToByteArray(resultZipFile)));
-        } finally {
-            if ((legPackage != null) && (legPackage.getFile() != null) && legPackage.getFile().exists() &&
-                    !legPackage.getFile().delete()) {
-                LOG.info("File not deleted {}", legPackage.getFile().toPath());
-            }
-            if ((resultZipFile != null) && resultZipFile.exists() && !resultZipFile.delete()) {
-                LOG.info("File not deleted {}", resultZipFile.toPath());
-            }
+        LeosFile resultZipFile = null;
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        if (!securityContext.hasPermission(proposal, LeosPermission.CAN_VALIDATE)) {
+            LOG.info("User does not have permission to perform the operation");
+            throw new IllegalStateException("User does not have permission to perform the operation");
         }
+        legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
+        String validationResult = conValidatorService.validate(legPackage.getFile());
+
+        Map<String, Object> contentToZip = new HashMap<>();
+        contentToZip.put("result.xml", validationResult.getBytes(UTF_8));
+        contentToZip.put(legPackage.getFile().getName(), legPackage.getFile().getBytes());
+        resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
+
+        notificationService.sendNotification(new DocumentExternalValidationNotification(securityContext.getUser().getEmail(),
+                securityContext.getUserName(), new Date(), proposalRef, resultZipFile.getBytes()));
     }
 
     @Override
@@ -178,42 +165,32 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             packageNames.forEach(packageName -> {
                 Package leosPackage = findPackageByName(packageName);
                 if (leosPackage != null) {
-                    File validationFile = null;
+                    LeosFile validationFile = new LeosFile();
                     try {
                         List<XmlDocument> xmlDocuments = packageRepository.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, true);
-                        validationFile = File.createTempFile("temp", ".zip");
+                        validationFile.generateFileName("temp", ".zip");
                         Map<String, Object> contentToZip = new HashMap<>();
                         for (XmlDocument xmlDocument : xmlDocuments) {
                             contentToZip.put(xmlDocument.getName(), xmlDocument.getContent().get().getSource().getBytes());
                         }
-                        ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(validationFile));
-                        try {
-                            ZipPackageUtil.addContentToOutputStream(zipOutputStream, contentToZip);
-                        } finally {
-                            zipOutputStream.close();
-                        }
+                        validationFile.setBytes(ZipPackageUtil.convertContentToByteArray(contentToZip));
                         String proposalRef = xmlDocuments.stream().filter(xmlDocument -> xmlDocument.getCategory().name().equals("PROPOSAL")).findFirst().get().getName().replace(".xml","");
                         String legFileName = proposalRef + ".leg";
-                        validationFile = ZipPackageUtil.renameZipFile(legFileName, validationFile);
+                        validationFile.setName(legFileName);
+                        validationFile.setOriginalFileName(legFileName);
                         String validationResult = conValidatorService.validate(validationFile);
 
                         if(StringUtils.isNotEmpty(validationResult)) {
                             Map<String, Object> validationResultContent = new HashMap<>();
-                            validationResultContent.put("result.xml", validationResult);
-                            validationResultContent.put(legFileName, validationFile);
-                            File resultZipFile = ZipPackageUtil.zipFiles("validation.zip", validationResultContent, "");
-                            sendNotification(proposalRef, email, userName, FileUtils.readFileToByteArray(resultZipFile));
+                            validationResultContent.put("result.xml", validationResult.getBytes(UTF_8));
+                            validationResultContent.put(legFileName, validationFile.getBytes());
+                            LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", validationResultContent, "");
+                            sendNotification(proposalRef, email, userName, resultZipFile.getBytes());
                             setDocumentsValidationStatus(xmlDocuments);
                         }
 
-                    } catch (FileNotFoundException e) {
-                        throw new RuntimeException(e);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
-                    } finally {
-                        if (validationFile != null && validationFile.exists() && validationFile.delete()) {
-                            LOG.info("File deleted {}", validationFile.toPath());
-                        }
                     }
                 }
             });

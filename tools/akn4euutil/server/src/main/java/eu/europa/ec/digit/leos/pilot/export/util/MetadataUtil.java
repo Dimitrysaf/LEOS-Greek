@@ -107,6 +107,10 @@ public class MetadataUtil {
     public static final String ELEMENT_REFERENCES ="references";
     public static final String ELEMENT_CONTAINER="container";
     public static final String ELEMENT_META="meta";
+    public static final String ELEMENT_FRBRPRESCRIPTIVE = "FRBRprescriptive";
+    public static final String ELEMENT_FRBRNUMBER = "FRBRnumber";
+    public static final String ELEMENT_FRBREXPRESSION = "FRBRExpression";
+    public static final String ELEMENT_FRBRVERSIONNUMBER = "FRBRversionNumber";
     public static final String ATTRIBUTE_LANGUAGE ="language";
     public static final String VALUE_LANGUAGE ="language";
     public static final String VALUE_LANGUAGE_EN ="EN";
@@ -122,10 +126,6 @@ public class MetadataUtil {
     public static final String VALUE_AUTHENTIC_LANGUAGES_NAME = "authenticLang";
     public static final String VALUE_CROSS_CONFERENCE_NAME = "associatedReferences";
     public static final String ACTING_ENTITY_NAME = "actingEntity";
-    public static final String ELEMENT_FRBRPRESCRIPTIVE = "FRBRprescriptive";
-    public static final String ELEMENT_FRBRNUMBER = "FRBRnumber";
-    public static final String ELEMENT_FRBREXPRESSION = "FRBRExpression";
-    public static final String ELEMENT_FRBRVERSIONNUMBER = "FRBRversionNumber";
     public static final String VALUE_MAIN_DOC = "mainDoc";
     public static final String VALUE_PLACE_AND_DATE = "placeAndDate";
     public static final String INTERINSTITUTIONAL_COTE_LANG_PLACEHOLDER = "__LANG__";

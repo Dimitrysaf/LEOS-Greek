@@ -32,6 +32,8 @@ import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.s
 
 import { AnnotateManager } from './annotate-manager';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
+import {EuiDialogService} from "@eui/components/eui-dialog";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-document-annotations',
@@ -81,6 +83,8 @@ export class DocumentAnnotationsComponent
     private milestoneService: ProposalMilestonesService,
     private mergeContributionService: MergeContributionsService,
     private detailsService: ProposalDetailsService,
+    private dialogService: EuiDialogService,
+    private translateService: TranslateService,
     @Optional() private ckEditorService?: CKEditorService,
   ) {}
 
@@ -111,6 +115,8 @@ export class DocumentAnnotationsComponent
       this.milestoneService,
       this.mergeContributionService,
       this.detailsService,
+      this.dialogService,
+      this.translateService,
       this.ckEditorService,
     );
     this.documentService.setAnnotationGetter(() =>

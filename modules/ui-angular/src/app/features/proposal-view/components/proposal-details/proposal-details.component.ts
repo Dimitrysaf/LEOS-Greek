@@ -84,6 +84,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   correctionInformation: string;
   finalVersion: boolean;
 
+  //TODO To be moved to the backend configuration
   languages = [];
 
   selectedLanguages: { [key: string]: boolean } = {};

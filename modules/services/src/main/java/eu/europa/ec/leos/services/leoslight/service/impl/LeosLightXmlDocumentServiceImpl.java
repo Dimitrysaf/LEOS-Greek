@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.rendition.RenderedDocument;
 import eu.europa.ec.leos.services.annotate.AnnotateService;
@@ -62,11 +63,9 @@ import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -183,19 +182,12 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         }
 
         String outputDescriptor = exportHelper.createJsonOutputDescriptorFile(exportOptions, false);
-        contentToZip.put("content.json", outputDescriptor.getBytes(StandardCharsets.UTF_8));
-        File file = null;
+        contentToZip.put("content.json", outputDescriptor.getBytes(UTF_8));
+        LeosFile file = null;
         try {
-            file = ZipPackageUtil.zipFiles("document.zip", contentToZip, null);
+            file = ZipPackageUtil.zipLeosFiles("document.zip", contentToZip, null);
             map.add("outputDescriptor", outputDescriptor);
-
-            ByteArrayResource bar = new ByteArrayResource(Files.readAllBytes(file.toPath())) {
-                @Override
-                public String getFilename() {
-                    return fileName;
-                }
-            };
-            map.add("inputFile", bar);
+            map.add("inputFile", file.getResource());
 
             ResponseEntity<byte[]> response = getResponseEntity(uri, null, map, byte[].class);
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -204,10 +196,6 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if ((file != null) && file.exists()) {
-                file.delete();
-            }
         }
         LOG.error("Not successful conversion using the external service Akn4EU");
         throw new IllegalStateException("Not successful conversion using the external service Akn4EU");

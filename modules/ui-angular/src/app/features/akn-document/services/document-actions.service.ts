@@ -74,6 +74,7 @@ import {
   AI_DROPDOWN_ID,
   AI_ALL_SECTIONS_ID,
   AI_FIRST_SECTION_ID, AI_SECOND_SECTION_ID, AI_THIRD_SECTION_ID, AI_FOURTH_SECTION_ID, AI_FIFTH_SECTION_ID, AI_BUTTON_ID,
+  MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID,
 } from '@/shared/constants/document-actions.constants';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
@@ -758,7 +759,9 @@ export abstract class DocumentActionsService {
         id: COMPARE_EXPORT_DROPDOWN_ID,
         euiSize: 's',
         euiStyle: 'secondary',
-        label: 'Export',
+        label: this.translateService.instant(
+          'page.collection.actions-dropdown.export',
+        ),
         icon: 'eui-ellipsis-vertical',
         disabled: this.versionCompareService.versionCompareIds$.pipe(
           map((versions) => versions.length <= 1),
@@ -832,8 +835,8 @@ export abstract class DocumentActionsService {
           {
             type: IRibbonToolbarType.BUTTON,
             id: MERGE_CONTRIBUTION_PREV_CHANGE_ID,
-            icon: 'eui-sort-asc',
-            euiSize: 's',
+            icon: 'chevron-up',
+            euiSize: 'm',
             euiStyle: 'secondary',
             basicButton: true,
             actionFn: () =>
@@ -846,8 +849,9 @@ export abstract class DocumentActionsService {
           {
             type: IRibbonToolbarType.BUTTON,
             id: MERGE_CONTRIBUTION_NEXT_CHANGE_ID,
-            icon: 'eui-sort-desc',
-            euiSize: 's',
+            icon: 'chevron-down',
+            svgType: 'sharp',
+            euiSize: 'm',
             euiStyle: 'secondary',
             basicButton: true,
             actionFn: () =>
@@ -873,15 +877,14 @@ export abstract class DocumentActionsService {
       },
       {
         type: IRibbonToolbarType.DROPDOWN,
-        id: COMPARE_EXPORT_DROPDOWN_ID,
+        id: MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID,
         euiSize: 's',
         euiStyle: 'secondary',
         description: this.translateService.instant(
           'page.editor.contribution.actions-button.tooltip',
         ),
-        icon: 'eui-more-vertical',
+        icon: 'eui-ellipsis-vertical',
         items: this.buildMergeContributionApplyDropdownOptions(),
-        cssClasses: 'eui-button--basic eui-button--icon-only',
       },
       {
         type: IRibbonToolbarType.BUTTON,

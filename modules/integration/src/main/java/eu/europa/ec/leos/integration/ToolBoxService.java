@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.leos.integration;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import io.atlassian.fugue.Pair;
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -24,10 +24,10 @@ public interface ToolBoxService {
 
     Pair<byte[], byte[]> getZipFilesFromLegDocumentJobResult(String jobId) throws IOException;
 
-    String createJob(Map<String, File> packages) throws IOException, JAXBException;
+    String createJob(Map<String, LeosFile> packages) throws IOException, JAXBException;
 
-    String createJobWithCallback(String proposalId, Map<String, File> packages) throws IOException, JAXBException;
+    String createJobWithCallback(String proposalId, Map<String, LeosFile> packages) throws IOException, JAXBException;
 
-    String createJobWithEmail(String proposalId, Map<String, File> packages, String destinationEmail) throws IOException, JAXBException;
+    String createJobWithEmail(String proposalId, Map<String, LeosFile> packages, String destinationEmail) throws IOException, JAXBException;
 
 }

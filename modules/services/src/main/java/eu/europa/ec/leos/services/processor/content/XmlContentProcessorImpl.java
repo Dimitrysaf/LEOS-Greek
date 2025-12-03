@@ -454,13 +454,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public byte[] replaceElementById(byte[] xmlContent, String newContent, String elementId) {
+    public byte[] replaceElementById(byte[] xmlContent, String newContent, String elementId, boolean doPostProcessing) {
         Document document = createXercesDocument(xmlContent);
         Node elementNode = XercesUtils.getElementById(document, elementId);
 
         if (elementNode != null) {
             Document documentNode = (Document)XercesUtils.replaceElement(elementNode, newContent);
-            documentNode = doXMLPostProcessingOnDocument(nodeToByteArray(documentNode));
+            if (doPostProcessing) documentNode = doXMLPostProcessingOnDocument(nodeToByteArray(documentNode));
             xmlContent = processUnnumberedParagraph(documentNode, newContent, elementId);
         }
         return xmlContent;
@@ -3000,6 +3000,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node node = getElementByXpath(xmlContent, xPath);
         if (XmlHelper.BILL.equals(node.getNodeName())) {
             category = LeosCategory.BILL;
+        } else if (COVERPAGE.equals(node.getNodeName())) {
+            category = LeosCategory.COVERPAGE;
         } else {
             String docNameAttr = getAttributeValue(node, XML_NAME);
             if (docNameAttr != null) {

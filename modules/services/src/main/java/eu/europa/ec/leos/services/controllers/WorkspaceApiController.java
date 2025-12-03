@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
@@ -46,10 +47,12 @@ public class WorkspaceApiController {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceApiController.class);
 
     private final ApiService apiService;
+    private final SecurityContext securityContext;
 
     @Autowired
-    public WorkspaceApiController(ApiService apiService) {
+    public WorkspaceApiController(ApiService apiService, SecurityContext securityContext) {
         this.apiService = apiService;
+        this.securityContext = securityContext;
     }
 
     @RequestMapping(value = "/filterProposals", method = RequestMethod.POST)
@@ -76,6 +79,8 @@ public class WorkspaceApiController {
         try {
             createCollectionResult = apiService.createProposal(request.getTemplateId(), request.getTemplateName(), request.getLangCode(),
                     request.getLinguisticVersions(), request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey());
+            LOG.info("A package with proposal is created with proposal ref {} by the user {}", createCollectionResult.getProposalId(),
+                    securityContext.getUser().getLogin());
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
         } catch (CreateCollectionException ex) {
             LOG.error("Error occurred while creating proposal " + ex.getMessage());

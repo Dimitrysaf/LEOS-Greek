@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.integration.rest.UserJSON;
@@ -47,11 +48,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -335,9 +332,9 @@ public class ProposalApiController {
             if (legFileName == null || legFileName.contains("..")) {
                 throw new IllegalArgumentException("Invalid upload directory path: " + legFileName);
             }
-            File content = new File(legFileName);
-            try (FileOutputStream fos = new FileOutputStream(content)) {
-                fos.write(legFile.getBytes());
+            LeosFile content = new LeosFile(legFileName);
+            try {
+                content.setBytes(legFile.getBytes());
             } catch (IOException ioe) {
                 LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -354,9 +351,9 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
         validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
-        File content = new File(legFile.getName());
-        try (FileOutputStream fos = new FileOutputStream(content)) {
-            fos.write(legFile.getBytes());
+        LeosFile content = new LeosFile(legFile.getName());
+        try {
+            content.setBytes(legFile.getBytes());
         } catch (IOException ioe) {
             LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -368,15 +365,17 @@ public class ProposalApiController {
     @RequestMapping(value = "/conValidateLegFile", method = RequestMethod.POST)
     public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) throws IOException {
         validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
-        String tempConvalLegPath = System.getProperty("java.io.tmpdir") + File.separator + "convalLeg";
-        new File(tempConvalLegPath).mkdirs();
         if (!isValidFileName(legFile.getOriginalFilename())) {
             new ResponseEntity<>("Invalid file name", HttpStatus.BAD_REQUEST);
         }
-        Path path = Paths.get(tempConvalLegPath, legFile.getOriginalFilename());
-        File file = path.toFile();
-        legFile.transferTo(file);
-        String result = conValidatorService.validate(file);
+        LeosFile content = new LeosFile(legFile.getName());
+        try {
+            content.setBytes(legFile.getBytes());
+        } catch (IOException ioe) {
+            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        String result = conValidatorService.validate(content);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

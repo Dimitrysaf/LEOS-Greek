@@ -187,7 +187,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 for (String documentRulesKey : tableOfContentDocumentRules.keySet()) {
                     DocumentRules.Rule rule = tableOfContentDocumentRules.get(documentRulesKey);
                     for (TableOfContentItemVO tableOfContentItemVO : request.getTableOfContentItemVOs()) {
-                        if (tableOfContentItemVO.getTagName().equals(AknTag.BODY)
+                    if (tableOfContentItemVO.getTagName().equals(AknTag.BODY)
                                 || tableOfContentItemVO.getTagName().equals(AknTag.PREAMBLE)
                                 || tableOfContentItemVO.getTagName().equals(AknTag.BLOCK)) {
                             validateTocStructure(rule, tableOfContentItemVO, checkDocumentRulesVO);
@@ -597,8 +597,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (tocItem.getAknTag().value().equals(elementName)) {
             if (tableOfContentItemVO.getChildItems() != null
                     && (tableOfContentItemVO.getChildItems().isEmpty()
-                        || tableOfContentItemVO.getChildItems().stream()
-                                .filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)) {
+                    || tableOfContentItemVO.getChildItems().stream()
+                    .filter(elem -> elem.getTrackChangeAction() == null || !elem.getTrackChangeAction().equals("delete")).count() == 0)) {
                 return true;
             }
         }
