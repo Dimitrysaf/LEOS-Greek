@@ -61,8 +61,18 @@ public class WorkspaceOptions {
         } else {
             initRoleFilter();
         }
+        customTemplateFilter();
         initSortOrder();
 
+    }
+
+    private void customTemplateFilter() {
+        //set false if user is not having Template manager or Support Role
+        if (!(securityContext.getUser().getRoles().contains("TEMPLATE_MANAGER")
+                || securityContext.getUser().getRoles().contains("SUPPORT"))) {
+            workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
+                    "=", false, true, "false"));
+        }
     }
 
     private void initFilter(FilterProposalsRequest.Filter[] filters) {
