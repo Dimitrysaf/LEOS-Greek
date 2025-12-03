@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -55,13 +56,11 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -104,10 +103,10 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
     public byte[] downloadProposal(String proposalRef) throws Exception {
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         String jobFileName = getJobFileName(proposalRef);
-        File packageFile;
+        LeosFile packageFile;
         try {
             packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId(), new ExportDW(ExportOptions.Output.WORD));
-            return FileUtils.readFileToByteArray(packageFile);
+            return packageFile.getBytes();
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
             throw e;

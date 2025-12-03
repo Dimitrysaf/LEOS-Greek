@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.converter;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -29,10 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 @Service
 @Instance(InstanceType.COUNCIL)
@@ -52,25 +49,19 @@ class ProposalConverterServiceForMandateImpl extends ProposalConverterServiceImp
     }
 
     @Override
-    protected void updateSource(final DocumentVO document, File documentFile, boolean canModifySource) {
-        try {
-            byte[] xmlBytes = Files.readAllBytes(documentFile.toPath());
-            if (canModifySource) {
-                if (document.getCategory() == LeosCategory.BILL) {
-                    xmlBytes = xmlContentProcessor.removeElements(xmlBytes, xPathCatalog.getXPathCoverPage(), 0);
-                    // We have to remove the references to the annexes, we will add them when importing
-                    xmlBytes = xmlContentProcessor.removeElements(xmlBytes, xPathCatalog.getXPathAttachments(), 0);
-                }
-                if (document.getCategory() == LeosCategory.ANNEX) {
-                    xmlBytes = xmlContentProcessor.removeElements(xmlBytes, xPathCatalog.getXPathCoverPage(), 0);
-                }
+    protected void updateSource(final DocumentVO document, LeosFile documentFile, boolean canModifySource) {
+        byte[] xmlBytes = documentFile.getBytes();
+        if (canModifySource) {
+            if (document.getCategory() == LeosCategory.BILL) {
+                xmlBytes = xmlContentProcessor.removeElements(xmlBytes, xPathCatalog.getXPathCoverPage(), 0);
+                // We have to remove the references to the annexes, we will add them when importing
+                xmlBytes = xmlContentProcessor.removeElements(xmlBytes, xPathCatalog.getXPathAttachments(), 0);
             }
-            document.setSource(xmlBytes);
-        } catch (IOException e) {
-            LOG.error("Error updating the source of the document: {}", e);
-            // the post validation will take care to analyse wether the source is there or not
-            document.setSource(null);
+            if (document.getCategory() == LeosCategory.ANNEX) {
+                xmlBytes = xmlContentProcessor.removeElements(xmlBytes, xPathCatalog.getXPathCoverPage(), 0);
+            }
         }
+        document.setSource(xmlBytes);
     }
 
 }

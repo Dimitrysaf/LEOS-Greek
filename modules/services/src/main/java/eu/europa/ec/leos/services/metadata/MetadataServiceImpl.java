@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.metadata;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.integration.AKN4EUService;
 import eu.europa.ec.leos.services.export.LegPackage;
@@ -25,11 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import static eu.europa.ec.leos.services.support.XmlHelper.PROP_ACT;
 
 @Service
 public class MetadataServiceImpl implements MetadataService {
@@ -46,16 +44,16 @@ public class MetadataServiceImpl implements MetadataService {
         this.akn4euService = akn4euService;
     }
 
-    protected File createZipFile(LegPackage legPackage, String jobFileName, MetadataOptions metadataOptions) throws Exception {
+    protected LeosFile createZipFile(LegPackage legPackage, String jobFileName, MetadataOptions metadataOptions) throws Exception {
         Validate.notNull(legPackage);
         Validate.notNull(jobFileName);
         Validate.notNull(metadataOptions);
         try (ByteArrayOutputStream contentFileContent = metadataHelper.createContentFile(metadataOptions, legPackage.getExportResource())) {
             Map<String, Object> contentToZip = new HashMap<>();
-            contentToZip.put("content.xml", contentFileContent);
+            contentToZip.put("content.xml", contentFileContent.toByteArray());
             String propActFileName = legPackage.getExportResource().getName() + ".leg";
-            contentToZip.put(propActFileName, legPackage.getFile());
-            return ZipPackageUtil.zipFiles(jobFileName, contentToZip, "");
+            contentToZip.put(propActFileName, legPackage.getFile().getBytes());
+            return ZipPackageUtil.zipLeosFiles(jobFileName, contentToZip, "");
         }
     }
 
@@ -63,7 +61,7 @@ public class MetadataServiceImpl implements MetadataService {
     public Map<String, Object> applyMetadata(LegPackage legPackage, Proposal proposal, MetadataOptions metadataOptions) throws Exception {
         Validate.notNull(metadataOptions);
         Validate.notNull(proposal);
-        File legFile = null;
+        LeosFile legFile = null;
         try {
             legFile = createZipFile(legPackage, "job.zip", metadataOptions);
             byte[] zipBytes = akn4euService.applyMetadata(legFile);
@@ -78,12 +76,6 @@ public class MetadataServiceImpl implements MetadataService {
         } catch (Exception e) {
             LOG.error("An exception occurred while updating proposal's metadata: ", e);
             throw e;
-        } finally {
-            if (legFile != null && legFile.exists()) {
-                if (!legFile.delete()) {
-                    LOG.info(FILE_NOT_DELETED, legFile.toPath());
-                }
-            }
         }
     }
 }

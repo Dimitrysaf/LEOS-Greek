@@ -17,6 +17,7 @@ package eu.europa.ec.leos.services.controllers;
 import com.google.common.eventbus.EventBus;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -56,7 +57,6 @@ import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -85,8 +85,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -399,15 +397,15 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/renditionfromleg", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getPdfFromLegFile(@RequestParam("legFile") MultipartFile legFile, @RequestParam("type") String type) {
-        File legFileTemp = null;
         try {
             final ExportOptions exportOptions = new ExportLW(type);
             exportOptions.setWithAnnotations(true);
 
             //create a temporary file with the bytes arrived as input
-            legFileTemp = File.createTempFile("tmp_", ".leg");
-            FileUtils.writeByteArrayToFile(legFileTemp, legFile.getBytes());
-            byte[] renditionFile = exportService.exportToToolboxCoDe(legFileTemp, exportOptions);
+            LeosFile leosFile = new LeosFile();
+            leosFile.generateFileName("tmp_", ".leg");
+            leosFile.setBytes(legFile.getBytes());
+            byte[] renditionFile = exportService.exportToToolboxCoDe(leosFile, exportOptions);
 
             HttpHeaders headers = new HttpHeaders();
             headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "TOOLBOX_RESULT_" + System.currentTimeMillis() + "\"");
@@ -419,13 +417,6 @@ public class LeosApiController {
             String errMsg = "Error occurred while creating rendition file: " + e.getMessage();
             LOG.error(errMsg, e);
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            if (legFileTemp != null && legFileTemp.exists()) {
-                boolean fileDeleted = legFileTemp.delete();
-                if (!fileDeleted) {
-                    LOG.warn("File not deleted");
-                }
-            }
         }
     }
 
@@ -457,10 +448,10 @@ public class LeosApiController {
         try {
             validatePath(file.getOriginalFilename());
             String pathname = applicationProperties.getProperty("leos.mandate.upload.path") + file.getOriginalFilename();
-            File content = new File(FilenameUtils.normalize(pathname));
+            LeosFile content = new LeosFile(FilenameUtils.normalize(pathname));
 
-            try (FileOutputStream fos = new FileOutputStream(content)) {
-                fos.write(file.getBytes());
+            try {
+                content.setBytes(file.getBytes());
             } catch (IOException ioe) {
                 LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -489,10 +480,10 @@ public class LeosApiController {
             connectedEntity = encodeParam(connectedEntity);
             iscRef = encodeParam(iscRef);
             validatePath(legFile.getOriginalFilename());
-            File content = new File(FilenameUtils.normalize(legFile.getOriginalFilename()));
+            LeosFile content = new LeosFile(FilenameUtils.normalize(legFile.getOriginalFilename()));
             userService.switchUser(user.getLogin());
-            try (FileOutputStream fos = new FileOutputStream(content)) {
-                fos.write(legFile.getBytes());
+            try {
+                content.setBytes(legFile.getBytes());
             } catch (IOException ioe) {
                 LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);

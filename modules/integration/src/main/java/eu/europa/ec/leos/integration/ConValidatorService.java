@@ -13,10 +13,10 @@
  */
 package eu.europa.ec.leos.integration;
 
-import java.io.File;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 
 public interface ConValidatorService {
 
-    String validate(File file);
+    String validate(LeosFile file);
 
 }

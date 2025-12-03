@@ -14,13 +14,13 @@
 package eu.europa.ec.digit.leos.pilot.export.service;
 
 import eu.europa.ec.digit.leos.pilot.export.util.ExportResource;
+import eu.europa.ec.digit.leos.pilot.export.util.LeosFile;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LegPackage {
-    private File file;
+    private LeosFile file;
     private ExportResource exportResource;
     private List<String> milestoneComments;
     private List<String> containedFiles;
@@ -38,11 +38,11 @@ public class LegPackage {
         containedFiles.add(containedFile);
     }
 
-    public File getFile() {
+    public LeosFile getFile() {
         return file;
     }
 
-    public void setFile(File file) {
+    public void setFile(LeosFile file) {
         this.file = file;
     }
 

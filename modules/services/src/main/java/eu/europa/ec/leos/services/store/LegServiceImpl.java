@@ -10,6 +10,7 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -73,7 +74,6 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -88,11 +88,8 @@ import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -507,10 +504,12 @@ public class LegServiceImpl implements LegService {
      * @return LegPackage used to be sent to Toolbox for PDF/LegisWrite generation.
      */
     @Override
-    public LegPackage createLegPackage(File legFile, ExportOptions exportOptions) throws IOException, XmlValidationException {
+    public LegPackage createLegPackage(LeosFile legFile, ExportOptions exportOptions) throws IOException, XmlValidationException {
         // legFile will be deleted after createProposalFromLegFile(), so we save the bytes in a temporary file
-        File legFileTemp = File.createTempFile("RENDITION_", ".leg");
-        FileUtils.copyFile(legFile, legFileTemp);
+
+        LeosFile legFileTemp = new LeosFile();
+        legFileTemp.generateFileName("RENDITION_", ".leg");
+        legFileTemp.setBytes(legFile.getBytes());
 
         DocumentVO proposalVO = proposalConverterService.createProposalFromLegFile(legFile, false);
 
@@ -687,11 +686,10 @@ public class LegServiceImpl implements LegService {
             }
         }
         String legPackageName = proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION).concat(LEG_FILE_EXTENSION);
-        legPackage.setFile(ZipPackageUtil.zipFiles(legPackageName, contentToZip, language));
+        legPackage.setFile(ZipPackageUtil.zipLeosFiles(legPackageName, contentToZip, language));
         legPackage.setExportResource(exportProposalResource);
         return legPackage;
     }
-
 
     /**
      * Creates the LegPackage, which is the logical representation of the leg file, for the given proposalId.
@@ -706,12 +704,7 @@ public class LegServiceImpl implements LegService {
         final LeosPackage leosPackage = packageRepository.findPackageByDocumentId(proposalId);
         final Map<String, Object> contentToZip = new HashMap<>();
 
-
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
-
-
-        List<XmlDocument> xmlDocuments = packageRepository.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, true);
-
 
         legPackage.addContainedFile(proposal.getVersionedReference());
         String language = proposal.getMetadata().get().getLanguage();
@@ -735,7 +728,7 @@ public class LegServiceImpl implements LegService {
         addBillToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, proposalRefsMap, legPackage, proposal);
         addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
         String legPackageName = proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION).concat(LEG_FILE_EXTENSION);
-        legPackage.setFile(ZipPackageUtil.zipFiles(legPackageName, contentToZip, language));
+        legPackage.setFile(ZipPackageUtil.zipLeosFiles(legPackageName, contentToZip, language));
         legPackage.setExportResource(exportProposalResource);
         return legPackage;
     }
@@ -989,7 +982,7 @@ public class LegServiceImpl implements LegService {
                 xmlContentProcessor.getElementByNameAndId(xmlContent, docPurposeElements.get(0).getElementTagName(), docPurposeElements.get(0).getElementId()) :
                 null;
         if (title != null) {
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, title, docPurposeElements.get(0).getElementId());
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, title, docPurposeElements.get(0).getElementId(), true);
         }
 
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
@@ -1362,7 +1355,7 @@ public class LegServiceImpl implements LegService {
     public LegDocument createLegDocument(String proposalId, String jobId, LegPackage legPackage, LeosLegStatus status) throws IOException {
         LOG.trace("Creating Leg Document for Package... [documentId={}]", proposalId);
         return packageRepository.createLegDocumentFromContent(packageRepository.findPackageByDocumentId(proposalId).getPath(), generateLegName(proposalId),
-                jobId, legPackage.getMilestoneComments(), getFileContent(legPackage.getFile()), status, legPackage.getContainedFiles());
+                jobId, legPackage.getMilestoneComments(), legPackage.getFile().getBytes(), status, legPackage.getContainedFiles());
     }
 
     @Override
@@ -1478,17 +1471,6 @@ public class LegServiceImpl implements LegService {
             }
         }
         throw new FileNotFoundException("The job result zip file is not present in the job file");
-    }
-
-    private byte[] getFileContent(File file) throws IOException {
-        try (InputStream is = new FileInputStream(file)) {
-            byte[] content = new byte[(int) file.length()];
-            int bytesRead = is.read(content);
-            if(bytesRead == 0){
-                LOG.debug("Zero bytes read!");
-            }
-            return content;
-        }
     }
 
     private void addCoverPageHtmlRendition(Map<String, Object> contentToZip, byte[] proposalContent, String styleSheetName, Proposal proposal) {
@@ -1856,23 +1838,15 @@ public class LegServiceImpl implements LegService {
 
     @Override
     public byte[] updateLegPackageContentWithComments(byte[] legPackageContent, List<String> comments) throws IOException {
-        File legPackageZipFile = null;
-        try {
-            Map<String, Object> legPackageZipContent = ZipPackageUtil.unzipByteArray(legPackageContent);
-            Map.Entry<String, Object> legPackageXmlDocument = legPackageZipContent.entrySet().stream()
-                    .filter(x -> x.getKey().startsWith(LeosCategory.BILL.name().toLowerCase()) || x.getKey().startsWith(LeosCategory.ANNEX.name().toLowerCase()))
-                    .findAny().orElseThrow(() -> new RuntimeException("No document file inside leg package!"));
-            byte[] xmlContentUpdated = replaceCommentsMetadata(comments, (byte[])legPackageXmlDocument.getValue());
-            legPackageZipContent.put(legPackageXmlDocument.getKey(), xmlContentUpdated);
-            legPackageZipFile = ZipPackageUtil.zipFiles(System.currentTimeMillis() + ".zip", legPackageZipContent, "");
-            return FileUtils.readFileToByteArray(legPackageZipFile);
-        } finally {
-            if (legPackageZipFile != null && legPackageZipFile.exists()) {
-                if(!legPackageZipFile.delete()){
-                    LOG.info("File not deleted {}", legPackageZipFile.toPath());
-                }
-            }
-        }
+        LeosFile legPackageZipFile = null;
+        Map<String, Object> legPackageZipContent = ZipPackageUtil.unzipByteArray(legPackageContent);
+        Map.Entry<String, Object> legPackageXmlDocument = legPackageZipContent.entrySet().stream()
+                .filter(x -> x.getKey().startsWith(LeosCategory.BILL.name().toLowerCase()) || x.getKey().startsWith(LeosCategory.ANNEX.name().toLowerCase()))
+                .findAny().orElseThrow(() -> new RuntimeException("No document file inside leg package!"));
+        byte[] xmlContentUpdated = replaceCommentsMetadata(comments, (byte[])legPackageXmlDocument.getValue());
+        legPackageZipContent.put(legPackageXmlDocument.getKey(), xmlContentUpdated);
+        legPackageZipFile = ZipPackageUtil.zipLeosFiles(System.currentTimeMillis() + ".zip", legPackageZipContent, "");
+        return legPackageZipFile.getBytes();
     }
 
     private byte[] addCommentsMetadata(List<String> comments, byte[] xmlContent) {
@@ -1976,7 +1950,7 @@ public class LegServiceImpl implements LegService {
             addCoverPageHtmlRendition(contentToZip, proposalContent, coverPageStyleSheet, proposal);
         }
 
-        legPackage.setFile(ZipPackageUtil.zipFiles(proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION) + ".leg",
+        legPackage.setFile(ZipPackageUtil.zipLeosFiles(proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION) + ".leg",
                 contentToZip, language));
         legPackage.addContainedFile(bill.getVersionedReference());
         legPackage.setExportResource(exportProposalResource);

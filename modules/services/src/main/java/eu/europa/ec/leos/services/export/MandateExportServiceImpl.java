@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.export;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
@@ -25,7 +26,6 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,8 +61,8 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
         Validate.notNull(exportOptions);
         Validate.notNull(proposalId);
         LegPackage legPackage = null;
-        File zipFile = null;
-        File exportedZipFile = null;
+        LeosFile zipFile = null;
+        LeosFile exportedZipFile = null;
         try {
             exportOptions.setDocuwrite(true);
             legPackage = legService.createLegPackage(proposalId, exportOptions);
@@ -71,18 +70,11 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
             byte[] docuwriteResponse = docuwriteService.convert(zipFile);
             exportedZipFile = createExportPackageZipFile(jobFileName, legPackage, docuwriteResponse);
             String docOrAnnex = ZipPackageUtil.obtainRealDocName(exportedZipFile, exportOptions.getFileType().getSimpleName());
-            File unzippedFile = ZipPackageUtil.unzipFile(exportedZipFile, docOrAnnex);
-            return FileUtils.readFileToByteArray(unzippedFile);
+            LeosFile unzippedFile = ZipPackageUtil.unzipFile(exportedZipFile, docOrAnnex);
+            return unzippedFile.getBytes();
         } catch (Exception e) {
             LOG.error("An exception occurred while using the Docuwrite service: ", e);
             throw e;
-        } finally {
-            if(legPackage != null){
-                FileHelper.deleteFile(legPackage.getFile());
-            }
-            FileHelper.deleteFile(zipFile);
-            FileHelper.deleteFile(exportedZipFile);
-            LOG.trace("createDocuWritePackage() end....");
         }
     }
 
@@ -92,41 +84,34 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
         Validate.notNull(exportOptions);
         Validate.notNull(proposalId);
         LegPackage legPackage = null;
-        File zipFile = null;
-        File exportPackageZipFile = null;
+        LeosFile zipFile = null;
+        LeosFile exportPackageZipFile = null;
         try {
             exportOptions.setDocuwrite(true);
             legPackage = legService.createLegPackage(proposalId, exportOptions);
             zipFile = createZipFile(legPackage, jobFileName, exportOptions);
             byte[] docuwriteResponse = docuwriteService.convert(zipFile);
             exportPackageZipFile = createExportPackageZipFile(jobFileName, legPackage, docuwriteResponse);
-            return FileUtils.readFileToByteArray(exportPackageZipFile);
+            return exportPackageZipFile.getBytes();
         } catch (Exception e) {
             LOG.error("An exception occurred while using the export package service: ", e);
             if (ExceptionUtils.indexOfThrowable(e, java.net.UnknownHostException.class) != -1) {
-                return FileUtils.readFileToByteArray(zipFile);
+                return zipFile.getBytes();
             }
             throw e;
-        } finally {
-            if(legPackage != null) {
-                FileHelper.deleteFile(legPackage.getFile());
-            }
-            FileHelper.deleteFile(zipFile);
-            FileHelper.deleteFile(exportPackageZipFile);
-            LOG.trace("createExportPackage() end....");
         }
     }
 
-    private File createExportPackageZipFile(String jobFileName, LegPackage legPackage, byte[] docuwriteResponse) throws Exception {
+    private LeosFile createExportPackageZipFile(String jobFileName, LegPackage legPackage, byte[] docuwriteResponse) throws Exception {
         Map<String, Object> exportPackageZipContent = ZipPackageUtil.unzipByteArray(docuwriteResponse);
         exportPackageZipContent.put(legPackage.getFile().getName(), legPackage.getFile());
-        return ZipPackageUtil.zipFiles(jobFileName, exportPackageZipContent, "");
+        return ZipPackageUtil.zipLeosFiles(jobFileName, exportPackageZipContent, "");
     }
 
     @Override
     public byte[] updateExportPackageWithComments(String documentId) throws Exception {
         LOG.trace("calling updateExportPackageWithComments()....");
-        File exportPackageZipFile = null;
+        LeosFile exportPackageZipFile = null;
         try {
             ExportDocument exportDocument = exportPackageService.findExportDocumentById(documentId);
             Map<String, Object> exportPackageZipContent = ZipPackageUtil.unzipByteArray(exportDocument.getContent().get().getSource().getBytes());
@@ -138,18 +123,11 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
             byte[] legPackageContentUpdated = legService.updateLegPackageContentWithComments((byte[]) legPackage.getValue(),
                     exportDocument.getComments());
             exportPackageZipContent.put(legPackage.getKey(), legPackageContentUpdated);
-            exportPackageZipFile = ZipPackageUtil.zipFiles(System.currentTimeMillis() + "_" + exportDocument.getName(), exportPackageZipContent, "");
-            return FileUtils.readFileToByteArray(exportPackageZipFile);
+            exportPackageZipFile = ZipPackageUtil.zipLeosFiles(System.currentTimeMillis() + "_" + exportDocument.getName(), exportPackageZipContent, "");
+            return exportPackageZipFile.getBytes();
         } catch (Exception e) {
             LOG.error("An exception occurred while using the export package service: ", e);
             throw e;
-        } finally {
-            if ((exportPackageZipFile != null) && (exportPackageZipFile.exists())) {
-                if(!exportPackageZipFile.delete()){
-                    LOG.info("File not deleted {}", exportPackageZipFile.toPath());
-                }
-            }
-            LOG.trace("updateExportPackageWithComments() end....");
         }
     }
 

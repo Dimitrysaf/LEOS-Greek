@@ -20,18 +20,13 @@ import eu.europa.ec.digit.leos.pilot.export.model.MetadataVO;
 import eu.europa.ec.digit.leos.pilot.export.service.processor.content.XmlContentProcessor;
 import eu.europa.ec.digit.leos.pilot.export.service.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.digit.leos.pilot.export.service.processor.node.XmlNodeProcessor;
+import eu.europa.ec.digit.leos.pilot.export.util.LeosFile;
 import eu.europa.ec.digit.leos.pilot.export.util.XPathCatalog;
-import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +77,7 @@ public class ProposalConverterServiceImpl implements ProposalConverterService {
             if (unzippedFiles.containsKey(proposalFileKey)) {
                 List<DocumentVO> propChildDocs = new ArrayList<>();
                 byte[] proposalContent = (byte[]) unzippedFiles.get(proposalFileKey);
-                File proposalFile = convertToFile(proposalContent);
+                LeosFile proposalFile = convertToFile(proposalContent);
                 updateSource(proposal, proposalFile, canModifySource);
                 updateDocIdFromXml(proposal, LeosCategory.PROPOSAL, proposalFileKey);
                 updateMetadataVO(proposal);
@@ -94,7 +89,7 @@ public class ProposalConverterServiceImpl implements ProposalConverterService {
                         continue;
                     }
                     byte[] docContent = (byte[]) unzippedFiles.get(docName);
-                    File docFile = convertToFile(docContent);
+                    LeosFile docFile = convertToFile(docContent);
                     DocumentVO doc = createDocument(docName, docFile, canModifySource);
                     if (doc != null) {
                         if (doc.getCategory() == LeosCategory.ANNEX) {
@@ -122,14 +117,9 @@ public class ProposalConverterServiceImpl implements ProposalConverterService {
         return proposal;
     }
 
-    private File convertToFile(byte[] proposal) {
-        File file = new File("proposal.xml");
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(proposal);
-        } catch (IOException e) {
-            LOG.error("Error in converting the proposal to a file: {}", e);
-            throw new RuntimeException("Error in converting the proposal to a file: {}", e);
-        }
+    private LeosFile convertToFile(byte[] proposal) {
+        LeosFile file = new LeosFile("proposal.xml");
+        file.setBytes(proposal);
         return file;
     }
 
@@ -145,11 +135,11 @@ public class ProposalConverterServiceImpl implements ProposalConverterService {
     }
 
     @Override
-    public DocumentVO createDocument(String docName, File docFile, boolean canModifySource) {
+    public DocumentVO createDocument(String docName, LeosFile docFile, boolean canModifySource) {
         DocumentVO doc = null;
         try {
             if (docName.endsWith(XML_DOC_EXT)) {
-                byte[] xmlBytes = Files.readAllBytes(docFile.toPath());
+                byte[] xmlBytes = docFile.getBytes();
                 LeosCategory category = xmlContentProcessor.identifyCategory(docName, xmlBytes);
                 if (category != null) {
                     doc = new DocumentVO(category);
@@ -164,9 +154,9 @@ public class ProposalConverterServiceImpl implements ProposalConverterService {
         return doc;
     }
 
-    public void updateSource(final DocumentVO document, File documentFile, boolean canModifySource) {
+    public void updateSource(final DocumentVO document, LeosFile documentFile, boolean canModifySource) {
         try {
-            byte[] xmlBytes = Files.readAllBytes(documentFile.toPath());
+            byte[] xmlBytes = documentFile.getBytes();
             String xmlContent = new String(xmlBytes, UTF_8);
             xmlBytes = xmlContent.getBytes(UTF_8);
             if (document.getCategory() == LeosCategory.BILL && canModifySource) {
@@ -219,31 +209,6 @@ public class ProposalConverterServiceImpl implements ProposalConverterService {
             } catch (Exception e) {
                 LOG.error("Error parsing metadata {}", e);
             }
-        }
-    }
-
-    private void deleteFiles(File mainFile, Map<String, Object> unzippedFiles, String unzipPath) {
-        if (!mainFile.delete()) {
-            LOG.info("File not deleted {}", mainFile.getPath());
-        }
-        List<String> parentFolders = new ArrayList<>();
-        for (String docName : unzippedFiles.keySet()) {
-            File unzippedFile = (File) unzippedFiles.get(docName);
-            String parent = unzippedFile.getParent();
-            if (!parentFolders.contains(parent)) {
-                parentFolders.add(parent);
-            }
-            if (!unzippedFile.delete()) {
-                LOG.info("File not deleted {}", unzippedFile.getPath());
-            }
-        }
-        try {
-            // we must clean also the folder.
-            for (String parent : parentFolders) {
-                FileUtils.deleteDirectory(new File(parent));
-            }
-        } catch (IOException e) {
-            LOG.error("Error deleting the folder {}", e);
         }
     }
 }

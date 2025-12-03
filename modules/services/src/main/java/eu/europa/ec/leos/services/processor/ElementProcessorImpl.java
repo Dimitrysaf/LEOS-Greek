@@ -117,7 +117,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
                 elementContent = result.right();
             }
         }
-        contentBytes = xmlContentProcessor.replaceElementById(contentBytes, elementContent, elementId);
+        contentBytes = xmlContentProcessor.replaceElementById(contentBytes, elementContent, elementId, true);
         return contentBytes;
     }
 

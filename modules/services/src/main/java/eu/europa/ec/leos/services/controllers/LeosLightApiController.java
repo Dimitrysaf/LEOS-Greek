@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.collect.ImmutableMap;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.AuthClient;
@@ -49,7 +50,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -131,25 +131,19 @@ public class LeosLightApiController {
     public ResponseEntity<Object> exportDocument(@RequestBody ExportDocumentRequest request, HttpServletRequest httpRequest) throws IOException {
         String clientContextToken = httpRequest.getHeader(CLIENT_CONTEXT_PARAMETER);
 
-        Pair<Boolean, File> result = leosLightApiService.exportDocument(request, clientContextToken);
+        Pair<Boolean, LeosFile> result = leosLightApiService.exportDocument(request, clientContextToken);
         Boolean isExported = result.left();
-        File file = result.right();
+        LeosFile file = result.right();
 
-        try {
-            if (isExported != null && isExported) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                return new ResponseEntity<>(ImmutableMap.of("result", messageHelper.getMessage("leoslight.service.export.callback.success")), headers, HttpStatus.OK);
+        if (isExported != null && isExported) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            return new ResponseEntity<>(ImmutableMap.of("result", messageHelper.getMessage("leoslight.service.export.callback.success")), headers, HttpStatus.OK);
+        } else {
+            if(request.getOptions() == null || ExportDocumentOptions.OutputType.XML.equals(request.getOptions().getOutputType())) {
+                return buildFileAttachment(file.getBytes(), file.getName(), APPLICATION_XML_VALUE);
             } else {
-                if(request.getOptions() == null || ExportDocumentOptions.OutputType.XML.equals(request.getOptions().getOutputType())) {
-                    return buildFileAttachment(FileUtils.readFileToByteArray(file), file.getName(), APPLICATION_XML_VALUE);
-                } else {
-                    return buildFileAttachment(FileUtils.readFileToByteArray(file), file.getName(), APPLICATION_ZIP_VALUE);
-                }
-            }
-        } finally {
-            if ((file != null) && file.exists()) {
-                file.delete();
+                return buildFileAttachment(file.getBytes(), file.getName(), APPLICATION_ZIP_VALUE);
             }
         }
     }

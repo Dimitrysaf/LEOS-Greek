@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
 import com.sun.istack.NotNull;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.action.SoftActionType;
@@ -40,6 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState;
 import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState.ADD;
 import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState.DELETE;
@@ -268,7 +270,14 @@ public class MergeContributionService {
             executeContributionAction(request.getMergeActions().get(0), contributionXmlContent);
         }
         xmlContent = resetActionOnDocument(xmlContent);
-        xmlContent = updateInternalReferences(xmlContent, intRefMap);
+        if (!xmlDocument.getMetadata().get().getCategory().equals(LeosCategory.MEMORANDUM) && !xmlDocument.getMetadata().get().getCategory().equals(STAT_DIGIT_FINANC_LEGIS)) {
+            xmlContent = this.numberService.renumberArticles(xmlContent, false);
+            xmlContent = this.numberService.renumberRecitals(xmlContent);
+            xmlContent = this.numberService.renumberLevel(xmlContent);
+            xmlContent = this.numberService.renumberParagraph(xmlContent);
+            xmlContent = this.numberService.renumberDivisions(xmlContent);
+        }
+        xmlContent = this.xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
         return new MergeContributionResponse(mergingCompletelySuccessfull.get(), xmlContent);
     }
 
@@ -594,7 +603,7 @@ public class MergeContributionService {
 
         // Processes main element
         if (DELETE.equals(elementState)) {
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(contributionNode), cleanedElementId);
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(contributionNode), cleanedElementId, false);
             if (!withTrackChanges) {
                 xmlContent = xmlContentProcessor.applyDeleteActionOnElement(xmlContent, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + cleanedElementId, true);
             }
@@ -619,7 +628,7 @@ public class MergeContributionService {
             } else {
                 resolveTrackChange(originalUpdatedNode, false, tocItemsList);
             }
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), cleanedElementId);
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), cleanedElementId, false);
             impactedElements.add(getId(contributionNode));
             xmlContent = renumberFragment(xmlContent,  elementId, tocItemsList);
         }
@@ -793,7 +802,7 @@ public class MergeContributionService {
                                 nodeToString(getFirstChild(contributionParagraph.get(), NUM)), NUM, getId(xmlNum), true, false);
                     } else {
                         xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                                nodeToString(getFirstChild(contributionParagraph.get(), NUM)), getId(xmlNum));
+                                nodeToString(getFirstChild(contributionParagraph.get(), NUM)), getId(xmlNum), false);
                     }
                 } else {
                     resolveTrackChange(xmlParagraph, true, tocItemsList);
@@ -801,13 +810,13 @@ public class MergeContributionService {
                     Node newNum = createNodeFromXmlFragment(xmlParagraph.getOwnerDocument(),
                             ("<" + NUM + " " + XMLID + "=\"" + getId(contributionNum) + "\">#</" + NUM + ">").getBytes(StandardCharsets.UTF_8), false);
                     xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                            nodeToString(xmlParagraph), getId(xmlParagraph));
+                            nodeToString(xmlParagraph), getId(xmlParagraph), true);
                     if (!xmlNum.getNodeName().equals(NUM)) {
                         xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,
                                 nodeToString(newNum), NUM, getId(xmlNum), true, false);
                     } else {
                         xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                                nodeToString(newNum), getId(xmlNum));
+                                nodeToString(newNum), getId(xmlNum), true);
                     }
                 }
             } else {
@@ -834,13 +843,13 @@ public class MergeContributionService {
                     resolveTrackChange(xmlParagraph, true, tocItemsList);
                 }
                 xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                        nodeToString(xmlParagraph), getId(xmlParagraph));
+                        nodeToString(xmlParagraph), getId(xmlParagraph), false);
                 if (!xmlNum.getNodeName().equals(NUM)) {
                     xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,
                             nodeToString(newNum), NUM, getId(xmlNum), true, false);
                 } else {
                     xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                            nodeToString(newNum), getId(xmlNum));
+                            nodeToString(newNum), getId(xmlNum), false);
                 }
             }
         }
@@ -859,11 +868,11 @@ public class MergeContributionService {
                         xmlContent = copyTrackChangesAttributes(tocItemsList, xmlContentProcessor, xmlContent, contributionParagraph.get(),
                                 getId(xmlParagraph));
                         xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                                nodeToString(getFirstChild(contributionParagraph.get(), NUM)), getId(xmlNum));
+                                nodeToString(getFirstChild(contributionParagraph.get(), NUM)), getId(xmlNum), false);
                     } else {
                         resolveTrackChange(xmlParagraph, true, tocItemsList);
                         xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                                nodeToString(xmlParagraph), getId(xmlParagraph));
+                                nodeToString(xmlParagraph), getId(xmlParagraph), false);
                         xmlContent = xmlContentProcessor.removeElementById(xmlContent,
                                 getId(xmlNum), false);
                     }
@@ -890,10 +899,10 @@ public class MergeContributionService {
                         resolveTrackChange(xmlParagraph, true, tocItemsList);
                     }
                     xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                            nodeToString(xmlParagraph), getId(xmlParagraph));
+                            nodeToString(xmlParagraph), getId(xmlParagraph), false);
                     if (withTrackChanges) {
                         xmlContent = xmlContentProcessor.replaceElementById(xmlContent,
-                                nodeToString(newNum), getId(xmlNum));
+                                nodeToString(newNum), getId(xmlNum), false);
                     } else {
                         xmlContent = xmlContentProcessor.removeElementById(xmlContent,
                                 getId(xmlNum), false);
@@ -1061,7 +1070,8 @@ public class MergeContributionService {
                     checkNum(deletedElement.getReallyImpactedNode(), originalNodeToBeRemoved, DELETE,
                             withTrackChanges, false, tocItemsList);
                     if (withTrackChanges) {
-                        xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(deletedElement.getReallyImpactedNode()), getId(originalNodeToBeRemoved));
+                        xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(deletedElement.getReallyImpactedNode()),
+                                getId(originalNodeToBeRemoved), false);
                         if (shouldRenumber(xmlContent, deletedElement.getId(), elementsToBeProcessed, tocItemsList)) {
                             xmlContent = renumberFragment(xmlContent, deletedElement.getId(), tocItemsList);
                         }
@@ -1111,7 +1121,7 @@ public class MergeContributionService {
             if (withTrackChanges && movedElementInOriginalContent == null) {
                 checkNum(moveToElt, elementInOriginalContent, DELETE, withTrackChanges, true, tocItemsList);
                 addMovedPrefixInAllSubElements(moveToElt);
-                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(moveToElt), idWithoutMovedPrefix);
+                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(moveToElt), idWithoutMovedPrefix, false);
                 if (shouldRenumber(xmlContent, getId(moveToElt), elementsToBeProcessed, tocItemsList)) {
                     xmlContent = renumberFragment(xmlContent, getId(moveToElt), tocItemsList);
                 }
@@ -1234,16 +1244,16 @@ public class MergeContributionService {
             if (withTrackChanges) {
                 checkNum(contributionNode, xmlNode, ElementState.ADD, withTrackChanges, true, tocItemsList);
             }
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNode), getId(xmlNode));
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNode), getId(xmlNode), false);
         } else if (xmlNum != null && isNumDeleted(contributionNum)) {
             if (!withTrackChanges || contributionNum == null) {
                 xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(xmlNum), false);
             } else {
-                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(contributionNum), getId(xmlNum));
+                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(contributionNum), getId(xmlNum), false);
             }
         } else if (xmlNum != null && !withTrackChanges && !getId(firstChild).equals(getId(xmlNode))) {
             xmlNum.setTextContent("#");
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNum), getId(xmlNum));
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlNum), getId(xmlNum), false);
         }
         return xmlContent;
     }
@@ -1428,7 +1438,8 @@ public class MergeContributionService {
             if (originalNodeToBeRemoved != null) {
                 checkNum(deletedElement.getReallyImpactedNode(), originalNodeToBeRemoved, DELETE, withTrackChanges, false, tocItemsList);
                 if (withTrackChanges) {
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(deletedElement.getReallyImpactedNode()), getId(originalNodeToBeRemoved));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(deletedElement.getReallyImpactedNode()),
+                            getId(originalNodeToBeRemoved), false);
                     if (shouldRenumber(xmlContent, deletedElement.getId(), elementsToBeProcessed, tocItemsList)) {
                         xmlContent = renumberFragment(xmlContent, deletedElement.getId(), tocItemsList);
                     }
@@ -1531,7 +1542,7 @@ public class MergeContributionService {
                 // Handle inline elements (mathjax, ...)
                 if (!isIns
                         && handleInlineDeletion(originalUpdatedNode, nodeToBeAddedOrRemoved, withTrackChanges, mergingCompletelySuccessfull)) {
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode), false);
                     return xmlContent;
                 }
 
@@ -1699,7 +1710,7 @@ public class MergeContributionService {
                     }
                 }
                 if (refOriginalParentNode != null) {
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refOriginalParentNode), getId(refOriginalParentNode));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refOriginalParentNode), getId(refOriginalParentNode), false);
                 }
             }
         }
@@ -1707,7 +1718,7 @@ public class MergeContributionService {
             if (isIns) {
                 Node refParent = originalRemovedOrInsertedNode.getParentNode();
                 replaceElement(originalRemovedOrInsertedNode, getContentNodeAsXmlFragment(originalRemovedOrInsertedNode));
-                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refParent), getId(refParent));
+                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refParent), getId(refParent), false);
             } else {
                 xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(originalRemovedOrInsertedNode), false);
             }
@@ -1786,7 +1797,7 @@ public class MergeContributionService {
             impactedElements.add(getId(contributionNode));
         } else if (elementToBeAdded) {
             resolveTrackChangesInEntireNode(originalUpdatedNode, tocItemsList);
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode));
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode), false);
             xmlContent = renumberFragment(xmlContent,  removesPrefixFromElementId(refIdForNumbering), tocItemsList);
             impactedElements.add(getId(contributionNode));
         } else if (ElementState.MOVE.equals(elementState)) {
@@ -1795,7 +1806,7 @@ public class MergeContributionService {
             impactedElements.add(cleanedElementId);
         } else if (ElementState.CONTENT_CHANGE.equals(elementState)) {
             resolveTrackChange(originalUpdatedNode, false, tocItemsList);
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), cleanedElementId);
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), cleanedElementId, false);
             impactedElements.add(getId(contributionNode));
             xmlContent = renumberFragment(xmlContent,  elementId, tocItemsList);
         }
@@ -1942,7 +1953,7 @@ public class MergeContributionService {
             } else if (xmlNum != null) {
                 XercesUtils.cleanTrackChangesForElement(xmlNum);
             }
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlElt), eltId);
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlElt), eltId, false);
             xmlContent = renumberFragment(xmlContent, eltId, tocItemsList);
         }
         return xmlContent;
@@ -2012,7 +2023,7 @@ public class MergeContributionService {
 
                 // Handle inline elements (mathjax, ...)
                 if (handleInlineDeletion(originalUpdatedNode, nodeToBeRemovedAgain, false, mergingCompletelySuccessfull)) {
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode), false);
                     return xmlContent;
                 }
 
@@ -2074,7 +2085,7 @@ public class MergeContributionService {
                     }
                 }
                 if (refOriginalParentNode != null) {
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refOriginalParentNode), getId(refOriginalParentNode));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refOriginalParentNode), getId(refOriginalParentNode), false);
                 }
             }
         }
@@ -2087,7 +2098,7 @@ public class MergeContributionService {
         if (originalRemovedNode != null) {
             Node parent = originalRemovedNode.getParentNode();
             replaceElement(originalRemovedNode, getContentNodeAsXmlFragment(originalRemovedNode));
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(parent), getId(parent));
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(parent), getId(parent), false);
         } else {
             // Case where merge was done without track changes
             boolean found = false;
@@ -2183,11 +2194,11 @@ public class MergeContributionService {
                     }
                     originalUpdatedNode = XercesUtils.appendToNodeContent(originalUpdatedNode,
                             contentToBeAdded, false);
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(originalUpdatedNode), getId(originalUpdatedNode), false);
                     found = true;
                 }
                 if (refParentToUpdateXml != null) {
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refParentToUpdateXml), getId(refParentToUpdateXml));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(refParentToUpdateXml), getId(refParentToUpdateXml), false);
                 }
             }
         }
@@ -2493,7 +2504,7 @@ public class MergeContributionService {
         }
 
         if (documentElement != null) {
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, newFragment, contributionElementId);
+            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, newFragment, contributionElementId, false);
         } else if (xmlParentSibling != null && xmlPreviousSibling == null && xmlNextSibling != null) {
             if (xmlNextSibling.getNodeName().equals(SUBPARAGRAPH)
                     && !refNode.getNodeName().equals(SUBPARAGRAPH)
@@ -2524,7 +2535,7 @@ public class MergeContributionService {
                     if (!withTrackChanges) {
                         resolveTrackChange(lastChild, false, tocItemsList);
                     }
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(newParentNode), getId(xmlParentSibling));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(newParentNode), getId(xmlParentSibling), false);
                     xmlParentSibling = getElementById(xmlContent, getId(xmlParentSibling));
                     lastChild = getLastChild(xmlParentSibling);
                 }
@@ -2560,7 +2571,7 @@ public class MergeContributionService {
                     if (!withTrackChanges) {
                         resolveTrackChange(lastChild, false, tocItemsList);
                     }
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlParentSibling), getId(xmlParentSibling));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlParentSibling), getId(xmlParentSibling), false);
                     xmlParentSibling = getElementById(xmlContent, getId(xmlParentSibling));
                     lastChild = getLastChild(xmlParentSibling);
                 } else {
@@ -2571,7 +2582,7 @@ public class MergeContributionService {
                     if (!withTrackChanges) {
                         resolveTrackChange(lastChild, false, tocItemsList);
                     }
-                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlParentSibling), getId(xmlParentSibling));
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(xmlParentSibling), getId(xmlParentSibling), false);
                     xmlParentSibling = getElementById(xmlContent, getId(xmlParentSibling));
                     lastChild = getLastChild(xmlParentSibling);
                 }
@@ -2970,7 +2981,7 @@ public class MergeContributionService {
         if (parentOfRemovedElt != null && !parentOfRemovedElt.getNodeName().equals(LIST)) {
             List<Node> children = getChildren(parentOfRemovedElt, Arrays.asList(SUBPARAGRAPH, LIST));
             if (children.size() == 1 && children.get(0).getNodeName().equals(SUBPARAGRAPH)) {
-                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(getFirstChild(children.get(0))), getId(children.get(0)));
+                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(getFirstChild(children.get(0))), getId(children.get(0)), false);
             }
         }
         return xmlContent;

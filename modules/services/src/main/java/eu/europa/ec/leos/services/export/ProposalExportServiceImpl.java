@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.export;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.instance.Instance;
@@ -44,7 +45,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -98,23 +98,17 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
     @Override
     public String exportToToolboxCoDe(String proposalId, ExportOptions exportOptions) throws Exception {
         Validate.notNull(toolBoxService, "Export Service is not available!!");
-        File legisWritePackage = null;
+        LeosFile legisWritePackage = null;
         String jobId;
         try {
             legisWritePackage = createCollectionPackage("job.zip", proposalId, exportOptions);
             String destinationEmail = securityContext.getUser().getEmail();
-            Map<String, File> packages = new HashMap<>();
+            Map<String, LeosFile> packages = new HashMap<>();
             packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
             jobId = toolBoxService.createJobWithEmail(proposalId, packages, destinationEmail);
         } catch (Exception ex) {
             LOG.error("Unexpected error occurred in method exportToToolboxCoDe() for proposal id {} with error {}", proposalId, ex.getMessage());
             throw ex;
-        } finally {
-            if (legisWritePackage != null && legisWritePackage.exists()) {
-                if (!legisWritePackage.delete()) {
-                    LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
-                }
-            }
         }
         return jobId;
     }
@@ -131,23 +125,17 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
     @Override
     public byte[] exportToToolboxCoDeDownload(String proposalId, ExportOptions exportOptions) throws Exception {
         Validate.notNull(toolBoxService, "Export Service is not available!!");
-        File legisWritePackage = null;
+        LeosFile legisWritePackage = null;
         String jobId;
         try {
             legisWritePackage = createCollectionPackage("job.zip", proposalId, exportOptions);
-            Map<String, File> packages = new HashMap<>();
+            Map<String, LeosFile> packages = new HashMap<>();
             packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
             jobId = toolBoxService.createJob(packages);
             return checkForReply(jobId, exportOptions.getExportOutput(), legisWritePackage.getName());
         } catch (Exception ex) {
             LOG.error("Unexpected error occurred in method exportToToolboxCoDeDownload(): {}", ex.getMessage());
             throw ex;
-        } finally {
-            if (legisWritePackage != null && legisWritePackage.exists()) {
-                if (!legisWritePackage.delete()) {
-                    LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
-                }
-            }
         }
     }
 
@@ -162,14 +150,14 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
      * @return New zip/leg file returned from Toolbox containing the generated PDF/LegisWrite files
      */
     @Override
-    public byte[] exportToToolboxCoDe(File legFile, ExportOptions exportOptions) throws Exception {
+    public byte[] exportToToolboxCoDe(LeosFile legFile, ExportOptions exportOptions) throws Exception {
         LOG.debug("Calling Toolbox to convert leg file {} to {}", legFile.getName(), exportOptions.getExportOutput().name());
-        File legisWritePackage = null;
+        LeosFile legisWritePackage = null;
         String jobId;
         try {
             legisWritePackage = createExportPackage("job.zip", legFile, exportOptions);
 
-            Map<String, File> packages = new HashMap<>();
+            Map<String, LeosFile> packages = new HashMap<>();
             packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
             jobId = toolBoxService.createJob(packages);
             LOG.debug("Rendition request with jobId '{}' correctly sent to Toolbox for legFile '{}'. JobFile sent to Toolbox '{}'. Waiting the reply...", jobId,
@@ -179,12 +167,6 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         } catch (Exception ex) {
             LOG.error("Unexpected error occurred in method exportToToolboxCoDe(): {}", ex.getMessage());
             throw ex;
-        } finally {
-            if (legisWritePackage != null && legisWritePackage.exists()) {
-                if (!legisWritePackage.delete()) {
-                    LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
-                }
-            }
         }
     }
 
@@ -200,14 +182,14 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
     public String exportLegPackage(String proposalId, LegPackage legPackage) throws Exception {
         Validate.notNull(toolBoxService, "Export Service is not available!!");
         String jobId;
-        File pdfPackage = null;
-        File legisWritePackage = null;
+        LeosFile pdfPackage = null;
+        LeosFile legisWritePackage = null;
         try {
             ExportLW exportOptionsPDF = new ExportLW(ExportOptions.Output.PDF);
             ExportLW exportOptionsWord = new ExportLW(ExportOptions.Output.WORD);
             pdfPackage = createZipFile(legPackage, "job1.zip", exportOptionsPDF);
             legisWritePackage = createZipFile(legPackage, "job2.zip", exportOptionsWord);
-            Map<String, File> packages = new HashMap<>();
+            Map<String, LeosFile> packages = new HashMap<>();
             packages.put(exportOptionsPDF.getFilePrefix() + ZIP_PACKAGE_NAME, pdfPackage);
             packages.put(exportOptionsWord.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
 
@@ -215,17 +197,6 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         } catch (Exception ex) {
             LOG.error("Unexpected error occurred in method exportLegPackage(): {}", ex.getMessage());
             throw ex;
-        } finally {
-            if (legisWritePackage != null && legisWritePackage.exists()) {
-                if (!legisWritePackage.delete()) {
-                    LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
-                }
-            }
-            if (pdfPackage != null && pdfPackage.exists()) {
-                if (!pdfPackage.delete()) {
-                    LOG.info(FILE_NOT_DELETED, pdfPackage.toPath());
-                }
-            }
         }
 
         LOG.trace("exportLegPackage - Create milestone JobId is {}", jobId);
@@ -264,24 +235,16 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         throw new RuntimeException("Toolbox didn't replied in the established number of tentatives");
     }
 
-    private File createExportPackage(String jobFileName, File legFile, ExportOptions exportOptions) throws Exception {
+    private LeosFile createExportPackage(String jobFileName, LeosFile legFile, ExportOptions exportOptions) throws Exception {
         Validate.notNull(jobFileName);
         Validate.notNull(exportOptions);
         Validate.notNull(legFile);
         try {
             LegPackage legPackage = legService.createLegPackage(legFile, exportOptions);
-            legFile = legPackage.getFile();
             return createZipFile(legPackage, jobFileName, exportOptions);
         } catch (XmlValidationException e) {
             LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
             throw new Exception(e.getMessage());
-        } finally {
-            if (legFile != null && legFile.exists()) {
-                if (!legFile.delete()) {
-                    LOG.info(FILE_NOT_DELETED, legFile.toPath());
-                }
-
-            }
         }
     }
 
@@ -303,54 +266,37 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         } catch (Exception e) {
             LOG.error("An exception occurred while using the Legiswrite service: ", e);
             throw e;
-        } finally {
-            if (legPackage != null && legPackage.getFile() != null && legPackage.getFile().exists()) {
-                if (!legPackage.getFile().delete()) {
-                    LOG.info(FILE_NOT_DELETED, legPackage.getFile().toPath());
-                }
-            }
-            LOG.debug("createLegisWritePackage() end....");
         }
     }
+
     @Override
     public byte[] createDocumentPackage(String jobFileName, ExportOptions exportOptions, User user) throws Exception {
         LOG.debug("calling createDocumentPackage()....");
         Validate.notNull(exportOptions);
-        File exportedFile = null;
+        LeosFile exportedFile = null;
         try {
             exportOptions.setDocuwrite(false);
             exportedFile = convertDocument(exportOptions);
-            return FileUtils.readFileToByteArray(exportedFile);
+            return exportedFile.getBytes();
         } catch (Exception e) {
             LOG.error("An exception occurred while converting the document: ", e);
             throw e;
-        } finally {
-            if (exportedFile != null && exportedFile.exists()) {
-                if (!exportedFile.delete()) {
-                    LOG.info(FILE_NOT_DELETED, exportedFile.toPath());
-                }
-            }
-            LOG.debug("createDocumentPackage() end....");
         }
     }
 
-    private File convertDocument(ExportOptions exportOptions) {
-        File file = null;
+    private LeosFile convertDocument(ExportOptions exportOptions) {
+        LeosFile file = null;
         try {
-                file = getZipFile(exportOptions);
+            file = getZipFile(exportOptions);
         } catch (IOException exception) {
-            if ((file != null) && file.exists()) {
-                file.delete();
-            }
             LOG.error("An exception occurred while converting the document: ", exception);
             throw new RuntimeException(exception);
         }
-
         return file;
     }
 
 
-    private File getZipFile(ExportOptions exportOptions) throws IOException {
+    private LeosFile getZipFile(ExportOptions exportOptions) throws IOException {
         LeosDocument document = exportOptions.getExportVersions().getCurrent();
         String docName = document.getName();
         byte[] docContent = document.getContent().get().getSource().getBytes();
@@ -363,6 +309,6 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         //3.process annotation and add document conversion
         contentToZip.put("exports.zip", leosLightXmlDocumentService.convert(docContent, docName, exportOptions));
         //4.final packaging
-        return ZipPackageUtil.zipFiles("result.zip", contentToZip, null);
+        return ZipPackageUtil.zipLeosFiles("result.zip", contentToZip, null);
     }
 }

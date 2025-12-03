@@ -100,7 +100,7 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
                 String updatedElementContent = convertToSubparagraph(contentElement, template);
                 try {
                     updatedContent = xmlContentProcessor.replaceElementById(content, updatedElementContent,
-                            elementId);
+                            elementId, true);
                 } catch (Exception e) {
                     throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
                 }

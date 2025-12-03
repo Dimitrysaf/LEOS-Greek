@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
@@ -35,7 +36,6 @@ import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +49,9 @@ public interface ApiService {
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
                                           boolean eeaRelevance, String template) throws CreateCollectionException;
 
-    CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException;
+    CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException;
 
-    LegFileValidation validateLegFile(File legDocument);
+    LegFileValidation validateLegFile(LeosFile legDocument);
 
     void deleteAnnex(String proposalRef, String annexRef) throws Exception;
 

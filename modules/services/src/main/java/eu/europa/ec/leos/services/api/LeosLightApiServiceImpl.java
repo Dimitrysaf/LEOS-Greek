@@ -5,6 +5,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -60,14 +61,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 
 import javax.inject.Provider;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -181,7 +176,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     @Override
-    public Pair<Boolean, File> exportDocument(ExportDocumentRequest request, String clientContextToken) {
+    public Pair<Boolean, LeosFile> exportDocument(ExportDocumentRequest request, String clientContextToken) {
         String documentUrl = request.getDocumentUrl();
         if (StringUtils.isEmpty(documentUrl)) {
             throw new InvalidInputException(messageHelper.getMessage("leoslight.service.export.url.missing"));
@@ -193,7 +188,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             throw new NotFoundException(messageHelper.getMessage("leoslight.document.not.found"));
         }
 
-        File file = convertDocument(docRef, savedDocument, request.getOptions());
+        LeosFile file = convertDocument(docRef, savedDocument, request.getOptions());
 
         String callbackAddress = request.getCallbackAddress();
         if (StringUtils.isEmpty(callbackAddress)) {
@@ -215,11 +210,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         }
 
         try {
-            leosLightXmlDocumentService.sendFileToCallbackUrl(file.getName(), Files.readAllBytes(file.toPath()), callbackAddress, token);
+            leosLightXmlDocumentService.sendFileToCallbackUrl(file.getName(), file.getBytes(), callbackAddress, token);
         } catch (Exception exception) {
-            if ((file != null) && file.exists()) {
-                file.delete();
-            }
             String errorMessage = String.format(messageHelper.getMessage("leoslight.service.export.callback.error"), callbackAddress, exception.getMessage());
             LOG.error(errorMessage);
             throw new InternalServerException(errorMessage);
@@ -233,14 +225,9 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         validateBasePath(FilenameUtils.normalize(file.getOriginalFilename()), "./");
 
         String originalFilename = file.getOriginalFilename();
-        File content = new File(file.getOriginalFilename());
+        LeosFile content = new LeosFile(file.getOriginalFilename());
         byte[] fileContent = file.getBytes();
-        try (FileOutputStream fos = new FileOutputStream(content)) {
-            fos.write(file.getBytes());
-        } catch (IOException ioe) {
-            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-            return new Pair<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        content.setBytes(fileContent);
 
         // Validate Leg file first
         LegFileValidation validation = apiService.validateLegFile(content);
@@ -389,8 +376,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         return newVersion[0] + "." + newVersion[1] + "." + newVersion[2];
     }
 
-    private File convertDocument(String docRef, LeosDocument document, ExportDocumentOptions options) {
-        File file = null;
+    private LeosFile convertDocument(String docRef, LeosDocument document, ExportDocumentOptions options) {
+        LeosFile file = null;
         try {
             if (options == null || ExportDocumentOptions.OutputType.XML.equals(options.getOutputType())) {
                 byte[] docContent = document.getContent().get().getSource().getBytes();
@@ -399,9 +386,6 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                 file = getZipFile(document, options);
             }
         } catch (IOException exception) {
-            if ((file != null) && file.exists()) {
-                file.delete();
-            }
             throw new InternalServerException(messageHelper.getMessage("leoslight.service.export.convert.error"), exception);
         }
 
@@ -409,7 +393,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     private DocumentVO getDocumentVO(String docRef, byte[] docContent) throws XmlValidationException {
-        File docFileTemp = null;
+        LeosFile docFileTemp = null;
         DocumentVO documentVO = null;
 
         try {
@@ -425,10 +409,6 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             }
         } catch (IOException e) {
             throw new XmlValidationException(messageHelper.getMessage("leoslight.document.invalid.document"));
-        } finally {
-            if ((docFileTemp != null) && docFileTemp.exists()) {
-                docFileTemp.delete();
-            }
         }
 
         return documentVO;
@@ -521,28 +501,14 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         }
     }
 
-    private File getXmlFile(String docRef, byte[] docContent) throws IOException {
-        File file = null;
+    private LeosFile getXmlFile(String docRef, byte[] docContent) throws IOException {
+        LeosFile file = null;
         OutputStream outputStream = null;
-        try {
-            final String basePath = System.getProperty("java.io.tmpdir");
-            // Ensure docRef is a safe filename (e.g., no path traversal)
-            docRef = docRef.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+        docRef = docRef.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
 
-            file = File.createTempFile(docRef, ".xml");
-            // Determine final destination path
-            Path path = Paths.get(basePath, docRef + ".xml").normalize();
-
-            //path = Files.move(path, path.resolveSibling(docRef + ".xml").normalize(), REPLACE_EXISTING);
-            Files.move(file.toPath(), path, StandardCopyOption.REPLACE_EXISTING);
-            file = path.toFile();
-            outputStream = new FileOutputStream(file);
-            outputStream.write(docContent);
-        } finally {
-            if (outputStream != null) {
-                outputStream.close();
-            }
-        }
+        file = new LeosFile();
+        file.generateFileName(docRef, ".xml");
+        file.setBytes(docContent);
         return file;
     }
 
@@ -555,7 +521,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                         String.format("Document %s is missing docTemplate", document.getId())));
     }
 
-    private File getZipFile(LeosDocument document, ExportDocumentOptions options) throws IOException {
+    private LeosFile getZipFile(LeosDocument document, ExportDocumentOptions options) throws IOException {
         String docName = document.getName();
         byte[] docContent = document.getContent().get().getSource().getBytes();
         Class docType = LeosCategoryClass.getClass(document.getCategory());
@@ -576,6 +542,6 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         contentToZip.put("exports.zip", leosLightXmlDocumentService.convert(docContent, docName, exportOptions));
 
         //4.final packaging
-        return ZipPackageUtil.zipFiles("result.zip", contentToZip, null);
+        return ZipPackageUtil.zipLeosFiles("result.zip", contentToZip, null);
     }
 }

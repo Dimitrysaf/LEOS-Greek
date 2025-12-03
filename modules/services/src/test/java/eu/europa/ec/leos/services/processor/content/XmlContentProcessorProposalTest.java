@@ -220,7 +220,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "                    </subparagraph>" +
                 "                </article>";
 
-        byte[] returnedElement = xercesXmlContentProcessor.replaceElementById(docContent, newContent, "art486");
+        byte[] returnedElement = xercesXmlContentProcessor.replaceElementById(docContent, newContent, "art486", true);
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_replaceElementByTagNameAndId_should_match_returnedTagContent.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(new String(returnedElement)));
     }
