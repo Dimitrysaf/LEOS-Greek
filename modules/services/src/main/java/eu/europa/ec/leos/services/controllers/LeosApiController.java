@@ -100,7 +100,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
-import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileName;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileNameForBinaryFile;
 import static eu.europa.ec.leos.services.support.XmlHelper.isValidSizeFileForBinaryFile;
 import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForBinaryFile;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
@@ -588,13 +588,18 @@ public class LeosApiController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> createProposalForeignAnnex(@PathVariable("proposalRef") String proposalRef, @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws Exception {
-        validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
-        if (!isValidFileName(foreignAnnexFile.getOriginalFilename()) || !isValidSizeFileForBinaryFile(foreignAnnexFile.getSize()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes())) {
-            new ResponseEntity<>("Invalid file name", HttpStatus.BAD_REQUEST);
+        try {
+            validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
+            if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidSizeFileForBinaryFile(foreignAnnexFile.getSize()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes())) {
+                return new ResponseEntity<>("Invalid file name", HttpStatus.BAD_REQUEST);
+            }
+            proposalRef = encodeParam(proposalRef);
+            this.apiService.createProposalAnnex(proposalRef, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            LOG.error(ERROR_WHILE_CREATING_NEW_BILL_ANNEX + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while creating new bill foreign annex", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        proposalRef = encodeParam(proposalRef);
-        this.apiService.createProposalAnnex(proposalRef, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "/secured/proposals/{proposalRef}/update-annex-title/{annexId}", method = RequestMethod.PUT,

@@ -12,7 +12,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, LegFileValidationResponse
+  User
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -152,9 +152,15 @@ export class ProposalDetailsService implements OnDestroy {
         formData,
         {},
       )
-      .subscribe((val) => {
-        this.setProposalRef(this.proposalRef);
-        this.loadingService.setLoading(false);
+      .subscribe({
+        next: (val) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+        },
+        error: (error) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+        }
       });
   }
 

@@ -826,40 +826,6 @@ public abstract class ApiServiceImpl implements ApiService {
         return packageService.findDocumentsByPackagePath(leosPackage.getPath(), FinancialStatement.class, false);
     }
 
-//    @Override
-//    public void createProposalForeignAnnex(String proposalRef) throws IOException {
-//        LOG.trace("Creating annex...");
-//        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
-//        if (proposal != null) {
-//            boolean isClonedProposal = proposal.isClonedProposal();
-//            try {
-//                populateTrackChangesContext(proposal);
-//                LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-//                Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
-//                BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
-//                BillContextService billContext = billContextProvider.get();
-//                billContext.usePackage(leosPackage);
-//                billContext.useTemplate(bill);
-//                billContext.usePurpose(metadata.getPurpose());
-//                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
-//                billContext.useActionMessage(ContextActionService.ANNEX_ADDED, messageHelper.getMessage("collection.block.annex.added"));
-//                billContext.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
-//
-//                CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
-//                String annexTemplate = templateItem.getItems().get(1).getId();
-//                billContext.useAnnexTemplate(annexTemplate);
-//                billContext.useCloneProposal(isClonedProposal);
-//                billContext.useOriginRef(cloneOriginRef);
-//                billContext.usePackageRef(proposalRef);
-//                billContext.executeCreateBillAnnex();
-//                billService.updateExternalReferencesAsync(leosPackage);
-//            } catch (Exception e) {
-//                LOG.error("Unexpected error occurred while creating new annex", e);
-//                throw e;
-//            }
-//        }
-//    }
-
     @Override
     public void createProposalAnnex(String proposalRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws IOException {
         LOG.trace("Creating annex...");

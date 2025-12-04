@@ -862,7 +862,8 @@ public class XmlHelper {
         List<String> allowedTypes = Arrays.asList(
                 "application/pdf",
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/octet-stream", "application/x-tika-ooxml");
         return allowedTypes.contains(mimeType);
     }
 
@@ -883,14 +884,6 @@ public class XmlHelper {
     }
 
     public static boolean isValidSizeFileForBinaryFile(long sizeofBinaryFile) {
-        // Max 50 MB
-        if (sizeofBinaryFile > (50 * 1024 * 1024)) {
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean isValidContentForBinaryFile(long sizeofBinaryFile) {
         // Max 50 MB
         if (sizeofBinaryFile > (50 * 1024 * 1024)) {
             return false;
