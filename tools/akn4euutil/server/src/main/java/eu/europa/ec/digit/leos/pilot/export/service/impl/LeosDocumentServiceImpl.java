@@ -89,15 +89,13 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return outputList.getLeosRenditionOutputs();
     }
 
-    public String callLeosValidation(MultipartFile inputFile, String email) {
-        String response = "";
+    public void callLeosValidation(MultipartFile inputFile, String email) {
         try {
-            response = restClient.callLeosValidation(inputFile, email);
+            restClient.callLeosValidation(inputFile, email);
         } catch (IOException e) {
             LOG.error("Error while calling leos validation - {}", e.getMessage());
             throw new RuntimeException(e);
         }
-        return response;
     }
 
     public byte[] applyMetadata(MultipartFile inputFile) throws IOException {

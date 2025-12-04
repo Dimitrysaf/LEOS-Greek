@@ -73,7 +73,7 @@ public class Akn4EUUtilRestClient {
         return output;
     }
 
-    public String callLeosValidation(MultipartFile inputFile, String email) throws IOException {
+    public void callLeosValidation(MultipartFile inputFile, String email) throws IOException {
         String url = getUrl(leosRestCoreApiConValidationURI);
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         ByteArrayResource byteArrayResource = convertFileToByteArray(inputFile);
@@ -85,11 +85,9 @@ public class Akn4EUUtilRestClient {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
         try {
             ResponseEntity<String> outputList = restTemplate.postForEntity(url, requestEntity, String.class);
-            return outputList.getBody();
         } catch (RestClientException e) {
             log.error("EdiT/Core module is not available for validation - {}", e.getMessage());
         }
-        return "";
     }
 
     private ByteArrayResource convertFileToByteArray(MultipartFile multipartFile) throws IOException {

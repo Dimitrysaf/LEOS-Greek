@@ -33,6 +33,6 @@ public interface LeosDocumentService {
 
     String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) throws IOException;
 
-    public String callLeosValidation(MultipartFile inputFile, String email);
+    public void callLeosValidation(MultipartFile inputFile, String email);
 
 }

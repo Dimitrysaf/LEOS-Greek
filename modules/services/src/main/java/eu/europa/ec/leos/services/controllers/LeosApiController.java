@@ -866,7 +866,7 @@ public class LeosApiController {
             contentToZip.put(validationFile.getOriginalFileName(), validationFile);
             LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
             notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", resultZipFile.getBytes()));
-            return new ResponseEntity<>("You will receive an email shortly with the validation result at " + email, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (Exception e) {
             LOG.error("Error occurred running conValidation - {}", e.getMessage());
