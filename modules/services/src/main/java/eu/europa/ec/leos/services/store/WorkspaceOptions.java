@@ -67,7 +67,7 @@ public class WorkspaceOptions {
     }
 
     private void customTemplateFilter() {
-        //set false if user is not having Template manager or Support Role
+        //Set the value to false if the user does not have either the Template Manager role or the Support role.
         if (!(securityContext.getUser().getRoles().contains("TEMPLATE_MANAGER")
                 || securityContext.getUser().getRoles().contains("SUPPORT"))) {
             workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
