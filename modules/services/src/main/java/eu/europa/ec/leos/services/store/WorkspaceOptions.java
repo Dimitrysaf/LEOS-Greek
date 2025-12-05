@@ -68,7 +68,7 @@ public class WorkspaceOptions {
 
     private void customTemplateFilter() {
         boolean hasCreateTemplatePermission = securityContext.hasPermission(null, LeosPermission.CAN_CREATE_TEMPLATE);
-        //Set the value to false if the user does not have create template permission
+        //Set the value to false if the user does not have create template permission.
         if (!(hasCreateTemplatePermission)) {
             workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
                     "=", false, true, "false"));
