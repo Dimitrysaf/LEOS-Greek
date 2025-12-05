@@ -125,20 +125,12 @@
             <sameParentAsChild>false</sameParentAsChild>
             <profiles>
                 <profile>
-                    <elementSelector>level:not([leos\:editable]) subparagraph[leos\:editable='true']:not(:has(> content > table[leos\:predefinedtable='true']))</elementSelector>
+                    <elementSelector>level:not([leos\:editable]) subparagraph[leos\:editable='true']</elementSelector>
                     <profileName>inlineAknSubParagraphFinancialStatement</profileName>
                 </profile>
                 <profile>
-                    <elementSelector>level:not([leos\:editable]) subparagraph[leos\:optional='true']:not(:has(> content > table[leos\:predefinedtable='true']))</elementSelector>
+                    <elementSelector>level:not([leos\:editable]) subparagraph[leos\:optional='true']</elementSelector>
                     <profileName>inlineAknSubParagraphFinancialStatement</profileName>
-                </profile>
-                <profile>
-                    <elementSelector>level:not([leos\:editable]) subparagraph[leos\:editable='true']:has(> content > table[leos\:predefinedtable='true'])</elementSelector>
-                    <profileName>inlineAknSubParagraphForTableFinancialStatement</profileName>
-                </profile>
-                <profile>
-                    <elementSelector>level:not([leos\:editable]) subparagraph[leos\:optional='true']:has(> content > table[leos\:predefinedtable='true'])</elementSelector>
-                    <profileName>inlineAknSubParagraphForTableFinancialStatement</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
