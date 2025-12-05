@@ -67,9 +67,9 @@ public class WorkspaceOptions {
     }
 
     private void customTemplateFilter() {
-        //Set the value to false if the user does not have either the Template Manager role or the Support role..
-        if (!(securityContext.getUser().getRoles().contains("TEMPLATE_MANAGER")
-                || securityContext.getUser().getRoles().contains("SUPPORT"))) {
+        boolean hasCreateTemplatePermission = securityContext.hasPermission(null, LeosPermission.CAN_CREATE_TEMPLATE);
+        //Set the value to false if the user does not have create template permission
+        if (!(hasCreateTemplatePermission)) {
             workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
                     "=", false, true, "false"));
         }
