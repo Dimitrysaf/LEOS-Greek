@@ -12,7 +12,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User
+  User, LegFileValidationResponse
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
