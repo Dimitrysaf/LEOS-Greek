@@ -43,6 +43,8 @@ define(function leosPastePluginModule(require) {
                     .replace(/&amp;#xa0;/g, ' ')
                     .replace(/\u00A0/g, ' ')
                     .replace(/&#160;/g, ' ');
+
+                dataValue = _stripHtmlSecurely(dataValue);
                 var fragment = CKEDITOR.htmlParser.fragment.fromHtml(dataValue);
                 fragment.forEach( function( node ) {//saving editor to reuse later
                     node.editor = editor;
@@ -54,7 +56,7 @@ define(function leosPastePluginModule(require) {
                 //Write back the object structure in dataValue
                 var writer = new CKEDITOR.htmlParser.basicWriter();
                 fragment.writeHtml(writer);
-                evt.data.dataValue = writer.getHtml();
+                evt.data.dataValue = writer.getHtml(false);
             }, 7);
         }
     };
@@ -146,16 +148,35 @@ define(function leosPastePluginModule(require) {
             },
             p:function (element) {
                 //P will stay as it is but all its children will be accumulated into a single text node
-                if (element.parent) {// if not already removed
+                if (element.parent) {
+                    // 1. Filter the children first (allows $ handler to clean up nested junk)
                     element.filterChildren(htmlFilter);
-
                     var text = '';
+                    var childrenToRemove = []; // Store children references to remove them safely later
+                    // 2. Iterate and collect all text content
                     for (var i = 0; i < element.children.length; i++) {
-                        text += convertElementToText(element.children[i]);
-                        element.children[i].remove();
-                        i--;
+                        var child = element.children[i];
+                        // If a child somehow lost its parent but is still in the list, re-assign it
+                        // (This handles intermediate filtering steps)
+                        if (!child.parent) {
+                            child.parent = element;
+                        }
+                        // Convert the child node (and its descendants) to plain text
+                        text += convertElementToText(child);
+                        // Mark the child for removal
+                        childrenToRemove.push(child);
                     }
-                    element.add(new CKEDITOR.htmlParser.text(text));
+                    // 3. Clean up the children first (important to avoid confusion with the parser)
+                    for (var j = 0; j < childrenToRemove.length; j++) {
+                        // Check if the child still has a parent (i.e., is still attached) before removing
+                        if (childrenToRemove[j].parent) {
+                            childrenToRemove[j].remove();
+                        }
+                    }
+                    // 4. Add the single, concatenated text node back to the parent <p> element
+                    if (text) {
+                        element.add(new CKEDITOR.htmlParser.text(text));
+                    }
                 }
             },
             br: function (element) {
@@ -262,6 +283,17 @@ define(function leosPastePluginModule(require) {
                     }
                 );
         }//else let it be text
+    }
+
+    function _stripHtmlSecurely(htmlString) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, 'text/html');
+
+        // Select all script and style tags and remove them
+        const elements = doc.querySelectorAll('script, style');
+        elements.forEach(el => el.remove());
+
+        return doc.body.textContent || "";
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
