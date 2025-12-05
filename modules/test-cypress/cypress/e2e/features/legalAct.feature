@@ -1210,7 +1210,7 @@ Feature: Legal Act Page Regression Features
     Then user is on act viewer page
 
 
-  @validationOfRecitalSectionInAutonomousAct @local 
+  @validationOfRecitalSectionInAutonomousAct @local
   Scenario: Recital section in autonomous act
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -1247,7 +1247,7 @@ Feature: Legal Act Page Regression Features
     And  click on toc edit button
     And click on three vertical dots for the element contains text "(1) Recital..." in toc
     And click on move option from dropdown content
-    And  click on three vertical dots for the element contains text "Recitals 1. RECITAL SECTION HEADING" in toc
+    And  click on three vertical dots for the element contains text "Recitals 1. Recital Section Heading" in toc
     And click on place as child option from dropdown content
     And  click on save and close button in navigation pane
     Then no warning symbol should be displayed in the navigation pane
@@ -1256,9 +1256,9 @@ Feature: Legal Act Page Regression Features
     Then total recital count is 2
     And recital section count is 1
     And recital section 1 contains "num" tag with value "1."
-    And  recital section 1 contains "heading" tag with value "RECITAL SECTION HEADING"
+    And  recital section 1 contains "heading" tag with value "Recital Section Heading"
     When click on toc edit button
-    And click on three vertical dots for the element contains text "Recitals 1. RECITAL SECTION HEADING" in toc
+    And click on three vertical dots for the element contains text "Recitals 1. Recital Section Heading" in toc
     And click on delete option from eui dropdown content
     Then "Delete Element: confirmation" dialog confirm box window is displayed
     When click on ok button in dialog box window
