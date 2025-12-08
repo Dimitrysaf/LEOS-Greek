@@ -113,6 +113,7 @@ public class WorkflowCollaboratorController {
             // accessDTO.userId contains the entity but the accessDTO.entity is overwritten
             // The mapping towards the entity is done from the userId
             User user = userService.getUser(userId);
+            // If the user is not present skip it (do not break)
             if (user == null) {
                 log.warn("add workflow collaborator for entity described by userId '{}' not found!, skip addition", userId);
                 return;
