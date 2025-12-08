@@ -123,6 +123,8 @@ public class MetadataServiceImpl implements MetadataService {
                     return MetadataUtil.parseAuthenticLanguages(fieldValue);
                 case COVERPAGE_TYPE:
                     return MetadataUtil.parseCoverPageType(fieldValue);
+                case DIFFUSION_VERSION:
+                    return MetadataUtil.parseDiffusionVersion(fieldValue);
                 default:
                     throw MetadataFieldNotAvailableException.newException(field);
             }

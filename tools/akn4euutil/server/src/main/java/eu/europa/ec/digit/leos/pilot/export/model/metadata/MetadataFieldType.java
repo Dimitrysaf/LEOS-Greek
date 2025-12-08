@@ -148,6 +148,9 @@ public enum MetadataFieldType {
         if(MetadataFieldType.UPDATE_COVER_PAGE.getTypeName().equals(typeName)){
             return MetadataFieldType.UPDATE_COVER_PAGE;
         }
+        if(MetadataFieldType.DIFFUSION_VERSION.getTypeName().equals(typeName)){
+            return MetadataFieldType.DIFFUSION_VERSION;
+        }
         throw new IllegalArgumentException("Invalid metadata type name");
     }
 }

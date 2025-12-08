@@ -836,4 +836,8 @@ public class MetadataUtil {
                 .filter((spelling) -> value.toLowerCase().contains(spelling))
                 .findFirst().isPresent();
     }
+
+    public static MetadataFieldInfo parseDiffusionVersion(String fieldValue) throws MetadataFieldInvalidValueException {
+        return new SimpleFieldInfo(fieldValue, MetadataFieldType.DIFFUSION_VERSION);
+    }
 }
