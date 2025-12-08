@@ -39,6 +39,20 @@ define(function aknBlockContainerPluginModule(require) {
                     var startContainer = range.startContainer.$;
                     var endContainer = range.endContainer.$;
 
+                    // Normalize: always work with element nodes (not text nodes → parent)
+                    var startEl = range.startContainer.type == CKEDITOR.NODE_ELEMENT ? range.startContainer : range.startContainer.getParent();
+                    var endEl   = range.endContainer.type == CKEDITOR.NODE_ELEMENT ? range.endContainer : range.endContainer.getParent();
+
+                    // Now check the two possible cases:
+                    var isStartElBlockContainer =  startEl.is("div") && startEl.getAttribute("leos:editable") == "true" &&
+                        startEl.hasAttribute("data-akn-name") &&
+                        startEl.getAttribute("data-akn-name").toLowerCase() == "blockcontainer";
+
+                    var isEndElBlockContainer =  endEl.is("div") && endEl.getAttribute("leos:editable") == "true" &&
+                        endEl.hasAttribute("data-akn-name") &&
+                        endEl.getAttribute("data-akn-name").toLowerCase() == "blockcontainer";
+
+
                     var isAtStart = (range.startOffset === 0);
                     var endLength = (endContainer.nodeType === Node.TEXT_NODE) ? endContainer.length
                         : (endContainer.nodeType === Node.ELEMENT_NODE) ? endContainer.childNodes.length
@@ -55,6 +69,8 @@ define(function aknBlockContainerPluginModule(require) {
                         !selected.hasNext() && !selected.hasPrevious()) {
                             isWholeSelected = true;
                     }
+
+                    isWholeSelected = isStartElBlockContainer || isEndElBlockContainer || isWholeSelected;
 
                     if (isWholeSelected) {
 
