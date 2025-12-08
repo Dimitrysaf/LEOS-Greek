@@ -102,8 +102,10 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_SUBFLOW_ID = "data-akn-subflow-id";
     var DATA_AKN_HCONTAINER_ID = "data-akn-hcontainer-id";
     var DATA_AKN_SUB_HCONTAINER_ID = "data-akn-sub-hcontainer-id";
+    var DATA_AKN_MEDIA_CONTAINER_ID = "data-akn-media-container-id";
     var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
     var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
+    var DATA_AKN_MEDIA_CONTAINER = "data-akn-media-container";
 
     /*
      * Create content elements with wrapping element(e.g.: alinea, subparagraph)
@@ -394,21 +396,21 @@ define(function hierarchicalElementTransformer(require) {
                     }]
                 });
                 contentPath += "/hcontainer";
-                if (element.attributes[DATA_AKN_SUB_HCONTAINER]) {
+                if (element.attributes[DATA_AKN_MEDIA_CONTAINER]) {
                     this.mapToChildProducts(element, {
                         toPath: contentPath,
-                        toChild: "hcontainer",
+                        toChild: "mediacontainer",
                         attrs: [{
-                            from: DATA_AKN_SUB_HCONTAINER_ID,
+                            from: DATA_AKN_MEDIA_CONTAINER_ID,
                             to: "xml:id",
                             action: "passAttributeTransformer"
                         }, {
-                            from: DATA_AKN_SUB_HCONTAINER,
+                            from: DATA_AKN_MEDIA_CONTAINER,
                             to: "name",
                             action: "passAttributeTransformer"
                         }]
                     });
-                    contentPath += "/hcontainer";
+                    contentPath += "/mediacontainer";
                     if (contentChildren[0].name === 'img') {
                         createContent.call(this, element, contentPath, contentChildren, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN);
                     } else {
@@ -658,6 +660,13 @@ define(function hierarchicalElementTransformer(require) {
             var rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp"].join("")));
             var rootElementsWithSubflowSubHcontainerContentMpAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/mp\/.+"].join("")));
             var rootElementsWithSubflowSubHcontainerContentAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/hcontainer\/content\/((?!mp).)+"].join("")));
+            //recital media container start
+            var rootElementsWithRecitalSubflowHcontainerMediaContainerAndContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/mediacontainer\/content"].join("")));
+            var rootElementsWithRecitalSubflowHcontainerMediaContainerAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/mediacontainer\/content\/mp"].join("")));
+            var rootElementsWithRecitalSubflowHcontainerMediaContainerContentMpAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/mediacontainer\/content\/mp\/.+"].join("")));
+            var rootElementsWithRecitalSubflowHcontainerMediaContainerContentAndNestedForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/mp\/subflow\/hcontainer\/mediacontainer\/content\/((?!mp).)+"].join("")));
+            //recital media container end
+
             // path = paragraph/subparagraph
             var rootElementsWithContentWrapperForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, PSR, contentWrapperForFrom].join("")));
             //path = paragraph/subparagraph/content
@@ -1076,6 +1085,36 @@ define(function hierarchicalElementTransformer(require) {
                                         action: "passAttributeTransformer"
                                     }]
                                 });
+                            } else if (rootElementsWithRecitalSubflowHcontainerMediaContainerAndContentForFromRegExp.test(path)) {
+                                this.mapToProducts(element, {
+                                    toPath: rootsElementsWithDivPathForTo,
+                                    attrs: [{
+                                        to: DATA_AKN_HCONTAINER_ID,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "xml:id", element.parent),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "name",
+                                        to: DATA_AKN_HCONTAINER,
+                                        toValue: getElementAttrVal.call(that, "hcontainer", "name", element.parent),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_MEDIA_CONTAINER_ID,
+                                        toValue: getElementAttrVal.call(that, "mediacontainer", "xml:id", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_MEDIA_CONTAINER,
+                                        toValue: getElementAttrVal.call(that, "mediacontainer", "name", element),
+                                        action: "passAttributeTransformer"
+                                    },{
+                                        from: "xml:id",
+                                        to: DATA_AKN_CONTENT_ID,
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "leos:origin",
+                                        to: DATA_CONTENT_ORIGIN,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
                             } else if (rootElementsWithSubflowSubHcontainerAndContentForFromRegExp.test(path)) {
                                 this.mapToProducts(element, {
                                     toPath: rootsElementsWithDivPathForTo,
@@ -1106,7 +1145,7 @@ define(function hierarchicalElementTransformer(require) {
                                         action: "passAttributeTransformer"
                                     }]
                                 });
-                            } else if (rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp.test(path)) {
+                            } else if (rootElementsWithRecitalSubflowHcontainerMediaContainerAndMpForFromRegExp.test(path) || rootElementsWithSubflowSubHcontainerContentAndMpForFromRegExp.test(path)) {
                                 this.mapToProducts(element, {
                                     toPath: rootsElementsWithDivPathForTo,
                                     attrs: [{
@@ -1320,7 +1359,9 @@ define(function hierarchicalElementTransformer(require) {
                                 this.mapToNestedChildProduct(element, {
                                     toPath: rootsElementsPathForTo
                                 });
-                            } else if (rootElementsWithMpAndNestedForFromRegExp.test(path) || rootElementsWithSubflowAndNestedForFromRegExp.test(path) ||
+                            } else if (rootElementsWithRecitalSubflowHcontainerMediaContainerContentMpAndNestedForFromRegExp.test(path) ||
+                                rootElementsWithMpAndNestedForFromRegExp.test(path) || rootElementsWithSubflowAndNestedForFromRegExp.test(path) ||
+                                rootElementsWithRecitalSubflowHcontainerMediaContainerContentAndNestedForFromRegExp.test(path) ||
                                 rootElementsWithSubflowSubHcontainerContentAndNestedForFromRegExp.test(path) ||
                                 rootElementsWithSubflowSubHcontainerContentMpAndNestedForFromRegExp.test(path)) {
                                 this.mapToNestedChildProduct(element, {
