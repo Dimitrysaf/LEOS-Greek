@@ -140,7 +140,7 @@ export class ProposalsFiltersComponent
   resetFilters() {
     this.resetSelectedTree(this.treeNodes);
     this.setInitialState();
-    this.treeNodes = [...this.treeNodes]; // new array reference
+    this.treeNodes = this.filteredNodes;
     this.proposalService.setFilters(
       ProposalsFiltersComponent.emptyFilterParams,
     );
