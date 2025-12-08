@@ -89,6 +89,15 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return outputList.getLeosRenditionOutputs();
     }
 
+    public void callLeosValidation(MultipartFile inputFile, String email) {
+        try {
+            restClient.callLeosValidation(inputFile, email);
+        } catch (IOException e) {
+            LOG.error("Error while calling leos validation - {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
     public byte[] applyMetadata(MultipartFile inputFile) throws IOException {
         Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
         return this.leosPrefinalisationService.applyMetadata(zipContent);
