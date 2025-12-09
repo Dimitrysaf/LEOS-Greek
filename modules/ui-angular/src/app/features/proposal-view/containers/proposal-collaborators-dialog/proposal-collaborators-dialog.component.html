@@ -27,12 +27,16 @@
                 'page.collection.collaborators.dialog.form.name' | translate
               }}</label>
             <eui-autocomplete
+              #autocompleteComponent
               [autocompleteData]="userAutocompleteData"
               name="item"
               id="item"
               formControlName="item"
+              [isForceSelection]="true"
               (selectionChange)="handleNameSelect($event, i)"
-              (keydown)="handleNameChanged(i)"
+              (keyup)="$event.key.length === 1 && handleNameChanged(i)"
+              (keyup.arrowDown)="onArrowSelect(i)"
+              (keyup.arrowUp)="onArrowSelect(i)"
               (clear)="handleNameChanged(i)"
             ></eui-autocomplete>
           </div>
@@ -113,6 +117,7 @@
         {{ 'global.actions.cancel' | translate }}
       </button>
       <button
+        id="addCollaboratorButton"
         [disabled]="!isFormValid"
         type="button"
         euiButton
