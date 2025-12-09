@@ -76,8 +76,13 @@
       width: 100%;
     }
   }
+  num > del[leos\:tc-original-number] ~ del,
+  num > del:not([leos\:tc-original-number]) ~ del[leos\:tc-original-number] {
+    display:none;
+  }
 
-  del, [leos\:action="delete"], [leos\:action="delete"] num, [leos\:action="delete"] heading {
+
+  del:only-of-type, [leos\:action="delete"], [leos\:action="delete"] num, [leos\:action="delete"] heading {
     text-decoration: line-through;
     white-space: break-spaces;
     mref, authorialnote, span.MathJax_CHTML {
