@@ -22,6 +22,7 @@ import {
 } from '@eui/components/eui-tree';
 import { EuiTreeSelectionChanges } from '@eui/components/eui-tree/eui-tree.model';
 import {AppConfigService} from "@/core/services/app-config.service";
+import {TranslateService} from "@ngx-translate/core";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -67,7 +68,8 @@ export class ProposalCreateTemplateSelectorComponent
   constructor(
     private cd: ChangeDetectorRef,
     private proposalService: ProposalService,
-    private appConfig: AppConfigService
+    private appConfig: AppConfigService,
+    private translateService: TranslateService
   ) {
     this.setInitialState();
   }
@@ -246,15 +248,15 @@ export class ProposalCreateTemplateSelectorComponent
     const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
     disabled = disabled || this.disabled || !isSameDocCollection || sameTemplate;
 
-    if(isEmptyCategory){
-      tooltipLabel = 'empty-category';
-    }else if(isTemplate){
-      if(this.disabled){
-        tooltipLabel = 'Invalid selection';
-      }else if(!isSameDocCollection) {
-        tooltipLabel = 'Invalid selection. Different category type';
-      }else if(sameTemplate){
-        tooltipLabel = 'Invalid selection. Cannot choose same template type';
+    if(isEmptyCategory) {
+      tooltipLabel = this.translateService.instant("page.workspace.create-selector.empty-category-tooltip");
+    } else if(isTemplate) {
+      if(this.disabled) {
+        tooltipLabel = this.translateService.instant("page.workspace.create-selector.invalid-selection-tooltip");
+      } else if(!isSameDocCollection) {
+        tooltipLabel = this.translateService.instant("page.workspace.create-selector.different-category-type-tooltip");
+      } else if(sameTemplate) {
+        tooltipLabel = this.translateService.instant("page.workspace.create-selector.same-template-type-tooltip");
       }
     }
     const node: TreeNode = {
