@@ -68,13 +68,14 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
   }
 
   private initLinguisticVersionsForm() {
+    const isEveryLanguageInProposal = this.languages.every(lang => this.isLanguageInProposal(lang));
     if (!this.linguisticVersionsForm) {
       this.linguisticVersionsForm = this.fb.group({
         newLinguisticVersions: new FormControl({ value: [], disabled: true }),
-        allSelected: new FormControl(this.languages.every(lang => this.isLanguageInProposal(lang)))
+        allSelected: new FormControl({ value: isEveryLanguageInProposal, disabled: isEveryLanguageInProposal }),
       });
     } else {
-      this.linguisticVersionsForm.reset({newLinguisticVersions: [], allSelected: this.languages.every(lang => this.isLanguageInProposal(lang))});
+      this.linguisticVersionsForm.reset({ newLinguisticVersions: [], allSelected: { value: isEveryLanguageInProposal, disabled: isEveryLanguageInProposal } });
     }
 
     this.languages.forEach(lang => {
