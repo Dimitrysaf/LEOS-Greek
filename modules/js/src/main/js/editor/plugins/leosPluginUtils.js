@@ -68,6 +68,7 @@ define(function leosPluginUtilsModule(require) {
     var SUBFLOW_NAME = "structuredContent";
     var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
     var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
+    var DATA_AKN_MEDIA_CONTAINER = "data-akn-media-container";
     var HCONTAINER_TABLE = "BLOCK_TAB";
     var SUB_HCONTAINER_TABLE = "TAB";
     var HCONTAINER_IMAGE = "FGR";
@@ -2066,6 +2067,7 @@ define(function leosPluginUtilsModule(require) {
         SUBFLOW_NAME: SUBFLOW_NAME,
         DATA_AKN_HCONTAINER: DATA_AKN_HCONTAINER,
         DATA_AKN_SUB_HCONTAINER: DATA_AKN_SUB_HCONTAINER,
+        DATA_AKN_MEDIA_CONTAINER: DATA_AKN_MEDIA_CONTAINER,
         HCONTAINER_TABLE: HCONTAINER_TABLE,
         SUB_HCONTAINER_TABLE: SUB_HCONTAINER_TABLE,
         HCONTAINER_IMAGE: HCONTAINER_IMAGE,

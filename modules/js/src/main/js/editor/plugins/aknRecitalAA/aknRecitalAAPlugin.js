@@ -23,7 +23,7 @@ define(function aknRecitalAAPluginModule(require) {
     var numberModule = require("plugins/leosNumber/recitalNumberModule");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
     var UTILS = require("core/leosUtils");
-    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
+    var MEDIA_CONTAINER = "mediacontainer";
 
     var pluginName = "aknRecitalAA";
     var ENTER_KEY = 13;
@@ -93,10 +93,25 @@ define(function aknRecitalAAPluginModule(require) {
                                 }
                             });
                     }
-                    evt.data.dataValue = recitalTag.outerHTML.replace('xmlns:leos="leos"', '');
-                }
+                    evt.data.dataValue = recitalTag.outerHTML.replace('xmlns:leos="leos"', '')
+                       .replace(/name="mediacontainer"/g,'')
+                       .replace(/<mediacontainer/g, '<mediaContainer')
+                       .replace(/<\/mediacontainer>/g, '<\/mediaContainer>');
 
+                }
             }, null, null, 99);
+
+            editor.on("toHtml", function (evt) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(evt.data.dataValue, "text/html");
+                const mediaContainers = doc.querySelectorAll(MEDIA_CONTAINER);
+                if (mediaContainers && mediaContainers.length && mediaContainers.length > 0) {
+                    mediaContainers.forEach(mc => {
+                        mc.setAttribute("name", MEDIA_CONTAINER);
+                    });
+                    evt.data.dataValue = doc.querySelector(RECITAL_NAME).outerHTML;
+                }
+            }, null, null, 1);
 
             leosKeyHandler.on({
                 editor : editor,
