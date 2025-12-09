@@ -1,10 +1,20 @@
 package eu.europa.ec.leos.services.collection;
 
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.services.collection.document.AnnexContextService;
+import eu.europa.ec.leos.services.collection.document.BillContextService;
+import eu.europa.ec.leos.services.collection.document.ExplanatoryContextService;
+import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
+import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
+import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
+
+import javax.inject.Provider;
+import java.util.HashMap;
 
 public interface CreateCollectionService {
 

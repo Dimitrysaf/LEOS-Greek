@@ -89,4 +89,6 @@ public interface AnnexService {
     Annex findFirstVersion(String documentRef);
 
     String generateAnnexReference(byte[] content, String language);
+
+    void updateReferencesAsync(Annex annex, Map<String, String> refsMatching);
 }

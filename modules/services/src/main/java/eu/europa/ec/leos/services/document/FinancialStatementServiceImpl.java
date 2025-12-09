@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
@@ -486,5 +487,16 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
 
     private void populateTrackChangesContext(XmlDocument document) {
         this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
+    }
+
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateReferencesAsync(FinancialStatement doc, Map<String, String> refsMatching) {
+        try {
+            byte[] content = xmlContentProcessor.updateReferencesOnImport(doc.getContent().get().getSource().getBytes(), refsMatching);
+            updateFinancialStatement(doc.getId(), content);
+        } catch (Exception e) {
+            LOG.error("Error while updating references on import: " + e.getMessage(), e);
+        }
     }
 }

@@ -1,16 +1,29 @@
 package eu.europa.ec.leos.services.collection;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Provider;
 
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.services.collection.document.AnnexContextService;
+import eu.europa.ec.leos.services.collection.document.BillContextService;
+import eu.europa.ec.leos.services.collection.document.ExplanatoryContextService;
+import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
+import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;

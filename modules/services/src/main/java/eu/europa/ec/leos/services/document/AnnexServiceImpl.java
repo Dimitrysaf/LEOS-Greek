@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -415,5 +416,17 @@ public abstract class AnnexServiceImpl implements AnnexService {
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
+    }
+
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateReferencesAsync(Annex annex, Map<String, String> refsMatching) {
+        try {
+            byte[] xmlContent = annex.getContent().get().getSource().getBytes();
+            xmlContent = xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
+            updateAnnex(annex.getId(), xmlContent, false);
+        } catch (Exception e) {
+            LOG.error("Error while updating references on import: " + e.getMessage(), e);
+        }
     }
 }
