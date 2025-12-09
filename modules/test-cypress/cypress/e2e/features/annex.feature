@@ -594,4 +594,3 @@ Feature: Annex Page Regression Features
     And  reference text label is shown as "Annex" in internal reference dialogue box
     When click on dialog cancel button
     And  click close button of ck editor
-    And  click dialog ok button
