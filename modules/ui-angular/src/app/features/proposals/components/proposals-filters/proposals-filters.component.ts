@@ -141,6 +141,8 @@ export class ProposalsFiltersComponent
     this.resetSelectedTree(this.treeNodes);
     this.setInitialState();
     this.treeNodes = this.filteredNodes;
+    this.resetSelectedTree(this.treeNodes);
+    this.cdRef.detectChanges();
     this.proposalService.setFilters(
       ProposalsFiltersComponent.emptyFilterParams,
     );

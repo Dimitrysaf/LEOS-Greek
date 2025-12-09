@@ -58,9 +58,8 @@ public class WorkspaceOptions {
     void initializeOptions(List<CatalogItem> catalogItems, FilterProposalsRequest.Filter[] filters) {
         if (filters != null && filters.length > 0) {
             initFilter(filters);
-        } else {
-            initRoleFilter();
         }
+        initRoleFilter();
         customTemplateFilter();
         initSortOrder();
 
@@ -85,7 +84,7 @@ public class WorkspaceOptions {
             }
 
             List<String> values = new ArrayList<>(Arrays.asList(filter.getValue()));
-            if(id.equalsIgnoreCase(FilterType.role.name())) {
+            /*if(id.equalsIgnoreCase(FilterType.role.name())) {
                 List<String> appRoles = authorityMap.getAllRoles().stream()
                         .filter(Role::isApplicationRole)
                         .map(role->role.getName())
@@ -104,7 +103,8 @@ public class WorkspaceOptions {
                 } else {
                     initRoleFilter();
                 }
-            } else if (id.equalsIgnoreCase(FilterType.customTemplates.name()) && securityContext.getUser() != null
+            } else*/
+            if (id.equalsIgnoreCase(FilterType.customTemplates.name()) && securityContext.getUser() != null
                     && securityContext.getUser().getRoles() != null
                     && (securityContext.getUser().getRoles().contains("TEMPLATE_MANAGER")
             || securityContext.getUser().getRoles().contains("SUPPORT"))) {
@@ -122,7 +122,7 @@ public class WorkspaceOptions {
                 }
             } else {
                 workspaceFilter.removeFilter(id);
-                initRoleFilter();
+               // initRoleFilter();
                 workspaceFilter.addFilter(new QueryFilter.Filter(id, "IN", nullCheck,
                         values.toArray(new String[]{})));
             }
