@@ -56,8 +56,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   private proposalLanguage: string;
   documentCollectionName: string;
   private destroy$ = new Subject();
-  dgList: string[] = [];
-  selectedDg: string;
 
   public activeTabIndex = 0;
 
@@ -97,25 +95,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     if (!this.isCopyChangeAct) {
       this.appConfig.config.subscribe((config) => {
           this.proposalService.loadCustomTemplateCatalog(config.user.defaultEntity.organizationName);
-          this.getDgList(config);
-      //this.proposalService.loadCustomTemplateCatalog(this.appConfig.user.defaultEntity.organizationName);
       });
   ``}
-  }
-
-  getDgList(config) {
-    let isSupportRole :boolean =config.user.roles?.includes('SUPPORT');
-    if (isSupportRole) {
-      this.detailsService.getAllOrganizations()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(organizations => {
-          this.dgList = organizations;
-          this.selectedDg = this.dgList.find(dg => dg === config.user.defaultEntity.organizationName);
-        });
-    } else {
-      this.dgList = config.user.entities.map(entity => entity.organizationName);
-      this.selectedDg = this.dgList.find(dg => dg === config.user.defaultEntity.organizationName);
-    }
   }
 
   ngAfterViewInit() {
