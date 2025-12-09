@@ -396,7 +396,27 @@ define(function hierarchicalElementTransformer(require) {
                     }]
                 });
                 contentPath += "/hcontainer";
-                if (element.attributes[DATA_AKN_MEDIA_CONTAINER]) {
+                if (element.attributes[DATA_AKN_SUB_HCONTAINER]) {
+                    this.mapToChildProducts(element, {
+                        toPath: contentPath,
+                        toChild: "hcontainer",
+                        attrs: [{
+                            from: DATA_AKN_SUB_HCONTAINER_ID,
+                            to: "xml:id",
+                            action: "passAttributeTransformer"
+                        }, {
+                            from: DATA_AKN_SUB_HCONTAINER,
+                            to: "name",
+                            action: "passAttributeTransformer"
+                        }]
+                    });
+                    contentPath += "/hcontainer";
+                    if (contentChildren[0].name === 'img') {
+                        createContent.call(this, element, contentPath, contentChildren, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN);
+                    } else {
+                        wrapElementWithContent.call(this, contentChildren[0], contentPath, DATA_AKN_CONTENT_ID, DATA_CONTENT_ORIGIN)
+                    }
+                } else if (element.attributes[DATA_AKN_MEDIA_CONTAINER]) {
                     this.mapToChildProducts(element, {
                         toPath: contentPath,
                         toChild: "mediacontainer",
