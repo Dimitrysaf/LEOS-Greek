@@ -3,8 +3,10 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
+import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.MergeContributionResponse;
 
@@ -36,4 +38,6 @@ public interface ContributionApiService {
     void handleMilestoneAccept(String proposalRef, String clonedLegFileName, Boolean isAddedElseDeleted, String annexRef, LeosCategory category) throws IOException;
 
     void handleMilestoneReject(String proposalRef, String clonedLegFileName, String originalLegFileId, String annexRef, boolean isAdded);
+
+    List<Element> extractElementsFromMergeActions(byte[] xmlContent, List<MergeActionVO> mergeActions);
 }

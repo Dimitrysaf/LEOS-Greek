@@ -836,6 +836,7 @@ export abstract class DocumentActionsService {
         ),
         icon: 'eui-ellipsis-vertical',
         items: this.mergeContributionApplyDropdownOptions,
+        disabled: this.mergeContributionService.isContributionDeclinedOrProcessed$,
       },
       {
         type: IRibbonToolbarType.BUTTON,
