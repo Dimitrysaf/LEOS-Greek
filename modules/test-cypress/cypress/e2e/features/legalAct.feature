@@ -883,6 +883,7 @@ Feature: Legal Act Page Regression Features
     When click close button of ck editor
     Then ck editor window is not displayed
 
+
   @checksForStory1703And2060And2208 @local
   Scenario: Checks related to specific stories: 1703, 2060 and 2208. Tests for alternatives and some track changes related to paragraph mode
     Given navigate to leos application with "User1"
@@ -1176,7 +1177,7 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "Automation Testing Alternative Article" in create document page
+    And  provide document title "Automation Testing Alternative clause" in create document page
     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
@@ -1210,7 +1211,7 @@ Feature: Legal Act Page Regression Features
     Then user is on act viewer page
 
 
-  @validationOfRecitalSectionInAutonomousAct @local 
+  @validationOfRecitalSectionInAutonomousAct @local
   Scenario: Recital section in autonomous act
     Given navigate to leos application with "User1"
     Then user is on home page

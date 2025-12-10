@@ -146,5 +146,6 @@ class financialStatementPage {
     getAllDatePicker(index, levelNumber) {
         return this.getLevelByNum(levelNumber).find('input[class="hasDatepicker"]').eq(index-1);
     }
+
 }
 export default new financialStatementPage();

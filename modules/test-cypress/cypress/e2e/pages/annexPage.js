@@ -5,6 +5,7 @@ class annexPage {
         closeBtn: () => cy.xpath("//button[text()='Close']"),
         level: () => cy.get('mainbody level'),
         paragraph: () => cy.xpath("(//div[contains(@class, 'orientation')]//paragraph)")
+
     }
 
     clickCloseBtn() {
@@ -283,5 +284,6 @@ class annexPage {
     getContentOfSubparagraphOfFourthLayerIndentOfLevel(subparagraphNumber, ListNumber5, fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber) {
         return this.getSubparagraphOfFourthLayerIndentOfLevel(subparagraphNumber, ListNumber5, fourthLayerIndentNumber, ListNumber4, thirdLayerPointNumber, ListNumber3, secondLayerPointNumber, ListNumber2, firstLayerPointNumber, ListNumber1, levelNumber).find('content aknp');
     }
+
 }
 export default new annexPage();
