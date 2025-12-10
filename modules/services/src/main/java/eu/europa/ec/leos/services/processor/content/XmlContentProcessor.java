@@ -419,5 +419,7 @@ public interface XmlContentProcessor {
 
     List<String> extractElementIdsFromXml(byte[] xmlContent);
 
-    byte[] alignDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException;
+    byte[] alignBaseVersionDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException;
+
+    byte[] alignLatestVersionDocument(byte[] sourceXml, byte[] sourceBaseXml, XmlDocument targetXmlDoc) throws IllegalArgumentException;
 }

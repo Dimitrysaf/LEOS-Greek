@@ -253,7 +253,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                         createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, languageCode, true);
                         if (createCollectionResult.isCollectionCreated()) {
                             String pkgName = createCollectionResult.getPackageName();
-                            addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false, "1.0.0");
+                            boolean isCustomTemplate = ((Proposal) originalProposal).getMetadata().get().isCustomTemplateAct();
+                            addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, isCustomTemplate);
                         }
                         collaboratorService.syncCollaborators((Proposal) originalProposal);
                     } catch (Exception e) {
@@ -295,8 +296,9 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                 List<Proposal> proposals = leosRepository.findDocumentsByPackageId(leosPackage.getId(), Proposal.class, false, false);
                 try {
                     String versionLabel = getNextVersionLabel(VersionType.MAJOR, proposals.get(0).getVersionLabel());
+                    boolean isCustomTemplate = proposals.get(0).getMetadata().get().isCustomTemplateAct();
                     addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode,
-                            leosPackage.getName(), true, versionLabel, idsAndUrlsHolder);
+                            leosPackage.getName(), true, versionLabel, isCustomTemplate, idsAndUrlsHolder);
                     createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
                             new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.updated.major.version")));
                 } catch (Exception e) {
@@ -315,12 +317,14 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                 docVo, docVo.getMetadataDocument());
     }
 
-    private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode,
-                                String pkgName, boolean updateDocs, String currentVersionLabel) throws Exception {
-        this.addLegDocument(file, fileContent, propDocument, proposalRef, languageCode, pkgName, updateDocs, currentVersionLabel, new CollectionIdsAndUrlsHolder());
+    private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode, String pkgName,
+            boolean isCustomTemplate) throws Exception {
+        this.addLegDocument(file, fileContent, propDocument, proposalRef, languageCode, pkgName, false, "1.0.0", isCustomTemplate,
+                new CollectionIdsAndUrlsHolder());
     }
-    private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode,
-                                String pkgName, boolean updateDocs, String currentVersionLabel, CollectionIdsAndUrlsHolder idsAndUrlsHolder) throws Exception {
+
+    private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode, String pkgName,
+            boolean updateDocs, String currentVersionLabel, boolean isCustomTemplate, CollectionIdsAndUrlsHolder idsAndUrlsHolder) {
         List<String> containedDocs = new ArrayList<>();
         containedDocs.add(proposalRef + "_" + currentVersionLabel);
         if (updateDocs) {
@@ -347,8 +351,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         });
         List<String> milestoneComments = new ArrayList<>();
         milestoneComments.add(messageHelper.getMessage("leoslight.document.milestone.imported"));
-        apiService.addLegDocument(pkgName, file.getOriginalFilename(), milestoneComments, fileContent, LeosLegStatus.IMPORTED,
-                containedDocs);
+        apiService.addLegDocument(pkgName, file.getOriginalFilename(), milestoneComments, fileContent, LeosLegStatus.IMPORTED, containedDocs, isCustomTemplate);
     }
 
     private String getNextVersionLabel(VersionType versionType, String oldVersion) {

@@ -149,8 +149,8 @@ public class LegServiceImplTest {
     private ExplanatoryService explanatoryService;
     @Mock
     private ProposalRepository proposalRepository;
-    @Mock
-    private LanguageHelper languageHelper;
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
     @Mock
     private ReferenceLabelService referenceLabelService;
     @Mock
@@ -207,7 +207,7 @@ public class LegServiceImplTest {
             new XMLContentComparatorServiceImpl(messageHelper, textComparator, securityContext, xmlContentProcessor, cloneContext));
 
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     @InjectMocks
     private ProposalService proposalService = spy(

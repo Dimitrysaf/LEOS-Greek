@@ -37,29 +37,13 @@
           | translate
       }}</label>
     </div>
-    <div class="col-md-9" *ngIf="!createForm.controls['customTemplateAct'].value">
+    <div class="col-md-9">
       <input
         id="document-language"
         euiInputText
         formControlName="documentLanguage"
         readonly
       />
-    </div>
-    <div class="col-md-9" *ngIf="createForm.controls['customTemplateAct'].value">
-      <div class="language-checkbox">
-        <input class="language-size"
-          type="checkbox"
-          id="all_lang"
-          formControlName="allSelected"
-          (change)="toggleAllLanguages($event)"/>
-        <label class="language-size"><b> {{ 'page.collection.details.all' | translate }}</b></label>
-      </div>
-      <div class="language-checkbox"><label class="language-size">|</label></div>
-      <div class="language-checkbox" *ngFor="let lang of languages">
-        <input class="language-size" type="checkbox" [formControlName]="lang"
-               (change)="updateSelectedLanguages()"/>
-        <label class="language-size" [for]="lang">{{ lang }}</label>
-      </div>
     </div>
   </div>
   <div euiInputGroup class="row">

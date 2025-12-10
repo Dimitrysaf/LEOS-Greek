@@ -126,6 +126,9 @@ public class MilestoneV implements Serializable {
     @Column(name = "AUDIT_LAST_M_BY", updatable = false)
     private String auditLastMBy;
 
+    @Column(name = "CUSTOM_TEMPLATE_ACT", updatable = false)
+    private Boolean customTemplateAct;
+
     public MilestoneV() {
     }
 
@@ -355,5 +358,13 @@ public class MilestoneV implements Serializable {
 
     public String getCategoryCode() {
         return categoryCode;
+    }
+
+    public Boolean getCustomTemplateAct() {
+        return customTemplateAct;
+    }
+
+    public void setCustomTemplateAct(Boolean customTemplateAct) {
+        this.customTemplateAct = customTemplateAct;
     }
 }

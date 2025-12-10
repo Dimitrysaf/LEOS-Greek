@@ -128,7 +128,7 @@ public interface LeosRepository {
      * @return the created leg document.
      */
     LegDocument createLegDocumentFromContent(String path, String name, String jobId, List<String> milestoneComments, byte[] contentBytes, LeosLegStatus status,
-                                             List<String> containedDocuments);
+                                             List<String> containedDocuments, boolean isCustomTemplate);
 
     /**
      * Updating Leg document status and content.

@@ -19,6 +19,7 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.utils.LegUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -133,20 +133,16 @@ public class UserHelper {
         return templatesCatalog + "-" + entityName;
     }
 
-    public User validateTemplateManagerRole(String errorMessage) throws IllegalStateException{
+    public User validateTemplateManager(String errorMessage) throws IllegalStateException{
         // Validate authenticated user exists
         User user = securityContext.getUser();
         if (user == null) {
             throw new IllegalStateException("No authenticated user found");
         }
 
-        if (!hasAnyRole(user, Arrays.asList("TEMPLATE_MANAGER", "SUPPORT"))) {
+        if (!securityContext.hasPermission(null, LeosPermission.CAN_CREATE_TEMPLATE)) {
             throw new IllegalStateException(errorMessage);
         }
         return user;
-    }
-
-    private boolean hasAnyRole(User user, List<String> roles) {
-        return roles.stream().anyMatch(role -> user.getRoles().contains(role));
     }
 }

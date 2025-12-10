@@ -54,8 +54,8 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 public abstract class XmlContentProcessorTest extends LeosTest {
     @InjectMocks
     protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
-    @Mock
-    protected LanguageHelper languageHelper;
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
     @Mock
     protected ReferenceLabelService referenceLabelService;
     @Mock
@@ -75,7 +75,7 @@ public abstract class XmlContentProcessorTest extends LeosTest {
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
     @InjectMocks
     protected StructureServiceImpl structureServiceImpl;
 

@@ -6,7 +6,7 @@ export interface Milestone {
   createdDate: string;
   documentTitle: string;
   legDocumentName: string;
-  versionedReference: string;
+  versionLabel: string;
   legFileId: string;
   proposalRef: string;
   legFileStatus: MilestoneStatus | string;

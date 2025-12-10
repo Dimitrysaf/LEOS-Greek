@@ -1001,11 +1001,19 @@ public class XercesUtils {
     }
 
     public static List<Node> getChildren(Node node) {
+        return getChildrenByNodeType(node, Node.ELEMENT_NODE);
+    }
+
+    public static List<Node> getTextChildren(Node node) {
+        return getChildrenByNodeType(node, Node.TEXT_NODE);
+    }
+
+    private static List<Node> getChildrenByNodeType(Node node, short nodeType) {
         List<Node> children = new ArrayList<>();
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             node = nodeList.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node.getNodeType() == nodeType) {
                 children.add(node);
             }
         }

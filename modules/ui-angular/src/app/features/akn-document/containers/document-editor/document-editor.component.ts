@@ -786,7 +786,7 @@ export class DocumentEditorComponent
     this.milestoneViewData = {
       createdBy: version.createdBy,
       createdDate: version.updatedDate,
-      versionedReference: version.versionedReference,
+      versionLabel: version.versionedReference,
       legDocumentName: null,
       legFileId: null,
       proposalRef: this.proposalRef,

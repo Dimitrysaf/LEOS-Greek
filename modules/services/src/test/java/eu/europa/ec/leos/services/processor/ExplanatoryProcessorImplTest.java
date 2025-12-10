@@ -79,8 +79,8 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     private TableOfContentProcessor tableOfContentProcessor;
     @Mock
     private TemplateStructureService templateStructureService;
-    @Mock
-    protected LanguageHelper languageHelper;
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
     @InjectMocks
     protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
     @Mock
@@ -143,7 +143,7 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     private String docTemplate;
     private List<TocItem> tocItems;

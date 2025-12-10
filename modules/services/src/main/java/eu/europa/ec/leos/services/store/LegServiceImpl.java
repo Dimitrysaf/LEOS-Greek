@@ -373,12 +373,10 @@ public class LegServiceImpl implements LegService {
         return legDocumentVO;
     }
 
-    private String generateLegName(String proposalId) {
+    private String generateLegName(Proposal proposal) {
         String docCollectionXPath = xPathCatalog.getXPathProposalDocCollection();
-        Proposal proposal = proposalService.findProposal(proposalId);
         final Content content = proposal.getContent().getOrError(() -> "Proposal content is required!");
         byte[] xmlContent = content.getSource().getBytes();
-        String language = proposal.getMetadata().get().getLanguage().toLowerCase();
         String docCollectionName = xmlContentProcessor.getElementValue(xmlContent, docCollectionXPath, true);
         return docCollectionName.concat("-").concat(proposal.getName().substring(proposal.getName().indexOf("-") + 1, proposal.getName().lastIndexOf("."))).concat(LEG_FILE_EXTENSION);
     }
@@ -1354,15 +1352,17 @@ public class LegServiceImpl implements LegService {
     @Override
     public LegDocument createLegDocument(String proposalId, String jobId, LegPackage legPackage, LeosLegStatus status) throws IOException {
         LOG.trace("Creating Leg Document for Package... [documentId={}]", proposalId);
-        return packageRepository.createLegDocumentFromContent(packageRepository.findPackageByDocumentId(proposalId).getPath(), generateLegName(proposalId),
-                jobId, legPackage.getMilestoneComments(), legPackage.getFile().getBytes(), status, legPackage.getContainedFiles());
+        Proposal proposal = proposalService.findProposal(proposalId);
+        return packageRepository.createLegDocumentFromContent(packageRepository.findPackageByDocumentId(proposalId).getPath(), generateLegName(proposal),
+                jobId, legPackage.getMilestoneComments(), legPackage.getFile().getBytes(), status, legPackage.getContainedFiles(),
+                proposal.getMetadata().get().isCustomTemplateAct());
     }
 
     @Override
-    public LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
-            List<String> containedDocuments) throws IOException {
+    public void addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
+            List<String> containedDocuments, boolean isCustomTemplate) {
         LOG.trace("Adding Leg Document for Package... [packageName ={}]", packageName);
-        return packageRepository.createLegDocumentFromContent(packageName, legFileName,"", milestoneComments, content, status, containedDocuments);
+        packageRepository.createLegDocumentFromContent(packageName, legFileName, "", milestoneComments, content, status, containedDocuments, isCustomTemplate);
     }
 
     @Override

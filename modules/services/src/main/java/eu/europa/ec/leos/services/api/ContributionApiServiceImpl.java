@@ -110,6 +110,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
@@ -624,12 +625,6 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             financialDocumentVO.setRef(financialStatement.getMetadata().get().getRef());
         }
         return financialDocumentVO;
-    }
-
-    public LeosFile createFileFromXmlSource(byte[] xmlSource, String docName) throws IOException {
-        LeosFile file = new LeosFile(docName);
-        file.setBytes(xmlSource);
-        return file;
     }
 
     @Override
