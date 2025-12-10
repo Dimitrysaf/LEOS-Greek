@@ -849,7 +849,7 @@ public class XmlHelper {
     }
 
     public static boolean isValidFileNameForBinaryFile(String fileName) {
-        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_]+\\.(pdf|docx|xlsx|PDF|DOCX|XLSX)$");
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_ ()]+\\.(pdf|docx|xlsx|PDF|DOCX|XLSX)$");
         if (fileName.length() > 255) {
             return false;
         }
