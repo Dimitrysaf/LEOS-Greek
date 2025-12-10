@@ -347,6 +347,37 @@ Feature: Annex Page Regression Features
     And click save and close button of ck editor
     Then ck editor window is not displayed
     Then attribute 'leos:indent-origin-num-id' of subparagraph 2 of list 1 of level 1 should not be equal to same attribute in subparagraph 1 of same level
+    When mouseover and click on level 2
+    Then ck editor window is displayed
+    When click enter from keyboard in edition mode
+    And  add "Manual testing" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "Automation testing" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  add "point b" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And  add "point c" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph 1 of level 2 is "Text..."
+    And  content of subparagraph 2 of level 2 is "Manual testing"
+    Then content of subparagraph with attribute name "refersto" and value "~INP" of list 1 of level 2 is "Automation testing"
+    And  content of point 1 of list 1 of level 2 is "point a"
+    And  content of point 2 of list 1 of level 2 is "point b"
+    And  content of point 3 of list 1 of level 2 is "point c"
+    When mouseover and click on level 2
+    Then ck editor window is displayed
+    When click on li 1 with attribute name "data-akn-element" with value "subparagraph" of level in edition mode
+    And  click on increase indent icon present in ck editor panel
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And content of point 1 of list 1 of level 2 is "Automation testing"
+    And content of point 2 of list 1 of level 2 is "point a"
+    And content of point 3 of list 1 of level 2 is "point b"
+    And content of point 4 of list 1 of level 2 is "point c"
 
   @levelNumbering @indentOutdentLevel @local
   Scenario: issues/2479 indent and outdent is not working for level

@@ -138,3 +138,4 @@ When('user selects {string} from the calendar field {int}', function(dateStr, in
 Then('calendar field {int} of level {string} has value {string}',function(index,levelNumber,expectedDate) {
     financialStatementPage.getAllDatePicker(index, levelNumber).should('have.value', expectedDate);
 });
+

@@ -461,6 +461,14 @@ Feature: fork and merge features
     Then total number of annexes present in act viewer page is 1
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 2
+    When click on action icon of annex 1
+    Then click on change title button
+    Then "Edit title" dialog box window is displayed
+    Then input value of dialog box window is "Annex"
+    When provide input "SapnaAnnex1" dialog box window
+    Then input value of dialog box window is "SapnaAnnex1"
+    When click on save button in dialog input box window
+    Then title of annex 1 contains "SapnaAnnex1"
     When click on milestones tab in act view page
     When click on add button in milestones tab
     And  click on create milestone button
@@ -487,6 +495,26 @@ Feature: fork and merge features
     And  click save and close button of ck editor
     Then ck editor window is not displayed
     When click on close button present in cover page
+    Then user is on act viewer page
+    Then total number of annexes present in act viewer page is 2
+    When click on action icon of annex 1
+    Then click on change title button
+    Then "Edit title" dialog box window is displayed
+    And input value of dialog box window is "SapnaAnnex1"
+    When provide input "SappyAnnex1" dialog box window
+    Then input value of dialog box window is "SappyAnnex1"
+    When click on save button in dialog input box window
+    Then title of annex 1 contains "SappyAnnex1"
+    When  click on annex 1 link
+    Then user is on annex page
+    And mouseover and click on level 1
+    Then ck editor window is displayed
+    When click at offset 7 of pTag 1 of level in edition mode
+    And click enter from keyboard in edition mode
+    When add "Some content in annex 1" at current cursor position in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    When click on close button present in annex page
     Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
@@ -547,7 +575,7 @@ Feature: fork and merge features
     Then ck editor window is not displayed
     And  level 1 contains "Text...add new content in same paragraph"
     And  content of level 1 has below content
-      | text | "Text..."       |
+      | text | "Text..."                           |
       | ins  | "add new content in same paragraph" |
     When click on close button present in annex page
     Then user is on act viewer page
@@ -717,9 +745,14 @@ Feature: fork and merge features
     When click on contributions pane accordion
     And  click on contribution card 1
     Then contribution view container is displayed
+    When click on merge actions menu of annex title
+    And click on merge action "Accept with Tracked Changes"
     When click on merge actions menu of "level" 1
     When click on merge action "Accept Change"
     And  click on apply changes
     And  click close button of merge section in ribbon toolbar
     Then contribution view container is not displayed
-    Then level 1 contains "Text...add new content in same paragraph"
+    Then title of the annex contains "del" tag with value "SapnaAnnex1"
+    And  title of the annex contains "ins" tag with value "SappyAnnex1"
+    And content of subparagraph 2 of level 1 is "Some content in annex 1"
+    And level 1 contains "Text...add new content in same paragraph"
