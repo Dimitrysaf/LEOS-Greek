@@ -865,7 +865,7 @@ public class LeosApiController {
             contentToZip.put("result.xml", validationResult);
             contentToZip.put(validationFile.getOriginalFileName(), validationFile);
             LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
-            notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", resultZipFile.getBytes()));
+            notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", validationFile.getOriginalFileName(), resultZipFile.getBytes()));
             return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (Exception e) {
