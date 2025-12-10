@@ -138,9 +138,9 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
     }
 
     @Override
-    public byte[] replaceTextInElement(T document, String origText, String newText, String elementId, int startOffset, int endOffset, boolean manageEntities) {
+    public byte[] replaceTextInElement(T document, String origText, String newText, String elementId, int startOffset, int endOffset) {
         Validate.notNull(document, "Document is required.");
-        Validate.notEmpty(origText, "Orginal Text is required");
+        Validate.notEmpty(origText, "Original Text is required");
         Validate.notNull(elementId, "Element Id is required");
         Validate.notNull(newText, "New Text is required");
         
@@ -190,7 +190,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
     }
 
     private byte[] getContent(T document) {
-        final Content content = document.getContent().getOrError(() -> "Annex content is required!");
+        final Content content = document.getContent().getOrError(() -> "Document content is required!");
         return content.getSource().getBytes();
     }
 
