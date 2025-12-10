@@ -25,7 +25,6 @@ import {
   ProposalCreateTemplateSelectorComponent
 } from "@/shared/components/proposal-create-template-selector/proposal-create-template-selector.component";
 import {appConfig} from "../../../../config";
-import {EuiGrowlService} from "@eui/core";
 import {AppConfigService} from "@/core/services/app-config.service";
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 const defaultLanguage =
@@ -67,7 +66,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     private proposalService: ProposalService,
     private router: Router,
     private translateService: TranslateService,
-    private growlService: EuiGrowlService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private appConfig: AppConfigService,
@@ -252,15 +250,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
           this.config.closeDialog();
           this.resetInitials();
           await this.router.navigate([`collection/${response.proposalId}`]);
-          if (response.notFoundLanguages?.length > 0) {
-            this.growlService.growl({
-              severity: 'warning',
-              summary: this.translateService.instant('global.notifications.title.warning'),
-              detail: this.translateService.instant('page.collection.add-linguistic-version.warning') + response.notFoundLanguages.join(', '),
-              sticky: true,
-              position: 'bottom-right',
-            });
-          }
           resolve(response);
         },
         error: reject,
@@ -308,13 +297,12 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDataForCreate(): CreateProposalBody {
-    const { templateId, templateName, langCode, linguisticVersions, docPurpose, eeaRelevance, customTemplateAct, key } =
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } =
       this.createForm.getRawValue();
     return {
       templateId,
       templateName,
       langCode,
-      linguisticVersions,
       docPurpose: docPurpose.trim(),
       eeaRelevance,
       customTemplateAct,
@@ -355,7 +343,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         { validators: Validators.required },
       ),
       documentLanguage: new FormControl({ value: '', disabled: true }),
-      linguisticVersions: new FormControl({ value: [], disabled: true }),
       confidentialityLevel: new FormControl({
         value: this.translateService.instant(
           'page.workspace.create-form.document.confidentiality-level-predefined-value',

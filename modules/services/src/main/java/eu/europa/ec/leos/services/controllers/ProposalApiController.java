@@ -50,7 +50,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -88,14 +87,15 @@ public class ProposalApiController {
         }
     }
 
-    @PostMapping(value = "/{proposalRef}/linguistic-versions")
-    public ResponseEntity<Object> createLinguisticVersions(@PathVariable String proposalRef, @RequestBody List<String> linguisticVersions) {
+    @PostMapping(value = "/{legFileId}/linguistic-versions")
+    public ResponseEntity<Object> createLinguisticVersions(@PathVariable String legFileId, @RequestBody List<String> linguisticVersions) {
         try {
-            List<String> notFoundLinguisticVersions = apiService.createLinguisticVersions(proposalRef, linguisticVersions);
+            List<String> notFoundLinguisticVersions = apiService.createLinguisticVersionsFromMilestone(legFileId, linguisticVersions);
             return new ResponseEntity<>(notFoundLinguisticVersions, HttpStatus.OK);
         } catch (CreateCollectionException ex) {
             LOG.error("Error occurred while creating linguistic versions for the proposal {}", ex.getMessage());
-            return new ResponseEntity<>("Error occurred while creating linguistic versions for the proposal", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred while creating linguistic versions for the proposal: " + ex.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

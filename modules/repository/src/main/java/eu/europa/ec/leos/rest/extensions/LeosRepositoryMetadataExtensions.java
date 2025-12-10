@@ -208,7 +208,7 @@ class LeosRepositoryMetadataExtensions {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_COVERPAGE_TYPE));
     }
 
-    private static Boolean getMetadataCustomTemplateAct(LeosDocument leosDocument) {
+    protected static Boolean getMetadataCustomTemplateAct(LeosDocument leosDocument) {
         Boolean customTemplateAct = (Boolean) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT));
         return customTemplateAct != null ? customTemplateAct : false;
     }

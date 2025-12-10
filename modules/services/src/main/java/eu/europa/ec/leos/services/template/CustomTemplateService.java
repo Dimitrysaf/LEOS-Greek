@@ -1,5 +1,7 @@
 package eu.europa.ec.leos.services.template;
 
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 
@@ -17,4 +19,8 @@ public interface CustomTemplateService {
     void updateTemplate(String packageId,String templateName, List<String> dgCodes);
 
     Boolean unPublishTemplate(String catalogKey);
+
+    void alignDocumentsFromBaseVersion(List<XmlDocument> sourceXmlDocs, List<XmlDocument> targetXmlDocs, DocumentVO documentVO, String ref);
+
+    void alignDocument(DocumentVO sourceBaseDocument, DocumentVO sourceDocument, List<XmlDocument> targetXmlDocs);
 }

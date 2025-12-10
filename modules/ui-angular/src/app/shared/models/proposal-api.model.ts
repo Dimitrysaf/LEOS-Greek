@@ -28,7 +28,6 @@ export type CreateProposalBody = {
   templateId: string;
   templateName: string;
   langCode: string;
-  linguisticVersions: string[];
   docPurpose: string;
   eeaRelevance: boolean;
   customTemplateAct: boolean;
@@ -71,7 +70,6 @@ export type CreateProposalResponse = {
   coverpageId: string | null;
   annexIdUrl: unknown; // Add correct type??
   docCloneAndOriginIdMap: unknown; // Add correct type??
-  notFoundLanguages: string[];
   collectionCreated: boolean;
   error: null;
 };

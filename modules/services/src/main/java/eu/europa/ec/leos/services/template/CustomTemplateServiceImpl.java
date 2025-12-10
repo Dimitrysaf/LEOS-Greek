@@ -13,24 +13,39 @@
  */
 package eu.europa.ec.leos.services.template;
 
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
+import eu.europa.ec.leos.services.numbering.NumberService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Provider;
 import java.io.IOException;
 import java.util.*;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +59,12 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
     private final SecurityContext securityContext;
     private final UserHelper userHelper;
     private final PackageService packageService;
+    private final Provider<StructureContext> structureContext;
+    private final MessageHelper messageHelper;
+    private final NumberService numberService;
+    private final XmlContentProcessor xmlContentProcessor;
+    private final LanguageGroupService languageGroupService;
+    private final DocumentLanguageContext documentLanguageContext;
 
 
     @Override
@@ -58,7 +79,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         List<String> validOrganizations = userService.getAllOrganizations();
         Set<String> validOrgSet = new HashSet<>(validOrganizations);
 
-        User user = userHelper.validateTemplateManagerRole("This user is not allowed to publish.");
+        User user = userHelper.validateTemplateManager("This user is not allowed to publish.");
         String originalDg = "";
         // Add user's entity organizations to DG codes if not already present
         List<String> finalDgCodes = new ArrayList<>(dgCodes);
@@ -159,5 +180,102 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         String templateName = (String) templateInfo.get("templateName");
         List<String> templateVisibility = (List<String>) templateInfo.get("templateVisibility");
         return new CustomTemplateInfoResponse(templateName, templateVisibility);
+    }
+
+    public void alignDocumentsFromBaseVersion(List<XmlDocument> sourceXmlDocs, List<XmlDocument> targetXmlDocs, DocumentVO documentToAlignWith, String ref) {
+        sourceXmlDocs.stream().filter(doc -> VersionsUtil.BASE_VERSION.equals(doc.getVersionLabel())).forEach(sourceXmlDoc -> {
+            try {
+                this.structureContext.get().useDocumentTemplate(sourceXmlDoc.getMetadata().get().getDocTemplate());
+                LeosCategory category = sourceXmlDoc.getCategory();
+                XmlDocument targetXmlDoc = targetXmlDocs.stream().filter(doc -> doc.getCategory().equals(category)).findAny()
+                        .orElseThrow(() -> new IllegalArgumentException(category.toString() + " document not found"));
+                XmlDocument alignedTargetBaseDocument = alignWithBaseVersion(targetXmlDoc, sourceXmlDoc);
+                alignWithLatestMilestoneIfDifferentFromBase(sourceXmlDocs, sourceXmlDoc, alignedTargetBaseDocument, documentToAlignWith, category);
+            } catch (IllegalArgumentException e) {
+                    LOG.error("{} in {} version", e.getMessage(), ref.substring(ref.lastIndexOf("-") + 1).toUpperCase());
+            }
+        });
+    }
+
+    private XmlDocument alignWithBaseVersion(XmlDocument targetXmlDoc, XmlDocument sourceXmlDoc) {
+        byte[] alignedTargetXmlContent = xmlContentProcessor.alignBaseVersionDocumentIds(sourceXmlDoc, targetXmlDoc);
+        return this.leosRepository.updateDocument(
+                targetXmlDoc.getId(),
+                alignedTargetXmlContent,
+                VersionType.TECHNICAL,
+                this.messageHelper.getMessage("operation.document.aligned.base"),
+                XmlDocument.class
+        );
+    }
+
+    private void alignWithLatestMilestoneIfDifferentFromBase(List<XmlDocument> sourceXmlDocs, XmlDocument sourceBaseXmlDoc, XmlDocument targetXmlDoc,
+            DocumentVO documentToAlignWith, LeosCategory category) {
+        if (versionExistsBetweenBaseAndLatestMilestone(sourceXmlDocs, category)) {
+            DocumentVO sourceDocument = documentToAlignWith;
+            switch (category) {
+                case BILL:
+                    sourceDocument = documentToAlignWith.getChildDocument(LeosCategory.BILL);
+                    break;
+                case MEMORANDUM:
+                    sourceDocument = documentToAlignWith.getChildDocument(LeosCategory.MEMORANDUM);
+                    break;
+            }
+            byte[] sourceBaseXml = sourceBaseXmlDoc.getContent().get().getSource().getBytes();
+            alignDocumentIdAndStructure(targetXmlDoc, sourceDocument.getSource(), sourceBaseXml);
+        }
+    }
+
+    private static boolean versionExistsBetweenBaseAndLatestMilestone(List<XmlDocument> sourceXmlDocs, LeosCategory category) {
+        return sourceXmlDocs.stream().filter(doc -> doc.getCategory().equals(category) && !doc.getVersionLabel().startsWith("0.0")).count() > 2;
+    }
+
+    @Override
+    public void alignDocument(DocumentVO sourceBaseDocument, DocumentVO sourceDocument, List<XmlDocument> targetXmlDocs) {
+        if (!sourceBaseDocument.equals(sourceDocument)) {
+            this.structureContext.get().useDocumentTemplate(sourceDocument.getMetadata().getDocTemplate());
+            byte[] sourceXml = sourceDocument.getSource();
+            byte[] sourceBaseXml = sourceBaseDocument.getSource();
+            LeosCategory category = sourceDocument.getCategory();
+            XmlDocument targetXmlDoc = targetXmlDocs.stream().filter(doc -> doc.getCategory().equals(category)).findAny()
+                    .orElseThrow(() -> new IllegalArgumentException(category.toString() + " document not found"));
+            alignDocumentIdAndStructure(targetXmlDoc, sourceXml, sourceBaseXml);
+        }
+        alignChildDocuments(sourceBaseDocument, sourceDocument, targetXmlDocs);
+    }
+
+    private void alignDocumentIdAndStructure(XmlDocument targetXmlDoc, byte[] sourceXml, byte[] sourceBaseXml) {
+        byte[] alignedTargetXmlContent = xmlContentProcessor.alignLatestVersionDocument(sourceXml, sourceBaseXml, targetXmlDoc);
+        alignedTargetXmlContent = renumberDocument(targetXmlDoc, alignedTargetXmlContent);
+        this.leosRepository.updateDocument(
+                targetXmlDoc.getId(),
+                alignedTargetXmlContent,
+                VersionType.INTERMEDIATE,
+                this.messageHelper.getMessage("operation.document.aligned.milestone"),
+                XmlDocument.class
+        );
+    }
+
+    private void alignChildDocuments(DocumentVO sourceBaseDocument, DocumentVO sourceDocument, List<XmlDocument> targetXmlDocs) {
+        sourceDocument.getChildDocuments().forEach(
+                childDocument -> sourceBaseDocument.getChildDocuments().stream().filter(doc -> doc.getCategory().equals(childDocument.getCategory())).findAny()
+                        .ifPresent(baseChildDocument -> alignDocument(baseChildDocument, childDocument, targetXmlDocs)));
+    }
+
+    private byte[] renumberDocument(XmlDocument document, byte[] xmlContent) {
+        if (Arrays.asList(LeosCategory.BILL, LeosCategory.ANNEX).contains(document.getCategory())) {
+            List<TocItem> tocItems = this.structureContext.get().getTocItems();
+            String documentLanguage = document.getMetadata().get().getLanguage();
+            this.languageGroupService.getLanguageMap();
+            this.documentLanguageContext.setDocumentLanguage(documentLanguage);
+            xmlContent = this.numberService.renumberArticles(xmlContent, false);
+            xmlContent = this.numberService.renumberRecitals(xmlContent);
+            xmlContent = this.numberService.renumberLevel(xmlContent);
+            xmlContent = this.numberService.renumberParagraph(xmlContent);
+            xmlContent = this.numberService.renumberDivisions(xmlContent);
+            for (String higherElement : HIGHER_ELEMENTS) {
+                xmlContent = this.numberService.renumberHigherSubDivisions(xmlContent, documentLanguage, higherElement, tocItems);
+            }
+        }
+        return xmlContent;
     }
 }

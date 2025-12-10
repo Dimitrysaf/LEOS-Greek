@@ -89,7 +89,7 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
                                  ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
                                  NotificationService notificationService, LegService legService, UserHelper userHelper,
                                  LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-                                 DocumentViewService documentViewService, GenericDocumentApiService genericDocumentApiService,
+                                 DocumentViewService documentViewService,
                                  GenericDocumentTocApiService genericDocumentTocApiService,
                                  CoverPageApiService coverPageApiService,
                                  ProposalDetailsService proposalDetailsService,
@@ -99,7 +99,7 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
                 exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
                 xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
                 validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
-                trackChangesContext, documentViewService, genericDocumentApiService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
+                trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
                 templateConfigurationService, languageHelper, packageRepository, proposalRepository);
     }
 

@@ -437,7 +437,7 @@ export class ProposalDetailsService implements OnDestroy {
               summary: this.translateService.instant(
                 'page.collection.milestones.create-milestone-dialog.error',
               ),
-              detail: res,
+              detail: res.error,
               life: 3000,
               isGrowlSticky: false,
               position: 'bottom-right',
@@ -543,18 +543,20 @@ export class ProposalDetailsService implements OnDestroy {
   }
 
   /**
-   * Create linguistic versions linked to the proposal
-   * @param proposalRef The ref of the proposal to link the new linguistic versions to
-   *                    (if this proposal is a linguistic version itself, the new linguistic versions are linked to the same main proposal as this)
+   * Create linguistic versions linked to the proposal of the milestone
+   *
+   * @param milestone The main language milestone from which the documents will be aligned
    * @param linguisticVersions The list of languages to create new linguistic versions
+   * @param proposalRef to reload the proposal after linguistic versions have been added
    */
   createLinguisticVersions(
-    proposalRef: string,
+    milestone: MilestoneDescriptor,
     linguisticVersions: string[],
+    proposalRef: string,
   ) {
     this.loadingService.setLoading(true);
 
-    const url = `${apiBaseUrl}/secured/proposal/${proposalRef}/linguistic-versions`;
+    const url = `${apiBaseUrl}/secured/proposal/${milestone.legFileId}/linguistic-versions`;
 
     return this.http
       .post(url, linguisticVersions)
@@ -595,8 +597,7 @@ export class ProposalDetailsService implements OnDestroy {
             detail:
               err?.error ??
               this.translateService.instant('page.collection.add-linguistic-version.error'),
-            life: 3000,
-            isGrowlSticky: false,
+            sticky: true,
             position: 'bottom-right',
           });
         },

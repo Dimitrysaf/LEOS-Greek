@@ -51,6 +51,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 
+import static eu.europa.ec.leos.rest.extensions.LeosRepositoryMetadataExtensions.getMetadataCustomTemplateAct;
+
 public class LeosDocumentExtensions {
 
     private static final Logger logger = LoggerFactory.getLogger(LeosDocumentExtensions.class);
@@ -320,7 +322,8 @@ public class LeosDocumentExtensions {
                 getStatus(d),
                 getContainedDocuments(d),
                 d.getRef(),
-                d.getPackageId());
+                d.getPackageId(),
+                getMetadataCustomTemplateAct(d));
     }
 
     private static ExportDocument toLeosExportDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {

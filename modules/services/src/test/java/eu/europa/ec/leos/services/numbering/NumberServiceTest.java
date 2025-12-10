@@ -35,8 +35,8 @@ public abstract class NumberServiceTest extends LeosTest {
 
     protected final static String PREFIX_SAVE_TOC_CN = "/saveToc/bill/cn/";
 
-    @Mock
-    protected LanguageHelper languageHelper;
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
     @Mock
     protected Provider<StructureContext> structureContextProvider;
     @Mock
@@ -50,7 +50,7 @@ public abstract class NumberServiceTest extends LeosTest {
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     @InjectMocks
     protected StructureServiceImpl structureServiceImpl;

@@ -78,7 +78,7 @@ public class WorkspaceApiController {
         CreateCollectionResult createCollectionResult;
         try {
             createCollectionResult = apiService.createProposal(request.getTemplateId(), request.getTemplateName(), request.getLangCode(),
-                    request.getLinguisticVersions(), request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey());
+                    request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey());
             LOG.info("A package with proposal is created with proposal ref {} by the user {}", createCollectionResult.getProposalId(),
                     securityContext.getUser().getLogin());
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);

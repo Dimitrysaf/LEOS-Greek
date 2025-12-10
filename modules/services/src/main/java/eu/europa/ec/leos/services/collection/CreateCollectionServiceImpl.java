@@ -148,9 +148,9 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         DocumentVO memorandum = documentVO.getChildDocument(LeosCategory.MEMORANDUM);
         DocumentVO bill = documentVO.getChildDocument(LeosCategory.BILL);
         DocumentVO financialStatement = documentVO.getChildDocument(LeosCategory.STAT_DIGIT_FINANC_LEGIS);
-        idsAndUrlsHolder.setMemorandumId(memorandum != null ? memorandum.getMetadata().getInternalRef() : null);
-        idsAndUrlsHolder.setBillId(bill != null ? bill.getMetadata().getInternalRef() : null);
-        idsAndUrlsHolder.setFinancialStatementId(financialStatement != null ? financialStatement.getMetadata().getInternalRef() : null);
+        idsAndUrlsHolder.setMemorandumId(memorandum != null ? memorandum.getRef() : null);
+        idsAndUrlsHolder.setBillId(bill != null ? bill.getRef() : null);
+        idsAndUrlsHolder.setFinancialStatementId(financialStatement != null ? financialStatement.getRef() : null);
     }
 
     @Override

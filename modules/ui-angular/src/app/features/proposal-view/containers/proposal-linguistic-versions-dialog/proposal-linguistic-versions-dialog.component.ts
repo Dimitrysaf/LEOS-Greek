@@ -1,8 +1,9 @@
-import {Component, Input, OnChanges, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Input, OnChanges, Output, ViewChild} from "@angular/core";
 import {EuiDialogComponent} from "@eui/components/eui-dialog";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {AppConfigService} from "@/core/services/app-config.service";
+import {MilestoneDescriptor} from "@/shared/components/proposal-milestone-view/proposal-milestone-view.component";
 
 @Component({
   selector: 'app-proposal-linguistic-versions-dialog',
@@ -13,6 +14,8 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
   @Input() proposalRef: string;
   @Input() proposalLanguage: string;
   @Input() translatedLanguages: string[] = [];
+  @Input() milestone: MilestoneDescriptor;
+  @Output() closed = new EventEmitter();
   languages: string[];
 
   @ViewChild('addLinguisticVersionsDialog') addLinguisticVersionsDialog: EuiDialogComponent;
@@ -37,10 +40,11 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
 
   close() {
     this.addLinguisticVersionsDialog.closeDialog();
+    this.closed.emit();
   }
 
   addLinguisticVersions() {
-    this.proposalDetailsService.createLinguisticVersions(this.proposalRef, this.getNewLinguisticVersions());
+    this.proposalDetailsService.createLinguisticVersions(this.milestone, this.getNewLinguisticVersions(), this.proposalRef);
     this.close();
   }
 
@@ -71,7 +75,7 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
       });
     } else {
       this.linguisticVersionsForm.reset({newLinguisticVersions: [], allSelected: this.languages.every(lang => this.isLanguageInProposal(lang))});
-   }
+    }
 
     this.languages.forEach(lang => {
       const isLanguageInProposal = this.isLanguageInProposal(lang);
@@ -80,7 +84,7 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
   }
 
   private isLanguageInProposal(lang: string) {
-    return this.proposalLanguage.toLowerCase() === lang.toLowerCase() ||
+    return this.proposalLanguage?.toLowerCase() === lang.toLowerCase() ||
       this.translatedLanguages?.some(translated => translated.toLowerCase() === lang.toLowerCase());
   }
 

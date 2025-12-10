@@ -29,15 +29,6 @@
         <button euiDropdownItem (click)="handleCopyChange()" *ngIf="canUpdate && repetitiveActsEnabled && !customTemplateAct && !proposalTemplate?.includes('_')">
           {{ 'page.collection.actions-dropdown.copyChange' | translate }}
         </button>
-        <button euiDropdownItem (click)="handleAddLinguisticVersion()" *ngIf="canUpdate && repetitiveActsEnabled && customTemplateAct && canCreateTemplate">
-          {{ 'page.collection.actions-dropdown.linguistic-version' | translate }}
-        </button>
-        <app-proposal-linguistic-versions-dialog
-          #linguisticVersionsDialog
-          [proposalRef]="proposalRef"
-          [proposalLanguage]="proposalLanguage"
-          [translatedLanguages]="translatedLanguages"
-        ></app-proposal-linguistic-versions-dialog>
       </ng-container>
       <ng-container>
         <button euiDropdownItem *ngIf="permissions.includes('CAN_DELETE') && !translated" (click)="handleConfirmationDelete()"

@@ -15,7 +15,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import {EuiDialogComponent, EuiDialogService} from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -36,6 +36,7 @@ const OTHER_VALUE = 'other';
 export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   @Input() isCloneProposal: boolean;
   @Input() isCustomTemplate: boolean;
+  @Input() hasLinguisticVersions: boolean;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
   form: FormGroup;
@@ -48,6 +49,7 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
+    private dialogService: EuiDialogService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -98,6 +100,27 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   }
 
   onAccept(): void {
+    if (this.isCustomTemplate && this.hasLinguisticVersions) {
+      this.dialogService.openDialog({
+        title: this.translateService.instant(
+          'page.collection.milestones.create-milestone-dialog.confirm-linguistic-versions.title',
+        ),
+        content: this.translateService.instant(
+          'page.collection.milestones.create-milestone-dialog.confirm-linguistic-versions.body',
+        ),
+        acceptLabel: this.translateService.instant('global.actions.confirm'),
+        dismissLabel: this.translateService.instant('global.actions.cancel'),
+        accept: () => {
+          this.createMilestone();
+          this.dialog.closeDialog();
+        },
+      });
+    } else {
+      this.createMilestone();
+    }
+  }
+
+  private createMilestone() {
     this.proposalDetailsService.createMilestone(
       this.form.get('milestonesTitle').value,
       this.isCloneProposal,

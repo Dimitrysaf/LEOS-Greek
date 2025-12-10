@@ -67,9 +67,9 @@ public class PackageRepositoryImpl implements PackageRepository {
 
     @Override
     public LegDocument createLegDocumentFromContent(String path, String name, String jobId, List<String> milestoneComments, byte[] contentBytes, LeosLegStatus status,
-                                                    List<String> containedDocuments) {
+                                                    List<String> containedDocuments, boolean isCustomTemplate) {
         logger.debug("Creating Leg document from content... [path=" + path + ", name=" + name + "]");
-        return leosRepository.createLegDocumentFromContent(path, name, jobId, milestoneComments, contentBytes, status, containedDocuments);
+        return leosRepository.createLegDocumentFromContent(path, name, jobId, milestoneComments, contentBytes, status, containedDocuments, isCustomTemplate);
     }
 
     @Override

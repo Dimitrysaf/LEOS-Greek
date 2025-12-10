@@ -74,6 +74,7 @@ public class CmisDocumentExtensionsTest {
     private final static List<Collaborator> DOC_COLLABORATORS = ImmutableList.of(new Collaborator("LOGIN","ROLE", "ENTITY"));
     private final static List<String> DOC_MILESTONE_COMMENTS = Arrays.asList("COMM_1", "COMM_2", "COMM3");
     private final static List<String> DOC_CONTAINED_DOCUMENTS = Arrays.asList("DOC_1", "DOC_2", "DOC_3");
+    private final static Boolean DOC_IS_CUSTOM_TEMPLATE_ACT = Boolean.TRUE;
     private final static String DOC_INITIAL_CREATED_BY = "DOCUMENT_INITIAL_CREATED_BY_";
     private final static Instant DOC_INITIAL_CREATION_INSTANT = LocalDateTime.of(2019, 5, 28, 23, 40).toInstant(ZoneOffset.UTC);
     private final static Option<Content> DOC_CONTENT = Option.option(new ContentImpl("testFile", "mime type", 23, new SourceImpl(new ByteArrayInputStream(new byte[]{0, 1, 2}))));
@@ -323,6 +324,10 @@ public class CmisDocumentExtensionsTest {
         Property containedDocuments = mock(Property.class);
         when(containedDocuments.getValues()).thenReturn(DOC_CONTAINED_DOCUMENTS);
         when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS)))).thenReturn(containedDocuments);
+
+        Property isCustomTemplateAct = mock(Property.class);
+        when(isCustomTemplateAct.getValue()).thenReturn(DOC_IS_CUSTOM_TEMPLATE_ACT);
+        when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT)))).thenReturn(isCustomTemplateAct);
 
         //make call
         LegDocument legDocument = CmisDocumentExtensions.toLeosDocument(cmisDocument, LegDocument.class, true, Collections.emptyMap());

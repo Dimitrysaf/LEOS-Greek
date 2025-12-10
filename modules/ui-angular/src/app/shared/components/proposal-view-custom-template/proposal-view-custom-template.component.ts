@@ -77,7 +77,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
     proposalRef: undefined,
     title: undefined,
     legFileId: undefined,
-    versionedReference: undefined
+    versionLabel: undefined
   };
   treeNodes: TreeDataModel = null;
   filteredNodes: TreeDataModel = null;

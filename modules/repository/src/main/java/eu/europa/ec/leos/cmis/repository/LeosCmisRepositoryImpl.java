@@ -247,7 +247,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
 
     @Override
     public LegDocument createLegDocumentFromContent(String path, String name, String jobId, List<String> milestoneComments, byte[] contentBytes, LeosLegStatus status,
-                                                    List<String> containedDocuments) {
+                                                    List<String> containedDocuments, boolean isCustomTemplate) {
         logger.trace("Creating leg document from content... [path=" + path + ", name=" + name + ']');
 
         checkSecurityContextEnsureUserIsPresent();
@@ -266,6 +266,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY), securityContext.getUser().getLogin());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), Date.from(Instant.now()));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS), containedDocuments);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT), isCustomTemplate);
 
         Document doc = repository.createDocumentFromContent(path, name, properties, legMimeType, contentBytes);
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);

@@ -22,10 +22,8 @@
       [editableTitle]="proposalTitleEditablePart"
       [isClonedProposal]="isClonedProposal"
       [originRef]="originRef"
-      [proposalRef]="proposalRef"
       [proposalTemplate]="proposalTemplate"
       [proposalLanguage]="proposalLanguage"
-      [translatedLanguages]="translatedLanguages"
       [documentCollectionName]="documentCollectionName"
       [customTemplateAct]="customTemplateAct"
       [isPublished]="isPublished"
@@ -52,6 +50,8 @@
           <app-proposal-milestones
             [proposal]="proposal"
             [proposalRef]="proposalRef"
+            [proposalLanguage]="proposalLanguage"
+            [translatedLanguages]="translatedLanguages"
             [legFileName]="legFileName"
           ></app-proposal-milestones>
         </eui-tab-content>
@@ -113,6 +113,8 @@
                 <app-proposal-milestones
                   [proposal]="proposal"
                   [proposalRef]="proposalRef"
+                  [proposalLanguage]="proposalLanguage"
+                  [translatedLanguages]="translatedLanguages"
                   [legFileName]="legFileName"
                 ></app-proposal-milestones>
               </eui-tab-content>

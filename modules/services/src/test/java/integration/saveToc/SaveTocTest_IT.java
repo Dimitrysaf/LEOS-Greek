@@ -81,8 +81,8 @@ public abstract class SaveTocTest_IT extends LeosTest {
     protected StructureContext structureContext;
     @Mock
     protected TemplateStructureService templateStructureService;
-    @Mock
-    protected LanguageHelper languageHelper;
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
     @Mock
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
     @Mock
@@ -92,7 +92,7 @@ public abstract class SaveTocTest_IT extends LeosTest {
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
     protected TrackChangesContext trackChangesContext = new TrackChangesContext();
 
     protected AkomantosoXsdValidator akomantosoXsdValidator = new AkomantosoXsdValidator();

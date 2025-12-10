@@ -289,7 +289,9 @@ public class CmisDocumentExtensions {
                 getStatus(d),
                 getContainedDocuments(d),
                 null,
-                null);
+                null,
+                getMetadataCustomTemplateAct(d)
+                );
     }
 
     private static ExportDocument toLeosExportDocument(Document d, boolean fetchContent) {
@@ -426,6 +428,11 @@ public class CmisDocumentExtensions {
     private static List<String> getContainedDocuments(Document document) {
         Property<String> containedDocuments = document.getProperty(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS));
         return containedDocuments.getValues();
+    }
+
+    private static Boolean getMetadataCustomTemplateAct(Document document) {
+        Property<Boolean> customTemplateAct = document.getProperty(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT));
+        return customTemplateAct.getValue();
     }
 
     private static boolean isClonedProposal(Document document) {
