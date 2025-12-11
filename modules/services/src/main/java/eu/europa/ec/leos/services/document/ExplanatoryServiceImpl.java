@@ -14,6 +14,7 @@ import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.ExplanatoryRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -32,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -380,4 +382,16 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         return EXPLANATORY_NAME_PREFIX + Cuid.createCuid();
     }
 
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateReferencesAsync(Explanatory doc, Map<String, String> refsMatching, final Map<ContextActionService, String> actionMsgMap) {
+        try {
+            byte[] xmlContent = doc.getContent().get().getSource().getBytes();
+            xmlContent = xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
+            updateExplanatory(doc, xmlContent, VersionType.MAJOR,
+                    actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+        } catch (Exception e) {
+            LOG.error("Error while updating references on import: " + e.getMessage(), e);
+        }
+    }
 }

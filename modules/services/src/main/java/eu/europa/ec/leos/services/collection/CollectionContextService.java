@@ -481,6 +481,14 @@ public abstract class CollectionContextService {
                     break;
             }
         }
+        updateReferencesOnImport(refsMatching);
+        String coverPageRef = proposal.getMetadata().get().getRef();
+        idsAndUrlsHolder.setCoverpageId(coverPageRef);
+        idsAndUrlsHolder.setCoverpageUrl(urlBuilder.buildCoverPageViewUrl(coverPageRef));
+        return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    private void updateReferencesOnImport(HashMap<String, XmlDocument> refsMatching) {
         for (DocumentVO docChild : propDocument.getChildDocuments()) {
             XmlDocument doc = refsMatching.get(docChild.getRef());
             switch (doc.getCategory()) {
@@ -518,10 +526,7 @@ public abstract class CollectionContextService {
                     break;
             }
         }
-        String coverPageRef = proposal.getMetadata().get().getRef();
-        idsAndUrlsHolder.setCoverpageId(coverPageRef);
-        idsAndUrlsHolder.setCoverpageUrl(urlBuilder.buildCoverPageViewUrl(coverPageRef));
-        return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+
     }
 
     private void setConnectedEntity() {

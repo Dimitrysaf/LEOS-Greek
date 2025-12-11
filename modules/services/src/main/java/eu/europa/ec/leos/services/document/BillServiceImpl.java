@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -518,4 +519,15 @@ public abstract class BillServiceImpl implements BillService {
         return bill;
     }
 
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateReferencesAsync(Bill bill, Map<String, String> refsMatching) {
+        try {
+            byte[] xmlContent = bill.getContent().get().getSource().getBytes();
+            xmlContent = xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
+            updateBill(bill.getId(), xmlContent, false);
+        } catch (Exception e) {
+            LOG.error("Error while updating references on import: " + e.getMessage(), e);
+        }
+    }
 }

@@ -16,7 +16,6 @@ package eu.europa.ec.leos.services.document;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -27,7 +26,6 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.light.Profile;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import io.atlassian.fugue.Pair;
 
 import java.util.HashMap;
 import java.util.List;
@@ -105,4 +103,6 @@ public interface BillService {
     Bill findFirstVersion(String documentRef);
 
     String generateBillReference(byte[] content, String language);
+
+    void updateReferencesAsync(Bill bill, Map<String, String> refsMatching);
 }
