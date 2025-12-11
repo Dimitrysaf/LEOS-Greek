@@ -6,10 +6,6 @@ stages:
 
 variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
-  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.yarn/cache"
-  GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository -e .npm
-  npm_config_cache: '$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.npm'
-  CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository"
 
 cache:
