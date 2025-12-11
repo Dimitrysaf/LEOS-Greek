@@ -54,6 +54,7 @@ import java.util.concurrent.TimeUnit;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
 
 public abstract class AnnexServiceImpl implements AnnexService {
 
@@ -366,7 +367,10 @@ public abstract class AnnexServiceImpl implements AnnexService {
     @Override
     public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content) {
         LOG.trace("Creating Annex... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        String ref = generateAnnexReference(content, metadata.getLanguage());
+        final String language = metadata.getLanguage();
+        String ref = metadata.getRef() != null ?
+                getTranslatedProposalReference(metadata.getRef(), language) :
+                generateAnnexReference(content, language);
         metadata = metadata
                 .builder()
                 .withRef(ref)
