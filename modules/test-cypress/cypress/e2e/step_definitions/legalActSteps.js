@@ -720,6 +720,37 @@ Then('recital {int} doest not contain subflow', function (recitalNumber) {
 Then('recital section count is {int}', (recitalSectionCount) => {
     legalActPage.elements.recitalSection().should('have.length', recitalSectionCount);
 });
+Then('block {int} contains the signature organisation text {string}', function (blockNumber, text) {
+    legalActPage.getOrganizationFromBlock(blockNumber).should("have.text", text);
+
+})
+
+Then ('block {int} contains the  role text {string}', function (blockNumber, text) {
+    legalActPage.getRoleFromBlock(blockNumber).should("have.text", text);
+});
+
+Then ('block {int} contains the signature of the person {string}', function (blockNumber, text) {
+    legalActPage.getSignatureOfThePerson(blockNumber).should("have.text", text);
+});
+
+When('mouseover and click on block {int}',(blockNumber) => {
+    legalActPage.mouseHoverAndClickOnBlockNumber(blockNumber);
+});
+
+Then('recital {int} contains text {string}', function (recitalNumber,text) {
+    legalActPage.getAknpTagOfRecital(recitalNumber).should('have.text', text);
+});
+
+When('mouseover on citation {int}', (citationNumber) => {
+    legalActPage.mouseHoverOnCitation(citationNumber);
+})
+
+Then('citation {int} contains text {string}', function (citationNumber,text) {
+    legalActPage.getAknpTagOfCitation(citationNumber).should('have.text', text);
+});
+
+
+
 
 Then ('recital section {int} contains {string} tag with value {string}', (recitalSectionNumber, tagName, tagValue) => {
   legalActPage.elements.recitalSection().eq(recitalSectionNumber - 1).children(tagName).should('have.text', tagValue);

@@ -139,3 +139,9 @@ Then('calendar field {int} of level {string} has value {string}',function(index,
     financialStatementPage.getAllDatePicker(index, levelNumber).should('have.value', expectedDate);
 });
 
+
+
+When ('mouseover on level {int} in financial statement page',(levelNumber) => {
+    financialStatementPage.mouseHoverOnLevel(levelNumber);
+});
+
