@@ -638,9 +638,9 @@ Feature: Legal Act Page Regression Features
     Then ck editor window is displayed
     When click at offset 59 of child 0 of citation in edition mode
     And  click on internal reference icon present in ck editor panel
-    Then cke dialog window is displayed with title "Internal reference"
+   Then cke dialog window is displayed with title "Internal reference"
     When click on "Article 3 - Subject matter and scope 1.In order..." link in enacting terms on the left side of internal reference window
-    And  click on point 2 of list 1 of paragraph 3 of article on the right side of internal reference window
+   And  click on point 2 of list 1 of paragraph 3 of article on the right side of internal reference window
     And  click on ok button in cke dialog window
     And  click save and close button of ck editor
     Then "Article 3(3), point (b)" is added as internal reference 1 of citation 2
@@ -1169,7 +1169,7 @@ Feature: Legal Act Page Regression Features
     And  node label "Section 1 - Section heading..." contains node label "Article 1 -"
     And  node label "Section 1 - Section heading..." contains node label "Article 2 -"
 
-  @switchingAlternativeArticle @local
+  @switchingAlternativeClause @local
   Scenario: user is able to switch alternative article
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -1187,6 +1187,7 @@ Feature: Legal Act Page Regression Features
     And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in all Member States."
     When mouseover and click on clause 1
     Then ck editor window is displayed
+    Then the clause inside ck editor is not editable and contains attribute "contenteditable" with value "false"
     When alternative1 is selected in ck editor panel
     And  click on alternative2 icon present in ck editor panel
     Then cke dialog window is displayed with title "Confirm alternative change"
@@ -1198,6 +1199,7 @@ Feature: Legal Act Page Regression Features
     And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in the Member States in accordance with the Treaties."
     When mouseover and click on clause 1
     Then ck editor window is displayed
+    Then the clause inside ck editor is not editable and contains attribute "contenteditable" with value "false"
     When alternative2 is selected in ck editor panel
     And  click on alternative1 icon present in ck editor panel
     Then cke dialog window is displayed with title "Confirm alternative change"
@@ -1207,9 +1209,71 @@ Feature: Legal Act Page Regression Features
     When click save and close button of ck editor
     Then ck editor window is not displayed
     And  content of clause 1 is "This Regulation shall be binding in its entirety and directly applicable in all Member States."
-    When click on close button present in legal act page
-    Then user is on act viewer page
 
+
+  @switchingAlternativeArticleAndSignature @local
+  Scenario: user is able to switch alternative article/Signature and unable to edit article content and Heading
+    Given navigate to leos application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-007" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing Alternative Article and Alternative Signature" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    And heading of article 3 contains "Article heading..."
+    And content of subparagraph 1 of paragraph 1 of article 2 contains "Member States shall bring into force the laws, regulations and administrative provisions necessary to comply with this Directive by [...] at the latest. They shall forthwith communicate to the Commission the text of those provisions."
+    And content of subparagraph 2 of paragraph 1 of article 2 contains "When Member States adopt those provisions, they shall contain a reference to this Directive or be accompanied by such a reference on the occasion of their official publication. Member States shall determine how such reference is to be made."
+    And  content of paragraph 2 of article 2 contains "Member States shall communicate to the Commission the text of the main provisions of national law which they adopt in the field covered by this Directive."
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    And the article inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    And alternative1 is selected in ck editor panel
+    When click on alternative2 icon present in ck editor panel
+    Then cke dialog window is displayed with title "Confirm alternative change"
+    And  cke dialog window is displayed with body "If any changes were made to the default content, selecting an alternative will discard them. Are you sure to continue?"
+    When click on ok button in cke dialog window
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And content of subparagraph 1 of paragraph 1 of article 2 contains "Member States shall adopt and publish, by [...] at the latest, the laws, regulations and administrative provisions necessary to comply with this Directive. They shall forthwith communicate to the Commission the text of those provisions."
+    And content of subparagraph 2 of paragraph 1 of article 2 contains "They shall apply those provisions from [...]."
+    And content of subparagraph 3 of paragraph 1 of article 2 contains "When Member States adopt those provisions, they shall contain a reference to this Directive or be accompanied by such a reference on the occasion of their official publication. Member States shall determine how such reference is to be made."
+    And  content of paragraph 2 of article 2 contains "Member States shall communicate to the Commission the text of the main provisions of national law which they adopt in the field covered by this Directive."
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    And the article inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    When click close button of ck editor
+    Then ck editor window is not displayed
+  # Alternative Signature
+    And  block 1 contains the signature organisation text "For the Commission"
+    And block 1 contains the  role text "The President"
+    And block 1 contains the signature of the person "[...]"
+    When mouseover and click on block 1
+    Then ck editor window is displayed
+    And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    When click on alternative icon present in ck editor panel
+    Then Alternative dropdown displays the following options:
+      | The President              |
+      | On behalf of the President |
+    When click on role from the dropdown button which contains text "On behalf of the President"
+    Then cke dialog window is displayed with title "Confirm alternative change"
+    And  cke dialog window is displayed with body "If any changes were made to the default content, selecting an alternative will discard them. Are you sure to continue?"
+    When click on ok button in cke dialog window
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  block 1 contains the signature organisation text "For the Commission"
+    And block 1 contains the  role text "On behalf of the President"
+    And block 1 contains the signature of the person "[...]"
+    When mouseover and click on block 1
+    Then ck editor window is displayed
+    And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    When click close button of ck editor
+    Then ck editor window is not displayed
 
   @validationOfRecitalSectionInAutonomousAct @local
   Scenario: Recital section in autonomous act

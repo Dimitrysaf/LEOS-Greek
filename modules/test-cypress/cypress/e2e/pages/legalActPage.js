@@ -20,7 +20,8 @@ class legalActPage {
         aknBody: () => cy.get('aknbody'),
         leosSoftMoveLabel: () => this.elements.aknBody().find('span.leos-soft-move-label'),
         recitals: () => cy.xpath('//recitals'),
-        recitalSection: () => this.elements.recitals().children('recitals')
+        recitalSection: () => this.elements.recitals().children('recitals'),
+        SignatureBlock: () => cy.get('conclusions block')
     }
 
     clickCloseBtn() {
@@ -376,5 +377,37 @@ class legalActPage {
         return this.getRowFromTableOfSubflowFromRecital(subFlowNumber, recitalNumber).eq(0).find('td');
     }
 
+    getBlock(blockNumber) {
+       return  this.elements.SignatureBlock(blockNumber - 1);
+    }
+
+    getSignatureFromBlock(blockNumber) {
+        return this.getBlock(blockNumber).find('signature');
+    }
+
+
+    getOrganizationFromBlock(blockNumber) {
+        return this.getSignatureFromBlock(blockNumber).find('organization');
+    }
+
+    getRoleFromBlock(blockNumber) {
+        return this.getSignatureFromBlock(blockNumber).find('role');
+    }
+
+    getSignatureOfThePerson(blockNumber) {
+        return this.getSignatureFromBlock(blockNumber).find('person');
+    }
+
+    mouseHoverAndClickOnBlockNumber(blockNumber) {
+        cy.xpath("//block[" + blockNumber + "]").realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).realClick({ position: "topLeft" }));
+    }
+
+    mouseHoverOnCitation(citationlNumber) {
+        this.getRecital(citationlNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "center" }));
+    }
+
+    getAknpTagOfCitation(citationNumber) {
+        return this.getCitation(citationNumber).find('aknp');
+    }
 }
 export default new legalActPage();

@@ -861,3 +861,45 @@ When('right click on cell {int} of row {int} of table {int} of li {int} with dat
 When('user select {string} from the context menu', function (menuItemLabel) {
     ckEditorWindow.clickOnContextMenuItem(menuItemLabel);
 });
+
+Then ('the clause inside ck editor is not editable and contains attribute {string} with value {string}', function (attributeName, attributeValue) {
+    ckEditorWindow.elements.ckEditableInline()
+        .should('have.attr', attributeName, attributeValue);
+
+});
+
+Then ('the article inside ck editor is not editable and contains attribute {string} with value {string}', function (attributeName, attributeValue) {
+    ckEditorWindow.elements.ckEditableInline()
+        .should('have.attr', attributeName, attributeValue);
+
+});
+
+Then ('the block inside ck editor is not editable and contains attribute {string} with value {string}', function (attributeName, attributeValue) {
+    ckEditorWindow.elements.ckEditableInline()
+        .should('have.attr', attributeName, attributeValue);
+});
+
+When('click on alternative icon present in ck editor panel', function () {
+    ckEditorWindow.clickCkEditorLeosAlternativeBtn();
+});
+
+Then('Alternative dropdown displays the following options:', function(dataTable) {
+    const expectedActionList = dataTable.raw().flat();
+    ckEditorWindow.getCkePanelListItem()
+        .should('have.length', expectedActionList.length)
+        .each(($el, index) => {
+            cy.wrap($el).find('a').invoke('text').then(text => {
+                expect(text.trim()).to.equal(expectedActionList[index]);
+            });
+        });
+});
+
+When ('click on role from the dropdown button which contains text {string}', function (role) {
+    ckEditorWindow.getIframeBodyTcPlugin().within(() => {
+        ckEditorWindow.roleFromThAlternativeDropdown(role);
+    });
+})
+
+When(/^click at offset (\d+) of pTag (\d+) of citation in edition mode$/, function (offSet, pTagNumber) {
+    ckEditorWindow.clickAtSpecificOffsetInPTagOfLevel(offSet, pTagNumber);
+});

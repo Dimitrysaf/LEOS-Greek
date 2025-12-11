@@ -41,6 +41,7 @@ class ckEditorWindow {
         pTagFromBlockContainer: () => this.elements.blockContainer().find('p'),
         olTagFromBlockContainer: () => this.elements.blockContainer().find('ol'),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
+        ckEditorLeosAlternativeBtn: () => cy.get(' .cke_combo__leosalternativescombo'),
         ckEditorLeosAlternative1Btn: () => cy.get('.cke_button__leosalternatives1'),
         ckEditorLeosAlternative2Btn: () => cy.get('.cke_button__leosalternatives2'),
         clauseContent: () => this.elements.ckEditableInline().find("#clause1 p[data-akn-mp-id='clause1ContentP']"),
@@ -61,6 +62,10 @@ class ckEditorWindow {
 
     getCkEditorDialogHtml() {
         return this.elements.ckEditorDialogHtml();
+    }
+
+    clickCkEditorLeosAlternativeBtn() {
+        this.elements.ckEditorLeosAlternativeBtn().click();
     }
 
     clickCkEditorLeosAlternative1Btn() {
@@ -716,5 +721,8 @@ class ckEditorWindow {
         });
     }
 
+    roleFromThAlternativeDropdown(role) {
+        this.elements.tcActionDropdown().contains(role).click({ force: true });
+    }
 }
 export default new ckEditorWindow();
