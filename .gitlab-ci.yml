@@ -7,11 +7,6 @@ stages:
 variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
 
-cache:
-  key: $CI_COMMIT_REF_SLUG
-  paths:
-    - $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository/
-
 java-build:
   stage: build
   script:
