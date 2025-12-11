@@ -86,7 +86,7 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
     @Override
     public void mergeSuggestion(LeosCategoryClass documentType, String documentRef, String origText, String newText, String elementId, int startOffset, int endOffset) {
         XmlDocument document = documentContentService.getDocumentByRef(documentRef, documentType);
-        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, origText, newText, elementId, startOffset, endOffset, false);
+        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, origText, newText, elementId, startOffset, endOffset);
         if (resultXmlContent == null) {
             throw new AnnotateException(messageHelper.getMessage("document.merge.suggestion.failed"));
         }
