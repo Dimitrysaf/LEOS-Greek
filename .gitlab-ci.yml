@@ -26,7 +26,7 @@ build-and-test:
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
       when: never
-  before_script:
+  script:
     - cd $CI_PROJECT_DIR/tools/user-repo
     - mvn clean install
     - cd $CI_PROJECT_DIR/tools/repository
@@ -44,7 +44,6 @@ build-and-test:
     - cd $CI_PROJECT_DIR/modules/web
     - mvn -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -Djetty.jvmArgs="-Xms512m -Xmx2g" jetty:run-war &
     - sleep 40
-  script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
     - npx cypress run --quiet -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
