@@ -86,8 +86,6 @@ public interface ApiService {
 
     void createProposalAnnex(String proposalRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws Exception;
 
-    //void createProposalForeignAnnex(String proposalRef) throws IOException;
-
     List<MilestonesVO> getProposalMilestones(String proposalRef) throws Exception;
 
     List<MilestonesVO> getProposalMilestones(String proposalRef, String language) throws Exception;
