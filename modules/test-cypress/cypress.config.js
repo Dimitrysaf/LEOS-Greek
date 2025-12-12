@@ -23,6 +23,10 @@ module.exports = defineConfig({
   video: false,
   e2e: {
     async setupNodeEvents(on, config) {
+      retries: {
+        runMode: 2,    // CI
+        openMode: 0    // local
+      },
       await addCucumberPreprocessorPlugin(on, config, {
         experimentalSingleBuild: true,
         // // Enable Cucumber Messages and JSON reports

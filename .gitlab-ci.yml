@@ -1,7 +1,6 @@
 image: $CI_REGISTRY_IMAGE/image-for-tests:1.0.3
 
 stages:
-  - build
   - test
 
 variables:
@@ -12,8 +11,21 @@ variables:
   CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository"
 
-java-build:
-  stage: build
+cache:
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository/
+
+cypress-test-for-local:
+  variables:
+    TAGS_TO_RUN: "@local"
+    GIT_CLEAN_FLAGS: none
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
   script:
     - cd $CI_PROJECT_DIR/tools/user-repo
     - mvn clean install
@@ -23,34 +35,6 @@ java-build:
     - mvn clean install
     - cd $CI_PROJECT_DIR
     - mvn clean install -DskipKarmaTests
-  artifacts:
-    expire_in: 1 hour
-    when: always
-    paths:
-      - pom.xml
-      - "**/target"
-      - "**/package-lock.json"
-      - "**/yarn.lock"
-  rules:
-      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      - if: $CI_PIPELINE_SOURCE == "web"
-      - if: $CI_PIPELINE_SOURCE == "schedule"
-  interruptible: true
-
-cypress-test-for-local:
-  variables:
-    TAGS_TO_RUN: "@local"
-    GIT_CLEAN_FLAGS: none
-  stage: test
-  dependencies:
-    - java-build
-  #  resource_group: cypress
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
-    - if: $CI_PIPELINE_SOURCE == "web"
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-      when: never
-  before_script:
     - cd $CI_PROJECT_DIR/tools/user-repo/web
     - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
     - cd $CI_PROJECT_DIR/tools/repository/web
@@ -60,7 +44,6 @@ cypress-test-for-local:
     - cd $CI_PROJECT_DIR/modules/web
     - mvn -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -Djetty.jvmArgs="-Xms512m -Xmx2g" jetty:run-war &
     - sleep 40
-  script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
     - npx cypress run --quiet -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
