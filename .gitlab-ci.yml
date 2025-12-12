@@ -1,7 +1,6 @@
-image: $CI_REGISTRY_IMAGE/image-for-tests:1.0.3
+image: $CI_REGISTRY_IMAGE/image-for-tests:1.0.4
 
 stages:
-  - build
   - test
 
 variables:
@@ -17,9 +16,17 @@ cache:
   paths:
     - $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository/
 
-java-build:
-  stage: build
-  script:
+build-and-test:
+  variables:
+    TAGS_TO_RUN: "@local"
+    GIT_CLEAN_FLAGS: none
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
+  before_script:
     - cd $CI_PROJECT_DIR/tools/user-repo
     - mvn clean install
     - cd $CI_PROJECT_DIR/tools/repository
@@ -28,35 +35,6 @@ java-build:
     - mvn clean install
     - cd $CI_PROJECT_DIR
     - mvn clean install -DskipKarmaTests
-  artifacts:
-    expire_in: 1 hour
-    when: always
-    paths:
-      - pom.xml
-      - "**/target"
-      - "**/package-lock.json"
-      - "**/yarn.lock"
-  rules:
-      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      - if: $CI_PIPELINE_SOURCE == "web"
-      - if: $CI_PIPELINE_SOURCE == "schedule"
-  interruptible: true
-
-cypress-test-for-local:
-  variables:
-    TAGS_TO_RUN: "@local"
-    GIT_CLEAN_FLAGS: none
-  stage: test
-  needs: [java-build]
-  dependencies:
-    - java-build
-  #  resource_group: cypress
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
-    - if: $CI_PIPELINE_SOURCE == "web"
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-      when: never
-  before_script:
     - cd $CI_PROJECT_DIR/tools/user-repo/web
     - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
     - cd $CI_PROJECT_DIR/tools/repository/web
