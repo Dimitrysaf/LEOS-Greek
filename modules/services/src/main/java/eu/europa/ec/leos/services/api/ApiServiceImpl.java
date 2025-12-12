@@ -371,7 +371,7 @@ public abstract class ApiServiceImpl implements ApiService {
         List<String> existingLinguisticVersions = new ArrayList<>();;
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         linguisticVersions.forEach(version -> {
-            if (proposal.getMetadata().get().getAvailableLangs().contains(version)) {
+            if (StringUtils.contains(proposal.getMetadata().get().getAvailableLangs(), version)) {
                 existingLinguisticVersions.add(version);
             }
         });
