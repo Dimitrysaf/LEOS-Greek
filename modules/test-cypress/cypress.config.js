@@ -22,11 +22,11 @@ module.exports = defineConfig({
   numTestsKeptInMemory: 1,
   video: false,
   e2e: {
+    retries: {
+      runMode: 2,    // CI
+      openMode: 0    // local
+    },
     async setupNodeEvents(on, config) {
-      retries: {
-        runMode: 2,    // CI
-        openMode: 0    // local
-      },
       await addCucumberPreprocessorPlugin(on, config, {
         experimentalSingleBuild: true,
         // // Enable Cucumber Messages and JSON reports
