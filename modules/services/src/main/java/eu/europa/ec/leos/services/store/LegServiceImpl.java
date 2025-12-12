@@ -1167,6 +1167,7 @@ public class LegServiceImpl implements LegService {
             xmlContent = addCommentsMetadata(exportOptions.getComments(), xmlContent);
         }
         contentToZip.put(annex.getName(), xmlContent);
+        contentToZip.put(annex.getOriginalFilename(), annex.getBinaryContent());
 
         addAnnotateToZipContent(contentToZip, annex.getMetadata().get().getRef(), annex.getName(), exportOptions, proposalRef);
         if (exportOptions.getFileType().equals(Annex.class)) {
