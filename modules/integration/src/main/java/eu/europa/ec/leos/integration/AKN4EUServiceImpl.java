@@ -16,7 +16,7 @@ public class AKN4EUServiceImpl implements AKN4EUService {
     }
 
     @Override
-    public byte[] applyMetadata(LeosFile legFile) throws Exception {
+    public byte[] applyMetadata(LeosFile legFile, User user) throws Exception {
         return null;
     }
 
