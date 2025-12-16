@@ -71,13 +71,17 @@ public class ProposalAKN4EUServiceImpl implements AKN4EUService {
     }
 
     @Override
-    public byte[] applyMetadata(LeosFile legFile) throws Exception {
+    public byte[] applyMetadata(LeosFile legFile, User user) throws Exception {
         Validate.notNull(legFile, "legFile must not be null!");
         try {
             String uri = akn4euUrl + applyMetadataUri;
 
             MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
             map.add("inputFile", legFile.getResource());
+            map.add("validate", user != null && user.getEmail() != null);
+            if (user != null && user.getEmail() != null) {
+                map.add("email", user.getEmail());
+            }
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);

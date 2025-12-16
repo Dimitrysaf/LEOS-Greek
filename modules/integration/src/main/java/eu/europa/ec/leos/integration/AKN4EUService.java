@@ -7,5 +7,5 @@ public interface AKN4EUService {
 
     void convert(LeosFile legFile, User user, String outputDescriptor) throws Exception;
 
-    byte[] applyMetadata(LeosFile legFile) throws Exception;
+    byte[] applyMetadata(LeosFile legFile, User user) throws Exception;
 }
