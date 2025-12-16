@@ -20,7 +20,7 @@ public interface CustomTemplateService {
 
     Boolean unPublishTemplate(String catalogKey);
 
-    void alignDocumentsFromBaseVersion(List<XmlDocument> sourceXmlDocs, List<XmlDocument> targetXmlDocs, DocumentVO documentVO, String ref);
+    void alignDocumentsFromBaseVersion(List<? extends XmlDocument> sourceXmlDocs, List<? extends XmlDocument> targetXmlDocs, DocumentVO documentVO, String ref);
 
     void alignDocument(DocumentVO sourceBaseDocument, DocumentVO sourceDocument, List<XmlDocument> targetXmlDocs);
 }
