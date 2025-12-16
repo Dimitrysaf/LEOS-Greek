@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -36,8 +37,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -120,6 +123,39 @@ public class WorkspaceApiController {
         } catch (Exception ex) {
             LOG.error("Error occurred while retrieving custom templates catalog: {}", ex.getMessage());
             return new ResponseEntity<>("Error occurred while retrieving custom templates catalog: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/getTemplatesForEntity", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Object> getTemplatesForEntity() {
+        List<List<CatalogItem>> combinedList = new ArrayList<>();
+        try {
+            combinedList = new ArrayList<>();
+            List<CatalogItem> catalogItems = apiService.getTemplates();
+            combinedList.add(catalogItems);
+            List<String> organizationNames =
+                    this.securityContext.getUser().getEntities()
+                            .stream()
+                            .map(Entity::getOrganizationName)
+                            .collect(Collectors.toList());
+
+            for (String organizationName : organizationNames) {
+                List<CatalogItem> customCatalogItems = apiService.getCustomTemplates(organizationName);
+                if(CollectionUtils.isNotEmpty(customCatalogItems)) {
+                    combinedList.add(customCatalogItems);
+                }
+            }
+            return new ResponseEntity<>(combinedList, HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            if (!combinedList.isEmpty()) {
+                return new ResponseEntity<>(combinedList, HttpStatus.OK);
+            }
+            LOG.error("Error occurred while retrieving templates {}", ex.getMessage());
+            return new ResponseEntity<>("Error occurred while retrieving templates for dg: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while retrieving templates : {}", ex.getMessage());
+            return new ResponseEntity<>("Error occurred while retrieving templates for dg: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
