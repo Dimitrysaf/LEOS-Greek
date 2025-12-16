@@ -48,6 +48,17 @@ public interface BillService {
 
     Bill updateBill(String id, byte[] updatedContent, boolean updateInternalRefs);
 
+    /**
+     * updates bill document  with the given content
+     * @param id the ID of the Bill
+     * @param updatedContent new updated content of the bill document
+     * @param updateInternalRefs to update internal references or not
+     * @param versionType new version type
+     * @param comment new comment
+     * @return bill document
+     */
+    Bill updateBill(String id, byte[] updatedContent, boolean updateInternalRefs, VersionType versionType, String comment);
+
     Bill updateBill(Bill bill, BillMetadata metadata, VersionType versionType, String actionMsg, boolean updateInternalRefs);
 
     Bill updateBill(Bill bill, byte[] updatedBillContent, String comments, boolean updateInternalRefs);

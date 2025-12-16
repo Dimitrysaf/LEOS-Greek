@@ -167,6 +167,13 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
+    public Proposal updateProposal(String proposalId, byte[] updatedBytes, VersionType versionType, String comment) {
+        Proposal proposal = proposalRepository.updateProposal(proposalId, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
+    }
+
+    @Override
     public Proposal updateProposal(String proposalId, byte[] updatedBytes, Map<String, Object> properties) {
         Proposal proposal = proposalRepository.updateProposal(proposalId, updatedBytes, properties);
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());

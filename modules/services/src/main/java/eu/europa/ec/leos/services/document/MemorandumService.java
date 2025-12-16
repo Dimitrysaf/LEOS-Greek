@@ -52,6 +52,16 @@ public interface MemorandumService {
 
     Memorandum updateMemorandum(String id, byte[] updatedMemorandumContent);
 
+    /**
+     * updates Memorandum document with the given content
+     * @param id the ID of the Memorandum
+     * @param updatedMemorandumContent new updated content of the Memorandum document
+     * @param versionType new version type
+     * @param comment new comment
+     * @return Memorandum document
+     */
+    Memorandum updateMemorandum(String id, byte[] updatedMemorandumContent, VersionType versionType, String comment);
+
     Memorandum updateMemorandumWithMilestoneComments(Memorandum memorandum, List<String> milestoneComments, VersionType versionType, String comment);
 
     Memorandum updateMemorandumWithMilestoneComments(String ref, String memorandumId, List<String> milestoneComments);
