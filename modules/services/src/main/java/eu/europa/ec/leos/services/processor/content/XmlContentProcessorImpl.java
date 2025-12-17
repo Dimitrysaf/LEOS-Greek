@@ -3264,24 +3264,35 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] alignLatestVersionDocument(byte[] sourceXml, byte[] sourceBaseXml, XmlDocument targetXmlDoc) throws IllegalArgumentException {
+        Document sourceBaseDoc = createXercesDocument(sourceBaseXml);
         Document sourceDoc = createXercesDocument(sourceXml);
         Document targetDoc = getXercesDocument(targetXmlDoc);
 
-        alignMetaNode(sourceDoc, targetDoc);
-        replaceUnchangedTextContentInSource(targetDoc, sourceDoc, sourceBaseXml);
+        alignMetaNode(sourceDoc, targetDoc, sourceBaseDoc);
+        replaceUnchangedTextContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
         alignAttachmentsIds(sourceDoc, targetDoc);
 
         return nodeToByteArray(sourceDoc);
     }
 
-    private static void alignMetaNode(Document sourceDoc, Document targetDoc) {
+    private static void alignMetaNode(Document sourceDoc, Document targetDoc, Document sourceBaseDoc) {
         Node sourceMeta = getFirstElementByXPath(sourceDoc, XPathCatalog.getXPathElement(META));
         Node targetMeta = getFirstElementByXPath(targetDoc, XPathCatalog.getXPathElement(META));
 
         removeDeletedNodes(targetMeta, sourceMeta);
         addNewNodes(sourceMeta, targetMeta);
 
+        handleAnnexTitle(sourceDoc, targetDoc, sourceBaseDoc);
         importAndReplaceNodeInDocument(sourceDoc, sourceMeta, targetMeta);
+    }
+
+    private static void handleAnnexTitle(Document sourceDoc, Document targetDoc, Document sourceBaseDoc) {
+        Node sourceBaseAnnexTitle = getFirstElementByXPath(sourceBaseDoc, XPathCatalog.getXPathAnnexTitle());
+        Node sourceAnnexTitle = getFirstElementByXPath(sourceDoc, XPathCatalog.getXPathAnnexTitle());
+        Node targetAnnexTitle = getFirstElementByXPath(targetDoc, XPathCatalog.getXPathAnnexTitle());
+        if (sourceAnnexTitle != null && !sourceAnnexTitle.getTextContent().equals(sourceBaseAnnexTitle.getTextContent())) {
+            targetAnnexTitle.setTextContent(sourceAnnexTitle.getTextContent());
+        }
     }
 
     private static void removeDeletedNodes(Node targetRootNode, Node sourceRootNode) {
@@ -3324,24 +3335,27 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private static void replaceUnchangedTextContentInSource(Document targetDoc, Document sourceDoc, byte[] sourceBaseXml) {
-        Document sourceBaseDoc = createXercesDocument(sourceBaseXml);
+    private static void replaceUnchangedTextContentInSourceDocByTarget(Document targetDoc, Document sourceDoc, Document sourceBaseDoc) {
         NodeList targetNodes = getAllNodesWithId(targetDoc);
         for (int i = 0; i < targetNodes.getLength(); i++) {
             Node targetNode = targetNodes.item(i);
             Node sourceNode = XercesUtils.getElementById(sourceDoc, getId(targetNode));
             if (sourceNode != null) {
                 Node sourceBaseNode = XercesUtils.getElementById(sourceBaseDoc, getId(targetNode));
-                List<Node> sourceTextNodes = getTextChildren(sourceNode);
-                List<Node> targetTextNodes = getTextChildren(targetNode);
-                if (sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
-                        .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining())) && sourceNode.getNodeName()
-                        .equals(targetNode.getNodeName()) && sourceTextNodes.size() == targetTextNodes.size()) {
-                    for (int j = 0; j < targetTextNodes.size(); j++) {
-                        String oldText = targetTextNodes.get(j).getTextContent();
-                        sourceTextNodes.get(j).setTextContent(oldText);
-                    }
-                }
+                replaceUnchangedTextContentInSourceNodeByTarget(sourceNode, targetNode, sourceBaseNode);
+            }
+        }
+    }
+
+    private static void replaceUnchangedTextContentInSourceNodeByTarget(Node sourceNode, Node targetNode, Node sourceBaseNode) {
+        List<Node> sourceTextNodes = getTextChildren(sourceNode);
+        List<Node> targetTextNodes = getTextChildren(targetNode);
+        if (sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
+                .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining())) && sourceNode.getNodeName()
+                .equals(targetNode.getNodeName()) && sourceTextNodes.size() == targetTextNodes.size()) {
+            for (int j = 0; j < targetTextNodes.size(); j++) {
+                String oldText = targetTextNodes.get(j).getTextContent();
+                sourceTextNodes.get(j).setTextContent(oldText);
             }
         }
     }
