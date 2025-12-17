@@ -126,7 +126,7 @@
 
     <!-- Session configuration -->
     <session-config>
-        <session-timeout>5</session-timeout>
+        <session-timeout>10</session-timeout>
         <!-- session timeout should always be more then double of heartbeat  -->
     </session-config>
 
