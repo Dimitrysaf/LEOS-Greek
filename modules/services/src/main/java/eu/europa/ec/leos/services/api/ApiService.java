@@ -49,6 +49,8 @@ public interface ApiService {
 
     List<CatalogItem> getCustomTemplates(String entityName) throws IOException;
 
+    List<List<CatalogItem>> getAllTemplatesForEntity() throws IOException;
+
     CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException;
 
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
