@@ -53,6 +53,16 @@ public interface ProposalService {
 
     Proposal updateProposal(String proposalId, byte[] updatedBytes);
 
+    /**
+     * updates Proposal document with the given content
+     * @param proposalId the ID of the Proposal
+     * @param updatedBytes new updated content of the Proposal document
+     * @param versionType new version type
+     * @param comment new comment
+     * @return Proposal document
+     */
+    Proposal updateProposal(String proposalId, byte[] updatedBytes, VersionType versionType, String comment);
+
     Proposal updateProposal(String proposalId, byte[] updatedBytes, Map<String, Object> properties);
 
     Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory, String refersToOfDocument, String showAs);

@@ -48,6 +48,17 @@ public interface AnnexService {
 
     Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs);
 
+    /**
+     * updates annex with the given content
+     * @param id the ID of the annex
+     * @param updatedAnnexContent new updated content of the annex
+     * @param updateInternalRefs to update internal references or not
+     * @param versionType new version type
+     * @param comment new comment
+     * @return annex object
+     */
+    Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, VersionType versionType, String comment);
+
     Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest);
     
     Annex updateAnnexWithMilestoneComments(Annex annex, List<String> milestoneComments, VersionType versionType, String comment);
