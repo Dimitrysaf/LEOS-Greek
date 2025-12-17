@@ -140,8 +140,7 @@ import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneH
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
-import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
-import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 
@@ -341,6 +340,7 @@ public abstract class ApiServiceImpl implements ApiService {
             validateCustomTemplate(legDocument);
             LeosFile legFile = createFileFromXmlSource(legDocument.getContent().get().getSource().getBytes(), "lastMilestone.leg");
             DocumentVO documentVO = proposalConverterService.createProposalFromLegFile(legFile, false);
+            validateAutonomousAct(documentVO);
             documentVO.getMetadata().setCustomTemplateAct(true);
             linguisticVersions = linguisticVersions.stream().map(StringUtils::upperCase).collect(Collectors.toList());
             validateLinguisticVersionsExist(documentVO.getRef(), linguisticVersions);
@@ -358,6 +358,12 @@ public abstract class ApiServiceImpl implements ApiService {
             userHelper.validateTemplateManager("This user is not allowed to create linguistic versions in custom templates.");
         } else {
             throw new IllegalStateException("This is not a custom template. Linguistic versions are not allowed in this proposal.");
+        }
+    }
+
+    private void validateAutonomousAct(DocumentVO document) {
+        if (!ACT_AUTO_COM.equals(document.getMetadata().getDocumentCollectionName())) {
+            throw new IllegalStateException("This custom template is not an autonomous act. Linguistic versions are not allowed in this proposal.");
         }
     }
 

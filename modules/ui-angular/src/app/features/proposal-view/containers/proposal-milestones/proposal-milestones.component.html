@@ -120,7 +120,7 @@
               <button
                 euiDropdownItem
                 (click)="openLinguisticVersionsDialog(row)"
-                *ngIf="row.versionLabel.startsWith(lastMilestoneVersion) && proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_CREATE_TEMPLATE')"
+                *ngIf="row.versionLabel.startsWith(lastMilestoneVersion) && proposal.metadata?.customTemplateAct && isAutonomousAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_CREATE_TEMPLATE')"
               >
                 {{
                   'page.collection.milestones.actions.generate-linguistic-versions'
