@@ -25,7 +25,6 @@ public class MaxUploadSizeFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Verifica Content-Length ANTES do multipart parsing
         String contentType = httpRequest.getContentType();
         if (contentType != null && contentType.startsWith("multipart/form-data")) {
             long contentLength = httpRequest.getContentLengthLong();
