@@ -287,8 +287,10 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                     action = LEOS_TC_INSERT_ACTION;
                 }
                 addAttribute(nodeToAddOrRemoveAttribute, LEOS_ACTION_ATTR, action);
-                addAttribute(nodeToAddOrRemoveAttribute, LEOS_UID, securityContext.getUser().getLogin());
-                addAttribute(nodeToAddOrRemoveAttribute, LEOS_TITLE, LeosXercesUtils.getTitleValue(securityContext));
+                if (tocVo.getChangedNode() != null && tocVo.getChangedNode().equals(Boolean.TRUE)) {
+                    addAttribute(nodeToAddOrRemoveAttribute, LEOS_UID, securityContext.getUser().getLogin());
+                    addAttribute(nodeToAddOrRemoveAttribute, LEOS_TITLE, LeosXercesUtils.getTitleValue(securityContext));
+                }
             } else if (numNode != null) {
                 removeAttribute(numNode, LEOS_ACTION_ATTR);
                 removeAttribute(numNode, LEOS_UID);

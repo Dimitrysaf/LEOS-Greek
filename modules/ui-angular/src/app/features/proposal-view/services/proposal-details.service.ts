@@ -756,6 +756,9 @@ export class ProposalDetailsService implements OnDestroy {
     collaborators: Collaborator[],
     config: LeosAppConfig,
   ) {
+    console.log('Issue 3172:');
+    console.log(collaborators);
+    console.log(config);
     const docRoles = this.retrieveAuthority(collaborators, config);
     const roles = [...config.user.roles, ...docRoles, config.contextRole];
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);

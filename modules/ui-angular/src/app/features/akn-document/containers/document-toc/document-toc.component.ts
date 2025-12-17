@@ -478,6 +478,7 @@ export class DocumentTocComponent
     if (this.dragAction.isAdd) {
       for (let nodeDragged of nodesDraggedOrdered) {
         nodeDragged.newNode = true;
+        nodeDragged.changedNode = true;
       }
     }
 

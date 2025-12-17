@@ -5,10 +5,10 @@ import {
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
-  HttpRequest,
+  HttpRequest, HttpResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {catchError, from, Observable, throwError} from 'rxjs';
+import {catchError, from, Observable, tap, throwError} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import {TokenData} from "@/core/models";
@@ -34,7 +34,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return from(this.addTokenToRequest(request)).pipe(
       switchMap((authRequest:HttpRequest<any>) =>
         // Pass on the cloned request instead of the original request
-         next.handle(authRequest).pipe(
+        next.handle(authRequest).pipe(
           catchError((e) => this.errorHandler(e, this.authService.loadTokenData().accessToken))
         )
       )

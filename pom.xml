@@ -172,6 +172,7 @@
         <sonar-jacoco-plugin.version>0.8.7</sonar-jacoco-plugin.version>
         <!-- Haelcast -->
         <hazelcast.version>5.3.6</hazelcast.version>
+        <spring-session-hazelcast.version>2.7.4</spring-session-hazelcast.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -577,6 +578,11 @@
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast-spring</artifactId>
                 <version>${hazelcast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.session</groupId>
+                <artifactId>spring-session-hazelcast</artifactId>
+                <version>${spring-session-hazelcast.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>

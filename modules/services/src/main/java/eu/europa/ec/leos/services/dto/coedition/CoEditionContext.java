@@ -1,11 +1,14 @@
 package eu.europa.ec.leos.services.dto.coedition;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
@@ -19,13 +22,29 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 @RequestScope
 public class CoEditionContext {
     public static final String TOPIC_DOCUMENT_SLASH = "/topic/document/";
+    
     @Autowired
     private SecurityContext securityContext;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired(required = false)
+    private HazelcastInstance hazelcastInstance;
+    @Value("${leos.hazelcast.kubernetes.enabled:true}")
+    private Boolean kubernetesEnabled;
+    
     private List<Element> updatedElements = new ArrayList<Element>();
 
     public void sendUpdatedElements(String documentRef, String presenterId, SaveElementResponse updatedElement, String alternateElementId) {
+        if (Boolean.TRUE.equals(kubernetesEnabled) && hazelcastInstance != null) {
+            IMap<String, UpdateElementsEvent> map = hazelcastInstance.getMap("updateElementsCache");
+            map.put(documentRef + "-" + System.currentTimeMillis(), 
+                   new UpdateElementsEvent(documentRef, presenterId, updatedElement, alternateElementId));
+        } else {
+            processUpdatedElements(documentRef, presenterId, updatedElement, alternateElementId);
+        }
+    }
+
+    private void processUpdatedElements(String documentRef, String presenterId, SaveElementResponse updatedElement, String alternateElementId) {
         final String presenterIdFinal = encodeParam(presenterId);
         final String documentRefFinal = encodeParam(documentRef);
         new Thread(() -> {
