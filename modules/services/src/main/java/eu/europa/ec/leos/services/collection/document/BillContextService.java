@@ -324,8 +324,7 @@ public class BillContextService {
         LOG.trace("Executing 'Update References On Bill' use case...");
         Validate.notNull(bill, "Bill is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
-        byte[] content = this.postProcessingDocumentService.updateReferences(bill.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
-        billService.updateBill(bill.getId(), content, false);
+        billService.updateReferencesAsync(bill, mapOldAndNewRefs);
     }
 
     public Bill executeCreateBill() {
@@ -401,7 +400,7 @@ public class BillContextService {
         }
     
         final String updateRefsComment = messageHelper.getMessage("internal.ref.updatedOnImport");
-        final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(bill.getContent().get().getSource().getBytes()); //updateRefs
+        final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessing(bill.getContent().get().getSource().getBytes()); //updateRefs
         bill = billService.updateBill(bill, updatedBytes, updateRefsComment, false);
 
         for (Annex annex : annexes) {
@@ -409,7 +408,7 @@ public class BillContextService {
                     .filter(p -> Integer.parseInt(p.getMetadata().getIndex()) == annex.getMetadata().get().getIndex())
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
-            byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(docChild.getSource());  //updateRefs
+            byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
             annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false);
             idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
             refsMatching.put(docChild.getRef(), annex);

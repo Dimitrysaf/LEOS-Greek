@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.Map;
@@ -325,5 +326,17 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         memorandum = memorandumRepository.updateMemorandum(memorandum.getId(), metadata, content, VersionType.MINOR, actionMsg);
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
         return memorandum;
+    }
+
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateReferencesAsync(Memorandum doc, Map<String, String> refsMatching) {
+        try {
+            byte[] xmlContent = doc.getContent().get().getSource().getBytes();
+            xmlContent = xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
+            updateMemorandum(doc.getId(), xmlContent);
+        } catch (Exception e) {
+            LOG.error("Error while updating references on import: " + e.getMessage(), e);
+        }
     }
 }

@@ -25,6 +25,7 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
+import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.rest.aop.annotation.PerformanceLogger;
@@ -50,6 +51,8 @@ import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ZipPackageUtil;
+import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
@@ -60,6 +63,7 @@ import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
+import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -124,6 +128,8 @@ public class LeosApiController {
     private final ApiService apiService;
     private final UserService userService;
     private final CoEditionInfoHandler coEditionInfoHandler;
+    private ConValidatorService conValidatorService;
+    private NotificationService notificationService;
     private final CustomTemplateService customTemplateService;
 
     private final ConfigService configService;
@@ -147,7 +153,8 @@ public class LeosApiController {
                              CreateCollectionService createCollectionService, Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
                              SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
-                             CustomTemplateService customTemplateService, DocumentContentService documentContentService) {
+                             DocumentContentService documentContentService, ConValidatorService conValidatorService,
+                             NotificationService notificationService, CustomTemplateService customTemplateService) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -165,6 +172,8 @@ public class LeosApiController {
         this.coEditionInfoHandler = coEditionInfoHandler;
         this.customTemplateService = customTemplateService;
         this.documentContentService = documentContentService;
+        this.conValidatorService = conValidatorService;
+        this.notificationService = notificationService;
     }
 
     @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -563,9 +572,6 @@ public class LeosApiController {
         }
     }
 
-
-
-
     @RequestMapping(value = "/secured/proposals/{proposalRef}/createAnnex", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -841,6 +847,30 @@ public class LeosApiController {
             return new ResponseEntity<>("Unexpected error occurred while getting Html renditions", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/conValidation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> conValidation(@RequestParam("legFile") MultipartFile legFile, @RequestParam(name = "email", required = true) String email) {
+        try {
+            // Security file and email
+            LeosFile validationFile = new LeosFile();
+            validationFile.setBytes(legFile.getBytes());
+            validationFile.setName(legFile.getOriginalFilename());
+            validationFile.setOriginalFileName(legFile.getOriginalFilename());
+            String validationResult = conValidatorService.validate(validationFile);
+            Map<String, Object> contentToZip = new HashMap<>();
+            contentToZip.put("result.xml", validationResult);
+            contentToZip.put(validationFile.getOriginalFileName(), validationFile);
+            LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
+            notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", validationFile.getOriginalFileName(), resultZipFile.getBytes()));
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e) {
+            LOG.error("Error occurred running conValidation - {}", e.getMessage());
+            return new ResponseEntity<>("Error occurred running conValidation", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @RequestMapping(value = "/secured/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

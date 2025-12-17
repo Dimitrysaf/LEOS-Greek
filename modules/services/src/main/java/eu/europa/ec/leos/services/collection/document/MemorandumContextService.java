@@ -185,8 +185,7 @@ public class MemorandumContextService {
         LOG.trace("Executing 'Update References On Memorandum' use case...");
         Validate.notNull(memorandum, "Memorandum is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
-        byte[] content = this.postProcessingDocumentService.updateReferences(memorandum.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
-        memorandumService.updateMemorandum(memorandum.getId(), content);
+        memorandumService.updateReferencesAsync(memorandum, mapOldAndNewRefs);
     }
 
     public Memorandum executeCreateMemorandum() {

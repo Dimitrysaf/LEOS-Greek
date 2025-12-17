@@ -83,4 +83,6 @@ public interface MemorandumService {
     XmlDocument findFirstVersion(String ref);
 
     String generateMemorandumReference(byte[] content, String language);
+
+    void updateReferencesAsync(Memorandum doc, Map<String, String> refsMatching);
 }

@@ -17,6 +17,7 @@ define(function leosInlineCancelPluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
+    var leosPuginUtils = require("plugins/leosPluginUtils");
     var dialogDefinition = require("./leosInlineCancelDialog");
 
     var pluginName = "leosInlineCancel";
@@ -36,6 +37,9 @@ define(function leosInlineCancelPluginModule(require) {
             editor.addCommand('inlinecancel', {
                 readOnly: 1,
                 exec : function(editor) {
+                    // #3210: Unselect before check dirty
+                    editor.LEOS.originalRange = leosPuginUtils.clearSelection(editor);
+
                     if(editor.checkDirty()) {
                         dialogCommand.exec();
                     } else {

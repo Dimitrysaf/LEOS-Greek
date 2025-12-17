@@ -105,7 +105,7 @@ public interface ElementProcessor<T extends XmlDocument> {
      * @return: On success returns updated content. On failure throws exception.
      */
     @PreAuthorize("hasPermission(#document, 'CAN_MERGE_SUGGESTION')")
-    byte[] replaceTextInElement(T document, String origText, String newText, String elementId, int startOffset, int endOffset, boolean manageEntities);
+    byte[] replaceTextInElement(T document, String origText, String newText, String elementId, int startOffset, int endOffset);
     
     String getElementAttributeValueByNameAndId(T document, String attributeName, String tagName, String idAttributeValue);
 

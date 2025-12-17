@@ -19,6 +19,7 @@ strip_text=true>
     See the Licence for the specific language governing permissions and limitations under the Licence.
 -->
 <#assign notification = .data_model.notification>
+<#assign proposalTitle = notification.proposalTitle>
 <#assign requestedBy = notification.updatedBy>
 <#assign requestedOn = notification.updatedOn>
 
@@ -31,6 +32,11 @@ strip_text=true>
     <b> at </b>
     <#if requestedOn??>
         ${requestedOn?datetime}
+    </#if>
+    <br><br>
+    <b>Proposal Title: </b>
+    <#if proposalTitle?? && proposalTitle != "">
+        ${proposalTitle}
     </#if>
     <br><br>
     <b>Find in attachment a .zip containing the original proposal and validation result.</b>
