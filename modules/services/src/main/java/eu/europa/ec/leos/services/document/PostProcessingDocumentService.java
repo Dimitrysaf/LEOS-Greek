@@ -119,14 +119,6 @@ public abstract class PostProcessingDocumentService {
                 newStatusBuilder.toString());
     }
 
-    public byte[] updateReferences(byte[] xmlContent, Map<String, String> refsMatching) {
-        try {
-            return xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public Result<?> updateOriginalProposalAfterRevisionDone(String cloneProposalRef, String cloneLegFileId,
                                                         CloneProposalMetadataVO cloneProposalMetadataVO) {
         return null;

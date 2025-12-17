@@ -185,7 +185,12 @@ define(function leosBase64ImageDialog(require) {
             range.fixBlock(true, leosPluginUtils.DIV);
             range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
             range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_HCONTAINER, leosPluginUtils.HCONTAINER_IMAGE);
-            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_SUB_HCONTAINER, leosPluginUtils.SUB_HCONTAINER_IMAGE);
+            if(selectedElement.getAscendant('ol') && selectedElement.getAscendant('ol').getAttribute('data-akn-name')
+            && selectedElement.getAscendant('ol').getAttribute('data-akn-name') === 'recital'){
+                range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_MEDIA_CONTAINER, "mediacontainer");
+            }else {
+                range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_SUB_HCONTAINER, leosPluginUtils.SUB_HCONTAINER_IMAGE);
+            }
             leosPluginUtils.setFocus(img, editor);
         }
 

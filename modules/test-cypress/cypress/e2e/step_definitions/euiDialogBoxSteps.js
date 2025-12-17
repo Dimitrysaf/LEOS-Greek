@@ -1,5 +1,6 @@
 import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import euiDialogBoxPage from "../pages/euiDialogBoxPage";
+import ckEditorWindow from "../pages/ckEditorWindow";
 
 Then(`{string} dialog confirm box window is displayed`, (headerValue) => {
     euiDialogBoxPage.elements.dialogHeader().should('have.text',headerValue);
@@ -85,3 +86,15 @@ When(/^drag row (\d+) and drop on row (\d+) in dialog box window$/, function (dr
 When(/^click on archive button$/, function () {
     euiDialogBoxPage.clickArchiveBtn();
 });
+
+Then ('{string} dialog box is displayed', function (headerValue) {
+    euiDialogBoxPage.elements.dialogBox().contains(headerValue)
+});
+
+Then('contains message {string} in dialog box', function (message) {
+    euiDialogBoxPage.elements.dialogBox().should('include.text', message);
+});
+
+
+
+

@@ -32,4 +32,7 @@ public interface LeosDocumentService {
     byte[] applyMetadata(MultipartFile inputFile) throws IOException;
 
     String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) throws IOException;
+
+    public void callLeosValidation(MultipartFile inputFile, String email);
+
 }

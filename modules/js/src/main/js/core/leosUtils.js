@@ -375,9 +375,14 @@ define(function leosUtilsModule(require) {
                     "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                     "float: left !important; text-decoration: none !important;" +
                     "}\n";
-                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before, " +
-                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before {" +
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):not([data-akn-tc-original-number]):before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):not([data-akn-tc-original-number]):before {" +
                     "content: attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt" +
+                    "}\n";
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-tc-original-number]:not([data-akn-tc-original-number='UNNUMBERED' i]):not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-tc-original-number]:not([data-akn-tc-original-number='UNNUMBERED' i]):not([data-akn-action-enter='delete']):not([data-akn-element='subparagraph']):before {" +
+                    "content: attr(data-akn-tc-original-number); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
                     "float: left; border: 0pt" +
                     "}\n";
                 tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before, " +
@@ -394,7 +399,7 @@ define(function leosUtilsModule(require) {
                 " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover):not([id*=revision]) { background-color: white;  }"+
                 " &:not(:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover)):not(&:hover):not([id*=revision]) { background-color: white;  }" +
                 "}\n";
-            tcShowStyle += ":is(" + ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR + "):not([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'])" +
+            tcShowStyle += ":is(" + ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR + "):not([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']):not([id*=revision])" +
                 " { background-color: white; }\n";
             tcShowStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
         }

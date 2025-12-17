@@ -155,7 +155,7 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
         resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
 
         notificationService.sendNotification(new DocumentExternalValidationNotification(securityContext.getUser().getEmail(),
-                securityContext.getUserName(), new Date(), proposalRef, resultZipFile.getBytes()));
+                securityContext.getUserName(), new Date(), proposalRef, proposal.getTitle(), resultZipFile.getBytes()));
     }
 
     @Override
@@ -175,6 +175,7 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
                         }
                         validationFile.setBytes(ZipPackageUtil.convertContentToByteArray(contentToZip));
                         String proposalRef = xmlDocuments.stream().filter(xmlDocument -> xmlDocument.getCategory().name().equals("PROPOSAL")).findFirst().get().getName().replace(".xml","");
+                        String proposalTitle = xmlDocuments.stream().filter(xmlDocument -> xmlDocument.getCategory().name().equals("PROPOSAL")).findFirst().get().getTitle();
                         String legFileName = proposalRef + ".leg";
                         validationFile.setName(legFileName);
                         validationFile.setOriginalFileName(legFileName);
@@ -185,7 +186,7 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
                             validationResultContent.put("result.xml", validationResult.getBytes(UTF_8));
                             validationResultContent.put(legFileName, validationFile.getBytes());
                             LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", validationResultContent, "");
-                            sendNotification(proposalRef, email, userName, resultZipFile.getBytes());
+                            sendNotification(proposalTitle, proposalRef, email, userName, resultZipFile.getBytes());
                             setDocumentsValidationStatus(xmlDocuments);
                         }
 
@@ -202,9 +203,9 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
         leosRepository.setDocumentsValidationStatus(xmlDocuments.stream().map(XmlDocument::getId).collect(toList()));
     }
 
-    private void sendNotification(String proposalRef, String email, String userName, byte[] validationResult) {
+    private void sendNotification(String proposalTitle, String proposalRef, String email, String userName, byte[] validationResult) {
         notificationService.sendNotification(new DocumentExternalValidationNotification(email, userName
-                , new Date(), proposalRef, validationResult));
+                , new Date(), proposalRef, proposalTitle, validationResult));
     }
 
     @Override

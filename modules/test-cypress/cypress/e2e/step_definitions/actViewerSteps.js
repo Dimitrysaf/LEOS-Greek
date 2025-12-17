@@ -52,6 +52,7 @@ Then(`total number of annexes present in act viewer page is {int}`, (count) => {
 
 When(`click on action icon of annex {int}`, (annexNumber) => {
     actViewerPage.clickActionsMenuOfAnnex(annexNumber);
+    cy.wait(2000);
 });
 
 When(`click on annex {int} link`, (annexNumber) => {
@@ -60,6 +61,7 @@ When(`click on annex {int} link`, (annexNumber) => {
 
 When(`click on change title button`, () => {
     actViewerPage.clickChangeTitleBtn();
+
 });
 
 Then(`title of annex {int} contains {string}`, (annexNumber, title) => {

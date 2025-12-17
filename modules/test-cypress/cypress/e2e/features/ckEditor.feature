@@ -1411,3 +1411,196 @@ Feature: CK Editor Regression Features
     When click save and close button of ck editor
     Then ck editor window is not displayed
     And  recital 1 contains "Recital...!#"
+
+  @ConvalValidation @local
+  Scenario: testing of different scenerios for Conval validation
+    Given navigate to leos application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "ConvalValidation" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  content of paragraph 1 of article 1 contains "Text..."
+    And  content of paragraph 2 of article 1 contains "Text..."
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When move the cursor position to offset 0 in paragraph 1 of article in edition mode
+    And  add "." at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When move the cursor position to offset 1 in paragraph 1 of article in edition mode
+    And  click backspace from keyboard in edition mode
+    And  add "," at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When move the cursor position to offset 1 in paragraph 1 of article in edition mode
+    And  click backspace from keyboard in edition mode
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "-point a sub point a" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
+    And  add "-point i sub point i" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When  click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click close button of ck editor
+    Then cke dialog window is displayed with title "Confirm cancel editing."
+    When  click on ok button in cke dialog window
+    Then ck editor window is not displayed
+    And  content of paragraph 1 of article 1 contains "Text..."
+    And  content of paragraph 2 of article 1 contains "Text..."
+    When mouseover on recital 1
+    Then recital 1 contains text "Recital..."
+    When mouseover and click on recital 1
+    Then ck editor window is displayed
+    When click at offset 0 of child 0 of recital in edition mode
+    And add "." at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click at offset 1 of child 0 of recital in edition mode
+    And  click backspace from keyboard in edition mode
+    And add "," at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click at offset 1 of child 0 of recital in edition mode
+    And  click backspace from keyboard in edition mode
+    And add "-" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click close button of ck editor
+    Then cke dialog window is displayed with title "Confirm cancel editing."
+    When  click on ok button in cke dialog window
+    Then ck editor window is not displayed
+    And  recital 1 contains text "Recital..."
+    When mouseover on citation 2
+    Then citation 2 contains text "Having regard to the proposal from the European Commission,"
+    When mouseover and click on citation 2
+    Then ck editor window is displayed
+    When click at offset 0 of child 0 of citation in edition mode
+    When mouseover and click on citation 2
+    Then ck editor window is displayed
+    When click at offset 0 of child 0 of citation in edition mode
+    And add "." at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click at offset 1 of child 0 of citation in edition mode
+    And  click backspace from keyboard in edition mode
+    And add "," at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click at offset 1 of child 0 of citation in edition mode
+    And  click backspace from keyboard in edition mode
+    And add "-" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click close button of ck editor
+    Then cke dialog window is displayed with title "Confirm cancel editing."
+    When  click on ok button in cke dialog window
+    Then ck editor window is not displayed
+    And citation 2 contains text "Having regard to the proposal from the European Commission,"
+    When click on close button present in legal act page
+    Then user is on act viewer page
+
+       #Financial Statement
+    When click on financial statement link present in act viewer page
+    Then user is on financial statement page
+    And  content of level 2 contains "[...]" in financial statement page
+    When mouseover and click on level 2 in financial statement page
+    Then ck editor window is displayed
+    When click at offset 0 of pTag 1 of level in edition mode
+    And add "." at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click at offset 1 of pTag 1 of level in edition mode
+    And  click backspace from keyboard in edition mode
+    And add "-" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click at offset 1 of pTag 1 of level in edition mode
+    And click backspace from keyboard in edition mode
+    And click at offset 5 of pTag 1 of level in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And  add ",new text" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And  add "new text" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click close button of ck editor
+    Then cke dialog window is displayed with title "Confirm cancel editing."
+    When  click on ok button in cke dialog window
+    Then ck editor window is not displayed
+    And content of level 2 contains "[...]" in financial statement page
+    When click on close button on financial statement page
+    Then user is on act viewer page
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 1
+          #Annex
+    When click on annex 1 link
+    Then user is on annex page
+    Then level 1 contains "Text..."
+    When mouseover and click on level 1
+    Then ck editor window is displayed
+    When click at offset 0 of pTag 1 of level in edition mode
+    And add "." at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click at offset 1 of pTag 1 of level in edition mode
+    And  click backspace from keyboard in edition mode
+    And add "-" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click at offset 1 of pTag 1 of level in edition mode
+    And click backspace from keyboard in edition mode
+    And click at offset 7 of pTag 1 of level in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And  add ",new text" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And  add "new text" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then warning message should match /"•", "," or "—" are not allowed at the beginning of a paragraph\. If you need a list please use the Edit features/
+    When click on ok button in cke dialog window
+    Then ck editor window is displayed
+    When click close button of ck editor
+    Then cke dialog window is displayed with title "Confirm cancel editing."
+    When  click on ok button in cke dialog window
+    Then ck editor window is not displayed

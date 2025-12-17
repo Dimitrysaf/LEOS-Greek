@@ -14,12 +14,13 @@
 package eu.europa.ec.leos.services.metadata;
 
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.export.LegPackage;
 
 import java.util.Map;
 
 public interface MetadataService {
 
-    Map<String, Object> applyMetadata(LegPackage legPackage, Proposal proposal, MetadataOptions metadataOptions) throws Exception;
+    Map<String, Object> applyMetadata(LegPackage legPackage, Proposal proposal, MetadataOptions metadataOptions, User user) throws Exception;
 
 }

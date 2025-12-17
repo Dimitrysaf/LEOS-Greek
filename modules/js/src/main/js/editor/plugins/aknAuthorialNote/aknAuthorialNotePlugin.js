@@ -107,6 +107,18 @@ define(function aknAuthorialNotePluginModule(require) {
                         // set the dialog value to the value from widget fnote attribute
                         this.setValue(widget.data.fnote);
                     },
+                    onChange: function() {
+                        var dialog = this.getDialog();
+                        if (this.getValue().trim() === '') {
+                            dialog.getButton('ok').disable();
+                        }
+                        if (this.getValue().trim() !== '') {
+                            dialog.getButton('ok').enable();
+                        }
+                    },
+                    onKeyUp: function() {
+                        this.fire('change');
+                    },
                     commit : function commit(widget) {
                         // update fnote value by data introduce by user in dialog
                         widget.setData("fnote", this.getValue());

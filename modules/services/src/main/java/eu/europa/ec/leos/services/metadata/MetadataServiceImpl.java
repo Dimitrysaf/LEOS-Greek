@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.metadata;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.integration.AKN4EUService;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import org.apache.commons.io.FileUtils;
@@ -58,13 +59,13 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public Map<String, Object> applyMetadata(LegPackage legPackage, Proposal proposal, MetadataOptions metadataOptions) throws Exception {
+    public Map<String, Object> applyMetadata(LegPackage legPackage, Proposal proposal, MetadataOptions metadataOptions, User user) throws Exception {
         Validate.notNull(metadataOptions);
         Validate.notNull(proposal);
         LeosFile legFile = null;
         try {
             legFile = createZipFile(legPackage, "job.zip", metadataOptions);
-            byte[] zipBytes = akn4euService.applyMetadata(legFile);
+            byte[] zipBytes = akn4euService.applyMetadata(legFile, user);
             Map<String, Object> zipContent = ZipPackageUtil.unzipByteArray(zipBytes);
             for (String fileName : zipContent.keySet()) {
                 if (fileName.endsWith(".leg")) {

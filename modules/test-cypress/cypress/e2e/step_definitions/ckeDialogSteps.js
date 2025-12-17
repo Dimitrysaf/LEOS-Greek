@@ -1,5 +1,6 @@
 import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import ckeDialogWindow from "../pages/ckeDialogWindow";
+import ckEditorWindow from "../pages/ckEditorWindow";
 
 Then(`cke dialog window is displayed with title {string}`, (title) => {
     ckeDialogWindow.elements.dialogTitle().should('have.text', title);
@@ -32,3 +33,12 @@ Then('click on dialog cancel button', () => {
 When('click on cancel button in cke dialog window', () => {
    ckeDialogWindow.clickCancelButton()
 })
+
+Then(/^warning message should match \/([^\/]+)\/$/, (pattern) => {
+    const regex = new RegExp(pattern, 'i');
+   return ckeDialogWindow.elements.warningDialogMessage()
+  // cy.get('div[role="presentation"] table span')
+        .invoke('text')
+        .should('match', regex);
+});
+

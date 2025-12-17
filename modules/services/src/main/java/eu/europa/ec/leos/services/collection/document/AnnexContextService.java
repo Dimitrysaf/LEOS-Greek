@@ -249,8 +249,7 @@ public class AnnexContextService {
         LOG.trace("Executing 'Update References On Annex' use case...");
         Validate.notNull(annex, "Annex is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
-        byte[] content = this.postProcessingDocumentService.updateReferences(annex.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
-        annexService.updateAnnex(annex.getId(), content, false);
+        annexService.updateReferencesAsync(annex, mapOldAndNewRefs);
     }
 
     public Annex executeCreateAnnex() {

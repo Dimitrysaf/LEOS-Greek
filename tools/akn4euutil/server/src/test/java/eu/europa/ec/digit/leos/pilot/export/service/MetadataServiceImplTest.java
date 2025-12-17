@@ -44,7 +44,7 @@ public class MetadataServiceImplTest {
     public void testAddCoteToCuidInMainXml() throws XmlUtilException, MetadataFieldInvalidValueException {
         XmlUtil.XmlFile xmlFile = createCuidXmlFile("main-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
         ReferenceFieldInfo coteFieldInfo = createCoteFieldInfo("COM(2024) 1811");
-        metadataService.processCote(coteFieldInfo, xmlFile);
+        metadataService.processCote(coteFieldInfo, null, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
         Assertions.assertNull(fileCuidNode);
@@ -57,7 +57,7 @@ public class MetadataServiceImplTest {
     public void testAddCoteToCuidInNotMainXml() throws XmlUtilException, MetadataFieldInvalidValueException {
         XmlUtil.XmlFile xmlFile = createCuidXmlFile("notMain-cm29gm7v600276e56hvqz1k4g-en.xml", "cm29gm7v600276e56hvqz1k4g");
         ReferenceFieldInfo coteFieldInfo = createCoteFieldInfo("COM(2024) 1811");
-        metadataService.processCote(coteFieldInfo, xmlFile);
+        metadataService.processCote(coteFieldInfo, null, xmlFile);
 
         Node fileCuidNode = xmlFile.getElementByName("akn4eu:fileCUID");
         Assertions.assertNotNull(fileCuidNode);

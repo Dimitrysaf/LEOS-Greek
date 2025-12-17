@@ -82,4 +82,6 @@ public interface FinancialStatementService {
     List<FinancialStatement> findFinancialStatementByPackagePath(String path);
 
     String generateFinancialStatementReference(byte[] content, String language);
+
+    void updateReferencesAsync(FinancialStatement doc, Map<String, String> refsMatching);
 }

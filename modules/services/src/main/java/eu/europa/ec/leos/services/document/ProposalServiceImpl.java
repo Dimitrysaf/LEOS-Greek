@@ -37,6 +37,7 @@ import eu.europa.ec.leos.integration.ExternalSystemACLService;
 import eu.europa.ec.leos.integration.dto.AccessDTO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermission;
@@ -731,7 +732,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public Map<String, byte[]> applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception {
         Map<String, byte[]> updatedDocuments = new HashMap<>();
         MetadataOptions metadataOptions = convertUpdateProposalRequestToMetadataOptions(legPackage.getExportResource().getName() + ".leg", proposal, request);
-        Map<String, Object> zipContent = metadataService.applyMetadata(legPackage, proposal, metadataOptions);
+        User user = securityContext.getUser();
+        Map<String, Object> zipContent = metadataService.applyMetadata(legPackage, proposal, metadataOptions, user);
         for (String fileName : zipContent.keySet()) {
             if (fileName.startsWith(PROPOSAL_FILE)) {
                 updatedDocuments.put(LeosCategory.PROPOSAL.name(), (byte[]) zipContent.get(fileName));

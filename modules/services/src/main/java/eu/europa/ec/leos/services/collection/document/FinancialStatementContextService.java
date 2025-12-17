@@ -217,8 +217,7 @@ public class FinancialStatementContextService {
         LOG.trace("Executing 'Update References On FinancialStatement' use case...");
         Validate.notNull(financialStatement, "FinancialStatement is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
-        byte[] content = this.postProcessingDocumentService.updateReferences(financialStatement.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
-        financialStatementService.updateFinancialStatement(financialStatement.getId(), content);
+        financialStatementService.updateReferencesAsync(financialStatement, mapOldAndNewRefs);
     }
 
     public FinancialStatement executeCreateFinancialStatement() {

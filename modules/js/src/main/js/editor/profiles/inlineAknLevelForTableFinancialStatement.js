@@ -39,7 +39,6 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
     plugins.push(require("plugins/aknHtmlSuperScript/aknHtmlSuperScriptPlugin"));
     plugins.push(require("plugins/aknHtmlSubScript/aknHtmlSubScriptPlugin"));
     plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
-    plugins.push(require("plugins/aknSubParagraphMandate/aknSubParagraphMandatePlugin"));
     plugins.push(require("plugins/leosWidget/leosWidgetPlugin"));
     plugins.push(require("plugins/leosAttrHandler/leosAttrHandlerPlugin"));
     plugins.push(require("plugins/leosPaste/leosPastePlugin"));

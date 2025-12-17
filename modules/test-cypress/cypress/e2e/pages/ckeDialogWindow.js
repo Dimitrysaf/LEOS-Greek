@@ -3,14 +3,16 @@ class ckeDialogWindow {
         ckeEditorDialog: () => cy.get("div[role='dialog']:not([style='display: none;'])"),
         dialogTitle: () => this.elements.ckeEditorDialog().find('.cke_dialog_title'),
         dialogContent: () => this.elements.ckeEditorDialog().find('span.cke_dialog_ui_html'),
-        okBtn: () => cy.get('.cke_dialog_footer_buttons').contains('OK'),
+        okBtn: () => cy.get('.cke_dialog_footer_buttons:visible').find('a.cke_dialog_ui_button_ok').contains('OK'),
         activeDialogBox: () => cy.get("div[role='dialog'][style='display: block;'],div[role='dialog']:not([style])"),
         dialogOkBtn: () => this.elements.activeDialogBox().find('.cke_dialog_ui_button_ok'),
         dialogCancelBtn: () => this.elements.activeDialogBox().find('.cke_dialog_ui_button_cancel'),
         dialogTextArea: () => cy.get('.cke_dialog_ui_input_textarea textarea'),
         dialogUIHBoxTable: () => cy.get('.cke_dialog_ui_hbox_first table tbody'),
-        cancelButton:()=>cy.get("tr.cke_dialog_ui_hbox span").contains("Cancel")
+        cancelButton: () => cy.get("tr.cke_dialog_ui_hbox span").contains("Cancel"),
+        warningDialogMessage: () => cy.get('div[role="presentation"] table span')
     }
+
 
     clickCancelButton(){
         this.elements.cancelButton().click();
@@ -36,5 +38,6 @@ class ckeDialogWindow {
         this.elements.dialogOkBtn().click();
     }
 }
+
 
 export default new ckeDialogWindow();
