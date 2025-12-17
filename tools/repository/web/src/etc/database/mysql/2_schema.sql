@@ -151,7 +151,7 @@ CREATE TABLE DOCUMENT_CONTENT
      CONTENT LONGTEXT NOT NULL COMMENT "The content of the document",
      BINARY_CONTENT BLOB NULL COMMENT "The binary content of the document",
      ORIGINAL_FILE_NAME VARCHAR(255) NULL COMMENT "The original name of the file of the binary content",
-     BINARY_CONTENT_SIZE VARCHAR(10) NULL COMMENT "The binary file size",
+     BINARY_CONTENT_SIZE VARCHAR(30) NULL COMMENT "The binary file size",
      ACT_TYPE VARCHAR(100) NOT NULL COMMENT "",
      DOC_PURPOSE VARCHAR(4000) NOT NULL COMMENT "Document purpose",
      DOC_TYPE VARCHAR(400) NOT NULL COMMENT "Document type",

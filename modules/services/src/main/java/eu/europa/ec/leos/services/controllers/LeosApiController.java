@@ -591,7 +591,7 @@ public class LeosApiController {
         try {
             validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
             if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidSizeFileForBinaryFile(foreignAnnexFile.getSize()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes())) {
-                return new ResponseEntity<>("Invalid file name", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Invalid file", HttpStatus.BAD_REQUEST);
             }
             proposalRef = encodeParam(proposalRef);
             this.apiService.createProposalAnnex(proposalRef, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
