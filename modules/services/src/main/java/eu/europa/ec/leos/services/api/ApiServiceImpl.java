@@ -362,7 +362,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private void validateAutonomousAct(DocumentVO document) {
-        if (!ACT_AUTO_COM.equals(document.getMetadata().getDocumentCollectionName())) {
+        if (!ACT_AUTO_COM.equals(document.getMetadata().getDocCollectionName())) {
             throw new IllegalStateException("This custom template is not an autonomous act. Linguistic versions are not allowed in this proposal.");
         }
     }
@@ -412,7 +412,14 @@ public abstract class ApiServiceImpl implements ApiService {
     private void createLinguisticAnnexIfExistsInMainLanguage(DocumentVO documentVO, String proposalRef) throws IOException {
         DocumentVO mainLanguageAnnex = documentVO.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX);
         if (mainLanguageAnnex != null) {
-            createProposalAnnex(proposalRef, mainLanguageAnnex.getRef());
+            String mainLanguageAnnexRef = mainLanguageAnnex.getRef();
+            createProposalAnnex(proposalRef, mainLanguageAnnexRef);
+            if (hasChangedAnnexTitle(null, mainLanguageAnnex, true)) {
+                String language = proposalRef.substring(proposalRef.lastIndexOf("-") + 1);
+                String linguisticAnnexRef = LanguageMapUtils.getTranslatedProposalReference(mainLanguageAnnexRef, language);
+                Annex linguisticAnnex = annexService.findAnnexByRef(linguisticAnnexRef);
+                updateAnnexTitle(proposalRef, linguisticAnnex.getId(), mainLanguageAnnex.getMetadata().getTitle());
+            }
         }
     }
 
@@ -1559,8 +1566,8 @@ public abstract class ApiServiceImpl implements ApiService {
         DocumentVO baseSourceAnnex = baseSourceDoc != null ? baseSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX) : null;
         DocumentVO finalSourceAnnex = finalSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX);
         String linguisticProposalRef = getProposalRef(linguisticDocuments);
+        XmlDocument linguisticAnnex = getLinguisticAnnex(linguisticDocuments);
         if (hasDeletedAnnex(baseSourceAnnex, finalSourceAnnex)) {
-            XmlDocument linguisticAnnex = getLinguisticAnnex(linguisticDocuments);
             deleteAnnex(linguisticProposalRef, linguisticAnnex.getMetadata().get().getRef());
             linguisticBillAttachmentsUpdated = true;
         }
@@ -1570,9 +1577,13 @@ public abstract class ApiServiceImpl implements ApiService {
             linguisticBillAttachmentsUpdated = true;
             String language = linguisticDocuments.get(0).getMetadata().get().getLanguage();
             String newLinguisticAnnexRef = LanguageMapUtils.getTranslatedProposalReference(finalSourceAnnexRef, language);
-            List<Annex> linguisticAnnexDoc = Collections.singletonList(annexService.findAnnexByRef(newLinguisticAnnexRef));
+            Annex linguisticAnnexDoc = annexService.findAnnexByRef(newLinguisticAnnexRef);
+            checkAndUpdateAnnexTitle(baseSourceAnnex, finalSourceAnnex, true, linguisticProposalRef, linguisticAnnexDoc);
             List<Annex> sourceAnnexDocs = annexService.findVersions(finalSourceAnnexRef);
-            customTemplateService.alignDocumentsFromBaseVersion(sourceAnnexDocs, linguisticAnnexDoc, finalSourceDoc, newLinguisticAnnexRef);
+            List<Annex> linguisticAnnexDocs = Collections.singletonList(annexService.findAnnexByRef(newLinguisticAnnexRef));
+            customTemplateService.alignDocumentsFromBaseVersion(sourceAnnexDocs, linguisticAnnexDocs, finalSourceDoc, newLinguisticAnnexRef);
+        } else {
+            checkAndUpdateAnnexTitle(baseSourceAnnex, finalSourceAnnex, false, linguisticProposalRef, linguisticAnnex);
         }
         return linguisticBillAttachmentsUpdated ?
                 packageService.findDocumentsByPackageId(linguisticPackageId, XmlDocument.class, false, true) :
@@ -1586,8 +1597,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private static XmlDocument getLinguisticAnnex(List<XmlDocument> linguisticDocuments) {
-        return linguisticDocuments.stream().filter(doc -> LeosCategory.ANNEX.equals(doc.getCategory())).findAny()
-                .orElseThrow(() -> new IllegalStateException(LeosCategory.ANNEX + " not found for some of the linguistic version/s."));
+        return linguisticDocuments.stream().filter(doc -> LeosCategory.ANNEX.equals(doc.getCategory())).findAny().orElse(null);
     }
 
     private boolean hasDeletedAnnex(DocumentVO baseAnnex, DocumentVO finalAnnex) {
@@ -1596,6 +1606,22 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private boolean hasAddedAnnex(DocumentVO baseAnnex, DocumentVO finalAnnex) {
         return finalAnnex != null && (baseAnnex == null || !baseAnnex.getRef().equals(finalAnnex.getRef()));
+    }
+
+    private void checkAndUpdateAnnexTitle(DocumentVO baseAnnex, DocumentVO finalAnnex, boolean isNewAnnex, String linguisticProposalRef,
+            XmlDocument linguisticAnnex) {
+        if (hasChangedAnnexTitle(baseAnnex, finalAnnex, isNewAnnex)) {
+            updateAnnexTitle(linguisticProposalRef, linguisticAnnex.getId(), finalAnnex.getMetadata().getTitle());
+        }
+    }
+
+    private boolean hasChangedAnnexTitle(DocumentVO baseAnnex, DocumentVO finalAnnex, boolean isNewAnnex) {
+        if (finalAnnex != null) {
+            String finalAnnexTitle = finalAnnex.getMetadata().getTitle();
+            String baseAnnexTitle = baseAnnex != null ? baseAnnex.getMetadata().getTitle() : null;
+            return isNewAnnex && !ANNEX.equals(finalAnnexTitle) || !isNewAnnex && !StringUtils.equals(baseAnnexTitle, finalAnnexTitle);
+        }
+        return false;
     }
 
     private boolean hasNotChanged(Proposal proposal) {

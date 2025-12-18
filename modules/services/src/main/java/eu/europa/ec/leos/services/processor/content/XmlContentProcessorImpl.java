@@ -3268,31 +3268,21 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document sourceDoc = createXercesDocument(sourceXml);
         Document targetDoc = getXercesDocument(targetXmlDoc);
 
-        alignMetaNode(sourceDoc, targetDoc, sourceBaseDoc);
+        alignMetaNode(sourceDoc, targetDoc);
         replaceUnchangedTextContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
         alignAttachmentsIds(sourceDoc, targetDoc);
 
         return nodeToByteArray(sourceDoc);
     }
 
-    private static void alignMetaNode(Document sourceDoc, Document targetDoc, Document sourceBaseDoc) {
+    private static void alignMetaNode(Document sourceDoc, Document targetDoc) {
         Node sourceMeta = getFirstElementByXPath(sourceDoc, XPathCatalog.getXPathElement(META));
         Node targetMeta = getFirstElementByXPath(targetDoc, XPathCatalog.getXPathElement(META));
 
         removeDeletedNodes(targetMeta, sourceMeta);
         addNewNodes(sourceMeta, targetMeta);
 
-        handleAnnexTitle(sourceDoc, targetDoc, sourceBaseDoc);
         importAndReplaceNodeInDocument(sourceDoc, sourceMeta, targetMeta);
-    }
-
-    private static void handleAnnexTitle(Document sourceDoc, Document targetDoc, Document sourceBaseDoc) {
-        Node sourceBaseAnnexTitle = getFirstElementByXPath(sourceBaseDoc, XPathCatalog.getXPathAnnexTitle());
-        Node sourceAnnexTitle = getFirstElementByXPath(sourceDoc, XPathCatalog.getXPathAnnexTitle());
-        Node targetAnnexTitle = getFirstElementByXPath(targetDoc, XPathCatalog.getXPathAnnexTitle());
-        if (sourceAnnexTitle != null && !sourceAnnexTitle.getTextContent().equals(sourceBaseAnnexTitle.getTextContent())) {
-            targetAnnexTitle.setTextContent(sourceAnnexTitle.getTextContent());
-        }
     }
 
     private static void removeDeletedNodes(Node targetRootNode, Node sourceRootNode) {

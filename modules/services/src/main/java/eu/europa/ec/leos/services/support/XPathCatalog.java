@@ -23,10 +23,6 @@ public class XPathCatalog {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:refOrigin";
     }
 
-    public static String getXPathAnnexTitle() {
-        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexTitle";
-    }
-
     public static String getXPathProprietary() {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary";
     }
