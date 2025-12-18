@@ -186,8 +186,13 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
     @Override
     public Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs) {
-        LOG.trace("Updating Annex content ... [id={}]", id);
-        Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, VersionType.MINOR, "Content updated.");
+        return updateAnnex(id, updatedAnnexContent, updateInternalRefs, VersionType.MINOR, "Content updated.");
+    }
+
+    @Override
+    public Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, VersionType versionType, String comment) {
+        LOG.trace("Updating Annex content ... [id={}, versionType={}, comment={}]", id, versionType, comment);
+        Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, versionType, comment);
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }

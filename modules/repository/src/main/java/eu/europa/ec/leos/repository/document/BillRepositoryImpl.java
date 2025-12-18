@@ -75,6 +75,12 @@ public class BillRepositoryImpl implements BillRepository {
     }
 
     @Override
+    public Bill updateBill(String id, byte[] content, VersionType versionType, String comment) {
+        logger.debug("Updating Bill content... [id={}, versionType={}, comment={}]", id, versionType, comment);
+        return leosRepository.updateDocument(id, content, versionType, comment, Bill.class);
+    }
+
+    @Override
     public Bill updateBill(String ref, String id, BillMetadata metadata) {
         logger.debug("Updating Bill metadata... [id=" + id + "]");
         return leosRepository.updateDocument(ref, id, metadata, Bill.class);

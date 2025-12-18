@@ -279,8 +279,13 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
 
     @Override
     public FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent) {
-        LOG.trace("Updating FinancialStatement content... [id={}]", id);
-        FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(id, updatedFinancialStatementContent, VersionType.MINOR, "Content updated");
+        return updateFinancialStatement(id, updatedFinancialStatementContent, VersionType.MINOR, "Content updated");
+    }
+
+    @Override
+    public FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent, VersionType versionType, String comment) {
+        LOG.trace("Updating FinancialStatement content... [id={}, versionType={}, comment={}]", id, versionType, comment);
+        FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(id, updatedFinancialStatementContent, versionType, comment);
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return financialStatement;
     }

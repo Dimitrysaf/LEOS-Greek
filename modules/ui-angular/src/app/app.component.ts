@@ -25,6 +25,7 @@ import {DomSanitizer, Title} from '@angular/platform-browser';
 import {CreateProposalService} from "@/shared/services/create-proposal.service";
 import {ApplicationRole} from "@/shared";
 import {Router} from "@angular/router";
+import {AuthService} from "@/core/services/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -78,7 +79,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private domSanitizer: DomSanitizer,
     protected createProposalService: CreateProposalService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
     this.i18nState = this.store.select(getI18nState);

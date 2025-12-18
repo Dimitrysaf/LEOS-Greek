@@ -13,12 +13,14 @@
  */
 package eu.europa.ec.leos.services.controllers;
 
+import com.hazelcast.core.HazelcastInstance;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.coedition.CoEditionService;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionRequest;
 import eu.europa.ec.leos.services.dto.coedition.UpdateCoEditionRequest;
 import eu.europa.ec.leos.services.dto.coedition.UpdateCoEditionResponse;
+import eu.europa.ec.leos.services.dto.coedition.UpdateElementsEvent;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.coedition.CoEditionActionInfo;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
@@ -57,6 +59,12 @@ public class CoEditionController {
 
     @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    HazelcastInstance hazelcastInstance;
+
+    @org.springframework.beans.factory.annotation.Value("${leos.hazelcast.kubernetes.enabled:true}")
+    private Boolean kubernetesEnabled;
 
     @EventListener
     //sent already existing data to the channels subscribed
@@ -143,6 +151,13 @@ public class CoEditionController {
         if(event.getElementFragment() != null) {
             elements.add(new Element(event.getElementId(), event.getElementTagName(), event.getElementFragment()));
         }
+        
+        // Propagate to other instances via Hazelcast if clustering is enabled
+        if (Boolean.TRUE.equals(kubernetesEnabled)) {
+            UpdateCoEditionResponse response = new UpdateCoEditionResponse(user, event.getPresenterId(), event.getDocumentId(), InfoType.DOCUMENT_UPDATED, elements);
+            hazelcastInstance.getMap("updateDocumentCache").put(event.getDocumentId() + "_" + System.currentTimeMillis(), response);
+        }
+        
         String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
         simpMessagingTemplate.convertAndSend(destination,
                 new UpdateCoEditionResponse(user, event.getPresenterId(), event.getDocumentId(), InfoType.DOCUMENT_UPDATED, elements));
@@ -160,5 +175,7 @@ public class CoEditionController {
             simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
         }
     }
+
+
 
 }
