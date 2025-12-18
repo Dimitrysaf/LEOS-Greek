@@ -243,6 +243,15 @@ public interface XmlNodeConfigProcessor {
         return keyValueMap;
     }
 
+    static Map<String, String> createObjectIdAndDocVersionValueMap(ProposalMetadata metadata) {
+        Map<String, String> keyValueMap = new HashMap<>();
+
+        keyValueMap.put(DOC_OBJECT_ID, metadata.getObjectId());
+        keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
+
+        return keyValueMap;
+    }
+
     static Map<String, String> createValueMap(BillMetadata metadata) {
         Map<String, String> keyValueMap = new HashMap<>();
 
