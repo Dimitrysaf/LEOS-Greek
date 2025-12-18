@@ -114,11 +114,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_ORIGINAL_STYLE;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_RETAIN_CLASS;
-import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createCoverpageEEARelevanceValueMap;
-import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createPrefaceValueMap;
-import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
-import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMapWithoutCoverpageEEARelevance;
-import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMapWithoutPreface;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.*;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
@@ -388,7 +384,7 @@ public class LegServiceImpl implements LegService {
                 .withObjectId(proposal.getId())
                 .withDocVersion(proposal.getVersionLabel())
                 .build();
-        xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMap(metadata)
+        xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createObjectIdAndDocVersionValueMap(metadata)
                 , xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
         return xmlContent;
     }
@@ -940,6 +936,10 @@ public class LegServiceImpl implements LegService {
             SpecificDocumentInformationDTO specificDocumentInformationForMemorandum, SpecificDocumentInformationDTO specificDocumentInformationForBill,
             SpecificDocumentInformationDTO specificDocumentInformationForFinancialStatement, int totalPageCount) {
         byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
+        ExportOptions exportOptions = exportProposalResource.getExportOptions();
+        if (exportOptions.isComparisonMode() && Proposal.class.equals(exportOptions.getFileType())) {
+            xmlContent = getComparedContent(exportOptions);
+        }
         xmlContent = addMetadataToProposal(proposal, xmlContent);
         if (totalPageCount > 0) {
             xmlContent = XercesUtils.addTotalPageCountTag(xmlContent, pageCounter.countPages(totalPageCount));
@@ -947,7 +947,6 @@ public class LegServiceImpl implements LegService {
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().get().getLanguage()), xmlContent);
 
-        ExportOptions exportOptions = exportProposalResource.getExportOptions();
         addAnnotateToZipContent(contentToZip, proposal.getMetadata().get().getRef(), proposal.getName(), exportOptions, proposal.getMetadata().getOrNull().getRef());
         if (exportOptions.getFileType().equals(Proposal.class)) {
             addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions);

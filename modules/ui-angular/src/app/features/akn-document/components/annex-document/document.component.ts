@@ -14,7 +14,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import {BehaviorSubject, combineLatest, Subject, takeUntil} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject, take, takeUntil} from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { TrackChangesActionsService } from '@/features/akn-document/services/track-changes-actions.service';
@@ -31,6 +31,8 @@ import {ContributionVO} from "@/shared/models/contribution-vo.model";
 import {MOVE_PREFIX, REVISION_PREFIX} from "@/shared/constants/fork-merge.constants";
 import {LoadingService} from "@/shared/services/loading.service";
 import {CoEditionUpdate} from "@/shared/models/coEditionVO.model";
+import {getUserDetails, UserDetails} from "@eui/base";
+import {Store} from "@ngrx/store";
 import {AnalysisResults} from "@/shared/models/leos.ai.model";
 import {TableOfContentItemVO} from "@/shared/models/toc.model";
 import {scrollInParent} from "@/shared/utils";
@@ -64,6 +66,7 @@ export class DocumentComponent
   paddingLeft: string;
   zoomLevel: number;
   docUpdating = false;
+  user: UserDetails;
   private bookmarkMutationObserver?: MutationObserver;
   private destroy$: Subject<any> = new Subject();
   private isCNInstance = false;
@@ -83,6 +86,7 @@ export class DocumentComponent
     private milestoneService: ProposalMilestonesService,
     private domSanitizer: DomSanitizer,
     private loadingService: LoadingService,
+    private store: Store<any>
   ) {
     this.waitUntil = (condition) => {
       return new Promise<void>((resolve, reject) => {
@@ -122,6 +126,11 @@ export class DocumentComponent
           this.changeDetectorRef.markForCheck();
         }
       });
+
+    this.store
+      .select(getUserDetails)
+      .pipe(take(1))
+      .subscribe((state) => (this.user = state));
   }
 
   ngOnDestroy(): void {
@@ -228,6 +237,11 @@ export class DocumentComponent
               this.tableOfContentService.reload();
               this.ckeditorService.refreshStateSpecificConnectors();
             } else {
+
+              if (coEditionUpdate.user.login !== this.user.login){
+                this.tableOfContentService.showRefreshWarning();
+              }
+
               const ckeditorsOpen = this.document.querySelectorAll('.cke_editable');
               if (!ckeditorsOpen || ckeditorsOpen.length === 0) {
                 this.documentService.reloadDocument();

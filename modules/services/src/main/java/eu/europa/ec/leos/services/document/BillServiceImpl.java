@@ -180,6 +180,16 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     @Override
+    public Bill updateBill(String id, byte[] updatedContent, boolean updateInternalRefs, VersionType versionType, String comment) {
+        LOG.trace("Updating Bill content... [id={}, versionType={}, comment={}]", id, versionType, comment);
+        Bill bill = billRepository.updateBill(id, updatedContent, versionType, comment);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(bill);
+        }
+        return bill;
+    }
+
+    @Override
     public Bill updateBill(Bill bill, BillMetadata updatedMetadata, byte[] updatedContent, VersionType versionType, String comment, boolean updateInternalRefs) {
         LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
         Stopwatch stopwatch = Stopwatch.createStarted();

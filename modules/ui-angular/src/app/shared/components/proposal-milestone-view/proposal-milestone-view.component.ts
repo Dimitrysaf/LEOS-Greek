@@ -88,6 +88,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   isTocPaneCollapsed = false;
   isAnnotationsPaneCollapsed = false;
+  isProcessing = false;
 
   hiddenCategories = [
     ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec'
@@ -354,7 +355,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   shouldDisableButtons(): boolean {
     const doc = this.documents[this.activeTabIndex];
-    return !this.permissions.includes('CAN_UPDATE') || (doc.state === 'Accepted_Added'
+    return this.isProcessing || !this.permissions.includes('CAN_UPDATE') || (doc.state === 'Accepted_Added'
     || doc.state === 'Accepted_Deleted'
     || doc.state === 'Rejected_Added'
     || doc.state === 'Rejected_Deleted');
@@ -370,59 +371,94 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   }
 
   handleAcceptReject(doc: MilestoneDocument, accept: boolean) {
+    if (this.isProcessing) return;
+    this.isProcessing = true;
+
     this.tmpSelectedTab = this.activeTabIndex;
     if (accept) {
       if (!this.evaluateState(doc.state)) {
         if (doc.type === 'STAT_DIGIT_FINANC_LEGIS') {
-          this.dialogService.openDialog({
-            title: this.translateService.instant(
-              'page.collection.drafts.financial-statement.delete.confirm-dialog.title',
-            ),
-            content: this.translateService.instant(
-              'page.collection.drafts.financial-statement.delete.confirm-dialog.body',
-            ),
-            acceptLabel: this.translateService.instant('global.actions.delete'),
-            accept: () => {
-              this.doAccept();
-            },
-          });
+          this.handleDeleteConfirmFinanceLegisDelete();
         } else {
-          this.confirmDeleteAnnex.deleteDialog.openDialog();
+          this.handleDeleteConfirmOthers();
         }
       } else {
         this.doAccept();
       }
     } else {
-      this.milestonesService.handleReject(this.milestone.proposalRef, this.parentLegDocumentId, this.milestone.legDocumentName, this.evaluateState(doc.state), doc.ref).subscribe({
-        next: (milestoneViewResponse: MilestoneViewResponse) => {
-          this.handleMilestoneExplorerDocuments(milestoneViewResponse, this.hiddenCategories);
-          this.setActiveTab(this.tmpSelectedTab);
-          this.appShell.growl({
-            severity: 'success',
-            summary: this.translateService.instant('global.notifications.title.success'),
-            detail: this.translateService.instant(
-              'page.collection.milestone-view-dialog.handle-doc.processed',
-            ),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-        error: (res) => {
-          this.appShell.growl({
-            severity: 'danger',
-            summary: this.translateService.instant(
-              'page.collection.milestone-view-dialog.handle-doc.error',
-            ),
-            detail: res,
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-
-          });
-        }
-      });
+      this.doReject(doc);
     }
+  }
+
+  doReject(doc: MilestoneDocument,) {
+    this.milestonesService.handleReject(this.milestone.proposalRef, this.parentLegDocumentId, this.milestone.legDocumentName, this.evaluateState(doc.state), doc.ref).subscribe({
+      next: (milestoneViewResponse: MilestoneViewResponse) => {
+        this.handleMilestoneExplorerDocuments(milestoneViewResponse, this.hiddenCategories);
+        this.setActiveTab(this.tmpSelectedTab);
+        this.appShell.growl({
+          severity: 'success',
+          summary: this.translateService.instant('global.notifications.title.success'),
+          detail: this.translateService.instant(
+            'page.collection.milestone-view-dialog.handle-doc.processed',
+          ),
+          life: 3000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+        });
+        this.isProcessing = false;
+      },
+      error: (res) => {
+        this.appShell.growl({
+          severity: 'danger',
+          summary: this.translateService.instant(
+            'page.collection.milestone-view-dialog.handle-doc.error',
+          ),
+          detail: res,
+          life: 3000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+
+        });
+        this.isProcessing = false;
+      }
+    });
+
+  }
+
+  handleDeleteConfirmFinanceLegisDelete() {
+    this.dialogService.openDialog({
+      title: this.translateService.instant(
+        'page.collection.drafts.financial-statement.delete.confirm-dialog.title',
+      ),
+      content: this.translateService.instant(
+        'page.collection.drafts.financial-statement.delete.confirm-dialog.body',
+      ),
+      acceptLabel: this.translateService.instant('global.actions.delete'),
+      accept: () => {
+        this.doAccept();
+      },
+      dismiss: () => {
+        this.isProcessing = false;
+      },
+      close: () => {
+        this.isProcessing = false;
+      }
+    });
+
+  }
+
+  handleDeleteConfirmOthers() {
+    const dialogComp = this.confirmDeleteAnnex.deleteDialog;
+
+    dialogComp.dismiss.subscribe(() => {
+      this.isProcessing = false;
+    });
+
+    dialogComp.dialogClose.subscribe(() => {
+      this.isProcessing = false;
+    });
+
+    dialogComp.openDialog();
   }
 
   doAccept() {
@@ -441,6 +477,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           isGrowlSticky: false,
           position: 'bottom-right',
         });
+        this.isProcessing = false;
       },
       error: (res) => {
         this.appShell.growl({
@@ -454,6 +491,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           position: 'bottom-right',
 
         });
+        this.isProcessing = false;
       },
     });
   }
