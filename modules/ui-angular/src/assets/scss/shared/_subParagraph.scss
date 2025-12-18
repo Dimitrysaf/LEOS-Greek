@@ -47,7 +47,7 @@ $LIST_SPACING: 40px;
 %padSubParagraph {
   // pad all subparagraphs of numbered paragraphs, except the first one which is already padded by the number tag
   & > num ~ subparagraph:not([leos\:action-enter="insert"]) > content > p::before,
-  & > num ~ subparagraph:not([leos\:action-enter="insert"]) > content > aknp::before {
+  & > num ~ subparagraph:not([leos\:action-enter="insert"]):not([leos\:action-number="insert"]) > content > aknp::before {
     @extend %padRight;
   }
   & > num ~ subparagraph[leos\:action-enter="insert"] > content > p::before,

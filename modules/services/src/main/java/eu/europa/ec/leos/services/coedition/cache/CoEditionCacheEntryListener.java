@@ -53,9 +53,24 @@ public class CoEditionCacheEntryListener implements EntryAddedListener<Object, O
 
     @Override
     public void entryAdded(EntryEvent<Object, Object> event) {
+        LOG.info("CoEdition entry ADDED - Key: {}, Value: {}, Member: {}",
+                event.getKey(), event.getValue(), event.getMember());
+
+        boolean isLocalEvent = event.getMember().localMember();
+        LOG.info("Event is local: {}", isLocalEvent);
+
+        if (this.getCoEditionService() == null){
+            LOG.info("CoEdition service is NULL");
+        }
+        if (this.getSimpMessagingTemplate() == null){
+            LOG.info("SimpMessagingTemplate is NULL");
+        }
+
         if ((this.getCoEditionService() != null) && (this.getSimpMessagingTemplate() != null)) {
             // On server startup (bootstrap) spring context might not be available
             CoEditionVO addedInfo = (CoEditionVO) event.getValue();
+            LOG.info("CoEdition entry ADDED - Key: {}, Value: {}, Member: {}",
+                    event.getKey(), event.getValue(), event.getMember());
             LOG.debug("Cache event - 'entryAdded' for " + addedInfo.getInfoType().toString() + " " +
                     addedInfo.getDocumentId() + " " + addedInfo.getElementId());
             CoEditionActionInfo actionInfo = new CoEditionActionInfo(true, CoEditionActionInfo.Operation.STORE, addedInfo,
@@ -67,8 +82,12 @@ public class CoEditionCacheEntryListener implements EntryAddedListener<Object, O
 
     @Override
     public void entryRemoved(EntryEvent<Object, Object> event) {
+        LOG.info("CoEdition entry REMOVED - Key: {}, Value: {}, Member: {}",
+                event.getKey(), event.getOldValue(), event.getMember());
         if ((this.getCoEditionService() != null) && (this.getSimpMessagingTemplate() != null)) {
             CoEditionVO removedInfo = (CoEditionVO) event.getOldValue();
+            LOG.info("CoEdition entry REMOVED - Key: {}, Value: {}, Member: {}",
+                    event.getKey(), event.getOldValue(), event.getMember());
             LOG.debug("Cache event - 'entryRemoved' for " + removedInfo.getInfoType().toString() + " " +
                     removedInfo.getDocumentId() + " " + removedInfo.getElementId());
             CoEditionActionInfo actionInfo = new CoEditionActionInfo(true, CoEditionActionInfo.Operation.REMOVE, removedInfo,
@@ -81,8 +100,12 @@ public class CoEditionCacheEntryListener implements EntryAddedListener<Object, O
     @Override
     public void entryUpdated(EntryEvent<Object, Object> event) {
         // Updated entries are treated the same as added entries (like in the original EhCache implementation)
+        LOG.info("CoEdition entry UPDATED - Key: {}, OldValue: {}, NewValue: {}, Member: {}",
+                event.getKey(), event.getOldValue(), event.getValue(), event.getMember());
         if ((this.getCoEditionService() != null) && (this.getSimpMessagingTemplate() != null)) {
             CoEditionVO updatedInfo = (CoEditionVO) event.getValue();
+            LOG.info("CoEdition entry UPDATED - Key: {}, OldValue: {}, NewValue: {}, Member: {}",
+                    event.getKey(), event.getOldValue(), event.getValue(), event.getMember());
             LOG.debug("Cache event - 'entryUpdated' for " + updatedInfo.getInfoType().toString() + " " +
                     updatedInfo.getDocumentId() + " " + updatedInfo.getElementId());
             CoEditionActionInfo actionInfo = new CoEditionActionInfo(true, CoEditionActionInfo.Operation.STORE, updatedInfo,
@@ -94,9 +117,13 @@ public class CoEditionCacheEntryListener implements EntryAddedListener<Object, O
 
     @Override
     public void entryEvicted(EntryEvent<Object, Object> event) {
+        LOG.info("CoEdition entry EVICTED - Key: {}, Member: {}",
+                event.getKey(), event.getMember());
         // Evicted entries are treated the same as removed entries (like in the original EhCache implementation)
         if ((this.getCoEditionService() != null) && (this.getSimpMessagingTemplate() != null)) {
             CoEditionVO evictedInfo = (CoEditionVO) event.getOldValue();
+            LOG.info("CoEdition entry EVICTED - Key: {}, Member: {}",
+                    event.getKey(), event.getMember());
             LOG.debug("Cache event - 'entryEvicted' for " + evictedInfo.getInfoType().toString() + " " +
                     evictedInfo.getDocumentId() + " " + evictedInfo.getElementId());
             CoEditionActionInfo actionInfo = new CoEditionActionInfo(true, CoEditionActionInfo.Operation.REMOVE, evictedInfo,
@@ -108,9 +135,13 @@ public class CoEditionCacheEntryListener implements EntryAddedListener<Object, O
 
     @Override
     public void entryExpired(EntryEvent<Object, Object> event) {
+        LOG.info("CoEdition entry EXPIRED - Key: {}, Member: {}",
+                event.getKey(), event.getMember());
         // Expired entries are treated the same as removed entries (like in the original EhCache implementation)
         if ((this.getCoEditionService() != null) && (this.getSimpMessagingTemplate() != null)) {
             CoEditionVO expiredInfo = (CoEditionVO) event.getOldValue();
+            LOG.info("CoEdition entry EXPIRED - Key: {}, Member: {}",
+                    event.getKey(), event.getMember());
             LOG.debug("Cache event - 'entryExpired' for " + expiredInfo.getInfoType().toString() + " " +
                     expiredInfo.getDocumentId() + " " + expiredInfo.getElementId());
             CoEditionActionInfo actionInfo = new CoEditionActionInfo(true, CoEditionActionInfo.Operation.REMOVE, expiredInfo,

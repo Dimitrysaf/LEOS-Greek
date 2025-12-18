@@ -20,7 +20,7 @@
 
     <groupId>eu.europa.ec.leos.pilot</groupId>
     <artifactId>leos</artifactId>
-    <version>5.3.1-SNAPSHOT</version>
+    <version>5.3.0</version>
     <packaging>pom</packaging>
 
     <name>LEOS Pilot</name>
@@ -171,6 +171,7 @@
         <sonar-jacoco-plugin.version>0.8.14</sonar-jacoco-plugin.version>
         <!-- Hazelcast -->
         <hazelcast.version>5.6.0</hazelcast.version>
+        <spring-session-hazelcast.version>3.5.3</spring-session-hazelcast.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -560,6 +561,11 @@
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast-spring</artifactId>
                 <version>${hazelcast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.session</groupId>
+                <artifactId>spring-session-hazelcast</artifactId>
+                <version>${spring-session-hazelcast.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
