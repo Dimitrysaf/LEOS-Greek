@@ -50,6 +50,17 @@ public class EditionInfoRepositoryImpl implements EditionInfoRepository {
 
     @Override
     public CoEditionVO store(CoEditionVO editionVo) {
+        IMap<Object, Object> nativeMap = (IMap<Object, Object>) coEditionCache.getNativeCache();
+
+        // Log cluster info before storing
+        LOG.info("=== Storing CoEdition data ===");
+        LOG.info("Document: {}, Element: {}, User: {}",
+                editionVo.getDocumentId(), editionVo.getElementId(), editionVo.getUserName());
+        LOG.info("Current cluster size: {}", nativeMap.getLocalMapStats().getBackupCount() + 1);
+        LOG.info("This pod: {}", nativeMap.getLocalMapStats().getOwnedEntryCount());
+        LOG.info("Backup count: {}", nativeMap.getLocalMapStats().getBackupCount());
+        LOG.info("==============================");
+
         coEditionCache.put(editionVo.getDocumentId() + "_" + UUID.randomUUID(), editionVo);
         return editionVo;
     }

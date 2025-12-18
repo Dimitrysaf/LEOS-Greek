@@ -137,6 +137,7 @@ public class TableOfContentItemVO implements Serializable {
     private boolean isSoleNumbered;
 
     private Boolean deletable;
+    private Boolean changedNode;
 
     public TableOfContentItemVO() {
         super();
@@ -880,4 +881,11 @@ public class TableOfContentItemVO implements Serializable {
         this.deletable = deletable;
     }
 
+    public Boolean getChangedNode() {
+        return changedNode;
+    }
+
+    public void setChangedNode(Boolean changedNode) {
+        this.changedNode = changedNode;
+    }
 }

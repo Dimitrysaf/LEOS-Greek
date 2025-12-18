@@ -12,19 +12,18 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
 
 @Configuration
 @EnableCaching
+@EnableHazelcastHttpSession
 public class HazelcastCacheConfig {
 
-    @Value("${leos.hazelcast.multicast.enabled:true}")
-    private Boolean multicastEnabled;
+    @Value("${leos.hazelcast.kubernetes.enabled:true}")
+    private Boolean kubernetesEnabled;
 
-    @Value("${leos.hazelcast.multicast.addr:224.0.0.1}")
-    private String multicastAddress;
-
-    @Value("${leos.hazelcast.multicast.port:45000}")
-    private int multicastPort;
+    @Value("${leos.hazelcast.k8s.namespace:legiswrite2-acceptance-cloud-tc-00}")
+    private String k8sNamespace;
 
     @Value("${leos.hazelcast.instance.name:leos-hazelcast-instance}")
     private String instanceName;
@@ -42,24 +41,19 @@ public class HazelcastCacheConfig {
         networkConfig.setPort(hazelcastPort);
         networkConfig.setPortAutoIncrement(true);
 
-        // Join configuration using the same multicast settings as JGroups
+        // Join configuration
         JoinConfig joinConfig = networkConfig.getJoin();
-
-        if (Boolean.TRUE.equals(multicastEnabled)) {
-            joinConfig.getMulticastConfig()
-                    .setEnabled(true)
-                    .setMulticastGroup(multicastAddress)
-                    .setMulticastPort(multicastPort);
-        }
-        else{
-            joinConfig.getMulticastConfig()
-                    .setEnabled(false);
-        }
-
-        // Disable other join methods
+        joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
         joinConfig.getAwsConfig().setEnabled(false);
-        joinConfig.getKubernetesConfig().setEnabled(false);
+
+        if (Boolean.TRUE.equals(kubernetesEnabled)) {
+            joinConfig.getKubernetesConfig()
+                    .setEnabled(true)
+                    .setProperty("namespace", k8sNamespace);
+        } else {
+            joinConfig.getKubernetesConfig().setEnabled(false);
+        }
 
         // Configure individual caches based on old EhCache configuration
         configureUserCaches(config);
@@ -68,6 +62,7 @@ public class HazelcastCacheConfig {
         configureSearchCaches(config);
         configureRepositoryCaches(config);
         configureCoEditionCache(config);
+        configureSessionCache(config);
 
         return config;
     }
@@ -237,5 +232,36 @@ public class HazelcastCacheConfig {
         coEditionCache.addEntryListenerConfig(listenerConfig);
 
         config.addMapConfig(coEditionCache);
+
+        // Update elements broadcast cache
+        MapConfig updateElementsCache = new MapConfig("updateElementsCache");
+        updateElementsCache.setBackupCount(0);
+        updateElementsCache.setTimeToLiveSeconds(5);
+        EntryListenerConfig updateListener = new EntryListenerConfig(
+                "eu.europa.ec.leos.services.dto.coedition.UpdateElementsListener",
+                false, true
+        );
+        updateElementsCache.addEntryListenerConfig(updateListener);
+        config.addMapConfig(updateElementsCache);
+
+        // Update document broadcast cache
+        MapConfig updateDocumentCache = new MapConfig("updateDocumentCache");
+        updateDocumentCache.setBackupCount(0);
+        updateDocumentCache.setTimeToLiveSeconds(5);
+        EntryListenerConfig updateDocListener = new EntryListenerConfig(
+                "eu.europa.ec.leos.services.dto.coedition.UpdateDocumentListener",
+                false, true
+        );
+        updateDocumentCache.addEntryListenerConfig(updateDocListener);
+        config.addMapConfig(updateDocumentCache);
+    }
+
+    // Spring Session cache configuration
+    private void configureSessionCache(Config config) {
+        MapConfig sessionCache = new MapConfig("spring:session:sessions");
+        sessionCache.setBackupCount(1);
+        sessionCache.setAsyncBackupCount(1);
+        sessionCache.setMaxIdleSeconds(1800); // 30 minutes
+        config.addMapConfig(sessionCache);
     }
 }

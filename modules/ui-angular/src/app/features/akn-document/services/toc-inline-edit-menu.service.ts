@@ -533,6 +533,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
   ) {
     const currentTree = this.tocService.getCurrentToc();
     item.trackChangeAction = LEOS_TC_DELETE_ACTION;
+    item.changedNode = true;
     this.tocEditService.setTreeHistory(currentTree);
     this.tocEditService.deleteItem(newTree, item);
     this.tocEditService.setTree(newTree);

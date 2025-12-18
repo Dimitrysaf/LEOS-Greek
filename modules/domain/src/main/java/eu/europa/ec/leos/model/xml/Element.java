@@ -1,8 +1,10 @@
 package eu.europa.ec.leos.model.xml;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Element {
+public class Element implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private String elementId;
 	private String elementTagName;

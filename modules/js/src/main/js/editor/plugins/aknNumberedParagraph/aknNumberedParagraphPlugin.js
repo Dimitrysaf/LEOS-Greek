@@ -25,6 +25,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
+    var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
 
     var DATA_INDENT_ACTION = "data-indent-action";
     var LEOS_INDENT_ACTION = "leos:data-indent-action";
@@ -129,6 +130,7 @@ define(function aknNumberedParagraphPluginModule(require) {
             editor.on("beforeCommandExec", _transformSubparagraphs, null, null, 0);
             editor.on("afterCommandExec", _checkParagraphsStructureAfterInsertSubparagraph, null, null, 100);
             editor.on("change", _transformSubparagraphs, null, null, 100);
+            editor.on("change", _checkDuplicateIds, null, null, 110);
             editor.on("receiveData", _startObservingAllParagraphs);
             editor.on("focus", _setCurrentParaMode, null, paraCommand);
             editor.on("dataReady", _setCurrentParaMode, null, paraCommand);
@@ -408,6 +410,52 @@ define(function aknNumberedParagraphPluginModule(require) {
         }
     }
 
+    function _checkDuplicateIds(event) {
+        if (event.editor.checkDirty()) {
+            event.editor.fire('lockSnapshot');
+            var jqEditor = $(event.editor.editable().$);
+
+            var ols = jqEditor.find("ol");
+            for (var i = 0; i < ols.length; i++) {
+                var idAttrValue = ols[i].getAttribute("id");
+                var isAlternativeArticle = hasSameIdAsParentAlternativeArticle(ols[i]);
+                if (idAttrValue && !isAlternativeArticle && $('[id="' + idAttrValue + '"]').length > 1) {
+                    idAttrValue = identityHandler.generateId();
+                    ols[i].setAttribute("id", idAttrValue);
+                }
+                var listItems = ols[i].children;
+                for (var jj = 0; jj < listItems.length; jj++) {
+                    idAttrValue = listItems[jj].getAttribute("id");
+                    if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
+                        idAttrValue = identityHandler.generateId();
+                        listItems[jj].setAttribute("id", idAttrValue);
+                    }
+                    idAttrValue = listItems[jj].getAttribute("data-akn-num-id");
+                    if (idAttrValue && $('[data-akn-num-id="' + idAttrValue + '"]').length > 1) {
+                        idAttrValue = identityHandler.generateId();
+                        listItems[jj].setAttribute("data-akn-num-id", idAttrValue);
+                    }
+
+                }
+            }
+            event.editor.fire( 'unlockSnapshot' );
+        }
+    }
+
+    function hasSameIdAsParentAlternativeArticle($ol) {
+        // Ensure we have a jQuery object
+        if (!($ol instanceof jQuery)) {
+            $ol = $($ol);
+        }
+        const $parent = $ol.parent('article');
+        // Check: parent exists, has leos:alternative="true", and same id
+        return (
+            $parent.length &&
+            $parent.attr('leos:alternative') === 'true' &&
+            $ol.attr('id') === $parent.attr('id')
+        );
+    }
+
     // This method transforms subparagraphs into paragraphs when included in unnumbered paragraphs: ol/li/p to ol/li
     var transformSubparagraphs = function transformSubparagraphs(editor) {
         // transforms subparagraphs to paragraphs
@@ -451,6 +499,8 @@ define(function aknNumberedParagraphPluginModule(require) {
                                     if (paragraphNode.getAttribute('title-number')) {
                                         currentNode.setAttribute('title-number', paragraphNode.getAttribute('title-number'));
                                     }
+                                    paragraphNode.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                                    paragraphNode.removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
                                 }
 
                                 currentNode.setAttribute(DATA_AKN_ATTR_SOFTACTION, TRANSFORMED);
