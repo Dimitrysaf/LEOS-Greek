@@ -274,6 +274,7 @@ public class AnnexContextService {
                 .withType(type)
                 .withTemplate(template)
                 .withPackageRef(packageRef)
+                .withRef(originRef)
                 .withCustomTemplateAct(customTemplateAct)
                 .build();
 

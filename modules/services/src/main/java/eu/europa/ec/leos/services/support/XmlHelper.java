@@ -289,6 +289,7 @@ public class XmlHelper {
     public static final String STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX = "STAT_DIGIT_FINANC_LEGIS";
     public static final String PROPOSAL_FILE = "main";
     public static final String PROP_ACT = "PROP_ACT";
+    public static final String ACT_AUTO_COM = "ACT_AUTO_COM";
     public static final String COUNCIL_EXPLANATORY = "EXPL_COUNCIL";
     public static final String STAT_DIGIT_FINANC_LEGIS = "STAT_DIGIT_FINANC_LEGIS";
 

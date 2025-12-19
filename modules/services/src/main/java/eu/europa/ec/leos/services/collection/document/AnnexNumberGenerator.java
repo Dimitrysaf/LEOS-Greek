@@ -10,23 +10,22 @@ public class AnnexNumberGenerator {
 
 	private AnnexNumberGenerator(){
 	}
-	private static final String ANNEX_TITLE_PREFIX = "Annex";
 
 	/**
 	 * @param number
 	 *            number for conversion
 	 * @return Roman Number
 	 */
-	public static String getAnnexNumber(int number) {
+	public static String getAnnexNumber(String annexTitlePrefix, int number) {
 		try {
 			if (number == 0) {
-				return ANNEX_TITLE_PREFIX;
+				return annexTitlePrefix;
 			} else {
-				return ANNEX_TITLE_PREFIX +" "+ RomanNumeral.asRomanNumerals(number);
+				return annexTitlePrefix +" "+ RomanNumeral.asRomanNumerals(number);
 			}
 		} catch (NumberFormatException exception) {
 			// If number of outside limit of 1-3999, decimal number will be returned
-			return ANNEX_TITLE_PREFIX +" " +number;
+			return annexTitlePrefix +" " +number;
 		}
 	}
 

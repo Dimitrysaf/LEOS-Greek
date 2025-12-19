@@ -604,7 +604,7 @@ public class BillContextService {
                 affectedAnnexContext.useAnnexId(annex.getId());
                 affectedAnnexContext.useIndex(index == 1 ? index : index - 1);
                 affectedAnnexContext.useActionMessageMap(actionMsgMap);
-                String affectedAnnexNumber = AnnexNumberGenerator.getAnnexNumber(annexes.size() == 1 ? 0 : index - 1);
+                String affectedAnnexNumber = getAnnexNumber(annexes.size() == 1 ? 0 : index - 1);
                 affectedAnnexContext.useAnnexNumber(affectedAnnexNumber);
                 affectedAnnexContext.executeUpdateAnnexIndex();
                 attachments.put(annex.getName(), affectedAnnexNumber);
@@ -624,6 +624,7 @@ public class BillContextService {
         annexContext.usePackage(leosPackage);
         annexContext.usePurpose(purpose);
         annexContext.useTemplate(annexTemplate);
+        annexContext.useLanguage(language);
         annexContext.useCustomTemplateAct(customTemplateAct);
         // we are using the same template for the annexes for sj-23 and sj19, the only change is this type. that's why we get it form the bill.
         Option<BillMetadata> metadataOption = bill.getMetadata();
@@ -633,7 +634,7 @@ public class BillContextService {
         // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         int annexIndex = annexes.size() + 1;
-        String annexNumber = AnnexNumberGenerator.getAnnexNumber(annexes.isEmpty() ? annexes.size() : annexIndex);
+        String annexNumber = getAnnexNumber(annexes.isEmpty() ? 0 : annexIndex);
         annexContext.useIndex(annexIndex);
         annexContext.useCollaborators(bill.getCollaborators());
         annexContext.useActionMessageMap(actionMsgMap);
@@ -662,7 +663,7 @@ public class BillContextService {
             annexContext.useIndex(firstIndex);
             annexContext.useCollaborators(bill.getCollaborators());
             annexContext.useActionMessageMap(actionMsgMap);
-            String firstAnnexNumber = AnnexNumberGenerator.getAnnexNumber(firstIndex);
+            String firstAnnexNumber = getAnnexNumber(firstIndex);
             annexContext.useAnnexNumber(firstAnnexNumber);
             annexContext.executeUpdateAnnexIndex();
             HashMap<String, String> attachmentsElements = new HashMap<>();
@@ -769,7 +770,7 @@ public class BillContextService {
         operatedAnnexContext.useAnnexId(operatedAnnex.getId());
         operatedAnnexContext.useIndex(affectedAnnex.getMetadata().get().getIndex());
         operatedAnnexContext.useActionMessageMap(actionMsgMap);
-        String operatedAnnexNumber = AnnexNumberGenerator.getAnnexNumber(affectedAnnex.getMetadata().get().getIndex());
+        String operatedAnnexNumber = getAnnexNumber(affectedAnnex.getMetadata().get().getIndex());
         operatedAnnexContext.useAnnexNumber(operatedAnnexNumber);
         operatedAnnexContext.executeUpdateAnnexIndex();
 
@@ -777,7 +778,7 @@ public class BillContextService {
         affectedAnnexContext.useAnnexId(affectedAnnex.getId());
         affectedAnnexContext.useIndex(currentIndex);
         affectedAnnexContext.useActionMessageMap(actionMsgMap);
-        String affectedAnnexNumber = AnnexNumberGenerator.getAnnexNumber(currentIndex);
+        String affectedAnnexNumber = getAnnexNumber(currentIndex);
         affectedAnnexContext.useAnnexNumber(affectedAnnexNumber);
         affectedAnnexContext.executeUpdateAnnexIndex();
 
@@ -797,7 +798,7 @@ public class BillContextService {
 
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         Annex operatedAnnex = findAnnexFromIndex(annexes, annexPreviousIndex);
-        String operatedAnnexNumber  = AnnexNumberGenerator.getAnnexNumber(annexNextIndex);
+        String operatedAnnexNumber  = getAnnexNumber(annexNextIndex);
 
         moveDirection = annexPreviousIndex < annexNextIndex ? "UP" : "DOWN";
         HashMap<String, String> attachments = new HashMap<>();
@@ -805,7 +806,7 @@ public class BillContextService {
             // Updating annexes between previous position and next position => Decrease them by one
             for (int i = annexPreviousIndex + 1 ; i <= annexNextIndex; i++) {
                 Annex affectedAnnex = findAnnexFromIndex(annexes, i);
-                String affectedAnnexNewNumber  = AnnexNumberGenerator.getAnnexNumber(i-1);
+                String affectedAnnexNewNumber = getAnnexNumber(i-1);
                 AnnexContextService affectedAnnexContext = annexContextProvider.get();
                 affectedAnnexContext.useAnnexId(affectedAnnex.getId());
                 affectedAnnexContext.useIndex(i-1);
@@ -818,7 +819,7 @@ public class BillContextService {
             // Updating annexes between next position and previous position => Increase them by one
             for (int i = annexPreviousIndex - 1; i >= annexNextIndex; i--) {
                 Annex affectedAnnex = findAnnexFromIndex(annexes, i);
-                String affectedAnnexNewNumber  = AnnexNumberGenerator.getAnnexNumber(i+1);
+                String affectedAnnexNewNumber = getAnnexNumber(i+1);
                 AnnexContextService affectedAnnexContext = annexContextProvider.get();
                 affectedAnnexContext.useAnnexId(affectedAnnex.getId());
                 affectedAnnexContext.useIndex(i+1);
@@ -916,7 +917,7 @@ public class BillContextService {
         AnnexContextService annexContext = annexContextProvider.get();
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         int annexIndex = annexes.size() + 1;
-        String annexNumber = AnnexNumberGenerator.getAnnexNumber(annexIndex);
+        String annexNumber = getAnnexNumber(annexIndex);
         annexContext.useActionMessage(ContextActionService.ANNEX_BLOCK_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
         this.annexDocument.getMetadata().setNumber(annexNumber);
         this.annexDocument.getMetadata().setIndex(String.valueOf(annexIndex));
@@ -936,6 +937,11 @@ public class BillContextService {
     private byte[] getContent(Bill bill) {
         final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
         return content.getSource().getBytes();
+    }
+
+    private String getAnnexNumber(int number) {
+        String annexTitlePrefix = messageHelper.getMessage("document.annex.title.prefix");
+        return AnnexNumberGenerator.getAnnexNumber(annexTitlePrefix, number);
     }
 
     public void useLanguage(String language) {

@@ -182,15 +182,17 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         return new CustomTemplateInfoResponse(templateName, templateVisibility);
     }
 
-    public void alignDocumentsFromBaseVersion(List<XmlDocument> sourceXmlDocs, List<XmlDocument> targetXmlDocs, DocumentVO documentToAlignWith, String ref) {
+    public void alignDocumentsFromBaseVersion(List<? extends XmlDocument> sourceXmlDocs, List<? extends XmlDocument> targetXmlDocs, DocumentVO documentToAlignWith, String ref) {
         sourceXmlDocs.stream().filter(doc -> VersionsUtil.BASE_VERSION.equals(doc.getVersionLabel())).forEach(sourceXmlDoc -> {
             try {
                 this.structureContext.get().useDocumentTemplate(sourceXmlDoc.getMetadata().get().getDocTemplate());
                 LeosCategory category = sourceXmlDoc.getCategory();
                 XmlDocument targetXmlDoc = targetXmlDocs.stream().filter(doc -> doc.getCategory().equals(category)).findAny()
                         .orElseThrow(() -> new IllegalArgumentException(category.toString() + " document not found"));
-                XmlDocument alignedTargetBaseDocument = alignWithBaseVersion(targetXmlDoc, sourceXmlDoc);
-                alignWithLatestMilestoneIfDifferentFromBase(sourceXmlDocs, sourceXmlDoc, alignedTargetBaseDocument, documentToAlignWith, category);
+                XmlDocument sourceXmlDocWithContent = leosRepository.findDocumentByVersion(XmlDocument.class, sourceXmlDoc.getMetadata().get().getRef(),
+                        VersionsUtil.BASE_VERSION);
+                XmlDocument alignedTargetBaseDocument = alignWithBaseVersion(targetXmlDoc, sourceXmlDocWithContent);
+                alignWithLatestMilestoneIfDifferentFromBase(sourceXmlDocs, sourceXmlDocWithContent, alignedTargetBaseDocument, documentToAlignWith, category);
             } catch (IllegalArgumentException e) {
                     LOG.error("{} in {} version", e.getMessage(), ref.substring(ref.lastIndexOf("-") + 1).toUpperCase());
             }
@@ -208,16 +210,19 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         );
     }
 
-    private void alignWithLatestMilestoneIfDifferentFromBase(List<XmlDocument> sourceXmlDocs, XmlDocument sourceBaseXmlDoc, XmlDocument targetXmlDoc,
+    private void alignWithLatestMilestoneIfDifferentFromBase(List<? extends XmlDocument> sourceXmlDocs, XmlDocument sourceBaseXmlDoc, XmlDocument targetXmlDoc,
             DocumentVO documentToAlignWith, LeosCategory category) {
         if (versionExistsBetweenBaseAndLatestMilestone(sourceXmlDocs, category)) {
             DocumentVO sourceDocument = documentToAlignWith;
             switch (category) {
+                case MEMORANDUM:
+                    sourceDocument = documentToAlignWith.getChildDocument(LeosCategory.MEMORANDUM);
+                    break;
                 case BILL:
                     sourceDocument = documentToAlignWith.getChildDocument(LeosCategory.BILL);
                     break;
-                case MEMORANDUM:
-                    sourceDocument = documentToAlignWith.getChildDocument(LeosCategory.MEMORANDUM);
+                case ANNEX:
+                    sourceDocument = documentToAlignWith.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX);
                     break;
             }
             byte[] sourceBaseXml = sourceBaseXmlDoc.getContent().get().getSource().getBytes();
@@ -225,7 +230,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         }
     }
 
-    private static boolean versionExistsBetweenBaseAndLatestMilestone(List<XmlDocument> sourceXmlDocs, LeosCategory category) {
+    private static boolean versionExistsBetweenBaseAndLatestMilestone(List<? extends XmlDocument> sourceXmlDocs, LeosCategory category) {
         return sourceXmlDocs.stream().filter(doc -> doc.getCategory().equals(category) && !doc.getVersionLabel().startsWith("0.0")).count() > 2;
     }
 
@@ -257,7 +262,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
 
     private void alignChildDocuments(DocumentVO sourceBaseDocument, DocumentVO sourceDocument, List<XmlDocument> targetXmlDocs) {
         sourceDocument.getChildDocuments().forEach(
-                childDocument -> sourceBaseDocument.getChildDocuments().stream().filter(doc -> doc.getCategory().equals(childDocument.getCategory())).findAny()
+                childDocument -> sourceBaseDocument.getChildDocuments().stream().filter(doc -> doc.getRef().equals(childDocument.getRef())).findAny()
                         .ifPresent(baseChildDocument -> alignDocument(baseChildDocument, childDocument, targetXmlDocs)));
     }
 

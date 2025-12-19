@@ -3204,28 +3204,45 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] alignBaseVersionDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException {
-        NodeList sourceNodes = getAllNodesWithId(sourceXmlDoc);
-
+        Document sourceDoc = getXercesDocument(sourceXmlDoc);
         Document targetDoc = getXercesDocument(targetXmlDoc);
-        NodeList targetNodes = getAllNodesWithId(targetDoc);
-
-        if (sourceNodes.getLength() == targetNodes.getLength()) {
-            for (int i = 0; i < sourceNodes.getLength(); i++) {
-                Node sourceNode = sourceNodes.item(i);
-                Node targetNode = targetNodes.item(i);
-                validateNodeAlignment(sourceXmlDoc, sourceNode, targetNode);
-                String sourceNodeId = getId(sourceNode);
-                setId(targetNode, sourceNodeId);
-            }
-        } else {
-            throw new IllegalArgumentException(sourceXmlDoc.getCategory().toString() + " document not structurally aligned");
-        }
+        Node attachmentsNode = removeAttachmentsIfExist(targetDoc);
+        alignAllIds(sourceDoc, targetDoc, sourceXmlDoc.getCategory().toString());
+        reinsertAttachments(targetDoc, attachmentsNode);
         return nodeToByteArray(targetDoc);
     }
 
-    private static NodeList getAllNodesWithId(XmlDocument xmlDoc) {
-        Document doc = getXercesDocument(xmlDoc);
-        return getAllNodesWithId(doc);
+    private Node removeAttachmentsIfExist(Document document) {
+        Node attachmentsNode = getFirstElementByXPath(document, xPathCatalog.getXPathAttachments());
+        return attachmentsNode != null ? deleteElement(attachmentsNode) : null;
+    }
+
+    private static void reinsertAttachments(Document document, Node attachmentsNode) {
+        if (attachmentsNode != null) {
+            Node billNode = getFirstElementByXPath(document, XPathCatalog.getXPathElement(BILL));
+            addChild(attachmentsNode, billNode);
+        }
+    }
+
+    private void alignAllIds(Node sourceDoc, Node targetDoc, String category) {
+        if (sourceDoc != null && targetDoc != null) {
+            NodeList sourceNodes = getAllNodesWithId(sourceDoc);
+            NodeList targetNodes = getAllNodesWithId(targetDoc);
+
+            if (sourceNodes.getLength() == targetNodes.getLength()) {
+                for (int i = 0; i < sourceNodes.getLength(); i++) {
+                    Node sourceNode = sourceNodes.item(i);
+                    Node targetNode = targetNodes.item(i);
+                    validateNodeAlignment(sourceNode, targetNode, category);
+                    String sourceNodeId = getId(sourceNode);
+                    setId(targetNode, sourceNodeId);
+                }
+            } else {
+                throw new IllegalArgumentException(category + " document not structurally aligned");
+            }
+        } else if (sourceDoc != null || targetDoc != null) {
+            throw new IllegalArgumentException(category + " document not structurally aligned");
+        }
     }
 
     private static NodeList getAllNodesWithId(Node node) {
@@ -3237,34 +3254,35 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return createXercesDocument(xmlContent);
     }
 
-    private void validateNodeAlignment(XmlDocument sourceXmlDoc, Node sourceNode, Node targetNode) throws IllegalArgumentException {
+    private void validateNodeAlignment(Node sourceNode, Node targetNode, String category) throws IllegalArgumentException {
         if (!sourceNode.getNodeName().equals(targetNode.getNodeName())
                 || !getFirstAscendantId(sourceNode).equals(getFirstAscendantId(targetNode))
                 || !getPreviousSiblingId(sourceNode).equals(getPreviousSiblingId(targetNode))) {
-            throw new IllegalArgumentException(sourceXmlDoc.getCategory().toString() + " document not structurally aligned");
+            throw new IllegalArgumentException(category + " document not structurally aligned");
         }
     }
 
     @Override
     public byte[] alignLatestVersionDocument(byte[] sourceXml, byte[] sourceBaseXml, XmlDocument targetXmlDoc) throws IllegalArgumentException {
+        Document sourceBaseDoc = createXercesDocument(sourceBaseXml);
         Document sourceDoc = createXercesDocument(sourceXml);
         Document targetDoc = getXercesDocument(targetXmlDoc);
 
         alignMetaNode(sourceDoc, targetDoc);
-        replaceUnchangedTextContentInSource(targetDoc, sourceDoc, sourceBaseXml);
+        replaceUnchangedTextContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
+        alignAttachmentsIds(sourceDoc, targetDoc);
 
         return nodeToByteArray(sourceDoc);
     }
 
     private static void alignMetaNode(Document sourceDoc, Document targetDoc) {
-        Node sourceMeta = getFirstElementByName(sourceDoc, "meta");
-        Node targetMeta = getFirstElementByName(targetDoc, "meta");
+        Node sourceMeta = getFirstElementByXPath(sourceDoc, XPathCatalog.getXPathElement(META));
+        Node targetMeta = getFirstElementByXPath(targetDoc, XPathCatalog.getXPathElement(META));
 
         removeDeletedNodes(targetMeta, sourceMeta);
         addNewNodes(sourceMeta, targetMeta);
 
-        Node importedNode = importNodeInDocument(sourceDoc, targetMeta);
-        XercesUtils.replaceElement(importedNode, sourceMeta);
+        importAndReplaceNodeInDocument(sourceDoc, sourceMeta, targetMeta);
     }
 
     private static void removeDeletedNodes(Node targetRootNode, Node sourceRootNode) {
@@ -3300,25 +3318,42 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private static void replaceUnchangedTextContentInSource(Document targetDoc, Document sourceDoc, byte[] sourceBaseXml) {
-        Document sourceBaseDoc = createXercesDocument(sourceBaseXml);
+    private static void importAndReplaceNodeInDocument(Document doc, Node originalNode, Node nodeToImport) {
+        if (originalNode != null && nodeToImport != null) {
+            Node importedNode = importNodeInDocument(doc, nodeToImport);
+            XercesUtils.replaceElement(importedNode, originalNode);
+        }
+    }
+
+    private static void replaceUnchangedTextContentInSourceDocByTarget(Document targetDoc, Document sourceDoc, Document sourceBaseDoc) {
         NodeList targetNodes = getAllNodesWithId(targetDoc);
         for (int i = 0; i < targetNodes.getLength(); i++) {
             Node targetNode = targetNodes.item(i);
             Node sourceNode = XercesUtils.getElementById(sourceDoc, getId(targetNode));
             if (sourceNode != null) {
                 Node sourceBaseNode = XercesUtils.getElementById(sourceBaseDoc, getId(targetNode));
-                List<Node> sourceTextNodes = getTextChildren(sourceNode);
-                List<Node> targetTextNodes = getTextChildren(targetNode);
-                if (sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
-                        .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining())) && sourceNode.getNodeName()
-                        .equals(targetNode.getNodeName()) && sourceTextNodes.size() == targetTextNodes.size()) {
-                    for (int j = 0; j < targetTextNodes.size(); j++) {
-                        String oldText = targetTextNodes.get(j).getTextContent();
-                        sourceTextNodes.get(j).setTextContent(oldText);
-                    }
-                }
+                replaceUnchangedTextContentInSourceNodeByTarget(sourceNode, targetNode, sourceBaseNode);
             }
         }
+    }
+
+    private static void replaceUnchangedTextContentInSourceNodeByTarget(Node sourceNode, Node targetNode, Node sourceBaseNode) {
+        List<Node> sourceTextNodes = getTextChildren(sourceNode);
+        List<Node> targetTextNodes = getTextChildren(targetNode);
+        if (sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
+                .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining())) && sourceNode.getNodeName()
+                .equals(targetNode.getNodeName()) && sourceTextNodes.size() == targetTextNodes.size()) {
+            for (int j = 0; j < targetTextNodes.size(); j++) {
+                String oldText = targetTextNodes.get(j).getTextContent();
+                sourceTextNodes.get(j).setTextContent(oldText);
+            }
+        }
+    }
+
+    private void alignAttachmentsIds(Document sourceDoc, Document targetDoc) {
+        Node sourceAttachmentsNode = getFirstElementByXPath(sourceDoc, xPathCatalog.getXPathAttachments());
+        Node targetAttachmentsNode = getFirstElementByXPath(targetDoc, xPathCatalog.getXPathAttachments());
+        alignAllIds(sourceAttachmentsNode, targetAttachmentsNode, LeosCategory.BILL.toString());
+        importAndReplaceNodeInDocument(sourceDoc, sourceAttachmentsNode, targetAttachmentsNode);
     }
 }
