@@ -5,5 +5,6 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PerformanceLogger {
-
+    String logLevel() default "INFO";
+    String tag() default "";
 }

@@ -17,13 +17,17 @@ package eu.europa.ec.leos.services.controllers;
 import com.google.common.eventbus.EventBus;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
+import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.rest.aop.annotation.PerformanceLogger;
 import eu.europa.ec.leos.security.AuthClient;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -46,6 +50,8 @@ import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ZipPackageUtil;
+import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
@@ -55,7 +61,7 @@ import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
-import org.apache.commons.io.FileUtils;
+import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -84,14 +90,15 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -104,9 +111,13 @@ import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileNameForBin
 import static eu.europa.ec.leos.services.support.XmlHelper.isValidSizeFileForBinaryFile;
 import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForBinaryFile;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileNameForZipFile;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidSizeFileForBinaryFile;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForLegFile;
 
 @RestController
 @RequestMapping
+@PerformanceLogger
 public class LeosApiController {
     private static final Logger LOG = LoggerFactory.getLogger(LeosApiController.class);
     private static final String ERROR_OCCURRED_WHILE_GETTING_DOCUMENT = "Error occurred while getting document ";
@@ -129,6 +140,8 @@ public class LeosApiController {
     private final ApiService apiService;
     private final UserService userService;
     private final CoEditionInfoHandler coEditionInfoHandler;
+    private ConValidatorService conValidatorService;
+    private NotificationService notificationService;
 
     private final ConfigService configService;
     private final SecurityContext securityContext;
@@ -151,7 +164,8 @@ public class LeosApiController {
                              CreateCollectionService createCollectionService, Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
                              SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
-                             DocumentContentService documentContentService) {
+                             DocumentContentService documentContentService, ConValidatorService conValidatorService,
+                             NotificationService notificationService) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -168,6 +182,8 @@ public class LeosApiController {
         this.userService = userService;
         this.coEditionInfoHandler = coEditionInfoHandler;
         this.documentContentService = documentContentService;
+        this.conValidatorService = conValidatorService;
+        this.notificationService = notificationService;
     }
 
     @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -218,7 +234,7 @@ public class LeosApiController {
             String accessToken = tokenService.getAccessToken(user, authClient); //TODO provide systemName
             JsonTokenReponse jsonToken = new JsonTokenReponse(accessToken, "jwt", expiresInMilliSec, null, null);
             tokenService.setAccessTokenMap(accessToken, jSessionId != null ? jSessionId.getValue() : null);
-            LOG.debug("Created accessToken for the Client '{}", authClient.getName());
+            LOG.debug("Created accessToken for the client {}", authClient.getName());
             return new ResponseEntity<>(jsonToken, HttpStatus.OK);
         } else {
             LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
@@ -400,15 +416,15 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/renditionfromleg", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getPdfFromLegFile(@RequestParam("legFile") MultipartFile legFile, @RequestParam("type") String type) {
-        File legFileTemp = null;
         try {
             final ExportOptions exportOptions = new ExportLW(type);
             exportOptions.setWithAnnotations(true);
 
             //create a temporary file with the bytes arrived as input
-            legFileTemp = File.createTempFile("tmp_", ".leg");
-            FileUtils.writeByteArrayToFile(legFileTemp, legFile.getBytes());
-            byte[] renditionFile = exportService.exportToToolboxCoDe(legFileTemp, exportOptions);
+            LeosFile leosFile = new LeosFile();
+            leosFile.generateFileName("tmp_", ".leg");
+            leosFile.setBytes(legFile.getBytes());
+            byte[] renditionFile = exportService.exportToToolboxCoDe(leosFile, exportOptions);
 
             HttpHeaders headers = new HttpHeaders();
             headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "TOOLBOX_RESULT_" + System.currentTimeMillis() + "\"");
@@ -420,13 +436,6 @@ public class LeosApiController {
             String errMsg = "Error occurred while creating rendition file: " + e.getMessage();
             LOG.error(errMsg, e);
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            if (legFileTemp != null && legFileTemp.exists()) {
-                boolean fileDeleted = legFileTemp.delete();
-                if (!fileDeleted) {
-                    LOG.warn("File not deleted");
-                }
-            }
         }
     }
 
@@ -458,10 +467,10 @@ public class LeosApiController {
         try {
             validatePath(file.getOriginalFilename());
             String pathname = applicationProperties.getProperty("leos.mandate.upload.path") + file.getOriginalFilename();
-            File content = new File(FilenameUtils.normalize(pathname));
+            LeosFile content = new LeosFile(FilenameUtils.normalize(pathname));
 
-            try (FileOutputStream fos = new FileOutputStream(content)) {
-                fos.write(file.getBytes());
+            try {
+                content.setBytes(file.getBytes());
             } catch (IOException ioe) {
                 LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -490,10 +499,10 @@ public class LeosApiController {
             connectedEntity = encodeParam(connectedEntity);
             iscRef = encodeParam(iscRef);
             validatePath(legFile.getOriginalFilename());
-            File content = new File(FilenameUtils.normalize(legFile.getOriginalFilename()));
+            LeosFile content = new LeosFile(FilenameUtils.normalize(legFile.getOriginalFilename()));
             userService.switchUser(user.getLogin());
-            try (FileOutputStream fos = new FileOutputStream(content)) {
-                fos.write(legFile.getBytes());
+            try {
+                content.setBytes(legFile.getBytes());
             } catch (IOException ioe) {
                 LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -549,8 +558,9 @@ public class LeosApiController {
     public ResponseEntity<Object> getProposalDetails(@PathVariable String proposalRef) {
         proposalRef = encodeParam(proposalRef);
         String userId = securityContext.getUser().getLogin();
-        Optional<DocumentVO> requestedProposal = apiService.getProposalDetails(proposalRef, userId);
+        Optional<ProposalDetailsVO> requestedProposal = apiService.getProposalDetails(proposalRef, userId);
         if (requestedProposal.isPresent()) {
+            LOG.info("Proposal with ref {} is opened by the user {}", proposalRef, securityContext.getUser().getLogin());
             return ResponseEntity.ok(requestedProposal.get());
         } else {
             return new ResponseEntity<>("No result found", HttpStatus.NOT_FOUND);
@@ -563,7 +573,9 @@ public class LeosApiController {
     public ResponseEntity<Object> downloadProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
-            return new ResponseEntity<>(apiService.downloadProposal(proposalRef), HttpStatus.OK);
+            byte[] proposal = apiService.downloadProposal(proposalRef);
+            LOG.info("Proposal with ref {} is downloaded by user {}", proposalRef, securityContext.getUser().getLogin());
+            return new ResponseEntity<>(proposal, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while downloading proposal", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -666,6 +678,7 @@ public class LeosApiController {
             proposalRef = encodeParam(proposalRef);
             annexRef = encodeParam(annexRef);
             apiService.deleteAnnex(proposalRef, annexRef);
+            LOG.info("Annex document with ref {} is deleted by user {}", annexRef, securityContext.getUser().getLogin());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error("Error occured while deleting proposal annex - " + e.getMessage());
@@ -754,6 +767,7 @@ public class LeosApiController {
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
             if (document != null) {
                 DocumentVO vo = new DocumentVO(document);
+                LOG.info("Document with doc ref {} is retrieved by the user {}: ", documentRef, securityContext.getUser().getLogin());
                 return new ResponseEntity<>(vo, HttpStatus.OK);
             }
         } catch (Exception e) {
@@ -767,8 +781,7 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> getConfig(HttpServletRequest request) {
         try {
-            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
-            AppConfigResponse appConfigResponse = configService.getApplicationConfig(clientContextToken);
+            AppConfigResponse appConfigResponse = configService.getApplicationConfig(request.getHeader(AUTHORIZATION));
             return new ResponseEntity<>(appConfigResponse, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());
@@ -862,4 +875,32 @@ public class LeosApiController {
             return new ResponseEntity<>("Unexpected error occurred while getting Html renditions", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/conValidation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> conValidation(@RequestParam("zipFile") MultipartFile zipFile, @RequestParam(name = "email", required = true) String email) {
+        try {
+            validatePath(FilenameUtils.normalize(zipFile.getOriginalFilename()));
+            if (!isValidFileNameForZipFile(zipFile.getOriginalFilename()) || !isValidSizeFileForBinaryFile(zipFile.getSize()) || !isValidMimeTypeForLegFile(zipFile.getBytes())) {
+                return new ResponseEntity<>("Invalid file", HttpStatus.BAD_REQUEST);
+            }
+            LeosFile receivedFile = new LeosFile();
+            receivedFile.setBytes(zipFile.getBytes());
+            receivedFile.setName(zipFile.getOriginalFilename());
+            receivedFile.setOriginalFileName(zipFile.getOriginalFilename());
+            LeosFile legFile = ZipPackageUtil.unzipFile(receivedFile, ZipPackageUtil.unzipFiles(receivedFile).entrySet().stream().filter(entry -> entry.getKey().toLowerCase().endsWith(".leg")).findFirst().get().getKey());
+            String validationResult = conValidatorService.validate(legFile);
+            Map<String, Object> contentToZip = new HashMap<>();
+            contentToZip.put("result.xml", validationResult);
+            contentToZip.put(legFile.getOriginalFileName(), legFile);
+            LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
+            notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e) {
+            LOG.error("Error occurred running conValidation - {}", e.getMessage());
+            return new ResponseEntity<>("Error occurred running conValidation", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

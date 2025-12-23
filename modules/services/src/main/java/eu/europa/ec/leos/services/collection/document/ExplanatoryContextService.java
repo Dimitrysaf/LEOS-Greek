@@ -189,9 +189,7 @@ public class ExplanatoryContextService {
         LOG.trace("Executing 'Update References On Explanatory' use case...");
         Validate.notNull(explanatory, "Explanatory is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
-        byte[] content = this.postProcessingDocumentService.updateReferences(explanatory.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
-        explanatoryService.updateExplanatory(explanatory, content, VersionType.MAJOR,
-                actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+        explanatoryService.updateReferencesAsync(explanatory, mapOldAndNewRefs, actionMsgMap);
     }
 
     public Explanatory executeCreateExplanatory() {

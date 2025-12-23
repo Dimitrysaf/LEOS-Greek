@@ -16,7 +16,6 @@ package eu.europa.ec.leos.services.document;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -27,7 +26,6 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.light.Profile;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import io.atlassian.fugue.Pair;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,11 +48,24 @@ public interface BillService {
 
     Bill updateBill(String id, byte[] updatedContent, boolean updateInternalRefs);
 
+    /**
+     * updates bill document  with the given content
+     * @param id the ID of the Bill
+     * @param updatedContent new updated content of the bill document
+     * @param updateInternalRefs to update internal references or not
+     * @param versionType new version type
+     * @param comment new comment
+     * @return bill document
+     */
+    Bill updateBill(String id, byte[] updatedContent, boolean updateInternalRefs, VersionType versionType, String comment);
+
     Bill updateBill(Bill bill, BillMetadata metadata, VersionType versionType, String actionMsg, boolean updateInternalRefs);
 
     Bill updateBill(Bill bill, byte[] updatedBillContent, String comments, boolean updateInternalRefs);
 
     Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest);
+
+    Bill updateBill(Bill bill, BillMetadata updatedMetadata, byte[] updatedContent, VersionType versionType, String comment, boolean updateInternalRefs);
 
     Bill updateBillWithMilestoneComments(Bill bill, List<String> milestoneComments, VersionType versionType, String comment);
 
@@ -80,7 +91,7 @@ public interface BillService {
 
     Bill saveTableOfContent(Bill bill, List<TableOfContentItemVO> tocList, String actionMsg, User user);
 
-    List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile);
+    List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile, boolean isAutonomousAct);
 
     List<String> getAncestorsIdsForElementId(Bill bill, List<String> elementIds);
 
@@ -103,4 +114,6 @@ public interface BillService {
     Bill findFirstVersion(String documentRef);
 
     String generateBillReference(byte[] content, String language);
+
+    void updateReferencesAsync(Bill bill, Map<String, String> refsMatching);
 }

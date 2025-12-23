@@ -54,10 +54,12 @@ class tableOfContent {
         euiLabelWarningList: () => cy.get('span.eui-label--warning'),
         warningSymbol: () => cy.get("eui-icon-svg[icon='eui-exclamation']"),
         moveOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Move']"),
+        placeAsChildOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place as child']"),
         placeBeforeOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Place before']"),
         deleteOptionInDropDownContent: () => this.elements.dropdownContent().find("button[aria-label='Delete']"),
         euiCardHeaderTitle: () => cy.get('eui-card-header-title.eui-card-header__title-container-title'),
-        totalRecitals:()=>cy.get('.mat-tree-node > div').contains('Recital')
+        totalRecitals:()=>cy.get('.mat-tree-node > div').contains('Recital'),
+
     }
 
     clickContributionsPaneButton() {
@@ -213,5 +215,11 @@ class tableOfContent {
     getNgContent(ngContent){
         return this.elements.matTree().contains(ngContent);
     }
+
+    clickPlaceAsChildOptionFromDropDownContent() {
+        this.elements.placeAsChildOptionInDropDownContent().click();
+    }
+
+
 }
 export default new tableOfContent();

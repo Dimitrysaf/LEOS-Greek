@@ -5,6 +5,7 @@ import annexPage from "../pages/annexPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
 
+
 Then(`user is on annex page`, () => {
     headerPage.getCurrentPageName().should("have.text", "Annex");
     cy.wait(5000);
@@ -307,4 +308,7 @@ Then('content of level {int} has below content', (levelNumber, datatable) => {
     annexPage.getContentOfLevel(levelNumber).then((element) => {
         checkContentResult(element, datatable);
     });
+});
+Then('title of the annex contains {string} tag with value {string}', (tagName,tagValue) => {
+   annexPage.elements.prefaceContainerBlockHeading().children(tagName).should('have.text', tagValue);
 });

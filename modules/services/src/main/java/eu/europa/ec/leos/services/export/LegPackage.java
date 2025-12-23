@@ -13,12 +13,18 @@
  */
 package eu.europa.ec.leos.services.export;
 
-import java.io.File;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class LegPackage {
-    private File file;
+    private LeosFile file;
+    private byte[] byteArray;
     private ExportResource exportResource;
     private List<String> milestoneComments;
     private List<String> containedFiles;
@@ -34,29 +40,5 @@ public class LegPackage {
 
     public void addContainedFile (String containedFile) {
         containedFiles.add(containedFile);
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public ExportResource getExportResource() {
-        return exportResource;
-    }
-
-    public void setExportResource(ExportResource exportResource) {
-        this.exportResource = exportResource;
-    }
-
-    public List<String> getMilestoneComments() {
-        return milestoneComments;
-    }
-
-    public List<String> getContainedFiles() {
-        return containedFiles;
     }
 }

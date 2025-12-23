@@ -11,6 +11,8 @@ public enum PropertiesMetadata {
     DOC_TYPE("docType", false),
     ACT_TYPE("actType", false),
     EEA_RELEVANCE("eeaRelevance", false),
+    AUTHENTIC_LANGUAGE("authenticLanguage", false),
+    COVERPAGE_TYPE("coverPageType", false),
     CREATED_BY("initialCreatedBy", false),
     CREATION_DATE("initialCreationDate", false),
     LANGUAGE("language", false),

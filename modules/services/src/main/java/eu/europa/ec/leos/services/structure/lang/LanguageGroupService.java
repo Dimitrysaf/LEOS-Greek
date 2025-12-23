@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,16 @@ public class LanguageGroupService {
             languageMap.put(group.getName(), group.getLangs());
         });
         languageMapHolder.loadLanguageMap(languageMap);
+    }
+
+    public List<String> getLanguageList() {
+        byte[] languageDocument = getLangGroupDocument();
+        final LanguageGroup languageGroup = loadLanguageGroupFromFile(languageDocument);
+        List<String> languages = new ArrayList<>();
+        languageGroup.getGroups().getGroups().forEach(group -> {
+            languages.addAll(group.getLangs());
+        });
+        return languages;
     }
 
     public byte[] getLangGroupDocument() {

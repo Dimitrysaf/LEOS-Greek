@@ -41,6 +41,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.cmis.CmisRepositoryContext;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
@@ -746,8 +747,18 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus) {
+    public void setDocumentsValidationStatus(List<String> documentIDs) {
+
+    }
+
+    @Override
+    public List<String> findPackagesForValidation() {
         return emptyList();
+    }
+
+    @Override
+    public Package findPackageByName(String packageName) {
+        return null;
     }
 
     @Override

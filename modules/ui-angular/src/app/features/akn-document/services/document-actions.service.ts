@@ -70,6 +70,7 @@ import {
   STRUCTURE_SECTION_ID,
   VIEW_SYNC_PANELS_ACTION,
   VIEW_VERSION_SECTION_ID,
+  MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID, MERGE_CONTRIBUTION_CANCEL_CHANGES_ID,
 } from '@/shared/constants/document-actions.constants';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
@@ -164,6 +165,48 @@ export abstract class DocumentActionsService {
       const newActions = this.buildActions();
       this.actionItemsBS.next(newActions);
     });
+
+    this.mergeContributionApplyDropdownOptions = [
+      {
+        id: MERGE_CONTRIBUTION_APPLY_CHANGES_ID,
+        command: () => this.onClickApplyAllChanges(),
+        label: this.translateService.instant(
+          'page.editor.contribution.actions.view.and.merge.actions.apply.changes',
+        ),
+        disabled: true,
+      },
+      {
+        id: MERGE_CONTRIBUTION_APPLY_CHANGES_TC_ID,
+        command: () => this.onClickApplyAllChangesWithTC(),
+        label: this.translateService.instant(
+          'page.editor.contribution.actions.view.and.merge.actions.apply.changes.tc',
+        ),
+        disabled: true,
+      },
+      {
+        id: MERGE_CONTRIBUTION_CANCEL_CHANGES_ID,
+        command: () => this.onClickCancelAllChanges(),
+        label: this.translateService.instant(
+          'page.editor.contribution.actions.view.and.merge.actions.cancel.changes',
+        ),
+        disabled: true,
+      },
+      {
+        id: MERGE_CONTRIBUTION_MARK_AS_PROCESSED_ID,
+        command: () => this.mergeContributionService.onClickMarkAsProcessed(),
+        label: this.translateService.instant(
+          'page.editor.contribution.actions.view.and.merge.actions.mark',
+        ),
+        disabled: true,
+      },
+    ];
+  }
+
+  existMergeChanges(exists: boolean) {
+    this.mergeContributionApplyDropdownOptions[0].disabled = !this.canAcceptTrackChanges();
+    this.mergeContributionApplyDropdownOptions[1].disabled = !this.canAcceptTrackChanges();
+    this.mergeContributionApplyDropdownOptions[2].disabled = !(exists && this.canAcceptTrackChanges());
+    this.mergeContributionApplyDropdownOptions[3].disabled = !this.canRejectTrackChanges();
   }
 
   get documentActionItems() {
@@ -670,7 +713,9 @@ export abstract class DocumentActionsService {
         id: COMPARE_EXPORT_DROPDOWN_ID,
         euiSize: 's',
         euiStyle: 'secondary',
-        label: 'Export',
+        label: this.translateService.instant(
+          'page.collection.actions-dropdown.export',
+        ),
         icon: 'eui-ellipsis-vertical',
         disabled: this.versionCompareService.versionCompareIds$.pipe(
           map((versions) => versions.length <= 1),
@@ -744,8 +789,8 @@ export abstract class DocumentActionsService {
           {
             type: IRibbonToolbarType.BUTTON,
             id: MERGE_CONTRIBUTION_PREV_CHANGE_ID,
-            icon: 'eui-sort-asc',
-            euiSize: 's',
+            icon: 'chevron-up',
+            euiSize: 'm',
             euiStyle: 'secondary',
             basicButton: true,
             actionFn: () =>
@@ -758,8 +803,9 @@ export abstract class DocumentActionsService {
           {
             type: IRibbonToolbarType.BUTTON,
             id: MERGE_CONTRIBUTION_NEXT_CHANGE_ID,
-            icon: 'eui-sort-desc',
-            euiSize: 's',
+            icon: 'chevron-down',
+            svgType: 'sharp',
+            euiSize: 'm',
             euiStyle: 'secondary',
             basicButton: true,
             actionFn: () =>
@@ -785,15 +831,14 @@ export abstract class DocumentActionsService {
       },
       {
         type: IRibbonToolbarType.DROPDOWN,
-        id: COMPARE_EXPORT_DROPDOWN_ID,
+        id: MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID,
         euiSize: 's',
         euiStyle: 'secondary',
         description: this.translateService.instant(
           'page.editor.contribution.actions-button.tooltip',
         ),
-        icon: 'eui-more-vertical',
-        items: this.buildMergeContributionApplyDropdownOptions(),
-        cssClasses: 'eui-button--basic eui-button--icon-only',
+        icon: 'eui-ellipsis-vertical',
+        items: this.mergeContributionApplyDropdownOptions,
       },
       {
         type: IRibbonToolbarType.BUTTON,
@@ -820,34 +865,7 @@ export abstract class DocumentActionsService {
     ];
   }
 
-  private buildMergeContributionApplyDropdownOptions(): DropdownModel[] {
-    return [
-      {
-        id: MERGE_CONTRIBUTION_APPLY_CHANGES_ID,
-        command: () => this.onClickApplyAllChanges(),
-        label: this.translateService.instant(
-          'page.editor.contribution.actions.view.and.merge.actions.apply.changes',
-        ),
-        disabled: !this.canAcceptTrackChanges(),
-      },
-      {
-        id: MERGE_CONTRIBUTION_APPLY_CHANGES_TC_ID,
-        command: () => this.onClickApplyAllChangesWithTC(),
-        label: this.translateService.instant(
-          'page.editor.contribution.actions.view.and.merge.actions.apply.changes.tc',
-        ),
-        disabled: !this.canAcceptTrackChanges(),
-      },
-      {
-        id: MERGE_CONTRIBUTION_MARK_AS_PROCESSED_ID,
-        command: () => this.mergeContributionService.onClickMarkAsProcessed(),
-        label: this.translateService.instant(
-          'page.editor.contribution.actions.view.and.merge.actions.mark',
-        ),
-        disabled: !this.canRejectTrackChanges(),
-      },
-    ];
-  }
+  private mergeContributionApplyDropdownOptions: DropdownModel[];
 
   private onClickApplyAllChanges() {
     this.mergeWithTrackChanges = false;
@@ -859,6 +877,10 @@ export abstract class DocumentActionsService {
     this.openMergeAllContributionsChangesDialog();
   }
 
+  private onClickCancelAllChanges() {
+    this.openCancelAllContributionsChangesDialog();
+  }
+
   private openMergeAllContributionsChangesDialog() {
     const content = this.translateService.instant(
       `page.editor.contribution.view.merge-contributions.accept-all.modal-text`,
@@ -867,13 +889,32 @@ export abstract class DocumentActionsService {
 
     this.dialogService.openDialog({
       title: this.translateService.instant(
-        'page.editor.contribution.view.merge-contributions.accept-all.modal-title',
+        'page.editor.contribution.view.merge-contributions.all.modal-title',
       ),
       content: conteSanitized as TemplatePortal,
       acceptLabel: this.translateService.instant('global.actions.continue'),
       dismissLabel: this.translateService.instant('global.actions.cancel'),
       accept: () => {
         this.onAcceptMergeAllContributions();
+      },
+    });
+  }
+
+  private openCancelAllContributionsChangesDialog() {
+    const content = this.translateService.instant(
+      `page.editor.contribution.view.merge-contributions.cancel-all.modal-text`,
+    );
+    const conteSanitized = this.domSanitizer.bypassSecurityTrustHtml(content);
+
+    this.dialogService.openDialog({
+      title: this.translateService.instant(
+        'page.editor.contribution.view.merge-contributions.all.modal-title',
+      ),
+      content: conteSanitized as TemplatePortal,
+      acceptLabel: this.translateService.instant('global.actions.continue'),
+      dismissLabel: this.translateService.instant('global.actions.cancel'),
+      accept: () => {
+        this.onCancelMergeAllContributions();
       },
     });
   }
@@ -885,7 +926,9 @@ export abstract class DocumentActionsService {
     );
   }
 
-  private onCancelMergeAllContributions() {}
+  private onCancelMergeAllContributions() {
+    this.ckEditorService.undoAllChanges();
+  }
 
   private handleMerge() {
     this.ckEditorService.handleMergeContributionsActions(
@@ -1098,10 +1141,6 @@ export abstract class DocumentActionsService {
   private reloadComponent() {
     this.documentService.reloadDocument();
     this.documentService.reloadView();
-  }
-
-  private handleReload() {
-    this.documentService.reloadDocument();
   }
 
   private isCN() {

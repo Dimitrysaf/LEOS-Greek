@@ -5,7 +5,6 @@ import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -42,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
@@ -263,7 +263,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(financialStatement, updatedFinancialStatementContent));
 
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
-        updateDocumentValidationStatus(financialStatement.getId());
         return financialStatement;
     }
 
@@ -281,16 +280,19 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
 
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
-        updateDocumentValidationStatus(financialStatement.getId());
         return financialStatement;
     }
 
     @Override
     public FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent) {
-        LOG.trace("Updating FinancialStatement content... [id={}]", id);
-        FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(id, updatedFinancialStatementContent, VersionType.MINOR, "Content updated");
+        return updateFinancialStatement(id, updatedFinancialStatementContent, VersionType.MINOR, "Content updated");
+    }
+
+    @Override
+    public FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent, VersionType versionType, String comment) {
+        LOG.trace("Updating FinancialStatement content... [id={}, versionType={}, comment={}]", id, versionType, comment);
+        FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(id, updatedFinancialStatementContent, versionType, comment);
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
-        updateDocumentValidationStatus(financialStatement.getId());
         return financialStatement;
     }
 
@@ -308,7 +310,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
 
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
-        updateDocumentValidationStatus(financialStatement.getId());
         return financialStatement;
     }
 
@@ -319,7 +320,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), updatedFinancialStatementContent, VersionType.MINOR, comment);
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
-        updateDocumentValidationStatus(financialStatement.getId());
         return financialStatement;
     }
 
@@ -328,7 +328,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         LOG.trace("Updating FinancialStatement metadata properties... [id={}]", id);
         FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(ref, id, properties, latest);
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
-        updateDocumentValidationStatus(financialStatement.getId());
         return financialStatement;
     }
 
@@ -393,10 +392,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         newXmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(newXmlContent);
 
         return updateFinancialStatement(financialStatement, newXmlContent, VersionType.MINOR, actionMsg);
-    }
-
-    private void updateDocumentValidationStatus(String id) {
-        proposalService.setProposalValidationStatus(id,  ProposalValidationStatus.NOT_VALIDATED);
     }
 
     private byte[] getContent(FinancialStatement financialStatement) {
@@ -497,5 +492,16 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
 
     private void populateTrackChangesContext(XmlDocument document) {
         this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
+    }
+
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateReferencesAsync(FinancialStatement doc, Map<String, String> refsMatching) {
+        try {
+            byte[] content = xmlContentProcessor.updateReferencesOnImport(doc.getContent().get().getSource().getBytes(), refsMatching);
+            updateFinancialStatement(doc.getId(), content);
+        } catch (Exception e) {
+            LOG.error("Error while updating references on import: " + e.getMessage(), e);
+        }
     }
 }

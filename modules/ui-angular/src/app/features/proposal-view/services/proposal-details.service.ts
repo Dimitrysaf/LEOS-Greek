@@ -7,12 +7,11 @@ import {
   CollaboratorRequest,
   CreateDraftBody,
   CreateDraftResponse,
-  Document,
   ExceptionResponseVO,
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User
+  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -24,7 +23,7 @@ import {
   map,
   Observable,
   Subject,
-  switchMap,
+  switchMap, take,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -44,7 +43,8 @@ import {EuiDialogService} from "@eui/components/eui-dialog";
 export class ProposalDetailsService implements OnDestroy {
   collaborators$: Observable<Collaborator[]>;
   userAutocompleteData$: Observable<User[]>;
-  proposalDetails$: Observable<Document>;
+  proposalDetails$: Observable<ProposalDetails>;
+  proposalDetailsRefreshedBS = new BehaviorSubject<Document>(null);
   userInputFieldChange$: Observable<string>;
   milestones$: Observable<Milestone[]>;
   exportedDocuments$: Observable<ExportPackageVO[]>;
@@ -59,6 +59,7 @@ export class ProposalDetailsService implements OnDestroy {
   private proposalDetailsResponse$ = this.proposalRefBS.pipe(
     switchMap(([_proposalRef, loading]) => this.getProposalDetails(loading, this.proposalRef)),
   );
+
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
 
   private userAutocompleteDataResponse$ = this.userInputFieldChangeBS.pipe(
@@ -215,15 +216,40 @@ export class ProposalDetailsService implements OnDestroy {
       )
   }
 
-  updateProposalMetadata(docPurpose: string, eeaRelevance: boolean) {
-    this.http
+  updateProposalMetadata(docPurpose: string, eeaRelevance: boolean, packageTitle?: string, isAuthenticLang?: AuthenticLanguage,
+                         authenticLang?: string[], coverPageType?: CoverPageType, verticalShift?: string, showCorrigendumAddendum?: boolean,
+                         proposalType?: string, targetProposalReference?: string, targetProposalDate?: Date, proposalTargetLang?: string[],
+                         correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
+                         adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
+                         institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean,
+                         signatures?: SignatureMetadata[]) {
+    const internalRef = null;
+    this.loadingService.setLoading(true);
+    return this.http
       .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
         docPurpose,
         eeaRelevance,
-        title: '',
-      })
-      .subscribe((val) => {
-        this.proposalRefBS.next([this.proposalRef, true]);
+        packageTitle,
+        internalRef,
+        isAuthenticLang,
+        authenticLang,
+        coverPageType,
+        verticalShift,
+        showCorrigendumAddendum,
+        proposalType,
+        targetProposalReference,
+        targetProposalDate,
+        proposalTargetLang,
+        correctionInformation,
+        finalVersion,
+        crossReferences,
+        adoptionPlace,
+        adoptionDate,
+        institutionalReference,
+        institutionalReferenceFinalVersion,
+        interInstitutionalReference,
+        stamp,
+        signatures
       });
   }
 
@@ -670,9 +696,9 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  public getProposalDetails(loading = true, ref : string): Observable<Document> {
+  public getProposalDetails(loading = true, ref : string): Observable<ProposalDetails> {
     if (loading) this.loadingService.setLoading(true);
-    return this.http.get<Document>(
+    return this.http.get<ProposalDetails>(
       `${apiBaseUrl}/secured/proposals/${ref}`,
     );
   }
@@ -711,6 +737,12 @@ export class ProposalDetailsService implements OnDestroy {
     });
   }
 
+  searchUsersByJobTitle(jobTitle: string): Observable<string[]> {
+    return this.http.get<string[]>(`${apiBaseUrl}/secured/proposal/searchUsersByJobTitle`, {
+      params: { jobTitle: jobTitle },
+    });
+  }
+
   private retrieveAuthority(collaborators: Collaborator[], config: LeosAppConfig) {
     /** Normal user collaborator - has preference over entity collaborators **/
     const userCollaborators = collaborators
@@ -746,6 +778,9 @@ export class ProposalDetailsService implements OnDestroy {
     collaborators: Collaborator[],
     config: LeosAppConfig,
   ) {
+    console.log('Issue 3172:');
+    console.log(collaborators);
+    console.log(config);
     const docRoles = this.retrieveAuthority(collaborators, config);
     const roles = [...config.user.roles, ...docRoles, config.contextRole];
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);

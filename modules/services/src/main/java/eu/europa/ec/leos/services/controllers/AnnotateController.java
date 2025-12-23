@@ -16,11 +16,17 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.services.api.AnnotateApiService;
+import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequest;
 import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequests;
 import eu.europa.ec.leos.services.dto.response.AnnotateMergeSuggestionsResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +47,19 @@ public class AnnotateController {
 
     private final AnnotateApiService annotateApiService;
 
+    private final CoEditionContext coEditionContext;
+
+    private final DocumentContentService documentContentService;
+
+    private final XmlContentProcessor xmlContentProcessor;
+
     @Autowired
-    public AnnotateController(AnnotateApiService annotateApiService) {
+    public AnnotateController(AnnotateApiService annotateApiService, CoEditionContext coEditionContext,
+                              DocumentContentService documentContentService, XmlContentProcessor xmlContentProcessor) {
         this.annotateApiService = annotateApiService;
+        this.coEditionContext = coEditionContext;
+        this.documentContentService = documentContentService;
+        this.xmlContentProcessor = xmlContentProcessor;
     }
 
     @GetMapping(value = "/requestUserPermissions/{documentType}/{documentRef}")
@@ -87,7 +103,7 @@ public class AnnotateController {
             AnnotateMetadata documentMetadata = annotateApiService.requestDocumentMetadata(documentRef, documentCategory);
             return new ResponseEntity<>(documentMetadata, HttpStatus.OK);
         } catch (Exception e) {
-            String msg = "Error occurred while requesting Annotation DocumentMetadata ";
+            String msg = "Error occurred while requesting Annotation DocumentMetadata";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -100,7 +116,7 @@ public class AnnotateController {
             List<AnnotateMetadata> searchMetadata = annotateApiService.requestSearchMetadata();
             return new ResponseEntity<>(searchMetadata, HttpStatus.OK);
         } catch (Exception e) {
-            String msg = "Error occurred while requesting Annotation DocumentMetadata ";
+            String msg = "Error occurred while requesting Annotation DocumentMetadata";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -114,15 +130,8 @@ public class AnnotateController {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
-            final String origText = mergeSuggestionRequest.getOrigText();
-            final String newText = mergeSuggestionRequest.getNewText() == null ? "" : mergeSuggestionRequest.getNewText();
-            final String elementId = mergeSuggestionRequest.getElementId();
-            final int startOffset = mergeSuggestionRequest.getStartOffset();
-            final int endOffset = mergeSuggestionRequest.getEndOffset();
-            if (origText == null || newText == null || elementId == null || startOffset < 0 || endOffset < 0 || startOffset == endOffset) {
-                throw new Exception("Invalid request parameters");
-            }
-            annotateApiService.mergeSuggestion(documentCategory, documentRef, origText, newText, elementId, startOffset, endOffset);
+            this.mergeSuggestion(documentRef, documentCategory, new ArrayList<>(), mergeSuggestionRequest);
+            this.refreshElementCoEdition(documentCategory, documentRef, mergeSuggestionRequest.getElementId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             String msg = "Error occurred while requesting Annotation Merge Suggestion";
@@ -135,15 +144,18 @@ public class AnnotateController {
     @ResponseBody
     public ResponseEntity<Object> requestMergeSuggestions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                           @RequestBody AnnotateMergeSuggestionRequests mergeSuggestionRequests) {
-        final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
-        List<AnnotateMergeSuggestionsResponse> results = new ArrayList<>();
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            List<AnnotateMergeSuggestionsResponse> results = new ArrayList<>();
             for (AnnotateMergeSuggestionRequest suggestionRequest : mergeSuggestionRequests.getMergeSuggestionRequests()) {
                 this.mergeSuggestion(documentRef, documentCategory, results, suggestionRequest);
+                this.refreshElementCoEdition(documentCategory, documentRef, suggestionRequest.getElementId());
             }
             return new ResponseEntity<>(results, HttpStatus.OK);
         } catch (Exception e) {
-            String msg = "Error occurred while requesting Annotation Merge Suggestion";
+            String msg = "Error occurred while requesting Annotation Merge Suggestions";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -152,7 +164,7 @@ public class AnnotateController {
     private void mergeSuggestion(String documentRef, LeosCategoryClass documentCategory, List<AnnotateMergeSuggestionsResponse> results, AnnotateMergeSuggestionRequest suggestionRequest) throws Exception {
         try {
             final String origText = suggestionRequest.getOrigText();
-            final String newText = suggestionRequest.getNewText();
+            final String newText = suggestionRequest.getNewText() == null ? "" : suggestionRequest.getNewText();
             final String elementId = suggestionRequest.getElementId();
             final int startOffset = suggestionRequest.getStartOffset();
             final int endOffset = suggestionRequest.getEndOffset();
@@ -162,9 +174,16 @@ public class AnnotateController {
             annotateApiService.mergeSuggestion(documentCategory, documentRef, origText, newText, elementId, startOffset, endOffset);
             results.add(new AnnotateMergeSuggestionsResponse(origText, newText, elementId, startOffset, endOffset, "SUCCESS"));
         } catch (Exception e) {
-            LOG.error("Error in for suggestion: {}", suggestionRequest);
+            LOG.error("Error merging suggestion: {}", suggestionRequest);
             throw e;
         }
+    }
+
+    private void refreshElementCoEdition(LeosCategoryClass documentType, String documentRef, String elementId) {
+        XmlDocument document = documentContentService.getDocumentByRef(documentRef, documentType);
+        Element element = xmlContentProcessor.getElementById(document.getContent().get().getSource().getBytes(), elementId);
+        coEditionContext.sendUpdatedElements(documentRef, null,
+                new SaveElementResponse(elementId, element.getElementTagName(), element.getElementFragment()), null);
     }
 
 }

@@ -13,15 +13,21 @@
  */
 package eu.europa.ec.leos.model.notification.validation;
 
+import lombok.Getter;
+
 import java.util.Date;
 
 public class DocumentExternalValidationNotification extends ValidationEmailNotification {
 
     private byte[] attachmentContent;
 
-    public DocumentExternalValidationNotification(String recipient, String requestedBy, Date requestedOn, String title, byte[] attachmentContent) {
+    @Getter
+    private String proposalTitle;
+
+    public DocumentExternalValidationNotification(String recipient, String requestedBy, Date requestedOn, String title, String proposalTitle, byte[] attachmentContent) {
         super(recipient, null, requestedBy, requestedOn, title);
         this.attachmentContent = attachmentContent;
+        this.proposalTitle = proposalTitle;
     }
 
     @Override

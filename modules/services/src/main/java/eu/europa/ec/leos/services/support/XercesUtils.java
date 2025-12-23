@@ -164,6 +164,16 @@ public class XercesUtils {
         return newNode;
     }
 
+    public static Node appendContentToNode(Node node, String newContent) {
+        String nodeAsString = nodeToString(node);
+        nodeAsString = removeSelfClosingElements(nodeAsString);
+        String closingTagString = "</"+node.getNodeName()+">";
+        String openTagAndActualContent = nodeAsString.substring(0, nodeAsString.indexOf(closingTagString));
+        String newNodeXml = openTagAndActualContent + newContent + closingTagString;
+        node = createNodeFromXmlFragment(node.getOwnerDocument(), newNodeXml.getBytes(UTF_8));
+        return node;
+    }
+
     public static Document getDocument(Node node) {
         Document document;
         if (node.getNodeType() == Node.DOCUMENT_NODE) {

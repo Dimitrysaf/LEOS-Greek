@@ -4,7 +4,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 
-import java.io.File;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 
 public interface CreateCollectionService {
 
@@ -25,7 +25,7 @@ public interface CreateCollectionService {
      * @param isTranslated
      * @return The collection creation result containing the proposal view url and the bill view url
      */
-    CreateCollectionResult createCollectionFromLeg(File legDocument, DocumentVO propDocument, String language, boolean isTranslated) throws CreateCollectionException;
+    CreateCollectionResult createCollectionFromLeg(LeosFile legDocument, DocumentVO propDocument, String language, boolean isTranslated) throws CreateCollectionException;
 
     /**
      * Clone an existing collection from a Leg document file
@@ -35,11 +35,11 @@ public interface CreateCollectionService {
      * @param connectedEntity
      * @return The collection cloned result containing the documents url and id
      */
-    CreateCollectionResult cloneCollection(File legDocument, String originRef, String user, String connectedEntity) throws CreateCollectionException;
+    CreateCollectionResult cloneCollection(LeosFile legDocument, String originRef, String user, String connectedEntity) throws CreateCollectionException;
 
     Result<?> updateOriginalProposalAfterRevisionDone(String cloneProposalRef, String cloneLegFileId);
 
-    DocumentVO createDocumentVOFromLegfile(File legDocument) throws XmlValidationException;
+    DocumentVO createDocumentVOFromLegfile(LeosFile legDocument) throws XmlValidationException;
 
-    DocumentVO getProposalDocumentFromLeg(File legDocument) throws CreateCollectionException;
+    DocumentVO getProposalDocumentFromLeg(LeosFile legDocument) throws CreateCollectionException;
 }

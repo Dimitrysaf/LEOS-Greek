@@ -16,7 +16,6 @@ package eu.europa.ec.leos.services.document;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
@@ -46,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +139,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, versionType, comment);
         updateInternalReferencesAsync(annex);
-        updateDocumentValidationStatus(annex.getId());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedAnnexContent));
 
@@ -178,7 +177,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }
-        updateDocumentValidationStatus(annex.getId());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedBytes));
 
@@ -206,19 +204,22 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, VersionType.MINOR, comment);
         updateInternalReferencesAsync(annex);
-        updateDocumentValidationStatus(annex.getId());
         LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return annex;
     }
 
     @Override
     public Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs) {
-        LOG.trace("Updating Annex content ... [id={}]", id);
-        Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, VersionType.MINOR, "Content updated.");
+        return updateAnnex(id, updatedAnnexContent, updateInternalRefs, VersionType.MINOR, "Content updated.");
+    }
+
+    @Override
+    public Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, VersionType versionType, String comment) {
+        LOG.trace("Updating Annex content ... [id={}, versionType={}, comment={}]", id, versionType, comment);
+        Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, versionType, comment);
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }
-        updateDocumentValidationStatus(annex.getId());
         return annex;
     }
 
@@ -227,7 +228,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex metadata properties... [id={}]", id);
         Annex annex = annexRepository.updateAnnex(ref, id, properties, latest);
         updateInternalReferencesAsync(annex);
-        updateDocumentValidationStatus(annex.getId());
         return annex;
     }
 
@@ -328,10 +328,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
             updatedBytes = xmlContentProcessor.doXMLPostProcessing(updatedBytes);
         }
         return updatedBytes;
-    }
-
-    private void updateDocumentValidationStatus(String id) {
-        proposalService.setProposalValidationStatus(id,  ProposalValidationStatus.NOT_VALIDATED);
     }
 
     @Override
@@ -462,5 +458,17 @@ public abstract class AnnexServiceImpl implements AnnexService {
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
+    }
+
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateReferencesAsync(Annex annex, Map<String, String> refsMatching) {
+        try {
+            byte[] xmlContent = annex.getContent().get().getSource().getBytes();
+            xmlContent = xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
+            updateAnnex(annex.getId(), xmlContent, false);
+        } catch (Exception e) {
+            LOG.error("Error while updating references on import: " + e.getMessage(), e);
+        }
     }
 }

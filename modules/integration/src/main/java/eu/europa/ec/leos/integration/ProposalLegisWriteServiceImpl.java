@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.integration;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +14,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 @Service
 @Instance(InstanceType.COMMISSION)
@@ -34,14 +31,13 @@ public class ProposalLegisWriteServiceImpl implements LegisWriteService {
     private String convertUri;
 
     @Override
-    public byte[] convert(File legFile) throws Exception {
+    public byte[] convert(LeosFile legFile) throws Exception {
         Validate.notNull(legFile, "legFile must not be null!");
         try {
             String uri = legisWriteUrl + convertUri;
 
             MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-            ByteArrayResource contentsAsResource = convertFileToByteArray(legFile);
-            map.add("legFile", contentsAsResource);
+            map.add("legFile", legFile.getResource());
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -60,18 +56,4 @@ public class ProposalLegisWriteServiceImpl implements LegisWriteService {
             throw new Exception("Exception while calling external service LegisWrite", e);
         }
     }
-
-    private ByteArrayResource convertFileToByteArray(File legFile) throws IOException {
-        byte[] bytesArray = new byte[(int) legFile.length()];
-
-        try(FileInputStream fis = new FileInputStream(legFile)) {
-            int bytesRead = fis.read(bytesArray); //read file into bytes[]
-            if(bytesRead == 0 && LOG.isWarnEnabled()){
-                LOG.warn("No bytes were red from the file");
-            }
-        }
-
-        return new ByteArrayResource(bytesArray);
-    }
-
 }

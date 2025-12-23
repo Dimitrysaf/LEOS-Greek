@@ -19,10 +19,9 @@ Feature: act viewer page Regression Features
   Scenario: verify that user is able to create milestone
     When click on details tab in act view page
     Then active tab name is "Details"
-    Then  template name is "SJ-023" in details tab
-    Then  language is "EN" in details tab
-    Then  confidentiality level is "STANDARD" in details tab
-    Then  EEA Relevance is unticked in details tab
+    And  template name is "SJ-023" in details tab
+    And  confidentiality level is "STANDARD" in details tab
+    And  EEA Relevance is unticked in details tab
     When click on milestones tab in act view page
     When  click on add button in milestones tab
     Then add milestone window is displayed

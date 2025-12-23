@@ -37,6 +37,8 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <absolute-ordering />
+
     <filter>
         <filter-name>requestContextFilter</filter-name>
         <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
@@ -124,7 +126,7 @@
 
     <!-- Session configuration -->
     <session-config>
-        <session-timeout>5</session-timeout>
+        <session-timeout>10</session-timeout>
         <!-- session timeout should always be more then double of heartbeat  -->
     </session-config>
 
@@ -210,6 +212,22 @@
             <url-pattern>/ui/api/*</url-pattern>
         </web-resource-collection>
     </security-constraint>
+
+    <servlet>
+        <servlet-name>h2Console</servlet-name>
+        <servlet-class>org.h2.server.web.WebServlet</servlet-class>
+        <init-param>
+            <param-name>-webAllowOthers</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>h2Console</servlet-name>
+        <url-pattern>/h2-console/*</url-pattern>
+    </servlet-mapping>
+
 
     <!-- Error pages -->
     <error-page>

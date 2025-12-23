@@ -15,7 +15,6 @@ package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
-import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 
@@ -59,7 +58,7 @@ public interface DocumentService {
 
     LeosDocument findDocumentByVersion(final String docRef, final String versionLabel);
 
-    List<LeosDocument> findDocumentsByValidationStatusNot(String validationStatus);
+    List<String> findPackagesForValidation();
 
     String getNextVersionLabel(final VersionType versionType, final String oldVersion);
 
@@ -98,4 +97,6 @@ public interface DocumentService {
     long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 
     LeosDocument findTemplateByName(String ref) throws RepositoryException;
+
+    boolean setDocumentValidationStatus(List<String> documentIDs) throws RepositoryException;
 }

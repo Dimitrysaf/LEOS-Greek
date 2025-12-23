@@ -57,11 +57,14 @@ public class CollectionContextMandateService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextMandateService.class);
 
     CollectionContextMandateService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
-                                    CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
-                                    Provider<BillContextService> billContextProvider, Provider<AnnexContextService> annexContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
+            CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
+            Provider<BillContextService> billContextProvider, Provider<AnnexContextService> annexContextProvider,
+            SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider,
+            Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService,
+            MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
         super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider,
-                securityContext,
-                explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper, xmlContentProcessor);
+                securityContext, explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService,
+                messageHelper, xmlContentProcessor);
     }
 
     @Override

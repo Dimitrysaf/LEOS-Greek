@@ -1,13 +1,12 @@
 package eu.europa.ec.leos.integration;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
 
 @Service
 public class LeosDocuWriteServiceImpl implements DocuWriteService {
     @Override
-    public byte[] convert(File legFile) throws Exception {
+    public byte[] convert(LeosFile legFile) throws Exception {
         throw new IllegalStateException("Feature not implemented for the running instance");
     }
 }

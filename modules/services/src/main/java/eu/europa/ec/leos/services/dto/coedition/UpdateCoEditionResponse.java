@@ -18,10 +18,12 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateCoEditionResponse {
+public class UpdateCoEditionResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
     private User user;
     private String presenterId;
     private String documentId;

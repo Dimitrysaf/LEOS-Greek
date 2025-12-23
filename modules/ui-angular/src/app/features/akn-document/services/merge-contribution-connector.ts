@@ -71,8 +71,8 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
   acceptAndMergeAllChanges(withTrackChanges: boolean) {
     const elementsToBeMerged = this.document.querySelectorAll('.' + MERGE_CONTRIBUTION);
     let selectedElements: Element[] = Array.from(elementsToBeMerged);
-    selectedElements.forEach( (e, index) => {
-      const elt = e as HTMLElement;
+    for (let index = 0; index < selectedElements.length; index++) {
+      let elt = selectedElements[index] as HTMLElement;
       if (!elt.hasAttribute(MERGE_ACTION_ATTR) && !elt.classList.contains(ACTION_DONE_CLASS)) {
         const softAction = elt.getAttribute(LEOS_SOFT_ACTION);
         if (softAction && softAction === MOVE_FROM_ATTR) {
@@ -85,8 +85,9 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
         });
       } else {
         selectedElements.splice(index, 1);
+        index--;
       }
-    });
+    }
     selectedElements.forEach((s) => {
       const elt = s as HTMLElement;
       this.mergeContributionsService.manageSelectedElements(elt, ContributionActionAttrValue.ACCEPT);
@@ -104,6 +105,66 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
 
       this.mergeContributionsService.addMergeActionList(action);
       this.doUpdateMergeActionList({action, select: true});
+    });
+    this.handleMergeAction();
+  }
+
+  existAcceptedChanges(): boolean {
+    const elementsMerged = this.document.querySelectorAll('[class*="' + MERGE_CONTRIBUTION + '"][leos\\:mergeAction]');
+    return elementsMerged.length > 0;
+  }
+
+  undoAllChanges() {
+    const elementsToBeMerged = this.document.querySelectorAll('.' + MERGE_CONTRIBUTION);
+    let selectedElements: Element[] = Array.from(elementsToBeMerged);
+    for (let index = 0; index < selectedElements.length; index++) {
+      let elt = selectedElements[index] as HTMLElement;
+      if (elt.hasAttribute(MERGE_ACTION_ATTR) && !elt.hasAttribute(SELECTED_ACTION_ATTR)) {
+        elt.setAttribute(SELECTED_ACTION_ATTR, ContributionActionAttrValue.UNDO);
+        const list = this.mergeContributionsService.getImpactedElementsForUndo(elt);
+        list.forEach(e => {
+          const elt =  e as HTMLElement;
+          elt.setAttribute(SELECTED_ACTION_ATTR, ContributionActionAttrValue.UNDO);
+        });
+        if (elt.hasAttribute(LEOS_SOFT_ACTION_MOVE_TO)) {
+          const movedFromElement = this.document.getElementById(elt.getAttribute(ID).replace(MOVE_PREFIX,''));
+          if (movedFromElement) {
+            movedFromElement.removeAttribute(SELECTED_ACTION_ATTR);
+            const temp_list = this.mergeContributionsService.getImpactedElementsForUndo(movedFromElement);
+            temp_list.forEach((e) => {
+              const elt = e as HTMLElement;
+              elt.setAttribute(
+                SELECTED_ACTION_ATTR,
+                ContributionActionAttrValue.UNDO,
+              );
+            });
+          }
+        } else if (elt.hasAttribute(LEOS_SOFT_ACTION_MOVE_FROM)) {
+          const movedToElement = this.document.getElementById(REVISION_PREFIX + MOVE_PREFIX + elt.getAttribute(ID).replace(REVISION_PREFIX,''));
+          if (movedToElement) {
+            movedToElement.setAttribute(SELECTED_ACTION_ATTR, ContributionActionAttrValue.UNDO);
+          }
+        }
+      } else {
+        selectedElements.splice(index, 1);
+        index--;
+      }
+    }
+    selectedElements.forEach((s) => {
+      const elt = s as HTMLElement;
+      this.mergeContributionsService.manageSelectedElements(elt, ContributionActionAttrValue.UNDO);
+
+      elt.removeAttribute(SELECTED_ACTION_ATTR);
+      const action: MergeActionVO = {action: "", contributionVO: undefined, elementId: "", elementState: "", elementTagName: "", withTrackChanges: false};
+      action.elementId = elt.getAttribute(ID).replace(REVISION_PREFIX, '');
+      action.elementState = this.mergeContributionsService.getAction(elt);
+      action.action = ContributionActionAttrValue.UNDO;
+      action.withTrackChanges = false;
+      action.elementTagName = elt.tagName.toLowerCase();
+      action.contributionVO = this.mergeContributionsService.getCurrentContribution();
+
+      this.mergeContributionsService.addMergeActionList(action);
+      this.doUpdateMergeActionList({action: action, select: true});
     });
     this.handleMergeAction();
   }

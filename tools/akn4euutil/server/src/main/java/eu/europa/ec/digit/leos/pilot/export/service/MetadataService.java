@@ -86,16 +86,18 @@ public interface MetadataService {
     /**
      * Process the cote field and add the data to the xml
      * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param diffusionVersion Diffusion number of a final document (can be null)
      * @param xmlFile XML file to add the cote data
      * */
-    void processCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, XmlUtil.XmlFile xmlFile);
 
     /**
      * Process the final cote field and add the data to the xml
      * @param fieldInfo {@link ReferenceFieldInfo} providing the data to set
+     * @param diffusionVersion Diffusion number of a final document (can be null)
      * @param xmlFile XML file to add the final cote value
      * */
-    void processFinalCote(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile);
+    void processFinalCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, XmlUtil.XmlFile xmlFile);
 
     /**
      * Process the interinstitutional cote field and add the data to the xml

@@ -15,12 +15,15 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
+import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.document.models.AnnexType;
@@ -34,7 +37,6 @@ import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -48,17 +50,21 @@ public interface ApiService {
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
                                           boolean eeaRelevance, String template) throws CreateCollectionException;
 
-    CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException;
+    CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException;
 
-    LegFileValidation validateLegFile(File legDocument);
+    LegFileValidation validateLegFile(LeosFile legDocument);
 
     void deleteAnnex(String proposalRef, String annexRef) throws Exception;
 
-    DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request);
+    DocumentVO updateProposalTitleAndEEaRelevance(String proposalRef, String docPurpose, Boolean eeaRelevance) throws Exception;
+
+    DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) throws Exception;
 
     void deleteCollection(String proposalRef);
 
     List<UserJSON> searchUser(String searchKey);
+
+    List<String> searchUserByJobTitle(String jobTitle);
 
     void createExplanatoryDocument(String proposalRef, String template);
 
@@ -80,7 +86,7 @@ public interface ApiService {
 
     byte[] exportProposalDownload(String proposalRef, String outputType) throws Exception;
 
-    Optional<DocumentVO> getProposalDetails(String proposalRef, String userId);
+    Optional<ProposalDetailsVO> getProposalDetails(String proposalRef, String userId);
 
     byte[] downloadProposal(String proposalRef) throws Exception;
 
@@ -115,9 +121,9 @@ public interface ApiService {
 
     void validateProposal(String proposalRef) throws Exception;
 
-    void validateProposal(String proposalRef, String email, String username) throws Exception;
-
-    <D extends LeosDocument> List<D> findDocumentsByValidationStatus(Class<? extends D> type, String validationStatus);
+    void validateProposals(String email, String username) throws Exception;
 
     LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) throws IOException;
+
+    Package findPackageByName(String packageName);
 }

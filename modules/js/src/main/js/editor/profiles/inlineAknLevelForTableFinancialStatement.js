@@ -115,7 +115,7 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
             { name: 'soft_insert', items: ['leosHierarchicalElementShiftEnterHandler', 'leosHierarchicalElementSubparagraphAfterLastPoint']},
             { name: 'ref', items: ['authorialNoteWidget', 'LeosCrossReference'] },
-            { name: 'insert', items: [ 'Mathjax', 'SpecialChar' , "base64image", 'Table'] },
+            { name: 'insert', items: [ 'Mathjax', 'SpecialChar' , "base64image"] },
             { name: 'paragraph', items: ['Outdent', 'Indent'] },
             '/',
             { name: 'tools', items: [ 'LeosShowBlocks' ] },

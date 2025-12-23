@@ -94,8 +94,16 @@ public class LeosDocumentApiController {
 
     @RequestMapping(value = "/applyMetadata", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile) {
+    public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile,
+                                                @RequestParam(name = "validate", required = false, defaultValue = "true") boolean validate,
+                                                @RequestParam(name = "email", required = false) String email) {
         try {
+            if (validate) {
+                if (email == null || email.trim().isEmpty()) {
+                    return ResponseEntity.badRequest().body("Email is required when validate is true");
+                }
+                leosDocumentService.callLeosValidation(inputFile, email);
+            }
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
             return buildValidZipResponse(documentOutput);
         } catch (LeosDocumentException e) {
@@ -108,8 +116,16 @@ public class LeosDocumentApiController {
     @RequestMapping(value = "/applyMetadataAsync", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile,
-                                                @RequestParam("callbackUrl") String callbackUrl) {
+                                                @RequestParam("callbackUrl") String callbackUrl,
+                                                @RequestParam(name = "validate", required = false, defaultValue = "true") boolean validate,
+                                                @RequestParam(name = "email", required = false) String email) {
         try {
+            if (validate) {
+                if (email == null || email.trim().isEmpty()) {
+                    return ResponseEntity.badRequest().body("Email is required when validate is true");
+                }
+                leosDocumentService.callLeosValidation(inputFile, email);
+            }
             String asyncId = leosDocumentService.applyMetadataAsync(inputFile, callbackUrl);
             return new ResponseEntity<>(asyncId, HttpStatus.OK);
         } catch (Exception e) {

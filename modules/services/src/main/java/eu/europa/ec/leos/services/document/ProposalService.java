@@ -15,7 +15,6 @@ package eu.europa.ec.leos.services.document;
 
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -24,7 +23,11 @@ import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
+import eu.europa.ec.leos.services.export.LegPackage;
+import eu.europa.ec.leos.services.metadata.MetadataOptions;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
@@ -50,6 +53,16 @@ public interface ProposalService {
 
     Proposal updateProposal(String proposalId, byte[] updatedBytes);
 
+    /**
+     * updates Proposal document with the given content
+     * @param proposalId the ID of the Proposal
+     * @param updatedBytes new updated content of the Proposal document
+     * @param versionType new version type
+     * @param comment new comment
+     * @return Proposal document
+     */
+    Proposal updateProposal(String proposalId, byte[] updatedBytes, VersionType versionType, String comment);
+
     Proposal updateProposal(String proposalId, byte[] updatedBytes, Map<String, Object> properties);
 
     Proposal addComponentRef(Proposal proposal, String href, LeosCategory leosCategory, String refersToOfDocument, String showAs);
@@ -61,8 +74,6 @@ public interface ProposalService {
     Proposal removeComponentRef(Proposal proposal, String href);
 
     void updateProposalAsync(String id, String comment);
-
-    void setProposalValidationStatus(String proposalId, ProposalValidationStatus status);
 
     Proposal findProposalByPackagePath(String path);
 
@@ -120,6 +131,11 @@ public interface ProposalService {
 
     LeosDocument findConfigByName(String name);
 
+    Map<String, byte[]> applyMetadata(LegPackage legPackage, Proposal proposal, UpdateProposalRequest request) throws Exception;
+
+    MetadataOptions convertUpdateProposalRequestToMetadataOptions(String legFileName, Proposal proposal, UpdateProposalRequest request);
+
     Proposal populateProposalMetadataFromXml(Proposal proposal);
 
+    MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, byte[] billContent, MetadataVO metadataVO);
 }

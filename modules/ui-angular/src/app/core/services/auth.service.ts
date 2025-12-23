@@ -84,14 +84,14 @@ export class AuthService implements OnDestroy {
 
   markTokenAsExpired(token: string | null) {
     const storedTokenData = this.loadTokenData();
-    console.debug('[auth.service] markTokenAsExpired '); // DEBUG
+    console.info('[auth.service] markTokenAsExpired '); // DEBUG
     if (token === storedTokenData?.accessToken) {
       console.debug('[auth.service] markTokenAsExpired - removing'); // DEBUG
       this.storage.remove(AuthService.TOKEN_KEY);
       this.monitorExpirySub?.unsubscribe();
       this.showExpiredTokenPopup();
     } else {
-      console.debug(
+      console.info(
         '[auth.service] markTokenAsExpired - already updated in localStorage',
       ); // DEBUG
     }

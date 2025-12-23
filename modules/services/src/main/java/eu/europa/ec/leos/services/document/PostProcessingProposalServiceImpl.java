@@ -5,6 +5,7 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -18,6 +19,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.services.utils.LegUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,15 +159,14 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                 Proposal originalProposal = proposalService.findProposal(documentVO.getId());
                 byte[] xmlContent = originalProposal.getContent().getOrThrow(() ->
                         new IllegalArgumentException("Proposal not found")).getSource().getBytes();
-                String docVersion = "";
-                if (documentVO != null && documentVO.getMetadata() != null && documentVO.getMetadata().getDocVersion() != null) {
-                    docVersion = documentVO.getMetadata().getDocVersion();
-                }
+                String docVersion = LegUtils.fetchMilestoneVersion(documentVO);
                 byte[] updatedProposalContent = preserveClonedDocumentProperties(xmlContent,
                         idsAndUrlsHolder.getProposalId(), cloneProposalMetadataVO, docVersion);
                 documentVO.setSource(updatedProposalContent);
                 //update original proposal with cloned metadata properties
-                proposalService.updateProposal(originalProposal.getId(), updatedProposalContent);
+                final String versionComment = messageHelper.getMessage("milestone.versionComment");
+                // updating the version type to Major and also versionComment to fix issue #2987
+                proposalService.updateProposal(originalProposal.getId(), updatedProposalContent, VersionType.MAJOR, versionComment);
 
                 //Update child documents
                 for(DocumentVO child : documentVO.getChildDocuments()) {
@@ -179,19 +180,19 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                             updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getBillId(),
                                     cloneProposalMetadataVO);
                             child.setSource(updatedContent);
-                            billService.updateBill(child.getId(), updatedContent, true);
+                            billService.updateBill(child.getId(), updatedContent, true, VersionType.MAJOR, versionComment);
                             break;
                         case MEMORANDUM:
                             updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getMemorandumId(),
                                     cloneProposalMetadataVO);
                             child.setSource(updatedContent);
-                            memorandumService.updateMemorandum(child.getId(), updatedContent);
+                            memorandumService.updateMemorandum(child.getId(), updatedContent, VersionType.MAJOR, versionComment);
                             break;
                         case STAT_DIGIT_FINANC_LEGIS:
                             updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getFinancialStatementId(),
                                     cloneProposalMetadataVO);
                             child.setSource(updatedContent);
-                            financialStatementService.updateFinancialStatement(child.getId(), updatedContent);
+                            financialStatementService.updateFinancialStatement(child.getId(), updatedContent, VersionType.MAJOR, versionComment);
                             break;
                         case ANNEX:
                             String clonedAnnexId = idsAndUrlsHolder.getDocCloneAndOriginIdMap().entrySet()
@@ -203,7 +204,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                             updatedContent = preserveClonedDocumentProperties(xmlContent, clonedAnnexId,
                                     cloneProposalMetadataVO);
                             child.setSource(updatedContent);
-                            annexService.updateAnnex(child.getId(), updatedContent, true);
+                            annexService.updateAnnex(child.getId(), updatedContent, true, VersionType.MAJOR, versionComment);
                             break;
                         default:
                             LOG.debug("Do nothing for rest of the categories like FS, MEDIA, CONFIG & LEG");

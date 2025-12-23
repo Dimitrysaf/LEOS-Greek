@@ -18,7 +18,6 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -51,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,7 +154,6 @@ public abstract class BillServiceImpl implements BillService {
         }
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
-        updateDocumentValidationStatus(bill.getId());
         return bill;
     }
 
@@ -163,7 +162,6 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Updating Bill metadata properties... [id={}]", id);
         Bill bill = billRepository.updateBill(ref, id, properties, latest);
         updateInternalReferencesAsync(bill);
-        updateDocumentValidationStatus(id);
         return bill;
     }
 
@@ -174,7 +172,33 @@ public abstract class BillServiceImpl implements BillService {
         if (updateInternalRefs) {
             updateInternalReferencesAsync(bill);
         }
-        updateDocumentValidationStatus(id);
+        return bill;
+    }
+
+    @Override
+    public Bill updateBill(String id, byte[] updatedContent, boolean updateInternalRefs, VersionType versionType, String comment) {
+        LOG.trace("Updating Bill content... [id={}, versionType={}, comment={}]", id, versionType, comment);
+        Bill bill = billRepository.updateBill(id, updatedContent, versionType, comment);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(bill);
+        }
+        return bill;
+    }
+
+    @Override
+    public Bill updateBill(Bill bill, BillMetadata updatedMetadata, byte[] updatedContent, VersionType versionType, String comment, boolean updateInternalRefs) {
+        LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        byte[] updatedBytes = updateDataInXml(updatedContent, updatedMetadata);
+
+        bill = billRepository.updateBill(bill.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        if (updateInternalRefs) {
+            updateInternalReferencesAsync(bill);
+        }
+        //call validation on document with updated content
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
+
+        LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return bill;
     }
 
@@ -190,7 +214,6 @@ public abstract class BillServiceImpl implements BillService {
         }
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
-        updateDocumentValidationStatus(bill.getId());
         LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return bill;
     }
@@ -215,10 +238,6 @@ public abstract class BillServiceImpl implements BillService {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
-    }
-
-    private void updateDocumentValidationStatus(String id) {
-        proposalService.setProposalValidationStatus(id,  ProposalValidationStatus.NOT_VALIDATED);
     }
 
     @Override
@@ -402,7 +421,7 @@ public abstract class BillServiceImpl implements BillService {
         return tocList;
     }
 
-    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile) {
+    public List<TocItem> fetchTocItems(@NotNull Bill bill, StructureContext structureContext, Profile profile, boolean isAutonomousAct) {
         List<TocItem> tocItems = structureContext.getTocItems();
         if (profile != null) {
             if (!profile.isTocEdition()) {
@@ -424,6 +443,14 @@ public abstract class BillServiceImpl implements BillService {
                             && profiles.get(0).getElementSelector().contains(BLOCK)) {
                         tocItem.setEditable(false);
                     }
+                }
+            }
+        }
+        if (!isAutonomousAct) {
+            for (TocItem tocItem : tocItems) {
+                if (tocItem.getAknTag().value().equalsIgnoreCase(ROLE)
+                                || tocItem.getAknTag().value().equalsIgnoreCase(PERSON)) {
+                    tocItem.setDraggable(false);
                 }
             }
         }
@@ -502,4 +529,15 @@ public abstract class BillServiceImpl implements BillService {
         return bill;
     }
 
+    @Override
+    @Async("delegatingSecurityContextAsyncTaskExecutor")
+    public void updateReferencesAsync(Bill bill, Map<String, String> refsMatching) {
+        try {
+            byte[] xmlContent = bill.getContent().get().getSource().getBytes();
+            xmlContent = xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
+            updateBill(bill.getId(), xmlContent, false);
+        } catch (Exception e) {
+            LOG.error("Error while updating references on import: " + e.getMessage(), e);
+        }
+    }
 }

@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
@@ -61,6 +62,8 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -74,16 +77,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 
 @Service("coverPage")
 public class CoverPageApiServiceImpl implements CoverPageApiService {
@@ -110,6 +124,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     RepositoryPropertiesMapper repositoryPropertiesMapper;
     TrackChangesContext trackChangesContext;
     GenericDocumentApiService genericDocumentApiService;
+    XPathCatalog xPathCatalog;
 
     private Provider<CloneContext> cloneContext;
     private Provider<CollectionContextService> proposalContextProvider;
@@ -128,7 +143,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             RepositoryPropertiesMapper repositoryPropertiesMapper, TrackChangesContext trackChangesContext,
             Provider<CloneContext> cloneContext, Provider<BillContextService> billContextServiceProvider,
             Provider<StructureContext> structureContext, Provider<CollectionContextService> proposalContextProvider,
-            Provider<MemorandumContextService> memorandumContextServiceProvider) {
+            Provider<MemorandumContextService> memorandumContextServiceProvider, XPathCatalog xPathCatalog) {
         this.proposalService = proposalService;
         this.documentViewService = documentViewService;
         this.documentContentService = documentContentService;
@@ -152,6 +167,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         this.structureContext = structureContext;
         this.proposalContextProvider = proposalContextProvider;
         this.memorandumContextServiceProvider = memorandumContextServiceProvider;
+        this.xPathCatalog = xPathCatalog;
     }
 
     @Override
@@ -199,7 +215,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             byte[] newXmlContent =
                     !docPurposeElements.isEmpty() ? xmlContentProcessor.replaceElementById(proposalContent,
                             elementFragment,
-                            docPurposeElements.get(0).getElementId()) : null;
+                            docPurposeElements.get(0).getElementId(), true) : null;
 
             if (newXmlContent == null) {
                 return null;
@@ -214,6 +230,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             String comment = messageHelper.getMessage("operation.docpurpose.updated");
             context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
             context.useActionComment(comment);
+            context.useVersionType(VersionType.MINOR);
             context.executeUpdateDocumentsAssociatedToProposal();
 
             String newContent = elementProcessor.getElement(proposal, elementName, elementId);
@@ -545,4 +562,76 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         }
     }
 
+    @Override
+    public DocumentVO getCoverPageCorrigendumAddendumDetails(byte[] proposalXMLContent, DocumentVO documentVO) {
+
+        Document document = createXercesDocument(proposalXMLContent);
+        String xPathCorrigendum = xPathCatalog.getXPathCorrigendum();
+        String xPathAddendum = xPathCatalog.getXPathAddendum();
+        Node corrigendum = XercesUtils.getFirstElementByXPath(document, xPathCorrigendum);
+        Node addendum = XercesUtils.getFirstElementByXPath(document, xPathAddendum);
+        Node existingNode = corrigendum != null ? corrigendum : addendum != null ? addendum : null;
+        NodeList nodeList = existingNode != null ? existingNode.getChildNodes() : null;
+
+        if (nodeList != null) {
+            String containerName = nodeList.item(0).getTextContent();
+            Node docNumberNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/akn:docNumber", true).item(0);
+            String docNumberText = getTextOfElement(docNumberNode);
+            Node inlineVersionNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/akn:docNumber/akn:inline[@name=\"version\"]", true).item(0);
+            String version = getTextOfElement(inlineVersionNode);
+            Node dateNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/akn:date/@date", true).item(0);
+            String dateText = getTextOfElement(dateNode);
+            Node correctionInfoNode = XercesUtils.getElementsByXPath(existingNode, "//akn:p/akn:inline[@name=\"correctionInfo\"]", true).item(0);
+            String correctionInfoText = getTextOfElement(correctionInfoNode);
+            NodeList psInContainer = XercesUtils.getElementsByXPath(existingNode, "//akn:container[@name=\"addendum\" or @name=\"corrigendum\"]/akn:p", true);
+            Node targetLanguageNode = XercesUtils.getElementsByXPath(existingNode, "//akn:container[@name=\"addendum\" or @name=\"corrigendum\"]/akn:p", true).item(2);
+
+            documentVO.setProposalType(containerName.toLowerCase(Locale.ROOT));
+            documentVO.setTargetProposalReference(docNumberText);
+            documentVO.setFinalVersion("final".equals(version) ? true : false);
+            documentVO.setTargetProposalDate(convertToDate(dateText));
+            documentVO.setCorrectionInformation(correctionInfoText);
+            documentVO.setShowCorrigendumAddendum(true);
+            if (targetLanguageNode != null && psInContainer.getLength() == 5) {
+                NodeList targetLangInlineNodes = XercesUtils.getElementsByName(targetLanguageNode, "inline");
+                if (targetLangInlineNodes != null && targetLangInlineNodes.getLength() > 0) {
+                    List<String> proposalTargetLang = new ArrayList<>();
+                    for (int i = 0; i < targetLangInlineNodes.getLength(); i++) {
+                        proposalTargetLang.add(XercesUtils.getAttributeValue(targetLangInlineNodes.item(i), "name").toLowerCase());
+                    }
+                    documentVO.setProposalTargetLang(proposalTargetLang);
+                } else {
+                    documentVO.setAllTargetLangSelected(true);
+                }
+            }
+        }
+        return documentVO;
+    }
+
+    private Date convertToDate(String dateStr) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            if (dateStr != null) {
+                date = df.parse(dateStr);
+            }
+        } catch (ParseException e) {
+            date = null;
+        }
+        return date;
+    }
+
+    private String getTextOfElement(Node docNumberNode) {
+        String directText = null;
+        if (docNumberNode != null) {
+            for (int i = 0; i < docNumberNode.getChildNodes().getLength(); i++) {
+                Node child = docNumberNode.getChildNodes().item(i);
+                if (child.getNodeType() == Node.TEXT_NODE) {
+                    directText = child.getTextContent().trim();
+                    break;
+                }
+            }
+        }
+        return directText;
+    }
 }

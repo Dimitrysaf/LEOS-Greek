@@ -260,7 +260,7 @@ export class ProposalService {
     requestData: UpdateProposalMetadataModel,
   ) {
     return this.http.put(
-      `${apiBaseUrl}/secured/proposal/${proposalRef}`,
+      `${apiBaseUrl}/secured/proposal/updateDocPurpose/${proposalRef}`,
       requestData,
     );
   }

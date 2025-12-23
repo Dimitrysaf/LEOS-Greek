@@ -19,6 +19,7 @@ define(function leosInlineCancelDialog(require) {
     var CKEDITOR = require("promise!ckEditor");
     var LOG = require("logger");
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
 
     var dialogDefinition = {
         dialogName : "leosInlineCancelDialog"
@@ -48,12 +49,19 @@ define(function leosInlineCancelDialog(require) {
                     ]
                 } ]
             } ],
+            buttons: [ CKEDITOR.dialog.okButton, CKEDITOR.dialog.cancelButton ],
             onOk: function(event) {
                 event.sender.hide();
                 editor.fire('close');
+            },
+            onCancel: function() {
+                // The selection is being cleared by the 'inlinecancel' command;
+                // We try to restore it if the dialog's Cancel button was clicked
+                const originalRange = editor.LEOS.originalRange;
+                if (originalRange) {
+                    leosPluginUtils.setFocus(originalRange.endContainer, editor);
+                }
             }
-            
-
         };
         return dialogDefinition;
     };
