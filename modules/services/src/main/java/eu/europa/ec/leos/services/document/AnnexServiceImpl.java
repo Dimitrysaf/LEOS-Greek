@@ -190,7 +190,6 @@ public abstract class AnnexServiceImpl implements AnnexService {
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }
-        updateDocumentValidationStatus(annex.getId());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedBytes));
 
